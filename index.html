@@ -12,10 +12,30 @@
     <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
     </head>
 <body>
-    <audio autoplay="autoplay">
-        <source src="klavesound.mpeg" type="SOUND/mpeg" />
-  Tarayıcınız audio etiketini desteklemiyor.
+    <iframe src="klavesound.mpeg" loop id="x" allow="autoplay" style="display:none">
+</iframe> 
+<audio id="y">
+
+  <source src="klavesound.mpeg"  type="SOUND/mpeg">
+
 </audio>
+
+<button onclick="play()">Play Müzik</button>
+
+<button onclick="pause()">Pause Müzik</button>  
+  
+<script>
+ function play() {
+       y.play();
+    }
+
+    function pause() {
+
+      x.setAttribute("src", "");
+       y.pause();
+    }  
+</script>
+
     <canvas id="matrixCanvas"></canvas>
                                                         <!-- Matrix -->
     <script src="/JAVASCRIPT/matrix.js"></script>
