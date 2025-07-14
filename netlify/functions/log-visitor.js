@@ -1,3 +1,7 @@
+headers: { 
+  'Access-Control-Allow-Origin': '*',
+  'Content-Type': 'application/json'
+}
 exports.handler = async (event) => {
   // IP ve tarih bilgisini al
   const ip = event.headers['x-nf-client-connection-ip'] || event.headers['x-forwarded-for'];
