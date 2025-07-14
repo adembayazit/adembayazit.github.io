@@ -19,7 +19,15 @@
     <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
     </head>
 <body>
-   
+   <script>
+  // Sayfa yüklendiğinde Netlify Function'ını tetikle(ip loglama)
+  fetch('https://your-site.netlify.app/.netlify/functions/log-visitor', { 
+    method: 'POST'
+  })
+    .then(response => response.json())
+    .then(data => console.log('Log kaydedildi:', data))
+    .catch(err => console.error('Hata:', err));
+</script>
     <canvas id="matrixCanvas"></canvas>
                                                         <!-- Matrix -->
     <script src="/JAVASCRIPT/matrix.js"></script>
