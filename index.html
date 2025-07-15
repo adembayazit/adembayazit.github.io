@@ -19,9 +19,8 @@
     <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
     </head>
 <body>
-
-    <script>
-  // 1- Yeşil Nokta Oluştur
+<script>
+  // 1- Yeşil Nokta
   const dot = document.createElement('div');
   dot.style.cssText = `
     position: fixed;
@@ -38,7 +37,7 @@
     transition: all 0.3s;
   `;
 
-  // 2- Bilgi Balonu
+  // 2- Tooltip Kutusu
   const tooltip = document.createElement('div');
   tooltip.style.cssText = `
     position: absolute;
@@ -72,9 +71,9 @@
       const ip = data.ip;
       const country = data.country;
 
-      // Tooltip içerik
+      // Tooltip bilgileri
       tooltip.innerHTML = `
-        <div style="margin-bottom: 5px; font-weight: bold; color: #00ff00;">✓ User Logged</div>
+        <div style="margin-bottom: 5px; font-weight: bold; color: #00ff00;">✓ IP Gönderildi</div>
         <div><strong>IP:</strong> ${ip}</div>
         <div><strong>Zaman:</strong> ${time.toLocaleString('tr-TR')}</div>
         <div><strong>Ülke:</strong> ${country}</div>
@@ -82,11 +81,15 @@
       `;
 
       // Netlify fonksiyonuna POST ile gönder
-      fetch('/.netlify/functions/log-visitor', {
+      return fetch('/.netlify/functions/log-visitor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ip: ip, country: country })
       });
+    })
+    .then(res => res.json())
+    .then(serverRes => {
+      console.log('Sunucu cevabı:', serverRes);
     })
     .catch(error => {
       const now = new Date();
