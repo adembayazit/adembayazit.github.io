@@ -1,53 +1,73 @@
 exports.handler = async (event) => {
-  // 1. IPv4 adresini güvenli şekilde alma
-  const getClientIPv4 = () => {
+  // 1. GERÇEK IPv4 ADRESİNİ ALMA FONKSİYONU
+  const getStrictIPv4 = () => {
     const headers = event.headers;
-    // Öncelik sırası: Cloudflare > Netlify > Diğer
-    return headers['cf-connecting-ip']?.[0] || // Cloudflare
-           headers['x-nf-client-connection-ip'] || // Netlify
-           (headers['x-forwarded-for'] || '').split(',')[0].trim() || // İlk IP
-           headers['client-ip'] || 
-           'IP_BULUNAMADI';
+    
+    // Cloudflare kullanıyorsanız (en güvenilir)
+    if (headers['cf-connecting-ip']) {
+      return headers['cf-connecting-ip'];
+    }
+    
+    // Netlify'in sağladığı IP
+    const netlifyIp = headers['x-nf-client-connection-ip'];
+    
+    // X-Forwarded-For'dan IPv4 filtreleme
+    const xForwardedIps = (headers['x-forwarded-for'] || '')
+      .split(',')
+      .map(ip => ip.trim())
+      .filter(ip => {
+        // Sadece IPv4 formatını kabul et (192.168.1.1 gibi)
+        const ipv4Pattern = /^(\d{1,3}\.){3}\d{1,3}$/;
+        return ipv4Pattern.test(ip.replace(/^::ffff:/, ''));
+      });
+    
+    // IPv6 içermeyen ilk IPv4'yü seç
+    return xForwardedIps[0] || netlifyIp || 'IP_BULUNAMADI';
   };
 
-  // 2. IPv6'yi IPv4'e çevirme
-  const cleanIPv4 = (ip) => {
+  // 2. KESİNLİKLE IPv4 TEMİZLEME
+  const strictIPv4 = (ip) => {
     if (!ip) return null;
-    // ::ffff:192.168.1.1 formatını düzelt
-    return ip.replace(/^::ffff:/, '').split('%')[0];
+    
+    // ::ffff:192.168.1.1 formatını temizle
+    ip = ip.replace(/^::ffff:/, '');
+    
+    // IPv4 format kontrolü
+    const ipv4Pattern = /^(\d{1,3}\.){3}\d{1,3}$/;
+    return ipv4Pattern.test(ip) ? ip : null;
   };
 
-  const rawIp = getClientIPv4();
-  const ipv4 = cleanIPv4(rawIp);
+  // 3. IP ALMA İŞLEMLERİ
+  const rawIp = getStrictIPv4();
+  const ipv4 = strictIPv4(rawIp) || 'IPV4_BULUNAMADI';
 
-  // 3. Log objesi oluştur
+  // 4. LOG KAYDI OLUŞTUR
   const logEntry = {
     ipv4: ipv4,
+    originalIp: rawIp, // Orijinal IP'yi de kaydet (debug için)
     timestamp: new Date().toISOString(),
-    userAgent: event.headers['user-agent'],
-    referer: event.headers['referer'] || 'Direkt Erişim'
+    userAgent: event.headers['user-agent'] || 'Belirsiz',
+    referer: event.headers['referer'] || 'Direkt Erişim',
+    headers: event.headers // Tüm header'ları kaydet (opsiyonel)
   };
 
-  // 4. Netlify Logs'a yazdır (Dashboard'da görünecek)
-  console.log("🌐 IPv4 LOG:", logEntry);
-
-  // 5. JSON dosyasına yaz (Kalıcı depolama için)
-  const fs = require('fs');
-  const path = '/tmp/ipv4-logs.json';
+  // 5. LOGLAMA İŞLEMLERİ
+  console.log("🔴 IPv4 LOG:", JSON.stringify(logEntry, null, 2));
   
-  let existingLogs = [];
-  try {
-    existingLogs = JSON.parse(fs.readFileSync(path, 'utf8'));
-  } catch (e) {
-    console.log("Yeni log dosyası oluşturuluyor...");
-  }
-
-  existingLogs.push(logEntry);
-  fs.writeFileSync(path, JSON.stringify(existingLogs, null, 2));
+  // 6. DOSYAYA YAZ (Opsiyonel)
+  const fs = require('fs');
+  fs.appendFileSync('/tmp/ipv4-logs.txt', `${JSON.stringify(logEntry)}\n`);
 
   return {
     statusCode: 200,
-    body: JSON.stringify({ success: true, ipv4: ipv4 }),
+    body: JSON.stringify({ 
+      status: "success",
+      your_ipv4: ipv4,
+      debug_info: {
+        original_ip: rawIp,
+        is_ipv4: ipv4 !== 'IPV4_BULUNAMADI'
+      }
+    }),
     headers: { 
       'Access-Control-Allow-Origin': '*',
       'Content-Type': 'application/json'
