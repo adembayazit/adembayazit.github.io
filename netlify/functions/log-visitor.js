@@ -1,4 +1,54 @@
 exports.handler = async (event) => {
+  // 1. OPTIONS isteğine cevap (preflight CORS)
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 204,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      },
+      body: ''
+    };
+  }
+
+  // 2. POST dışı metod kontrolü
+  if (event.httpMethod !== 'POST') {
+    return {
+      statusCode: 405,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: JSON.stringify({ error: 'Sadece POST isteği destekleniyor' })
+    };
+  }
+
+  // 3. POST ise işlem yap
+  try {
+    const data = JSON.parse(event.body);
+    console.log('Ziyaretçi verisi:', data);
+
+    return {
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ status: 'ok', message: 'Veri alındı' })
+    };
+  } catch (err) {
+    return {
+      statusCode: 400,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ error: 'JSON ayrıştırma hatası', detay: err.message })
+    };
+  }
+};
+
+exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
