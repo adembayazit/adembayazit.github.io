@@ -20,8 +20,7 @@
     </head>
 <body>
 
-    <!-- Netfliy_IP_JS -->
-<script>
+    <script>
   // 1- Yeşil Nokta Oluştur
   const dot = document.createElement('div');
   dot.style.cssText = `
@@ -62,39 +61,39 @@
   dot.appendChild(tooltip);
   document.body.appendChild(dot);
 
-  // 3- Fare Etkileşimleri
   dot.addEventListener('mouseenter', () => tooltip.style.opacity = '1');
   dot.addEventListener('mouseleave', () => tooltip.style.opacity = '0');
 
-  // 4- IP'yi ipinfo.io'dan al ve tooltip'e yerleştir
-  fetch('https://ipinfo.io/json?token=68a1229187303a') // kendi token'ını koy
-    .then(res => {
-      if (!res.ok) throw new Error('Network error');
-      return res.json();
-    })
+  // 3- IP Al ve Gönder
+  fetch('https://ipinfo.io/json?token=68a1229187303a')
+    .then(res => res.json())
     .then(data => {
       const time = new Date();
+      const ip = data.ip;
+      const country = data.country;
+
+      // Tooltip içerik
       tooltip.innerHTML = `
         <div style="margin-bottom: 5px; font-weight: bold; color: #00ff00;">✓ User Logged</div>
-        <div><strong>IP:</strong> ${data.ip}</div>
+        <div><strong>IP:</strong> ${ip}</div>
         <div><strong>Zaman:</strong> ${time.toLocaleString('tr-TR')}</div>
-        <div><strong>Ülke:</strong> ${data.country}</div>
+        <div><strong>Ülke:</strong> ${country}</div>
         <div style="font-size: 12px; margin-top: 5px; color: #ccc;">${navigator.userAgent.split(' ')[0]}</div>
       `;
 
-      // 5- İstersen burada Netlify fonksiyonuna POST ile IP ve diğer verileri gönderebilirsin
-      fetch('https://adembayazit.netlify.app/.netlify/functions/log-visitor', {
+      // Netlify fonksiyonuna POST ile gönder
+      fetch('/.netlify/functions/log-visitor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ip: data.ip, extra: data })
+        body: JSON.stringify({ ip: ip, country: country })
       });
     })
     .catch(error => {
       const now = new Date();
       tooltip.innerHTML = `
-        <div style="margin-bottom: 5px; font-weight: bold; color: #ff5555;">❌ Error</div>
+        <div style="margin-bottom: 5px; font-weight: bold; color: #ff5555;">❌ Hata</div>
         <div><strong>Zaman:</strong> ${now.toLocaleString('tr-TR')}</div>
-        <div><strong>Hata:</strong> ${error.message}</div>
+        <div><strong>Mesaj:</strong> ${error.message}</div>
       `;
       dot.style.background = "#ff5555";
     });
