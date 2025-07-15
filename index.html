@@ -22,91 +22,75 @@
 
     <!-- Netfliy_IP_JS -->
     <script>
-// 1. "Loglanıyor..." yazısını göster
-const logIndicator = document.createElement('div');
-logIndicator.innerHTML = `
-  <div style="
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: #4CAF50;
-    color: white;
-    width: 120px;
-    height: 40px;
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: Arial;
-    font-size: 14px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    z-index: 9999;
-  ">
-    <span style="margin-right: 8px">●</span> Loglanıyor...
-  </div>
+// 1. Yuvarlak göstergeyi oluştur
+const indicator = document.createElement('div');
+indicator.style.cssText = `
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 16px;
+  height: 16px;
+  background: limegreen;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
+  cursor: pointer;
+  z-index: 9999;
+  transition: all 0.3s ease;
 `;
-document.body.appendChild(logIndicator);
 
-// 2. Log isteğini gönder
-fetch('https://adembayazit.netlify.app/.netlify/functions/log-visitor')
+// 2. Üzerine gelince tooltip göster
+const tooltip = document.createElement('div');
+tooltip.style.cssText = `
+  position: absolute;
+  bottom: 100%;
+  right: 100%;
+  background: rgba(0,0,0,0.7);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: Arial;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+`;
+
+// 3. Elementleri birleştir
+indicator.appendChild(tooltip);
+document.body.appendChild(indicator);
+
+// 4. Fare olayları
+indicator.addEventListener('mouseenter', () => {
+  tooltip.style.opacity = '1';
+  tooltip.textContent = 'Sayfa ziyareti loglanıyor...';
+});
+
+indicator.addEventListener('mouseleave', () => {
+  tooltip.style.opacity = '0';
+});
+
+// 5. Log isteğini gönder
+fetch('https://siteniz.netlify.app/.netlify/functions/log-visitor')
   .then(res => res.json())
   .then(data => {
-    // 3. Başarılıysa yeşil tik ekle
-    logIndicator.innerHTML = `
-      <div style="
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background: #4CAF50;
-        color: white;
-        width: 120px;
-        height: 40px;
-        border-radius: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-family: Arial;
-        font-size: 14px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-        z-index: 9999;
-      ">
-        <span style="margin-right: 8px">✓</span> Loglandı!
-      </div>
-    `;
+    // Başarılıysa parlak yeşil yap
+    indicator.style.background = '#00ff00';
+    indicator.style.boxShadow = '0 0 10px rgba(0,255,0,0.7)';
+    tooltip.textContent = 'Loglandı ✓ ' + data.date;
     
-    console.log("Log kaydı başarılı:", data);
+    // 3 sn sonra eski haline dön
+    setTimeout(() => {
+      indicator.style.background = 'limegreen';
+      indicator.style.boxShadow = '0 0 0 2px rgba(0,0,0,0.1)';
+    }, 3000);
   })
   .catch(err => {
-    // 4. Hata durumunda kırmızı gösterge
-    logIndicator.innerHTML = `
-      <div style="
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background: #f44336;
-        color: white;
-        width: 120px;
-        height: 40px;
-        border-radius: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-family: Arial;
-        font-size: 14px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-        z-index: 9999;
-      ">
-        <span style="margin-right: 8px">✗</span> Hata!
-      </div>
-    `;
-    console.error("Loglama hatası:", err);
+    // Hata durumunda kırmızı yap
+    indicator.style.background = '#ff3333';
+    tooltip.textContent = 'Loglama hatası!';
   });
-
-// 5. 3 saniye sonra kaybolsun
-setTimeout(() => {
-  logIndicator.style.opacity = '0';
-  setTimeout(() => logIndicator.remove(), 500);
-}, 3000);
 </script>
     
     <canvas id="matrixCanvas"></canvas>
