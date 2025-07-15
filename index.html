@@ -22,7 +22,7 @@
 
     <!-- Netfliy_IP_JS -->
    <script>
-// Create indicator dot
+// 1- Yeşil Nokta Oluştur
 const dot = document.createElement('div');
 dot.style.cssText = `
   position: fixed;
@@ -39,7 +39,7 @@ dot.style.cssText = `
   transition: all 0.3s;
 `;
 
-// Create tooltip
+// 2- Bilgi Balonu (Türkçe/İngilizce)
 const tooltip = document.createElement('div');
 tooltip.style.cssText = `
   position: absolute;
@@ -47,49 +47,44 @@ tooltip.style.cssText = `
   right: 100%;
   background: rgba(0,0,0,0.85);
   color: white;
-  padding: 6px 10px;
-  border-radius: 4px;
-  font-size: 12px;
+  padding: 8px 12px;
+  border-radius: 5px;
+  font-size: 13px;
   font-family: Arial, sans-serif;
   white-space: nowrap;
   opacity: 0;
-  transition: opacity 0.2s;
+  transition: opacity 0.3s;
   pointer-events: none;
-  min-width: 180px;
+  min-width: 200px;
 `;
 
 dot.appendChild(tooltip);
 document.body.appendChild(dot);
 
-// Hover effects
-dot.addEventListener('mouseenter', () => {
-  tooltip.style.opacity = '1';
-});
+// 3- Fareyle Üzerine Gelince Göster
+dot.addEventListener('mouseenter', () => tooltip.style.opacity = '1');
+dot.addEventListener('mouseleave', () => tooltip.style.opacity = '0');
 
-dot.addEventListener('mouseleave', () => {
-  tooltip.style.opacity = '0';
-});
-
-// Send log request
+// 4- IP ve Zamanı Logla (Netlify Function)
 fetch('https://adembayazit.netlify.app/.netlify/functions/log-visitor')
   .then(res => res.json())
   .then(data => {
-    // Success state
-    dot.style.background = 'limegreen';
+    const time = new Date(data.timestamp);
     tooltip.innerHTML = `
-      <div><strong>Logged Successfully</strong></div>
-      <div>IPv4: ${data.ipv4}</div>
-      <div>Time: ${new Date(data.timestamp).toLocaleString()}</div>
-      <div>Browser: ${data.userAgent.split(' ')[0]}</div>
+      <div><strong>✅ Site Logged (Başarılı)</strong></div>
+      <div>IP: ${data.ipv4 || "Bilinmiyor"}</div>
+      <div>Zaman: ${time.toLocaleString('tr-TR')}</div>
+      <div>Tarayıcı: ${navigator.userAgent.split(' ')[0]}</div>
     `;
   })
-  .catch(err => {
-    // Error state
-    dot.style.background = '#ff3333';
+  .catch(() => {
+    const now = new Date();
     tooltip.innerHTML = `
-      <div><strong>Logging Failed</strong></div>
-      <div>Error: ${err.message}</div>
+      <div><strong>⚠️ Loglanamadı</strong></div>
+      <div>Zaman: ${now.toLocaleString('tr-TR')}</div>
+      <div>Hata: API bağlantısı yok</div>
     `;
+    dot.style.background = "#ff5555";
   });
 </script>
     
