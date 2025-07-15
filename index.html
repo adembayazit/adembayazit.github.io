@@ -20,7 +20,6 @@
     </head>
 <body>
 <script>
-  // 1- Yeşil Nokta
   const dot = document.createElement('div');
   dot.style.cssText = `
     position: fixed;
@@ -37,7 +36,6 @@
     transition: all 0.3s;
   `;
 
-  // 2- Tooltip Kutusu
   const tooltip = document.createElement('div');
   tooltip.style.cssText = `
     position: absolute;
@@ -53,7 +51,7 @@
     opacity: 0;
     transition: opacity 0.3s;
     pointer-events: none;
-    min-width: 220px;
+    min-width: 240px;
     backdrop-filter: blur(5px);
   `;
 
@@ -63,8 +61,7 @@
   dot.addEventListener('mouseenter', () => tooltip.style.opacity = '1');
   dot.addEventListener('mouseleave', () => tooltip.style.opacity = '0');
 
-  // 3- IP Al ve Gönder
-  fetch('https://ipinfo.io/json?token=68a1229187303a')
+  fetch('https://ipinfo.io/json?token=68a1229187303a') // TOKEN doğruysa böyle bırak
     .then(async res => {
       if (!res.ok) {
         const text = await res.text();
@@ -74,37 +71,38 @@
     })
     .then(data => {
       const now = new Date();
-      const ip = data.ip;
-      const country = data.country;
-      const city = data.city;
-      const org = data.org;
-      const timezone = data.timezone;
+      const {
+        ip, hostname, city, region,
+        country, loc, org, postal, timezone
+      } = data;
 
-      // Tooltip bilgileri
       tooltip.innerHTML = `
-        <div style="margin-bottom: 5px; font-weight: bold; color: #00ff00;">✓ Ziyaretçi Tanımlandı</div>
+        <div style="margin-bottom: 5px; font-weight: bold; color: #00ff00;">✓ IP Tespit Edildi</div>
         <div><strong>IP:</strong> ${ip}</div>
+        <div><strong>Host:</strong> ${hostname}</div>
         <div><strong>Şehir:</strong> ${city}</div>
+        <div><strong>Bölge:</strong> ${region}</div>
         <div><strong>Ülke:</strong> ${country}</div>
+        <div><strong>Konum:</strong> ${loc}</div>
+        <div><strong>Posta:</strong> ${postal}</div>
         <div><strong>Servis:</strong> ${org}</div>
         <div><strong>Saat:</strong> ${now.toLocaleString('tr-TR')}</div>
         <div style="font-size: 12px; margin-top: 5px; color: #ccc;">${navigator.userAgent.split(' ')[0]}</div>
       `;
 
-      // Sunucuya log gönder
+      // POST ile Netlify fonksiyonuna gönder
       fetch('/.netlify/functions/log-visitor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ip,
-          country,
-          city,
-          org,
-          timezone,
-          timestamp: now.toISOString(),
+          ip, hostname, city, region,
+          country, loc, org, postal,
+          timezone, timestamp: now.toISOString(),
           userAgent: navigator.userAgent
         })
-      });
+      }).then(res => res.json())
+        .then(console.log)
+        .catch(err => console.error("POST hatası:", err));
     })
     .catch(error => {
       const now = new Date();
