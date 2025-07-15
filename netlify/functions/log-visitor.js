@@ -1,68 +1,70 @@
+const axios = require('axios');
+
 exports.handler = async (event) => {
-  // 1. DOĞRU IP ALMA (WhatIsMyIP uyumlu)
-  const getTrueIPv4 = () => {
-    const headers = event.headers;
-    
-    // Cloudflare desteği
-    if (headers['cf-connecting-ip']) {
-      return headers['cf-connecting-ip'];
+  // 1. TEMEL ZİYARETÇİ BİLGİLERİ
+  const getVisitorIP = () => {
+    return event.headers['x-nf-client-connection-ip'] || 
+           event.headers['x-forwarded-for']?.split(',')[0].trim() || 
+           'IP_BULUNAMADI';
+  };
+
+  // 2. IP'DEN KONUM BİLGİSİ ALMA (Ücretsiz IPAPI kullanımı)
+  const getLocationData = async (ip) => {
+    try {
+      const response = await axios.get(`http://ip-api.com/json/${ip}?fields=66846719`);
+      return {
+        postalCode: response.data.zip || 'Bilinmiyor',
+        city: response.data.city || 'Bilinmiyor',
+        country: response.data.country || 'Bilinmiyor',
+        isp: response.data.isp || 'Bilinmiyor'
+      };
+    } catch (error) {
+      console.error('Konum bilgisi alınamadı:', error);
+      return {
+        postalCode: 'ALINAMADI',
+        city: 'ALINAMADI',
+        country: 'ALINAMADI',
+        isp: 'ALINAMADI'
+      };
     }
-    
-    // Netlify IPv4 header'ı
-    const netlifyIp = headers['x-nf-client-connection-ip'];
-    
-    // X-Forwarded-For'dan temiz IPv4 çekme
-    const xForwarded = (headers['x-forwarded-for'] || '')
-      .split(',')
-      .map(ip => ip.trim().replace(/^::ffff:/, ''))
-      .find(ip => /^(\d{1,3}\.){3}\d{1,3}$/.test(ip));
-    
-    return xForwarded || netlifyIp || 'IP_ALINAMADI';
   };
 
-  // 2. TARİH FORMATLAMA (TR saat dilimi)
-  const formatDate = () => {
-    return new Date().toLocaleString('tr-TR', {
-      timeZone: 'Europe/Istanbul',
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
-    }).replace(/\s/g, '');
+  // 3. VERİLERİ TOPLA
+  const visitorIP = getVisitorIP();
+  const location = await getLocationData(visitorIP.replace(/^::ffff:/, ''));
+  
+  const logEntry = {
+    ip: visitorIP,
+    timestamp: new Date().toLocaleString('tr-TR'),
+    browser: (event.headers['user-agent'] || '').split('/')[0],
+    page: event.headers['referer'] || 'Direkt Erişim',
+    location: {
+      postalCode: location.postalCode,
+      city: location.city,
+      country: location.country,
+      isp: location.isp
+    }
   };
 
-  // 3. BROWSER BİLGİSİNİ TEMİZLE
-  const getCleanBrowser = (userAgent) => {
-    if (!userAgent) return 'Belirsiz';
-    return userAgent.split(' ')[0].replace(/[^a-zA-Z0-9]/g, '');
-  };
-
-  // 4. VERİLERİ TOPLA
-  const ipv4 = getTrueIPv4();
-  const logData = {
-    ip: ipv4,
-    date: formatDate(),
-    browser: getCleanBrowser(event.headers['user-agent']),
-    site: 'adembayazit.github.io'
-  };
-
-  // 5. 4 SATIRLIK LOG FORMATI
+  // 4. LOG FORMATI (4 Satır + Ek Bilgiler)
   const logText = `
-IP: ${logData.ip}
-Tarih: ${logData.date}
-Browser: ${logData.browser}
-Site: ${logData.site}
+IP: ${logEntry.ip}
+Tarih: ${logEntry.timestamp}
+Tarayıcı: ${logEntry.browser}
+Posta Kodu: ${logEntry.location.postalCode}
+Şehir: ${logEntry.location.city}
+Ülke: ${logEntry.location.country}
+ISP: ${logEntry.location.isp}
+Sayfa: ${logEntry.page}
 -----------------------`;
 
-  // 6. LOGLAMA
+  // 5. KAYIT İŞLEMLERİ
   console.log(logText);
-  require('fs').appendFileSync('/tmp/github-logs.txt', logText);
+  require('fs').appendFileSync('/tmp/advanced-logs.txt', logText);
 
   return {
     statusCode: 200,
-    body: JSON.stringify(logData),
+    body: JSON.stringify(logEntry),
     headers: { 
       'Access-Control-Allow-Origin': 'https://adembayazit.github.io',
       'Content-Type': 'application/json'
