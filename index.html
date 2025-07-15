@@ -21,68 +21,73 @@
 <body>
 
     <!-- Netfliy_IP_JS -->
-   <script>
+ <script>
 // 1- Yeşil Nokta Oluştur
 const dot = document.createElement('div');
 dot.style.cssText = `
   position: fixed;
   bottom: 20px;
   right: 20px;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   background: limegreen;
   border-radius: 50%;
   border: 2px solid white;
-  box-shadow: 0 0 8px rgba(50, 205, 50, 0.7);
+  box-shadow: 0 0 10px rgba(50, 205, 50, 0.8);
   cursor: pointer;
   z-index: 9999;
   transition: all 0.3s;
 `;
 
-// 2- Bilgi Balonu (Türkçe/İngilizce)
+// 2- Bilgi Balonu
 const tooltip = document.createElement('div');
 tooltip.style.cssText = `
   position: absolute;
   bottom: 100%;
-  right: 100%;
-  background: rgba(0,0,0,0.85);
+  right: 0;
+  background: rgba(0,0,0,0.9);
   color: white;
-  padding: 8px 12px;
-  border-radius: 5px;
-  font-size: 13px;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 14px;
   font-family: Arial, sans-serif;
   white-space: nowrap;
   opacity: 0;
   transition: opacity 0.3s;
   pointer-events: none;
-  min-width: 200px;
+  min-width: 220px;
+  backdrop-filter: blur(5px);
 `;
 
 dot.appendChild(tooltip);
 document.body.appendChild(dot);
 
-// 3- Fareyle Üzerine Gelince Göster
+// 3- Fare Etkileşimleri
 dot.addEventListener('mouseenter', () => tooltip.style.opacity = '1');
 dot.addEventListener('mouseleave', () => tooltip.style.opacity = '0');
 
-// 4- IP ve Zamanı Logla (Netlify Function)
-fetch('https://adembayazit.netlify.app/.netlify/functions/log-visitor')
-  .then(res => res.json())
+// 4- Verileri Çek ve Göster
+fetch('/.netlify/functions/log-visitor')
+  .then(response => {
+    if (!response.ok) throw new Error('Network error');
+    return response.json();
+  })
   .then(data => {
     const time = new Date(data.timestamp);
     tooltip.innerHTML = `
-      <div><strong>✅ Site Logged (Başarılı)</strong></div>
-      <div>IP: ${data.ipv4 || "Bilinmiyor"}</div>
-      <div>Zaman: ${time.toLocaleString('tr-TR')}</div>
-      <div>Tarayıcı: ${navigator.userAgent.split(' ')[0]}</div>
+      <div style="margin-bottom: 5px; font-weight: bold; color: #00ff00;">✔️ Site Log Kaydı</div>
+      <div><strong>IP:</strong> ${data.ipv4}</div>
+      <div><strong>Zaman:</strong> ${time.toLocaleString('tr-TR')}</div>
+      <div><strong>Ülke:</strong> ${data.country}</div>
+      <div style="font-size: 12px; margin-top: 5px; color: #ccc;">${navigator.userAgent.split(' ')[0]}</div>
     `;
   })
-  .catch(() => {
+  .catch(error => {
     const now = new Date();
     tooltip.innerHTML = `
-      <div><strong>⚠️ Loglanamadı</strong></div>
-      <div>Zaman: ${now.toLocaleString('tr-TR')}</div>
-      <div>Hata: API bağlantısı yok</div>
+      <div style="margin-bottom: 5px; font-weight: bold; color: #ff5555;">⚠️ Hata Oluştu</div>
+      <div><strong>Zaman:</strong> ${now.toLocaleString('tr-TR')}</div>
+      <div><strong>Hata:</strong> ${error.message}</div>
     `;
     dot.style.background = "#ff5555";
   });
