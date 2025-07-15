@@ -1,41 +1,37 @@
-exports.handler = async (event) => {
-  const headers = event.headers;
+// Netlify Function: log-visitor.js
 
-  // Tüm olası IP başlıklarını kontrol et
-  const possibleIPs = [
-    headers['x-nf-client-connection-ip'],
-    headers['client-ip'],
-    headers['x-forwarded-for'],
-    headers['x-real-ip'],
-    headers['cf-connecting-ip'], // Cloudflare kullanılıyorsa
-    event.requestContext?.identity?.sourceIp, // fallback AWS Gateway (bazı Netlify env'lerinde olur)
-  ];
+const fetch = require('node-fetch'); // Netlify'de fetch zaten desteklenir
 
-  // İlk bulunan geçerli IP'yi al
-  const rawIP = possibleIPs.find(ip => ip && ip.trim()) || 'IP alınamadı';
+exports.handler = async () => {
+  try {
+    // IP adresini ve konum verilerini almak için ipinfo.io kullanıyoruz
+    const response = await fetch('https://ipinfo.io/json?token=68a1229187303a'); // Token isteğe bağlıdır ama rate limit olmaması için tavsiye edilir
+    const ipData = await response.json();
 
-  // IPv4'ü çıkarmak için fonksiyon
-  const extractIPv4 = (ip) => {
-    if (!ip) return 'IPv4 bulunamadı';
-    if (ip.includes(',')) ip = ip.split(',')[0]; // x-forwarded-for birden fazla IP içerir
-    const ipv4Match = ip.match(/(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/);
-    return ipv4Match ? ipv4Match[0] : 'IPv4 bulunamadı';
-  };
-
-  return {
-    statusCode: 200,
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*'
-    },
-    body: JSON.stringify({
-      status: "success",
-      ipv4: extractIPv4(rawIP),
-      ipv6: rawIP.includes(':') ? rawIP : 'IPv6 yok',
-      timestamp: new Date().toISOString(),
-      browser: headers['user-agent']?.match(/\((.*?)\)/)?.[1] || 'Bilinmiyor',
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      rawIP: rawIP
-    })
-  };
+    return {
+      statusCode: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      },
+      body: JSON.stringify({
+        status: 'success',
+        ip: ipData.ip,
+        ipv6: ipData.ip.includes(':') ? ipData.ip : 'IPv6 yok',
+        city: ipData.city,
+        region: ipData.region,
+        country: ipData.country,
+        loc: ipData.loc, // "latitude,longitude"
+        timezone: ipData.timezone,
+        org: ipData.org, // internet servis sağlayıcısı
+        browser: '', // kullanıcı tarayıcı bilgisi istersen ayrıca bakarız
+        timestamp: new Date().toISOString()
+      })
+    };
+  } catch (error) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: 'IP verisi alınamadı', message: error.message })
+    };
+  }
 };
