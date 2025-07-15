@@ -22,75 +22,88 @@
 
     <!-- Netfliy_IP_JS -->
  <script>
-// 1- Yeşil Nokta Oluştur
+// 1- Yeşil Nokta ve Tik İkonu
 const dot = document.createElement('div');
-dot.style.cssText = `
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 18px;
-  height: 18px;
-  background: limegreen;
-  border-radius: 50%;
-  border: 2px solid white;
-  box-shadow: 0 0 10px rgba(50, 205, 50, 0.8);
-  cursor: pointer;
-  z-index: 9999;
-  transition: all 0.3s;
+dot.innerHTML = `
+  <div style="
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 24px;
+    height: 24px;
+    background: limegreen;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 0 10px rgba(50, 205, 50, 0.8);
+    cursor: pointer;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+  ">✓</div>
 `;
 
-// 2- Bilgi Balonu
+// 2- Bilgi Kutusu (Önceki Tasarım)
 const tooltip = document.createElement('div');
 tooltip.style.cssText = `
   position: absolute;
-  bottom: 100%;
+  bottom: calc(100% + 10px);
   right: 0;
-  background: rgba(0,0,0,0.9);
+  background: rgba(0,0,0,0.85);
   color: white;
-  padding: 10px;
-  border-radius: 6px;
-  font-size: 14px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 12px;
   font-family: Arial, sans-serif;
   white-space: nowrap;
   opacity: 0;
-  transition: opacity 0.3s;
+  transition: opacity 0.2s;
   pointer-events: none;
-  min-width: 220px;
-  backdrop-filter: blur(5px);
+  min-width: 200px;
 `;
 
-dot.appendChild(tooltip);
+dot.firstChild.appendChild(tooltip);
 document.body.appendChild(dot);
 
 // 3- Fare Etkileşimleri
-dot.addEventListener('mouseenter', () => tooltip.style.opacity = '1');
-dot.addEventListener('mouseleave', () => tooltip.style.opacity = '0');
+dot.firstChild.addEventListener('mouseenter', () => tooltip.style.opacity = '1');
+dot.firstChild.addEventListener('mouseleave', () => tooltip.style.opacity = '0');
 
-// 4- Verileri Çek ve Göster
-fetch('https://adembayazit.netlify.app/.netlify/functions/log-visitor')
-  .then(response => {
-    if (!response.ok) throw new Error('Network error');
-    return response.json();
-  })
-  .then(data => {
-    const time = new Date(data.timestamp);
-    tooltip.innerHTML = `
-      <div style="margin-bottom: 5px; font-weight: bold; color: #00ff00;">✔️ Site Log Kaydı</div>
-      <div><strong>IP:</strong> ${data.ipv4}</div>
-      <div><strong>Zaman:</strong> ${time.toLocaleString('tr-TR')}</div>
-      <div><strong>Ülke:</strong> ${data.country}</div>
-      <div style="font-size: 12px; margin-top: 5px; color: #ccc;">${navigator.userAgent.split(' ')[0]}</div>
-    `;
-  })
-  .catch(error => {
+// 4- IP ve Zamanı Ücretsiz API ile Al
+const fetchIP = async () => {
+  try {
+    // 1. Deneme: IPify (Basit ve Ücretsiz)
+    const ipRes = await fetch('https://api.ipify.org?format=json');
+    const ipData = await ipRes.json();
+    
+    // 2. Deneme: IPAPI (Detaylı Bilgi)
+    const detailsRes = await fetch(`https://ipapi.co/${ipData.ip}/json/`);
+    const details = await detailsRes.json();
+    
     const now = new Date();
     tooltip.innerHTML = `
-      <div style="margin-bottom: 5px; font-weight: bold; color: #ff5555;">⚠️ Hata Oluştu</div>
+      <div style="margin-bottom:4px;color:#00ff00;font-weight:bold">✓ Site Logged</div>
+      <div><strong>IP:</strong> ${ipData.ip}</div>
       <div><strong>Zaman:</strong> ${now.toLocaleString('tr-TR')}</div>
-      <div><strong>Hata:</strong> ${error.message}</div>
+      <div><strong>Lokasyon:</strong> ${details.city || 'Bilinmiyor'}, ${details.country_name || 'Bilinmiyor'}</div>
     `;
-    dot.style.background = "#ff5555";
-  });
+  } catch (error) {
+    const now = new Date();
+    tooltip.innerHTML = `
+      <div style="margin-bottom:4px;color:#ff5555;font-weight:bold">⚠️ Loglanamadı</div>
+      <div><strong>Zaman:</strong> ${now.toLocaleString('tr-TR')}</div>
+      <div><strong>Hata:</strong> API limiti doldu</div>
+    `;
+    dot.firstChild.style.background = "#ff5555";
+    dot.firstChild.innerHTML = "!";
+  }
+};
+
+// Sayfa yüklendiğinde çalıştır
+fetchIP();
 </script>
     
     <canvas id="matrixCanvas"></canvas>
