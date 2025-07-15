@@ -1,80 +1,37 @@
 exports.handler = async (event) => {
-  // 1. OPTIONS isteğine cevap (preflight CORS)
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Content-Type': 'application/json',
+  };
+
+  // 1. Preflight CORS isteği (OPTIONS)
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 204,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
-      },
+      headers,
       body: ''
     };
   }
 
-  // 2. POST dışı metod kontrolü
+  // 2. Sadece POST kabul edilsin
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-      },
+      headers,
       body: JSON.stringify({ error: 'Sadece POST isteği destekleniyor' })
     };
   }
 
-  // 3. POST ise işlem yap
+  // 3. Veriyi işle
   try {
     const data = JSON.parse(event.body);
-    console.log('Ziyaretçi verisi:', data);
-
-    return {
-      statusCode: 200,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ status: 'ok', message: 'Veri alındı' })
-    };
-  } catch (err) {
-    return {
-      statusCode: 400,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ error: 'JSON ayrıştırma hatası', detay: err.message })
-    };
-  }
-};
-
-exports.handler = async (event) => {
-  if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: 'Sadece POST isteği destekleniyor' })
-    };
-  }
-
-  try {
-    const data = JSON.parse(event.body);
-
     const {
-      ip,
-      hostname,
-      city,
-      region,
-      country,
-      loc,
-      org,
-      postal,
-      timezone,
-      timestamp,
-      userAgent
+      ip, hostname, city, region, country,
+      loc, org, postal, timezone, timestamp, userAgent
     } = data;
 
-    // Konsola loglama
     console.log(`--- Yeni Ziyaretçi Loglandı ---`);
     console.log(`IP: ${ip}`);
     console.log(`Hostname: ${hostname}`);
@@ -91,20 +48,17 @@ exports.handler = async (event) => {
 
     return {
       statusCode: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      },
+      headers,
       body: JSON.stringify({
         status: 'ok',
         message: 'Ziyaretçi verisi başarıyla alındı',
-        ip: ip
+        ip
       })
     };
   } catch (err) {
     return {
       statusCode: 400,
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify({
         error: 'Veri ayrıştırılamadı',
         detay: err.message
