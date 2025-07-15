@@ -21,10 +21,10 @@
 <body>
 
     <!-- Netfliy_IP_JS -->
-    <script>
-// 1. Yuvarlak göstergeyi oluştur
-const indicator = document.createElement('div');
-indicator.style.cssText = `
+   <script>
+// Create indicator dot
+const dot = document.createElement('div');
+dot.style.cssText = `
   position: fixed;
   bottom: 20px;
   right: 20px;
@@ -33,63 +33,63 @@ indicator.style.cssText = `
   background: limegreen;
   border-radius: 50%;
   border: 2px solid white;
-  box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
+  box-shadow: 0 0 8px rgba(50, 205, 50, 0.7);
   cursor: pointer;
   z-index: 9999;
-  transition: all 0.3s ease;
+  transition: all 0.3s;
 `;
 
-// 2. Üzerine gelince tooltip göster
+// Create tooltip
 const tooltip = document.createElement('div');
 tooltip.style.cssText = `
   position: absolute;
   bottom: 100%;
   right: 100%;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0,0,0,0.85);
   color: white;
-  padding: 4px 8px;
+  padding: 6px 10px;
   border-radius: 4px;
   font-size: 12px;
-  font-family: Arial;
+  font-family: Arial, sans-serif;
   white-space: nowrap;
   opacity: 0;
   transition: opacity 0.2s;
   pointer-events: none;
+  min-width: 180px;
 `;
 
-// 3. Elementleri birleştir
-indicator.appendChild(tooltip);
-document.body.appendChild(indicator);
+dot.appendChild(tooltip);
+document.body.appendChild(dot);
 
-// 4. Fare olayları
-indicator.addEventListener('mouseenter', () => {
+// Hover effects
+dot.addEventListener('mouseenter', () => {
   tooltip.style.opacity = '1';
-  tooltip.textContent = 'Sayfa ziyareti loglanıyor...';
 });
 
-indicator.addEventListener('mouseleave', () => {
+dot.addEventListener('mouseleave', () => {
   tooltip.style.opacity = '0';
 });
 
-// 5. Log isteğini gönder
-fetch('https://siteniz.netlify.app/.netlify/functions/log-visitor')
+// Send log request
+fetch('https://adembayazit.netlify.app/.netlify/functions/log-visitor')
   .then(res => res.json())
   .then(data => {
-    // Başarılıysa parlak yeşil yap
-    indicator.style.background = '#00ff00';
-    indicator.style.boxShadow = '0 0 10px rgba(0,255,0,0.7)';
-    tooltip.textContent = 'Loglandı ✓ ' + data.date;
-    
-    // 3 sn sonra eski haline dön
-    setTimeout(() => {
-      indicator.style.background = 'limegreen';
-      indicator.style.boxShadow = '0 0 0 2px rgba(0,0,0,0.1)';
-    }, 3000);
+    // Success state
+    dot.style.background = 'limegreen';
+    tooltip.innerHTML = `
+      <div><strong>Logged Successfully</strong></div>
+      <div>IPv4: ${data.ipv4}</div>
+      <div>Time: ${new Date(data.timestamp).toLocaleString()}</div>
+      <div>Browser: ${data.userAgent.split(' ')[0]}</div>
+    `;
   })
   .catch(err => {
-    // Hata durumunda kırmızı yap
-    indicator.style.background = '#ff3333';
-    tooltip.textContent = 'Loglama hatası!';
+    // Error state
+    dot.style.background = '#ff3333';
+    tooltip.innerHTML = `
+      <div><strong>Logging Failed</strong></div>
+      <div>Error: ${err.message}</div>
+    `;
   });
 </script>
     
