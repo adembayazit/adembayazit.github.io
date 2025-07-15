@@ -22,75 +22,115 @@
 
     <!-- Netfliy_IP_JS -->
 <script>
-// 1- Yeşil Nokta Oluştur
-const dot = document.createElement('div');
-dot.style.cssText = `
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 18px;
-  height: 18px;
-  background: limegreen;
-  border-radius: 50%;
-  border: 2px solid white;
-  box-shadow: 0 0 10px rgba(50, 205, 50, 0.8);
-  cursor: pointer;
-  z-index: 9999;
-  transition: all 0.3s;
+// 1- Göstergeyi Oluştur
+const indicator = document.createElement('div');
+indicator.innerHTML = `
+  <div style="
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 26px;
+    height: 26px;
+    background: #28a745;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 0 12px rgba(40, 167, 69, 0.9);
+    cursor: pointer;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s;
+  ">✓</div>
+  
+  <div class="visitor-info" style="
+    position: absolute;
+    bottom: calc(100% + 12px);
+    right: 0;
+    background: rgba(0,0,0,0.95);
+    color: white;
+    padding: 12px;
+    border-radius: 8px;
+    font-family: Arial, sans-serif;
+    min-width: 280px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.15);
+  ">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+      <div style="color:#28a745;font-size:18px;">✓</div>
+      <div style="font-weight:bold;font-size:15px;">Ziyaret Bilgileri</div>
+    </div>
+    <div style="margin-bottom:8px;">
+      <div><strong style="color:#aaa;">IPv4:</strong> <span class="ipv4-field">Alınıyor...</span></div>
+      <div><strong style="color:#aaa;">IPv6:</strong> <span class="ipv6-field">Alınıyor...</span></div>
+    </div>
+    <div style="margin-bottom:8px;"><strong style="color:#aaa;">Zaman:</strong> <span class="time-field">${new Date().toLocaleString('tr-TR')}</span></div>
+    <div style="margin-top:12px;font-size:12px;color:#ddd;word-break:break-all;">
+      ${navigator.userAgent.split('(')[1].split(')')[0]}
+    </div>
+  </div>
 `;
 
-// 2- Bilgi Balonu
-const tooltip = document.createElement('div');
-tooltip.style.cssText = `
-  position: absolute;
-  bottom: 100%;
-  right: 0;
-  background: rgba(0,0,0,0.9);
-  color: white;
-  padding: 10px;
-  border-radius: 6px;
-  font-size: 14px;
-  font-family: Arial, sans-serif;
-  white-space: nowrap;
-  opacity: 0;
-  transition: opacity 0.3s;
-  pointer-events: none;
-  min-width: 220px;
-  backdrop-filter: blur(5px);
-`;
+// 2- Sayfaya Ekle
+document.body.appendChild(indicator);
 
-dot.appendChild(tooltip);
-document.body.appendChild(dot);
+// 3- IP Adreslerini Çek
+async function fetchIPs() {
+  try {
+    // IPv4 için API
+    const ipv4Res = await fetch('https://api.ipify.org?format=json');
+    const ipv4Data = await ipv4Res.json();
+    
+    // IPv6 için API (ayrı bir endpoint)
+    const ipv6Res = await fetch('https://api64.ipify.org?format=json');
+    const ipv6Data = await ipv6Res.json();
+    
+    updateUI(ipv4Data.ip, ipv6Data.ip, new Date().toLocaleString('tr-TR'));
+    
+  } catch (error) {
+    console.error("Hata:", error);
+    updateUI("Alınamadı", "Alınamadı", new Date().toLocaleString('tr-TR'), true);
+  }
+}
 
-// 3- Fare Etkileşimleri
-dot.addEventListener('mouseenter', () => tooltip.style.opacity = '1');
-dot.addEventListener('mouseleave', () => tooltip.style.opacity = '0');
+// 4- Arayüzü Güncelle
+function updateUI(ipv4, ipv6, time, isError = false) {
+  const infoBox = indicator.querySelector('.visitor-info');
+  
+  if (isError) {
+    indicator.querySelector('div').style.background = '#dc3545';
+    indicator.querySelector('div').innerHTML = '!';
+    infoBox.querySelector('.ipv4-field').innerHTML = 'API hatası';
+    infoBox.querySelector('.ipv6-field').innerHTML = 'API hatası';
+    return;
+  }
+  
+  infoBox.querySelector('.ipv4-field').textContent = ipv4 || "Bulunamadı";
+  infoBox.querySelector('.ipv6-field').textContent = ipv6 || "Bulunamadı";
+  infoBox.querySelector('.time-field').textContent = time;
+}
 
-// 4- Verileri Çek ve Göster
-fetch('https://adembayazit.netlify.app/.netlify/functions/log-visitor')
-  .then(response => {
-    if (!response.ok) throw new Error('Network error');
-    return response.json();
-  })
-  .then(data => {
-    const time = new Date(data.timestamp);
-    tooltip.innerHTML = `
-      <div style="margin-bottom: 5px; font-weight: bold; color: #00ff00;"> ✓ User Logged</div>
-      <div><strong>IP:</strong> ${data.ipv4}</div>
-      <div><strong>Zaman:</strong> ${time.toLocaleString('tr-TR')}</div>
-      <div><strong>Ülke:</strong> ${data.country}</div>
-      <div style="font-size: 12px; margin-top: 5px; color: #ccc;">${navigator.userAgent.split(' ')[0]}</div>
-    `;
-  })
-  .catch(error => {
-    const now = new Date();
-    tooltip.innerHTML = `
-      <div style="margin-bottom: 5px; font-weight: bold; color: #ff5555;">❌ Eror</div>
-      <div><strong>Zaman:</strong> ${now.toLocaleString('tr-TR')}</div>
-      <div><strong>Hata:</strong> ${error.message}</div>
-    `;
-    dot.style.background = "#ff5555";
-  });
+// 5- Fare Etkileşimleri
+indicator.querySelector('div').addEventListener('mouseenter', () => {
+  indicator.querySelector('.visitor-info').style.opacity = '1';
+  // Bilgileri her hover'da tazele
+  if(indicator.querySelector('.ipv4-field').textContent === 'Alınıyor...') {
+    fetchIPs();
+  }
+});
+
+indicator.querySelector('div').addEventListener('mouseleave', () => {
+  indicator.querySelector('.visitor-info').style.opacity = '0';
+});
+
+// 6- Sayfa Yüklendiğinde Çalıştır
+fetchIPs();
 </script>
     
     <canvas id="matrixCanvas"></canvas>
