@@ -22,83 +22,94 @@
 
     <!-- Netfliy_IP_JS -->
 <script>
-// 1. Yeşil Tik ve Kutu Tasarımı
-const tracker = document.createElement('div');
-tracker.innerHTML = `
+// 1- Yeşil Tikli Nokta Oluştur
+const dot = document.createElement('div');
+dot.innerHTML = `
   <div style="
-    position:fixed;
-    bottom:20px;
-    right:20px;
-    width:24px;
-    height:24px;
-    background:#28a745;
-    border-radius:50%;
-    border:2px solid white;
-    box-shadow:0 0 10px rgba(40,167,69,0.8);
-    cursor:pointer;
-    z-index:9999;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:white;
-    font-weight:bold;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 24px;
+    height: 24px;
+    background: limegreen;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 0 10px rgba(50, 205, 50, 0.8);
+    cursor: pointer;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
   ">✓</div>
-  
-  <div class="visitor-tooltip" style="
-    position:absolute;
-    bottom:calc(100% + 10px);
-    right:0;
-    background:rgba(0,0,0,0.9);
-    color:white;
-    padding:10px;
-    border-radius:5px;
-    font-family:Arial;
-    min-width:220px;
-    opacity:0;
-    transition:opacity 0.3s;
-    pointer-events:none;
-  "></div>
 `;
 
-// 2. Sayfaya Ekleme
-document.body.appendChild(tracker);
+// 2- Bilgi Balonu
+const tooltip = document.createElement('div');
+tooltip.style.cssText = `
+  position: absolute;
+  bottom: calc(100% + 10px);
+  right: 0;
+  background: rgba(0,0,0,0.9);
+  color: white;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: Arial, sans-serif;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  min-width: 220px;
+  backdrop-filter: blur(5px);
+`;
 
-// 3. API ile Bilgi Çekme
+dot.firstChild.appendChild(tooltip);
+document.body.appendChild(dot);
+
+// 3- Fare Etkileşimleri
+dot.firstChild.addEventListener('mouseenter', () => tooltip.style.opacity = '1');
+dot.firstChild.addEventListener('mouseleave', () => tooltip.style.opacity = '0');
+
+// 4- IP ve Zaman Bilgisi için API Entegrasyonu
 async function getVisitorInfo() {
   try {
-    // Netlify Fonksiyonunu kullanmak için:
-    // const response = await fetch('https://adembayazit.netlify.app/.netlify/functions/log-visitor');
-    
-    // Veya direkt API kullanımı:
+    // 1. API: IP adresini al
     const ipResponse = await fetch('https://api.ipify.org?format=json');
-    const {ip} = await ipResponse.json();
+    const ipData = await ipResponse.json();
+    
+    // 2. API: Lokasyon bilgisi (isteğe bağlı)
+    const locationResponse = await fetch(`https://ipapi.co/${ipData.ip}/country_name/`);
+    const country = await locationResponse.text();
     
     const now = new Date();
-    tracker.querySelector('.visitor-tooltip').innerHTML = `
-      <div style="color:#28a745;font-weight:bold;margin-bottom:5px">✓ Site Ziyaret Edildi</div>
-      <div><strong>IP:</strong> ${ip}</div>
+    tooltip.innerHTML = `
+      <div style="margin-bottom:5px;color:#00ff00;font-weight:bold;">✓ Site Ziyaret Edildi</div>
+      <div><strong>IP:</strong> ${ipData.ip}</div>
       <div><strong>Zaman:</strong> ${now.toLocaleString('tr-TR')}</div>
+      ${country ? `<div><strong>Ülke:</strong> ${country}</div>` : ''}
+      <div style="font-size:12px;margin-top:5px;color:#ccc;">
+        ${navigator.userAgent.split(' ')[0].replace('Mozilla/', '')}
+      </div>
     `;
     
   } catch (error) {
-    tracker.querySelector('div').style.background = '#dc3545';
-    tracker.querySelector('div').innerHTML = '!';
+    const now = new Date();
+    tooltip.innerHTML = `
+      <div style="margin-bottom:5px;color:#ff5555;font-weight:bold;">⚠️ Hata Oluştu</div>
+      <div><strong>Zaman:</strong> ${now.toLocaleString('tr-TR')}</div>
+      <div><strong>Hata:</strong> API bağlantısı kurulamadı</div>
+    `;
+    dot.firstChild.style.background = "#ff5555";
+    dot.firstChild.innerHTML = "!";
   }
 }
 
-// 4. Fare Etkileşimleri
-tracker.querySelector('div').addEventListener('mouseenter', () => {
-  tracker.querySelector('.visitor-tooltip').style.opacity = '1';
-});
-
-tracker.querySelector('div').addEventListener('mouseleave', () => {
-  tracker.querySelector('.visitor-tooltip').style.opacity = '0';
-});
-
-// 5. Sayfa Yüklendiğinde Çalıştır
+// Sayfa yüklendiğinde çalıştır
 window.addEventListener('DOMContentLoaded', getVisitorInfo);
 </script>
-    
     <canvas id="matrixCanvas"></canvas>
                                                         <!-- Matrix -->
     <script src="/JAVASCRIPT/matrix.js"></script>
