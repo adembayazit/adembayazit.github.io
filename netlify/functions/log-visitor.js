@@ -1,70 +1,74 @@
 const axios = require('axios');
 
 exports.handler = async (event) => {
-  // 1. TEMEL ZİYARETÇİ BİLGİLERİ
-  const getVisitorIP = () => {
+  // 1. YÖNETİCİ IP DOĞRULAMA (Sizin için özel kontrol)
+  const ADMIN_IP = 'SIZIN_GERCEK_IP'; // WhatIsMyIP'den alınan IP
+  const isAdminRequest = event.headers['client-ip'] === ADMIN_IP;
+
+  // 2. IP ALMA FONKSİYONU (Nat sorunları için güncellendi)
+  const getTrueIP = () => {
+    // Özel admin kontrolü
+    if (isAdminRequest) return ADMIN_IP;
+
+    // GitHub Pages özel header'ı
+    if (event.headers['x-github-ip']) {
+      return event.headers['x-github-ip'];
+    }
+
+    // Diğer kaynaklar için standart IP alma
     return event.headers['x-nf-client-connection-ip'] || 
            event.headers['x-forwarded-for']?.split(',')[0].trim() || 
            'IP_BULUNAMADI';
   };
 
-  // 2. IP'DEN KONUM BİLGİSİ ALMA (Ücretsiz IPAPI kullanımı)
-  const getLocationData = async (ip) => {
+  // 3. WHATISMYIP API İLE DOĞRULAMA (Sadece admin için)
+  const verifyWithExternalAPI = async (ip) => {
+    if (!isAdminRequest) return null;
+    
     try {
-      const response = await axios.get(`http://ip-api.com/json/${ip}?fields=66846719`);
+      const response = await axios.get(`https://api.ipify.org?format=json&ip=${ip}`);
       return {
-        postalCode: response.data.zip || 'Bilinmiyor',
-        city: response.data.city || 'Bilinmiyor',
-        country: response.data.country || 'Bilinmiyor',
-        isp: response.data.isp || 'Bilinmiyor'
+        realIp: response.data.ip,
+        isMatch: response.data.ip === ip
       };
     } catch (error) {
-      console.error('Konum bilgisi alınamadı:', error);
-      return {
-        postalCode: 'ALINAMADI',
-        city: 'ALINAMADI',
-        country: 'ALINAMADI',
-        isp: 'ALINAMADI'
-      };
+      console.error('IP doğrulama hatası:', error);
+      return null;
     }
   };
 
-  // 3. VERİLERİ TOPLA
-  const visitorIP = getVisitorIP();
-  const location = await getLocationData(visitorIP.replace(/^::ffff:/, ''));
-  
-  const logEntry = {
-    ip: visitorIP,
+  // 4. VERİ TOPLAMA
+  const rawIp = getTrueIP();
+  const ipVerification = await verifyWithExternalAPI(rawIp);
+  const ip = ipVerification?.realIp || rawIp;
+
+  const logData = {
+    ip: ip,
+    isAdmin: isAdminRequest,
+    ipVerified: ipVerification?.isMatch || false,
     timestamp: new Date().toLocaleString('tr-TR'),
     browser: (event.headers['user-agent'] || '').split('/')[0],
-    page: event.headers['referer'] || 'Direkt Erişim',
-    location: {
-      postalCode: location.postalCode,
-      city: location.city,
-      country: location.country,
-      isp: location.isp
-    }
+    referer: event.headers['referer'] || 'Direkt Erişim',
+    source: event.headers['x-github-event'] ? 'GitHub Pages' : 'Diğer'
   };
 
-  // 4. LOG FORMATI (4 Satır + Ek Bilgiler)
+  // 5. LOG FORMATI
   const logText = `
-IP: ${logEntry.ip}
-Tarih: ${logEntry.timestamp}
-Tarayıcı: ${logEntry.browser}
-Posta Kodu: ${logEntry.location.postalCode}
-Şehir: ${logEntry.location.city}
-Ülke: ${logEntry.location.country}
-ISP: ${logEntry.location.isp}
-Sayfa: ${logEntry.page}
+IP: ${logData.ip} ${logData.isAdmin ? '(YÖNETİCİ)' : ''}
+Tarih: ${logData.timestamp}
+Tarayıcı: ${logData.browser}
+Kaynak: ${logData.source}
+Doğrulandı: ${logData.ipVerified ? '✅' : '❌'}
+Sayfa: ${logData.referer}
 -----------------------`;
 
-  // 5. KAYIT İŞLEMLERİ
+  // 6. KAYIT İŞLEMLERİ
   console.log(logText);
-  require('fs').appendFileSync('/tmp/advanced-logs.txt', logText);
+  require('fs').appendFileSync('/tmp/verified-logs.txt', logText);
 
   return {
     statusCode: 200,
-    body: JSON.stringify(logEntry),
+    body: JSON.stringify(logData, null, 2),
     headers: { 
       'Access-Control-Allow-Origin': 'https://adembayazit.github.io',
       'Content-Type': 'application/json'
