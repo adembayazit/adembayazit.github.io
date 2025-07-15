@@ -1,37 +1,59 @@
-// Netlify Function: log-visitor.js
-
-const fetch = require('node-fetch'); // Netlify'de fetch zaten desteklenir
-
-exports.handler = async () => {
+exports.handler = async (event) => {
   try {
-    // IP adresini ve konum verilerini almak için ipinfo.io kullanıyoruz
-    const response = await fetch('https://ipinfo.io/json?token=68a1229187303a'); // Token isteğe bağlıdır ama rate limit olmaması için tavsiye edilir
-    const ipData = await response.json();
+    if (event.httpMethod === 'POST') {
+      const data = JSON.parse(event.body);
+      const visitorIP = data.ip || 'IP gönderilmedi';
+      const extra = data.extra || {};
 
+      const userAgent = event.headers['user-agent'] || 'Bilinmiyor';
+      const browser = userAgent.match(/\((.*?)\)/)?.[1] || 'Bilinmiyor';
+      const timezone = extra.timezone || 'Bilinmiyor';
+
+      return {
+        statusCode: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify({
+          status: 'success',
+          ipv4: visitorIP,
+          ipv6: visitorIP.includes(':') ? visitorIP : 'IPv6 yok',
+          timestamp: new Date().toISOString(),
+          browser,
+          timezone,
+          rawData: data
+        })
+      };
+    }
+    else if (event.httpMethod === 'GET') {
+      // GET ise sadece sabit veya test amaçlı veri dönelim (örnek)
+      return {
+        statusCode: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify({
+          status: 'success',
+          ipv4: 'Kullanıcı IP (GET ile alınamaz)',
+          country: 'Bilinmiyor',
+          timestamp: new Date().toISOString()
+        })
+      };
+    }
+    else {
+      return {
+        statusCode: 405,
+        body: JSON.stringify({ error: 'Yalnızca GET veya POST metoduna izin verilir' }),
+        headers: { 'Content-Type': 'application/json' }
+      };
+    }
+  } catch (e) {
     return {
-      statusCode: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      },
-      body: JSON.stringify({
-        status: 'success',
-        ip: ipData.ip,
-        ipv6: ipData.ip.includes(':') ? ipData.ip : 'IPv6 yok',
-        city: ipData.city,
-        region: ipData.region,
-        country: ipData.country,
-        loc: ipData.loc, // "latitude,longitude"
-        timezone: ipData.timezone,
-        org: ipData.org, // internet servis sağlayıcısı
-        browser: '', // kullanıcı tarayıcı bilgisi istersen ayrıca bakarız
-        timestamp: new Date().toISOString()
-      })
-    };
-  } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'IP verisi alınamadı', message: error.message })
+      statusCode: 400,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ error: 'İşlem sırasında hata oluştu', message: e.message })
     };
   }
 };
