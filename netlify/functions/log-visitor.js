@@ -1,46 +1,24 @@
+// netlify/functions/log-visitor.js
 exports.handler = async (event) => {
-  // 1. TEMEL BİLGİLERİ TOPLA
-  const ip = event.headers['x-nf-client-connection-ip'] || 'IP_BULUNAMADI';
-  const browser = event.headers['user-agent'] || 'Belirsiz Tarayıcı';
-  const siteAdi = 'adembayazit.github.io'; // Sitenizin adını buraya yazın
+  const ip = event.headers['x-nf-client-connection-ip'] || 'IP alınamadı';
+  const userAgent = event.headers['user-agent'] || 'Tarayıcı bilgisi yok';
   
-  // 2. TARİH/SAAT FORMATI (Türkiye saat dilimi)
-  const tarih = new Date().toLocaleString('tr-TR', {
-    timeZone: 'Europe/Istanbul',
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit'
-  });
-
-  // 3. LOG KAYDI
-  const logKaydi = `
-IP: ${ip}
-Tarih: ${tarih}
-Browser: ${browser.split(' ')[0]}
-Site: ${siteAdi}
------------------------`;
-
-  // 4. KONSOLA VE DOSYAYA YAZ
-  console.log(logKaydi);
-  require('fs').appendFileSync('/tmp/basit-logs.txt', logKaydi);
-
-  // 5. YANIT OLUŞTUR (Yeşil yuvarlak için)
   return {
     statusCode: 200,
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*'
+    },
     body: JSON.stringify({
       status: "success",
-      ip: ip,
-      tarih: tarih,
-      browser: browser,
-      site: siteAdi,
-      indicator: "🟢"
-    }),
-    headers: { 
-      'Access-Control-Allow-Origin': '*',
-      'Content-Type': 'application/json'
-    }
+      ipv4: ip.includes(':') ? ip.split(':')[0] : ip, // IPv6 gelirse ilk kısmı al
+      timestamp: new Date().toISOString(),
+      browser: userAgent.split('(')[1].split(')')[0] || userAgent,
+      fullInfo: {
+        ip: ip,
+        userAgent: userAgent,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+      }
+    })
   };
 };
