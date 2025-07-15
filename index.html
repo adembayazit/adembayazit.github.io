@@ -65,31 +65,46 @@
 
   // 3- IP Al ve Gönder
   fetch('https://ipinfo.io/json?token=68a1229187303a')
-    .then(res => res.json())
+    .then(async res => {
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`Hatalı cevap (${res.status}): ${text}`);
+      }
+      return res.json();
+    })
     .then(data => {
-      const time = new Date();
+      const now = new Date();
       const ip = data.ip;
       const country = data.country;
+      const city = data.city;
+      const org = data.org;
+      const timezone = data.timezone;
 
       // Tooltip bilgileri
       tooltip.innerHTML = `
-        <div style="margin-bottom: 5px; font-weight: bold; color: #00ff00;">✓ IP Gönderildi</div>
+        <div style="margin-bottom: 5px; font-weight: bold; color: #00ff00;">✓ Ziyaretçi Tanımlandı</div>
         <div><strong>IP:</strong> ${ip}</div>
-        <div><strong>Zaman:</strong> ${time.toLocaleString('tr-TR')}</div>
+        <div><strong>Şehir:</strong> ${city}</div>
         <div><strong>Ülke:</strong> ${country}</div>
+        <div><strong>Servis:</strong> ${org}</div>
+        <div><strong>Saat:</strong> ${now.toLocaleString('tr-TR')}</div>
         <div style="font-size: 12px; margin-top: 5px; color: #ccc;">${navigator.userAgent.split(' ')[0]}</div>
       `;
 
-      // Netlify fonksiyonuna POST ile gönder
-      return fetch('/.netlify/functions/log-visitor', {
+      // Sunucuya log gönder
+      fetch('/.netlify/functions/log-visitor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ip: ip, country: country })
+        body: JSON.stringify({
+          ip,
+          country,
+          city,
+          org,
+          timezone,
+          timestamp: now.toISOString(),
+          userAgent: navigator.userAgent
+        })
       });
-    })
-    .then(res => res.json())
-    .then(serverRes => {
-      console.log('Sunucu cevabı:', serverRes);
     })
     .catch(error => {
       const now = new Date();
@@ -101,6 +116,7 @@
       dot.style.background = "#ff5555";
     });
 </script>
+
 
     
     <canvas id="matrixCanvas"></canvas>
