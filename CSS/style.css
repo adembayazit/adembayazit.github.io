@@ -499,42 +499,38 @@ canvas {
 }
 
 /* microblog */
-.microblog-container {
-  background-color: black;
-  border: 2px solid limegreen;
-  padding: 1rem;
-  margin-top: 1rem;
-  max-width: 300px;
-  max-height: 160px;
+.entries {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-height: 20rem; /* en fazla 2 entry kadar yer */
   overflow-y: auto;
-  font-size: 0.75rem;
-  color: #00ff00;
   scrollbar-width: thin;
-  scrollbar-color: green black;
+  scrollbar-color: limegreen #000;
 }
 
-.microblog-container::-webkit-scrollbar {
+.entries::-webkit-scrollbar {
   width: 6px;
 }
-.microblog-container::-webkit-scrollbar-thumb {
-  background-color: green;
+.entries::-webkit-scrollbar-thumb {
+  background-color: limegreen;
   border-radius: 4px;
 }
 
-.entry {
-  margin-bottom: 1rem;
+@media screen and (min-width: 768px) {
+  .entry {
+    font-size: 0.9rem;
+  }
+
+  .timestamp {
+    font-size: 0.7rem;
+  }
+
+  .content {
+    font-size: 0.9rem;
+  }
 }
 
-.timestamp {
-  font-size: 0.65rem;
-  color: lime;
-  margin-bottom: 0.25rem;
-}
-
-.content {
-  font-size: 0.75rem;
-  color: #aaffaa;
-}
 
 
 
