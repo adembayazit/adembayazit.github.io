@@ -17,7 +17,6 @@
   const sendLog = (eventType, detail) => {
     const now = new Date();
 
-    // IP ve lokasyon bilgisini yoksa boş bırakabiliriz
     const payload = {
       timestamp: now.toISOString(),
       userAgent: navigator.userAgent,
@@ -31,7 +30,9 @@
       loc: ipData.loc || null,
       org: ipData.org || null,
       postal: ipData.postal || null,
-      timezone: ipData.timezone || null
+      timezone: ipData.timezone || null,
+      pageTitle: document.title || null,
+      pageURL: window.location.href
     };
 
     fetch(endpoint, {
@@ -40,6 +41,9 @@
       body: JSON.stringify(payload)
     }).catch(console.error);
   };
+
+  // ✅ SAYFA İLK AÇILDIĞINDA LOG GÖNDER
+  sendLog('page_load', 'Sayfa yüklendi ve monitor.js aktif oldu');
 
   // 2. Ekran görüntüsü vb davranışları dinle
 
