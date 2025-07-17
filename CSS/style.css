@@ -529,77 +529,76 @@ canvas {
 }
 
 /* microblog */
-/* Mikroblog bölüm stili */
-.microblog {
-  padding: 2rem;
-  background-color: #000;
-  z-index: 99;
-  position: relative;
-}
+section#microblog {
+      padding: 1rem;
+      max-width: 600px;
+      margin: 120px auto 2rem auto;
+      z-index: 99;
+      position: relative;
+    }
 
-.microblog .container {
-  max-width: 1000px;
-  margin: auto;
-}
+    .entry-group {
+      margin-bottom: 1.5rem;
+      border: 1px solid limegreen;
+      border-radius: 12px;
+      padding: 1rem;
+      background: #111;
+      position: relative;
+    }
 
-.section-title {
-  color: limegreen;
-  text-align: center;
-  font-size: 1.5rem;
-  margin-bottom: 1.5rem;
-}
+    .entry {
+      margin-bottom: 0.7rem;
+      padding: 0.5rem;
+      border-left: 3px solid limegreen;
+      border-radius: 8px;
+      background-color: #000;
+    }
 
-.entries {
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
-  max-height: 70vh;
-  overflow-y: auto;
-}
+    .entry .timestamp {
+      font-size: 0.7rem;
+      color: limegreen;
+      margin-bottom: 0.3rem;
+    }
 
-/* Grup başlığı ve çerçevesi */
-.entry-group {
-  border: 1px solid limegreen;
-  border-radius: 12px;
-  padding: 1rem;
-  background: #111;
-}
+    .entry .content {
+      font-size: 0.9rem;
+      word-wrap: break-word;
+    }
 
-/* Her entry bloğu */
-.entry {
-  background-color: #000;
-  border-left: 3px solid limegreen;
-  border-radius: 8px;
-  padding: 0.5rem;
-  color: #fff;
-  margin-bottom: 0.6rem;
-}
+    .entry.reply::before {
+      content: "↳ ";
+      color: limegreen;
+    }
 
-.entry .timestamp {
-  font-size: 0.75rem;
-  color: lime;
-  margin-bottom: 0.25rem;
-}
+    .id-badge {
+      font-weight: bold;
+      background-color: #111;
+      color: lime;
+      border: 1px solid limegreen;
+      padding: 0.2rem 0.5rem;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      display: inline-block;
+      font-size: 0.75rem;
+      position: absolute;
+      top: -12px;
+      left: -12px;
+    }
 
-.entry .content {
-  font-size: 0.95rem;
-  word-wrap: break-word;
-}
+    @media screen and (max-width: 600px) {
+      section#microblog {
+        margin-top: 130px;
+        padding: 0.5rem;
+      }
 
-/* Bağlı (alt) entry’ler */
-.entry.reply::before {
-  content: "↳ ";
-  color: limegreen;
-}
+      .entry .content {
+        font-size: 0.8rem;
+      }
 
-/* Makale ID rozeti */
-.id-badge {
-  font-size: 0.75rem;
-  background-color: #111;
-  color: lime;
-  border: 1px solid limegreen;
-  padding: 0.2rem 0.5rem;
-  border-radius: 8px;
-  margin-bottom: 0.4rem;
-  display: inline-block;
-}
+      .id-badge {
+        font-size: 0.65rem;
+        top: -10px;
+        left: -10px;
+      }
+    }
+  </style>
