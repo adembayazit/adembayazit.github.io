@@ -6,7 +6,7 @@ exports.handler = async (event) => {
     'Content-Type': 'application/json',
   };
 
-  // 1. Preflight CORS isteği (OPTIONS)
+  // 1. CORS Preflight
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 204,
@@ -15,7 +15,7 @@ exports.handler = async (event) => {
     };
   }
 
-  // 2. Sadece POST kabul edilsin
+  // 2. Yalnızca POST izin ver
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
@@ -24,9 +24,29 @@ exports.handler = async (event) => {
     };
   }
 
-  // 3. Veriyi işle
   try {
     const data = JSON.parse(event.body);
+
+    // Eğer eventType varsa davranışsal log (ekran görüntüsü vb)
+    if (data.eventType) {
+      console.log(`--- Kullanıcı Davranışı Loglandı ---`);
+      console.log(`Zaman: ${data.timestamp}`);
+      console.log(`Olay Türü: ${data.eventType}`);
+      console.log(`Detay: ${data.detail}`);
+      console.log(`Tarayıcı: ${data.userAgent}`);
+      console.log(`-------------------------------`);
+
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({
+          status: 'ok',
+          message: 'Davranışsal veri başarıyla loglandı'
+        })
+      };
+    }
+
+    // Diğer durumda klasik ziyaretçi log'u
     const {
       ip, hostname, city, region, country,
       loc, org, postal, timezone, timestamp, userAgent
