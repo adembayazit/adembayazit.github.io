@@ -529,76 +529,88 @@ canvas {
 }
 
 /* microblog */
-section#microblog {
-      padding: 1rem;
-      max-width: 600px;
-      margin: 120px auto 2rem auto;
-      z-index: 99;
-      position: relative;
-    }
+.micro-entries {
+  background-color: #000;
+  padding: 1rem;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  border-radius: 12px;
+  box-shadow: inset 0 0 12px rgba(50, 205, 50, 0.4);
+}
 
-    .entry-group {
-      margin-bottom: 1.5rem;
-      border: 1px solid limegreen;
-      border-radius: 12px;
-      padding: 1rem;
-      background: #111;
-      position: relative;
-    }
+.micro-title {
+  text-align: center;
+  color: limegreen;
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
+  text-shadow: 0 0 4px #0f0;
+}
 
-    .entry {
-      margin-bottom: 0.7rem;
-      padding: 0.5rem;
-      border-left: 3px solid limegreen;
-      border-radius: 8px;
-      background-color: #000;
-    }
+.entries {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
 
-    .entry .timestamp {
-      font-size: 0.7rem;
-      color: limegreen;
-      margin-bottom: 0.3rem;
-    }
+.entry {
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid limegreen;
+  padding: 1rem;
+  border-radius: 10px;
+  transition: all 0.3s;
+}
 
-    .entry .content {
-      font-size: 0.9rem;
-      word-wrap: break-word;
-    }
+.entry:hover {
+  transform: scale(1.02);
+  border-color: #00ff00;
+}
 
-    .entry.reply::before {
-      content: "↳ ";
-      color: limegreen;
-    }
+.timestamp {
+  font-size: 0.8rem;
+  color: #90ee90;
+  margin-bottom: 0.5rem;
+}
 
-    .id-badge {
-      font-weight: bold;
-      background-color: #111;
-      color: lime;
-      border: 1px solid limegreen;
-      padding: 0.2rem 0.5rem;
-      border-radius: 8px;
-      margin-bottom: 0.5rem;
-      display: inline-block;
-      font-size: 0.75rem;
-      position: absolute;
-      top: -12px;
-      left: -12px;
-    }
+.content {
+  color: #e0ffe0;
+  font-size: 1rem;
+  line-height: 1.5;
+}
 
-    @media screen and (max-width: 600px) {
-      section#microblog {
-        margin-top: 130px;
-        padding: 0.5rem;
-      }
+.content b {
+  font-weight: bold;
+}
 
-      .entry .content {
-        font-size: 0.8rem;
-      }
+.content i {
+  font-style: italic;
+}
 
-      .id-badge {
-        font-size: 0.65rem;
-        top: -10px;
-        left: -10px;
-      }
-    }
-  </style>
+.content u {
+  text-decoration: underline;
+}
+#microblog {
+  width: 100%;
+  padding: 60px 10%;
+  background: transparent;
+}
+
+.microblog .section-title {
+  color: limegreen;
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  text-shadow: 0 0 5px limegreen;
+}
+
+/* Entry container */
+.entries {
+  background: black;
+  border: 2px solid limegreen;
+  border-radius: 20px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
+}
