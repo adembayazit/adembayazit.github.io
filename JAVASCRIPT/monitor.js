@@ -1,61 +1,57 @@
-(function () {
-  const endpoint = "https://adembayazit.netlify.app/.netlify/functions/logVisitor"; // Mevcut log endpoint'in burasıysa
+// javascript/monitor.js
 
-  // Yardımcı: log gönder
-  function logSuspicious(eventName) {
+(function() {
+  const endpoint = "https://adembayazit.netlify.app/.netlify/functions/log-visitor"; // Aynı endpoint'e yolluyorsak field ekleyeceğiz
+
+  const sendLog = (eventType, detail) => {
+    const now = new Date();
     fetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        type: "suspicious_event",
-        event: eventName,
-        timestamp: new Date().toISOString()
+        timestamp: now.toISOString(),
+        userAgent: navigator.userAgent,
+        eventType,
+        detail
       })
     }).catch(console.error);
-  }
+  };
 
-  // 1. PrintScreen tuşu
-  document.addEventListener("keyup", function (e) {
-    if (e.key === "PrintScreen") {
-      logSuspicious("PrintScreen tuşuna basıldı");
-      blurScreenTemporarily();
-    }
+  // 1. Sayfa bulanıklaştı (blur)
+  window.addEventListener("blur", () => {
+    sendLog("blur", "Sayfa odağını kaybetti (muhtemel ekran görüntüsü alma)");
   });
 
-  // 2. Sayfa odaktan çıkınca (örneğin snipping tool vs)
+  // 2. Sayfa yeniden odaklandı
+  window.addEventListener("focus", () => {
+    sendLog("focus", "Sayfa yeniden odaklandı");
+  });
+
+  // 3. Görünürlük değişti (örn: başka sekmeye geçti)
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) {
-      logSuspicious("Sayfa odaktan çıktı");
-      blurScreenTemporarily();
+      sendLog("visibilitychange_hidden", "Kullanıcı başka sekmeye geçti veya ekran görüntüsü aldı");
+    } else {
+      sendLog("visibilitychange_visible", "Kullanıcı tekrar geri döndü");
     }
   });
 
-  // 3. Mouse donması (örneğin ekran seçim sırasında)
+  // 4. PrtScn kısayolu algılama (Windows)
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "PrintScreen") {
+      sendLog("keypress", "PrintScreen tuşuna basıldı");
+    }
+    // Bazı OS'lerde ekran görüntüsü Shift+Cmd+4 gibi olabilir ama web'de algılanamaz
+  });
+
+  // 5. Mouse freeze tespiti (örnek, isteğe bağlı)
   let lastMove = Date.now();
   document.addEventListener("mousemove", () => {
     const now = Date.now();
     if (now - lastMove > 3000) {
-      logSuspicious("Mouse 3+ saniye hareket etmedi (ekran yakalama şüphesi)");
-      blurScreenTemporarily();
+      sendLog("mousemove_pause", "Fare 3 saniyeden uzun süre hareket etmedi");
     }
     lastMove = now;
   });
-
-  // 4. Sağ tık ve kopyalama girişimi
-  document.addEventListener("contextmenu", () => {
-    logSuspicious("Sağ tık menüsü açıldı");
-  });
-
-  document.addEventListener("copy", () => {
-    logSuspicious("Ctrl+C ile içerik kopyalandı");
-  });
-
-  // 5. Sayfayı anlık karartmak
-  function blurScreenTemporarily() {
-    document.body.style.filter = "blur(8px)";
-    setTimeout(() => {
-      document.body.style.filter = "none";
-    }, 5000); // 5 saniye bulanıklık
-  }
 
 })();
