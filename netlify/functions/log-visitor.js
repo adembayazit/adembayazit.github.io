@@ -6,7 +6,7 @@ exports.handler = async (event) => {
     'Content-Type': 'application/json',
   };
 
-  // 1. CORS Preflight
+  // Preflight
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 204,
@@ -15,7 +15,7 @@ exports.handler = async (event) => {
     };
   }
 
-  // 2. Yalnızca POST izin ver
+  // Sadece POST destekleniyor
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
@@ -27,32 +27,22 @@ exports.handler = async (event) => {
   try {
     const data = JSON.parse(event.body);
 
-    // Eğer eventType varsa davranışsal log (ekran görüntüsü vb)
-    if (data.eventType) {
-      console.log(`--- Kullanıcı Davranışı Loglandı ---`);
-      console.log(`Zaman: ${data.timestamp}`);
-      console.log(`Olay Türü: ${data.eventType}`);
-      console.log(`Detay: ${data.detail}`);
-      console.log(`Tarayıcı: ${data.userAgent}`);
-      console.log(`-------------------------------`);
-
-      return {
-        statusCode: 200,
-        headers,
-        body: JSON.stringify({
-          status: 'ok',
-          message: 'Davranışsal veri başarıyla loglandı'
-        })
-      };
-    }
-
-    // Diğer durumda klasik ziyaretçi log'u
     const {
       ip, hostname, city, region, country,
-      loc, org, postal, timezone, timestamp, userAgent
+      loc, org, postal, timezone, timestamp,
+      userAgent, eventType, detail
     } = data;
 
-    console.log(`--- Yeni Ziyaretçi Loglandı ---`);
+    // Olay başlığı
+    const title = eventType ? `📸 [${eventType.toUpperCase()}] Ekran Görüntüsü veya Davranış` : `👤 Yeni Ziyaretçi`;
+
+    // Genel log çıktısı
+    console.log(`--- ${title} ---`);
+    console.log(`Zaman: ${timestamp}`);
+    if (eventType) {
+      console.log(`Davranış Türü: ${eventType}`);
+      console.log(`Detay: ${detail}`);
+    }
     console.log(`IP: ${ip}`);
     console.log(`Hostname: ${hostname}`);
     console.log(`Şehir: ${city}`);
@@ -62,7 +52,6 @@ exports.handler = async (event) => {
     console.log(`Posta Kodu: ${postal}`);
     console.log(`Org: ${org}`);
     console.log(`Zaman Dilimi: ${timezone}`);
-    console.log(`Ziyaret Zamanı: ${timestamp}`);
     console.log(`Tarayıcı: ${userAgent}`);
     console.log(`-------------------------------`);
 
@@ -71,10 +60,11 @@ exports.handler = async (event) => {
       headers,
       body: JSON.stringify({
         status: 'ok',
-        message: 'Ziyaretçi verisi başarıyla alındı',
+        message: eventType ? 'Davranış + ziyaretçi bilgisi loglandı' : 'Ziyaretçi bilgisi loglandı',
         ip
       })
     };
+
   } catch (err) {
     return {
       statusCode: 400,
