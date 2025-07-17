@@ -529,89 +529,77 @@ canvas {
 }
 
 /* microblog */
-.micro-entries {
-  background-color: #000;
-  padding: 1rem;
-  margin-top: 2rem;
-  margin-bottom: 2rem;
-  border-radius: 12px;
-  box-shadow: inset 0 0 12px rgba(50, 205, 50, 0.4);
-}
-
-.micro-title {
-  text-align: center;
-  color: limegreen;
-  font-size: 1.3rem;
-  margin-bottom: 1rem;
-  font-weight: bold;
-  text-shadow: 0 0 4px #0f0;
-}
-
-.entries {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.entry {
-  background: rgba(0, 0, 0, 0.7);
-  border: 1px solid limegreen;
-  padding: 1rem;
-  border-radius: 10px;
-  transition: all 0.3s;
-}
-
-.entry:hover {
-  transform: scale(1.02);
-  border-color: #00ff00;
-}
-
-.timestamp {
-  font-size: 0.8rem;
-  color: #90ee90;
-  margin-bottom: 0.5rem;
-}
-
-.content {
-  color: #e0ffe0;
-  font-size: 1rem;
-  line-height: 1.5;
-}
-
-.content b {
-  font-weight: bold;
-}
-
-.content i {
-  font-style: italic;
-}
-
-.content u {
-  text-decoration: underline;
-}
-#microblog {
-  width: 100%;
-  padding: 60px 10%;
-  background: transparent;
-}
-
-.microblog .section-title {
-  color: limegreen;
-  font-size: 2rem;
-  text-align: center;
-  margin-bottom: 2rem;
-  text-shadow: 0 0 5px limegreen;
-}
-
-/* Entry container */
-.entries {
-  background: black;
-  border: 2px solid limegreen;
-  border-radius: 20px;
+/* Mikroblog bölüm stili */
+.microblog {
   padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  box-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
+  background-color: #000;
+  z-index: 99;
+  position: relative;
 }
 
+.microblog .container {
+  max-width: 1000px;
+  margin: auto;
+}
+
+.section-title {
+  color: limegreen;
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.entries {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+/* Grup başlığı ve çerçevesi */
+.entry-group {
+  border: 1px solid limegreen;
+  border-radius: 12px;
+  padding: 1rem;
+  background: #111;
+}
+
+/* Her entry bloğu */
+.entry {
+  background-color: #000;
+  border-left: 3px solid limegreen;
+  border-radius: 8px;
+  padding: 0.5rem;
+  color: #fff;
+  margin-bottom: 0.6rem;
+}
+
+.entry .timestamp {
+  font-size: 0.75rem;
+  color: lime;
+  margin-bottom: 0.25rem;
+}
+
+.entry .content {
+  font-size: 0.95rem;
+  word-wrap: break-word;
+}
+
+/* Bağlı (alt) entry’ler */
+.entry.reply::before {
+  content: "↳ ";
+  color: limegreen;
+}
+
+/* Makale ID rozeti */
+.id-badge {
+  font-size: 0.75rem;
+  background-color: #111;
+  color: lime;
+  border: 1px solid limegreen;
+  padding: 0.2rem 0.5rem;
+  border-radius: 8px;
+  margin-bottom: 0.4rem;
+  display: inline-block;
+}
