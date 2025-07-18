@@ -57,7 +57,6 @@ function createEntryElement(entry, container, depth) {
   
   // Girinti ekle
   if (depth > 0) {
-    entryDiv.style.marginLeft = `${depth * 30}px`;
     entryDiv.classList.add("child-entry");
   }
   
