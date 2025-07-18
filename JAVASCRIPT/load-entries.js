@@ -11,13 +11,24 @@ document.addEventListener("DOMContentLoaded", () => {
       );
 
       const threadEntries = new Set();
-      const findThread = (id) => {
+      const depthMap = new Map();
+      
+      const findThread = (id, depth = 0) => {
         const entry = data.find(e => e.id === id);
         if (entry && !threadEntries.has(entry.id)) {
           threadEntries.add(entry.id);
-          entry.references.forEach(refId => findThread(refId));
+          depthMap.set(entry.id, depth);
+          
+          let maxDepth = depth;
+          entry.references.forEach(refId => {
+            const childDepth = findThread(refId, depth + 1);
+            if (childDepth > maxDepth) maxDepth = childDepth;
+          });
+          return maxDepth;
         }
+        return depth;
       };
+      
       findThread(latestEntry.id);
 
       // Sıralama: Önce thread, sonra diğerleri (yeni tarih üstte)
@@ -33,6 +44,12 @@ document.addEventListener("DOMContentLoaded", () => {
       finalEntries.forEach((entry) => {
         const entryDiv = document.createElement("div");
         entryDiv.className = "entry";
+        if (threadEntries.has(entry.id)) {
+          entryDiv.classList.add("thread-entry");
+          const depth = depthMap.get(entry.id) || 0;
+          entryDiv.dataset.depth = depth;
+        }
+        
         entryDiv.dataset.id = entry.id;
 
         const time = new Date(entry.date).toLocaleString("tr-TR", {
@@ -44,7 +61,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }).replace(",", "");
 
         entryDiv.innerHTML = `
-          <div class="timestamp">📅 ${time}</div>
+          <div class="entry-header">
+            <div class="timestamp">📅 ${time}</div>
+            <div class="entry-id">#${entry.id}</div>
+          </div>
           <div class="content">${entry.content}</div>
         `;
         
@@ -60,7 +80,11 @@ function drawConnections(entries) {
   const entryElements = document.querySelectorAll('.entry');
   const container = document.getElementById('entries');
   
-  // Canvas oluştur
+  // Eski canvas'ı temizle
+  const oldCanvas = document.getElementById('connections-canvas');
+  if (oldCanvas) oldCanvas.remove();
+  
+  // Yeni canvas oluştur
   const canvas = document.createElement('canvas');
   canvas.id = 'connections-canvas';
   canvas.style.position = 'absolute';
@@ -76,53 +100,60 @@ function drawConnections(entries) {
   function resizeCanvas() {
     canvas.width = container.offsetWidth;
     canvas.height = container.offsetHeight;
+    draw();
+  }
+  
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Bağlantıları çiz
+    ctx.strokeStyle = 'rgba(50, 205, 50, 0.7)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4, 3]);
+
+    entries.forEach(entry => {
+      if (entry.references.length > 0) {
+        const sourceElem = document.querySelector(`.entry[data-id="${entry.id}"]`);
+        if (!sourceElem) return;
+        
+        const sourceRect = sourceElem.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        
+        // Kaynak noktası: sol kenar orta noktası
+        const sourceX = sourceRect.left - containerRect.left + 10;
+        const sourceY = sourceRect.top - containerRect.top + sourceRect.height / 2;
+        
+        entry.references.forEach(refId => {
+          const targetElem = document.querySelector(`.entry[data-id="${refId}"]`);
+          if (targetElem) {
+            const targetRect = targetElem.getBoundingClientRect();
+            
+            // Hedef noktası: sağ kenar orta noktası
+            const targetX = targetRect.right - containerRect.left - 10;
+            const targetY = targetRect.top - containerRect.top + targetRect.height / 2;
+            
+            // Ok çizimi
+            ctx.beginPath();
+            ctx.moveTo(sourceX, sourceY);
+            ctx.lineTo(targetX, targetY);
+            ctx.stroke();
+            
+            // Ok başı
+            const angle = Math.atan2(targetY - sourceY, targetX - sourceX);
+            drawArrowhead(ctx, targetX, targetY, angle);
+          }
+        });
+      }
+    });
   }
   
   resizeCanvas();
   window.addEventListener('resize', resizeCanvas);
-  
-  // Bağlantıları çiz
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.strokeStyle = 'rgba(50, 205, 50, 0.6)';
-  ctx.lineWidth = 2;
-  ctx.setLineDash([5, 3]);
-
-  entries.forEach(entry => {
-    if (entry.references.length > 0) {
-      const sourceElem = document.querySelector(`.entry[data-id="${entry.id}"]`);
-      if (!sourceElem) return;
-      
-      const sourceRect = sourceElem.getBoundingClientRect();
-      const containerRect = container.getBoundingClientRect();
-      
-      const sourceX = sourceRect.left + sourceRect.width / 2 - containerRect.left;
-      const sourceY = sourceRect.top - containerRect.top;
-      
-      entry.references.forEach(refId => {
-        const targetElem = document.querySelector(`.entry[data-id="${refId}"]`);
-        if (targetElem) {
-          const targetRect = targetElem.getBoundingClientRect();
-          const targetX = targetRect.left + targetRect.width / 2 - containerRect.left;
-          const targetY = targetRect.bottom - containerRect.top;
-          
-          // Ok çizimi
-          ctx.beginPath();
-          ctx.moveTo(sourceX, sourceY);
-          ctx.lineTo(targetX, targetY);
-          ctx.stroke();
-          
-          // Ok başı
-          const angle = Math.atan2(targetY - sourceY, targetX - sourceX);
-          drawArrowhead(ctx, targetX, targetY, angle);
-        }
-      });
-    }
-  });
 }
 
 function drawArrowhead(ctx, x, y, angle) {
-  const size = 10;
-  ctx.fillStyle = 'rgba(50, 205, 50, 0.6)';
+  const size = 12;
+  ctx.fillStyle = 'rgba(50, 205, 50, 0.9)';
   ctx.beginPath();
   ctx.moveTo(x, y);
   ctx.lineTo(
