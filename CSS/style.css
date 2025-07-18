@@ -625,11 +625,13 @@ canvas {
   box-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
 }
 
+/* ... diğer stiller ... */
+
 /* --------------------------- İLİŞKİ AĞI STİLLERİ ------------------------- */
 #entries {
   position: relative;
   min-height: 500px;
-  padding-left: 20px;
+  padding-left: 10px; /* Daha az sol padding */
 }
 
 .entry {
@@ -638,9 +640,11 @@ canvas {
   border: 1px solid rgba(50, 205, 50, 0.5);
   border-radius: 8px;
   padding: 15px;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
   transition: all 0.3s;
   z-index: 2;
+  width: 95%; /* Daha geniş alan */
+  margin-right: auto; /* Sağa kaymayı önle */
 }
 
 .entry:hover {
@@ -665,6 +669,7 @@ canvas {
 .timestamp {
   font-size: 0.85rem;
   color: #90ee90;
+  flex-grow: 1; /* Daha fazla alan kapla */
 }
 
 .entry-id {
@@ -674,12 +679,14 @@ canvas {
   padding: 3px 8px;
   border-radius: 12px;
   color: #00ff00;
+  margin-left: 10px; /* Sol boşluk ekle */
 }
 
 .content {
   color: #e0ffe0;
   font-size: 1rem;
   line-height: 1.5;
+  padding-right: 10px; /* Sağ padding */
 }
 
 #connections-canvas {
@@ -695,23 +702,22 @@ canvas {
 /* Mobil için ilişki ağı */
 @media (max-width: 768px) {
   #entries {
-    padding-left: 10px;
+    padding-left: 5px;
   }
   
   .entry {
     padding: 12px;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
+    width: 98%; /* Mobilde daha geniş */
   }
   
   .entry-header {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row; /* Yatay düzeni koru */
   }
   
   .entry-id {
-    position: absolute;
-    top: 12px;
-    right: 12px;
+    position: static; /* Normal konumda */
+    margin-top: 0;
   }
   
   #connections-canvas {
@@ -720,5 +726,9 @@ canvas {
   
   .content {
     font-size: 0.9rem;
+  }
+  
+  .thread-entry {
+    margin-left: 10px !important;
   }
 }
