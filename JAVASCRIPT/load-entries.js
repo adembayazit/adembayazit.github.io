@@ -44,10 +44,13 @@ document.addEventListener("DOMContentLoaded", () => {
       finalEntries.forEach((entry) => {
         const entryDiv = document.createElement("div");
         entryDiv.className = "entry";
+        const depth = depthMap.get(entry.id) || 0;
+        
         if (threadEntries.has(entry.id)) {
           entryDiv.classList.add("thread-entry");
-          const depth = depthMap.get(entry.id) || 0;
-          entryDiv.dataset.depth = depth;
+          // Derinliğe göre girinti ekle
+          const indent = depth * 20; // Daha küçük girinti
+          entryDiv.style.marginLeft = `${indent}px`;
         }
         
         entryDiv.dataset.id = entry.id;
@@ -108,8 +111,8 @@ function drawConnections(entries) {
     
     // Bağlantıları çiz
     ctx.strokeStyle = 'rgba(50, 205, 50, 0.7)';
-    ctx.lineWidth = 2;
-    ctx.setLineDash([4, 3]);
+    ctx.lineWidth = 3; // Daha kalın çizgiler
+    ctx.setLineDash([5, 3]);
 
     entries.forEach(entry => {
       if (entry.references.length > 0) {
@@ -120,7 +123,7 @@ function drawConnections(entries) {
         const containerRect = container.getBoundingClientRect();
         
         // Kaynak noktası: sol kenar orta noktası
-        const sourceX = sourceRect.left - containerRect.left + 10;
+        const sourceX = sourceRect.left - containerRect.left;
         const sourceY = sourceRect.top - containerRect.top + sourceRect.height / 2;
         
         entry.references.forEach(refId => {
@@ -128,8 +131,8 @@ function drawConnections(entries) {
           if (targetElem) {
             const targetRect = targetElem.getBoundingClientRect();
             
-            // Hedef noktası: sağ kenar orta noktası
-            const targetX = targetRect.right - containerRect.left - 10;
+            // Hedef noktası: sol kenar orta noktası
+            const targetX = targetRect.left - containerRect.left;
             const targetY = targetRect.top - containerRect.top + targetRect.height / 2;
             
             // Ok çizimi
