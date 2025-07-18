@@ -385,26 +385,6 @@ canvas {
     margin-bottom: 1rem;
     }
 
-  .entry {
-    border-bottom: 1px dashed limegreen; /* sadece alt ayraç */
-    margin-bottom: 0.8rem;
-    padding-bottom: 0.6rem;
-    color: #aaffaa;
-  }
-
-  .timestamp {
-    font-size: 0.65rem;
-    color: lime;
-    margin-bottom: 0.3rem;
-    font-family: monospace;
-  }
-
-  .content {
-    font-size: 0.75rem;
-    font-style: italic;
-    font-weight: bold;
-    text-decoration: underline;
-  }
     .home {
         flex-direction: column;
         align-items: center;
@@ -480,16 +460,6 @@ canvas {
     .mu {
         margin-top: 120px;
     }
-    
-    /* İLİŞKİ AĞI MOBİL STİLLERİ */
-    #connections-canvas {
-        display: none; /* Mobilde canvas'ı gizle */
-    }
-    
-    .entry {
-        padding: 10px;
-        margin-bottom: 15px;
-    }
 }
 /* ---------------------------Navbar----------------------- */
 
@@ -539,66 +509,6 @@ canvas {
 }
 
 /* microblog */
-.micro-entries {
-  background-color: #000;
-  padding: 1rem;
-  margin-top: 2rem;
-  margin-bottom: 2rem;
-  border-radius: 12px;
-  box-shadow: inset 0 0 12px rgba(50, 205, 50, 0.4);
-}
-
-.micro-title {
-  text-align: center;
-  color: limegreen;
-  font-size: 1.3rem;
-  margin-bottom: 1rem;
-  font-weight: bold;
-  text-shadow: 0 0 4px #0f0;
-}
-
-.entries {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.entry {
-  background: rgba(0, 0, 0, 0.7);
-  border: 1px solid limegreen;
-  padding: 1rem;
-  border-radius: 10px;
-  transition: all 0.3s;
-}
-
-.entry:hover {
-  transform: scale(1.02);
-  border-color: #00ff00;
-}
-
-.timestamp {
-  font-size: 0.8rem;
-  color: #90ee90;
-  margin-bottom: 0.5rem;
-}
-
-.content {
-  color: #e0ffe0;
-  font-size: 1rem;
-  line-height: 1.5;
-}
-
-.content b {
-  font-weight: bold;
-}
-
-.content i {
-  font-style: italic;
-}
-
-.content u {
-  text-decoration: underline;
-}
 #microblog {
   width: 100%;
   padding: 60px 10%;
@@ -625,110 +535,81 @@ canvas {
   box-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
 }
 
-/* ... diğer stiller ... */
-
-/* --------------------------- İLİŞKİ AĞI STİLLERİ ------------------------- */
+/* --------------------------- HİYERARŞİK LİSTE STİLLERİ ------------------------- */
 #entries {
   position: relative;
   min-height: 500px;
-  padding-left: 10px; /* Daha az sol padding */
+  padding-left: 0;
 }
 
 .entry {
   position: relative;
-  background: rgba(0, 30, 0, 0.3);
-  border: 1px solid rgba(50, 205, 50, 0.5);
+  background: rgba(0, 30, 0, 0.2);
+  border: 1px solid rgba(50, 205, 50, 0.3);
   border-radius: 8px;
   padding: 15px;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   transition: all 0.3s;
   z-index: 2;
-  width: 95%; /* Daha geniş alan */
-  margin-right: auto; /* Sağa kaymayı önle */
 }
 
 .entry:hover {
   transform: translateY(-3px);
   border-color: #00ff00;
-  box-shadow: 0 5px 15px rgba(0, 255, 0, 0.2);
+  box-shadow: 0 5px 15px rgba(0, 255, 0, 0.1);
 }
 
-.thread-entry {
-  background: rgba(0, 60, 0, 0.4);
-}
-
-.entry-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-  padding-bottom: 8px;
-  border-bottom: 1px dashed rgba(50, 205, 50, 0.4);
+.child-entry {
+  background: rgba(0, 50, 0, 0.3);
+  border-left: 3px solid limegreen;
+  margin-top: 10px;
+  margin-left: 30px;
 }
 
 .timestamp {
   font-size: 0.85rem;
   color: #90ee90;
-  flex-grow: 1; /* Daha fazla alan kapla */
+  margin-bottom: 5px;
+  font-family: monospace;
 }
 
 .entry-id {
+  position: absolute;
+  top: 15px;
+  right: 15px;
   font-size: 0.8rem;
   font-weight: bold;
   background: rgba(50, 205, 50, 0.2);
   padding: 3px 8px;
   border-radius: 12px;
   color: #00ff00;
-  margin-left: 10px; /* Sol boşluk ekle */
 }
 
 .content {
   color: #e0ffe0;
   font-size: 1rem;
   line-height: 1.5;
-  padding-right: 10px; /* Sağ padding */
+  padding-right: 60px;
 }
 
-#connections-canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1;
-}
-
-/* Mobil için ilişki ağı */
+/* Mobil için */
 @media (max-width: 768px) {
-  #entries {
-    padding-left: 5px;
-  }
-  
   .entry {
     padding: 12px;
-    margin-bottom: 15px;
-    width: 98%; /* Mobilde daha geniş */
   }
   
-  .entry-header {
-    flex-direction: row; /* Yatay düzeni koru */
+  .child-entry {
+    margin-left: 15px !important;
   }
   
   .entry-id {
-    position: static; /* Normal konumda */
-    margin-top: 0;
-  }
-  
-  #connections-canvas {
-    display: block !important;
+    top: 12px;
+    right: 12px;
+    font-size: 0.7rem;
   }
   
   .content {
+    padding-right: 40px;
     font-size: 0.9rem;
-  }
-  
-  .thread-entry {
-    margin-left: 10px !important;
   }
 }
