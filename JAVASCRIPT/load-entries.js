@@ -10,19 +10,22 @@ document.addEventListener("DOMContentLoaded", () => {
         new Date(b.date) - new Date(a.date)
       );
 
-      // 2. Parent-child ilişkilerini kur
+      // 2. Sadece son 7 entry'i al
+      const last7Entries = sortedEntries.slice(0, 7);
+
+      // 3. Parent-child ilişkilerini kur (sadece son 7 için)
       const entriesMap = new Map();
       const parentEntries = [];
       
       // Önce tüm entry'leri map'e ekle
-      sortedEntries.forEach(entry => {
+      last7Entries.forEach(entry => {
         entriesMap.set(entry.id, {...entry, children: []});
       });
       
       // Child-parent ilişkilerini kur
-      sortedEntries.forEach(entry => {
+      last7Entries.forEach(entry => {
         if (entry.references && entry.references.length > 0) {
-          const parentId = entry.references[0]; // İlk referans parent olarak alınır
+          const parentId = entry.references[0];
           if (entriesMap.has(parentId)) {
             entriesMap.get(parentId).children.push(entry);
           }
@@ -31,10 +34,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
 
-      // 3. Parent entry'leri tarihe göre sırala (yeniden eskiye)
+      // 4. Parent entry'leri tarihe göre sırala (yeniden eskiye)
       parentEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
       
-      // 4. Entry'leri oluştur
+      // 5. Entry'leri oluştur (sadece son 7)
       parentEntries.forEach(parent => {
         // Parent entry'i oluştur
         createEntryElement(parent, container, 0);
