@@ -5,7 +5,7 @@ let currentPage = 1;
 fetch("photos.json")
   .then(res => res.json())
   .then(data => {
-    photos = data.reverse(); // son eklenen başta
+    photos = data.reverse();
     renderPhotos();
   });
 
@@ -13,12 +13,12 @@ function renderPhotos() {
   const grid = document.getElementById("gallery-grid");
   const start = 0;
   const end = currentPage * perPage;
-  const currentPhotos = photos.slice(start, end);
+  const currentPhotos = photos.slice(0, end);
 
   grid.innerHTML = "";
   currentPhotos.forEach(photo => {
     const img = document.createElement("img");
-    img.src = photo.src;
+    img.src = photo.src; // ✅ photos.json içeriği { "src": "PHOTO/photo1.PNG" } olmalı
     img.className = "gallery-img";
     img.addEventListener("click", () => showModal(photo.src));
     grid.appendChild(img);
@@ -48,6 +48,6 @@ document.addEventListener("DOMContentLoaded", () => {
 function showModal(src) {
   const modal = document.getElementById("modal");
   const modalImg = document.getElementById("modal-img");
-  modal.style.display = "block";
+  modal.style.display = "flex"; // ✅ Flex yapıya geç
   modalImg.src = src;
 }
