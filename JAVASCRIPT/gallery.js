@@ -5,7 +5,7 @@ let currentPage = 1;
 fetch("photos.json")
   .then(res => res.json())
   .then(data => {
-    photos = data.reverse(); // son eklenen başta gözüksün
+    photos = data.reverse(); // son eklenen başta
     renderPhotos();
   });
 
@@ -13,14 +13,14 @@ function renderPhotos() {
   const grid = document.getElementById("gallery-grid");
   const start = 0;
   const end = currentPage * perPage;
-  const currentPhotos = photos.slice(0, end);
+  const currentPhotos = photos.slice(start, end);
 
   grid.innerHTML = "";
-  currentPhotos.forEach(src => {
+  currentPhotos.forEach(photo => {
     const img = document.createElement("img");
-    img.src = src;
+    img.src = photo.src;
     img.className = "gallery-img";
-    img.addEventListener("click", () => showModal(src));
+    img.addEventListener("click", () => showModal(photo.src));
     grid.appendChild(img);
   });
 
