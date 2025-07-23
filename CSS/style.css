@@ -614,93 +614,82 @@ canvas {
   }
 }
 /* Galeri*/
-/* Galeri Wrapper (Yeşil çerçeveli kutu) */
-.gallery-wrapper {
-  border: 3px solid limegreen;
-  background-color: black;
-  padding: 20px;
-  border-radius: 10px;
-  max-width: 1200px;
-  margin: 40px auto;
+/* Galeri genel */
+.photo-gallery {
+  padding: 40px 0;
+  background-color: #000;
+  color: #fff;
   text-align: center;
 }
 
-/* Başlık */
-.section-title {
-  color: white;
-  font-size: 24px;
-  margin-bottom: 20px;
-}
-
-/* Galeri Grid */
-/* Galeri Wrapper (Yeşil çerçeveli kutu) */
 .gallery-wrapper {
-  border: 3px solid limegreen;
-  background-color: black;
+  max-width: 960px;
+  margin: 0 auto;
   padding: 20px;
-  border-radius: 10px;
-  max-width: 1200px;
-  margin: 40px auto;
-  text-align: center;
+  border: 2px solid limegreen;
+  background-color: black;
+  border-radius: 8px;
 }
 
-/* Başlık */
-.section-title {
-  color: white;
-  font-size: 24px;
-  margin-bottom: 20px;
-}
-
-/* Galeri Grid */
 .gallery-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 0; /* birleşik görünüm */
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+  justify-items: center;
 }
 
-/* Resimler */
 .gallery-img {
   width: 100%;
-  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 4px;
+  transition: transform 0.3s ease;
   cursor: pointer;
-  border-radius: 0; /* düz kareler */
-  border: none;     /* yeşil çerçeve kalktı */
-  display: block;
 }
 
-/* Modal (ortalanmış düzeltme) */
+.gallery-img:hover {
+  transform: scale(1.08);
+}
+
+/* Modal */
 .modal {
   display: none;
   position: fixed;
-  z-index: 999;
+  z-index: 9999;
+  padding-top: 50px;
   left: 0;
   top: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
+  overflow: auto;
   background-color: rgba(0,0,0,0.9);
-
-  /* Ortalamak için flex */
-  display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
 }
+
 .modal-content {
-  max-width: 90%;
-  max-height: 80%;
-  border: 4px solid limegreen;
-  border-radius: 10px;
+  margin: auto;
+  display: block;
+  max-width: 90vw;
+  max-height: 90vh;
   object-fit: contain;
+  border: 3px solid limegreen;
+  border-radius: 6px;
 }
+
 .close {
   position: absolute;
-  top: 20px;
-  right: 35px;
-  color: limegreen;
+  top: 30px;
+  right: 40px;
+  color: white;
   font-size: 40px;
   font-weight: bold;
   cursor: pointer;
 }
 
-/* Load More Button */
-.load-more {
-  margi
+/* Mobilde alt alta */
+@media (max-width: 768px) {
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
