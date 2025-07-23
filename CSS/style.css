@@ -614,66 +614,101 @@ canvas {
   }
 }
 /* Galeri*/
-.gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 15px;
+/* Galeri Wrapper (Yeşil çerçeveli kutu) */
+.gallery-wrapper {
+  border: 3px solid limegreen;
+  background-color: black;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 1200px;
+  margin: 40px auto;
+  text-align: center;
+}
+
+/* Başlık */
+.section-title {
+  color: white;
+  font-size: 24px;
   margin-bottom: 20px;
 }
 
+/* Galeri Grid */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+/* Resimler */
 .gallery-img {
   width: 100%;
   height: auto;
   cursor: pointer;
-  border-radius: 8px;
-  transition: transform 0.3s ease;
+  border-radius: 4px;
+  transition: transform 0.2s ease;
+  border: 2px solid limegreen;
 }
-
 .gallery-img:hover {
   transform: scale(1.05);
 }
 
-.load-more {
-  padding: 10px 20px;
-  background: #333;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.load-more:hover {
-  background: #555;
-}
-
+/* Modal */
 .modal {
   display: none;
   position: fixed;
   z-index: 999;
-  left: 0; top: 0;
-  width: 100%; height: 100%;
-  background-color: rgba(0,0,0,0.8);
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.9);
   justify-content: center;
   align-items: center;
 }
-
 .modal-content {
   max-width: 90%;
-  max-height: 90%;
-  border-radius: 8px;
+  max-height: 80%;
+  border: 4px solid limegreen;
+  border-radius: 10px;
 }
-
 .close {
   position: absolute;
-  top: 20px; right: 30px;
-  color: white;
-  font-size: 35px;
+  top: 20px;
+  right: 35px;
+  color: limegreen;
+  font-size: 40px;
+  font-weight: bold;
   cursor: pointer;
 }
 
-@media screen and (max-width: 768px) {
+/* Load More Button */
+.load-more {
+  margin-top: 20px;
+  padding: 10px 25px;
+  background-color: limegreen;
+  color: black;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+.load-more:hover {
+  background-color: #00cc00;
+}
+
+/* Mobil uyumlu 2 sütun */
+@media (max-width: 768px) {
   .gallery-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* Daha küçük ekranlarda 1 sütun */
+@media (max-width: 480px) {
+  .gallery-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 
