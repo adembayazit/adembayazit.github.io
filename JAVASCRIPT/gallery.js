@@ -1,54 +1,50 @@
-let photos = [];
-let perPage = 8;
-let currentPage = 1;
-
-fetch("/photos.json")
-  .then(res => res.json())
-  .then(data => {
-    photos = data.reverse(); // en son fotoğraf önce gelsin
-    renderPhotos();
-  });
-
-function renderPhotos() {
-  const grid = document.getElementById("gallery-grid");
-  const start = 0;
-  const end = currentPage * perPage;
-  const currentPhotos = photos.slice(start, end);
-
-  grid.innerHTML = "";
-  currentPhotos.forEach(photo => {
-    const img = document.createElement("img");
-    img.src = photo.src;
-    img.alt = "Photo";
-    img.className = "gallery-img";
-    img.addEventListener("click", () => showModal(photo.src));
-    grid.appendChild(img);
-  });
-
-  const moreBtn = document.getElementById("load-more");
-  moreBtn.style.display = photos.length > end ? "block" : "none";
-}
-
 document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("load-more").addEventListener("click", () => {
-    currentPage++;
-    renderPhotos();
-  });
-
-  document.querySelector(".close").addEventListener("click", () => {
-    document.getElementById("modal").style.display = "none";
-  });
-
-  window.addEventListener("click", (e) => {
-    if (e.target.id === "modal") {
-      document.getElementById("modal").style.display = "none";
-    }
-  });
-});
-
-function showModal(src) {
+  const galleryGrid = document.getElementById("gallery-grid");
+  const loadMoreBtn = document.getElementById("load-more");
   const modal = document.getElementById("modal");
   const modalImg = document.getElementById("modal-img");
-  modal.style.display = "flex";
-  modalImg.src = src;
-}
+  const closeBtn = document.querySelector(".close");
+
+  let allPhotos = [];
+  let visibleCount = 8;
+
+  fetch("/photos.json")
+    .then(res => res.json())
+    .then(data => {
+      allPhotos = data;
+      renderPhotos();
+    })
+    .catch(err => {
+      console.error("Photo fetch error:", err);
+    });
+
+  function renderPhotos() {
+    galleryGrid.innerHTML = "";
+    allPhotos.slice(0, visibleCount).forEach(photo => {
+      const img = document.createElement("img");
+      img.src = photo.src;
+      img.classList.add("gallery-photo");
+      img.alt = "Gallery Photo";
+      img.addEventListener("click", () => {
+        modal.style.display = "block";
+        modalImg.src = img.src;
+      });
+      galleryGrid.appendChild(img);
+    });
+
+    loadMoreBtn.style.display = visibleCount < allPhotos.length ? "block" : "none";
+  }
+
+  loadMoreBtn.addEventListener("click", () => {
+    visibleCount += 8;
+    renderPhotos();
+  });
+
+  closeBtn.addEventListener("click", () => {
+    modal.style.display = "none";
+  });
+
+  window.addEventListener("click", e => {
+    if (e.target === modal) modal.style.display = "none";
+  });
+});
