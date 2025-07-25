@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Log başarılıysa aynı sekmede yönlendir
         setTimeout(() => {
           window.location.href = "https://drive.google.com/file/d/17FloLfdbiQPpb1UmK-rQB5kl9S9qlYkq/view";
-        }, 150); // Hafif gecikme
+        }, 50); // Hafif gecikme
       })
       .catch(err => {
         console.error("Log gönderimi başarısız:", err);
