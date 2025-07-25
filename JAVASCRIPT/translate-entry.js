@@ -4,52 +4,30 @@ function addTranslationIcons() {
   entries.forEach((entry) => {
     const idDiv = entry.querySelector(".entry-id");
     const contentDiv = entry.querySelector(".content");
-    const contentText = contentDiv?.innerHTML?.trim();
+    const contentText = contentDiv?.textContent?.trim();
+    const entryId = idDiv?.textContent?.replace("#", "")?.trim();
 
-    if (!idDiv || !contentText) return;
-
-    // Zaten ikon varsa tekrar ekleme
+    if (!idDiv || !contentText || !entryId) return;
     if (idDiv.querySelector(".translation-icon")) return;
 
-    // Türkçe içerik kontrolü (data-tr veya dataset.tr)
-    const contentTr = entry.dataset.tr || entry.getAttribute("data-tr");
+    // Entry ID'ye göre JSON'dan çeviri bul
+    const matchedEntry = window.entriesData?.find(
+      (e) => String(e.id) === entryId
+    );
 
-    if (!contentTr) return; // Türkçesi yoksa ikon gösterme
+    if (!matchedEntry || !matchedEntry.content_tr) return;
 
     // 🇹🇷 ikonunu oluştur
     const icon = document.createElement("span");
     icon.classList.add("translation-icon");
     icon.textContent = "🇹🇷";
-    icon.title = "Türkçeye çevir";
-    icon.style.cssText = `
-      display: inline-block;
-      margin-left: 8px;
-      background: limegreen;
-      color: white;
-      border-radius: 50%;
-      padding: 4px 6px;
-      font-size: 14px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    `;
+    icon.setAttribute("title", "Türkçeye çevir");
 
-    // Hover ile tersine dönüş
-    icon.addEventListener("mouseenter", () => {
-      icon.style.background = "white";
-      icon.style.color = "limegreen";
-    });
-
-    icon.addEventListener("mouseleave", () => {
-      icon.style.background = "limegreen";
-      icon.style.color = "white";
-    });
-
-    // Tıklanınca içeriği Türkçe ile değiştir
+    // Tıklanınca içerik Türkçeye dönüşsün
     icon.addEventListener("click", () => {
-      contentDiv.innerHTML = contentTr;
+      contentDiv.textContent = matchedEntry.content_tr;
     });
 
-    // ID div'ine ekle
     idDiv.appendChild(icon);
   });
 }
