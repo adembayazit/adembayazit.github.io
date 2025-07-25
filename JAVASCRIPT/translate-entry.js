@@ -1,39 +1,55 @@
 function addTranslationIcons() {
   const entries = document.querySelectorAll(".entry");
 
-  entries.forEach(async (entry) => {
+  entries.forEach((entry) => {
     const idDiv = entry.querySelector(".entry-id");
     const contentDiv = entry.querySelector(".content");
-    const contentText = contentDiv?.textContent?.trim();
+    const contentText = contentDiv?.innerHTML?.trim();
 
     if (!idDiv || !contentText) return;
 
+    // Zaten ikon varsa tekrar ekleme
     if (idDiv.querySelector(".translation-icon")) return;
+
+    // Türkçe içerik kontrolü (data-tr veya dataset.tr)
+    const contentTr = entry.dataset.tr || entry.getAttribute("data-tr");
+
+    if (!contentTr) return; // Türkçesi yoksa ikon gösterme
 
     // 🇹🇷 ikonunu oluştur
     const icon = document.createElement("span");
     icon.classList.add("translation-icon");
     icon.textContent = "🇹🇷";
-    icon.setAttribute("data-tooltip", "Çeviri yükleniyor...");
+    icon.title = "Türkçeye çevir";
+    icon.style.cssText = `
+      display: inline-block;
+      margin-left: 8px;
+      background: limegreen;
+      color: white;
+      border-radius: 50%;
+      padding: 4px 6px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    `;
 
-    // Çeviri al
-    try {
-      const res = await fetch(
-        `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=tr&dt=t&q=${encodeURIComponent(contentText)}`
-      );
-      const data = await res.json();
-      const translated = data?.[0]?.[0]?.[0];
+    // Hover ile tersine dönüş
+    icon.addEventListener("mouseenter", () => {
+      icon.style.background = "white";
+      icon.style.color = "limegreen";
+    });
 
-      if (translated) {
-        icon.setAttribute("data-tooltip", translated);
-      } else {
-        icon.setAttribute("data-tooltip", "Çevrilemedi");
-      }
-    } catch (err) {
-      icon.setAttribute("data-tooltip", "Hata oluştu");
-      console.error("Çeviri hatası:", err);
-    }
+    icon.addEventListener("mouseleave", () => {
+      icon.style.background = "limegreen";
+      icon.style.color = "white";
+    });
 
+    // Tıklanınca içeriği Türkçe ile değiştir
+    icon.addEventListener("click", () => {
+      contentDiv.innerHTML = contentTr;
+    });
+
+    // ID div'ine ekle
     idDiv.appendChild(icon);
   });
 }
