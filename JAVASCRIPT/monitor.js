@@ -76,35 +76,4 @@
 
 })();
 
-// monitor.js içinde, en sona ekle
-document.addEventListener("DOMContentLoaded", () => {
-  const downloadBtn = document.getElementById("downloadCv");
-  if (downloadBtn) {
-    downloadBtn.addEventListener("click", () => {
-      const now = new Date();
-      const payload = {
-        timestamp: now.toISOString(),
-        userAgent: navigator.userAgent,
-        eventType: "cv_download",
-        detail: "Download CV butonuna tıklandı",
-        ip: ipData?.ip || null,
-        hostname: ipData?.hostname || null,
-        city: ipData?.city || null,
-        region: ipData?.region || null,
-        country: ipData?.country || null,
-        loc: ipData?.loc || null,
-        org: ipData?.org || null,
-        postal: ipData?.postal || null,
-        timezone: ipData?.timezone || null,
-        pageTitle: document.title || null,
-        pageURL: window.location.href
-      };
 
-      fetch("https://adembayazit.netlify.app/.netlify/functions/log-visitor", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      }).catch(console.error);
-    });
-  }
-});
