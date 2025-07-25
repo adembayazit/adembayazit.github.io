@@ -15,9 +15,8 @@ async function addTranslationIcons() {
   entries.forEach(entry => {
     const idDiv = entry.querySelector(".entry-id");
     const contentDiv = entry.querySelector(".content");
-    const contentText = contentDiv?.textContent?.trim();
-
-    if (!idDiv || !contentText) return;
+    const originalContent = contentDiv?.innerHTML?.trim(); // ⬅️ Orijinal içerik
+    if (!idDiv || !originalContent) return;
     if (idDiv.querySelector(".translation-icon")) return;
 
     const idValue = parseInt(idDiv.textContent.replace(/\D/g, ''));
@@ -29,11 +28,12 @@ async function addTranslationIcons() {
     const icon = document.createElement("span");
     icon.classList.add("translation-icon");
     icon.textContent = "🇹🇷";
-   
-    // ⬇ Tooltip davranışı (hover ile gösterme)
+    icon.setAttribute("data-tooltip", translatedText);
+    icon.setAttribute("aria-label", "Türkçe çeviri");
+
+    // Hover ile gösterilen tooltip
     icon.addEventListener("mouseenter", () => {
       if (icon.querySelector(".tooltip-box")) return;
-
       const tooltip = document.createElement("div");
       tooltip.classList.add("tooltip-box");
       tooltip.innerHTML = translatedText;
@@ -47,10 +47,15 @@ async function addTranslationIcons() {
       icon.classList.remove("show-tooltip");
     });
 
-    // ⬇ Tıklayınca içeriği Türkçeye çevir
+    // Toggle çeviri: Türkçe <-> İngilizce
+    let isTranslated = false;
     icon.addEventListener("click", () => {
-      if (translationEntry?.content_tr) {
+      if (!isTranslated && translationEntry?.content_tr) {
         contentDiv.innerHTML = translationEntry.content_tr;
+        isTranslated = true;
+      } else {
+        contentDiv.innerHTML = originalContent;
+        isTranslated = false;
       }
     });
 
