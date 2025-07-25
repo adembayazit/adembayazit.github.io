@@ -5,24 +5,19 @@ document.addEventListener("DOMContentLoaded", () => {
       const container = document.getElementById("entries");
       container.innerHTML = '';
 
-      // 1. Tüm entry'leri tarihe göre sırala (yeniden eskiye)
       const sortedEntries = data.sort((a, b) => 
         new Date(b.date) - new Date(a.date)
       );
 
-      // 2. Sadece son 7 entry'i al
       const last7Entries = sortedEntries.slice(0, 7);
 
-      // 3. Parent-child ilişkilerini kur (sadece son 7 için)
       const entriesMap = new Map();
       const parentEntries = [];
-      
-      // Önce tüm entry'leri map'e ekle
+
       last7Entries.forEach(entry => {
         entriesMap.set(entry.id, {...entry, children: []});
       });
-      
-      // Child-parent ilişkilerini kur
+
       last7Entries.forEach(entry => {
         if (entry.references && entry.references.length > 0) {
           const parentId = entry.references[0];
@@ -34,23 +29,19 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
 
-      // 4. Parent entry'leri tarihe göre sırala (yeniden eskiye)
       parentEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
-      
-      // 5. Entry'leri oluştur (sadece son 7)
+
       parentEntries.forEach(parent => {
-        // Parent entry'i oluştur
         createEntryElement(parent, container, 0);
-        
-        // Child entry'leri bul ve tarihe göre sırala (eskiden yeniye)
         const children = entriesMap.get(parent.id)?.children || [];
         children.sort((a, b) => new Date(a.date) - new Date(b.date));
-        
-        // Child entry'leri oluştur
         children.forEach(child => {
           createEntryElement(child, container, 1);
         });
       });
+
+      // ✅ Entry'ler DOM'a eklendikten sonra çeviri ikonlarını ekle
+      addTranslationIcons();
     });
 });
 
@@ -58,7 +49,6 @@ function createEntryElement(entry, container, depth) {
   const entryDiv = document.createElement("div");
   entryDiv.className = "entry";
   
-  // Girinti ekle
   if (depth > 0) {
     entryDiv.classList.add("child-entry");
   }
@@ -79,4 +69,36 @@ function createEntryElement(entry, container, depth) {
   
   container.appendChild(entryDiv);
 }
-addTranslationIcons();
+
+// 🌐 ÇEVİRİ İKONLARINI EKLEME FONKSİYONU
+function addTranslationIcons() {
+  const entries = document.querySelectorAll(".entry");
+
+  entries.forEach(async (entry) => {
+    const idDiv = entry.querySelector(".entry-id");
+    const contentDiv = entry.querySelector(".content");
+    const contentText = contentDiv?.textContent?.trim();
+
+    if (!idDiv || !contentText) return;
+    if (idDiv.querySelector(".globe-icon")) return;
+
+    const globe = document.createElement("span");
+    globe.classList.add("globe-icon");
+    globe.textContent = " 🌐";
+    globe.style.cursor = "help";
+    globe.title = "Çeviriliyor...";
+
+    try {
+      const res = await fetch(
+        `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=tr&dt=t&q=${encodeURIComponent(contentText)}`
+      );
+      const data = await res.json();
+      const translatedText = data?.[0]?.[0]?.[0];
+      globe.title = translatedText || "Çevrilemedi";
+    } catch (err) {
+      globe.title = "Hata oluştu";
+    }
+
+    idDiv.appendChild(globe);
+  });
+}
