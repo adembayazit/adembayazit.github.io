@@ -7,25 +7,33 @@ function addTranslationIcons() {
     const contentText = contentDiv?.textContent?.trim();
 
     if (!idDiv || !contentText) return;
-    if (idDiv.querySelector(".globe-icon")) return;
 
-    const globe = document.createElement("span");
-    globe.classList.add("globe-icon");
-    globe.textContent = " 🌐";
-    globe.style.cursor = "help";
-    globe.title = "Çeviriliyor...";
+    if (idDiv.querySelector(".translation-icon")) return;
 
+    // 🇹🇷 ikonunu oluştur
+    const icon = document.createElement("span");
+    icon.classList.add("translation-icon");
+    icon.textContent = "🇹🇷";
+    icon.setAttribute("data-tooltip", "Çeviri yükleniyor...");
+
+    // Çeviri al
     try {
       const res = await fetch(
         `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=tr&dt=t&q=${encodeURIComponent(contentText)}`
       );
       const data = await res.json();
-      const translatedText = data?.[0]?.[0]?.[0];
-      globe.title = translatedText || "Çevrilemedi";
+      const translated = data?.[0]?.[0]?.[0];
+
+      if (translated) {
+        icon.setAttribute("data-tooltip", translated);
+      } else {
+        icon.setAttribute("data-tooltip", "Çevrilemedi");
+      }
     } catch (err) {
-      globe.title = "Hata oluştu";
+      icon.setAttribute("data-tooltip", "Hata oluştu");
+      console.error("Çeviri hatası:", err);
     }
 
-    idDiv.appendChild(globe);
+    idDiv.appendChild(icon);
   });
 }
