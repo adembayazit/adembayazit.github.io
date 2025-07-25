@@ -767,3 +767,40 @@ canvas {
     line-height: 20px;
   }
 }
+.tooltip-box {
+  position: absolute;
+  top: 50%;
+  left: -8px;
+  transform: translate(-100%, -50%);
+  background-color: rgba(0, 0, 0, 0.85);
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+  white-space: normal;
+  line-height: 1.4;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 999;
+  min-width: 150px;
+  max-width: 280px;
+  transition: opacity 0.3s ease;
+}
+
+/* Gösterilecek durumda */
+.translation-icon.show-tooltip .tooltip-box {
+  opacity: 1;
+}
+
+/* Mobilde ekran taşmasını engelle */
+@media (max-width: 600px) {
+  .tooltip-box {
+    left: 50%;
+    transform: translate(-50%, -110%);
+    max-width: 90vw;
+    font-size: 12px;
+    padding: 5px 8px;
+  }
+}
+
