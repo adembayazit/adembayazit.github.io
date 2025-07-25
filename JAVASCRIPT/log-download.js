@@ -37,15 +37,15 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       })
       .then(() => {
-        // Log işlemi tamamlandıktan sonra yönlendir
+        // Log başarılıysa aynı sekmede yönlendir
         setTimeout(() => {
-          window.open("https://drive.google.com/file/d/17FloLfdbiQPpb1UmK-rQB5kl9S9qlYkq/view", "_blank");
-        }, 500); // 0.5 saniye gecikme
+          window.location.href = "https://drive.google.com/file/d/17FloLfdbiQPpb1UmK-rQB5kl9S9qlYkq/view";
+        }, 300); // Hafif gecikme
       })
       .catch(err => {
         console.error("Log gönderimi başarısız:", err);
-        // Hata olsa bile indirme yönlendirmesi yapılsın
-        window.open("https://drive.google.com/file/d/17FloLfdbiQPpb1UmK-rQB5kl9S9qlYkq/view", "_blank");
+        // Hata olsa bile yönlendir
+        window.location.href = "https://drive.google.com/file/d/17FloLfdbiQPpb1UmK-rQB5kl9S9qlYkq/view";
       });
   });
 });
