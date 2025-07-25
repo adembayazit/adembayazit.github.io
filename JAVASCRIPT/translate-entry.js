@@ -8,13 +8,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!idDiv || !contentText) return;
 
+    // Daha önce eklenmişse tekrar eklemeyi önle
+    if (idDiv.querySelector(".globe-icon")) return;
+
     // 🌐 ikonunu oluştur
     const globe = document.createElement("span");
+    globe.classList.add("globe-icon");
     globe.textContent = " 🌐";
     globe.style.cursor = "help";
-    globe.title = "Çevriliyor...";
+    globe.title = "Çeviriliyor...";
 
-    // Çeviri al
+    // Çeviri API’si (Google Translate açık API)
     try {
       const res = await fetch(
         `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=tr&dt=t&q=${encodeURIComponent(contentText)}`
@@ -22,13 +26,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await res.json();
       const translatedText = data?.[0]?.[0]?.[0];
 
-      // Tooltip'i güncelle
       if (translatedText) {
         globe.title = translatedText;
       } else {
         globe.title = "Çevrilemedi";
       }
     } catch (err) {
+      console.error("Çeviri hatası:", err);
       globe.title = "Hata oluştu";
     }
 
