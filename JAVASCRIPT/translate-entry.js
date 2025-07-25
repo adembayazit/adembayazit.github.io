@@ -30,3 +30,8 @@ function addTranslationIcons() {
     idDiv.appendChild(icon);
   });
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  addTranslationIcons();
+});
+
