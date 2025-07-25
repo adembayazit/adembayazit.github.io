@@ -28,25 +28,7 @@ async function addTranslationIcons() {
     const icon = document.createElement("span");
     icon.classList.add("translation-icon");
     icon.textContent = "🇹🇷";
-    icon.setAttribute("data-tooltip", translatedText);
-    icon.setAttribute("aria-label", "Türkçe çeviri");
-
-    // Hover ile gösterilen tooltip
-    icon.addEventListener("mouseenter", () => {
-      if (icon.querySelector(".tooltip-box")) return;
-      const tooltip = document.createElement("div");
-      tooltip.classList.add("tooltip-box");
-      tooltip.innerHTML = translatedText;
-      icon.appendChild(tooltip);
-      icon.classList.add("show-tooltip");
-    });
-
-    icon.addEventListener("mouseleave", () => {
-      const tooltip = icon.querySelector(".tooltip-box");
-      if (tooltip) tooltip.remove();
-      icon.classList.remove("show-tooltip");
-    });
-
+   
     // Toggle çeviri: Türkçe <-> İngilizce
     let isTranslated = false;
     icon.addEventListener("click", () => {
