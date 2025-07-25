@@ -5,12 +5,11 @@ function addTranslationIcons() {
     const idDiv = entry.querySelector(".entry-id");
     const contentDiv = entry.querySelector(".content");
     const contentText = contentDiv?.textContent?.trim();
-    const entryId = idDiv?.textContent?.replace("#", "")?.trim();
+    const entryId = idDiv?.textContent?.replace("#", "").trim();
 
     if (!idDiv || !contentText || !entryId) return;
     if (idDiv.querySelector(".translation-icon")) return;
 
-    // Entry ID'ye göre JSON'dan çeviri bul
     const matchedEntry = window.entriesData?.find(
       (e) => String(e.id) === entryId
     );
@@ -21,7 +20,7 @@ function addTranslationIcons() {
     const icon = document.createElement("span");
     icon.classList.add("translation-icon");
     icon.textContent = "🇹🇷";
-    icon.setAttribute("title", "Türkçeye çevir");
+    icon.setAttribute("data-tooltip", "Türkçe çeviriyi göster");
 
     // Tıklanınca içerik Türkçeye dönüşsün
     icon.addEventListener("click", () => {
