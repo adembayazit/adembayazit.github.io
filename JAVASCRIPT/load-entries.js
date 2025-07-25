@@ -84,7 +84,7 @@ function addTranslationIcons() {
 
     const globe = document.createElement("span");
     globe.classList.add("globe-icon");
-    globe.textContent = " 🇹🇷";
+    globe.textContent = " 🌐";
     globe.style.cursor = "help";
     globe.title = "Çeviriliyor...";
 
