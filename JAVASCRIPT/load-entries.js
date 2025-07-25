@@ -79,3 +79,4 @@ function createEntryElement(entry, container, depth) {
   
   container.appendChild(entryDiv);
 }
+addTranslationIcons();
