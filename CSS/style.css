@@ -713,20 +713,57 @@ canvas {
   font-size: 40px;
   cursor: pointer;
 }
-.globe-icon {
-  margin-left: 6px;
-  font-size: 0.95em;
-  vertical-align: middle;
-  color: #2ecc71; /* Yeşil renk kodu */
-  font-weight: bold;
+.translation-icon {
   display: inline-block;
-  margin-left: 5px;
-  cursor: pointer; 
-  filter: saturate(0%) brightness(200%);
-  opacity: 0.8;
- }
-.globe-icon:hover {
-    filter: saturate(0%) brightness(200%);
-    opacity: 0.9;
-    transform: scale(1.2);
-   }
+  margin-left: 6px;
+  position: relative;
+  width: 24px;
+  height: 24px;
+  background-color: white;
+  color: black;
+  font-size: 14px;
+  font-family: system-ui, sans-serif;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 24px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 2px rgba(0,0,0,0.1);
+}
+
+.translation-icon:hover {
+  background-color: limegreen;
+  color: white;
+}
+
+.translation-icon::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: 50%;
+  left: -8px;
+  transform: translate(-100%, -50%);
+  white-space: nowrap;
+  background-color: rgba(0,0,0,0.75);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 10;
+}
+
+.translation-icon:hover::after {
+  opacity: 1;
+}
+
+@media (max-width: 600px) {
+  .translation-icon {
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    line-height: 20px;
+  }
+}
