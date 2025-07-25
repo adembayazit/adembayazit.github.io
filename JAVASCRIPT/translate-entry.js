@@ -29,9 +29,7 @@ async function addTranslationIcons() {
     const icon = document.createElement("span");
     icon.classList.add("translation-icon");
     icon.textContent = "🇹🇷";
-    icon.setAttribute("data-tooltip", translatedText);
-    icon.setAttribute("aria-label", "Türkçe çeviri");
-
+   
     // ⬇ Tooltip davranışı (hover ile gösterme)
     icon.addEventListener("mouseenter", () => {
       if (icon.querySelector(".tooltip-box")) return;
