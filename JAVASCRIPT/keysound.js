@@ -12,10 +12,10 @@ document.addEventListener("DOMContentLoaded", () => {
     background: limegreen;
     color: white;
     font-size: 18px;
-    border: 1px solid white;
+    border: 2px solid white;
     border-radius: 50%;
-    width: 21px;
-    height: 21px;
+    width: 20px;
+    height: 20px;
     cursor: pointer;
     display: flex;
     align-items: center;
