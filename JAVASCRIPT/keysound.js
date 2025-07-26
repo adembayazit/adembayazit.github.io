@@ -14,8 +14,8 @@ document.addEventListener("DOMContentLoaded", () => {
     font-size: 18px;
     border: 1px solid white;
     border-radius: 50%;
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     cursor: pointer;
     display: flex;
     align-items: center;
