@@ -13,21 +13,10 @@ document.addEventListener("DOMContentLoaded", () => {
     border-radius: 20px;
     backdrop-filter: blur(4px);
   `;
-
-  // IP göstergesi
-  const dot = document.createElement('div');
-  dot.style.cssText = `
-    width: 18px;
-    height: 18px;
-    background: limegreen;
-    border-radius: 50%;
-    border: 2px solid white;
-    box-shadow: 0 0 8px rgba(0, 255, 0, 0.6);
-  `;
-
+  
   // Ses çalma butonu
   const btn = document.createElement('button');
-  btn.innerHTML = '▶️';
+  btn.innerHTML = '▶';
   btn.style.cssText = `
     background: limegreen;
     color: white;
