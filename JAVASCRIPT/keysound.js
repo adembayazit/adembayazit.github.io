@@ -25,9 +25,9 @@ document.addEventListener("DOMContentLoaded", () => {
     padding: 0;
   `;
 
-  // 🎧 İkon
+  // 🎧 Başlangıçta play ikonu
   const icon = document.createElement('i');
-  icon.className = 'bx bx-pause'; // Başlangıçta ses çalıyor gibi görünmesi için
+  icon.className = 'bx bx-play';
   icon.style.cssText = `
     font-size: 18px;
     pointer-events: none;
@@ -35,9 +35,9 @@ document.addEventListener("DOMContentLoaded", () => {
   `;
   btn.appendChild(icon);
 
-  // 🎤 Tooltip
+  // 🛠 Tooltip (hover yazısı)
   const tooltip = document.createElement("div");
-  tooltip.innerText = "Sesli mesajınız var";
+  tooltip.innerText = "Acoustic Steganography";
   tooltip.style.cssText = `
     position: absolute;
     bottom: 38px;
@@ -70,17 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let isPlaying = false;
 
-  // Sayfa açıldığında otomatik çal veya kullanıcı tıklamasını bekle
-  const tryAutoPlay = () => {
-    audio.play().then(() => {
-      isPlaying = true;
-      icon.className = 'bx bx-pause';
-    }).catch(err => {
-      console.warn("Otomatik oynatma engellendi, tıklamayla başlatılacak.");
-    });
-  };
-
-  // 🔊 Butona tıklanınca durdur/başlat
+  // 👆 Butona tıklama: oynat / durdur
   btn.addEventListener("click", () => {
     if (isPlaying) {
       audio.pause();
@@ -95,14 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
   });
- 
-  // ✅ Otomatik butona tıklama (bazı tarayıcılarda çalışır)
-  setTimeout(() => {
-    btn.click(); // Kullanıcı tıklamış gibi davran
-  }, 500);
 
   wrapper.appendChild(btn);
   document.body.appendChild(wrapper);
-}); 
-
- 
+});
