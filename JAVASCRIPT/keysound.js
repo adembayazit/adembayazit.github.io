@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   if (!localStorage.getItem('audioPlayed')) {
-    const audio = new Audio('/sounds/welcome.mp3');
+    const audio = new Audio('/SOUND/keysound.mp3');
     audio.volume = 0.5; // Ses seviyesi (%50)
 
     // 1. Otomatik başlatmayı dene (tarayıcı izin verirse)
