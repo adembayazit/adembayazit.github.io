@@ -95,5 +95,14 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
   });
+ 
+  // ✅ Otomatik butona tıklama (bazı tarayıcılarda çalışır)
+  setTimeout(() => {
+    btn.click(); // Kullanıcı tıklamış gibi davran
+  }, 500);
+
+  wrapper.appendChild(btn);
+  document.body.appendChild(wrapper);
+}); 
 
  
