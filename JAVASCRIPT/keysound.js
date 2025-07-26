@@ -11,46 +11,47 @@ document.addEventListener("DOMContentLoaded", () => {
   btn.style.cssText = `
     background: limegreen;
     color: white;
-    font-size: 20px;
+    font-size: 18px;
     border: 1px solid white;
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
-    transition: transform 0.2s;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    padding: 0;
   `;
 
-  // 🔊 İkonu ekle
+  // 🔊 bx-play ikonu
   const icon = document.createElement('i');
   icon.className = 'bx bx-play';
   icon.style.cssText = `
-    font-size: 24px;
+    font-size: 18px;
     pointer-events: none;
+    margin-top: 1px;
   `;
   btn.appendChild(icon);
 
-  // Tooltip
+  // 🎧 Tooltip
   const tooltip = document.createElement("div");
   tooltip.innerText = "Sesli mesajınız var";
   tooltip.style.cssText = `
     position: absolute;
-    bottom: 46px;
+    bottom: 38px;
     left: 50%;
     transform: translateX(-50%);
     background: rgba(0,0,0,0.85);
     color: white;
-    padding: 6px 10px;
-    font-size: 13px;
-    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 11px;
+    border-radius: 5px;
     opacity: 0;
     pointer-events: none;
-    white-space: nowrap;
     transition: opacity 0.3s ease;
+    white-space: nowrap;
     font-family: system-ui, sans-serif;
   `;
   btn.appendChild(tooltip);
@@ -62,8 +63,10 @@ document.addEventListener("DOMContentLoaded", () => {
     tooltip.style.opacity = "0";
   });
 
+  // 🔈 Ses çalma
   btn.addEventListener("click", () => {
     const audio = new Audio("/SOUND/keysound.mp3");
+    audio.volume = 1.0;
     audio.play().catch(err => {
       console.error("Ses çalma hatası:", err);
     });
