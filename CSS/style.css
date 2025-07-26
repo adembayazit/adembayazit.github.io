@@ -715,25 +715,27 @@ canvas {
 }
 .translation-icon {
   display: inline-block;
-  width: 24px;               /* Sabit genişlik */
-  height: 16px;              /* Sabit yükseklik */
+  width: 20px;               /* Kare için eşit genişlik ve yükseklik */
+  height: 20px;
   background-position: center;
-  background-size: cover;    /* Tüm alanı kaplayacak şekilde */
+  background-size: contain;   /* Bayrağın tamamını göster (orijinal oran korunur) */
   background-repeat: no-repeat;
   cursor: pointer;
   margin-left: 6px;
   padding: 0;
   box-sizing: border-box;
-  line-height: 0;            /* Yazı satırı yüksekliğini sıfırla */
-  vertical-align: middle;    /* Diğer inline öğelerle hizala */
+  line-height: 0;
+  vertical-align: middle;
   border: 0.5px solid transparent;
-  transition: transform 0.2s ease, border 0.2s ease;
+  transition: all 0.2s ease;
+  overflow: hidden;          /* Taşan kısımları kes */
 }
 
 .translation-icon:hover {
   transform: scale(1.15);
   border: 0.5px solid white;
-  border-radius: 2px;
+  border-radius: 3px;
+  background-size: cover;    /* Hover'da tam kareyi kapla (opsiyonel) */
 }
 
 .tooltip-box {
