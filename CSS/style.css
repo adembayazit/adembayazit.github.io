@@ -714,23 +714,27 @@ canvas {
   cursor: pointer;
 }
 .translation-icon {
-  display: inline-block;
-  min-width: 18px;  /* Minimum genişlik */
-  width: auto;      /* İçerik genişliğine göre otomatik esneme */
-  height: 12px;     /* Sabit yükseklik */
+  display: inline-flex;       /* Flex ile içeriği daha iyi hizalar */
+  justify-content: center;   /* İçeriği yatayda ortalar */
+  align-items: center;       /* İçeriği dikeyde ortalar */
+  width: 24px;               /* Sabit genişlik (bayrak oranına göre ayarlayın) */
+  height: 16px;              /* Sabit yükseklik */
   background-position: center;
-  background-size: contain;  /* İkonun tamamı görünecek şekilde */
+  background-size: cover;    /* Tüm alanı kaplayacak şekilde */
   background-repeat: no-repeat;
   cursor: pointer;
   margin-left: 6px;
-  padding: 0 4px;   /* Yanlardan padding */
-  box-sizing: border-box; /* Padding'i genişliğe dahil et */
+  padding: 0;                /* Padding'i kaldırıyoruz */
+  box-sizing: border-box;
+  transition: transform 0.2s ease, border 0.2s ease; /* Daha smooth geçiş */
+  border: 0.5px solid transparent; /* Hover'da çıkacak border için hazırlık */
 }
 
-/* Hover: çerçeve + büyüme */
+/* Hover efekti */
 .translation-icon:hover {
-  transform: scale(1.1);
+  transform: scale(1.15);    /* Daha belirgin büyüme */
   border: 0.5px solid white;
+  border-radius: 2px;        /* Hafif yuvarlak köşe (opsiyonel) */
 }
 
 .tooltip-box {
