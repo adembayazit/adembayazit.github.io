@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
   tooltip.style.cssText = `
     position: absolute;
     bottom: 38px;
-    right: 50%;
+    left: 50%;
     transform: translateX(-50%);
     background: rgba(0,0,0,0.85);
     color: white;
