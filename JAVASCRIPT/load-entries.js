@@ -65,7 +65,7 @@ function createEntryElement(entry, container, depth) {
     <div class="timestamp"><span class="fa-solid fa-bug bug-iconentry"></span> ${time}</div>
     <div class="entry-id">#${entry.id}</div>
     <div class="content">${entry.content}</div>
-    <div class="daisy">🌼</div>
+    <div class="daisy">20 🌼 Drop a daisy</div>
   `;
   
   container.appendChild(entryDiv);
