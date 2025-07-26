@@ -715,58 +715,27 @@ canvas {
 }
 .translation-icon {
   display: inline-block;
-  margin-left: 6px;
-  position: relative;
-  width: 24px;
-  height: 24px;
+  width: 21px;
+  height: 21px;
   background-color: limegreen;
-  color: white;
-  font-size: 14px;
-  font-family: system-ui, sans-serif;
+  border: 2px solid white;
   border-radius: 50%;
-  text-align: center;
-  line-height: 24px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 0 2px rgba(0,0,0,0.1);
+  margin-left: 6px;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  box-shadow: 0 0 3px rgba(0,0,0,0.2);
+}
+
+.translation-icon.fi {
+  background-position: center;
+  background-size: cover;
 }
 
 .translation-icon:hover {
   background-color: white;
-  color: red;
+  border-color: red;
 }
 
-.translation-icon::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  top: 50%;
-  left: -8px;
-  transform: translate(-100%, -50%);
-  white-space: nowrap;
-  background-color: rgba(0,0,0,0.75);
-  color: white;
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-size: 13px;
-  font-family: inherit;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease;
-  z-index: 10;
-}
-
-.translation-icon:hover::after {
-  opacity: 1;
-}
-
-@media (max-width: 600px) {
-  .translation-icon {
-    width: 20px;
-    height: 20px;
-    font-size: 12px;
-    line-height: 20px;
-  }
-}
 .tooltip-box {
   position: absolute;
   top: -32px;
