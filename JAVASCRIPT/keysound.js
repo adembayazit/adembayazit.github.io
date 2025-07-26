@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let isPlaying = false;
 
-  // Sayfa açıldığında otomatik çal
+  // Sayfa açıldığında otomatik çal veya kullanıcı tıklamasını bekle
   const tryAutoPlay = () => {
     audio.play().then(() => {
       isPlaying = true;
@@ -79,9 +79,8 @@ document.addEventListener("DOMContentLoaded", () => {
       console.warn("Otomatik oynatma engellendi, tıklamayla başlatılacak.");
     });
   };
-  tryAutoPlay();
 
-  // Butona tıklanınca durdur/başlat
+  // 🔊 Butona tıklanınca durdur/başlat
   btn.addEventListener("click", () => {
     if (isPlaying) {
       audio.pause();
@@ -96,6 +95,11 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
   });
+
+  // ✅ Otomatik butona tıklama (bazı tarayıcılarda çalışır)
+  setTimeout(() => {
+    btn.click(); // Kullanıcı tıklamış gibi davran
+  }, 700);
 
   wrapper.appendChild(btn);
   document.body.appendChild(wrapper);
