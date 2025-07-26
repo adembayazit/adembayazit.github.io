@@ -62,7 +62,7 @@ function createEntryElement(entry, container, depth) {
   }).replace(",", "");
 
   entryDiv.innerHTML = `
-    <div class="timestamp">🗓 ${time}</div>
+    <div class="timestamp"><span class="fa-solid fa-bug"> ${time}</div>
     <div class="entry-id">#${entry.id}</div>
     <div class="content">${entry.content}</div>
   `;
