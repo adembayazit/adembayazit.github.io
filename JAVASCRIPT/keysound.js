@@ -35,14 +35,13 @@ document.addEventListener("DOMContentLoaded", () => {
   `;
   btn.appendChild(icon);
 
-  // ✅ Tooltip sola hizalı ve alt alta
+  // ✅ Tooltip sola hizalı, genişliği sınırlı, kelimeye göre kırılır
   const tooltip = document.createElement("div");
   tooltip.innerText = "Acoustic Steganography";
   tooltip.style.cssText = `
     position: absolute;
     bottom: 38px;
     left: 0;
-    transform: none;
     background: rgba(0,0,0,0.85);
     color: white;
     padding: 4px 8px;
@@ -52,9 +51,9 @@ document.addEventListener("DOMContentLoaded", () => {
     pointer-events: none;
     transition: opacity 0.3s ease;
     font-family: system-ui, sans-serif;
-    max-width: 120px;
+    max-width: 140px;
     white-space: normal;
-    word-break: break-word;
+    word-break: normal;
   `;
   btn.appendChild(tooltip);
 
