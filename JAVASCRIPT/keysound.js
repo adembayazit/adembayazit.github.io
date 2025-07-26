@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 🔈 Ses çalma
   btn.addEventListener("click", () => {
-    const audio = new Audio("/SOUND/keysound.mp3");
+    const audio = new Audio("/SOUND/klavyesound.mp3");
     audio.volume = 1.0;
     audio.play().catch(err => {
       console.error("Ses çalma hatası:", err);
