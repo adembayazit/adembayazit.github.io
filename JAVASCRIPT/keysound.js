@@ -25,9 +25,9 @@ document.addEventListener("DOMContentLoaded", () => {
     padding: 0;
   `;
 
-  // 🔊 bx-play ikonu
+  // 🎧 İkon
   const icon = document.createElement('i');
-  icon.className = 'bx bx-play';
+  icon.className = 'bx bx-pause'; // Başlangıçta ses çalıyor gibi görünmesi için
   icon.style.cssText = `
     font-size: 18px;
     pointer-events: none;
@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
   `;
   btn.appendChild(icon);
 
-  // 🎧 Tooltip
+  // 🎤 Tooltip
   const tooltip = document.createElement("div");
   tooltip.innerText = "Sesli mesajınız var";
   tooltip.style.cssText = `
@@ -63,13 +63,38 @@ document.addEventListener("DOMContentLoaded", () => {
     tooltip.style.opacity = "0";
   });
 
-  // 🔈 Ses çalma
-  btn.addEventListener("click", () => {
-    const audio = new Audio("/SOUND/klavyesound.mp3");
-    audio.volume = 1.0;
-    audio.play().catch(err => {
-      console.error("Ses çalma hatası:", err);
+  // 🎵 Ses oynatıcı
+  const audio = new Audio("/SOUND/klavyesound.mp3");
+  audio.loop = true;
+  audio.volume = 1.0;
+
+  let isPlaying = false;
+
+  // Sayfa açıldığında otomatik çal
+  const tryAutoPlay = () => {
+    audio.play().then(() => {
+      isPlaying = true;
+      icon.className = 'bx bx-pause';
+    }).catch(err => {
+      console.warn("Otomatik oynatma engellendi, tıklamayla başlatılacak.");
     });
+  };
+  tryAutoPlay();
+
+  // Butona tıklanınca durdur/başlat
+  btn.addEventListener("click", () => {
+    if (isPlaying) {
+      audio.pause();
+      isPlaying = false;
+      icon.className = 'bx bx-play';
+    } else {
+      audio.play().then(() => {
+        isPlaying = true;
+        icon.className = 'bx bx-pause';
+      }).catch(err => {
+        console.error("Ses başlatılamadı:", err);
+      });
+    }
   });
 
   wrapper.appendChild(btn);
