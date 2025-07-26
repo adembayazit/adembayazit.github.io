@@ -27,7 +27,7 @@ async function addTranslationIcons() {
 
     const icon = document.createElement("span");
     icon.classList.add("translation-icon");
-    icon.textContent = "🇹🇷";
+    icon.textContent = "TR";
    
     // Toggle çeviri: Türkçe <-> İngilizce
     let isTranslated = false;
