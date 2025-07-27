@@ -160,8 +160,8 @@ function createEntryElement(entry, container, depth) {
 
     <!-- 🌼 Papatya Beğeni Butonu -->
     <div class="daisy-like" data-entry-id="${entry.id}">
-      <img src="IMAGES/daisy.svg" class="daisy-icon" alt="Beğen" />
       <span class="like-count">0</span>
+      <img src="IMAGES/daisy.svg" class="daisy-icon" alt="Beğen" />
     </div>
   `;
 
