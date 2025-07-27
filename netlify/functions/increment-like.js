@@ -1,61 +1,31 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 exports.handler = async (event) => {
-  // ✅ CORS preflight için
-  if (event.httpMethod === 'OPTIONS') {
-    return {
-      statusCode: 204,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
-      },
-      body: '',
-    };
-  }
-
-  // ❌ GET isteği kabul edilmez
-  if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      headers: {
-        'Allow': 'POST',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: 'Method Not Allowed',
-    };
+  if (event.httpMethod !== "POST") {
+    return { statusCode: 405, body: "Method Not Allowed" };
   }
 
   try {
-    const filePath = path.resolve(__dirname, 'likes.json');
-    const likesData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    const { id } = JSON.parse(event.body);
+    const filePath = path.resolve(__dirname, "likes.json");
 
-    const { entryId } = JSON.parse(event.body);
-
-    if (!entryId) {
-      throw new Error('Missing entryId');
+    let data = {};
+    if (fs.existsSync(filePath)) {
+      data = JSON.parse(fs.readFileSync(filePath, "utf8"));
     }
 
-    likesData[entryId] = (likesData[entryId] || 0) + 1;
+    data[id] = (data[id] || 0) + 1;
 
-    fs.writeFileSync(filePath, JSON.stringify(likesData, null, 2));
+    fs.writeFileSync(filePath, JSON.stringify(data));
 
     return {
       statusCode: 200,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({ success: true, likes: likesData[entryId] }),
+      body: JSON.stringify({ id, likes: data[id] }),
+      headers: { "Access-Control-Allow-Origin": "*" },
     };
-  } catch (err) {
-    console.error("increment-like error:", err);
-    return {
-      statusCode: 500,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({ success: false, error: err.message }),
-    };
+  } catch (error) {
+    console.error("increment-like error:", error);
+    return { statusCode: 500, body: "Server Error" };
   }
 };
