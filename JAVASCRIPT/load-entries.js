@@ -40,7 +40,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       });
 
-      // ✅ Entry'ler DOM'a eklendikten sonra çeviri ikonlarını ekle
       addTranslationIcons();
     });
 });
@@ -48,11 +47,11 @@ document.addEventListener("DOMContentLoaded", () => {
 function createEntryElement(entry, container, depth) {
   const entryDiv = document.createElement("div");
   entryDiv.className = "entry";
-  
+
   if (depth > 0) {
     entryDiv.classList.add("child-entry");
   }
-  
+
   const time = new Date(entry.date).toLocaleString("tr-TR", {
     year: "numeric",
     month: "2-digit",
@@ -65,8 +64,37 @@ function createEntryElement(entry, container, depth) {
     <div class="timestamp"><span class="fa-solid fa-bug bug-iconentry"></span> ${time}</div>
     <div class="entry-id">#${entry.id}</div>
     <div class="content">${entry.content}</div>
-    <div class="daisy">20 🌼 Drop a daisy</div>
+
+    <!-- 🌼 Papatya beğeni sistemi -->
+    <div class="daisy-like" data-entry-id="${entry.id}">
+      <img src="/images/daisy.svg" class="daisy-icon" onclick="likeEntry(this)" />
+      <span class="like-count">0</span>
+    </div>
   `;
-  
+
   container.appendChild(entryDiv);
+
+  // Beğeni sayısını yükle
+  fetch(`/.netlify/functions/get-likes?id=${entry.id}`)
+    .then((res) => res.json())
+    .then((data) => {
+      entryDiv.querySelector(".like-count").textContent = data.likes || 0;
+    });
+}
+
+// Beğeni arttırma fonksiyonu
+function likeEntry(imgElement) {
+  const container = imgElement.closest(".daisy-like");
+  const entryId = container.getAttribute("data-entry-id");
+  const countSpan = container.querySelector(".like-count");
+
+  fetch("/.netlify/functions/increment-like", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id: entryId })
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      countSpan.textContent = data.likes;
+    });
 }
