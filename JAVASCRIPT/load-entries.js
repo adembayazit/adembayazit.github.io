@@ -68,10 +68,10 @@ function createEntryElement(entry, container, depth) {
   const likeCountSpan = likeContainer.querySelector(".like-count");
   const likeIcon = likeContainer.querySelector(".daisy-icon");
 
-  // Beğeni sayısını al
+  // ✅ Beğeni sayısını al
   fetch(`/.netlify/functions/get-likes?id=${entry.id}`)
     .then((res) => {
-      if (!res.ok) throw new Error("get-likes fetch failed");
+      if (!res.ok) throw new Error(`get-likes fetch failed (Status: ${res.status})`);
       return res.json();
     })
     .then((data) => {
@@ -82,7 +82,7 @@ function createEntryElement(entry, container, depth) {
       likeCountSpan.textContent = "0";
     });
 
-  // Tıklama eventi
+  // ✅ Tıklama eventi
   likeIcon.addEventListener("click", () => {
     fetch(`/.netlify/functions/increment-like`, {
       method: "POST",
@@ -90,7 +90,7 @@ function createEntryElement(entry, container, depth) {
       body: JSON.stringify({ id: entry.id })
     })
       .then((res) => {
-        if (!res.ok) throw new Error("increment-like fetch failed");
+        if (!res.ok) throw new Error(`increment-like fetch failed (Status: ${res.status})`);
         return res.json();
       })
       .then((data) => {
