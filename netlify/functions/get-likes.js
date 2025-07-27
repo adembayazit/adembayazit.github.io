@@ -2,24 +2,32 @@ const fs = require("fs");
 const path = require("path");
 
 exports.handler = async (event) => {
-  if (event.httpMethod !== "GET") {
-    return { statusCode: 405, body: "Method Not Allowed" };
+  const id = event.queryStringParameters?.id;
+  const likesFilePath = path.resolve(__dirname, "likes.json");
+
+  if (!id) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ error: "Missing ID" })
+    };
   }
 
   try {
-    const id = event.queryStringParameters.id;
-    const filePath = path.resolve(__dirname, "likes.json");
-    const file = fs.readFileSync(filePath, "utf8");
-    const data = JSON.parse(file);
+    const data = JSON.parse(fs.readFileSync(likesFilePath, "utf-8"));
     const likes = data[id] || 0;
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ id, likes }),
-      headers: { "Access-Control-Allow-Origin": "*" },
+      headers: {
+        "Access-Control-Allow-Origin": "*"
+      },
+      body: JSON.stringify({ id, likes })
     };
-  } catch (error) {
-    console.error("get-likes error:", error);
-    return { statusCode: 500, body: "Server Error" };
+  } catch (err) {
+    console.error("get-likes.js error:", err);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "Internal Server Error" })
+    };
   }
 };
