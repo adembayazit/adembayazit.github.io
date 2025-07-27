@@ -3,9 +3,9 @@ document.addEventListener("DOMContentLoaded", () => {
     .then((res) => res.json())
     .then((data) => {
       const container = document.getElementById("entries");
-      container.innerHTML = '';
+      container.innerHTML = "";
 
-      const sortedEntries = data.sort((a, b) => 
+      const sortedEntries = data.sort((a, b) =>
         new Date(b.date) - new Date(a.date)
       );
 
@@ -14,11 +14,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const entriesMap = new Map();
       const parentEntries = [];
 
-      last7Entries.forEach(entry => {
-        entriesMap.set(entry.id, {...entry, children: []});
+      last7Entries.forEach((entry) => {
+        entriesMap.set(entry.id, { ...entry, children: [] });
       });
 
-      last7Entries.forEach(entry => {
+      last7Entries.forEach((entry) => {
         if (entry.references && entry.references.length > 0) {
           const parentId = entry.references[0];
           if (entriesMap.has(parentId)) {
@@ -31,32 +31,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
       parentEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-      parentEntries.forEach(parent => {
+      parentEntries.forEach((parent) => {
         createEntryElement(parent, container, 0);
         const children = entriesMap.get(parent.id)?.children || [];
         children.sort((a, b) => new Date(a.date) - new Date(b.date));
-        children.forEach(child => {
+        children.forEach((child) => {
           createEntryElement(child, container, 1);
         });
       });
 
-      // ✅ Entry'ler DOM'a eklendikten sonra çeviri ikonlarını ekle
-      addTranslationIcons();
+      addTranslationIcons(); // varsa çeviri sistemini de çağır
     });
 });
 
 function createEntryElement(entry, container, depth) {
   const entryDiv = document.createElement("div");
   entryDiv.className = "entry";
-  
-  if (depth > 0) {
-    entryDiv.classList.add("child-entry");
-  }
-  
-  function createEntryElement(entry, container, depth) {
-  const entryDiv = document.createElement("div");
-  entryDiv.className = "entry";
-  
   if (depth > 0) {
     entryDiv.classList.add("child-entry");
   }
@@ -69,7 +59,6 @@ function createEntryElement(entry, container, depth) {
     minute: "2-digit"
   }).replace(",", "");
 
-  // HTML içeriği düzgün kapatıldı
   entryDiv.innerHTML = `
     <div class="timestamp">
       <span class="fa-solid fa-bug bug-iconentry"></span> ${time}
@@ -80,16 +69,42 @@ function createEntryElement(entry, container, depth) {
     <div class="entry-box" data-entry-id="${entry.id}">
       <div class="entry-content">${entry.content}</div>
 
-      <!-- ❤️ Papatya Like Butonu -->
       <div class="like-container" data-entry-id="${entry.id}">
-        <img src="/images/daisy.svg" class="daisy-icon" onclick="likeEntry(this)" />
+        <img src="/IMAGES/daisy.svg" class="daisy-icon" onclick="likeEntry(this)" />
         <span class="like-count">0</span>
       </div>
     </div>
   `;
 
-  // Bu satır fonksiyon içinde olmalı
   container.appendChild(entryDiv);
+
+  // Sayfa yüklendiğinde like sayısını getir
+  fetch(`/.netlify/functions/get-likes?id=${entry.id}`)
+    .then((res) => res.json())
+    .then((data) => {
+      const likeCountSpan = entryDiv.querySelector(".like-count");
+      if (data && data.likes !== undefined) {
+        likeCountSpan.textContent = data.likes;
+      }
+    })
+    .catch((err) => console.error("Like yükleme hatası:", err));
 }
 
-
+function likeEntry(img) {
+  const entryId = img.closest(".like-container").dataset.entryId;
+  fetch("/.netlify/functions/like-entry", {
+    method: "POST",
+    body: JSON.stringify({ id: entryId }),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data && data.likes !== undefined) {
+        const likeCountSpan = img.nextElementSibling;
+        likeCountSpan.textContent = data.likes;
+      }
+    })
+    .catch((err) => console.error("Beğeni hatası:", err));
+}
