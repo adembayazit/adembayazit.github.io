@@ -1,51 +1,103 @@
-document.addEventListener("DOMContentLoaded", async () => {
-  const container = document.getElementById("entries");
+document.addEventListener("DOMContentLoaded", () => {
+  fetch("entries.json")
+    .then((res) => res.json())
+    .then((data) => {
+      const container = document.getElementById("entries");
+      container.innerHTML = "";
 
-  // Entries JSON'u yükle
-  const entries = await fetch("entries.json").then(res => res.json());
+      const sortedEntries = data.sort((a, b) => new Date(b.date) - new Date(a.date));
+      const last7Entries = sortedEntries.slice(0, 7);
 
-  for (const entry of entries) {
-    const entryCard = document.createElement("div");
-    entryCard.classList.add("entry-card");
-    entryCard.dataset.entryId = entry.id;
+      const entriesMap = new Map();
+      const parentEntries = [];
 
-    // Entry içeriği
-    entryCard.innerHTML = `
-      <div class="entry-content">
-        <p>${entry.content}</p>
-      </div>
-      <div class="entry-footer">
-        <span class="entry-id">#${entry.id}</span>
-        <button class="like-btn" title="Beğen">
-          <img src="/images/daisy.svg" class="like-icon" />
-          <span class="like-count">0</span>
-        </button>
-      </div>
-    `;
+      last7Entries.forEach(entry => {
+        entriesMap.set(entry.id, { ...entry, children: [] });
+      });
 
-    container.appendChild(entryCard);
+      last7Entries.forEach(entry => {
+        if (entry.references && entry.references.length > 0) {
+          const parentId = entry.references[0];
+          if (entriesMap.has(parentId)) {
+            entriesMap.get(parentId).children.push(entry);
+          }
+        } else {
+          parentEntries.push(entry);
+        }
+      });
 
-    // Beğeni sayısını getir
-    try {
-      const res = await fetch(`/.netlify/functions/get-likes?id=${entry.id}`);
-      const data = await res.json();
-      const countSpan = entryCard.querySelector(".like-count");
-      if (data.likes !== undefined) countSpan.textContent = data.likes;
-    } catch (e) {
-      console.error(`Beğeni yüklenemedi (ID: ${entry.id}):`, e);
-    }
+      parentEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-    // Beğeni butonuna tıklama
-    const likeBtn = entryCard.querySelector(".like-btn");
-    likeBtn.addEventListener("click", async () => {
-      try {
-        const res = await fetch(`/.netlify/functions/increment-like`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ id: entry.id })
+      parentEntries.forEach(parent => {
+        createEntryElement(parent, container, 0);
+        const children = entriesMap.get(parent.id)?.children || [];
+        children.sort((a, b) => new Date(a.date) - new Date(b.date));
+        children.forEach(child => {
+          createEntryElement(child, container, 1);
         });
-        const data = await res.json();
-        const countSpan = entryCard.querySelector(".like-count");
-        if (d
+      });
+
+      addTranslationIcons?.();
+    });
+});
+
+function createEntryElement(entry, container, depth) {
+  const entryDiv = document.createElement("div");
+  entryDiv.className = "entry";
+  if (depth > 0) entryDiv.classList.add("child-entry");
+
+  const time = new Date(entry.date).toLocaleString("tr-TR", {
+    year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit"
+  }).replace(",", "");
+
+  entryDiv.innerHTML = `
+    <div class="timestamp"><span class="fa-solid fa-bug bug-iconentry"></span> ${time}</div>
+    <div class="entry-id">#${entry.id}</div>
+    <div class="content">${entry.content}</div>
+
+    <!-- 🌼 Papatya Beğeni Butonu -->
+    <div class="daisy-like" data-entry-id="${entry.id}">
+      <span class="like-count">...</span>
+      <img src="IMAGES/daisy.svg" class="daisy-icon" />
+    </div>
+  `;
+
+  container.appendChild(entryDiv);
+
+  const likeContainer = entryDiv.querySelector(".daisy-like");
+  const likeCountSpan = likeContainer.querySelector(".like-count");
+  const likeIcon = likeContainer.querySelector(".daisy-icon");
+
+  // ✅ Beğeni sayısını al
+  fetch(`/.netlify/functions/get-likes?id=${entry.id}`)
+    .then((res) => {
+      if (!res.ok) throw new Error(`get-likes fetch failed (Status: ${res.status})`);
+      return res.json();
+    })
+    .then((data) => {
+      likeCountSpan.textContent = data.likes ?? 0;
+    })
+    .catch((err) => {
+      console.error("get-likes error:", err);
+      likeCountSpan.textContent = "0";
+    });
+
+  // ✅ Tıklama eventi
+  likeIcon.addEventListener("click", () => {
+    fetch(`/.netlify/functions/increment-like`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: entry.id })
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error(`increment-like fetch failed (Status: ${res.status})`);
+        return res.json();
+      })
+      .then((data) => {
+        likeCountSpan.textContent = data.likes ?? 0;
+      })
+      .catch((err) => {
+        console.error("increment-like error:", err);
+      });
+  });
+}
