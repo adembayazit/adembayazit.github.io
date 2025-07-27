@@ -1,29 +1,29 @@
 const fs = require("fs");
 const path = require("path");
 
+const likesFilePath = path.resolve(__dirname, "likes.json");
+
 exports.handler = async (event) => {
   if (event.httpMethod !== "POST") {
     return {
       statusCode: 405,
-      headers: { 'Allow': 'POST' },
-      body: "Method Not Allowed",
+      body: JSON.stringify({ error: "Yalnızca POST istekleri kabul edilir." })
     };
   }
 
-  const { id } = JSON.parse(event.body || "{}");
-  const dbPath = path.join(__dirname, "likes.json");
+  const { id } = JSON.parse(event.body);
 
-  let db = {};
-  if (fs.existsSync(dbPath)) {
-    db = JSON.parse(fs.readFileSync(dbPath));
+  let likes = {};
+  if (fs.existsSync(likesFilePath)) {
+    likes = JSON.parse(fs.readFileSync(likesFilePath));
   }
 
-  db[id] = (db[id] || 0) + 1;
-  fs.writeFileSync(dbPath, JSON.stringify(db, null, 2));
+  likes[id] = (likes[id] || 0) + 1;
+
+  fs.writeFileSync(likesFilePath, JSON.stringify(likes));
 
   return {
     statusCode: 200,
-    headers: { 'Access-Control-Allow-Origin': '*' },
-    body: JSON.stringify({ likes: db[id] }),
+    body: JSON.stringify({ likes: likes[id] })
   };
 };
