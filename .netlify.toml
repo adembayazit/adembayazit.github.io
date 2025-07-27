@@ -1,24 +1,22 @@
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+  command = "npm install && npm run build"
+
 [functions]
   node_bundler = "esbuild"
   included_files = [
-    "netlify/functions/*.js",
-    "netlify/functions/likes.json",
-    "package.json"
+    "netlify/functions/likes.json"
   ]
 
 [build.environment]
   FORCE_IPV4 = "true"
   NODE_VERSION = "18"
 
-[build]
-  command = "npm install && npm run build"
-  functions = "netlify/functions"
-  publish = "public"
-
 [[headers]]
   for = "/.netlify/functions/*"
   [headers.values]
-    X-NF-Client-Connection-IP = ":client-ip"
     Access-Control-Allow-Origin = "*"
     Access-Control-Allow-Methods = "GET, POST, OPTIONS"
     Access-Control-Allow-Headers = "Content-Type"
+    X-NF-Client-Connection-IP = ":client-ip"
