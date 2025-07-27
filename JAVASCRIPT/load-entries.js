@@ -67,7 +67,7 @@ function createEntryElement(entry, container, depth) {
 
     <!-- 🌼 Papatya beğeni sistemi -->
     <div class="daisy-like" data-entry-id="${entry.id}">
-      <img src="/images/daisy.svg" class="daisy-icon" onclick="likeEntry(this)" />
+      <img src="/IMAGES/daisy.svg" class="daisy-icon" onclick="likeEntry(this)" />
       <span class="like-count">0</span>
     </div>
   `;
