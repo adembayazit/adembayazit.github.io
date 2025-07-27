@@ -1,33 +1,44 @@
 const fs = require("fs");
 const path = require("path");
 
-exports.handler = async (event) => {
-  const id = event.queryStringParameters?.id;
-  const likesFilePath = path.resolve(__dirname, "likes.json");
+const likesFile = path.resolve(__dirname, "../../likes.json");
 
-  if (!id) {
+exports.handler = async (event) => {
+  const headers = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Methods": "GET, OPTIONS"
+  };
+
+  // ✅ Preflight isteği
+  if (event.httpMethod === "OPTIONS") {
+    return { statusCode: 204, headers };
+  }
+
+  if (event.httpMethod !== "GET") {
     return {
-      statusCode: 400,
-      body: JSON.stringify({ error: "Missing ID" })
+      statusCode: 405,
+      headers,
+      body: JSON.stringify({ error: "Method Not Allowed" }),
     };
   }
 
   try {
-    const data = JSON.parse(fs.readFileSync(likesFilePath, "utf-8"));
+    const id = event.queryStringParameters.id;
+    const data = JSON.parse(fs.readFileSync(likesFile, "utf8"));
     const likes = data[id] || 0;
 
     return {
       statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*"
-      },
-      body: JSON.stringify({ id, likes })
+      headers,
+      body: JSON.stringify({ likes }),
     };
   } catch (err) {
     console.error("get-likes.js error:", err);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Internal Server Error" })
+      headers,
+      body: JSON.stringify({ error: "Internal Server Error" }),
     };
   }
 };
