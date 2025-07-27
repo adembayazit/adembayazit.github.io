@@ -1,15 +1,25 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 exports.handler = async (event) => {
-  const filePath = path.resolve(__dirname, 'likes.json');
-  const likesData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+  if (event.httpMethod !== "GET") {
+    return { statusCode: 405, body: "Method Not Allowed" };
+  }
 
-  return {
-    statusCode: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-    },
-    body: JSON.stringify(likesData),
-  };
+  try {
+    const id = event.queryStringParameters.id;
+    const filePath = path.resolve(__dirname, "likes.json");
+    const file = fs.readFileSync(filePath, "utf8");
+    const data = JSON.parse(file);
+    const likes = data[id] || 0;
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ id, likes }),
+      headers: { "Access-Control-Allow-Origin": "*" },
+    };
+  } catch (error) {
+    console.error("get-likes error:", error);
+    return { statusCode: 500, body: "Server Error" };
+  }
 };
