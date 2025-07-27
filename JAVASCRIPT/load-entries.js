@@ -53,6 +53,14 @@ function createEntryElement(entry, container, depth) {
     entryDiv.classList.add("child-entry");
   }
   
+  function createEntryElement(entry, container, depth) {
+  const entryDiv = document.createElement("div");
+  entryDiv.className = "entry";
+  
+  if (depth > 0) {
+    entryDiv.classList.add("child-entry");
+  }
+
   const time = new Date(entry.date).toLocaleString("tr-TR", {
     year: "numeric",
     month: "2-digit",
@@ -61,22 +69,26 @@ function createEntryElement(entry, container, depth) {
     minute: "2-digit"
   }).replace(",", "");
 
+  // HTML içeriği düzgün kapatıldı
   entryDiv.innerHTML = `
-    <div class="timestamp"><span class="fa-solid fa-bug bug-iconentry"></span> ${time}</div>
+    <div class="timestamp">
+      <span class="fa-solid fa-bug bug-iconentry"></span> ${time}
+    </div>
     <div class="entry-id">#${entry.id}</div>
     <div class="content">${entry.content}</div>
-    <div class="entry-box" data-entry-id="${entry.id}">
-  <div class="entry-content">
-    ${entry.content}
-  </div>
 
-  <!-- ❤️ Papatya Like Butonu -->
-  <div class="like-container" data-entry-id="${entry.id}">
-    <img src="/images/daisy.svg" class="daisy-icon" onclick="likeEntry(this)" />
-    <span class="like-count">0</span>
-  </div>
-</div>
-  
+    <div class="entry-box" data-entry-id="${entry.id}">
+      <div class="entry-content">${entry.content}</div>
+
+      <!-- ❤️ Papatya Like Butonu -->
+      <div class="like-container" data-entry-id="${entry.id}">
+        <img src="/images/daisy.svg" class="daisy-icon" onclick="likeEntry(this)" />
+        <span class="like-count">0</span>
+      </div>
+    </div>
+  `;
+
+  // Bu satır fonksiyon içinde olmalı
   container.appendChild(entryDiv);
 }
 
