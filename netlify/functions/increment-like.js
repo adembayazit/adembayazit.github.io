@@ -2,32 +2,60 @@ const fs = require('fs');
 const path = require('path');
 
 exports.handler = async (event) => {
-  if (event.httpMethod !== "POST") {
-    return { statusCode: 405, body: "Method Not Allowed" };
+  // ✅ CORS preflight için
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 204,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      },
+      body: '',
+    };
   }
 
-  const { id } = JSON.parse(event.body || '{}');
-  if (!id) return { statusCode: 400, body: "Missing ID" };
-
-  const filePath = path.resolve(__dirname, 'likes.json');
+  // ❌ GET isteği kabul edilmez
+  if (event.httpMethod !== 'POST') {
+    return {
+      statusCode: 405,
+      headers: {
+        'Allow': 'POST',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: 'Method Not Allowed',
+    };
+  }
 
   try {
-    let likesData = {};
-    if (fs.existsSync(filePath)) {
-      const raw = fs.readFileSync(filePath);
-      likesData = JSON.parse(raw);
+    const filePath = path.resolve(__dirname, 'likes.json');
+    const likesData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+
+    const { entryId } = JSON.parse(event.body);
+
+    if (!entryId) {
+      throw new Error('Missing entryId');
     }
 
-    likesData[id] = (likesData[id] || 0) + 1;
+    likesData[entryId] = (likesData[entryId] || 0) + 1;
+
     fs.writeFileSync(filePath, JSON.stringify(likesData, null, 2));
 
     return {
       statusCode: 200,
-      headers: { 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify({ likes: likesData[id] })
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: JSON.stringify({ success: true, likes: likesData[entryId] }),
     };
   } catch (err) {
-    console.error("increment-like.js error:", err);
-    return { statusCode: 500, body: "Error updating like count" };
+    console.error("increment-like error:", err);
+    return {
+      statusCode: 500,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: JSON.stringify({ success: false, error: err.message }),
+    };
   }
 };
