@@ -1,10 +1,12 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
-const filePath = path.resolve(__dirname, 'likes.json');
+const filePath = path.resolve(__dirname, "likes.json");
 
 exports.handler = async function (event) {
-  const entryId = event.queryStringParameters.id;
+  const entryId = event.httpMethod === "POST"
+    ? JSON.parse(event.body)?.id
+    : event.queryStringParameters?.id;
 
   if (!entryId) {
     return {
@@ -14,47 +16,30 @@ exports.handler = async function (event) {
   }
 
   let likesData = {};
-
-  try {
-    if (fs.existsSync(filePath)) {
-      likesData = JSON.parse(fs.readFileSync(filePath));
-    }
-  } catch (err) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: "File read error" }),
-    };
+  if (fs.existsSync(filePath)) {
+    likesData = JSON.parse(fs.readFileSync(filePath));
   }
 
-  // POST: like arttır
-  if (event.httpMethod === "POST") {
-    likesData[entryId] = (likesData[entryId] || 0) + 1;
-
-    try {
-      fs.writeFileSync(filePath, JSON.stringify(likesData, null, 2));
-    } catch (err) {
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ error: "File write error" }),
-      };
-    }
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ likes: likesData[entryId] }),
-    };
-  }
-
-  // GET: like sayısını getir
   if (event.httpMethod === "GET") {
     return {
       statusCode: 200,
+      headers: { 'Access-Control-Allow-Origin': '*' },
       body: JSON.stringify({ likes: likesData[entryId] || 0 }),
+    };
+  }
+
+  if (event.httpMethod === "POST") {
+    likesData[entryId] = (likesData[entryId] || 0) + 1;
+    fs.writeFileSync(filePath, JSON.stringify(likesData, null, 2));
+    return {
+      statusCode: 200,
+      headers: { 'Access-Control-Allow-Origin': '*' },
+      body: JSON.stringify({ likes: likesData[entryId] }),
     };
   }
 
   return {
     statusCode: 405,
-    body: JSON.stringify({ error: "Method not allowed" }),
+    body: JSON.stringify({ error: "Method Not Allowed" }),
   };
 };
