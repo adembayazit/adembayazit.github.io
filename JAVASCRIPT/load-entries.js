@@ -68,7 +68,7 @@ function createEntryElement(entry, container, depth) {
     <!-- 🌼 Papatya beğeni sistemi -->
     <div class="daisy-like" data-entry-id="${entry.id}">
       <span class="like-count">0</span>
-      <img src="IMAGES/daisy.svg" class="daisy-icon" />
+      <img src="IMAGES/daisy.svg" class="daisy-icon" onclick="likeEntry(this)" />
     </div>
   `;
 
@@ -78,15 +78,11 @@ function createEntryElement(entry, container, depth) {
   fetch(`/.netlify/functions/get-likes?id=${entry.id}`)
     .then((res) => res.json())
     .then((data) => {
-      const count = data.likes || 0;
-      entryDiv.querySelector(".like-count").textContent = count;
+      entryDiv.querySelector(".like-count").textContent = data.likes || 0;
     });
-
-  // Like butonuna tıklama olayı ekle
-  const daisyIcon = entryDiv.querySelector(".daisy-icon");
-  daisyIcon.addEventListener("click", () => likeEntry(daisyIcon));
 }
 
+// Beğeni arttırma fonksiyonu
 function likeEntry(imgElement) {
   const container = imgElement.closest(".daisy-like");
   const entryId = container.getAttribute("data-entry-id");
@@ -94,19 +90,11 @@ function likeEntry(imgElement) {
 
   fetch("/.netlify/functions/increment-like", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ id: entryId })
   })
-    .then((res) => {
-      if (!res.ok) throw new Error("İstek başarısız: " + res.status);
-      return res.json();
-    })
+    .then((res) => res.json())
     .then((data) => {
       countSpan.textContent = data.likes;
-    })
-    .catch((err) => {
-      console.error("Beğeni arttırılamadı:", err);
     });
 }
