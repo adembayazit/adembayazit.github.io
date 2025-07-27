@@ -1,50 +1,29 @@
 const fs = require("fs");
 const path = require("path");
 
-const filePath = path.resolve(__dirname, "likes.json");
-
-exports.handler = async function (event) {
+exports.handler = async (event) => {
   if (event.httpMethod !== "POST") {
     return {
       statusCode: 405,
+      headers: { 'Allow': 'POST' },
       body: "Method Not Allowed",
     };
   }
 
-  const { id } = JSON.parse(event.body || '{}');
+  const { id } = JSON.parse(event.body || "{}");
+  const dbPath = path.join(__dirname, "likes.json");
 
-  if (!id) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ error: "Missing entry ID" }),
-    };
+  let db = {};
+  if (fs.existsSync(dbPath)) {
+    db = JSON.parse(fs.readFileSync(dbPath));
   }
 
-  let likesData = {};
-  try {
-    if (fs.existsSync(filePath)) {
-      likesData = JSON.parse(fs.readFileSync(filePath));
-    }
-  } catch (err) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: "Read error" }),
-    };
-  }
-
-  likesData[id] = (likesData[id] || 0) + 1;
-
-  try {
-    fs.writeFileSync(filePath, JSON.stringify(likesData, null, 2));
-  } catch (err) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: "Write error" }),
-    };
-  }
+  db[id] = (db[id] || 0) + 1;
+  fs.writeFileSync(dbPath, JSON.stringify(db, null, 2));
 
   return {
     statusCode: 200,
-    body: JSON.stringify({ likes: likesData[id] }),
+    headers: { 'Access-Control-Allow-Origin': '*' },
+    body: JSON.stringify({ likes: db[id] }),
   };
 };
