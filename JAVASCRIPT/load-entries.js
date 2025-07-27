@@ -65,8 +65,17 @@ function createEntryElement(entry, container, depth) {
     <div class="timestamp"><span class="fa-solid fa-bug bug-iconentry"></span> ${time}</div>
     <div class="entry-id">#${entry.id}</div>
     <div class="content">${entry.content}</div>
-    <div class="daisy">20 🌼 Drop a daisy</div>
-  `;
+    <div class="entry-box" data-entry-id="${entry.id}">
+  <div class="entry-content">
+    ${entry.content}
+  </div>
+
+  <!-- ❤️ Papatya Like Butonu -->
+  <div class="like-container" data-entry-id="${entry.id}">
+    <img src="/images/daisy.svg" class="daisy-icon" onclick="likeEntry(this)" />
+    <span class="like-count">0</span>
+  </div>
+</div>
   
   container.appendChild(entryDiv);
 }
