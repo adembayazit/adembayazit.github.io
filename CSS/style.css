@@ -721,10 +721,10 @@ canvas {
 }
 .translation-icon {
   display: inline-block;
-  width: 30px;               /* Daha büyük başlangıç boyutu */
-  height: 20px;              /* Dikdörtgen oran korunsun */
+  width: 30px;               /* Başlangıç genişliği artırıldı */
+  height: 20px;              /* Yükseklik sabit (dikdörtgen form) */
   background-position: center;
-  background-size: cover;
+  background-size: cover;    /* Bayrağın tamamını kaplamasını sağlar */
   background-repeat: no-repeat;
   cursor: pointer;
   margin-left: 7px;
@@ -732,15 +732,15 @@ canvas {
   box-sizing: border-box;
   line-height: 0;
   vertical-align: middle;
-  transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1); /* Daha yumuşak geçiş */
+  border: 0.5px solid transparent;
+  transition: all 0.2s ease;
   overflow: hidden;
-  transform: scale(1) rotate(0deg); /* Başlangıç transform değeri */
 }
 
-.translation-icon:hover, 
-.translation-icon.active { /* Hem hover hem de active class için */
-  transform: scale(1.5) rotate(360deg); /* Büyütme + dönme */
-  z-index: 10; /* Diğer elementlerin üzerinde görünsün */
+.translation-icon:hover {
+  transform: scale(1.5);     /* Dikdörtgen oranını koruyarak büyütme */
+  /* width: 36px; */         /* Alternatif: Eğer transform kullanmak istemezseniz */
+  /* height: 24px; */        /* Bu değerlerle de manuel büyütebilirsiniz */
 }
 .tooltip-box {
   position: absolute;
