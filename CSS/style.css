@@ -721,10 +721,10 @@ canvas {
 }
 .translation-icon {
   display: inline-block;
-  width: 24px;               /* Kare için eşit genişlik ve yükseklik */
-  height: 20px;
+  width: 30px;               /* Başlangıç genişliği artırıldı */
+  height: 20px;              /* Yükseklik sabit (dikdörtgen form) */
   background-position: center;
-  background-size: contain;   /* Bayrağın tamamını göster (orijinal oran korunur) */
+  background-size: cover;    /* Bayrağın tamamını kaplamasını sağlar */
   background-repeat: no-repeat;
   cursor: pointer;
   margin-left: 7px;
@@ -734,14 +734,13 @@ canvas {
   vertical-align: middle;
   border: 0.5px solid transparent;
   transition: all 0.2s ease;
-  overflow: hidden;          /* Taşan kısımları kes */
+  overflow: hidden;
 }
 
 .translation-icon:hover {
-  transform: scale(1.15);
-  border: 0.5px solid white;
-  border-radius: 1px;
-  background-size: cover;    /* Hover'da tam kareyi kapla (opsiyonel) */
+  transform: scale(1.2);     /* Dikdörtgen oranını koruyarak büyütme */
+  /* width: 36px; */         /* Alternatif: Eğer transform kullanmak istemezseniz */
+  /* height: 24px; */        /* Bu değerlerle de manuel büyütebilirsiniz */
 }
 
 .tooltip-box {
