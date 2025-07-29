@@ -27,16 +27,31 @@ async function addTranslationIcons() {
 
     const icon = document.createElement("span");
     icon.classList.add("translation-icon", "fi", "fi-tr");
+    
+    // Bayrak ikonu için ülke kodu belirleme (örneğin İngilizce için fi-gb)
+    const langCode = translationEntry?.lang || 'tr'; // Varsayılan Türkçe
+    icon.classList.add(`fi-${langCode}`);
 
-    // Toggle çeviri
-    let isTranslated = false;
-    icon.addEventListener("click", () => {
-      if (!isTranslated && translationEntry?.content_tr) {
+    // Toggle çeviri ve animasyon
+    icon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      
+      // Animasyonu tetikle
+      icon.classList.toggle("active");
+      
+      // Çeviri işlemi
+      if (icon.classList.contains("active") && translationEntry?.content_tr) {
         contentDiv.innerHTML = translationEntry.content_tr;
-        isTranslated = true;
       } else {
         contentDiv.innerHTML = originalContent;
-        isTranslated = false;
+      }
+    });
+
+    // Document click event to close translation
+    document.addEventListener("click", (e) => {
+      if (!icon.contains(e.target)) {
+        icon.classList.remove("active");
+        contentDiv.innerHTML = originalContent;
       }
     });
 
