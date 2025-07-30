@@ -1,11 +1,19 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  await loadInteractions();
-  fetch("entries.json")
-    .then((res) => res.json())
-    .then(processEntries)
-    .catch(console.error);
+  try {
+    // Önce etkileşimleri yükle
+    await loadInteractions();
+    
+    // Sonra entry'leri yükle ve işle
+    const response = await fetch("entries.json");
+    if (!response.ok) throw new Error('Entries fetch failed');
+    const entries = await response.json();
+    processEntries(entries);
+  } catch (error) {
+    console.error("Initialization error:", error);
+  }
 });
 
+// Etkileşim verileri için önbellek
 const interactionsCache = {
   likes: {},
   pins: {},
@@ -13,6 +21,7 @@ const interactionsCache = {
   isUpdating: false
 };
 
+// Etkileşimleri yükle
 async function loadInteractions() {
   try {
     const response = await fetch(`https://api.jsonbin.io/v3/b/68862fd97b4b8670d8a81945/latest`, {
@@ -24,38 +33,52 @@ async function loadInteractions() {
       cache: 'no-cache'
     });
     
-    if (!response.ok) throw new Error('Failed to fetch interactions');
+    if (!response.ok) throw new Error('API request failed');
     
     const result = await response.json();
     interactionsCache.likes = result.likes || {};
     interactionsCache.pins = result.pins || {};
     interactionsCache.lastUpdated = Date.now();
+    console.log("Interactions loaded:", interactionsCache);
   } catch (error) {
-    console.error('loadInteractions error:', error);
+    console.error("Failed to load interactions:", error);
+    // LocalStorage'dan yedek yükle
     const localData = localStorage.getItem('entryInteractions');
     if (localData) {
-      const parsed = JSON.parse(localData);
-      interactionsCache.likes = parsed.likes || {};
-      interactionsCache.pins = parsed.pins || {};
+      try {
+        const parsed = JSON.parse(localData);
+        interactionsCache.likes = parsed.likes || {};
+        interactionsCache.pins = parsed.pins || {};
+        console.log("Loaded from localStorage:", parsed);
+      } catch (e) {
+        console.error("LocalStorage parse error:", e);
+      }
     }
   }
 }
 
+// Entry'leri işle
 function processEntries(entries) {
   const container = document.getElementById("entries");
+  if (!container) {
+    console.error("Entries container not found!");
+    return;
+  }
   container.innerHTML = "";
 
+  // Entry'leri tarihe göre sırala ve son 7'sini al
   const sortedEntries = [...entries].sort((a, b) => new Date(b.date) - new Date(a.date));
-  const last7Entries = sortedEntries.slice(0, 7);
+  const displayedEntries = sortedEntries.slice(0, 7);
 
+  // Hiyerarşik yapı oluştur
   const entriesMap = new Map();
   const parentEntries = [];
 
-  last7Entries.forEach(entry => {
+  displayedEntries.forEach(entry => {
     entriesMap.set(entry.id, { ...entry, children: [] });
   });
 
-  last7Entries.forEach(entry => {
+  displayedEntries.forEach(entry => {
     if (entry.references?.length > 0) {
       const parentId = entry.references[0];
       if (entriesMap.has(parentId)) {
@@ -66,6 +89,7 @@ function processEntries(entries) {
     }
   });
 
+  // Entry elementlerini oluştur
   parentEntries
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .forEach(parent => {
@@ -76,20 +100,27 @@ function processEntries(entries) {
         .forEach(child => createEntryElement(child, container, 1));
     });
 
+  // Çeviri ikonlarını ekle (varsa)
   if (typeof addTranslationIcons === 'function') {
     addTranslationIcons();
   }
 }
 
+// Entry elementi oluştur
 function createEntryElement(entry, container, depth) {
   const entryDiv = document.createElement("div");
   entryDiv.className = `entry ${depth > 0 ? 'child-entry' : ''}`;
+  entryDiv.dataset.entryId = entry.id;
 
   const time = new Date(entry.date).toLocaleString("tr-TR", {
-    year: "numeric", month: "2-digit", day: "2-digit", 
-    hour: "2-digit", minute: "2-digit"
+    year: "numeric", 
+    month: "2-digit", 
+    day: "2-digit", 
+    hour: "2-digit", 
+    minute: "2-digit"
   }).replace(",", "");
 
+  // Beğeni ve iğneleme sayılarını önbellekten al
   const likeCount = interactionsCache.likes[entry.id] || 0;
   const pinCount = interactionsCache.pins[entry.id] || 0;
 
@@ -113,66 +144,91 @@ function createEntryElement(entry, container, depth) {
 
   container.appendChild(entryDiv);
 
-  entryDiv.querySelector(".daisy-icon")?.addEventListener("click", (e) => {
-    handleInteractionClick('likes', entry.id, entryDiv, e.target.closest('.daisy-like'));
+  // Etkileşim butonlarına event listener ekle
+  entryDiv.querySelector(".daisy-like").addEventListener("click", (e) => {
+    e.stopPropagation();
+    handleInteractionClick('likes', entry.id, entryDiv);
   });
   
-  entryDiv.querySelector(".pine-icon")?.addEventListener("click", (e) => {
-    handleInteractionClick('pins', entry.id, entryDiv, e.target.closest('.pine-pin'));
+  entryDiv.querySelector(".pine-pin").addEventListener("click", (e) => {
+    e.stopPropagation();
+    handleInteractionClick('pins', entry.id, entryDiv);
   });
 }
 
-async function handleInteractionClick(type, entryId, entryDiv, buttonElement) {
-  if (interactionsCache.isUpdating) return;
-  
-  const countSpan = buttonElement.querySelector(`.${type}-count`);
-  const icon = buttonElement.querySelector(`.${type}-icon`);
-  const currentCount = parseInt(countSpan.textContent) || 0;
-  const newCount = currentCount + 1;
-
-  // Anında feedback
-  countSpan.textContent = newCount;
-  buttonElement.classList.add(type === 'likes' ? 'liked' : 'pinned');
-  
-  // Önbellek güncelleme
-  interactionsCache[type][entryId] = newCount;
-  interactionsCache.isUpdating = true;
-
-  // LocalStorage yedek
-  localStorage.setItem('entryInteractions', JSON.stringify({
-    likes: interactionsCache.likes,
-    pins: interactionsCache.pins
-  }));
+// Etkileşim tıklama işlemi
+async function handleInteractionClick(type, entryId, entryDiv) {
+  if (interactionsCache.isUpdating) {
+    console.log("Update already in progress");
+    return;
+  }
 
   try {
-    await updateInteractionsOnServer();
+    interactionsCache.isUpdating = true;
+    
+    // Mevcut değeri al
+    const currentCount = interactionsCache[type][entryId] || 0;
+    const newCount = currentCount + 1;
+    
+    // Önbelleği güncelle
+    interactionsCache[type][entryId] = newCount;
+    
+    // UI'ı güncelle
+    const countSpan = entryDiv.querySelector(`.${type}-count`);
+    const button = entryDiv.querySelector(`.${type === 'likes' ? '.daisy-like' : '.pine-pin'}`);
+    
+    if (countSpan) countSpan.textContent = newCount;
+    if (button) button.classList.add(type === 'likes' ? 'liked' : 'pinned');
+    
+    // LocalStorage'a kaydet
+    localStorage.setItem('entryInteractions', JSON.stringify({
+      likes: interactionsCache.likes,
+      pins: interactionsCache.pins
+    }));
+    
+    // Sunucuyu güncelle (arka planda)
+    setTimeout(async () => {
+      try {
+        await updateInteractionsOnServer();
+      } catch (error) {
+        console.error("Background update failed:", error);
+      }
+    }, 0);
+    
   } catch (error) {
-    console.error('Update failed:', error);
-    countSpan.textContent = currentCount;
-    interactionsCache[type][entryId] = currentCount;
+    console.error("Interaction error:", error);
   } finally {
-    interactionsCache.isUpdating = false;
     setTimeout(() => {
-      buttonElement.classList.remove(type === 'likes' ? 'liked' : 'pinned');
+      const button = entryDiv.querySelector(`.${type === 'likes' ? '.daisy-like' : '.pine-pin'}`);
+      if (button) button.classList.remove(type === 'likes' ? 'liked' : 'pinned');
+      interactionsCache.isUpdating = false;
     }, 600);
   }
 }
 
+// Sunucudaki etkileşimleri güncelle
 async function updateInteractionsOnServer() {
-  const response = await fetch(`https://api.jsonbin.io/v3/b/68862fd97b4b8670d8a81945`, {
-    method: 'PUT',
-    headers: {
-      'X-Master-Key': '$2a$10$eY1/HMTP6ppkyuDLWsZGteqd7gRPXZ1YcjWc.bdfd3s6CdNElmwFC',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      likes: interactionsCache.likes,
-      pins: interactionsCache.pins
-    })
-  });
+  try {
+    const response = await fetch(`https://api.jsonbin.io/v3/b/68862fd97b4b8670d8a81945`, {
+      method: 'PUT',
+      headers: {
+        'X-Master-Key': '$2a$10$eY1/HMTP6ppkyuDLWsZGteqd7gRPXZ1YcjWc.bdfd3s6CdNElmwFC',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        likes: interactionsCache.likes,
+        pins: interactionsCache.pins
+      })
+    });
 
-  if (!response.ok) throw new Error('Update failed');
-  
-  interactionsCache.lastUpdated = Date.now();
-  return response.json();
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    
+    const result = await response.json();
+    interactionsCache.lastUpdated = Date.now();
+    console.log("Server update successful:", result);
+    return result;
+  } catch (error) {
+    console.error("Failed to update server:", error);
+    throw error;
+  }
 }
