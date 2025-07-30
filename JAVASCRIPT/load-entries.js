@@ -1,22 +1,12 @@
-document.addEventListener("DOMContentLoaded", async () => {
-  // Önce beğenileri yükle
-  await loadLikes();
-  
-  // Sonra entry'leri yükle
-  fetch("entries.json")
-    .then((res) => res.json())
-    .then(processEntries)
-    .catch(console.error);
-});
-
-// Global önbellek ve durum yönetimi
+// 1. Global cache yapısını güncelle
 const likesCache = {
   data: {},
+  pins: {}, // Yeni eklenen pin verileri
   lastUpdated: 0,
   isUpdating: false
 };
 
-// Beğenileri yükle (sayfa yüklendiğinde)
+// 2. loadLikes fonksiyonunu güncelle (içerik aynı, sadece pins kısmı eklendi)
 async function loadLikes() {
   try {
     const response = await fetch(`https://api.jsonbin.io/v3/b/68862fd97b4b8670d8a81945/latest`, {
@@ -32,63 +22,20 @@ async function loadLikes() {
     
     const result = await response.json();
     likesCache.data = result.likes || {};
+    likesCache.pins = result.pins || {}; // Yeni eklenen satır
     likesCache.lastUpdated = Date.now();
   } catch (error) {
     console.error('loadLikes error:', error);
-    // LocalStorage'dan yedek yükle
-    const localLikes = localStorage.getItem('entryLikes');
-    if (localLikes) {
-      likesCache.data = JSON.parse(localLikes);
+    const localData = localStorage.getItem('entryLikes');
+    if (localData) {
+      const parsedData = JSON.parse(localData);
+      likesCache.data = parsedData.likes || {};
+      likesCache.pins = parsedData.pins || {}; // Yeni eklenen satır
     }
   }
 }
 
-// Entry'leri işle
-function processEntries(entries) {
-  const container = document.getElementById("entries");
-  container.innerHTML = "";
-
-  // Entry'leri tarihe göre sırala
-  const sortedEntries = [...entries].sort((a, b) => new Date(b.date) - new Date(a.date));
-  const last7Entries = sortedEntries.slice(0, 7);
-
-  // Hiyerarşik yapı oluştur
-  const entriesMap = new Map();
-  const parentEntries = [];
-
-  last7Entries.forEach(entry => {
-    entriesMap.set(entry.id, { ...entry, children: [] });
-  });
-
-  last7Entries.forEach(entry => {
-    if (entry.references?.length > 0) {
-      const parentId = entry.references[0];
-      if (entriesMap.has(parentId)) {
-        entriesMap.get(parentId).children.push(entry);
-      }
-    } else {
-      parentEntries.push(entry);
-    }
-  });
-
-  // Entry'leri oluştur
-  parentEntries
-    .sort((a, b) => new Date(b.date) - new Date(a.date))
-    .forEach(parent => {
-      createEntryElement(parent, container, 0);
-      const children = entriesMap.get(parent.id)?.children || [];
-      children
-        .sort((a, b) => new Date(a.date) - new Date(b.date))
-        .forEach(child => createEntryElement(child, container, 1));
-    });
-
-  // Çeviri ikonlarını ekle (varsa)
-  if (typeof addTranslationIcons === 'function') {
-    addTranslationIcons();
-  }
-}
-
-// Entry elementi oluştur
+// 3. createEntryElement fonksiyonunu güncelle (pine ikonu eklendi)
 function createEntryElement(entry, container, depth) {
   const entryDiv = document.createElement("div");
   entryDiv.className = `entry ${depth > 0 ? 'child-entry' : ''}`;
@@ -98,8 +45,8 @@ function createEntryElement(entry, container, depth) {
     hour: "2-digit", minute: "2-digit"
   }).replace(",", "");
 
-  // Beğeni sayısını önbellekten al
   const likeCount = likesCache.data[entry.id] || 0;
+  const pinCount = likesCache.pins[entry.id] || 0; // Yeni eklenen pin sayacı
 
   entryDiv.innerHTML = `
     <div class="timestamp">
@@ -107,56 +54,69 @@ function createEntryElement(entry, container, depth) {
     </div>
     <div class="entry-id">#${entry.id}</div>
     <div class="content">${entry.content}</div>
-    <div class="daisy-like" data-entry-id="${entry.id}">
-      <img src="IMAGES/daisy.svg" class="daisy-icon" alt="Beğen" />
-      <span class="like-count">${likeCount}</span>
+    <div class="interaction-buttons">
+      <div class="daisy-like" data-entry-id="${entry.id}">
+        <img src="IMAGES/daisy.svg" class="daisy-icon" alt="Beğen" />
+        <span class="like-count">${likeCount}</span>
+      </div>
+      <div class="pine-pin" data-entry-id="${entry.id}">
+        <img src="IMAGES/pine-tree.svg" class="pine-icon" alt="Sabitle" />
+        <span class="pin-count">${pinCount}</span>
+      </div>
     </div>
   `;
 
   container.appendChild(entryDiv);
 
-  // Beğeni butonu event listener
   const likeIcon = entryDiv.querySelector(".daisy-icon");
   likeIcon?.addEventListener("click", () => handleLikeClick(entry.id, entryDiv));
+  
+  // Yeni eklenen pin event listener
+  const pinIcon = entryDiv.querySelector(".pine-icon");
+  pinIcon?.addEventListener("click", () => handlePinClick(entry.id, entryDiv));
 }
 
-// Beğeni tıklama işlemi
-async function handleLikeClick(entryId, entryDiv) {
+// 4. Yeni pin fonksiyonlarını ekle
+async function handlePinClick(entryId, entryDiv) {
   if (likesCache.isUpdating) return;
   
-  const likeCountSpan = entryDiv.querySelector(".like-count");
-  const likeIcon = entryDiv.querySelector(".daisy-icon");
-  const currentCount = parseInt(likeCountSpan.textContent) || 0;
+  const pinCountSpan = entryDiv.querySelector(".pin-count");
+  const pinIcon = entryDiv.querySelector(".pine-icon");
+  const currentCount = parseInt(pinCountSpan.textContent) || 0;
 
-  // 1. Anında görsel feedback
-  likeCountSpan.textContent = currentCount + 1;
-  likeIcon.style.transform = 'scale(1.2)';
-  likeCountSpan.style.animation = 'pulse 0.3s';
+  pinCountSpan.textContent = currentCount + 1;
+  pinIcon.style.transform = 'scale(1.2)';
+  pinCountSpan.classList.add('pinned');
   
-  // 2. Önbelleği güncelle
-  likesCache.data[entryId] = currentCount + 1;
+  setTimeout(() => {
+    pinCountSpan.classList.remove('pinned');
+  }, 600);
+
+  likesCache.pins[entryId] = currentCount + 1;
   likesCache.isUpdating = true;
 
-  // 3. LocalStorage'a yedekle
-  localStorage.setItem('entryLikes', JSON.stringify(likesCache.data));
+  localStorage.setItem('entryLikes', JSON.stringify({
+    likes: likesCache.data,
+    pins: likesCache.pins
+  }));
 
   try {
-    // 4. API'ye güncelleme gönder (arka planda)
-    await updateLikeOnServer(entryId, currentCount + 1);
+    await updatePinsOnServer(entryId, currentCount + 1);
   } catch (error) {
-    console.error('Like update failed:', error);
-    // Hata durumunda geri al
-    likesCache.data[entryId] = currentCount;
-    likeCountSpan.textContent = currentCount;
+    console.error('Pin update failed:', error);
+    likesCache.pins[entryId] = currentCount;
+    pinCountSpan.textContent = currentCount;
   } finally {
     likesCache.isUpdating = false;
-    setTimeout(() => likeIcon.style.transform = 'scale(1)', 300);
+    setTimeout(() => pinIcon.style.transform = 'scale(1)', 300);
   }
 }
 
-// Sunucuda beğeniyi güncelle (arka planda)
-async function updateLikeOnServer(entryId, newCount) {
-  const updatedData = { ...likesCache.data, [entryId]: newCount };
+async function updatePinsOnServer(entryId, newCount) {
+  const updatedData = { 
+    likes: likesCache.data,
+    pins: { ...likesCache.pins, [entryId]: newCount }
+  };
   
   const response = await fetch(`https://api.jsonbin.io/v3/b/68862fd97b4b8670d8a81945`, {
     method: 'PUT',
@@ -164,14 +124,37 @@ async function updateLikeOnServer(entryId, newCount) {
       'X-Master-Key': '$2a$10$eY1/HMTP6ppkyuDLWsZGteqd7gRPXZ1YcjWc.bdfd3s6CdNElmwFC',
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ likes: updatedData })
+    body: JSON.stringify(updatedData)
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to update pins on server');
+  }
+
+  likesCache.lastUpdated = Date.now();
+  return response.json();
+}
+
+// 5. Mevcut updateLikeOnServer fonksiyonunu güncelle
+async function updateLikeOnServer(entryId, newCount) {
+  const updatedData = { 
+    likes: { ...likesCache.data, [entryId]: newCount },
+    pins: likesCache.pins // Pins verisini de gönder
+  };
+  
+  const response = await fetch(`https://api.jsonbin.io/v3/b/68862fd97b4b8670d8a81945`, {
+    method: 'PUT',
+    headers: {
+      'X-Master-Key': '$2a$10$eY1/HMTP6ppkyuDLWsZGteqd7gRPXZ1YcjWc.bdfd3s6CdNElmwFC',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(updatedData)
   });
 
   if (!response.ok) {
     throw new Error('Failed to update likes on server');
   }
 
-  // Önbellek güncelleme zamanını kaydet
   likesCache.lastUpdated = Date.now();
   return response.json();
 }
