@@ -18,18 +18,19 @@ async function loadInteractions() {
     const response = await fetch(`https://api.jsonbin.io/v3/b/68862fd97b4b8670d8a81945/latest`, {
       headers: {
         'X-Master-Key': '$2a$10$eY1/HMTP6ppkyuDLWsZGteqd7gRPXZ1YcjWc.bdfd3s6CdNElmwFC',
-        'Content-Type': 'application/json',
         'X-Bin-Meta': 'false'
-      },
-      cache: 'no-cache'
+      }
     });
     
     if (!response.ok) throw new Error('Failed to fetch interactions');
     
     const result = await response.json();
-    interactionsCache.likes = result.likes || {};
-    interactionsCache.pins = result.pins || {};
+    // JSON yapınıza göre doğrudan erişim
+    interactionsCache.likes = result.record?.likes || {};
+    interactionsCache.pins = result.record?.pins || {};
     interactionsCache.lastUpdated = Date.now();
+    
+    console.log('Loaded interactions:', interactionsCache);
   } catch (error) {
     console.error('loadInteractions error:', error);
     const localData = localStorage.getItem('entryInteractions');
@@ -43,6 +44,8 @@ async function loadInteractions() {
 
 function processEntries(entries) {
   const container = document.getElementById("entries");
+  if (!container) return;
+  
   container.innerHTML = "";
 
   const sortedEntries = [...entries].sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -75,10 +78,6 @@ function processEntries(entries) {
         .sort((a, b) => new Date(a.date) - new Date(b.date))
         .forEach(child => createEntryElement(child, container, 1));
     });
-
-  if (typeof addTranslationIcons === 'function') {
-    addTranslationIcons();
-  }
 }
 
 function createEntryElement(entry, container, depth) {
@@ -105,7 +104,7 @@ function createEntryElement(entry, container, depth) {
         <span class="like-count">${likeCount}</span>
       </div>
       <div class="pine-pin" data-entry-id="${entry.id}">
-        <img src="IMAGES/pine-tree.svg" class="pine-icon" alt="İğnele" />
+        <img src="IMAGES/pine-tree.svg" class="pine-icon" alt="Sabitle" />
         <span class="pin-count">${pinCount}</span>
       </div>
     </div>
@@ -113,26 +112,33 @@ function createEntryElement(entry, container, depth) {
 
   container.appendChild(entryDiv);
 
-  entryDiv.querySelector(".daisy-icon")?.addEventListener("click", (e) => {
-    handleInteractionClick('likes', entry.id, entryDiv, e.target.closest('.daisy-like'));
+  // Beğeni butonu event listener
+  entryDiv.querySelector(".daisy-like")?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    handleInteractionClick('likes', entry.id, entryDiv);
   });
   
-  entryDiv.querySelector(".pine-icon")?.addEventListener("click", (e) => {
-    handleInteractionClick('pins', entry.id, entryDiv, e.target.closest('.pine-pin'));
+  // Pin butonu event listener
+  entryDiv.querySelector(".pine-pin")?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    handleInteractionClick('pins', entry.id, entryDiv);
   });
 }
 
-async function handleInteractionClick(type, entryId, entryDiv, buttonElement) {
-  if (interactionsCache.isUpdating) return;
+async function handleInteractionClick(type, entryId, entryDiv) {
+  if (interactionsCache.isUpdating) {
+    console.log('Update already in progress');
+    return;
+  }
   
-  const countSpan = buttonElement.querySelector(`.${type}-count`);
-  const icon = buttonElement.querySelector(`.${type}-icon`);
+  const button = entryDiv.querySelector(`.${type === 'likes' ? 'daisy-like' : 'pine-pin'}`);
+  const countSpan = entryDiv.querySelector(`.${type}-count`);
   const currentCount = parseInt(countSpan.textContent) || 0;
   const newCount = currentCount + 1;
 
-  // Anında feedback
+  // Anında görsel feedback
   countSpan.textContent = newCount;
-  buttonElement.classList.add(type === 'likes' ? 'liked' : 'pinned');
+  button.classList.add('animating');
   
   // Önbellek güncelleme
   interactionsCache[type][entryId] = newCount;
@@ -145,34 +151,35 @@ async function handleInteractionClick(type, entryId, entryDiv, buttonElement) {
   }));
 
   try {
-    await updateInteractionsOnServer();
+    // API güncelleme
+    const response = await fetch(`https://api.jsonbin.io/v3/b/68862fd97b4b8670d8a81945`, {
+      method: 'PUT',
+      headers: {
+        'X-Master-Key': '$2a$10$eY1/HMTP6ppkyuDLWsZGteqd7gRPXZ1YcjWc.bdfd3s6CdNElmwFC',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        likes: interactionsCache.likes,
+        pins: interactionsCache.pins
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    interactionsCache.lastUpdated = Date.now();
+    console.log(`${type} updated successfully`);
   } catch (error) {
     console.error('Update failed:', error);
+    // Hata durumunda geri al
     countSpan.textContent = currentCount;
     interactionsCache[type][entryId] = currentCount;
+    button.classList.remove('animating');
   } finally {
     interactionsCache.isUpdating = false;
     setTimeout(() => {
-      buttonElement.classList.remove(type === 'likes' ? 'liked' : 'pinned');
+      button.classList.remove('animating');
     }, 600);
   }
-}
-
-async function updateInteractionsOnServer() {
-  const response = await fetch(`https://api.jsonbin.io/v3/b/68862fd97b4b8670d8a81945`, {
-    method: 'PUT',
-    headers: {
-      'X-Master-Key': '$2a$10$eY1/HMTP6ppkyuDLWsZGteqd7gRPXZ1YcjWc.bdfd3s6CdNElmwFC',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      likes: interactionsCache.likes,
-      pins: interactionsCache.pins
-    })
-  });
-
-  if (!response.ok) throw new Error('Update failed');
-  
-  interactionsCache.lastUpdated = Date.now();
-  return response.json();
 }
