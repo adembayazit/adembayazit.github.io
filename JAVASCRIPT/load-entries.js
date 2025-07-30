@@ -41,6 +41,46 @@ async function loadInteractions() {
   }
 }
 
+function processEntries(entries) {
+  const container = document.getElementById("entries");
+  container.innerHTML = "";
+
+  const sortedEntries = [...entries].sort((a, b) => new Date(b.date) - new Date(a.date));
+  const last7Entries = sortedEntries.slice(0, 7);
+
+  const entriesMap = new Map();
+  const parentEntries = [];
+
+  last7Entries.forEach(entry => {
+    entriesMap.set(entry.id, { ...entry, children: [] });
+  });
+
+  last7Entries.forEach(entry => {
+    if (entry.references?.length > 0) {
+      const parentId = entry.references[0];
+      if (entriesMap.has(parentId)) {
+        entriesMap.get(parentId).children.push(entry);
+      }
+    } else {
+      parentEntries.push(entry);
+    }
+  });
+
+  parentEntries
+    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .forEach(parent => {
+      createEntryElement(parent, container, 0);
+      const children = entriesMap.get(parent.id)?.children || [];
+      children
+        .sort((a, b) => new Date(a.date) - new Date(b.date))
+        .forEach(child => createEntryElement(child, container, 1));
+    });
+
+  if (typeof addTranslationIcons === 'function') {
+    addTranslationIcons();
+  }
+}
+
 function createEntryElement(entry, container, depth) {
   const entryDiv = document.createElement("div");
   entryDiv.className = `entry ${depth > 0 ? 'child-entry' : ''}`;
@@ -74,24 +114,25 @@ function createEntryElement(entry, container, depth) {
   container.appendChild(entryDiv);
 
   entryDiv.querySelector(".daisy-icon")?.addEventListener("click", (e) => {
-    handleInteractionClick('likes', entry.id, entryDiv, e.target);
+    handleInteractionClick('likes', entry.id, entryDiv, e.target.closest('.daisy-like'));
   });
   
   entryDiv.querySelector(".pine-icon")?.addEventListener("click", (e) => {
-    handleInteractionClick('pins', entry.id, entryDiv, e.target);
+    handleInteractionClick('pins', entry.id, entryDiv, e.target.closest('.pine-pin'));
   });
 }
 
-async function handleInteractionClick(type, entryId, entryDiv, icon) {
+async function handleInteractionClick(type, entryId, entryDiv, buttonElement) {
   if (interactionsCache.isUpdating) return;
   
-  const countSpan = entryDiv.querySelector(`.${type}-count`);
+  const countSpan = buttonElement.querySelector(`.${type}-count`);
+  const icon = buttonElement.querySelector(`.${type}-icon`);
   const currentCount = parseInt(countSpan.textContent) || 0;
   const newCount = currentCount + 1;
 
   // Anında feedback
   countSpan.textContent = newCount;
-  icon.classList.add(type === 'likes' ? 'liked' : 'pinned');
+  buttonElement.classList.add(type === 'likes' ? 'liked' : 'pinned');
   
   // Önbellek güncelleme
   interactionsCache[type][entryId] = newCount;
@@ -112,8 +153,8 @@ async function handleInteractionClick(type, entryId, entryDiv, icon) {
   } finally {
     interactionsCache.isUpdating = false;
     setTimeout(() => {
-      icon.classList.remove(type === 'likes' ? 'liked' : 'pinned');
-    }, 500);
+      buttonElement.classList.remove(type === 'likes' ? 'liked' : 'pinned');
+    }, 600);
   }
 }
 
