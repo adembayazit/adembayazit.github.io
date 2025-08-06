@@ -4,6 +4,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 // ENV VAR
+const MASTER_KEY = window.JSONBIN_API_KEY;
+const BIN_ID = window.JSONBIN_BIN_ID;
 const BIN_ID = JSONBIN_BIN_ID; // örnek: "666e1e90e41b4d34eebea9a7"
 const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}/latest`;
 const MASTER_KEY = JSONBIN_API_KEY; // Netlify environment variable
