@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Metin Editörü</title>
+  <style>
+    .editor-container {
+      display: grid;
+      gap: 1rem;
+      max-width: 800px;
+      margin: 0 auto;
+      font-family: Arial, sans-serif;
+    }
+    .toolbar {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+      padding: 10px;
+      background: #f5f5f5;
+      border-radius: 5px;
+    }
+    .toolbar button {
+      padding: 5px 10px;
+      cursor: pointer;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 3px;
+    }
+    .toolbar button:hover {
+      background: #e9e9e9;
+    }
+    textarea {
+      min-height: 150px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    .preview {
+      border: 1px solid #ddd;
+      padding: 15px;
+      min-height: 50px;
+      border-radius: 5px;
+    }
+    .language-tabs {
+      display: flex;
+      margin-bottom: -1px;
+    }
+    .language-tabs button {
+      padding: 8px 15px;
+      background: #f5f5f5;
+      border: 1px solid #ddd;
+      border-bottom: none;
+      cursor: pointer;
+      border-radius: 5px 5px 0 0;
+      margin-right: 5px;
+    }
+    .language-tabs button.active {
+      background: white;
+      border-bottom: 1px solid white;
+    }
+    .editor-area {
+      display: none;
+    }
+    .editor-area.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="editor-container">
+    <div class="language-tabs">
+      <button class="active" onclick="switchTab('english')">English</button>
+      <button onclick="switchTab('turkish')">Türkçe</button>
+    </div>
+    
+    <!-- İngilizce Editör -->
+    <div id="english-editor" class="editor-area active">
+      <div class="toolbar">
+        <button onclick="formatText('bold')"><b>B</b></button>
+        <button onclick="formatText('italic')"><i>I</i></button>
+        <button onclick="formatText('underline')"><u>U</u></button>
+        <button onclick="formatText('paragraph')">¶</button>
+        <button onclick="formatText('quote')">❝</button>
+        <button onclick="formatText('link')">🔗</button>
+        <button onclick="formatText('clear')">Temizle</button>
+      </div>
+      <textarea id="content-input" placeholder="English content..."></textarea>
+      <h3>Önizleme:</h3>
+      <div id="english-preview" class="preview"></div>
+    </div>
+    
+    <!-- Türkçe Editör -->
+    <div id="turkish-editor" class="editor-area">
+      <div class="toolbar">
+        <button onclick="formatText('bold', 'tr')"><b>B</b></button>
+        <button onclick="formatText('italic', 'tr')"><i>I</i></button>
+        <button onclick="formatText('underline', 'tr')"><u>U</u></button>
+        <button onclick="formatText('paragraph', 'tr')">¶</button>
+        <button onclick="formatText('quote', 'tr')">❝</button>
+        <button onclick="formatText('link', 'tr')">🔗</button>
+        <button onclick="formatText('clear', 'tr')">Temizle</button>
+      </div>
+      <textarea id="content-tr-input" placeholder="Türkçe içerik..."></textarea>
+      <h3>Önizleme:</h3>
+      <div id="turkish-preview" class="preview"></div>
+    </div>
+  </div>
+
+  <script>
+    // Sekme değiştirme
+    function switchTab(lang) {
+      document.querySelectorAll('.editor-area').forEach(el => {
+        el.classList.remove('active');
+      });
+      document.querySelectorAll('.language-tabs button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      
+      document.getElementById(`${lang}-editor`).classList.add('active');
+      event.currentTarget.classList.add('active');
+    }
+    
+    // Metin formatlama fonksiyonu
+    function formatText(type, lang = 'en') {
+      const textarea = lang === 'en' ? 
+        document.getElementById('content-input') : 
+        document.getElementById('content-tr-input');
+      
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const selectedText = textarea.value.substring(start, end);
+      let beforeText = textarea.value.substring(0, start);
+      let afterText = textarea.value.substring(end);
+      
+      let newText = '';
+      
+      switch(type) {
+        case 'bold':
+          newText = `<b>${selectedText}</b>`;
+          break;
+        case 'italic':
+          newText = `<i>${selectedText}</i>`;
+          break;
+        case 'underline':
+          newText = `<u>${selectedText}</u>`;
+          break;
+        case 'paragraph':
+          newText = `<p>${selectedText}</p>`;
+          break;
+        case 'quote':
+          newText = `<blockquote>${selectedText}</blockquote>`;
+          break;
+        case 'link':
+          const url = prompt('Link URL girin:');
+          if (url) {
+            newText = `<a href="${url}" target="_blank">${selectedText}</a>`;
+          } else {
+            return;
+          }
+          break;
+        case 'clear':
+          newText = selectedText.replace(/<\/?[^>]+(>|$)/g, "");
+          break;
+        default:
+          newText = selectedText;
+      }
+      
+      textarea.value = beforeText + newText + afterText;
+      updatePreview();
+      
+      // Yeni pozisyonu ayarla
+      const newCursorPos = start + newText.length;
+      textarea.setSelectionRange(newCursorPos, newCursorPos);
+      textarea.focus();
+    }
+    
+    // Önizleme güncelleme
+    function updatePreview() {
+      document.getElementById('english-preview').innerHTML = 
+        document.getElementById('content-input').value;
+      document.getElementById('turkish-preview').innerHTML = 
+        document.getElementById('content-tr-input').value;
+    }
+    
+    // Input değişikliklerini dinle
+    document.getElementById('content-input').addEventListener('input', updatePreview);
+    document.getElementById('content-tr-input').addEventListener('input', updatePreview);
+    
+    // Klavye kısayolları
+    document.addEventListener('keydown', function(e) {
+      if (e.ctrlKey || e.metaKey) {
+        const activeTextarea = document.querySelector('.editor-area.active textarea');
+        
+        switch(e.key.toLowerCase()) {
+          case 'b':
+            e.preventDefault();
+            formatText('bold', document.querySelector('.editor-area.active').id.includes('english') ? 'en' : 'tr');
+            break;
+          case 'i':
+            e.preventDefault();
+            formatText('italic', document.querySelector('.editor-area.active').id.includes('english') ? 'en' : 'tr');
+            break;
+          case 'u':
+            e.preventDefault();
+            formatText('underline', document.querySelector('.editor-area.active').id.includes('english') ? 'en' : 'tr');
+            break;
+        }
+      }
+    });
+  </script>
+</body>
+</html>
