@@ -94,7 +94,7 @@ function createEntryElement(entry, container, depth) {
   entryDiv.className = `entry ${depth > 0 ? 'child-entry' : ''}`;
 
   const time = new Date(entry.date).toLocaleString("tr-TR", {
-    year: "numeric", month: "2-digit", day: "2-digit",
+    year: "numeric", month: "2-digit", day: "2-digit", 
     hour: "2-digit", minute: "2-digit"
   }).replace(",", "");
 
