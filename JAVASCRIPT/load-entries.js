@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     await loadInteractions();
 
     try {
-      const response = await fetch("/.netlify/functions/get-entries");
+      const response = await fetch("https://adembayazit.netlify.app/.netlify/functions/get-entries");
       if (!response.ok) throw new Error("Entries fetch failed");
       const entries = await response.json();
       processEntries(entries);
