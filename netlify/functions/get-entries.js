@@ -1,7 +1,7 @@
 const fetch = require("node-fetch");
 
 exports.handler = async function () {
-  const BIN_ID = "68933248ae596e708fc2fbbc"; // Entries bin
+  const BIN_ID = "68933248ae596e708fc2fbbc";
   const MASTER_KEY = process.env.JSONBIN_MASTER_KEY;
 
   try {
@@ -13,27 +13,25 @@ exports.handler = async function () {
       }
     });
 
-    if (!res.ok) {
-      throw new Error(`JSONBin'den veri alınamadı. Status: ${res.status}`);
-    }
+    if (!res.ok) throw new Error("JSONBin'den veri alınamadı");
 
     const json = await res.json();
 
-    // Eğer json.record yoksa hata dön
-    if (!json || !json.record) {
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ error: "Veri boş veya geçersiz." })
-      };
-    }
-
     return {
       statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",          // <--- CORS için
+        "Access-Control-Allow-Headers": "Content-Type"
+      },
       body: JSON.stringify(json.record)
     };
   } catch (error) {
     return {
       statusCode: 500,
+      headers: {
+        "Access-Control-Allow-Origin": "*",          // <--- Hata durumunda da ekle
+        "Access-Control-Allow-Headers": "Content-Type"
+      },
       body: JSON.stringify({ error: error.message })
     };
   }
