@@ -3,7 +3,6 @@ const fetch = require('node-fetch');
 exports.handler = async (event) => {
   try {
     const { updatedLikes, updatedPins } = JSON.parse(event.body);
-    
     const response = await fetch('https://api.jsonbin.io/v3/b/68862fd97b4b8670d8a81945', {
       method: 'PUT',
       headers: {
@@ -12,9 +11,7 @@ exports.handler = async (event) => {
       },
       body: JSON.stringify({ likes: updatedLikes, pins: updatedPins })
     });
-    
-    const data = await response.json();
-    return { statusCode: 200, body: JSON.stringify(data) };
+    return { statusCode: 200, body: JSON.stringify(await response.json()) };
   } catch (error) {
     return { statusCode: 500, body: JSON.stringify({ error: "Güncelleme başarısız" }) };
   }
