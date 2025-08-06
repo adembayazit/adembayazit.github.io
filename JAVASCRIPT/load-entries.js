@@ -15,14 +15,13 @@ const pinsCache = { data: {}, lastUpdated: 0, isUpdating: false };
 // JSONBIN'DEN ENTRIES VERİSİNİ ÇEK
 async function loadEntriesFromJSONBin() {
   try {
-    const response = await fetch(`https://api.jsonbin.io/v3/b/${ENTRIES_BIN_ID}/latest`, {
-      headers: {
-        "X-Master-Key": MASTER_KEY,
-        "Content-Type": "application/json",
-        "X-Bin-Meta": "false"
-      },
-      cache: "no-cache"
-    });
+    const response = await fetch("/.netlify/functions/get-entries");
+    const entries = await response.json();
+    processEntries(entries);
+  } catch (error) {
+    console.error("loadEntriesFromJSONBin error:", error);
+  }
+}
 
     if (!response.ok) throw new Error("Entry verisi alınamadı");
     const result = await response.json();
