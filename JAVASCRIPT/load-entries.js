@@ -23,12 +23,7 @@ const pinsCache = {
 // INTERACTION DATA YÜKLE (likes + pins)
 async function loadInteractions() {
   try {
-    const response = await fetch(`https://api.jsonbin.io/v3/b/68862fd97b4b8670d8a81945/latest`, {
-      headers: {
-        'X-Master-Key': '$2a$10$eY1/HMTP6ppkyuDLWsZGteqd7gRPXZ1YcjWc.bdfd3s6CdNElmwFC',
-        'Content-Type': 'application/json',
-        'X-Bin-Meta': 'false'
-      },
+    const response = await fetch(`/.netlify/functions/load-interactions`, {
       cache: 'no-cache'
     });
 
@@ -46,7 +41,6 @@ async function loadInteractions() {
     if (localPins) pinsCache.data = JSON.parse(localPins);
   }
 }
-
 // ENTRY'LERİ YÜKLE VE GÖSTER
 function processEntries(entries) {
   const container = document.getElementById("entries");
