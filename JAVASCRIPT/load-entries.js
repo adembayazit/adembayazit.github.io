@@ -1,45 +1,31 @@
-
 document.addEventListener("DOMContentLoaded", async () => {
   await loadInteractions();
-  await loadEntriesFromJSONBin();
+
+  fetch("entries.json")
+    .then((res) => res.json())
+    .then(processEntries)
+    .catch(console.error);
 });
 
-// ENV VAR
-const MASTER_KEY = window.JSONBIN_API_KEY || JSONBIN_API_KEY;
-const BIN_ID = window.JSONBIN_BIN_ID || JSONBIN_BIN_ID; // Tek tanımlama
-const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}/latest`;
-
 // GLOBAL CACHES
-const likesCache = { data: {}, lastUpdated: 0, isUpdating: false };
-const pinsCache = { data: {}, lastUpdated: 0, isUpdating: false };
+const likesCache = {
+  data: {},
+  lastUpdated: 0,
+  isUpdating: false
+};
 
-// JSONBin'den ENTRY VERİLERİNİ YÜKLE
-async function loadEntriesFromJSONBin() {
-  try {
-    const response = await fetch(API_URL, {
-      headers: {
-        'X-Master-Key': MASTER_KEY,
-        'X-Bin-Meta': 'false'
-      },
-      cache: 'no-cache'
-    });
-
-    if (!response.ok) throw new Error(`Failed to fetch entries (${response.status})`);
-
-    const result = await response.json();
-    processEntries(result.record);
-  } catch (error) {
-    console.error("loadEntriesFromJSONBin error:", error);
-    document.getElementById("entries").innerHTML = `<p>Entry'ler yüklenemedi.</p>`;
-  }
-}
+const pinsCache = {
+  data: {},
+  lastUpdated: 0,
+  isUpdating: false
+};
 
 // INTERACTION DATA YÜKLE (likes + pins)
 async function loadInteractions() {
   try {
-    const response = await fetch(`https://api.jsonbin.io/v3/b/YOUR_INTERACTIONS_BIN_ID/latest`, {
+    const response = await fetch(`https://api.jsonbin.io/v3/b/68862fd97b4b8670d8a81945/latest`, {
       headers: {
-        'X-Master-Key': MASTER_KEY,
+        'X-Master-Key': '$2a$10$eY1/HMTP6ppkyuDLWsZGteqd7gRPXZ1YcjWc.bdfd3s6CdNElmwFC',
         'Content-Type': 'application/json',
         'X-Bin-Meta': 'false'
       },
@@ -108,7 +94,7 @@ function createEntryElement(entry, container, depth) {
   entryDiv.className = `entry ${depth > 0 ? 'child-entry' : ''}`;
 
   const time = new Date(entry.date).toLocaleString("tr-TR", {
-    year: "numeric", month: "2-digit", day: "2-digit",
+    year: "numeric", month: "2-digit", day: "2-digit", 
     hour: "2-digit", minute: "2-digit"
   }).replace(",", "");
 
@@ -204,10 +190,10 @@ async function updateInteractionsOnServer(entryId, newLikeCount, newPinCount) {
   const updatedLikes = newLikeCount !== null ? { ...likesCache.data, [entryId]: newLikeCount } : likesCache.data;
   const updatedPins = newPinCount !== null ? { ...pinsCache.data, [entryId]: newPinCount } : pinsCache.data;
 
-  const response = await fetch(`https://api.jsonbin.io/v3/b/YOUR_INTERACTIONS_BIN_ID`, {
+  const response = await fetch(`https://api.jsonbin.io/v3/b/68862fd97b4b8670d8a81945`, {
     method: 'PUT',
     headers: {
-      'X-Master-Key': MASTER_KEY,
+      'X-Master-Key': '$2a$10$eY1/HMTP6ppkyuDLWsZGteqd7gRPXZ1YcjWc.bdfd3s6CdNElmwFC',
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
