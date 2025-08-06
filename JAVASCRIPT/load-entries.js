@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 // 🔐 ENV VAR'lar
 const ENTRIES_BIN_ID = "68933248ae596e708fc2fbbc"; // entries verisi
 const INTERACTIONS_BIN_ID = "68862fd97b4b8670d8a81945"; // likes + pins
-const MASTER_KEY = JSONBIN_MASTER_KEY; // Netlify environment variable
+const MASTER_KEY = "$2a$10$8d7wB08K7w275/WFSjFBQOgEFxZ.MN/Z2L8WCze6bE60QM7UzLMQ6"; // Netlify environment variable
 
 // GLOBAL CACHES
 const likesCache = { data: {}, lastUpdated: 0, isUpdating: false };
