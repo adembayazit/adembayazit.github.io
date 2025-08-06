@@ -9,9 +9,7 @@ exports.handler = async () => {
         'X-Bin-Meta': 'false'
       }
     });
-    
-    const data = await response.json();
-    return { statusCode: 200, body: JSON.stringify(data) };
+    return { statusCode: 200, body: JSON.stringify(await response.json()) };
   } catch (error) {
     return { statusCode: 500, body: JSON.stringify({ error: "Veri alınamadı" }) };
   }
