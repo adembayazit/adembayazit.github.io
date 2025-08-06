@@ -1,10 +1,8 @@
 const fetch = require("node-fetch");
 
 exports.handler = async function () {
-  const BIN_ID = "68933248ae596e708fc2fbbc";
+  const BIN_ID = "68933248ae596e708fc2fbbc"; // Entries bin ID
   const MASTER_KEY = process.env.JSONBIN_MASTER_KEY;
-
-  console.log("MASTER_KEY:", MASTER_KEY ? "Var" : "Yok veya boş");
 
   try {
     const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
@@ -15,25 +13,34 @@ exports.handler = async function () {
       }
     });
 
-    if (!res.ok) throw new Error("JSONBin'den veri alınamadı");
+    const text = await res.text();
 
-    const json = await res.json();
+    // Yanıt boş mu?
+    if (!text) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: "JSONBin yanıtı boş döndü." })
+      };
+    }
+
+    let json;
+    try {
+      json = JSON.parse(text);
+    } catch (err) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: "Yanıt JSON formatında değil", raw: text })
+      };
+    }
 
     return {
       statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",          // CORS için
-        "Access-Control-Allow-Headers": "Content-Type"
-      },
       body: JSON.stringify(json.record)
     };
+
   } catch (error) {
     return {
       statusCode: 500,
-      headers: {
-        "Access-Control-Allow-Origin": "*",          // Hata durumunda da ekle
-        "Access-Control-Allow-Headers": "Content-Type"
-      },
       body: JSON.stringify({ error: error.message })
     };
   }
