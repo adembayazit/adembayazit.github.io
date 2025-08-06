@@ -1,49 +1,56 @@
-document.addEventListener("DOMContentLoaded", async () => {
-  await loadInteractions();
+document.addEventListener("DOMContentLoaded", () => {
+  (async () => {
+    await loadInteractions();
 
-  try {
-    const response = await fetch("/.netlify/functions/get-entries");
-    const entries = await response.json();
-    processEntries(entries);
-  } catch (error) {
-    console.error("Entry yüklenirken hata:", error);
-  }
+    try {
+      const response = await fetch("/.netlify/functions/get-entries");
+      if (!response.ok) throw new Error("Entries fetch failed");
+      const entries = await response.json();
+      processEntries(entries);
+    } catch (error) {
+      console.error("Entry yüklenirken hata:", error);
+    }
+  })();
 });
 
-// GLOBAL CACHES
 const likesCache = {
   data: {},
   lastUpdated: 0,
-  isUpdating: false
+  isUpdating: false,
 };
 
 const pinsCache = {
   data: {},
   lastUpdated: 0,
-  isUpdating: false
+  isUpdating: false,
 };
 
-// INTERACTION DATA YÜKLE (likes + pins)
 async function loadInteractions() {
   try {
-    const response = await fetch("/.netlify/functions/get-interactions");
+    const response = await fetch("https://api.jsonbin.io/v3/b/68862fd97b4b8670d8a81945/latest", {
+      headers: {
+        "X-Master-Key": "$2a$10$8d7wB08K7w275/WFSjFBQOgEFxZ.MN/Z2L8WCze6bE60QM7UzLMQ6",
+        "Content-Type": "application/json",
+        "X-Bin-Meta": "false",
+      },
+      cache: "no-cache",
+    });
 
-    if (!response.ok) throw new Error('Failed to fetch interaction data');
+    if (!response.ok) throw new Error("Failed to fetch interaction data");
 
     const result = await response.json();
     likesCache.data = result.likes || {};
     pinsCache.data = result.pins || {};
     likesCache.lastUpdated = pinsCache.lastUpdated = Date.now();
   } catch (error) {
-    console.error('loadInteractions error:', error);
-    const localLikes = localStorage.getItem('entryLikes');
-    const localPins = localStorage.getItem('entryPins');
+    console.error("loadInteractions error:", error);
+    const localLikes = localStorage.getItem("entryLikes");
+    const localPins = localStorage.getItem("entryPins");
     if (localLikes) likesCache.data = JSON.parse(localLikes);
     if (localPins) pinsCache.data = JSON.parse(localPins);
   }
 }
 
-// ENTRY'LERİ YÜKLE VE GÖSTER
 function processEntries(entries) {
   const container = document.getElementById("entries");
   container.innerHTML = "";
@@ -54,11 +61,11 @@ function processEntries(entries) {
   const entriesMap = new Map();
   const parentEntries = [];
 
-  last7Entries.forEach(entry => {
+  last7Entries.forEach((entry) => {
     entriesMap.set(entry.id, { ...entry, children: [] });
   });
 
-  last7Entries.forEach(entry => {
+  last7Entries.forEach((entry) => {
     if (entry.references?.length > 0) {
       const parentId = entry.references[0];
       if (entriesMap.has(parentId)) {
@@ -71,27 +78,29 @@ function processEntries(entries) {
 
   parentEntries
     .sort((a, b) => new Date(b.date) - new Date(a.date))
-    .forEach(parent => {
+    .forEach((parent) => {
       createEntryElement(parent, container, 0);
       const children = entriesMap.get(parent.id)?.children || [];
       children
         .sort((a, b) => new Date(a.date) - new Date(b.date))
-        .forEach(child => createEntryElement(child, container, 1));
+        .forEach((child) => createEntryElement(child, container, 1));
     });
 
-  if (typeof addTranslationIcons === 'function') {
+  if (typeof addTranslationIcons === "function") {
     addTranslationIcons();
   }
 }
 
-// ENTRY ELEMENTİ OLUŞTUR
 function createEntryElement(entry, container, depth) {
   const entryDiv = document.createElement("div");
-  entryDiv.className = `entry ${depth > 0 ? 'child-entry' : ''}`;
+  entryDiv.className = `entry ${depth > 0 ? "child-entry" : ""}`;
 
   const time = new Date(entry.date).toLocaleString("tr-TR", {
-    year: "numeric", month: "2-digit", day: "2-digit", 
-    hour: "2-digit", minute: "2-digit"
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
   }).replace(",", "");
 
   const likeCount = likesCache.data[entry.id] || 0;
@@ -117,14 +126,10 @@ function createEntryElement(entry, container, depth) {
 
   container.appendChild(entryDiv);
 
-  const likeIcon = entryDiv.querySelector(".daisy-icon");
-  likeIcon?.addEventListener("click", () => handleLikeClick(entry.id, entryDiv));
-
-  const pinIcon = entryDiv.querySelector(".pine-icon");
-  pinIcon?.addEventListener("click", () => handlePinClick(entry.id, entryDiv));
+  entryDiv.querySelector(".daisy-icon")?.addEventListener("click", () => handleLikeClick(entry.id, entryDiv));
+  entryDiv.querySelector(".pine-icon")?.addEventListener("click", () => handlePinClick(entry.id, entryDiv));
 }
 
-// BEĞENİ TIKLAMA
 async function handleLikeClick(entryId, entryDiv) {
   if (likesCache.isUpdating) return;
 
@@ -133,27 +138,26 @@ async function handleLikeClick(entryId, entryDiv) {
   const currentCount = parseInt(likeCountSpan.textContent) || 0;
 
   likeCountSpan.textContent = currentCount + 1;
-  likeIcon.style.transform = 'scale(1.2)';
-  likeCountSpan.style.animation = 'pulse 0.3s';
+  likeIcon.style.transform = "scale(1.2)";
+  likeCountSpan.style.animation = "pulse 0.3s";
 
   likesCache.data[entryId] = currentCount + 1;
   likesCache.isUpdating = true;
 
-  localStorage.setItem('entryLikes', JSON.stringify(likesCache.data));
+  localStorage.setItem("entryLikes", JSON.stringify(likesCache.data));
 
   try {
     await updateInteractionsOnServer(entryId, currentCount + 1, null);
   } catch (error) {
-    console.error('Like update failed:', error);
+    console.error("Like update failed:", error);
     likesCache.data[entryId] = currentCount;
     likeCountSpan.textContent = currentCount;
   } finally {
     likesCache.isUpdating = false;
-    setTimeout(() => likeIcon.style.transform = 'scale(1)', 300);
+    setTimeout(() => (likeIcon.style.transform = "scale(1)"), 300);
   }
 }
 
-// PİN TIKLAMA
 async function handlePinClick(entryId, entryDiv) {
   if (pinsCache.isUpdating) return;
 
@@ -167,12 +171,12 @@ async function handlePinClick(entryId, entryDiv) {
   pinsCache.data[entryId] = currentCount + 1;
   pinsCache.isUpdating = true;
 
-  localStorage.setItem('entryPins', JSON.stringify(pinsCache.data));
+  localStorage.setItem("entryPins", JSON.stringify(pinsCache.data));
 
   try {
     await updateInteractionsOnServer(entryId, null, currentCount + 1);
   } catch (error) {
-    console.error('Pin update failed:', error);
+    console.error("Pin update failed:", error);
     pinsCache.data[entryId] = currentCount;
     pinCountSpan.textContent = currentCount;
   } finally {
@@ -181,24 +185,24 @@ async function handlePinClick(entryId, entryDiv) {
   }
 }
 
-// SUNUCUDA BEĞENİ VE PİN GÜNCELLE
 async function updateInteractionsOnServer(entryId, newLikeCount, newPinCount) {
   const updatedLikes = newLikeCount !== null ? { ...likesCache.data, [entryId]: newLikeCount } : likesCache.data;
   const updatedPins = newPinCount !== null ? { ...pinsCache.data, [entryId]: newPinCount } : pinsCache.data;
 
-  const response = await fetch("/.netlify/functions/update-interactions", {
-    method: 'PUT',
+  const response = await fetch("https://api.jsonbin.io/v3/b/68862fd97b4b8670d8a81945", {
+    method: "PUT",
     headers: {
-      'Content-Type': 'application/json'
+      "X-Master-Key": "$2a$10$8d7wB08K7w275/WFSjFBQOgEFxZ.MN/Z2L8WCze6bE60QM7UzLMQ6",
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       likes: updatedLikes,
-      pins: updatedPins
-    })
+      pins: updatedPins,
+    }),
   });
 
   if (!response.ok) {
-    throw new Error('Failed to update data on server');
+    throw new Error("Failed to update data on server");
   }
 
   likesCache.lastUpdated = pinsCache.lastUpdated = Date.now();
