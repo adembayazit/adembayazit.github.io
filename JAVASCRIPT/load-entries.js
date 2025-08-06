@@ -25,7 +25,7 @@ async function loadInteractions() {
   try {
     const response = await fetch(`https://api.jsonbin.io/v3/b/68862fd97b4b8670d8a81945/latest`, {
       headers: {
-        'X-Master-Key': '$2a$10$eY1/HMTP6ppkyuDLWsZGteqd7gRPXZ1YcjWc.bdfd3s6CdNElmwFC',
+        'X-Master-Key': process.env.JSONBIN_API_KEY,
         'Content-Type': 'application/json',
         'X-Bin-Meta': 'false'
       },
@@ -193,7 +193,7 @@ async function updateInteractionsOnServer(entryId, newLikeCount, newPinCount) {
   const response = await fetch(`https://api.jsonbin.io/v3/b/68862fd97b4b8670d8a81945`, {
     method: 'PUT',
     headers: {
-      'X-Master-Key': '$2a$10$eY1/HMTP6ppkyuDLWsZGteqd7gRPXZ1YcjWc.bdfd3s6CdNElmwFC',
+      'X-Master-Key': process.env.JSONBIN_API_KEY,
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
