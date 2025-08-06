@@ -1,16 +1,15 @@
 const fetch = require('node-fetch');
 
-exports.handler = async () => {
+exports.handler = async (event) => {
   try {
-    const response = await fetch('https://api.jsonbin.io/v3/b/68862fd97b4b8670d8a81945/latest', {
+    const response = await fetch('https://api.jsonbin.io/v3/b/YOUR_BIN_ID/latest', {
       headers: {
         'X-Master-Key': process.env.JSONBIN_MASTER_KEY,
-        'Content-Type': 'application/json',
-        'X-Bin-Meta': 'false'
+        'Content-Type': 'application/json'
       }
     });
     return { statusCode: 200, body: JSON.stringify(await response.json()) };
   } catch (error) {
-    return { statusCode: 500, body: JSON.stringify({ error: "Veri alınamadı" }) };
+    return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
   }
 };
