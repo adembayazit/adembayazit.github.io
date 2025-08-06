@@ -1,8 +1,3 @@
-const fs = require("fs");
-const path = require("path");
-
-const likesFile = path.resolve(__dirname, "../../likes.json");
-
 exports.handler = async (event) => {
   const headers = {
     "Access-Control-Allow-Origin": "*",
@@ -10,7 +5,7 @@ exports.handler = async (event) => {
     "Access-Control-Allow-Methods": "GET, OPTIONS"
   };
 
-  // ✅ Preflight isteği
+  // Preflight isteği
   if (event.httpMethod === "OPTIONS") {
     return { statusCode: 204, headers };
   }
@@ -25,8 +20,20 @@ exports.handler = async (event) => {
 
   try {
     const id = event.queryStringParameters.id;
-    const data = JSON.parse(fs.readFileSync(likesFile, "utf8"));
-    const likes = data[id] || 0;
+    
+    // JSONBin.io'dan veriyi çek
+    const response = await fetch(`https://api.jsonbin.io/v3/b/68862fd97b4b8670d8a81945/latest`, {
+      headers: {
+        'X-Master-Key': process.env.JSONBIN_API_KEY,
+        'Content-Type': 'application/json',
+        'X-Bin-Meta': 'false'
+      }
+    });
+
+    if (!response.ok) throw new Error('JSONBin API error');
+
+    const data = await response.json();
+    const likes = data.likes?.[id] || 0; // JSONBin.io'daki likes objesinden al
 
     return {
       statusCode: 200,
@@ -38,7 +45,10 @@ exports.handler = async (event) => {
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ error: "Internal Server Error" }),
+      body: JSON.stringify({ 
+        error: "Internal Server Error",
+        message: err.message 
+      }),
     };
   }
 };
