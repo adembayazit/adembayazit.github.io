@@ -18,11 +18,21 @@ exports.handler = async function () {
     const json = await res.json();
     return {
       statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*", // İstersen sadece adembayazit.com yazabilirsin
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS"
+      },
       body: JSON.stringify(json.record)
     };
   } catch (error) {
     return {
       statusCode: 500,
+      headers: {
+        "Access-Control-Allow-Origin": "*", // Hata durumunda bile CORS header verilmeli
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS"
+      },
       body: JSON.stringify({ error: error.message })
     };
   }
