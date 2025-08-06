@@ -13,49 +13,30 @@ exports.handler = async function () {
       }
     });
 
-    const text = await res.text();
-
-    if (!text) {
+    if (!res.ok) {
       return {
-        statusCode: 500,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ error: "Boş yanıt alındı." })
+        statusCode: res.status,
+        body: JSON.stringify({ error: `JSONBin'den veri alınamadı (status ${res.status})` })
       };
     }
 
-    let json;
-    try {
-      json = JSON.parse(text);
-    } catch (err) {
+    const json = await res.json();
+
+    // Eğer `json.record` boş ya da undefined ise, hata dön
+    if (!json || !json.record) {
       return {
         statusCode: 500,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ error: "JSON parse hatası", raw: text })
+        body: JSON.stringify({ error: "Veri boş veya geçersiz." })
       };
     }
 
     return {
       statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*", // CORS problemi çözülür
-        "Content-Type": "application/json"
-      },
       body: JSON.stringify(json.record)
     };
-
   } catch (error) {
     return {
       statusCode: 500,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json"
-      },
       body: JSON.stringify({ error: error.message })
     };
   }
