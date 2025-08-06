@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 // ENV VAR
 const MASTER_KEY = window.JSONBIN_API_KEY || JSONBIN_API_KEY;
 const BIN_ID = window.JSONBIN_BIN_ID || JSONBIN_BIN_ID; // Tek tanımlama
-const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}/latest`;
+const API_URL = `https://api.jsonbin.io/v3/b/68933248ae596e708fc2fbbc/latest`;
 
 // GLOBAL CACHES
 const likesCache = { data: {}, lastUpdated: 0, isUpdating: false };
