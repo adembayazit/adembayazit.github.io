@@ -1,0 +1,36 @@
+name: Deploy with API Key
+
+on:
+  push:
+    branches: [ "main" ]  # main branch'e push yapıldığında tetikle
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # GitHub'ın sağladığı Linux makinede çalıştır
+
+    steps:
+      # 1. Adım: Kodu repodan al
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Adım: API Key'i kullanarak config dosyası oluştur
+      - name: Setup API Key
+        env:
+          JSONBIN_MASTER_KEY: ${{ secrets.JSONBIN_MASTER_KEY }}  # 🔑 Secret burada!
+        run: |
+          echo "const CONFIG = { API_KEY: '$JSONBIN_MASTER_KEY' };" > src/config.js
+          echo "✅ API Key config dosyası oluşturuldu"
+
+      # 3. Adım: Projeyi build et (örnek npm projesi)
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build
+
+      # 4. Adım: GitHub Pages'e deploy et
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}  # GitHub'ın otomatik token'ı
+          publish_dir: ./dist  # Build çıktısının olduğu klasör
