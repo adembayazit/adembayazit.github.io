@@ -14,15 +14,12 @@ exports.handler = async function () {
     });
 
     if (!res.ok) {
-      return {
-        statusCode: res.status,
-        body: JSON.stringify({ error: `JSONBin'den veri alınamadı (status ${res.status})` })
-      };
+      throw new Error(`JSONBin'den veri alınamadı. Status: ${res.status}`);
     }
 
     const json = await res.json();
 
-    // Eğer `json.record` boş ya da undefined ise, hata dön
+    // Eğer json.record yoksa hata dön
     if (!json || !json.record) {
       return {
         statusCode: 500,
