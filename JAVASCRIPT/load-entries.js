@@ -26,14 +26,7 @@ const pinsCache = {
 // INTERACTION DATA YÜKLE (likes + pins)
 async function loadInteractions() {
   try {
-    const response = await fetch(`https://api.jsonbin.io/v3/b/68862fd97b4b8670d8a81945/latest`, {
-      headers: {
-        'X-Master-Key': '$2a$10$8d7wB08K7w275/WFSjFBQOgEFxZ.MN/Z2L8WCze6bE60QM7UzLMQ6',
-        'Content-Type': 'application/json',
-        'X-Bin-Meta': 'false'
-      },
-      cache: 'no-cache'
-    });
+    const response = await fetch("/.netlify/functions/get-interactions");
 
     if (!response.ok) throw new Error('Failed to fetch interaction data');
 
@@ -193,10 +186,9 @@ async function updateInteractionsOnServer(entryId, newLikeCount, newPinCount) {
   const updatedLikes = newLikeCount !== null ? { ...likesCache.data, [entryId]: newLikeCount } : likesCache.data;
   const updatedPins = newPinCount !== null ? { ...pinsCache.data, [entryId]: newPinCount } : pinsCache.data;
 
-  const response = await fetch(`https://api.jsonbin.io/v3/b/68862fd97b4b8670d8a81945`, {
+  const response = await fetch("/.netlify/functions/update-interactions", {
     method: 'PUT',
     headers: {
-      'X-Master-Key': '$2a$10$8d7wB08K7w275/WFSjFBQOgEFxZ.MN/Z2L8WCze6bE60QM7UzLMQ6',
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
