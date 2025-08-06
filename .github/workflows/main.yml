@@ -1,9 +1,5 @@
 name: Deploy with API Key
-env:
-    JSONBIN_MASTER_KEY: ${{ secrets.JSONBIN_MASTER_KEY }}
-  run: |
-    mkdir -p src  # Önce klasörü oluştur
-    echo "const CONFIG = { API_KEY: '$JSONBIN_MASTER_KEY' };" > src/config.js
+
 on:
   push:
     branches: [ "main" ]  # main branch'e push yapıldığında tetikle
@@ -22,6 +18,7 @@ jobs:
         env:
           JSONBIN_MASTER_KEY: ${{ secrets.JSONBIN_MASTER_KEY }}  # 🔑 Secret burada!
         run: |
+          mkdir -p src  # src klasörünü oluştur (eğer yoksa)
           echo "const CONFIG = { API_KEY: '$JSONBIN_MASTER_KEY' };" > src/config.js
           echo "✅ API Key config dosyası oluşturuldu"
 
