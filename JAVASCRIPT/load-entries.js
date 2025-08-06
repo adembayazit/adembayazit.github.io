@@ -1,10 +1,13 @@
 document.addEventListener("DOMContentLoaded", async () => {
   await loadInteractions();
 
-  fetch("entries.json")
-    .then((res) => res.json())
-    .then(processEntries)
-    .catch(console.error);
+  try {
+    const response = await fetch("/.netlify/functions/get-entries");
+    const entries = await response.json();
+    processEntries(entries);
+  } catch (error) {
+    console.error("Entry yüklenirken hata:", error);
+  }
 });
 
 // GLOBAL CACHES
