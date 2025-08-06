@@ -13,25 +13,48 @@ exports.handler = async function () {
       }
     });
 
-    if (!res.ok) throw new Error("JSONBin'den veri alınamadı");
+    const text = await res.text();
 
-    const json = await res.json();
+    if (!text) {
+      return {
+        statusCode: 500,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ error: "Boş yanıt alındı." })
+      };
+    }
+
+    let json;
+    try {
+      json = JSON.parse(text);
+    } catch (err) {
+      return {
+        statusCode: 500,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ error: "JSON parse hatası", raw: text })
+      };
+    }
+
     return {
       statusCode: 200,
       headers: {
-        "Access-Control-Allow-Origin": "*", // İstersen sadece adembayazit.com yazabilirsin
-        "Access-Control-Allow-Headers": "Content-Type",
-        "Access-Control-Allow-Methods": "GET, POST, OPTIONS"
+        "Access-Control-Allow-Origin": "*", // CORS problemi çözülür
+        "Content-Type": "application/json"
       },
       body: JSON.stringify(json.record)
     };
+
   } catch (error) {
     return {
       statusCode: 500,
       headers: {
-        "Access-Control-Allow-Origin": "*", // Hata durumunda bile CORS header verilmeli
-        "Access-Control-Allow-Headers": "Content-Type",
-        "Access-Control-Allow-Methods": "GET, POST, OPTIONS"
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({ error: error.message })
     };
