@@ -1,10 +1,10 @@
-console.log("MASTER_KEY:", MASTER_KEY ? "Var" : "Yok veya boş");
-
 const fetch = require("node-fetch");
 
 exports.handler = async function () {
   const BIN_ID = "68933248ae596e708fc2fbbc";
   const MASTER_KEY = process.env.JSONBIN_MASTER_KEY;
+
+  console.log("MASTER_KEY:", MASTER_KEY ? "Var" : "Yok veya boş");
 
   try {
     const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
@@ -22,7 +22,7 @@ exports.handler = async function () {
     return {
       statusCode: 200,
       headers: {
-        "Access-Control-Allow-Origin": "*",          // <--- CORS için
+        "Access-Control-Allow-Origin": "*",          // CORS için
         "Access-Control-Allow-Headers": "Content-Type"
       },
       body: JSON.stringify(json.record)
@@ -31,7 +31,7 @@ exports.handler = async function () {
     return {
       statusCode: 500,
       headers: {
-        "Access-Control-Allow-Origin": "*",          // <--- Hata durumunda da ekle
+        "Access-Control-Allow-Origin": "*",          // Hata durumunda da ekle
         "Access-Control-Allow-Headers": "Content-Type"
       },
       body: JSON.stringify({ error: error.message })
