@@ -1,3 +1,5 @@
+console.log("MASTER_KEY:", MASTER_KEY ? "Var" : "Yok veya boş");
+
 const fetch = require("node-fetch");
 
 exports.handler = async function () {
