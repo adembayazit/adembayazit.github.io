@@ -1,44 +1,29 @@
-const fs = require("fs");
-const path = require("path");
+const fetch = require("node-fetch");
 
-const likesFile = path.resolve(__dirname, "../../likes.json");
-
-exports.handler = async (event) => {
-  const headers = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "Content-Type",
-    "Access-Control-Allow-Methods": "GET, OPTIONS"
-  };
-
-  // ✅ Preflight isteği
-  if (event.httpMethod === "OPTIONS") {
-    return { statusCode: 204, headers };
-  }
-
-  if (event.httpMethod !== "GET") {
-    return {
-      statusCode: 405,
-      headers,
-      body: JSON.stringify({ error: "Method Not Allowed" }),
-    };
-  }
+exports.handler = async function () {
+  const BIN_ID = "68933248ae596e708fc2fbbc"; // Entries bin
+  const MASTER_KEY = process.env.JSONBIN_MASTER_KEY;
 
   try {
-    const id = event.queryStringParameters.id;
-    const data = JSON.parse(fs.readFileSync(likesFile, "utf8"));
-    const likes = data[id] || 0;
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+      headers: {
+        'X-Master-Key': MASTER_KEY,
+        'Content-Type': 'application/json',
+        'X-Bin-Meta': 'false'
+      }
+    });
 
+    if (!res.ok) throw new Error("JSONBin'den veri alınamadı");
+
+    const json = await res.json();
     return {
       statusCode: 200,
-      headers,
-      body: JSON.stringify({ likes }),
+      body: JSON.stringify(json.record)
     };
-  } catch (err) {
-    console.error("get-likes.js error:", err);
+  } catch (error) {
     return {
       statusCode: 500,
-      headers,
-      body: JSON.stringify({ error: "Internal Server Error" }),
+      body: JSON.stringify({ error: error.message })
     };
   }
 };
