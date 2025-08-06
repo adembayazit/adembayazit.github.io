@@ -20,15 +20,10 @@ const pinsCache = {
   isUpdating: false
 };
 
-// INTERACTION DATA YÜKLE (likes + pins)
+// INTERACTION DATA YÜKLE (Netlify Function üzerinden)
 async function loadInteractions() {
   try {
-    const response = await fetch(`https://api.jsonbin.io/v3/b/68862fd97b4b8670d8a81945/latest`, {
-      headers: {
-        'X-Master-Key': '$2a$10$upbMS10i370IW0Ll5G/WB.f5ceSfLg4Wgt3VF5mMjuoJz8ecOiEee',
-        'Content-Type': 'application/json',
-        'X-Bin-Meta': 'false'
-      },
+    const response = await fetch('/.netlify/functions/getInteractions', {
       cache: 'no-cache'
     });
 
@@ -185,20 +180,19 @@ async function handlePinClick(entryId, entryDiv) {
   }
 }
 
-// SUNUCUDA BEĞENİ VE PİN GÜNCELLE
+// SUNUCUDA BEĞENİ VE PİN GÜNCELLE (Netlify Function'a gönder)
 async function updateInteractionsOnServer(entryId, newLikeCount, newPinCount) {
   const updatedLikes = newLikeCount !== null ? { ...likesCache.data, [entryId]: newLikeCount } : likesCache.data;
   const updatedPins = newPinCount !== null ? { ...pinsCache.data, [entryId]: newPinCount } : pinsCache.data;
 
-  const response = await fetch(`https://api.jsonbin.io/v3/b/68862fd97b4b8670d8a81945`, {
-    method: 'PUT',
+  const response = await fetch('/.netlify/functions/updateInteractions', {
+    method: 'POST',
     headers: {
-      'X-Master-Key': '$2a$10$upbMS10i370IW0Ll5G/WB.f5ceSfLg4Wgt3VF5mMjuoJz8ecOiEee',
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      likes: updatedLikes,
-      pins: updatedPins
+      updatedLikes,
+      updatedPins
     })
   });
 
