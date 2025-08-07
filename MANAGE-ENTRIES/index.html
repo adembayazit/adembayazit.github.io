@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Giriş - adembayazit.com</title>
+    <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Ana siteyle uyumlu ekstra stiller */
+        .login-container {
+            background: rgba(0, 30, 0, 0.8);
+            border: 1px solid limegreen;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+        
+        button {
+            background: limegreen;
+            color: black;
+            font-weight: 600;
+        }
+        
+        button:hover {
+            box-shadow: 0 0 10px limegreen;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <img src="../IMAGES/hackerwhite.svg" alt="adembayazit.com" class="hacker-icon">
+            <h2>LadyB<span class="fa-solid fa-bug bug-icon"></span>G Admin</h2>
+        </div>
+        <input type="password" id="adminPassword" placeholder="Admin Şifresi">
+        <button onclick="checkPassword()"><i class="fas fa-lock"></i> Giriş Yap</button>
+    </div>
+
+    <script>
+        function checkPassword() {
+            const password = document.getElementById('adminPassword').value;
+            // SHA-256 hash ile şifre kontrolü (örnek: "adem123")
+            if(password === "belirlediginiz_sifre" || 
+               (typeof sha256 !== 'undefined' && sha256(password) === "hashlenmis_sifre")) {
+                localStorage.setItem('adminAuthenticated', 'true');
+                window.location.href = "admin.html";
+            } else {
+                alert("Hatalı şifre!");
+            }
+        }
+    </script>
+</body>
+</html>
