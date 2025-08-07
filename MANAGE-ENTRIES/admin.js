@@ -410,6 +410,14 @@
             border-radius: 3px;
         }
         
+        .counter-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+        
         @keyframes scanline {
             0% { transform: translateX(-100%); }
             100% { transform: translateX(100%); }
@@ -503,7 +511,10 @@
             <div class="preview-container">
                 <div class="preview-header">
                     <h4><i class="fas fa-eye"></i> Önizleme</h4>
-                    <small>Anasayfada nasıl görünecek</small>
+                    <div class="counter-container">
+                        <span>Türkçe: <span id="preview-tr-chars">0</span> karakter</span>
+                        <span>İngilizce: <span id="preview-en-chars">0</span> karakter</span>
+                    </div>
                 </div>
                 <div class="preview-content" id="preview-content">
                     İçerik önizleme burada görünecek...
@@ -538,7 +549,7 @@
             
             <!-- Search box -->
             <div class="search-box">
-                <input type="text" id="search-query" placeholder="ID veya içerik ile ara...">
+                <input type="text" id="search-query" placeholder="ID veya içerik ile ara..." onkeyup="if(event.key === 'Enter') searchEntries()">
                 <button onclick="searchEntries()"><i class="fas fa-search"></i> Ara</button>
             </div>
             
@@ -576,6 +587,10 @@
             
             document.getElementById('tr-counter').textContent = `${trContent.length} karakter`;
             document.getElementById('en-counter').textContent = `${enContent.length} karakter`;
+            
+            // Önizlemede karakter sayılarını güncelle
+            document.getElementById('preview-tr-chars').textContent = trContent.length;
+            document.getElementById('preview-en-chars').textContent = enContent.length;
         }
         
         async function fetchFromJsonBin(binId, method = 'GET', data = null) {
@@ -850,10 +865,12 @@
                         <div class="form-group">
                             <label for="edit-tr-${entryId}">Türkçe İçerik:</label>
                             <textarea id="edit-tr-${entryId}">${entry.content_tr || ''}</textarea>
+                            <div class="char-counter">${entry.content_tr ? entry.content_tr.length : 0} karakter</div>
                         </div>
                         <div class="form-group">
                             <label for="edit-en-${entryId}">İngilizce İçerik:</label>
                             <textarea id="edit-en-${entryId}">${entry.content || ''}</textarea>
+                            <div class="char-counter">${entry.content ? entry.content.length : 0} karakter</div>
                         </div>
                         <div class="edit-actions">
                             <button class="save-btn" onclick="saveEntry(${entryId})"><i class="fas fa-save"></i> Kaydet</button>
@@ -861,6 +878,20 @@
                         </div>
                     `;
                     targetItem.appendChild(editForm);
+                    
+                    // Edit alanları için karakter sayacını güncelle
+                    const trEdit = document.getElementById(`edit-tr-${entryId}`);
+                    const enEdit = document.getElementById(`edit-en-${entryId}`);
+                    
+                    trEdit.addEventListener('input', () => {
+                        editForm.querySelector('.form-group:first-child .char-counter').textContent = 
+                            `${trEdit.value.length} karakter`;
+                    });
+                    
+                    enEdit.addEventListener('input', () => {
+                        editForm.querySelector('.form-group:last-child .char-counter').textContent = 
+                            `${enEdit.value.length} karakter`;
+                    });
                 }
                 
                 editForm.style.display = 'block';
