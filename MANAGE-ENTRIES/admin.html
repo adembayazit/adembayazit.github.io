@@ -13,6 +13,7 @@
             --bg-color: #000;
             --error-color: #ff3333;
             --success-color: #00ff00;
+            --warning-color: #ffcc00;
         }
         
         body {
@@ -73,7 +74,7 @@
         }
         
         .logout-btn:hover {
-            box-shadow: 0 0 10px var(--primary-color));
+            box-shadow: 0 0 10px var(--primary-color);
             transform: translateY(-2px);
         }
         
@@ -84,7 +85,7 @@
             padding: 2rem;
         }
         
-        .editor-container, .stats-container {
+        .editor-container, .stats-container, .entries-container {
             background: rgba(0, 30, 0, 0.7);
             border: 1px solid var(--primary-color);
             border-radius: 5px;
@@ -94,7 +95,7 @@
             overflow: hidden;
         }
         
-        .editor-container::after, .stats-container::after {
+        .editor-container::after, .stats-container::after, .entries-container::after {
             content: "";
             position: absolute;
             top: 0;
@@ -115,7 +116,7 @@
             font-weight: bold;
         }
         
-        input[type="number"], textarea {
+        input[type="number"], textarea, input[type="text"] {
             width: 100%;
             padding: 10px;
             background: #111;
@@ -176,6 +177,7 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 1rem;
+            margin-bottom: 1.5rem;
         }
         
         .stat-box {
@@ -218,6 +220,108 @@
             color: var(--error-color);
         }
         
+        .warning {
+            background: rgba(255, 204, 0, 0.1);
+            border: 1px solid var(--warning-color);
+            color: var(--warning-color);
+        }
+        
+        .entries-list {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 1rem;
+        }
+        
+        .entry-item {
+            background: rgba(0, 30, 0, 0.5);
+            border: 1px solid var(--primary-color);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 3px;
+            position: relative;
+        }
+        
+        .entry-item:hover {
+            background: rgba(0, 60, 0, 0.5);
+        }
+        
+        .entry-content {
+            margin-bottom: 0.5rem;
+        }
+        
+        .entry-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+        
+        .entry-actions {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            display: none;
+        }
+        
+        .entry-item:hover .entry-actions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .entry-actions button {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--primary-color);
+            color: var(--text-color);
+            width: 25px;
+            height: 25px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        
+        .entry-actions button:hover {
+            background: var(--primary-color);
+            color: black;
+        }
+        
+        .edit-form {
+            display: none;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(0, 60, 0, 0.5);
+            border: 1px solid var(--primary-color);
+            border-radius: 3px;
+        }
+        
+        .edit-form textarea {
+            min-height: 100px;
+        }
+        
+        .edit-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .edit-actions button {
+            flex: 1;
+            padding: 5px;
+        }
+        
+        .save-btn {
+            background: var(--primary-color);
+            color: black;
+        }
+        
+        .cancel-btn {
+            background: #333;
+            color: white;
+        }
+        
+        .delete-btn {
+            background: var(--error-color);
+            color: white;
+        }
+        
         @keyframes scanline {
             0% { transform: translateX(-100%); }
             100% { transform: translateX(100%); }
@@ -253,6 +357,11 @@
     <div class="admin-container">
         <div class="editor-container">
             <h3><i class="fas fa-plus-circle"></i> Yeni Entry Ekle</h3>
+            
+            <div class="form-group">
+                <label for="entryId"><i class="fas fa-hashtag"></i> Entry ID:</label>
+                <input type="number" id="entryId" placeholder="Entry ID (otomatik oluşturmak için boş bırakın)">
+            </div>
             
             <div class="form-group">
                 <label for="referenceId"><i class="fas fa-link"></i> Referans ID (opsiyonel):</label>
@@ -306,6 +415,11 @@
                     <small>Toplam Entry</small>
                 </div>
             </div>
+            
+            <h3><i class="fas fa-history"></i> Son Entryler</h3>
+            <div class="entries-list" id="recent-entries">
+                <!-- Son entryler buraya eklenecek -->
+            </div>
         </div>
     </div>
 
@@ -321,6 +435,7 @@
                 window.location.href = 'login.html';
             } else {
                 loadStats();
+                loadRecentEntries();
             }
         });
         
@@ -347,6 +462,7 @@
         }
         
         async function submitEntry() {
+            const entryIdInput = document.getElementById('entryId');
             const referenceId = document.getElementById('referenceId').value;
             const trContent = document.getElementById('trContent').value;
             const enContent = document.getElementById('enContent').value;
@@ -366,36 +482,55 @@
                 
                 // Mevcut entry'leri çek
                 const currentData = await fetchFromJsonBin(ENTRIES_BIN_ID);
-                const entries = currentData.records || currentData;
+                let entries = Array.isArray(currentData) ? currentData : (currentData.records || []);
                 
-                // Yeni entry oluştur
+                // Entry ID kontrolü
+                let entryId = entryIdInput.value ? parseInt(entryIdInput.value) : generateId();
+                
+                // ID zaten var mı kontrol et
+                if (entryIdInput.value && entries.some(e => e.id === entryId)) {
+                    showMessage('Bu ID zaten kullanılıyor!', 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Entry Ekle';
+                    return;
+                }
+                
+                // Yeni entry oluştur (sizin formatınıza uygun)
                 const newEntry = {
-                    id: generateId(),
+                    id: entryId,
                     date: new Date().toISOString(),
-                    content: trContent || enContent,
+                    content: enContent || trContent, // Varsayılan içerik
                     content_tr: trContent || null,
                     content_en: enContent || null,
-                    references: referenceId ? [parseInt(referenceId)] : [],
-                    lang: trContent ? 'tr' : 'en'
+                    references: referenceId ? [parseInt(referenceId)] : []
                 };
                 
+                // content_tr veya content_en'e göre content'i ayarla
+                if (trContent && enContent) {
+                    newEntry.content = trContent; // Varsayılan olarak Türkçe
+                } else if (trContent) {
+                    newEntry.content = trContent;
+                } else if (enContent) {
+                    newEntry.content = enContent;
+                }
+                
                 // Yeni listeyi hazırla
-                const updatedEntries = Array.isArray(entries) ? 
-                    [newEntry, ...entries] : 
-                    [newEntry];
+                const updatedEntries = [newEntry, ...entries];
                 
                 // JSONBin'e gönder
-                await fetchFromJsonBin(ENTRIES_BIN_ID, 'PUT', {
-                    records: updatedEntries
-                });
+                await fetchFromJsonBin(ENTRIES_BIN_ID, 'PUT', updatedEntries);
                 
                 showMessage('Entry başarıyla eklendi!', 'success');
+                
+                // Formu temizle
+                entryIdInput.value = '';
                 document.getElementById('referenceId').value = '';
                 document.getElementById('trContent').value = '';
                 document.getElementById('enContent').value = '';
                 
-                // İstatistikleri güncelle
+                // İstatistikleri ve son entryleri güncelle
                 await updateStats();
+                await loadRecentEntries();
             } catch (error) {
                 showMessage(`Hata: ${error.message}`, 'error');
                 console.error('Entry ekleme hatası:', error);
@@ -406,8 +541,186 @@
             }
         }
         
+        async function loadRecentEntries() {
+            try {
+                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
+                const recentEntriesContainer = document.getElementById('recent-entries');
+                recentEntriesContainer.innerHTML = '';
+                
+                // En son 5 entry'yi göster
+                const recentEntries = Array.isArray(entries) ? 
+                    entries.slice(0, 5) : 
+                    (entries.records ? entries.records.slice(0, 5) : []);
+                
+                if (recentEntries.length === 0) {
+                    recentEntriesContainer.innerHTML = '<p>Henüz entry bulunmamaktadır.</p>';
+                    return;
+                }
+                
+                recentEntries.forEach(entry => {
+                    const entryEl = document.createElement('div');
+                    entryEl.className = 'entry-item';
+                    
+                    // İçerik belirleme (TR varsa TR, yoksa EN, yoksa content)
+                    let displayContent = entry.content_tr || entry.content_en || entry.content;
+                    
+                    entryEl.innerHTML = `
+                        <div class="entry-content">${displayContent}</div>
+                        <div class="entry-meta">
+                            <span>ID: ${entry.id}</span>
+                            <span>${formatDate(entry.date)}</span>
+                        </div>
+                        <div class="entry-actions">
+                            <button onclick="editEntry(${entry.id})" title="Düzenle"><i class="fas fa-edit"></i></button>
+                            <button onclick="deleteEntry(${entry.id})" title="Sil"><i class="fas fa-trash"></i></button>
+                        </div>
+                    `;
+                    
+                    recentEntriesContainer.appendChild(entryEl);
+                });
+            } catch (error) {
+                console.error('Son entryleri yükleme hatası:', error);
+            }
+        }
+        
+        async function editEntry(entryId) {
+            try {
+                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
+                const entry = Array.isArray(entries) ? 
+                    entries.find(e => e.id === entryId) : 
+                    (entries.records ? entries.records.find(e => e.id === entryId) : null);
+                
+                if (!entry) {
+                    showMessage('Entry bulunamadı!', 'error');
+                    return;
+                }
+                
+                // Entry item'ını bul
+                const entryItems = document.querySelectorAll('.entry-item');
+                const targetItem = Array.from(entryItems).find(item => 
+                    item.querySelector('.entry-meta span').textContent.includes(entryId));
+                
+                if (!targetItem) return;
+                
+                // Edit formu oluştur veya göster
+                let editForm = targetItem.querySelector('.edit-form');
+                
+                if (!editForm) {
+                    editForm = document.createElement('div');
+                    editForm.className = 'edit-form';
+                    editForm.innerHTML = `
+                        <div class="form-group">
+                            <label for="edit-tr-${entryId}">Türkçe İçerik:</label>
+                            <textarea id="edit-tr-${entryId}">${entry.content_tr || ''}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-en-${entryId}">İngilizce İçerik:</label>
+                            <textarea id="edit-en-${entryId}">${entry.content_en || ''}</textarea>
+                        </div>
+                        <div class="edit-actions">
+                            <button class="save-btn" onclick="saveEntry(${entryId})"><i class="fas fa-save"></i> Kaydet</button>
+                            <button class="cancel-btn" onclick="cancelEdit(${entryId})"><i class="fas fa-times"></i> İptal</button>
+                            <button class="delete-btn" onclick="confirmDelete(${entryId})"><i class="fas fa-trash"></i> Sil</button>
+                        </div>
+                    `;
+                    targetItem.appendChild(editForm);
+                }
+                
+                editForm.style.display = 'block';
+            } catch (error) {
+                console.error('Entry düzenleme hatası:', error);
+                showMessage(`Düzenleme hatası: ${error.message}`, 'error');
+            }
+        }
+        
+        async function saveEntry(entryId) {
+            try {
+                const trContent = document.getElementById(`edit-tr-${entryId}`).value;
+                const enContent = document.getElementById(`edit-en-${entryId}`).value;
+                
+                if (!trContent && !enContent) {
+                    showMessage('En az bir dilde içerik girin!', 'error');
+                    return;
+                }
+                
+                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
+                let entriesArray = Array.isArray(entries) ? entries : (entries.records || []);
+                
+                const entryIndex = entriesArray.findIndex(e => e.id === entryId);
+                if (entryIndex === -1) {
+                    showMessage('Entry bulunamadı!', 'error');
+                    return;
+                }
+                
+                // Entry'yi güncelle
+                entriesArray[entryIndex] = {
+                    ...entriesArray[entryIndex],
+                    content_tr: trContent || null,
+                    content_en: enContent || null,
+                    content: trContent || enContent || entriesArray[entryIndex].content,
+                    date: new Date().toISOString()
+                };
+                
+                // JSONBin'e gönder
+                await fetchFromJsonBin(ENTRIES_BIN_ID, 'PUT', entriesArray);
+                
+                showMessage('Entry başarıyla güncellendi!', 'success');
+                
+                // Listeyi yenile
+                await loadRecentEntries();
+            } catch (error) {
+                console.error('Entry kaydetme hatası:', error);
+                showMessage(`Kaydetme hatası: ${error.message}`, 'error');
+            }
+        }
+        
+        function cancelEdit(entryId) {
+            const entryItems = document.querySelectorAll('.entry-item');
+            const targetItem = Array.from(entryItems).find(item => 
+                item.querySelector('.entry-meta span').textContent.includes(entryId));
+            
+            if (targetItem) {
+                const editForm = targetItem.querySelector('.edit-form');
+                if (editForm) {
+                    editForm.style.display = 'none';
+                }
+            }
+        }
+        
+        function confirmDelete(entryId) {
+            if (confirm('Bu entryi silmek istediğinize emin misiniz?')) {
+                deleteEntry(entryId);
+            }
+        }
+        
+        async function deleteEntry(entryId) {
+            try {
+                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
+                let entriesArray = Array.isArray(entries) ? entries : (entries.records || []);
+                
+                const updatedEntries = entriesArray.filter(e => e.id !== entryId);
+                
+                // JSONBin'e gönder
+                await fetchFromJsonBin(ENTRIES_BIN_ID, 'PUT', updatedEntries);
+                
+                showMessage('Entry başarıyla silindi!', 'success');
+                
+                // Listeyi yenile
+                await loadRecentEntries();
+                await updateStats();
+            } catch (error) {
+                console.error('Entry silme hatası:', error);
+                showMessage(`Silme hatası: ${error.message}`, 'error');
+            }
+        }
+        
         function generateId() {
             return Math.floor(Math.random() * 900000) + 100000;
+        }
+        
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('tr-TR') + ' ' + date.toLocaleTimeString('tr-TR');
         }
         
         async function updateStats() {
