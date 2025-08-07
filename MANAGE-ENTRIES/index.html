@@ -7,103 +7,39 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
-        body {
-            background: #000;
-            color: limegreen;
-            font-family: 'Courier New', monospace;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .login-container {
-            background: rgba(0, 30, 0, 0.8);
-            border: 1px solid limegreen;
-            padding: 2rem;
-            border-radius: 5px;
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
-            text-align: center;
-            width: 300px;
-        }
-        .logo {
-            margin-bottom: 1.5rem;
-        }
-        .logo img {
-            height: 50px;
-            filter: drop-shadow(0 0 5px limegreen);
-        }
-        .input-group {
-            display: flex;
-            margin: 10px 0;
-        }
-        input {
-            flex: 1;
-            padding: 10px;
-            background: #111;
-            border: 1px solid limegreen;
-            border-right: none;
-            color: limegreen;
-        }
-        button {
-            padding: 10px 15px;
-            background: limegreen;
-            color: black;
-            font-weight: bold;
-            border: 1px solid limegreen;
-            cursor: pointer;
-        }
-        #message {
-            height: 20px;
-            margin-top: 10px;
-            font-size: 14px;
-        }
+        /* Tasarım kodları aynı */
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <div class="logo">
-            <img src="../IMAGES/hackerwhite.svg" alt="adembayazit.com" class="hacker-icon">
-            <h2>LadyB<span style="color:red">0</span>G Admin</h2>
-        </div>
-        <div class="input-group">
-            <input type="password" id="adminPassword" placeholder="Admin Şifresi" autocomplete="off">
-            <button onclick="checkPassword()"><i class="fas fa-lock"></i></button>
-        </div>
-        <p id="message"></p>
-    </div>
-
+    <!-- Arayüz kısmı aynı -->
+    
     <script>
-        // SHA-256 hash fonksiyonu (UTF-8 desteğiyle)
+        // GÜNCELLENMİŞ KISIM
         function hashPassword(password) {
-            return CryptoJS.SHA256(password).toString();
+            return CryptoJS.SHA256(password).toString(CryptoJS.enc.Hex);
         }
 
         function checkPassword() {
             const password = document.getElementById('adminPassword').value;
             const messageEl = document.getElementById('message');
             
-            // "admin123" şifresinin doğru hash'i
-            const CORRECT_HASH = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918";
-            
-            // Debug için
-            console.log("Girilen şifre:", password);
-            console.log("Oluşturulan hash:", hashPassword(password));
+            // YENİ DOĞRU HASH (admin123 için)
+            const CORRECT_HASH = "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9";
             
             if (hashPassword(password) === CORRECT_HASH) {
-                messageEl.textContent = "Giriş başarılı! Yönlendiriliyor...";
+                messageEl.textContent = "✓ Giriş başarılı!";
                 messageEl.style.color = "limegreen";
-                localStorage.setItem('adminAuth', 'true');
                 setTimeout(() => {
                     window.location.href = "admin.html";
                 }, 1000);
             } else {
-                messageEl.textContent = "Hatalı şifre!";
+                messageEl.textContent = "✗ Hatalı şifre!";
                 messageEl.style.color = "red";
+                console.log("Beklenen hash:", CORRECT_HASH);
+                console.log("Girilen hash:", hashPassword(password));
             }
         }
 
-        // Enter tuşu desteği
         document.getElementById('adminPassword').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') checkPassword();
         });
