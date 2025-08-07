@@ -4,8 +4,222 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Paneli - adembayazit.com</title>
-    <link rel="stylesheet" href="admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: limegreen;
+            --secondary-color: #001e00;
+            --text-color: limegreen;
+            --bg-color: #000;
+            --error-color: #ff3333;
+            --success-color: #00ff00;
+        }
+        
+        body {
+            background: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        
+        .admin-header {
+            background: rgba(0, 30, 0, 0.9);
+            border-bottom: 1px solid var(--primary-color);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo img {
+            height: 40px;
+            filter: drop-shadow(0 0 5px var(--primary-color));
+        }
+        
+        .logo h2 {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .bug-icon {
+            color: red;
+            animation: bugPulse 1.5s infinite;
+        }
+        
+        .logout-btn {
+            background: var(--primary-color);
+            color: black;
+            border: none;
+            padding: 8px 15px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 3px;
+            transition: all 0.3s;
+        }
+        
+        .logout-btn:hover {
+            box-shadow: 0 0 10px var(--primary-color);
+            transform: translateY(-2px);
+        }
+        
+        .admin-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            padding: 2rem;
+        }
+        
+        .editor-container, .stats-container {
+            background: rgba(0, 30, 0, 0.7);
+            border: 1px solid var(--primary-color);
+            border-radius: 5px;
+            padding: 1.5rem;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .editor-container::after, .stats-container::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+            animation: scanline 3s linear infinite;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        
+        input[type="number"], textarea {
+            width: 100%;
+            padding: 10px;
+            background: #111;
+            border: 1px solid var(--primary-color);
+            color: var(--text-color);
+            font-family: 'Courier New', monospace;
+            border-radius: 3px;
+        }
+        
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .editor-toolbar {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 5px;
+        }
+        
+        .editor-toolbar button {
+            background: #111;
+            border: 1px solid var(--primary-color);
+            color: var(--text-color);
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        
+        .editor-toolbar button:hover {
+            background: var(--primary-color);
+            color: black;
+        }
+        
+        .submit-btn {
+            background: var(--primary-color);
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 3px;
+            transition: all 0.3s;
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .submit-btn:hover {
+            box-shadow: 0 0 15px var(--primary-color);
+            transform: translateY(-2px);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+        
+        .stat-box {
+            background: rgba(0, 30, 0, 0.5);
+            border: 1px solid var(--primary-color);
+            padding: 1rem;
+            text-align: center;
+            border-radius: 3px;
+        }
+        
+        .stat-box i {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+        
+        .stat-box span {
+            display: block;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        @keyframes scanline {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        @keyframes bugPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .admin-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
     <header class="admin-header">
@@ -26,7 +240,7 @@
             </div>
             
             <div class="form-group">
-                <label for="trContent"><span class="fi fi-tr"></span> Türkçe İçerik:</label>
+                <label for="trContent"><i class="fas fa-language"></i> Türkçe İçerik:</label>
                 <div class="editor-toolbar">
                     <button onclick="formatText('trContent', 'bold')" title="Kalın"><i class="fas fa-bold"></i></button>
                     <button onclick="formatText('trContent', 'italic')" title="İtalik"><i class="fas fa-italic"></i></button>
@@ -38,7 +252,7 @@
             </div>
             
             <div class="form-group">
-                <label for="enContent"><span class="fi fi-gb"></span> İngilizce İçerik:</label>
+                <label for="enContent"><i class="fas fa-globe"></i> İngilizce İçerik:</label>
                 <div class="editor-toolbar">
                     <button onclick="formatText('enContent', 'bold')" title="Bold"><i class="fas fa-bold"></i></button>
                     <button onclick="formatText('enContent', 'italic')" title="Italic"><i class="fas fa-italic"></i></button>
@@ -74,6 +288,101 @@
         </div>
     </div>
 
-    <script src="admin.js"></script>
+    <script>
+        // Oturum kontrolü
+        window.addEventListener('DOMContentLoaded', () => {
+            if (!localStorage.getItem('adminAuth') || localStorage.getItem('adminAuth') !== 'true') {
+                window.location.href = 'login.html';
+            }
+        });
+        
+        function logout() {
+            localStorage.removeItem('adminAuth');
+            window.location.href = 'login.html';
+        }
+        
+        // Metin düzenleme fonksiyonları
+        function formatText(textareaId, format) {
+            const textarea = document.getElementById(textareaId);
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selectedText = textarea.value.substring(start, end);
+            let formattedText = '';
+            
+            switch(format) {
+                case 'bold':
+                    formattedText = `**${selectedText}**`;
+                    break;
+                case 'italic':
+                    formattedText = `_${selectedText}_`;
+                    break;
+                case 'underline':
+                    formattedText = `<u>${selectedText}</u>`;
+                    break;
+                case 'quote':
+                    formattedText = `> ${selectedText}`;
+                    break;
+            }
+            
+            textarea.value = textarea.value.substring(0, start) + formattedText + textarea.value.substring(end);
+            textarea.focus();
+            textarea.setSelectionRange(start + formattedText.length, start + formattedText.length);
+        }
+        
+        function clearFormatting(textareaId) {
+            const textarea = document.getElementById(textareaId);
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selectedText = textarea.value.substring(start, end);
+            
+            // Basit format temizleme
+            const cleanedText = selectedText
+                .replace(/\*\*(.*?)\*\*/g, '$1')
+                .replace(/_(.*?)_/g, '$1')
+                .replace(/<u>(.*?)<\/u>/g, '$1')
+                .replace(/^>\s?(.*)$/gm, '$1');
+                
+            textarea.value = textarea.value.substring(0, start) + cleanedText + textarea.value.substring(end);
+            textarea.focus();
+            textarea.setSelectionRange(start + cleanedText.length, start + cleanedText.length);
+        }
+        
+        function submitEntry() {
+            const referenceId = document.getElementById('referenceId').value;
+            const trContent = document.getElementById('trContent').value;
+            const enContent = document.getElementById('enContent').value;
+            
+            if (!trContent && !enContent) {
+                alert('Lütfen en az bir dilde içerik girin!');
+                return;
+            }
+            
+            // Burada API çağrısı yapılabilir
+            console.log('Entry gönderiliyor:', {
+                referenceId,
+                trContent,
+                enContent
+            });
+            
+            // Örnek başarı mesajı
+            alert('Entry başarıyla gönderildi!');
+            
+            // Formu temizle
+            document.getElementById('referenceId').value = '';
+            document.getElementById('trContent').value = '';
+            document.getElementById('enContent').value = '';
+        }
+        
+        // İstatistikleri yükle (örnek veri)
+        function loadStats() {
+            // Burada API'den gerçek veriler çekilebilir
+            document.getElementById('total-likes').textContent = '1,245';
+            document.getElementById('total-pins').textContent = '89';
+            document.getElementById('total-entries').textContent = '342';
+        }
+        
+        // Sayfa yüklendiğinde istatistikleri yükle
+        window.addEventListener('load', loadStats);
+    </script>
 </body>
 </html>
