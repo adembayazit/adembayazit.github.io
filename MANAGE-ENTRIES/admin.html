@@ -3,121 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Giriş - adembayazit.com</title>
+    <title>Admin Paneli - adembayazit.com</title>
+    <link rel="stylesheet" href="admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-    <style>
-        body {
-            background: #000;
-            color: limegreen;
-            font-family: 'Courier New', monospace;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .login-container {
-            background: rgba(0, 30, 0, 0.8);
-            border: 1px solid limegreen;
-            padding: 2rem;
-            border-radius: 5px;
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
-            text-align: center;
-            width: 300px;
-        }
-        .logo {
-            margin-bottom: 1.5rem;
-        }
-        .logo img {
-            height: 50px;
-            filter: drop-shadow(0 0 5px limegreen);
-        }
-        .logo h2 {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            margin-top: 10px;
-        }
-        input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            background: #111;
-            border: 1px solid limegreen;
-            color: limegreen;
-        }
-        button {
-            width: 100%;
-            padding: 10px;
-            background: limegreen;
-            color: black;
-            font-weight: bold;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        button:hover {
-            box-shadow: 0 0 10px limegreen;
-        }
-        .bug-icon {
-            color: red;
-            font-size: 0.9em;
-        }
-        #message {
-            height: 20px;
-            margin-top: 10px;
-            font-size: 14px;
-        }
-    </style>
 </head>
 <body>
-    <div class="login-container">
+    <header class="admin-header">
         <div class="logo">
             <img src="../IMAGES/hackerwhite.svg" alt="adembayazit.com" class="hacker-icon">
             <h2>LadyB<span class="fa-solid fa-bug bug-icon"></span>G Admin</h2>
         </div>
-        <input type="password" id="adminPassword" placeholder="Admin Şifresi" autocomplete="off">
-        <button onclick="checkPassword()"><i class="fas fa-lock"></i> Giriş Yap</button>
-        <p id="message"></p>
+        <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</button>
+    </header>
+
+    <div class="admin-container">
+        <div class="editor-container">
+            <h3><i class="fas fa-plus-circle"></i> Yeni Entry Ekle</h3>
+            
+            <div class="form-group">
+                <label for="referenceId"><i class="fas fa-link"></i> Referans ID (opsiyonel):</label>
+                <input type="number" id="referenceId" placeholder="Referans ID">
+            </div>
+            
+            <div class="form-group">
+                <label for="trContent"><span class="fi fi-tr"></span> Türkçe İçerik:</label>
+                <div class="editor-toolbar">
+                    <button onclick="formatText('trContent', 'bold')" title="Kalın"><i class="fas fa-bold"></i></button>
+                    <button onclick="formatText('trContent', 'italic')" title="İtalik"><i class="fas fa-italic"></i></button>
+                    <button onclick="formatText('trContent', 'underline')" title="Altı Çizili"><i class="fas fa-underline"></i></button>
+                    <button onclick="formatText('trContent', 'quote')" title="Tırnak İşareti"><i class="fas fa-quote-right"></i></button>
+                    <button onclick="clearFormatting('trContent')" title="Temizle"><i class="fas fa-eraser"></i></button>
+                </div>
+                <textarea id="trContent" placeholder="Türkçe içerik..."></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="enContent"><span class="fi fi-gb"></span> İngilizce İçerik:</label>
+                <div class="editor-toolbar">
+                    <button onclick="formatText('enContent', 'bold')" title="Bold"><i class="fas fa-bold"></i></button>
+                    <button onclick="formatText('enContent', 'italic')" title="Italic"><i class="fas fa-italic"></i></button>
+                    <button onclick="formatText('enContent', 'underline')" title="Underline"><i class="fas fa-underline"></i></button>
+                    <button onclick="formatText('enContent', 'quote')" title="Quote"><i class="fas fa-quote-right"></i></button>
+                    <button onclick="clearFormatting('enContent')" title="Clear"><i class="fas fa-eraser"></i></button>
+                </div>
+                <textarea id="enContent" placeholder="English content..."></textarea>
+            </div>
+            
+            <button class="submit-btn" onclick="submitEntry()"><i class="fas fa-paper-plane"></i> Entry Ekle</button>
+        </div>
+        
+        <div class="stats-container">
+            <h3><i class="fas fa-chart-bar"></i> İstatistikler</h3>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <i class="fas fa-heart"></i>
+                    <span id="total-likes">0</span>
+                    <small>Toplam Beğeni</small>
+                </div>
+                <div class="stat-box">
+                    <i class="fas fa-thumbtack"></i>
+                    <span id="total-pins">0</span>
+                    <small>Toplam Pin</small>
+                </div>
+                <div class="stat-box">
+                    <i class="fas fa-file-alt"></i>
+                    <span id="total-entries">0</span>
+                    <small>Toplam Entry</small>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <script>
-        // SHA-256 hash fonksiyonu
-        function hashPassword(password) {
-            return CryptoJS.SHA256(password).toString(CryptoJS.enc.Hex);
-        }
-
-        function checkPassword() {
-            const password = document.getElementById('adminPassword').value;
-            const messageEl = document.getElementById('message');
-            
-            // "dunyakimseyekalmaz" şifresinin hash'i
-            const CORRECT_HASH = "a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e";
-            
-            if (hashPassword(password) === CORRECT_HASH) {
-                messageEl.textContent = "✓ Giriş başarılı!";
-                messageEl.style.color = "limegreen";
-                localStorage.setItem('adminAuth', 'true');
-                setTimeout(() => {
-                    window.location.href = "admin-panel.html"; // Yönlendirilecek sayfa
-                }, 1000);
-            } else {
-                messageEl.textContent = "✗ Hatalı şifre!";
-                messageEl.style.color = "red";
-                console.log("Beklenen hash:", CORRECT_HASH);
-                console.log("Girilen hash:", hashPassword(password));
-            }
-        }
-
-        // Enter tuşu desteği
-        document.getElementById('adminPassword').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') checkPassword();
-        });
-    </script>
+    <script src="admin.js"></script>
 </body>
 </html>
