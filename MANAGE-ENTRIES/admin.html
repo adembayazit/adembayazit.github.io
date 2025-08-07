@@ -343,6 +343,50 @@
             color: white;
         }
         
+        /* Yeni eklenen stiller */
+        .preview-container {
+            margin-top: 5px;
+            padding: 8px;
+            background: rgba(0, 30, 0, 0.3);
+            border: 1px dashed var(--primary-color);
+            border-radius: 3px;
+            font-size: 0.8rem;
+        }
+        
+        .preview-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .char-count {
+            font-size: 0.7rem;
+            color: #aaa;
+        }
+        
+        .search-container {
+            margin-bottom: 1rem;
+        }
+        
+        .search-input {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .search-input input {
+            flex: 1;
+        }
+        
+        .search-input button {
+            background: var(--primary-color);
+            color: black;
+            border: none;
+            padding: 0 10px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        
         @keyframes scanline {
             0% { transform: translateX(-100%); }
             100% { transform: translateX(100%); }
@@ -415,7 +459,14 @@
                     <button onclick="formatText('trContent', 'quote')" title="Tırnak İşareti"><i class="fas fa-quote-right"></i></button>
                     <button onclick="clearFormatting('trContent')" title="Temizle"><i class="fas fa-eraser"></i></button>
                 </div>
-                <textarea id="trContent" placeholder="Türkçe içerik..."></textarea>
+                <textarea id="trContent" placeholder="Türkçe içerik..." oninput="updatePreview('trContent')"></textarea>
+                <div class="preview-container">
+                    <div class="preview-title">
+                        <span>Ön İzleme:</span>
+                        <span class="char-count"><span id="trContent-count">0</span> karakter</span>
+                    </div>
+                    <div id="trContent-preview"></div>
+                </div>
             </div>
             
             <div class="form-group">
@@ -427,7 +478,14 @@
                     <button onclick="formatText('enContent', 'quote')" title="Quote"><i class="fas fa-quote-right"></i></button>
                     <button onclick="clearFormatting('enContent')" title="Clear"><i class="fas fa-eraser"></i></button>
                 </div>
-                <textarea id="enContent" placeholder="English content..."></textarea>
+                <textarea id="enContent" placeholder="English content..." oninput="updatePreview('enContent')"></textarea>
+                <div class="preview-container">
+                    <div class="preview-title">
+                        <span>Preview:</span>
+                        <span class="char-count"><span id="enContent-count">0</span> characters</span>
+                    </div>
+                    <div id="enContent-preview"></div>
+                </div>
             </div>
             
             <button class="submit-btn" onclick="submitEntry()"><i class="fas fa-paper-plane"></i> Entry Ekle</button>
@@ -454,6 +512,14 @@
                 </div>
             </div>
             
+            <div class="search-container">
+                <h3><i class="fas fa-search"></i> Entry Ara</h3>
+                <div class="search-input">
+                    <input type="number" id="searchId" placeholder="Entry ID girin">
+                    <button onclick="searchEntry()"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+            
             <h3><i class="fas fa-history"></i> Son Entryler</h3>
             <div class="entries-list" id="recent-entries">
                 <!-- Son entryler buraya eklenecek -->
@@ -474,6 +540,9 @@
             } else {
                 loadStats();
                 loadRecentEntries();
+                // İlk yüklemede ön izlemeleri güncelle
+                updatePreview('trContent');
+                updatePreview('enContent');
             }
         });
         
@@ -554,7 +623,7 @@
                 const newEntry = {
                     id: entryId,
                     date: new Date().toISOString(),
-                    content: enContent || '', // İngilizce içerik
+                    content: trContent || enContent || '', // Ana içerik (TR varsa TR, yoksa EN)
                     content_tr: trContent || null, // Türkçe içerik
                     content_en: enContent || null, // İngilizce içerik
                     references: referenceId ? [parseInt(referenceId)] : []
@@ -573,6 +642,10 @@
                 document.getElementById('referenceId').value = '';
                 document.getElementById('trContent').value = '';
                 document.getElementById('enContent').value = '';
+                
+                // Ön izlemeleri temizle
+                updatePreview('trContent');
+                updatePreview('enContent');
                 
                 // İstatistikleri ve son entryleri güncelle
                 await updateStats();
@@ -611,7 +684,7 @@
                     let displayContent = entry.content_tr || entry.content_en || entry.content;
                     
                     entryEl.innerHTML = `
-                        <div class="entry-content">${displayContent}</div>
+                        <div class="entry-content">${formatPreviewText(displayContent)}</div>
                         <div class="entry-meta">
                             <span>ID: ${entry.id}</span>
                             <span>${formatDate(entry.date)}</span>
@@ -626,6 +699,51 @@
                 });
             } catch (error) {
                 console.error('Son entryleri yükleme hatası:', error);
+            }
+        }
+        
+        async function searchEntry() {
+            const searchId = document.getElementById('searchId').value;
+            if (!searchId) {
+                loadRecentEntries();
+                return;
+            }
+            
+            try {
+                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
+                const recentEntriesContainer = document.getElementById('recent-entries');
+                recentEntriesContainer.innerHTML = '';
+                
+                let entriesArray = Array.isArray(entries) ? entries : (entries.records || []);
+                const entry = entriesArray.find(e => e.id === parseInt(searchId));
+                
+                if (!entry) {
+                    recentEntriesContainer.innerHTML = '<p>Entry bulunamadı.</p>';
+                    return;
+                }
+                
+                const entryEl = document.createElement('div');
+                entryEl.className = 'entry-item';
+                
+                // İçerik belirleme (TR varsa TR, yoksa EN)
+                let displayContent = entry.content_tr || entry.content_en || entry.content;
+                
+                entryEl.innerHTML = `
+                    <div class="entry-content">${formatPreviewText(displayContent)}</div>
+                    <div class="entry-meta">
+                        <span>ID: ${entry.id}</span>
+                        <span>${formatDate(entry.date)}</span>
+                    </div>
+                    <div class="entry-actions">
+                        <button onclick="editEntry(${entry.id})" title="Düzenle"><i class="fas fa-edit"></i></button>
+                        <button onclick="confirmDelete(${entry.id})" title="Sil"><i class="fas fa-trash"></i></button>
+                    </div>
+                `;
+                
+                recentEntriesContainer.appendChild(entryEl);
+            } catch (error) {
+                console.error('Entry arama hatası:', error);
+                showMessage(`Arama hatası: ${error.message}`, 'error');
             }
         }
         
@@ -657,11 +775,25 @@
                     editForm.innerHTML = `
                         <div class="form-group">
                             <label for="edit-tr-${entryId}">Türkçe İçerik:</label>
-                            <textarea id="edit-tr-${entryId}">${entry.content_tr || ''}</textarea>
+                            <textarea id="edit-tr-${entryId}" oninput="updateEditPreview(${entryId}, 'tr')">${entry.content_tr || ''}</textarea>
+                            <div class="preview-container">
+                                <div class="preview-title">
+                                    <span>Ön İzleme:</span>
+                                    <span class="char-count"><span id="edit-tr-${entryId}-count">0</span> karakter</span>
+                                </div>
+                                <div id="edit-tr-${entryId}-preview"></div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="edit-en-${entryId}">İngilizce İçerik:</label>
-                            <textarea id="edit-en-${entryId}">${entry.content_en || ''}</textarea>
+                            <textarea id="edit-en-${entryId}" oninput="updateEditPreview(${entryId}, 'en')">${entry.content_en || ''}</textarea>
+                            <div class="preview-container">
+                                <div class="preview-title">
+                                    <span>Preview:</span>
+                                    <span class="char-count"><span id="edit-en-${entryId}-count">0</span> characters</span>
+                                </div>
+                                <div id="edit-en-${entryId}-preview"></div>
+                            </div>
                         </div>
                         <div class="edit-actions">
                             <button class="save-btn" onclick="saveEntry(${entryId})"><i class="fas fa-save"></i> Kaydet</button>
@@ -669,6 +801,10 @@
                         </div>
                     `;
                     targetItem.appendChild(editForm);
+                    
+                    // Edit preview'ları güncelle
+                    updateEditPreview(entryId, 'tr');
+                    updateEditPreview(entryId, 'en');
                 }
                 
                 editForm.style.display = 'block';
@@ -702,7 +838,7 @@
                     ...entriesArray[entryIndex],
                     content_tr: trContent || null,
                     content_en: enContent || null,
-                    content: enContent || trContent || entriesArray[entryIndex].content,
+                    content: trContent || enContent || entriesArray[entryIndex].content,
                     date: new Date().toISOString()
                 };
                 
@@ -807,6 +943,41 @@
             window.location.href = 'index.html';
         }
         
+        // Ön izleme güncelleme fonksiyonları
+        function updatePreview(textareaId) {
+            const textarea = document.getElementById(textareaId);
+            const preview = document.getElementById(`${textareaId}-preview`);
+            const charCount = document.getElementById(`${textareaId}-count`);
+            
+            if (textarea && preview && charCount) {
+                preview.innerHTML = formatPreviewText(textarea.value);
+                charCount.textContent = textarea.value.length;
+            }
+        }
+        
+        function updateEditPreview(entryId, lang) {
+            const textarea = document.getElementById(`edit-${lang}-${entryId}`);
+            const preview = document.getElementById(`edit-${lang}-${entryId}-preview`);
+            const charCount = document.getElementById(`edit-${lang}-${entryId}-count`);
+            
+            if (textarea && preview && charCount) {
+                preview.innerHTML = formatPreviewText(textarea.value);
+                charCount.textContent = textarea.value.length;
+            }
+        }
+        
+        function formatPreviewText(text) {
+            if (!text) return '<em>Ön izleme yok</em>';
+            
+            // Markdown benzeri formatları HTML'e çevir
+            return text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/_(.*?)_/g, '<em>$1</em>')
+                .replace(/<u>(.*?)<\/u>/g, '<u>$1</u>')
+                .replace(/^>\s?(.*)$/gm, '<blockquote>$1</blockquote>')
+                .replace(/\n/g, '<br>');
+        }
+        
         // Metin düzenleme fonksiyonları
         function formatText(textareaId, format) {
             const textarea = document.getElementById(textareaId);
@@ -833,6 +1004,9 @@
             textarea.value = textarea.value.substring(0, start) + formattedText + textarea.value.substring(end);
             textarea.focus();
             textarea.setSelectionRange(start + formattedText.length, start + formattedText.length);
+            
+            // Ön izlemeyi güncelle
+            updatePreview(textareaId);
         }
         
         function clearFormatting(textareaId) {
@@ -850,6 +1024,9 @@
             textarea.value = textarea.value.substring(0, start) + cleanedText + textarea.value.substring(end);
             textarea.focus();
             textarea.setSelectionRange(start + cleanedText.length, start + cleanedText.length);
+            
+            // Ön izlemeyi güncelle
+            updatePreview(textareaId);
         }
     </script>
 </body>
