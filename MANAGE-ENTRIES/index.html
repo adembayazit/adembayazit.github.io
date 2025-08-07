@@ -16,6 +16,8 @@
             align-items: center;
             height: 100vh;
             margin: 0;
+            background-image: radial-gradient(rgba(0, 80, 0, 0.3) 1px, transparent 1px);
+            background-size: 20px 20px;
         }
         .login-container {
             background: rgba(0, 30, 0, 0.8);
@@ -24,14 +26,32 @@
             border-radius: 5px;
             box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
             text-align: center;
-            width: 300px;
+            width: 320px;
+            position: relative;
+            overflow: hidden;
+        }
+        .login-container::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border: 1px dashed rgba(0, 255, 0, 0.5);
+            border-radius: 8px;
+            pointer-events: none;
+            animation: pulse 2s infinite alternate;
         }
         .logo {
             margin-bottom: 1.5rem;
         }
         .logo img {
-            height: 50px;
+            height: 60px;
             filter: drop-shadow(0 0 5px limegreen);
+            transition: transform 0.3s;
+        }
+        .logo img:hover {
+            transform: rotate(10deg);
         }
         .logo h2 {
             display: flex;
@@ -39,18 +59,26 @@
             justify-content: center;
             gap: 5px;
             margin-top: 10px;
+            text-shadow: 0 0 5px limegreen;
         }
         input {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             margin: 10px 0;
             background: #111;
             border: 1px solid limegreen;
             color: limegreen;
+            font-family: 'Courier New', monospace;
+            border-radius: 3px;
+            transition: box-shadow 0.3s;
+        }
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 8px limegreen;
         }
         button {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             background: limegreen;
             color: black;
             font-weight: bold;
@@ -60,28 +88,60 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s;
+            margin-top: 15px;
         }
         button:hover {
-            box-shadow: 0 0 10px limegreen;
+            box-shadow: 0 0 15px limegreen;
+            transform: translateY(-2px);
         }
         .bug-icon {
             color: red;
             font-size: 0.9em;
+            animation: bugPulse 1.5s infinite;
         }
         #message {
             height: 20px;
-            margin-top: 10px;
+            margin-top: 15px;
             font-size: 14px;
+            min-height: 20px;
+        }
+        .terminal-effect {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: limegreen;
+            animation: scanline 3s linear infinite;
+        }
+        @keyframes scanline {
+            0% { bottom: 100%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { bottom: 0; opacity: 0; }
+        }
+        @keyframes pulse {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.7; }
+        }
+        @keyframes bugPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
         }
     </style>
 </head>
 <body>
     <div class="login-container">
+        <div class="terminal-effect"></div>
         <div class="logo">
             <img src="../IMAGES/hackerwhite.svg" alt="adembayazit.com" class="hacker-icon">
             <h2>LadyB<span class="fa-solid fa-bug bug-icon"></span>G Admin</h2>
         </div>
-        <input type="password" id="adminPassword" placeholder="Admin Şifresi" autocomplete="off">
+        <input type="password" id="adminPassword" placeholder="Admin Şifresi" autocomplete="off" autofocus>
         <button onclick="checkPassword()"><i class="fas fa-lock"></i> Giriş Yap</button>
         <p id="message"></p>
     </div>
@@ -99,24 +159,46 @@
             // "dunyakimseyekalmaz" şifresinin hash'i
             const CORRECT_HASH = "5370d0ee02321d5a3a3f5061b2c592811104b8f4743cc0df2ae745fed4b3ed30";
             
+            if (!password) {
+                messageEl.textContent = "✗ Lütfen şifre girin!";
+                messageEl.style.color = "red";
+                return;
+            }
+            
             if (hashPassword(password) === CORRECT_HASH) {
-                messageEl.textContent = "✓ Giriş başarılı!";
+                messageEl.textContent = "✓ Giriş başarılı! Yönlendiriliyor...";
                 messageEl.style.color = "limegreen";
                 localStorage.setItem('adminAuth', 'true');
+                
+                // Buton animasyonu
+                const btn = document.querySelector('button');
+                btn.innerHTML = '<i class="fas fa-check"></i> Giriş Başarılı';
+                btn.style.background = "#00ff00";
+                
                 setTimeout(() => {
-                    window.location.href = "admin.html"; // Yönlendirilecek sayfa
-                }, 1000);
+                    window.location.href = "admin.html";
+                }, 1500);
             } else {
                 messageEl.textContent = "✗ Hatalı şifre!";
                 messageEl.style.color = "red";
-                console.log("Beklenen hash:", CORRECT_HASH);
-                console.log("Girilen hash:", hashPassword(password));
+                
+                // Hata animasyonu
+                const container = document.querySelector('.login-container');
+                container.style.animation = 'shake 0.5s';
+                setTimeout(() => {
+                    container.style.animation = '';
+                }, 500);
             }
         }
 
         // Enter tuşu desteği
         document.getElementById('adminPassword').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') checkPassword();
+        });
+
+        // Sayfa yüklendiğinde inputa odaklan
+        window.addEventListener('load', function() {
+            document.getElementById('adminPassword').focus();
         });
     </script>
 </body>
