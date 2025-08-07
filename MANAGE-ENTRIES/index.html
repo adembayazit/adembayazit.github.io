@@ -162,15 +162,26 @@
             20%, 40%, 60%, 80% { transform: translateX(5px); }
         }
         
-        .hacker-icon {
-            /* Önceki kodda kullanılan SVG ikonu */
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="lime" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M15.5,8A1.5,1.5 0 0,1 17,9.5A1.5,1.5 0 0,1 15.5,11A1.5,1.5 0 0,1 14,9.5A1.5,1.5 0 0,1 15.5,8M8.5,8A1.5,1.5 0 0,1 10,9.5A1.5,1.5 0 0,1 8.5,11A1.5,1.5 0 0,1 7,9.5A1.5,1.5 0 0,1 8.5,8M12,17.5C9.24,17.5 7,15.43 7,12.8C7,11.66 7.35,11.1 8.11,10.5C8.77,10 9.87,9.5 12,9.5C14.13,9.5 15.23,10 15.89,10.5C16.65,11.1 17,11.66 17,12.8C17,15.43 14.76,17.5 12,17.5Z"/></svg>');
-            width: 60px;
-            height: 60px;
-            display: block;
-            margin: 0 auto;
-            background-repeat: no-repeat;
-            background-size: contain;
+        /* Mobile-specific adjustments */
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 1.5rem;
+            }
+            .logo img {
+                height: 50px;
+            }
+            input {
+                padding: 10px;
+            }
+            button {
+                padding: 10px;
+            }
+        }
+        
+        @media (max-height: 600px) {
+            .login-container {
+                margin-top: 10vh;
+            }
         }
     </style>
 </head>
@@ -178,7 +189,8 @@
     <div class="login-container">
         <div class="terminal-effect"></div>
         <div class="logo">
-            <div class="hacker-icon"></div>
+            <!-- Orjinal hackerwhite.svg dosyasını kullanıyoruz -->
+            <img src="../IMAGES/hackerwhite.svg" alt="adembayazit.com" class="hacker-icon">
             <h2>LadyB<span class="fa-solid fa-bug bug-icon"></span>G Admin</h2>
         </div>
         <input type="password" id="adminPassword" placeholder="Admin Şifresi" autocomplete="off" autofocus>
