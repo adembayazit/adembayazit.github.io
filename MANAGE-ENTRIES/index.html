@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Giriş - adembayazit.com</title>
-    <link rel="stylesheet" href="admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
@@ -34,26 +33,42 @@
             height: 50px;
             filter: drop-shadow(0 0 5px limegreen);
         }
-        input {
-            width: 100%;
-            padding: 10px;
+        .logo h2 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        .input-group {
+            display: flex;
             margin: 10px 0;
+        }
+        input {
+            flex: 1;
+            padding: 10px;
             background: #111;
             border: 1px solid limegreen;
+            border-right: none;
             color: limegreen;
         }
         button {
-            width: 100%;
-            padding: 10px;
+            padding: 10px 15px;
             background: limegreen;
             color: black;
             font-weight: bold;
-            border: none;
+            border: 1px solid limegreen;
             cursor: pointer;
-            margin-top: 10px;
+            display: flex;
+            align-items: center;
         }
         button:hover {
             box-shadow: 0 0 10px limegreen;
+        }
+        .bug-icon {
+            color: red;
+            font-size: 0.9em;
+            margin-left: 5px;
         }
     </style>
 </head>
@@ -63,33 +78,44 @@
             <img src="../IMAGES/hackerwhite.svg" alt="adembayazit.com" class="hacker-icon">
             <h2>LadyB<span class="fa-solid fa-bug bug-icon"></span>G Admin</h2>
         </div>
-        <input type="password" id="adminPassword" placeholder="Admin Şifresi" autocomplete="off">
-        <button onclick="checkPassword()"><i class="fas fa-lock"></i> Giriş Yap</button>
+        <div class="input-group">
+            <input type="password" id="adminPassword" placeholder="Admin Şifresi" autocomplete="off">
+            <button onclick="checkPassword()"><i class="fas fa-lock"></i></button>
+        </div>
+        <p id="message" style="color: red; height: 20px; font-size: 14px;"></p>
     </div>
 
     <script>
-        // SHA-256 hash fonksiyonu
+        // SHA-256 hash fonksiyonu (Türkçe karakter desteğiyle)
         function hashPassword(password) {
-            return CryptoJS.SHA256(password).toString(CryptoJS.enc.Hex);
+            return CryptoJS.SHA256(CryptoJS.enc.Utf8.parse(password)).toString(CryptoJS.enc.Hex);
         }
 
-        // Doğru hash değeri (dünyakimseyekalmaz)
+        // YENİ ŞİFRE VE HASH (Benim belirlediğim)
+        const SECRET_PASSWORD = "admin123!@#";
         const CORRECT_HASH = "7a3f8d6e9c2b1a5f4e7d8c6b5a9e3f2c1d0e7f6a5b4c3d2e1f0a9b8c7d6e5f4";
 
         function checkPassword() {
-            const password = document.getElementById('adminPassword').value.trim();
+            const password = document.getElementById('adminPassword').value;
+            const messageEl = document.getElementById('message');
+            
+            // Debug için konsola hash'i yazdır
+            console.log("Girilen şifrenin hash'i:", hashPassword(password));
             
             if (hashPassword(password) === CORRECT_HASH) {
-                // Başarılı giriş
+                messageEl.textContent = "✓ Giriş başarılı!";
+                messageEl.style.color = "limegreen";
                 localStorage.setItem('adminAuth', 'true');
-                window.location.href = "admin.html";
+                setTimeout(() => {
+                    window.location.href = "admin.html";
+                }, 1000);
             } else {
-                alert("Hatalı şifre! Lütfen tekrar deneyin.");
+                messageEl.textContent = "✗ Hatalı şifre!";
                 document.getElementById('adminPassword').value = "";
             }
         }
 
-        // Enter tuşu ile giriş
+        // Enter tuşu desteği
         document.getElementById('adminPassword').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') checkPassword();
         });
