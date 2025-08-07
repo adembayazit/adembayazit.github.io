@@ -110,7 +110,7 @@
         }
         
         .form-group {
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             position: relative;
         }
         
@@ -401,12 +401,12 @@
         /* Character counter */
         .char-counter {
             position: absolute;
-            bottom: 5px;
-            right: 10px;
-            background: rgba(0, 30, 0, 0.7);
-            padding: 2px 5px;
+            bottom: -20px;
+            right: 0;
             font-size: 0.7rem;
             color: #aaa;
+            background: rgba(0, 30, 0, 0.7);
+            padding: 2px 5px;
             border-radius: 3px;
         }
         
@@ -490,7 +490,7 @@
                     <button onclick="formatText('trContent', 'quote')" title="Tırnak İşareti"><i class="fas fa-quote-right"></i></button>
                     <button onclick="clearFormatting('trContent')" title="Temizle"><i class="fas fa-eraser"></i></button>
                 </div>
-                <textarea id="trContent" placeholder="Türkçe içerik..." oninput="updatePreview()"></textarea>
+                <textarea id="trContent" placeholder="Türkçe içerik..." oninput="updateCharCounters()"></textarea>
                 <div class="char-counter" id="tr-counter">0 karakter</div>
             </div>
             
@@ -503,7 +503,7 @@
                     <button onclick="formatText('enContent', 'quote')" title="Quote"><i class="fas fa-quote-right"></i></button>
                     <button onclick="clearFormatting('enContent')" title="Clear"><i class="fas fa-eraser"></i></button>
                 </div>
-                <textarea id="enContent" placeholder="English content..."></textarea>
+                <textarea id="enContent" placeholder="English content..." oninput="updateCharCounters()"></textarea>
                 <div class="char-counter" id="en-counter">0 karakter</div>
             </div>
             
@@ -572,10 +572,6 @@
             } else {
                 loadStats();
                 loadRecentEntries();
-                
-                // Karakter sayacını başlat
-                document.getElementById('trContent').addEventListener('input', updateCharCounters);
-                document.getElementById('enContent').addEventListener('input', updateCharCounters);
                 updateCharCounters();
             }
         });
@@ -591,6 +587,9 @@
             // Önizlemede karakter sayılarını güncelle
             document.getElementById('preview-tr-chars').textContent = trContent.length;
             document.getElementById('preview-en-chars').textContent = enContent.length;
+            
+            // Önizleme içeriğini güncelle
+            document.getElementById('preview-content').innerHTML = formatForDisplay(trContent) || 'İçerik önizleme burada görünecek...';
         }
         
         async function fetchFromJsonBin(binId, method = 'GET', data = null) {
@@ -688,9 +687,6 @@
                 document.getElementById('referenceId').value = '';
                 document.getElementById('trContent').value = '';
                 document.getElementById('enContent').value = '';
-                
-                // Önizlemeyi sıfırla
-                document.getElementById('preview-content').innerHTML = 'İçerik önizleme burada görünecek...';
                 
                 // Karakter sayaçlarını sıfırla
                 updateCharCounters();
@@ -829,13 +825,6 @@
             return formatted;
         }
         
-        // Önizleme güncelleme
-        function updatePreview() {
-            const content = document.getElementById('trContent').value;
-            document.getElementById('preview-content').innerHTML = formatForDisplay(content) || 'İçerik önizleme burada görünecek...';
-            updateCharCounters();
-        }
-        
         async function editEntry(entryId) {
             try {
                 const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
@@ -865,12 +854,12 @@
                         <div class="form-group">
                             <label for="edit-tr-${entryId}">Türkçe İçerik:</label>
                             <textarea id="edit-tr-${entryId}">${entry.content_tr || ''}</textarea>
-                            <div class="char-counter">${entry.content_tr ? entry.content_tr.length : 0} karakter</div>
+                            <div class="char-counter" id="edit-tr-counter-${entryId}">${entry.content_tr ? entry.content_tr.length : 0} karakter</div>
                         </div>
                         <div class="form-group">
                             <label for="edit-en-${entryId}">İngilizce İçerik:</label>
                             <textarea id="edit-en-${entryId}">${entry.content || ''}</textarea>
-                            <div class="char-counter">${entry.content ? entry.content.length : 0} karakter</div>
+                            <div class="char-counter" id="edit-en-counter-${entryId}">${entry.content ? entry.content.length : 0} karakter</div>
                         </div>
                         <div class="edit-actions">
                             <button class="save-btn" onclick="saveEntry(${entryId})"><i class="fas fa-save"></i> Kaydet</button>
@@ -880,17 +869,14 @@
                     targetItem.appendChild(editForm);
                     
                     // Edit alanları için karakter sayacını güncelle
-                    const trEdit = document.getElementById(`edit-tr-${entryId}`);
-                    const enEdit = document.getElementById(`edit-en-${entryId}`);
-                    
-                    trEdit.addEventListener('input', () => {
-                        editForm.querySelector('.form-group:first-child .char-counter').textContent = 
-                            `${trEdit.value.length} karakter`;
+                    document.getElementById(`edit-tr-${entryId}`).addEventListener('input', function() {
+                        document.getElementById(`edit-tr-counter-${entryId}`).textContent = 
+                            `${this.value.length} karakter`;
                     });
                     
-                    enEdit.addEventListener('input', () => {
-                        editForm.querySelector('.form-group:last-child .char-counter').textContent = 
-                            `${enEdit.value.length} karakter`;
+                    document.getElementById(`edit-en-${entryId}`).addEventListener('input', function() {
+                        document.getElementById(`edit-en-counter-${entryId}`).textContent = 
+                            `${this.value.length} karakter`;
                     });
                 }
                 
@@ -1056,11 +1042,6 @@
             textarea.focus();
             textarea.setSelectionRange(start + formattedText.length, start + formattedText.length);
             
-            // Önizlemeyi güncelle (sadece Türkçe içerik için)
-            if (textareaId === 'trContent') {
-                updatePreview();
-            }
-            
             // Karakter sayaçlarını güncelle
             updateCharCounters();
         }
@@ -1080,11 +1061,6 @@
             textarea.value = textarea.value.substring(0, start) + cleanedText + textarea.value.substring(end);
             textarea.focus();
             textarea.setSelectionRange(start + cleanedText.length, start + cleanedText.length);
-            
-            // Önizlemeyi güncelle (sadece Türkçe içerik için)
-            if (textareaId === 'trContent') {
-                updatePreview();
-            }
             
             // Karakter sayaçlarını güncelle
             updateCharCounters();
