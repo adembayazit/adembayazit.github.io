@@ -1,10 +1,25 @@
 document.addEventListener("DOMContentLoaded", async () => {
   await loadInteractions();
 
-  fetch("entries.json")
+  // JSONBin.io'dan entry'leri çek (68933248ae596e708fc2fbbc)
+  fetch("https://api.jsonbin.io/v3/b/68933248ae596e708fc2fbbc/latest", {
+    headers: {
+      'X-Master-Key': '$2a$10$8d7wB08K7w275/WFSjFBQOgEFxZ.MN/Z2L8WCze6bE60QM7UzLMQ6',
+      'Content-Type': 'application/json',
+      'X-Bin-Meta': 'false'
+    },
+    cache: 'no-cache'
+  })
     .then((res) => res.json())
-    .then(processEntries)
-    .catch(console.error);
+    .then(processEntries) // Direk veriyi işle
+    .catch((error) => {
+      console.error("Entry çekme hatası:", error);
+      // Fallback: Local JSON dosyasına yedekleme yapabilirsin
+      fetch("entries.json")
+        .then((res) => res.json())
+        .then(processEntries)
+        .catch(console.error);
+    });
 });
 
 // GLOBAL CACHES
@@ -52,7 +67,10 @@ function processEntries(entries) {
   const container = document.getElementById("entries");
   container.innerHTML = "";
 
-  const sortedEntries = [...entries].sort((a, b) => new Date(b.date) - new Date(a.date));
+  // Eğer JSONBin.io'dan gelen veri {records: [...]} şeklindeyse:
+  const actualEntries = entries.records || entries;
+
+  const sortedEntries = [...actualEntries].sort((a, b) => new Date(b.date) - new Date(a.date));
   const last7Entries = sortedEntries.slice(0, 7);
 
   const entriesMap = new Map();
