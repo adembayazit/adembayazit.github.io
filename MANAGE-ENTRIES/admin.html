@@ -343,7 +343,7 @@
             color: white;
         }
         
-        /* Yeni eklenen stiller */
+        /* Ön izleme stilleri */
         .preview-container {
             margin-top: 5px;
             padding: 8px;
@@ -385,6 +385,37 @@
             padding: 0 10px;
             cursor: pointer;
             border-radius: 3px;
+        }
+        
+        /* Ön izleme içeriği stilleri */
+        #trContent-preview, #enContent-preview,
+        [id$="-preview"] {
+            font-family: 'Courier New', monospace;
+            line-height: 1.5;
+        }
+        
+        #trContent-preview strong, #enContent-preview strong,
+        [id$="-preview"] strong {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        #trContent-preview em, #enContent-preview em,
+        [id$="-preview"] em {
+            font-style: italic;
+        }
+        
+        #trContent-preview u, #enContent-preview u,
+        [id$="-preview"] u {
+            text-decoration: underline;
+        }
+        
+        #trContent-preview blockquote, #enContent-preview blockquote,
+        [id$="-preview"] blockquote {
+            border-left: 3px solid var(--primary-color);
+            padding-left: 10px;
+            margin: 5px 0;
+            color: #aaa;
         }
         
         @keyframes scanline {
@@ -683,7 +714,7 @@
                     let displayContent = entry.content_tr || entry.content;
                     
                     entryEl.innerHTML = `
-                        <div class="entry-content">${formatPreviewText(displayContent)}</div>
+                        <div class="entry-content">${displayContent}</div>
                         <div class="entry-meta">
                             <span>ID: ${entry.id}</span>
                             <span>${formatDate(entry.date)}</span>
@@ -728,7 +759,7 @@
                 let displayContent = entry.content_tr || entry.content;
                 
                 entryEl.innerHTML = `
-                    <div class="entry-content">${formatPreviewText(displayContent)}</div>
+                    <div class="entry-content">${displayContent}</div>
                     <div class="entry-meta">
                         <span>ID: ${entry.id}</span>
                         <span>${formatDate(entry.date)}</span>
@@ -948,7 +979,7 @@
             const charCount = document.getElementById(`${textareaId}-count`);
             
             if (textarea && preview && charCount) {
-                preview.innerHTML = formatPreviewText(textarea.value);
+                preview.innerHTML = textarea.value.replace(/\n/g, '<br>');
                 charCount.textContent = textarea.value.length;
             }
         }
@@ -959,21 +990,9 @@
             const charCount = document.getElementById(`edit-${lang}-${entryId}-count`);
             
             if (textarea && preview && charCount) {
-                preview.innerHTML = formatPreviewText(textarea.value);
+                preview.innerHTML = textarea.value.replace(/\n/g, '<br>');
                 charCount.textContent = textarea.value.length;
             }
-        }
-        
-        function formatPreviewText(text) {
-            if (!text) return '<em>Ön izleme yok</em>';
-            
-            // Markdown benzeri formatları HTML'e çevir
-            return text
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/_(.*?)_/g, '<em>$1</em>')
-                .replace(/<u>(.*?)<\/u>/g, '<u>$1</u>')
-                .replace(/^>\s?(.*)$/gm, '<blockquote>$1</blockquote>')
-                .replace(/\n/g, '<br>');
         }
         
         // Metin düzenleme fonksiyonları
@@ -986,16 +1005,16 @@
             
             switch(format) {
                 case 'bold':
-                    formattedText = `**${selectedText}**`;
+                    formattedText = `<strong>${selectedText}</strong>`;
                     break;
                 case 'italic':
-                    formattedText = `_${selectedText}_`;
+                    formattedText = `<em>${selectedText}</em>`;
                     break;
                 case 'underline':
                     formattedText = `<u>${selectedText}</u>`;
                     break;
                 case 'quote':
-                    formattedText = `> ${selectedText}`;
+                    formattedText = `<blockquote>${selectedText}</blockquote>`;
                     break;
             }
             
@@ -1003,7 +1022,6 @@
             textarea.focus();
             textarea.setSelectionRange(start + formattedText.length, start + formattedText.length);
             
-            // Ön izlemeyi güncelle
             updatePreview(textareaId);
         }
         
@@ -1014,16 +1032,15 @@
             const selectedText = textarea.value.substring(start, end);
             
             const cleanedText = selectedText
-                .replace(/\*\*(.*?)\*\*/g, '$1')
-                .replace(/_(.*?)_/g, '$1')
+                .replace(/<strong>(.*?)<\/strong>/g, '$1')
+                .replace(/<em>(.*?)<\/em>/g, '$1')
                 .replace(/<u>(.*?)<\/u>/g, '$1')
-                .replace(/^>\s?(.*)$/gm, '$1');
+                .replace(/<blockquote>(.*?)<\/blockquote>/g, '$1');
                 
             textarea.value = textarea.value.substring(0, start) + cleanedText + textarea.value.substring(end);
             textarea.focus();
             textarea.setSelectionRange(start + cleanedText.length, start + cleanedText.length);
             
-            // Ön izlemeyi güncelle
             updatePreview(textareaId);
         }
     </script>
