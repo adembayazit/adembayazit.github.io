@@ -1,4 +1,4 @@
-// 1. GLOBAL DEĞİŞKENLER - EN ÜSTE EKLENMELİ
+// 1. GLOBAL DEĞİŞKENLER
 const likesCache = {
   data: {},
   lastUpdated: 0,
@@ -54,6 +54,57 @@ async function loadInteractions() {
   }
 }
 
+// ÇEVİRİ İKONLARINI EKLEME FONKSİYONU
+async function addTranslationIcons() {
+  const entries = document.querySelectorAll(".entry");
+  if (entries.length === 0) return;
+
+  entries.forEach(entry => {
+    const idDiv = entry.querySelector(".entry-id");
+    const contentDiv = entry.querySelector(".content");
+    const originalContent = contentDiv?.innerHTML?.trim();
+    if (!idDiv || !originalContent) return;
+    
+    if (idDiv.querySelector(".translation-icon")) return;
+
+    const idValue = parseInt(idDiv.textContent.replace(/\D/g, ''));
+    if (isNaN(idValue)) return;
+
+    const translationEntry = currentEntries.find(item => item.id === idValue);
+    
+    if (!translationEntry?.content_tr) return;
+
+    const icon = document.createElement("span");
+    icon.classList.add("translation-icon", "fi", "fi-tr");
+    icon.title = "Çeviriyi göster/gizle";
+    
+    const langCode = translationEntry?.lang || 'tr';
+    icon.classList.add(`fi-${langCode}`);
+
+    icon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      icon.classList.toggle("active");
+      
+      if (icon.classList.contains("active")) {
+        if (translationEntry.content_tr) {
+          contentDiv.innerHTML = translationEntry.content_tr;
+        }
+      } else {
+        contentDiv.innerHTML = originalContent;
+      }
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!icon.contains(e.target) && !contentDiv.contains(e.target)) {
+        icon.classList.remove("active");
+        contentDiv.innerHTML = originalContent;
+      }
+    });
+
+    idDiv.appendChild(icon);
+  });
+}
+
 function processEntries(entries) {
   const container = document.getElementById("entries");
   if (!container) {
@@ -64,6 +115,8 @@ function processEntries(entries) {
   container.innerHTML = "";
 
   const actualEntries = entries.records || entries;
+  currentEntries = [...actualEntries]; // Global değişkene kaydet
+  
   const sortedEntries = [...actualEntries].sort((a, b) => new Date(b.date) - new Date(a.date));
   const last7Entries = sortedEntries.slice(0, 7);
 
@@ -94,6 +147,9 @@ function processEntries(entries) {
         .sort((a, b) => new Date(a.date) - new Date(b.date))
         .forEach(child => createEntryElement(child, container, 1));
     });
+
+  // Çeviri ikonlarını ekle
+  addTranslationIcons();
 }
 
 function createEntryElement(entry, container, depth) {
@@ -131,7 +187,6 @@ function createEntryElement(entry, container, depth) {
 
   container.appendChild(entryDiv);
 
-  // Event listener'lar
   const likeIcon = entryDiv.querySelector(".daisy-icon");
   likeIcon?.addEventListener("click", () => handleLikeClick(entry.id, entryDiv));
 
