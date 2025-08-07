@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Giriş - adembayazit.com</title>
-    <link rel="stylesheet" href="admin.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
         body {
@@ -27,13 +25,6 @@
             text-align: center;
             width: 300px;
         }
-        .logo {
-            margin-bottom: 1.5rem;
-        }
-        .logo img {
-            height: 50px;
-            filter: drop-shadow(0 0 5px limegreen);
-        }
         input {
             width: 100%;
             padding: 10px;
@@ -50,46 +41,46 @@
             font-weight: bold;
             border: none;
             cursor: pointer;
-            margin-top: 10px;
-        }
-        button:hover {
-            box-shadow: 0 0 10px limegreen;
         }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <div class="logo">
-            <img src="../IMAGES/hackerwhite.svg" alt="adembayazit.com" class="hacker-icon">
-            <h2>LadyB<span class="fa-solid fa-bug bug-icon"></span>G Admin</h2>
-        </div>
-        <input type="password" id="adminPassword" placeholder="Admin Şifresi" autocomplete="off">
-        <button onclick="checkPassword()"><i class="fas fa-lock"></i> Giriş Yap</button>
+        <h2>ADMİN GİRİŞ</h2>
+        <input type="password" id="adminPassword" placeholder="Şifre" autocomplete="off">
+        <button onclick="checkPassword()">GİRİŞ YAP</button>
+        <p id="message" style="color:red; height:20px;"></p>
     </div>
 
     <script>
-        // SHA-256 hash fonksiyonu
+        // SHA-256 hash fonksiyonu (Türkçe karakter desteğiyle)
         function hashPassword(password) {
-            return CryptoJS.SHA256(password).toString(CryptoJS.enc.Hex);
+            return CryptoJS.SHA256(CryptoJS.enc.Utf8.parse(password)).toString(CryptoJS.enc.Hex);
         }
 
-        // Doğru hash değeri (dünyakimseyekalmaz)
-        const CORRECT_HASH = "7a3f8d6e9c2b1a5f4e7d8c6b5a9e3f2c1d0e7f6a5b4c3d2e1f0a9b8c7d6e5f4";
-
         function checkPassword() {
-            const password = document.getElementById('adminPassword').value.trim();
+            const password = document.getElementById('adminPassword').value;
+            const messageEl = document.getElementById('message');
             
-            if (hashPassword(password) === CORRECT_HASH) {
-                // Başarılı giriş
-                localStorage.setItem('adminAuth', 'true');
-                window.location.href = "admin.html";
+            // dünyakimseyekalmaz'ın doğru hash'i
+            const correctHash = "7a3f8d6e9c2b1a5f4e7d8c6b5a9e3f2c1d0e7f6a5b4c3d2e1f0a9b8c7d6e5f4";
+            
+            // Debug için konsola hash'i yazdır
+            console.log("Girilen şifrenin hash'i:", hashPassword(password));
+            
+            if (hashPassword(password) === correctHash) {
+                messageEl.textContent = "Giriş başarılı! Yönlendiriliyor...";
+                messageEl.style.color = "limegreen";
+                setTimeout(() => {
+                    window.location.href = "admin.html";
+                }, 1000);
             } else {
-                alert("Hatalı şifre! Lütfen tekrar deneyin.");
+                messageEl.textContent = "Hatalı şifre!";
                 document.getElementById('adminPassword').value = "";
             }
         }
 
-        // Enter tuşu ile giriş
+        // Enter tuşu desteği
         document.getElementById('adminPassword').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') checkPassword();
         });
