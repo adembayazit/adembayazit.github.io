@@ -258,7 +258,6 @@
         
         .entry-content {
             margin-bottom: 0.3rem;
-            white-space: pre-line;
         }
         
         .entry-meta {
@@ -344,59 +343,6 @@
             color: white;
         }
         
-        /* Preview container */
-        .preview-container {
-            margin-top: 1rem;
-            padding: 1rem;
-            background: rgba(0, 20, 0, 0.5);
-            border: 1px solid var(--primary-color);
-            border-radius: 3px;
-        }
-        
-        .preview-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-        
-        .preview-content {
-            padding: 1rem;
-            background: rgba(0, 30, 0, 0.3);
-            border-radius: 3px;
-            min-height: 80px;
-            white-space: pre-line;
-        }
-        
-        /* Search box */
-        .search-box {
-            display: flex;
-            margin-bottom: 10px;
-            gap: 5px;
-        }
-        
-        .search-box input {
-            flex: 1;
-            padding: 8px;
-            background: #111;
-            border: 1px solid var(--primary-color);
-            color: var(--text-color);
-            font-family: 'Courier New', monospace;
-            border-radius: 3px;
-            font-size: 0.9rem;
-        }
-        
-        .search-box button {
-            background: var(--primary-color);
-            color: black;
-            border: none;
-            padding: 0 12px;
-            cursor: pointer;
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
-            border-radius: 3px;
-        }
-        
         @keyframes scanline {
             0% { transform: translateX(-100%); }
             100% { transform: translateX(100%); }
@@ -461,7 +407,7 @@
             </div>
             
             <div class="form-group">
-                <label for="trContent"><i class="fas fa-language"></i> İçerik:</label>
+                <label for="trContent"><i class="fas fa-language"></i> Türkçe İçerik:</label>
                 <div class="editor-toolbar">
                     <button onclick="formatText('trContent', 'bold')" title="Kalın"><i class="fas fa-bold"></i></button>
                     <button onclick="formatText('trContent', 'italic')" title="İtalik"><i class="fas fa-italic"></i></button>
@@ -469,18 +415,19 @@
                     <button onclick="formatText('trContent', 'quote')" title="Tırnak İşareti"><i class="fas fa-quote-right"></i></button>
                     <button onclick="clearFormatting('trContent')" title="Temizle"><i class="fas fa-eraser"></i></button>
                 </div>
-                <textarea id="trContent" placeholder="İçerik..." oninput="updatePreview()"></textarea>
+                <textarea id="trContent" placeholder="Türkçe içerik..."></textarea>
             </div>
             
-            <!-- Preview section -->
-            <div class="preview-container">
-                <div class="preview-header">
-                    <h4><i class="fas fa-eye"></i> Önizleme</h4>
-                    <small>Anasayfada nasıl görünecek</small>
+            <div class="form-group">
+                <label for="enContent"><i class="fas fa-globe"></i> İngilizce İçerik:</label>
+                <div class="editor-toolbar">
+                    <button onclick="formatText('enContent', 'bold')" title="Bold"><i class="fas fa-bold"></i></button>
+                    <button onclick="formatText('enContent', 'italic')" title="Italic"><i class="fas fa-italic"></i></button>
+                    <button onclick="formatText('enContent', 'underline')" title="Underline"><i class="fas fa-underline"></i></button>
+                    <button onclick="formatText('enContent', 'quote')" title="Quote"><i class="fas fa-quote-right"></i></button>
+                    <button onclick="clearFormatting('enContent')" title="Clear"><i class="fas fa-eraser"></i></button>
                 </div>
-                <div class="preview-content" id="preview-content">
-                    İçerik önizleme burada görünecek...
-                </div>
+                <textarea id="enContent" placeholder="English content..."></textarea>
             </div>
             
             <button class="submit-btn" onclick="submitEntry()"><i class="fas fa-paper-plane"></i> Entry Ekle</button>
@@ -508,13 +455,6 @@
             </div>
             
             <h3><i class="fas fa-history"></i> Son Entryler</h3>
-            
-            <!-- Search box -->
-            <div class="search-box">
-                <input type="text" id="search-query" placeholder="ID veya içerik ile ara...">
-                <button onclick="searchEntries()"><i class="fas fa-search"></i> Ara</button>
-            </div>
-            
             <div class="entries-list" id="recent-entries">
                 <!-- Son entryler buraya eklenecek -->
             </div>
@@ -580,12 +520,13 @@
             const entryIdInput = document.getElementById('entryId');
             const referenceId = document.getElementById('referenceId').value;
             const trContent = document.getElementById('trContent').value;
+            const enContent = document.getElementById('enContent').value;
             const responseEl = document.getElementById('response-message');
             
             responseEl.style.display = 'none';
             
-            if (!trContent) {
-                showMessage('Lütfen içerik girin!', 'error');
+            if (!trContent && !enContent) {
+                showMessage('Lütfen en az bir dilde içerik girin!', 'error');
                 return;
             }
             
@@ -613,8 +554,9 @@
                 const newEntry = {
                     id: entryId,
                     date: new Date().toISOString(),
-                    content: trContent || '', // Tek içerik alanı
+                    content: enContent || '', // İngilizce içerik
                     content_tr: trContent || null, // Türkçe içerik
+                    content_en: enContent || null, // İngilizce içerik
                     references: referenceId ? [parseInt(referenceId)] : []
                 };
                 
@@ -630,9 +572,7 @@
                 entryIdInput.value = '';
                 document.getElementById('referenceId').value = '';
                 document.getElementById('trContent').value = '';
-                
-                // Önizlemeyi sıfırla
-                document.getElementById('preview-content').innerHTML = 'İçerik önizleme burada görünecek...';
+                document.getElementById('enContent').value = '';
                 
                 // İstatistikleri ve son entryleri güncelle
                 await updateStats();
@@ -668,10 +608,10 @@
                     entryEl.className = 'entry-item';
                     
                     // İçerik belirleme (TR varsa TR, yoksa EN)
-                    let displayContent = entry.content_tr || entry.content;
+                    let displayContent = entry.content_tr || entry.content_en || entry.content;
                     
                     entryEl.innerHTML = `
-                        <div class="entry-content">${formatForDisplay(displayContent)}</div>
+                        <div class="entry-content">${displayContent}</div>
                         <div class="entry-meta">
                             <span>ID: ${entry.id}</span>
                             <span>${formatDate(entry.date)}</span>
@@ -687,89 +627,6 @@
             } catch (error) {
                 console.error('Son entryleri yükleme hatası:', error);
             }
-        }
-        
-        // Arama fonksiyonu
-        async function searchEntries() {
-            const query = document.getElementById('search-query').value.trim().toLowerCase();
-            if (!query) {
-                showMessage('Lütfen arama sorgusu girin!', 'warning');
-                return;
-            }
-            
-            try {
-                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
-                const allEntries = Array.isArray(entries) ? entries : (entries.records || []);
-                
-                const filteredEntries = allEntries.filter(entry => {
-                    // ID'ye göre arama
-                    if (entry.id.toString().includes(query)) return true;
-                    
-                    // İçeriğe göre arama
-                    if (entry.content && entry.content.toLowerCase().includes(query)) return true;
-                    if (entry.content_tr && entry.content_tr.toLowerCase().includes(query)) return true;
-                    
-                    return false;
-                });
-                
-                const recentEntriesContainer = document.getElementById('recent-entries');
-                recentEntriesContainer.innerHTML = '';
-                
-                if (filteredEntries.length === 0) {
-                    recentEntriesContainer.innerHTML = '<p>Hiç entry bulunamadı.</p>';
-                    return;
-                }
-                
-                filteredEntries.slice(0, 10).forEach(entry => {
-                    const entryEl = document.createElement('div');
-                    entryEl.className = 'entry-item';
-                    
-                    let displayContent = entry.content_tr || entry.content;
-                    
-                    entryEl.innerHTML = `
-                        <div class="entry-content">${formatForDisplay(displayContent)}</div>
-                        <div class="entry-meta">
-                            <span>ID: ${entry.id}</span>
-                            <span>${formatDate(entry.date)}</span>
-                        </div>
-                        <div class="entry-actions">
-                            <button onclick="editEntry(${entry.id})" title="Düzenle"><i class="fas fa-edit"></i></button>
-                            <button onclick="confirmDelete(${entry.id})" title="Sil"><i class="fas fa-trash"></i></button>
-                        </div>
-                    `;
-                    
-                    recentEntriesContainer.appendChild(entryEl);
-                });
-                
-            } catch (error) {
-                console.error('Arama hatası:', error);
-                showMessage(`Arama sırasında hata: ${error.message}`, 'error');
-            }
-        }
-        
-        // Görselleştirme için formatlama
-        function formatForDisplay(text) {
-            if (!text) return '';
-            
-            // Kalın metin: **kalın**
-            let formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            
-            // İtalik metin: _italik_
-            formatted = formatted.replace(/_(.*?)_/g, '<em>$1</em>');
-            
-            // Altı çizili: <u>altı çizili</u>
-            formatted = formatted.replace(/<u>(.*?)<\/u>/g, '<u>$1</u>');
-            
-            // Alıntı: > alıntı
-            formatted = formatted.replace(/^> (.*)$/gm, '<blockquote>$1</blockquote>');
-            
-            return formatted;
-        }
-        
-        // Önizleme güncelleme
-        function updatePreview() {
-            const content = document.getElementById('trContent').value;
-            document.getElementById('preview-content').innerHTML = formatForDisplay(content) || 'İçerik önizleme burada görünecek...';
         }
         
         async function editEntry(entryId) {
@@ -799,8 +656,12 @@
                     editForm.className = 'edit-form';
                     editForm.innerHTML = `
                         <div class="form-group">
-                            <label for="edit-tr-${entryId}">İçerik:</label>
-                            <textarea id="edit-tr-${entryId}">${entry.content_tr || entry.content || ''}</textarea>
+                            <label for="edit-tr-${entryId}">Türkçe İçerik:</label>
+                            <textarea id="edit-tr-${entryId}">${entry.content_tr || ''}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-en-${entryId}">İngilizce İçerik:</label>
+                            <textarea id="edit-en-${entryId}">${entry.content_en || ''}</textarea>
                         </div>
                         <div class="edit-actions">
                             <button class="save-btn" onclick="saveEntry(${entryId})"><i class="fas fa-save"></i> Kaydet</button>
@@ -820,9 +681,10 @@
         async function saveEntry(entryId) {
             try {
                 const trContent = document.getElementById(`edit-tr-${entryId}`).value;
+                const enContent = document.getElementById(`edit-en-${entryId}`).value;
                 
-                if (!trContent) {
-                    showMessage('İçerik girin!', 'error');
+                if (!trContent && !enContent) {
+                    showMessage('En az bir dilde içerik girin!', 'error');
                     return;
                 }
                 
@@ -838,8 +700,9 @@
                 // Entry'yi güncelle
                 entriesArray[entryIndex] = {
                     ...entriesArray[entryIndex],
-                    content: trContent,
-                    content_tr: trContent,
+                    content_tr: trContent || null,
+                    content_en: enContent || null,
+                    content: enContent || trContent || entriesArray[entryIndex].content,
                     date: new Date().toISOString()
                 };
                 
@@ -970,9 +833,6 @@
             textarea.value = textarea.value.substring(0, start) + formattedText + textarea.value.substring(end);
             textarea.focus();
             textarea.setSelectionRange(start + formattedText.length, start + formattedText.length);
-            
-            // Önizlemeyi güncelle
-            updatePreview();
         }
         
         function clearFormatting(textareaId) {
@@ -990,9 +850,6 @@
             textarea.value = textarea.value.substring(0, start) + cleanedText + textarea.value.substring(end);
             textarea.focus();
             textarea.setSelectionRange(start + cleanedText.length, start + cleanedText.length);
-            
-            // Önizlemeyi güncelle
-            updatePreview();
         }
     </script>
 </body>
