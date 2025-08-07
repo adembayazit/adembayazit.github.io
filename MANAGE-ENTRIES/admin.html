@@ -625,7 +625,7 @@
                     date: new Date().toISOString(),
                     content: trContent || enContent || '', // Ana içerik (TR varsa TR, yoksa EN)
                     content_tr: trContent || null, // Türkçe içerik
-                    content_en: enContent || null, // İngilizce içerik
+                    content: enContent || null, // İngilizce içerik
                     references: referenceId ? [parseInt(referenceId)] : []
                 };
                 
@@ -681,7 +681,7 @@
                     entryEl.className = 'entry-item';
                     
                     // İçerik belirleme (TR varsa TR, yoksa EN)
-                    let displayContent = entry.content_tr || entry.content_en || entry.content;
+                    let displayContent = entry.content_tr || entry.content || entry.content;
                     
                     entryEl.innerHTML = `
                         <div class="entry-content">${formatPreviewText(displayContent)}</div>
@@ -726,7 +726,7 @@
                 entryEl.className = 'entry-item';
                 
                 // İçerik belirleme (TR varsa TR, yoksa EN)
-                let displayContent = entry.content_tr || entry.content_en || entry.content;
+                let displayContent = entry.content_tr || entry.content || entry.content;
                 
                 entryEl.innerHTML = `
                     <div class="entry-content">${formatPreviewText(displayContent)}</div>
@@ -786,7 +786,7 @@
                         </div>
                         <div class="form-group">
                             <label for="edit-en-${entryId}">İngilizce İçerik:</label>
-                            <textarea id="edit-en-${entryId}" oninput="updateEditPreview(${entryId}, 'en')">${entry.content_en || ''}</textarea>
+                            <textarea id="edit-en-${entryId}" oninput="updateEditPreview(${entryId}, 'en')">${entry.content || ''}</textarea>
                             <div class="preview-container">
                                 <div class="preview-title">
                                     <span>Preview:</span>
@@ -837,7 +837,7 @@
                 entriesArray[entryIndex] = {
                     ...entriesArray[entryIndex],
                     content_tr: trContent || null,
-                    content_en: enContent || null,
+                    content: enContent || null,
                     content: trContent || enContent || entriesArray[entryIndex].content,
                     date: new Date().toISOString()
                 };
