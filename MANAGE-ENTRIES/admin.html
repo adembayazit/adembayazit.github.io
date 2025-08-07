@@ -1,213 +1,79 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <title>Metin Editörü</title>
-  <style>
-    .editor-container {
-      display: grid;
-      gap: 1rem;
-      max-width: 800px;
-      margin: 0 auto;
-      font-family: Arial, sans-serif;
-    }
-    .toolbar {
-      display: flex;
-      gap: 5px;
-      flex-wrap: wrap;
-      padding: 10px;
-      background: #f5f5f5;
-      border-radius: 5px;
-    }
-    .toolbar button {
-      padding: 5px 10px;
-      cursor: pointer;
-      background: white;
-      border: 1px solid #ddd;
-      border-radius: 3px;
-    }
-    .toolbar button:hover {
-      background: #e9e9e9;
-    }
-    textarea {
-      min-height: 150px;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      font-size: 16px;
-    }
-    .preview {
-      border: 1px solid #ddd;
-      padding: 15px;
-      min-height: 50px;
-      border-radius: 5px;
-    }
-    .language-tabs {
-      display: flex;
-      margin-bottom: -1px;
-    }
-    .language-tabs button {
-      padding: 8px 15px;
-      background: #f5f5f5;
-      border: 1px solid #ddd;
-      border-bottom: none;
-      cursor: pointer;
-      border-radius: 5px 5px 0 0;
-      margin-right: 5px;
-    }
-    .language-tabs button.active {
-      background: white;
-      border-bottom: 1px solid white;
-    }
-    .editor-area {
-      display: none;
-    }
-    .editor-area.active {
-      display: block;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Paneli - adembayazit.com</title>
+    <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <div class="editor-container">
-    <div class="language-tabs">
-      <button class="active" onclick="switchTab('english')">English</button>
-      <button onclick="switchTab('turkish')">Türkçe</button>
-    </div>
-    
-    <!-- İngilizce Editör -->
-    <div id="english-editor" class="editor-area active">
-      <div class="toolbar">
-        <button onclick="formatText('bold')"><b>B</b></button>
-        <button onclick="formatText('italic')"><i>I</i></button>
-        <button onclick="formatText('underline')"><u>U</u></button>
-        <button onclick="formatText('paragraph')">¶</button>
-        <button onclick="formatText('quote')">❝</button>
-        <button onclick="formatText('link')">🔗</button>
-        <button onclick="formatText('clear')">Temizle</button>
-      </div>
-      <textarea id="content-input" placeholder="English content..."></textarea>
-      <h3>Önizleme:</h3>
-      <div id="english-preview" class="preview"></div>
-    </div>
-    
-    <!-- Türkçe Editör -->
-    <div id="turkish-editor" class="editor-area">
-      <div class="toolbar">
-        <button onclick="formatText('bold', 'tr')"><b>B</b></button>
-        <button onclick="formatText('italic', 'tr')"><i>I</i></button>
-        <button onclick="formatText('underline', 'tr')"><u>U</u></button>
-        <button onclick="formatText('paragraph', 'tr')">¶</button>
-        <button onclick="formatText('quote', 'tr')">❝</button>
-        <button onclick="formatText('link', 'tr')">🔗</button>
-        <button onclick="formatText('clear', 'tr')">Temizle</button>
-      </div>
-      <textarea id="content-tr-input" placeholder="Türkçe içerik..."></textarea>
-      <h3>Önizleme:</h3>
-      <div id="turkish-preview" class="preview"></div>
-    </div>
-  </div>
+    <header class="admin-header">
+        <div class="logo">
+            <img src="../IMAGES/hackerwhite.svg" alt="adembayazit.com" class="hacker-icon">
+            <h2>LadyB<span class="fa-solid fa-bug bug-icon"></span>G Admin</h2>
+        </div>
+        <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</button>
+    </header>
 
-  <script>
-    // Sekme değiştirme
-    function switchTab(lang) {
-      document.querySelectorAll('.editor-area').forEach(el => {
-        el.classList.remove('active');
-      });
-      document.querySelectorAll('.language-tabs button').forEach(btn => {
-        btn.classList.remove('active');
-      });
-      
-      document.getElementById(`${lang}-editor`).classList.add('active');
-      event.currentTarget.classList.add('active');
-    }
-    
-    // Metin formatlama fonksiyonu
-    function formatText(type, lang = 'en') {
-      const textarea = lang === 'en' ? 
-        document.getElementById('content-input') : 
-        document.getElementById('content-tr-input');
-      
-      const start = textarea.selectionStart;
-      const end = textarea.selectionEnd;
-      const selectedText = textarea.value.substring(start, end);
-      let beforeText = textarea.value.substring(0, start);
-      let afterText = textarea.value.substring(end);
-      
-      let newText = '';
-      
-      switch(type) {
-        case 'bold':
-          newText = `<b>${selectedText}</b>`;
-          break;
-        case 'italic':
-          newText = `<i>${selectedText}</i>`;
-          break;
-        case 'underline':
-          newText = `<u>${selectedText}</u>`;
-          break;
-        case 'paragraph':
-          newText = `<p>${selectedText}</p>`;
-          break;
-        case 'quote':
-          newText = `<blockquote>${selectedText}</blockquote>`;
-          break;
-        case 'link':
-          const url = prompt('Link URL girin:');
-          if (url) {
-            newText = `<a href="${url}" target="_blank">${selectedText}</a>`;
-          } else {
-            return;
-          }
-          break;
-        case 'clear':
-          newText = selectedText.replace(/<\/?[^>]+(>|$)/g, "");
-          break;
-        default:
-          newText = selectedText;
-      }
-      
-      textarea.value = beforeText + newText + afterText;
-      updatePreview();
-      
-      // Yeni pozisyonu ayarla
-      const newCursorPos = start + newText.length;
-      textarea.setSelectionRange(newCursorPos, newCursorPos);
-      textarea.focus();
-    }
-    
-    // Önizleme güncelleme
-    function updatePreview() {
-      document.getElementById('english-preview').innerHTML = 
-        document.getElementById('content-input').value;
-      document.getElementById('turkish-preview').innerHTML = 
-        document.getElementById('content-tr-input').value;
-    }
-    
-    // Input değişikliklerini dinle
-    document.getElementById('content-input').addEventListener('input', updatePreview);
-    document.getElementById('content-tr-input').addEventListener('input', updatePreview);
-    
-    // Klavye kısayolları
-    document.addEventListener('keydown', function(e) {
-      if (e.ctrlKey || e.metaKey) {
-        const activeTextarea = document.querySelector('.editor-area.active textarea');
+    <div class="admin-container">
+        <div class="editor-container">
+            <h3><i class="fas fa-plus-circle"></i> Yeni Entry Ekle</h3>
+            
+            <div class="form-group">
+                <label for="referenceId"><i class="fas fa-link"></i> Referans ID (opsiyonel):</label>
+                <input type="number" id="referenceId" placeholder="Referans ID">
+            </div>
+            
+            <div class="form-group">
+                <label for="trContent"><span class="fi fi-tr"></span> Türkçe İçerik:</label>
+                <div class="editor-toolbar">
+                    <button onclick="formatText('trContent', 'bold')" title="Kalın"><i class="fas fa-bold"></i></button>
+                    <button onclick="formatText('trContent', 'italic')" title="İtalik"><i class="fas fa-italic"></i></button>
+                    <button onclick="formatText('trContent', 'underline')" title="Altı Çizili"><i class="fas fa-underline"></i></button>
+                    <button onclick="formatText('trContent', 'quote')" title="Tırnak İşareti"><i class="fas fa-quote-right"></i></button>
+                    <button onclick="clearFormatting('trContent')" title="Temizle"><i class="fas fa-eraser"></i></button>
+                </div>
+                <textarea id="trContent" placeholder="Türkçe içerik..."></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="enContent"><span class="fi fi-gb"></span> İngilizce İçerik:</label>
+                <div class="editor-toolbar">
+                    <button onclick="formatText('enContent', 'bold')" title="Bold"><i class="fas fa-bold"></i></button>
+                    <button onclick="formatText('enContent', 'italic')" title="Italic"><i class="fas fa-italic"></i></button>
+                    <button onclick="formatText('enContent', 'underline')" title="Underline"><i class="fas fa-underline"></i></button>
+                    <button onclick="formatText('enContent', 'quote')" title="Quote"><i class="fas fa-quote-right"></i></button>
+                    <button onclick="clearFormatting('enContent')" title="Clear"><i class="fas fa-eraser"></i></button>
+                </div>
+                <textarea id="enContent" placeholder="English content..."></textarea>
+            </div>
+            
+            <button class="submit-btn" onclick="submitEntry()"><i class="fas fa-paper-plane"></i> Entry Ekle</button>
+        </div>
         
-        switch(e.key.toLowerCase()) {
-          case 'b':
-            e.preventDefault();
-            formatText('bold', document.querySelector('.editor-area.active').id.includes('english') ? 'en' : 'tr');
-            break;
-          case 'i':
-            e.preventDefault();
-            formatText('italic', document.querySelector('.editor-area.active').id.includes('english') ? 'en' : 'tr');
-            break;
-          case 'u':
-            e.preventDefault();
-            formatText('underline', document.querySelector('.editor-area.active').id.includes('english') ? 'en' : 'tr');
-            break;
-        }
-      }
-    });
-  </script>
+        <div class="stats-container">
+            <h3><i class="fas fa-chart-bar"></i> İstatistikler</h3>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <i class="fas fa-heart"></i>
+                    <span id="total-likes">0</span>
+                    <small>Toplam Beğeni</small>
+                </div>
+                <div class="stat-box">
+                    <i class="fas fa-thumbtack"></i>
+                    <span id="total-pins">0</span>
+                    <small>Toplam Pin</small>
+                </div>
+                <div class="stat-box">
+                    <i class="fas fa-file-alt"></i>
+                    <span id="total-entries">0</span>
+                    <small>Toplam Entry</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
 </body>
 </html>
