@@ -7,14 +7,87 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
-        /* Tasarım kodları aynı */
+        body {
+            background: #000;
+            color: limegreen;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-container {
+            background: rgba(0, 30, 0, 0.8);
+            border: 1px solid limegreen;
+            padding: 2rem;
+            border-radius: 5px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+            text-align: center;
+            width: 300px;
+        }
+        .logo {
+            margin-bottom: 1.5rem;
+        }
+        .logo img {
+            height: 50px;
+            filter: drop-shadow(0 0 5px limegreen);
+        }
+        .logo h2 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background: #111;
+            border: 1px solid limegreen;
+            color: limegreen;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: limegreen;
+            color: black;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        button:hover {
+            box-shadow: 0 0 10px limegreen;
+        }
+        .bug-icon {
+            color: red;
+            font-size: 0.9em;
+        }
+        #message {
+            height: 20px;
+            margin-top: 10px;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
-    <!-- Arayüz kısmı aynı -->
-    
+    <div class="login-container">
+        <div class="logo">
+            <img src="../IMAGES/hackerwhite.svg" alt="adembayazit.com" class="hacker-icon">
+            <h2>LadyB<span class="fa-solid fa-bug bug-icon"></span>G Admin</h2>
+        </div>
+        <input type="password" id="adminPassword" placeholder="Admin Şifresi" autocomplete="off">
+        <button onclick="checkPassword()"><i class="fas fa-lock"></i> Giriş Yap</button>
+        <p id="message"></p>
+    </div>
+
     <script>
-        // GÜNCELLENMİŞ KISIM
+        // SHA-256 hash fonksiyonu
         function hashPassword(password) {
             return CryptoJS.SHA256(password).toString(CryptoJS.enc.Hex);
         }
@@ -23,14 +96,15 @@
             const password = document.getElementById('adminPassword').value;
             const messageEl = document.getElementById('message');
             
-            // YENİ DOĞRU HASH (admin123 için)
-            const CORRECT_HASH = "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9";
+            // "dunyakimseyekalmaz" şifresinin hash'i
+            const CORRECT_HASH = "a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e";
             
             if (hashPassword(password) === CORRECT_HASH) {
                 messageEl.textContent = "✓ Giriş başarılı!";
                 messageEl.style.color = "limegreen";
+                localStorage.setItem('adminAuth', 'true');
                 setTimeout(() => {
-                    window.location.href = "admin.html";
+                    window.location.href = "admin-panel.html"; // Yönlendirilecek sayfa
                 }, 1000);
             } else {
                 messageEl.textContent = "✗ Hatalı şifre!";
@@ -40,6 +114,7 @@
             }
         }
 
+        // Enter tuşu desteği
         document.getElementById('adminPassword').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') checkPassword();
         });
