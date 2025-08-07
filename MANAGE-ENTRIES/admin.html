@@ -378,43 +378,185 @@
     </div>
 
     <script>
-        // JSON veri yapısı
+        // JSONBin API configuration
+        const JSONBIN_API_KEY = 'YOUR_JSONBIN_API_KEY'; // Replace with your actual API key
+        const JSONBIN_BIN_ID = '68933248ae596e708fc2fbbc'; // Your bin ID
+        const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
+        const JSONBIN_HEADERS = {
+            'Content-Type': 'application/json',
+            'X-Master-Key': JSONBIN_API_KEY,
+            'X-Bin-Name': 'LadyBug Entries'
+        };
+
+        // Proxy configuration (alternative if CORS issues)
+        const PROXY_URL = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
+        
+        // Global data
         let entriesData = [];
+        let currentEditingId = null;
         
-        // Dil seçimine göre içerik alanlarını göster/gizle
-        document.getElementById('entryLang').addEventListener('change', function() {
-            const lang = this.value;
-            document.getElementById('trContentGroup').style.display = (lang === 'en') ? 'none' : 'block';
-            document.getElementById('enContentGroup').style.display = (lang === 'tr') ? 'none' : 'block';
-        });
-        
-        // Oturum kontrolü
-        window.addEventListener('DOMContentLoaded', () => {
-            if (!localStorage.getItem('adminAuth') || localStorage.getItem('adminAuth') !== 'true') {
-                window.location.href = 'index.html';
-            } else {
-                loadStats();
-                loadEntries();
+        // Helper function to fetch via proxy or directly
+        async function fetchData(method = 'GET', data = null) {
+            try {
+                // Try direct fetch first
+                const options = {
+                    method,
+                    headers: JSONBIN_HEADERS
+                };
+                
+                if (data) {
+                    options.body = JSON.stringify(data);
+                }
+                
+                const response = await fetch(method === 'GET' ? JSONBIN_URL + '/latest' : JSONBIN_URL, options);
+                
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                console.error('Direct fetch failed, trying proxy:', error);
+                
+                // Fallback to proxy
+                try {
+                    const proxyResponse = await fetch(PROXY_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            path: method === 'GET' ? '/latest' : '',
+                            method,
+                            body: data,
+                            headers: JSONBIN_HEADERS
+                        })
+                    });
+                    
+                    if (!proxyResponse.ok) throw new Error(`Proxy error! status: ${proxyResponse.status}`);
+                    return await proxyResponse.json();
+                } catch (proxyError) {
+                    console.error('Proxy also failed:', proxyError);
+                    throw proxyError;
+                }
             }
-        });
+        }
         
-        // Entry yükleme
+        // Load entries from JSONBin
         async function loadEntries() {
             try {
-                const response = await fetch('entries.json');
-                entriesData = await response.json();
-                displayEntries(entriesData.slice(0, 5)); // Son 5 entry göster
+                showMessage('Entryler yükleniyor...', 'success');
+                const result = await fetchData('GET');
+                entriesData = result.record || [];
+                displayEntries(entriesData.slice(0, 5));
                 updateStats();
+                showMessage('Entryler başarıyla yüklendi!', 'success');
             } catch (error) {
                 console.error('Entry yükleme hatası:', error);
                 showMessage('Entryler yüklenirken hata oluştu!', 'error');
             }
         }
         
-        // Entryleri görüntüleme
+        // Save entries to JSONBin
+        async function saveEntries() {
+            try {
+                const result = await fetchData('PUT', entriesData);
+                console.log('Entries saved:', result);
+                return true;
+            } catch (error) {
+                console.error('Entry kaydetme hatası:', error);
+                showMessage('Entryler kaydedilirken hata oluştu!', 'error');
+                return false;
+            }
+        }
+        
+        // Submit new entry
+        async function submitEntry() {
+            const referenceId = document.getElementById('referenceId').value;
+            const trContent = document.getElementById('trContent').value;
+            const enContent = document.getElementById('enContent').value;
+            const lang = document.getElementById('entryLang').value;
+            const responseEl = document.getElementById('response-message');
+            
+            responseEl.style.display = 'none';
+            
+            if ((lang === 'tr' || lang === 'both') && !trContent) {
+                showMessage('Lütfen Türkçe içerik girin!', 'error');
+                return;
+            }
+            
+            if ((lang === 'en' || lang === 'both') && !enContent) {
+                showMessage('Lütfen İngilizce içerik girin!', 'error');
+                return;
+            }
+            
+            try {
+                const submitBtn = document.querySelector('.submit-btn');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...';
+                
+                // Create new entry
+                const newEntry = {
+                    id: currentEditingId || generateId(),
+                    date: new Date().toISOString(),
+                    content: lang === 'tr' ? trContent : enContent,
+                    content_tr: lang !== 'en' ? trContent : null,
+                    content_en: lang !== 'tr' ? enContent : null,
+                    references: referenceId ? [parseInt(referenceId)] : [],
+                    lang: lang === 'both' ? 'tr' : lang
+                };
+                
+                if (currentEditingId) {
+                    // Update existing entry
+                    const index = entriesData.findIndex(e => e.id === currentEditingId);
+                    if (index !== -1) {
+                        entriesData[index] = newEntry;
+                    }
+                    currentEditingId = null;
+                } else {
+                    // Add new entry
+                    entriesData.unshift(newEntry);
+                }
+                
+                // Save to JSONBin
+                const success = await saveEntries();
+                if (success) {
+                    showMessage(`Entry başarıyla ${currentEditingId ? 'güncellendi' : 'eklendi'}!`, 'success');
+                    
+                    // Clear form
+                    document.getElementById('referenceId').value = '';
+                    document.getElementById('trContent').value = '';
+                    document.getElementById('enContent').value = '';
+                    document.getElementById('entryLang').value = 'tr';
+                    document.getElementById('trContentGroup').style.display = 'block';
+                    document.getElementById('enContentGroup').style.display = 'none';
+                    
+                    // Update list
+                    displayEntries(entriesData.slice(0, 5));
+                    updateStats();
+                }
+            } catch (error) {
+                showMessage(`Hata: ${error.message}`, 'error');
+                console.error('Entry ekleme/güncelleme hatası:', error);
+            } finally {
+                const submitBtn = document.querySelector('.submit-btn');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Entry Ekle';
+            }
+        }
+        
+        // Generate new ID
+        function generateId() {
+            const maxId = Math.max(...entriesData.map(e => e.id), 0);
+            return maxId + 1;
+        }
+        
+        // Display entries
         function displayEntries(entries) {
             const container = document.getElementById('entries-container');
             container.innerHTML = '';
+            
+            if (entries.length === 0) {
+                container.innerHTML = '<div class="entry-item">Henüz entry bulunmamaktadır.</div>';
+                return;
+            }
             
             entries.forEach(entry => {
                 const entryEl = document.createElement('div');
@@ -440,84 +582,12 @@
             });
         }
         
-        // Entry ekleme
-        async function submitEntry() {
-            const referenceId = document.getElementById('referenceId').value;
-            const trContent = document.getElementById('trContent').value;
-            const enContent = document.getElementById('enContent').value;
-            const lang = document.getElementById('entryLang').value;
-            const responseEl = document.getElementById('response-message');
-            
-            responseEl.style.display = 'none';
-            
-            if ((lang === 'tr' || lang === 'both') && !trContent) {
-                showMessage('Lütfen Türkçe içerik girin!', 'error');
-                return;
-            }
-            
-            if ((lang === 'en' || lang === 'both') && !enContent) {
-                showMessage('Lütfen İngilizce içerik girin!', 'error');
-                return;
-            }
-            
-            try {
-                const submitBtn = document.querySelector('.submit-btn');
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...';
-                
-                // Yeni entry oluştur
-                const newEntry = {
-                    id: generateId(),
-                    date: new Date().toISOString(),
-                    content: lang === 'tr' ? trContent : enContent,
-                    content_tr: lang !== 'en' ? trContent : null,
-                    content_en: lang !== 'tr' ? enContent : null,
-                    references: referenceId ? [parseInt(referenceId)] : [],
-                    lang: lang === 'both' ? 'tr' : lang
-                };
-                
-                // Mevcut entry'lere ekle
-                entriesData.unshift(newEntry);
-                
-                // Burada gerçekte API'ye göndermeniz gerekir
-                // await saveEntriesToServer(entriesData);
-                
-                showMessage('Entry başarıyla eklendi!', 'success');
-                
-                // Formu temizle
-                document.getElementById('referenceId').value = '';
-                document.getElementById('trContent').value = '';
-                document.getElementById('enContent').value = '';
-                
-                // Listeyi güncelle
-                displayEntries(entriesData.slice(0, 5));
-                updateStats();
-            } catch (error) {
-                showMessage(`Hata: ${error.message}`, 'error');
-                console.error('Entry ekleme hatası:', error);
-            } finally {
-                const submitBtn = document.querySelector('.submit-btn');
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Entry Ekle';
-            }
-        }
-        
-        // ID üretme
-        function generateId() {
-            const maxId = Math.max(...entriesData.map(e => e.id), 0);
-            return maxId + 1;
-        }
-        
-        // İstatistikleri güncelle
-        function updateStats() {
-            document.getElementById('total-entries').textContent = entriesData.length;
-            // Beğeni ve pin istatistikleri için ek mantık ekleyebilirsiniz
-        }
-        
-        // Entry düzenleme
+        // Edit entry
         function editEntry(id) {
             const entry = entriesData.find(e => e.id === id);
             if (!entry) return;
+            
+            currentEditingId = id;
             
             document.getElementById('referenceId').value = entry.references?.[0] || '';
             document.getElementById('trContent').value = entry.content_tr || '';
@@ -537,27 +607,37 @@
                 document.getElementById('enContentGroup').style.display = 'none';
             }
             
+            document.querySelector('.submit-btn').innerHTML = '<i class="fas fa-save"></i> Güncelle';
+            
             window.scrollTo({ top: 0, behavior: 'smooth' });
             showMessage(`#${id} numaralı entry düzenleniyor...`, 'success');
         }
         
-        // Entry silme
+        // Delete entry
         async function deleteEntry(id) {
             if (!confirm(`#${id} numaralı entryi silmek istediğinize emin misiniz?`)) return;
             
             try {
                 entriesData = entriesData.filter(e => e.id !== id);
-                // await saveEntriesToServer(entriesData);
-                showMessage(`#${id} numaralı entry silindi!`, 'success');
-                displayEntries(entriesData.slice(0, 5));
-                updateStats();
+                const success = await saveEntries();
+                if (success) {
+                    showMessage(`#${id} numaralı entry silindi!`, 'success');
+                    displayEntries(entriesData.slice(0, 5));
+                    updateStats();
+                }
             } catch (error) {
                 showMessage(`Silme hatası: ${error.message}`, 'error');
                 console.error('Entry silme hatası:', error);
             }
         }
         
-        // Mesaj gösterme
+        // Update statistics
+        function updateStats() {
+            document.getElementById('total-entries').textContent = entriesData.length;
+            // You can add more stats here like total likes, pins etc.
+        }
+        
+        // Show message
         function showMessage(message, type) {
             const responseEl = document.getElementById('response-message');
             responseEl.textContent = message;
@@ -569,12 +649,13 @@
             }, 5000);
         }
         
+        // Logout
         function logout() {
             localStorage.removeItem('adminAuth');
             window.location.href = 'login.html';
         }
         
-        // Metin düzenleme fonksiyonları
+        // Text formatting functions
         function formatText(textareaId, format) {
             const textarea = document.getElementById(textareaId);
             const start = textarea.selectionStart;
@@ -632,7 +713,22 @@
             textarea.focus();
             textarea.setSelectionRange(start + cleanedText.length, start + cleanedText.length);
         }
+        
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!localStorage.getItem('adminAuth') || localStorage.getItem('adminAuth') !== 'true') {
+                window.location.href = 'index.html';
+            } else {
+                loadEntries();
+                
+                // Show/hide content fields based on language selection
+                document.getElementById('entryLang').addEventListener('change', function() {
+                    const lang = this.value;
+                    document.getElementById('trContentGroup').style.display = (lang === 'en') ? 'none' : 'block';
+                    document.getElementById('enContentGroup').style.display = (lang === 'tr') ? 'none' : 'block';
+                });
+            }
+        });
     </script>
 </body>
 </html>
-
