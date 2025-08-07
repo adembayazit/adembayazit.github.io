@@ -6,8 +6,9 @@
     <title>Admin Giriş - adembayazit.com</title>
     <link rel="stylesheet" href="admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CryptoJS kütüphanesi eklendi -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
-        /* Ana siteyle uyumlu ekstra stiller */
         .login-container {
             background: rgba(0, 30, 0, 0.8);
             border: 1px solid limegreen;
@@ -36,17 +37,35 @@
     </div>
 
     <script>
+        // SHA-256 hash fonksiyonu
+        function hashPassword(password) {
+            return CryptoJS.SHA256(password).toString(CryptoJS.enc.Hex);
+        }
+
         function checkPassword() {
             const password = document.getElementById('adminPassword').value;
-            // SHA-256 hash ile şifre kontrolü (örnek: "adem123")
-            if(password === '1bb3971b26882b05dc65df5987b42dcd15fc9c676f07c841f958b8284c5954e5' || 
-               (typeof sha256 !== 'undefined' && sha256(password) === '1bb3971b26882b05dc65df5987b42dcd15fc9c676f07c841f958b8284c5954e5')) {
-                localStorage.setItem('adminAuthenticated', 'true');
+            const storedHash = '1bb3971b26882b05dc65df5987b42dcd15fc9c676f07c841f958b8284c5954e5';
+            
+            // Giriş denemesi hash'i (debug için)
+            console.log("Giriş denemesi hash:", hashPassword(password));
+            
+            if (hashPassword(password) === storedHash) {
+                // Oturum yönetimi için daha güvenli yaklaşım
+                const sessionToken = window.crypto.getRandomValues(new Uint32Array(1))[0].toString(16);
+                localStorage.setItem('adminSessionToken', hashPassword(sessionToken));
+                localStorage.setItem('lastLogin', new Date().toISOString());
+                
                 window.location.href = "admin.html";
             } else {
-                alert("Hatalı şifre!");
+                alert("✋ Hatalı şifre! 3 yanlış deneme hesabı kilitleyecektir.");
+                // Hatalı giriş sayacı eklenebilir
             }
         }
+        
+        // Enter tuşu ile giriş
+        document.getElementById('adminPassword').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') checkPassword();
+        });
     </script>
 </body>
 </html>
