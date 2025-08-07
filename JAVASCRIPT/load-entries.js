@@ -1,290 +1,502 @@
-// 1. GLOBAL DEĞİŞKENLER
-const likesCache = {
-  data: {},
-  lastUpdated: 0,
-  isUpdating: false
-};
-
-const pinsCache = {
-  data: {},
-  lastUpdated: 0,
-  isUpdating: false
-};
-
-let currentEntries = [];
-
-// 2. PROXY HELPER FONKSİYONU
-async function fetchViaProxy(path, method = 'GET', body = null) {
-  const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
-  
-  try {
-    const response = await fetch(proxyUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ path, method, body })
-    });
-
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    return await response.json();
-  } catch (error) {
-    console.error('Proxy error:', error);
-    throw error;
-  }
-}
-
-// 3. TEMEL FONKSİYONLAR
-async function loadInteractions() {
-  try {
-    const result = await fetchViaProxy('/b/68862fd97b4b8670d8a81945/latest');
-    likesCache.data = result.likes || {};
-    pinsCache.data = result.pins || {};
-    likesCache.lastUpdated = pinsCache.lastUpdated = Date.now();
-  } catch (error) {
-    console.error('loadInteractions error:', error);
-    try {
-      const localLikes = localStorage.getItem('entryLikes') || '{}';
-      const localPins = localStorage.getItem('entryPins') || '{}';
-      likesCache.data = JSON.parse(localLikes);
-      pinsCache.data = JSON.parse(localPins);
-    } catch (parseError) {
-      console.error('Local storage parse error:', parseError);
-    }
-  }
-}
-
-// ÇEVİRİ İKONLARINI EKLEME FONKSİYONU
-async function addTranslationIcons() {
-  const entries = document.querySelectorAll(".entry");
-  if (entries.length === 0) return;
-
-  entries.forEach(entry => {
-    const idDiv = entry.querySelector(".entry-id");
-    const contentDiv = entry.querySelector(".content");
-    const originalContent = contentDiv?.innerHTML?.trim();
-    if (!idDiv || !originalContent) return;
-    
-    if (idDiv.querySelector(".translation-icon")) return;
-
-    const idValue = parseInt(idDiv.textContent.replace(/\D/g, ''));
-    if (isNaN(idValue)) return;
-
-    const translationEntry = currentEntries.find(item => item.id === idValue);
-    
-    if (!translationEntry?.content_tr) return;
-
-    const icon = document.createElement("span");
-    icon.classList.add("translation-icon", "fi", "fi-tr");
-    icon.title = "Çeviriyi göster/gizle";
-    
-    const langCode = translationEntry?.lang || 'tr';
-    icon.classList.add(`fi-${langCode}`);
-
-    icon.addEventListener("click", (e) => {
-      e.stopPropagation();
-      icon.classList.toggle("active");
-      
-      if (icon.classList.contains("active")) {
-        if (translationEntry.content_tr) {
-          contentDiv.innerHTML = translationEntry.content_tr;
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Paneli - adembayazit.com</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: limegreen;
+            --secondary-color: #001e00;
+            --text-color: limegreen;
+            --bg-color: #000;
+            --error-color: #ff3333;
+            --success-color: #00ff00;
         }
-      } else {
-        contentDiv.innerHTML = originalContent;
-      }
-    });
+        
+        body {
+            background: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        
+        .admin-header {
+            background: rgba(0, 30, 0, 0.9);
+            border-bottom: 1px solid var(--primary-color);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo img {
+            height: 40px;
+            filter: drop-shadow(0 0 5px var(--primary-color));
+        }
+        
+        .logo h2 {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .bug-icon {
+            color: red;
+            animation: bugPulse 1.5s infinite;
+        }
+        
+        .logout-btn {
+            background: var(--primary-color);
+            color: black;
+            border: none;
+            padding: 8px 15px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 3px;
+            transition: all 0.3s;
+        }
+        
+        .logout-btn:hover {
+            box-shadow: 0 0 10px var(--primary-color));
+            transform: translateY(-2px);
+        }
+        
+        .admin-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            padding: 2rem;
+        }
+        
+        .editor-container, .stats-container {
+            background: rgba(0, 30, 0, 0.7);
+            border: 1px solid var(--primary-color);
+            border-radius: 5px;
+            padding: 1.5rem;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .editor-container::after, .stats-container::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+            animation: scanline 3s linear infinite;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        
+        input[type="number"], textarea {
+            width: 100%;
+            padding: 10px;
+            background: #111;
+            border: 1px solid var(--primary-color);
+            color: var(--text-color);
+            font-family: 'Courier New', monospace;
+            border-radius: 3px;
+        }
+        
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .editor-toolbar {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 5px;
+        }
+        
+        .editor-toolbar button {
+            background: #111;
+            border: 1px solid var(--primary-color);
+            color: var(--text-color);
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        
+        .editor-toolbar button:hover {
+            background: var(--primary-color);
+            color: black;
+        }
+        
+        .submit-btn {
+            background: var(--primary-color);
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 3px;
+            transition: all 0.3s;
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .submit-btn:hover {
+            box-shadow: 0 0 15px var(--primary-color);
+            transform: translateY(-2px);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+        
+        .stat-box {
+            background: rgba(0, 30, 0, 0.5);
+            border: 1px solid var(--primary-color);
+            padding: 1rem;
+            text-align: center;
+            border-radius: 3px;
+        }
+        
+        .stat-box i {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+        
+        .stat-box span {
+            display: block;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        #response-message {
+            padding: 10px;
+            margin-top: 15px;
+            border-radius: 3px;
+            text-align: center;
+            display: none;
+        }
+        
+        .success {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid var(--success-color);
+            color: var(--success-color);
+        }
+        
+        .error {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid var(--error-color);
+            color: var(--error-color);
+        }
+        
+        @keyframes scanline {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        @keyframes bugPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .admin-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="admin-header">
+        <div class="logo">
+            <img src="../IMAGES/hackerwhite.svg" alt="adembayazit.com" class="hacker-icon">
+            <h2>LadyB<span class="fa-solid fa-bug bug-icon"></span>G Admin</h2>
+        </div>
+        <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</button>
+    </header>
 
-    document.addEventListener("click", (e) => {
-      if (!icon.contains(e.target) && !contentDiv.contains(e.target)) {
-        icon.classList.remove("active");
-        contentDiv.innerHTML = originalContent;
-      }
-    });
-
-    idDiv.appendChild(icon);
-  });
-}
-
-function processEntries(entries) {
-  const container = document.getElementById("entries");
-  if (!container) {
-    console.error('Entries container not found!');
-    return;
-  }
-  
-  container.innerHTML = "";
-
-  const actualEntries = entries.records || entries;
-  currentEntries = [...actualEntries]; // Global değişkene kaydet
-  
-  const sortedEntries = [...actualEntries].sort((a, b) => new Date(b.date) - new Date(a.date));
-  const last7Entries = sortedEntries.slice(0, 7);
-
-  const entriesMap = new Map();
-  const parentEntries = [];
-
-  last7Entries.forEach(entry => {
-    entriesMap.set(entry.id, { ...entry, children: [] });
-  });
-
-  last7Entries.forEach(entry => {
-    if (entry.references?.length > 0) {
-      const parentId = entry.references[0];
-      if (entriesMap.has(parentId)) {
-        entriesMap.get(parentId).children.push(entry);
-      }
-    } else {
-      parentEntries.push(entry);
-    }
-  });
-
-  parentEntries
-    .sort((a, b) => new Date(b.date) - new Date(a.date))
-    .forEach(parent => {
-      createEntryElement(parent, container, 0);
-      const children = entriesMap.get(parent.id)?.children || [];
-      children
-        .sort((a, b) => new Date(a.date) - new Date(b.date))
-        .forEach(child => createEntryElement(child, container, 1));
-    });
-
-  // Çeviri ikonlarını ekle
-  addTranslationIcons();
-}
-
-function createEntryElement(entry, container, depth) {
-  const entryDiv = document.createElement("div");
-  entryDiv.className = `entry ${depth > 0 ? 'child-entry' : ''}`;
-
-  const time = new Date(entry.date).toLocaleString("tr-TR", {
-    year: "numeric", 
-    month: "2-digit", 
-    day: "2-digit", 
-    hour: "2-digit", 
-    minute: "2-digit"
-  }).replace(",", "");
-
-  const likeCount = likesCache.data[entry.id] || 0;
-  const pinCount = pinsCache.data[entry.id] || 0;
-
-  entryDiv.innerHTML = `
-    <div class="timestamp">
-      <span class="fa-solid fa-bug bug-iconentry"></span> ${time}
+    <div class="admin-container">
+        <div class="editor-container">
+            <h3><i class="fas fa-plus-circle"></i> Yeni Entry Ekle</h3>
+            
+            <div class="form-group">
+                <label for="referenceId"><i class="fas fa-link"></i> Referans ID (opsiyonel):</label>
+                <input type="number" id="referenceId" placeholder="Referans ID">
+            </div>
+            
+            <div class="form-group">
+                <label for="trContent"><i class="fas fa-language"></i> Türkçe İçerik:</label>
+                <div class="editor-toolbar">
+                    <button onclick="formatText('trContent', 'bold')" title="Kalın"><i class="fas fa-bold"></i></button>
+                    <button onclick="formatText('trContent', 'italic')" title="İtalik"><i class="fas fa-italic"></i></button>
+                    <button onclick="formatText('trContent', 'underline')" title="Altı Çizili"><i class="fas fa-underline"></i></button>
+                    <button onclick="formatText('trContent', 'quote')" title="Tırnak İşareti"><i class="fas fa-quote-right"></i></button>
+                    <button onclick="clearFormatting('trContent')" title="Temizle"><i class="fas fa-eraser"></i></button>
+                </div>
+                <textarea id="trContent" placeholder="Türkçe içerik..."></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="enContent"><i class="fas fa-globe"></i> İngilizce İçerik:</label>
+                <div class="editor-toolbar">
+                    <button onclick="formatText('enContent', 'bold')" title="Bold"><i class="fas fa-bold"></i></button>
+                    <button onclick="formatText('enContent', 'italic')" title="Italic"><i class="fas fa-italic"></i></button>
+                    <button onclick="formatText('enContent', 'underline')" title="Underline"><i class="fas fa-underline"></i></button>
+                    <button onclick="formatText('enContent', 'quote')" title="Quote"><i class="fas fa-quote-right"></i></button>
+                    <button onclick="clearFormatting('enContent')" title="Clear"><i class="fas fa-eraser"></i></button>
+                </div>
+                <textarea id="enContent" placeholder="English content..."></textarea>
+            </div>
+            
+            <button class="submit-btn" onclick="submitEntry()"><i class="fas fa-paper-plane"></i> Entry Ekle</button>
+            <div id="response-message"></div>
+        </div>
+        
+        <div class="stats-container">
+            <h3><i class="fas fa-chart-bar"></i> İstatistikler</h3>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <i class="fas fa-heart"></i>
+                    <span id="total-likes">0</span>
+                    <small>Toplam Beğeni</small>
+                </div>
+                <div class="stat-box">
+                    <i class="fas fa-thumbtack"></i>
+                    <span id="total-pins">0</span>
+                    <small>Toplam Pin</small>
+                </div>
+                <div class="stat-box">
+                    <i class="fas fa-file-alt"></i>
+                    <span id="total-entries">0</span>
+                    <small>Toplam Entry</small>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="entry-id">#${entry.id}</div>
-    <div class="content">${entry.content}</div>
-    <div class="interaction-buttons">
-      <div class="daisy-like" data-entry-id="${entry.id}">
-        <img src="IMAGES/daisy.svg" class="daisy-icon" alt="Beğen" />
-        <span class="like-count">${likeCount}</span>
-      </div>
-      <div class="pine-pin" data-entry-id="${entry.id}">
-        <img src="IMAGES/pine.svg" class="pine-icon" alt="Pinle" />
-        <span class="pin-count">${pinCount}</span>
-      </div>
-    </div>
-  `;
 
-  container.appendChild(entryDiv);
-
-  const likeIcon = entryDiv.querySelector(".daisy-icon");
-  likeIcon?.addEventListener("click", () => handleLikeClick(entry.id, entryDiv));
-
-  const pinIcon = entryDiv.querySelector(".pine-icon");
-  pinIcon?.addEventListener("click", () => handlePinClick(entry.id, entryDiv));
-}
-
-// 4. INTERACTION FONKSİYONLARI
-async function handleLikeClick(entryId, entryDiv) {
-  if (likesCache.isUpdating) return;
-
-  likesCache.isUpdating = true;
-  const likeCountSpan = entryDiv.querySelector(".like-count");
-  const likeIcon = entryDiv.querySelector(".daisy-icon");
-  const currentCount = parseInt(likeCountSpan.textContent) || 0;
-
-  try {
-    likeCountSpan.textContent = currentCount + 1;
-    likeIcon.style.transform = 'scale(1.2)';
-    
-    likesCache.data[entryId] = currentCount + 1;
-    localStorage.setItem('entryLikes', JSON.stringify(likesCache.data));
-    
-    await updateInteractionsOnServer(entryId, currentCount + 1, null);
-    likesCache.lastUpdated = Date.now();
-  } catch (error) {
-    console.error('Like update failed:', error);
-    likeCountSpan.textContent = currentCount;
-    likesCache.data[entryId] = currentCount;
-  } finally {
-    likesCache.isUpdating = false;
-    setTimeout(() => {
-      likeIcon.style.transform = 'scale(1)';
-    }, 300);
-  }
-}
-
-async function handlePinClick(entryId, entryDiv) {
-  if (pinsCache.isUpdating) return;
-
-  pinsCache.isUpdating = true;
-  const pinCountSpan = entryDiv.querySelector(".pin-count");
-  const pinIcon = entryDiv.querySelector(".pine-icon");
-  const currentCount = parseInt(pinCountSpan.textContent) || 0;
-
-  try {
-    pinCountSpan.textContent = currentCount + 1;
-    pinIcon.classList.add("pinned");
-    
-    pinsCache.data[entryId] = currentCount + 1;
-    localStorage.setItem('entryPins', JSON.stringify(pinsCache.data));
-    
-    await updateInteractionsOnServer(entryId, null, currentCount + 1);
-    pinsCache.lastUpdated = Date.now();
-  } catch (error) {
-    console.error('Pin update failed:', error);
-    pinCountSpan.textContent = currentCount;
-    pinsCache.data[entryId] = currentCount;
-  } finally {
-    pinsCache.isUpdating = false;
-    setTimeout(() => {
-      pinIcon.classList.remove("pinned");
-    }, 600);
-  }
-}
-
-async function updateInteractionsOnServer(entryId, newLikeCount, newPinCount) {
-  const updatedLikes = newLikeCount !== null ? { ...likesCache.data, [entryId]: newLikeCount } : likesCache.data;
-  const updatedPins = newPinCount !== null ? { ...pinsCache.data, [entryId]: newPinCount } : pinsCache.data;
-
-  try {
-    await fetchViaProxy('/b/68862fd97b4b8670d8a81945', 'PUT', {
-      likes: updatedLikes,
-      pins: updatedPins
-    });
-  } catch (error) {
-    throw new Error('Failed to update data on server');
-  }
-}
-
-// 5. BAŞLANGIÇ FONKSİYONU
-async function initializeApp() {
-  try {
-    await loadInteractions();
-    const entries = await fetchViaProxy('/b/68933248ae596e708fc2fbbc/latest');
-    processEntries(entries);
-  } catch (error) {
-    console.error("Initialization error:", error);
-    try {
-      const response = await fetch("entries.json");
-      processEntries(await response.json());
-    } catch (fallbackError) {
-      console.error("Fallback failed:", fallbackError);
-      document.getElementById("entries").innerHTML = 
-        '<div class="error">Veriler yüklenirken bir hata oluştu</div>';
-    }
-  }
-}
-
-// 6. UYGULAMAYI BAŞLAT
-document.addEventListener("DOMContentLoaded", initializeApp);
+    <script>
+        // JSONBin.io API ayarları
+        const ENTRIES_BIN_ID = '68933248ae596e708fc2fbbc';
+        const INTERACTIONS_BIN_ID = '68862fd97b4b8670d8a81945';
+        const PROXY_URL = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
+        
+        // Oturum kontrolü
+        window.addEventListener('DOMContentLoaded', () => {
+            if (!localStorage.getItem('adminAuth') || localStorage.getItem('adminAuth') !== 'true') {
+                window.location.href = 'login.html';
+            } else {
+                loadStats();
+            }
+        });
+        
+        async function fetchFromJsonBin(binId, method = 'GET', data = null) {
+            try {
+                const response = await fetch(PROXY_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        path: `/b/${binId}${method === 'GET' ? '/latest' : ''}`,
+                        method,
+                        body: data
+                    })
+                });
+                
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                console.error('JSONBin fetch error:', error);
+                throw error;
+            }
+        }
+        
+        async function submitEntry() {
+            const referenceId = document.getElementById('referenceId').value;
+            const trContent = document.getElementById('trContent').value;
+            const enContent = document.getElementById('enContent').value;
+            const responseEl = document.getElementById('response-message');
+            
+            responseEl.style.display = 'none';
+            
+            if (!trContent && !enContent) {
+                showMessage('Lütfen en az bir dilde içerik girin!', 'error');
+                return;
+            }
+            
+            try {
+                const submitBtn = document.querySelector('.submit-btn');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...';
+                
+                // Mevcut entry'leri çek
+                const currentData = await fetchFromJsonBin(ENTRIES_BIN_ID);
+                const entries = currentData.records || currentData;
+                
+                // Yeni entry oluştur
+                const newEntry = {
+                    id: generateId(),
+                    date: new Date().toISOString(),
+                    content: trContent || enContent,
+                    content_tr: trContent || null,
+                    content_en: enContent || null,
+                    references: referenceId ? [parseInt(referenceId)] : [],
+                    lang: trContent ? 'tr' : 'en'
+                };
+                
+                // Yeni listeyi hazırla
+                const updatedEntries = Array.isArray(entries) ? 
+                    [newEntry, ...entries] : 
+                    [newEntry];
+                
+                // JSONBin'e gönder
+                await fetchFromJsonBin(ENTRIES_BIN_ID, 'PUT', {
+                    records: updatedEntries
+                });
+                
+                showMessage('Entry başarıyla eklendi!', 'success');
+                document.getElementById('referenceId').value = '';
+                document.getElementById('trContent').value = '';
+                document.getElementById('enContent').value = '';
+                
+                // İstatistikleri güncelle
+                await updateStats();
+            } catch (error) {
+                showMessage(`Hata: ${error.message}`, 'error');
+                console.error('Entry ekleme hatası:', error);
+            } finally {
+                const submitBtn = document.querySelector('.submit-btn');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Entry Ekle';
+            }
+        }
+        
+        function generateId() {
+            return Math.floor(Math.random() * 900000) + 100000;
+        }
+        
+        async function updateStats() {
+            try {
+                const entriesData = await fetchFromJsonBin(ENTRIES_BIN_ID);
+                const interactions = await fetchFromJsonBin(INTERACTIONS_BIN_ID);
+                
+                const totalEntries = Array.isArray(entriesData) ? 
+                    entriesData.length : 
+                    (entriesData.records ? entriesData.records.length : 0);
+                
+                const totalLikes = interactions.likes ? 
+                    Object.values(interactions.likes).reduce((a, b) => a + b, 0) : 0;
+                
+                const totalPins = interactions.pins ? 
+                    Object.values(interactions.pins).reduce((a, b) => a + b, 0) : 0;
+                
+                document.getElementById('total-entries').textContent = totalEntries;
+                document.getElementById('total-likes').textContent = totalLikes;
+                document.getElementById('total-pins').textContent = totalPins;
+            } catch (error) {
+                console.error('İstatistik güncelleme hatası:', error);
+            }
+        }
+        
+        async function loadStats() {
+            await updateStats();
+        }
+        
+        function showMessage(message, type) {
+            const responseEl = document.getElementById('response-message');
+            responseEl.textContent = message;
+            responseEl.className = type;
+            responseEl.style.display = 'block';
+            
+            setTimeout(() => {
+                responseEl.style.display = 'none';
+            }, 5000);
+        }
+        
+        function logout() {
+            localStorage.removeItem('adminAuth');
+            window.location.href = 'login.html';
+        }
+        
+        // Metin düzenleme fonksiyonları
+        function formatText(textareaId, format) {
+            const textarea = document.getElementById(textareaId);
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selectedText = textarea.value.substring(start, end);
+            let formattedText = '';
+            
+            switch(format) {
+                case 'bold':
+                    formattedText = `**${selectedText}**`;
+                    break;
+                case 'italic':
+                    formattedText = `_${selectedText}_`;
+                    break;
+                case 'underline':
+                    formattedText = `<u>${selectedText}</u>`;
+                    break;
+                case 'quote':
+                    formattedText = `> ${selectedText}`;
+                    break;
+            }
+            
+            textarea.value = textarea.value.substring(0, start) + formattedText + textarea.value.substring(end);
+            textarea.focus();
+            textarea.setSelectionRange(start + formattedText.length, start + formattedText.length);
+        }
+        
+        function clearFormatting(textareaId) {
+            const textarea = document.getElementById(textareaId);
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selectedText = textarea.value.substring(start, end);
+            
+            const cleanedText = selectedText
+                .replace(/\*\*(.*?)\*\*/g, '$1')
+                .replace(/_(.*?)_/g, '$1')
+                .replace(/<u>(.*?)<\/u>/g, '$1')
+                .replace(/^>\s?(.*)$/gm, '$1');
+                
+            textarea.value = textarea.value.substring(0, start) + cleanedText + textarea.value.substring(end);
+            textarea.focus();
+            textarea.setSelectionRange(start + cleanedText.length, start + cleanedText.length);
+        }
+    </script>
+</body>
+</html>
