@@ -33,13 +33,6 @@
             height: 50px;
             filter: drop-shadow(0 0 5px limegreen);
         }
-        .logo h2 {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            margin-top: 10px;
-        }
         .input-group {
             display: flex;
             margin: 10px 0;
@@ -59,16 +52,11 @@
             font-weight: bold;
             border: 1px solid limegreen;
             cursor: pointer;
-            display: flex;
-            align-items: center;
         }
-        button:hover {
-            box-shadow: 0 0 10px limegreen;
-        }
-        .bug-icon {
-            color: red;
-            font-size: 0.9em;
-            margin-left: 5px;
+        #message {
+            height: 20px;
+            margin-top: 10px;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -76,42 +64,42 @@
     <div class="login-container">
         <div class="logo">
             <img src="../IMAGES/hackerwhite.svg" alt="adembayazit.com" class="hacker-icon">
-            <h2>LadyB<span class="fa-solid fa-bug bug-icon"></span>G Admin</h2>
+            <h2>LadyB<span style="color:red">0</span>G Admin</h2>
         </div>
         <div class="input-group">
             <input type="password" id="adminPassword" placeholder="Admin Şifresi" autocomplete="off">
             <button onclick="checkPassword()"><i class="fas fa-lock"></i></button>
         </div>
-        <p id="message" style="color: red; height: 20px; font-size: 14px;"></p>
+        <p id="message"></p>
     </div>
 
     <script>
-        // SHA-256 hash fonksiyonu (Türkçe karakter desteğiyle)
+        // SHA-256 hash fonksiyonu (UTF-8 desteğiyle)
         function hashPassword(password) {
-            return CryptoJS.SHA256(CryptoJS.enc.Utf8.parse(password)).toString(CryptoJS.enc.Hex);
+            return CryptoJS.SHA256(password).toString();
         }
-
-        // YENİ ŞİFRE VE HASH (Benim belirlediğim)
-        const SECRET_PASSWORD = "admin123!@#";
-        const CORRECT_HASH = "7a3f8d6e9c2b1a5f4e7d8c6b5a9e3f2c1d0e7f6a5b4c3d2e1f0a9b8c7d6e5f4";
 
         function checkPassword() {
             const password = document.getElementById('adminPassword').value;
             const messageEl = document.getElementById('message');
             
-            // Debug için konsola hash'i yazdır
-            console.log("Girilen şifrenin hash'i:", hashPassword(password));
+            // "admin123" şifresinin doğru hash'i
+            const CORRECT_HASH = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918";
+            
+            // Debug için
+            console.log("Girilen şifre:", password);
+            console.log("Oluşturulan hash:", hashPassword(password));
             
             if (hashPassword(password) === CORRECT_HASH) {
-                messageEl.textContent = "✓ Giriş başarılı!";
+                messageEl.textContent = "Giriş başarılı! Yönlendiriliyor...";
                 messageEl.style.color = "limegreen";
                 localStorage.setItem('adminAuth', 'true');
                 setTimeout(() => {
                     window.location.href = "admin.html";
                 }, 1000);
             } else {
-                messageEl.textContent = "✗ Hatalı şifre!";
-                document.getElementById('adminPassword').value = "";
+                messageEl.textContent = "Hatalı şifre!";
+                messageEl.style.color = "red";
             }
         }
 
