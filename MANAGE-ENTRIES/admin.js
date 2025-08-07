@@ -1,186 +1,1063 @@
-// Admin kontrolü
-if(!localStorage.getItem('adminAuthenticated')) {
-    window.location.href = "index.html";
-}
-
-function logout() {
-    localStorage.removeItem('adminAuthenticated');
-    window.location.href = "index.html";
-}
-
-// Formatlama fonksiyonları
-function formatText(textareaId, format) {
-    const textarea = document.getElementById(textareaId);
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = textarea.value.substring(start, end);
-    let formattedText = '';
-    
-    switch(format) {
-        case 'bold':
-            formattedText = `<b>${selectedText}</b>`;
-            break;
-        case 'italic':
-            formattedText = `<i>${selectedText}</i>`;
-            break;
-        case 'underline':
-            formattedText = `<u>${selectedText}</u>`;
-            break;
-        case 'quote':
-            formattedText = `"${selectedText}"`;
-            break;
-    }
-    
-    textarea.value = textarea.value.substring(0, start) + formattedText + textarea.value.substring(end);
-    textarea.focus();
-    textarea.setSelectionRange(start + formattedText.length, start + formattedText.length);
-}
-
-function clearFormatting(textareaId) {
-    const textarea = document.getElementById(textareaId);
-    const text = textarea.value;
-    textarea.value = text.replace(/<\/?[^>]+(>|$)/g, ""); // Tüm HTML tag'larını temizle
-}
-
-// Entry gönderme fonksiyonu
-async function submitEntry() {
-    const trContent = document.getElementById('trContent').value.trim();
-    const enContent = document.getElementById('enContent').value.trim();
-    const referenceId = document.getElementById('referenceId').value;
-    
-    if(!trContent && !enContent) {
-        alert("En az bir dilde içerik girmelisiniz!");
-        return;
-    }
-
-    try {
-        // Mevcut entry'leri çek
-        const response = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                path: '/b/68933248ae596e708fc2fbbc/latest',
-                method: 'GET'
-            })
-        });
-        
-        if (!response.ok) throw new Error('Veri alınamadı');
-        
-        const data = await response.json();
-        const entries = data.records || data;
-        const maxId = Math.max(...entries.map(e => e.id), 0);
-        
-        // Yeni entry objesi
-        const newEntry = {
-            id: maxId + 1,
-            date: new Date().toISOString(),
-            content: enContent,
-            content_tr: trContent,
-            references: referenceId ? [parseInt(referenceId)] : []
-        };
-        
-        // Yeni entry'yi ekleyerek güncelle
-        const updatedEntries = [...entries, newEntry];
-        
-        // JSONBin.io'ya gönder
-        const updateResponse = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                path: '/b/68933248ae596e708fc2fbbc',
-                method: 'PUT',
-                body: updatedEntries
-            })
-        });
-        
-        if (!updateResponse.ok) throw new Error('Güncelleme başarısız');
-        
-        alert("Entry başarıyla eklendi!");
-        document.getElementById('trContent').value = '';
-        document.getElementById('enContent').value = '';
-        document.getElementById('referenceId').value = '';
-        
-        // İstatistikleri güncelle
-        updateStats();
-        
-    } catch (error) {
-        console.error('Hata:', error);
-        alert("Bir hata oluştu: " + error.message);
-        
-        // Fallback olarak local storage'a kaydet
-        try {
-            const localEntries = JSON.parse(localStorage.getItem('entries_backup') || '[]');
-            const maxId = Math.max(...localEntries.map(e => e.id), 0);
-            
-            const newEntry = {
-                id: maxId + 1,
-                date: new Date().toISOString(),
-                content: enContent,
-                content_tr: trContent,
-                references: referenceId ? [parseInt(referenceId)] : []
-            };
-            
-            localStorage.setItem('entries_backup', JSON.stringify([...localEntries, newEntry]));
-            alert("Entry local storage'a yedeklendi!");
-        } catch (e) {
-            console.error('Local storage hatası:', e);
-        }
-    }
-}
-
-// İstatistikleri güncelle
-async function updateStats() {
-    try {
-        // Entry sayısı
-        const entriesResponse = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                path: '/b/68933248ae596e708fc2fbbc/latest',
-                method: 'GET'
-            })
-        });
-        
-        if (entriesResponse.ok) {
-            const entriesData = await entriesResponse.json();
-            const entries = entriesData.records || entriesData;
-            document.getElementById('total-entries').textContent = entries.length;
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Paneli - adembayazit.com</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: limegreen;
+            --secondary-color: #001e00;
+            --text-color: limegreen;
+            --bg-color: #000;
+            --error-color: #ff3333;
+            --success-color: #00ff00;
+            --warning-color: #ffcc00;
         }
         
-        // Like ve pin istatistikleri
-        const statsResponse = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                path: '/b/68862fd97b4b8670d8a81945/latest',
-                method: 'GET'
-            })
-        });
-        
-        if (statsResponse.ok) {
-            const statsData = await statsResponse.json();
-            const likes = statsData.likes || {};
-            const pins = statsData.pins || {};
-            
-            const totalLikes = Object.values(likes).reduce((sum, count) => sum + count, 0);
-            const totalPins = Object.values(pins).reduce((sum, count) => sum + count, 0);
-            
-            document.getElementById('total-likes').textContent = totalLikes;
-            document.getElementById('total-pins').textContent = totalPins;
+        body {
+            background: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
         }
         
-    } catch (error) {
-        console.error('İstatistik güncelleme hatası:', error);
-    }
-}
+        .admin-header {
+            background: rgba(0, 30, 0, 0.9);
+            border-bottom: 1px solid var(--primary-color);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .logo img {
+            height: 30px;
+            filter: drop-shadow(0 0 5px var(--primary-color));
+        }
+        
+        .logo h2 {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 1rem;
+        }
+        
+        .bug-icon {
+            color: red;
+            animation: bugPulse 1.5s infinite;
+        }
+        
+        .logout-btn {
+            background: var(--primary-color);
+            color: black;
+            border: none;
+            padding: 6px 10px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            border-radius: 3px;
+            transition: all 0.3s;
+            font-size: 0.8rem;
+        }
+        
+        .logout-btn:hover {
+            box-shadow: 0 0 10px var(--primary-color);
+            transform: translateY(-2px);
+        }
+        
+        .admin-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 1rem;
+        }
+        
+        .editor-container, .stats-container, .entries-container {
+            background: rgba(0, 30, 0, 0.7);
+            border: 1px solid var(--primary-color);
+            border-radius: 5px;
+            padding: 1rem;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .editor-container::after, .stats-container::after, .entries-container::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+            animation: scanline 3s linear infinite;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        input[type="number"], textarea, input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            background: #111;
+            border: 1px solid var(--primary-color);
+            color: var(--text-color);
+            font-family: 'Courier New', monospace;
+            border-radius: 3px;
+            font-size: 0.9rem;
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .editor-toolbar {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 5px;
+            flex-wrap: wrap;
+        }
+        
+        .editor-toolbar button {
+            background: #111;
+            border: 1px solid var(--primary-color);
+            color: var(--text-color);
+            padding: 4px 8px;
+            cursor: pointer;
+            border-radius: 3px;
+            font-size: 0.8rem;
+        }
+        
+        .editor-toolbar button:hover {
+            background: var(--primary-color);
+            color: black;
+        }
+        
+        .submit-btn {
+            background: var(--primary-color);
+            color: black;
+            border: none;
+            padding: 8px 15px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            border-radius: 3px;
+            transition: all 0.3s;
+            width: 100%;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+        
+        .submit-btn:hover {
+            box-shadow: 0 0 15px var(--primary-color);
+            transform: translateY(-2px);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-box {
+            background: rgba(0, 30, 0, 0.5);
+            border: 1px solid var(--primary-color);
+            padding: 0.5rem;
+            text-align: center;
+            border-radius: 3px;
+            font-size: 0.8rem;
+        }
+        
+        .stat-box i {
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+            color: var(--primary-color);
+        }
+        
+        .stat-box span {
+            display: block;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+        
+        #response-message {
+            padding: 8px;
+            margin-top: 10px;
+            border-radius: 3px;
+            text-align: center;
+            display: none;
+            font-size: 0.9rem;
+        }
+        
+        .success {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid var(--success-color);
+            color: var(--success-color);
+        }
+        
+        .error {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid var(--error-color);
+            color: var(--error-color);
+        }
+        
+        .warning {
+            background: rgba(255, 204, 0, 0.1);
+            border: 1px solid var(--warning-color);
+            color: var(--warning-color);
+        }
+        
+        .entries-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 0.5rem;
+        }
+        
+        .entry-item {
+            background: rgba(0, 30, 0, 0.5);
+            border: 1px solid var(--primary-color);
+            padding: 0.8rem;
+            margin-bottom: 0.8rem;
+            border-radius: 3px;
+            position: relative;
+            font-size: 0.9rem;
+        }
+        
+        .entry-item:hover {
+            background: rgba(0, 60, 0, 0.5);
+        }
+        
+        .entry-content {
+            margin-bottom: 0.3rem;
+            white-space: pre-line;
+        }
+        
+        .entry-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: #aaa;
+        }
+        
+        .entry-actions {
+            position: absolute;
+            top: 3px;
+            right: 3px;
+            display: none;
+        }
+        
+        .entry-item:hover .entry-actions {
+            display: flex;
+            gap: 3px;
+        }
+        
+        .entry-actions button {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--primary-color);
+            color: var(--text-color);
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .entry-actions button:hover {
+            background: var(--primary-color);
+            color: black;
+        }
+        
+        .edit-form {
+            display: none;
+            margin-top: 0.5rem;
+            padding: 0.8rem;
+            background: rgba(0, 60, 0, 0.5);
+            border: 1px solid var(--primary-color);
+            border-radius: 3px;
+            font-size: 0.9rem;
+        }
+        
+        .edit-form textarea {
+            min-height: 80px;
+        }
+        
+        .edit-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .edit-actions button {
+            flex: 1;
+            padding: 4px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+        }
+        
+        .save-btn {
+            background: var(--primary-color);
+            color: black;
+        }
+        
+        .cancel-btn {
+            background: #333;
+            color: white;
+        }
+        
+        .delete-btn {
+            background: var(--error-color);
+            color: white;
+        }
+        
+        /* Preview container */
+        .preview-container {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(0, 20, 0, 0.5);
+            border: 1px solid var(--primary-color);
+            border-radius: 3px;
+        }
+        
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .preview-content {
+            padding: 1rem;
+            background: rgba(0, 30, 0, 0.3);
+            border-radius: 3px;
+            min-height: 80px;
+            white-space: pre-line;
+        }
+        
+        /* Search box */
+        .search-box {
+            display: flex;
+            margin-bottom: 10px;
+            gap: 5px;
+        }
+        
+        .search-box input {
+            flex: 1;
+            padding: 8px;
+            background: #111;
+            border: 1px solid var(--primary-color);
+            color: var(--text-color);
+            font-family: 'Courier New', monospace;
+            border-radius: 3px;
+            font-size: 0.9rem;
+        }
+        
+        .search-box button {
+            background: var(--primary-color);
+            color: black;
+            border: none;
+            padding: 0 12px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            border-radius: 3px;
+        }
+        
+        /* Character counter */
+        .char-counter {
+            position: absolute;
+            bottom: 5px;
+            right: 10px;
+            background: rgba(0, 30, 0, 0.7);
+            padding: 2px 5px;
+            font-size: 0.7rem;
+            color: #aaa;
+            border-radius: 3px;
+        }
+        
+        @keyframes scanline {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        @keyframes bugPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Tablet ve daha büyük ekranlar */
+        @media (min-width: 768px) {
+            .admin-container {
+                display: grid;
+                grid-template-columns: 2fr 1fr;
+                gap: 1.5rem;
+                padding: 1.5rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1rem;
+            }
+            
+            .logo {
+                font-size: 1rem;
+            }
+            
+            .logo h2 {
+                font-size: 1.2rem;
+            }
+            
+            .logout-btn {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="admin-header">
+        <div class="logo">
+            <img src="../IMAGES/hackerwhite.svg" alt="adembayazit.com" class="hacker-icon">
+            <h2>LadyB<span class="fa-solid fa-bug bug-icon"></span>G Admin</h2>
+        </div>
+        <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Çıkış</button>
+    </header>
 
-// Sayfa yüklendiğinde istatistikleri güncelle
-document.addEventListener('DOMContentLoaded', updateStats);
+    <div class="admin-container">
+        <div class="editor-container">
+            <h3><i class="fas fa-plus-circle"></i> Yeni Entry Ekle</h3>
+            
+            <div class="form-group">
+                <label for="entryId"><i class="fas fa-hashtag"></i> Entry ID:</label>
+                <input type="number" id="entryId" placeholder="Otomatik ID için boş bırakın">
+            </div>
+            
+            <div class="form-group">
+                <label for="referenceId"><i class="fas fa-link"></i> Referans ID (opsiyonel):</label>
+                <input type="number" id="referenceId" placeholder="Referans ID">
+            </div>
+            
+            <div class="form-group">
+                <label for="trContent"><i class="fas fa-language"></i> Türkçe İçerik:</label>
+                <div class="editor-toolbar">
+                    <button onclick="formatText('trContent', 'bold')" title="Kalın"><i class="fas fa-bold"></i></button>
+                    <button onclick="formatText('trContent', 'italic')" title="İtalik"><i class="fas fa-italic"></i></button>
+                    <button onclick="formatText('trContent', 'underline')" title="Altı Çizili"><i class="fas fa-underline"></i></button>
+                    <button onclick="formatText('trContent', 'quote')" title="Tırnak İşareti"><i class="fas fa-quote-right"></i></button>
+                    <button onclick="clearFormatting('trContent')" title="Temizle"><i class="fas fa-eraser"></i></button>
+                </div>
+                <textarea id="trContent" placeholder="Türkçe içerik..." oninput="updatePreview()"></textarea>
+                <div class="char-counter" id="tr-counter">0 karakter</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="enContent"><i class="fas fa-globe"></i> İngilizce İçerik:</label>
+                <div class="editor-toolbar">
+                    <button onclick="formatText('enContent', 'bold')" title="Bold"><i class="fas fa-bold"></i></button>
+                    <button onclick="formatText('enContent', 'italic')" title="Italic"><i class="fas fa-italic"></i></button>
+                    <button onclick="formatText('enContent', 'underline')" title="Underline"><i class="fas fa-underline"></i></button>
+                    <button onclick="formatText('enContent', 'quote')" title="Quote"><i class="fas fa-quote-right"></i></button>
+                    <button onclick="clearFormatting('enContent')" title="Clear"><i class="fas fa-eraser"></i></button>
+                </div>
+                <textarea id="enContent" placeholder="English content..."></textarea>
+                <div class="char-counter" id="en-counter">0 karakter</div>
+            </div>
+            
+            <!-- Preview section -->
+            <div class="preview-container">
+                <div class="preview-header">
+                    <h4><i class="fas fa-eye"></i> Önizleme</h4>
+                    <small>Anasayfada nasıl görünecek</small>
+                </div>
+                <div class="preview-content" id="preview-content">
+                    İçerik önizleme burada görünecek...
+                </div>
+            </div>
+            
+            <button class="submit-btn" onclick="submitEntry()"><i class="fas fa-paper-plane"></i> Entry Ekle</button>
+            <div id="response-message"></div>
+        </div>
+        
+        <div class="stats-container">
+            <h3><i class="fas fa-chart-bar"></i> İstatistikler</h3>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <i class="fas fa-heart"></i>
+                    <span id="total-likes">0</span>
+                    <small>Toplam Beğeni</small>
+                </div>
+                <div class="stat-box">
+                    <i class="fas fa-thumbtack"></i>
+                    <span id="total-pins">0</span>
+                    <small>Toplam Pin</small>
+                </div>
+                <div class="stat-box">
+                    <i class="fas fa-file-alt"></i>
+                    <span id="total-entries">0</span>
+                    <small>Toplam Entry</small>
+                </div>
+            </div>
+            
+            <h3><i class="fas fa-history"></i> Son Entryler</h3>
+            
+            <!-- Search box -->
+            <div class="search-box">
+                <input type="text" id="search-query" placeholder="ID veya içerik ile ara...">
+                <button onclick="searchEntries()"><i class="fas fa-search"></i> Ara</button>
+            </div>
+            
+            <div class="entries-list" id="recent-entries">
+                <!-- Son entryler buraya eklenecek -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // JSONBin.io API ayarları
+        const ENTRIES_BIN_ID = '68933248ae596e708fc2fbbc';
+        const INTERACTIONS_BIN_ID = '68862fd97b4b8670d8a81945';
+        const PROXY_URL = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
+        
+        // Oturum kontrolü
+        window.addEventListener('DOMContentLoaded', () => {
+            if (!localStorage.getItem('adminAuth') || localStorage.getItem('adminAuth') !== 'true') {
+                window.location.href = 'index.html';
+            } else {
+                loadStats();
+                loadRecentEntries();
+                
+                // Karakter sayacını başlat
+                document.getElementById('trContent').addEventListener('input', updateCharCounters);
+                document.getElementById('enContent').addEventListener('input', updateCharCounters);
+                updateCharCounters();
+            }
+        });
+        
+        // Karakter sayacını güncelle
+        function updateCharCounters() {
+            const trContent = document.getElementById('trContent').value;
+            const enContent = document.getElementById('enContent').value;
+            
+            document.getElementById('tr-counter').textContent = `${trContent.length} karakter`;
+            document.getElementById('en-counter').textContent = `${enContent.length} karakter`;
+        }
+        
+        async function fetchFromJsonBin(binId, method = 'GET', data = null) {
+            try {
+                const response = await fetch(PROXY_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        path: `/b/${binId}${method === 'GET' ? '/latest' : ''}`,
+                        method,
+                        body: data
+                    })
+                });
+                
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                console.error('JSONBin fetch error:', error);
+                throw error;
+            }
+        }
+        
+        async function getNextId() {
+            try {
+                const currentData = await fetchFromJsonBin(ENTRIES_BIN_ID);
+                let entries = Array.isArray(currentData) ? currentData : (currentData.records || []);
+                
+                if (entries.length === 0) return 1;
+                
+                // En yüksek ID'yi bul
+                const maxId = Math.max(...entries.map(e => e.id));
+                return maxId + 1;
+            } catch (error) {
+                console.error('ID alınırken hata:', error);
+                // Hata durumunda rastgele ID üret
+                return Math.floor(Math.random() * 900000) + 100000;
+            }
+        }
+        
+        async function submitEntry() {
+            const entryIdInput = document.getElementById('entryId');
+            const referenceId = document.getElementById('referenceId').value;
+            const trContent = document.getElementById('trContent').value;
+            const enContent = document.getElementById('enContent').value;
+            const responseEl = document.getElementById('response-message');
+            
+            responseEl.style.display = 'none';
+            
+            if (!trContent && !enContent) {
+                showMessage('Lütfen en az bir dilde içerik girin!', 'error');
+                return;
+            }
+            
+            try {
+                const submitBtn = document.querySelector('.submit-btn');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...';
+                
+                // Mevcut entry'leri çek
+                const currentData = await fetchFromJsonBin(ENTRIES_BIN_ID);
+                let entries = Array.isArray(currentData) ? currentData : (currentData.records || []);
+                
+                // Entry ID belirle
+                let entryId = entryIdInput.value ? parseInt(entryIdInput.value) : await getNextId();
+                
+                // ID zaten var mı kontrol et
+                if (entryIdInput.value && entries.some(e => e.id === entryId)) {
+                    showMessage('Bu ID zaten kullanılıyor!', 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Entry Ekle';
+                    return;
+                }
+                
+                // Yeni entry oluştur
+                const newEntry = {
+                    id: entryId,
+                    date: new Date().toISOString(),
+                    content: enContent || '', // İngilizce içerik
+                    content_tr: trContent || null, // Türkçe içerik
+                    references: referenceId ? [parseInt(referenceId)] : []
+                };
+                
+                // Yeni listeyi hazırla
+                const updatedEntries = [newEntry, ...entries];
+                
+                // JSONBin'e gönder
+                await fetchFromJsonBin(ENTRIES_BIN_ID, 'PUT', updatedEntries);
+                
+                showMessage('Entry başarıyla eklendi!', 'success');
+                
+                // Formu temizle
+                entryIdInput.value = '';
+                document.getElementById('referenceId').value = '';
+                document.getElementById('trContent').value = '';
+                document.getElementById('enContent').value = '';
+                
+                // Önizlemeyi sıfırla
+                document.getElementById('preview-content').innerHTML = 'İçerik önizleme burada görünecek...';
+                
+                // Karakter sayaçlarını sıfırla
+                updateCharCounters();
+                
+                // İstatistikleri ve son entryleri güncelle
+                await updateStats();
+                await loadRecentEntries();
+            } catch (error) {
+                showMessage(`Hata: ${error.message}`, 'error');
+                console.error('Entry ekleme hatası:', error);
+            } finally {
+                const submitBtn = document.querySelector('.submit-btn');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Entry Ekle';
+            }
+        }
+        
+        async function loadRecentEntries() {
+            try {
+                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
+                const recentEntriesContainer = document.getElementById('recent-entries');
+                recentEntriesContainer.innerHTML = '';
+                
+                // En son 5 entry'yi göster
+                const recentEntries = Array.isArray(entries) ? 
+                    entries.slice(0, 5) : 
+                    (entries.records ? entries.records.slice(0, 5) : []);
+                
+                if (recentEntries.length === 0) {
+                    recentEntriesContainer.innerHTML = '<p>Henüz entry bulunmamaktadır.</p>';
+                    return;
+                }
+                
+                recentEntries.forEach(entry => {
+                    const entryEl = document.createElement('div');
+                    entryEl.className = 'entry-item';
+                    
+                    // İçerik belirleme (TR varsa TR, yoksa EN)
+                    let displayContent = entry.content_tr || entry.content;
+                    
+                    entryEl.innerHTML = `
+                        <div class="entry-content">${formatForDisplay(displayContent)}</div>
+                        <div class="entry-meta">
+                            <span>ID: ${entry.id}</span>
+                            <span>${formatDate(entry.date)}</span>
+                        </div>
+                        <div class="entry-actions">
+                            <button onclick="editEntry(${entry.id})" title="Düzenle"><i class="fas fa-edit"></i></button>
+                            <button onclick="confirmDelete(${entry.id})" title="Sil"><i class="fas fa-trash"></i></button>
+                        </div>
+                    `;
+                    
+                    recentEntriesContainer.appendChild(entryEl);
+                });
+            } catch (error) {
+                console.error('Son entryleri yükleme hatası:', error);
+            }
+        }
+        
+        // Arama fonksiyonu
+        async function searchEntries() {
+            const query = document.getElementById('search-query').value.trim().toLowerCase();
+            const recentEntriesContainer = document.getElementById('recent-entries');
+            
+            if (!query) {
+                // Arama kutusu boşsa son 5 entry'yi göster
+                loadRecentEntries();
+                return;
+            }
+            
+            try {
+                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
+                const allEntries = Array.isArray(entries) ? entries : (entries.records || []);
+                
+                const filteredEntries = allEntries.filter(entry => {
+                    // ID'ye göre arama
+                    if (entry.id.toString().includes(query)) return true;
+                    
+                    // İçeriğe göre arama
+                    if (entry.content && entry.content.toLowerCase().includes(query)) return true;
+                    if (entry.content_tr && entry.content_tr.toLowerCase().includes(query)) return true;
+                    
+                    return false;
+                });
+                
+                recentEntriesContainer.innerHTML = '';
+                
+                if (filteredEntries.length === 0) {
+                    recentEntriesContainer.innerHTML = '<p>Hiç entry bulunamadı.</p>';
+                    return;
+                }
+                
+                filteredEntries.slice(0, 10).forEach(entry => {
+                    const entryEl = document.createElement('div');
+                    entryEl.className = 'entry-item';
+                    
+                    let displayContent = entry.content_tr || entry.content;
+                    
+                    entryEl.innerHTML = `
+                        <div class="entry-content">${formatForDisplay(displayContent)}</div>
+                        <div class="entry-meta">
+                            <span>ID: ${entry.id}</span>
+                            <span>${formatDate(entry.date)}</span>
+                        </div>
+                        <div class="entry-actions">
+                            <button onclick="editEntry(${entry.id})" title="Düzenle"><i class="fas fa-edit"></i></button>
+                            <button onclick="confirmDelete(${entry.id})" title="Sil"><i class="fas fa-trash"></i></button>
+                        </div>
+                    `;
+                    
+                    recentEntriesContainer.appendChild(entryEl);
+                });
+                
+            } catch (error) {
+                console.error('Arama hatası:', error);
+                showMessage(`Arama sırasında hata: ${error.message}`, 'error');
+            }
+        }
+        
+        // Görselleştirme için formatlama
+        function formatForDisplay(text) {
+            if (!text) return '';
+            
+            // Kalın metin: **kalın**
+            let formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            
+            // İtalik metin: _italik_
+            formatted = formatted.replace(/_(.*?)_/g, '<em>$1</em>');
+            
+            // Altı çizili: <u>altı çizili</u>
+            formatted = formatted.replace(/<u>(.*?)<\/u>/g, '<u>$1</u>');
+            
+            // Alıntı: > alıntı
+            formatted = formatted.replace(/^> (.*)$/gm, '<blockquote>$1</blockquote>');
+            
+            return formatted;
+        }
+        
+        // Önizleme güncelleme
+        function updatePreview() {
+            const content = document.getElementById('trContent').value;
+            document.getElementById('preview-content').innerHTML = formatForDisplay(content) || 'İçerik önizleme burada görünecek...';
+            updateCharCounters();
+        }
+        
+        async function editEntry(entryId) {
+            try {
+                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
+                const entry = Array.isArray(entries) ? 
+                    entries.find(e => e.id === entryId) : 
+                    (entries.records ? entries.records.find(e => e.id === entryId) : null);
+                
+                if (!entry) {
+                    showMessage('Entry bulunamadı!', 'error');
+                    return;
+                }
+                
+                // Entry item'ını bul
+                const entryItems = document.querySelectorAll('.entry-item');
+                const targetItem = Array.from(entryItems).find(item => 
+                    item.querySelector('.entry-meta span').textContent.includes(`ID: ${entryId}`));
+                
+                if (!targetItem) return;
+                
+                // Edit formu oluştur veya göster
+                let editForm = targetItem.querySelector('.edit-form');
+                
+                if (!editForm) {
+                    editForm = document.createElement('div');
+                    editForm.className = 'edit-form';
+                    editForm.innerHTML = `
+                        <div class="form-group">
+                            <label for="edit-tr-${entryId}">Türkçe İçerik:</label>
+                            <textarea id="edit-tr-${entryId}">${entry.content_tr || ''}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-en-${entryId}">İngilizce İçerik:</label>
+                            <textarea id="edit-en-${entryId}">${entry.content || ''}</textarea>
+                        </div>
+                        <div class="edit-actions">
+                            <button class="save-btn" onclick="saveEntry(${entryId})"><i class="fas fa-save"></i> Kaydet</button>
+                            <button class="cancel-btn" onclick="cancelEdit(${entryId})"><i class="fas fa-times"></i> İptal</button>
+                        </div>
+                    `;
+                    targetItem.appendChild(editForm);
+                }
+                
+                editForm.style.display = 'block';
+            } catch (error) {
+                console.error('Entry düzenleme hatası:', error);
+                showMessage(`Düzenleme hatası: ${error.message}`, 'error');
+            }
+        }
+        
+        async function saveEntry(entryId) {
+            try {
+                const trContent = document.getElementById(`edit-tr-${entryId}`).value;
+                const enContent = document.getElementById(`edit-en-${entryId}`).value;
+                
+                if (!trContent && !enContent) {
+                    showMessage('En az bir dilde içerik girin!', 'error');
+                    return;
+                }
+                
+                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
+                let entriesArray = Array.isArray(entries) ? entries : (entries.records || []);
+                
+                const entryIndex = entriesArray.findIndex(e => e.id === entryId);
+                if (entryIndex === -1) {
+                    showMessage('Entry bulunamadı!', 'error');
+                    return;
+                }
+                
+                // Entry'yi güncelle
+                entriesArray[entryIndex] = {
+                    ...entriesArray[entryIndex],
+                    content: enContent || '',
+                    content_tr: trContent || null,
+                    date: new Date().toISOString()
+                };
+                
+                // JSONBin'e gönder
+                await fetchFromJsonBin(ENTRIES_BIN_ID, 'PUT', entriesArray);
+                
+                showMessage('Entry başarıyla güncellendi!', 'success');
+                
+                // Listeyi yenile
+                await loadRecentEntries();
+            } catch (error) {
+                console.error('Entry kaydetme hatası:', error);
+                showMessage(`Kaydetme hatası: ${error.message}`, 'error');
+            }
+        }
+        
+        function cancelEdit(entryId) {
+            const entryItems = document.querySelectorAll('.entry-item');
+            const targetItem = Array.from(entryItems).find(item => 
+                item.querySelector('.entry-meta span').textContent.includes(`ID: ${entryId}`));
+            
+            if (targetItem) {
+                const editForm = targetItem.querySelector('.edit-form');
+                if (editForm) {
+                    editForm.style.display = 'none';
+                }
+            }
+        }
+        
+        function confirmDelete(entryId) {
+            if (confirm('Bu entryi silmek istediğinize emin misiniz?')) {
+                deleteEntry(entryId);
+            }
+        }
+        
+        async function deleteEntry(entryId) {
+            try {
+                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
+                let entriesArray = Array.isArray(entries) ? entries : (entries.records || []);
+                
+                const updatedEntries = entriesArray.filter(e => e.id !== entryId);
+                
+                // JSONBin'e gönder
+                await fetchFromJsonBin(ENTRIES_BIN_ID, 'PUT', updatedEntries);
+                
+                showMessage('Entry başarıyla silindi!', 'success');
+                
+                // Listeyi yenile
+                await loadRecentEntries();
+                await updateStats();
+            } catch (error) {
+                console.error('Entry silme hatası:', error);
+                showMessage(`Silme hatası: ${error.message}`, 'error');
+            }
+        }
+        
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('tr-TR') + ' ' + date.toLocaleTimeString('tr-TR');
+        }
+        
+        async function updateStats() {
+            try {
+                const entriesData = await fetchFromJsonBin(ENTRIES_BIN_ID);
+                const interactions = await fetchFromJsonBin(INTERACTIONS_BIN_ID);
+                
+                const totalEntries = Array.isArray(entriesData) ? 
+                    entriesData.length : 
+                    (entriesData.records ? entriesData.records.length : 0);
+                
+                const totalLikes = interactions.likes ? 
+                    Object.values(interactions.likes).reduce((a, b) => a + b, 0) : 0;
+                
+                const totalPins = interactions.pins ? 
+                    Object.values(interactions.pins).reduce((a, b) => a + b, 0) : 0;
+                
+                document.getElementById('total-entries').textContent = totalEntries;
+                document.getElementById('total-likes').textContent = totalLikes;
+                document.getElementById('total-pins').textContent = totalPins;
+            } catch (error) {
+                console.error('İstatistik güncelleme hatası:', error);
+            }
+        }
+        
+        async function loadStats() {
+            await updateStats();
+        }
+        
+        function showMessage(message, type) {
+            const responseEl = document.getElementById('response-message');
+            responseEl.textContent = message;
+            responseEl.className = type;
+            responseEl.style.display = 'block';
+            
+            setTimeout(() => {
+                responseEl.style.display = 'none';
+            }, 5000);
+        }
+        
+        function logout() {
+            localStorage.removeItem('adminAuth');
+            window.location.href = 'index.html';
+        }
+        
+        // Metin düzenleme fonksiyonları
+        function formatText(textareaId, format) {
+            const textarea = document.getElementById(textareaId);
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selectedText = textarea.value.substring(start, end);
+            let formattedText = '';
+            
+            switch(format) {
+                case 'bold':
+                    formattedText = `**${selectedText}**`;
+                    break;
+                case 'italic':
+                    formattedText = `_${selectedText}_`;
+                    break;
+                case 'underline':
+                    formattedText = `<u>${selectedText}</u>`;
+                    break;
+                case 'quote':
+                    formattedText = `> ${selectedText}`;
+                    break;
+            }
+            
+            textarea.value = textarea.value.substring(0, start) + formattedText + textarea.value.substring(end);
+            textarea.focus();
+            textarea.setSelectionRange(start + formattedText.length, start + formattedText.length);
+            
+            // Önizlemeyi güncelle (sadece Türkçe içerik için)
+            if (textareaId === 'trContent') {
+                updatePreview();
+            }
+            
+            // Karakter sayaçlarını güncelle
+            updateCharCounters();
+        }
+        
+        function clearFormatting(textareaId) {
+            const textarea = document.getElementById(textareaId);
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selectedText = textarea.value.substring(start, end);
+            
+            const cleanedText = selectedText
+                .replace(/\*\*(.*?)\*\*/g, '$1')
+                .replace(/_(.*?)_/g, '$1')
+                .replace(/<u>(.*?)<\/u>/g, '$1')
+                .replace(/^>\s?(.*)$/gm, '$1');
+                
+            textarea.value = textarea.value.substring(0, start) + cleanedText + textarea.value.substring(end);
+            textarea.focus();
+            textarea.setSelectionRange(start + cleanedText.length, start + cleanedText.length);
+            
+            // Önizlemeyi güncelle (sadece Türkçe içerik için)
+            if (textareaId === 'trContent') {
+                updatePreview();
+            }
+            
+            // Karakter sayaçlarını güncelle
+            updateCharCounters();
+        }
+    </script>
+</body>
+</html>
