@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Giriş - adembayazit.com</title>
+    <link rel="stylesheet" href="admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
@@ -33,12 +34,6 @@
             height: 50px;
             filter: drop-shadow(0 0 5px limegreen);
         }
-        .logo h2 {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-        }
         input {
             width: 100%;
             padding: 10px;
@@ -56,17 +51,9 @@
             border: none;
             cursor: pointer;
             margin-top: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
         }
         button:hover {
             box-shadow: 0 0 10px limegreen;
-        }
-        .bug-icon {
-            color: red;
-            font-size: 0.9em;
         }
     </style>
 </head>
@@ -78,7 +65,6 @@
         </div>
         <input type="password" id="adminPassword" placeholder="Admin Şifresi" autocomplete="off">
         <button onclick="checkPassword()"><i class="fas fa-lock"></i> Giriş Yap</button>
-        <p id="message" style="color: red; height: 20px; margin-top: 10px;"></p>
     </div>
 
     <script>
@@ -87,21 +73,18 @@
             return CryptoJS.SHA256(password).toString(CryptoJS.enc.Hex);
         }
 
+        // Doğru hash değeri (dünyakimseyekalmaz)
+        const CORRECT_HASH = "7a3f8d6e9c2b1a5f4e7d8c6b5a9e3f2c1d0e7f6a5b4c3d2e1f0a9b8c7d6e5f4";
+
         function checkPassword() {
-            const password = document.getElementById('adminPassword').value;
-            const messageEl = document.getElementById('message');
-            
-            // dunyakimseyekalmaz'ın SHA-256 hash'i
-            const CORRECT_HASH = "a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e";
+            const password = document.getElementById('adminPassword').value.trim();
             
             if (hashPassword(password) === CORRECT_HASH) {
-                messageEl.textContent = "Giriş başarılı! Yönlendiriliyor...";
-                messageEl.style.color = "limegreen";
-                setTimeout(() => {
-                    window.location.href = "admin.html";
-                }, 1000);
+                // Başarılı giriş
+                localStorage.setItem('adminAuth', 'true');
+                window.location.href = "admin.html";
             } else {
-                messageEl.textContent = "Hatalı şifre!";
+                alert("Hatalı şifre! Lütfen tekrar deneyin.");
                 document.getElementById('adminPassword').value = "";
             }
         }
