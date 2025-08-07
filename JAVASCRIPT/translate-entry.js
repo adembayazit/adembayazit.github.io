@@ -2,63 +2,54 @@ async function addTranslationIcons() {
   const entries = document.querySelectorAll(".entry");
   if (entries.length === 0) return;
 
-  let translations;
-  try {
-    // JSONBin.io'dan çevirileri çek
-    const response = await fetch('https://api.jsonbin.io/v3/b/68933248ae596e708fc2fbbc/latest', {
-      headers: {
-        'X-Master-Key': '$2a$10$8d7wB08K7w275/WFSjFBQOgEFxZ.MN/Z2L8WCze6bE60QM7UzLMQ6',
-        'Content-Type': 'application/json',
-        'X-Bin-Meta': 'false'
-      },
-      cache: 'no-cache'
-    });
-    
-    if (!response.ok) throw new Error('Veri alınamadı');
-    const data = await response.json();
-    translations = data.records || data; // JSONBin v3 formatı desteği
-  } catch (err) {
-    console.error('JSON yükleme hatası:', err);
-    return;
-  }
+  // Mevcut entry'leri kullan (artık ayrıca fetch'e gerek yok)
+  const translations = currentEntries;
 
   entries.forEach(entry => {
     const idDiv = entry.querySelector(".entry-id");
     const contentDiv = entry.querySelector(".content");
     const originalContent = contentDiv?.innerHTML?.trim();
     if (!idDiv || !originalContent) return;
+    
+    // Eğer zaten bir ikon varsa atla
     if (idDiv.querySelector(".translation-icon")) return;
 
     const idValue = parseInt(idDiv.textContent.replace(/\D/g, ''));
     if (isNaN(idValue)) return;
 
-    const translationEntry = Array.isArray(translations) ? 
-      translations.find(item => item.id === idValue) :
-      translations;
-
-    // Çeviri yoksa ikon ekleme
+    // Entry'yi bul
+    const translationEntry = translations.find(item => item.id === idValue);
+    
+    // Çeviri yoksa ve content_tr de yoksa ikon EKLEME
     if (!translationEntry?.content_tr) return;
 
     const icon = document.createElement("span");
     icon.classList.add("translation-icon", "fi", "fi-tr");
     icon.title = "Çeviriyi göster/gizle";
     
-    // Bayrak ikonu
+    // Bayrak ikonu (dil koduna göre)
     const langCode = translationEntry?.lang || 'tr';
     icon.classList.add(`fi-${langCode}`);
 
-    // Toggle çeviri
+    // Toggle çeviri işlevi
     icon.addEventListener("click", (e) => {
       e.stopPropagation();
       icon.classList.toggle("active");
-      contentDiv.innerHTML = icon.classList.contains("active") ? 
-        translationEntry.content_tr : 
-        originalContent;
+      
+      if (icon.classList.contains("active")) {
+        // Eğer çeviri varsa göster
+        if (translationEntry.content_tr) {
+          contentDiv.innerHTML = translationEntry.content_tr;
+        }
+      } else {
+        // Orijinal içeriğe dön
+        contentDiv.innerHTML = originalContent;
+      }
     });
 
-    // Dışarı tıklandığında çeviriyi kapat
+    // Dokümana tıklayınca çeviriyi kapat
     document.addEventListener("click", (e) => {
-      if (!icon.contains(e.target)) {
+      if (!icon.contains(e.target) && !contentDiv.contains(e.target)) {
         icon.classList.remove("active");
         contentDiv.innerHTML = originalContent;
       }
