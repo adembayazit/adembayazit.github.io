@@ -623,9 +623,8 @@
                 const newEntry = {
                     id: entryId,
                     date: new Date().toISOString(),
-                    content: trContent || enContent || '', // Ana içerik (TR varsa TR, yoksa EN)
+                    content: enContent || '', // İngilizce içerik
                     content_tr: trContent || null, // Türkçe içerik
-                    content: enContent || null, // İngilizce içerik
                     references: referenceId ? [parseInt(referenceId)] : []
                 };
                 
@@ -681,7 +680,7 @@
                     entryEl.className = 'entry-item';
                     
                     // İçerik belirleme (TR varsa TR, yoksa EN)
-                    let displayContent = entry.content_tr || entry.content || entry.content;
+                    let displayContent = entry.content_tr || entry.content;
                     
                     entryEl.innerHTML = `
                         <div class="entry-content">${formatPreviewText(displayContent)}</div>
@@ -726,7 +725,7 @@
                 entryEl.className = 'entry-item';
                 
                 // İçerik belirleme (TR varsa TR, yoksa EN)
-                let displayContent = entry.content_tr || entry.content || entry.content;
+                let displayContent = entry.content_tr || entry.content;
                 
                 entryEl.innerHTML = `
                     <div class="entry-content">${formatPreviewText(displayContent)}</div>
@@ -837,8 +836,7 @@
                 entriesArray[entryIndex] = {
                     ...entriesArray[entryIndex],
                     content_tr: trContent || null,
-                    content: enContent || null,
-                    content: trContent || enContent || entriesArray[entryIndex].content,
+                    content: enContent || '',
                     date: new Date().toISOString()
                 };
                 
