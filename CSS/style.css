@@ -24,7 +24,6 @@ body {
     justify-content: space-between;
     align-items: center;
     z-index: 100;
-    /* border-radius: 100px; */
 }
 
 .logo {
@@ -36,7 +35,6 @@ body {
     pointer-events: none;
     opacity: 0;
     animation: slideTop 1s ease forwards;
-    
 }
 
 .navbar a {
@@ -50,6 +48,7 @@ body {
     animation: slideTop .5s ease forwards;
     animation-delay: calc(.2s * var(--i));
 }
+
 .navbar a::after {
     content: '';
     width: 0;
@@ -85,7 +84,6 @@ body {
 .home-content {
     max-width: 600px;
     padding: 50px;
-    /* margin-left: -30px; */
 }
 
 .home-content h1 {
@@ -142,7 +140,6 @@ body {
     opacity: 0;
     animation: zoomIn 1s ease forwards;
     animation-delay: 0.4s;
-    
 }
 
 .home-sci a:hover {
@@ -183,7 +180,6 @@ body {
 .home-img .glowing-circle {
     width: 100%;
     height: 100%;
-   
     border-radius: 50%;
     display: flex;
     justify-content: center;
@@ -258,9 +254,7 @@ canvas {
     scroll-behavior: smooth;
 }
 
-
 /* ---------------------------About----------------------- */
-
 .about {
     width: 100%;
     height: 100vh;
@@ -298,7 +292,6 @@ canvas {
         opacity: 0;
         transform: translateY(100px);
     }
-
     100% {
         opacity: 1;
         transform: translateY(0);
@@ -310,7 +303,6 @@ canvas {
         opacity: 0;
         transform: translateX(-100px);
     }
-
     100% {
         opacity: 1;
         transform: translateX(0);
@@ -322,7 +314,6 @@ canvas {
         opacity: 0;
         transform: translateX(100px);
     }
-
     100% {
         opacity: 1;
         transform: translateX(0);
@@ -334,7 +325,6 @@ canvas {
         opacity: 0;
         transform: scale(0);
     }
-
     100% {
         opacity: 1;
         transform: scale(1);
@@ -345,11 +335,9 @@ canvas {
     0% {
         transform: translateY(0);
     }
-
     50% {
         transform: translateY(-24px);
     }
-
     100%{
         transform: translate(0);
     }
@@ -359,7 +347,6 @@ canvas {
     0% {
         transform: rotate(0);
     }
-    
     100% {
         transform: rotate(360deg);
     }
@@ -372,16 +359,16 @@ canvas {
     100% {
       opacity: 1;
     }
-  }
+}
+
 /* ---------------------------Mobil----------------------- */
 @media (max-width: 768px) {
-
     #microblog {
     position: relative;
     z-index: 99;
     background-color: black;
     padding: 1rem;
-    margin-top: 120px;  /* Yukarıdan boşluk */
+    margin-top: 120px;
     margin-bottom: 1rem;
     }
 
@@ -461,15 +448,13 @@ canvas {
         margin-top: 120px;
     }
 }
-/* ---------------------------Navbar----------------------- */
 
-/* Genel dropdown alanı */
+/* ---------------------------Navbar----------------------- */
 .dropdown {
   position: relative;
   display: inline-block;
 }
 
-/* Açılır menü düğmesi (üst link) */
 .dropbtn {
   font-size: 18px;
   color: #fff;
@@ -479,7 +464,6 @@ canvas {
   cursor: pointer;
 }
 
-/* Açılır menü içeriği (başlangıçta gizli) */
 .dropdown-content {
   display: none;
   position: absolute;
@@ -499,11 +483,10 @@ canvas {
 
 .dropdown-content a:hover {
   color: white;
-  background-color: limegreen; /* veya sadece 'green' */
+  background-color: limegreen;
   text-shadow: 0 0 10px green;
 }
 
-/* Hover ile gösterme */
 .dropdown:hover .dropdown-content {
   display: block;
 }
@@ -523,29 +506,10 @@ canvas {
   text-shadow: 0 0 5px limegreen;
 }
 
-/* Entry container */
-.entries {
-  background: black;
-  border: 2px solid limegreen;
-  border-radius: 20px;
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  box-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
-}
-
-/* --------------------------- HİYERARŞİK LİSTE STİLLERİ ------------------------- */
-#entries {
-  position: relative;
-  min-height: 500px;
-  padding-left: 6;
-}
-
+/* ENTRY STİLLERİ */
 .entry {
   position: relative;
   background: rgba(0, 30, 0, 0.2);
-  border: 1px solid rgba(50, 205, 50, 0.3);
   border-radius: 8px;
   padding: 15px;
   margin-bottom: 15px;
@@ -553,46 +517,30 @@ canvas {
   z-index: 2;
 }
 
-.entry:hover {
-  transform: translateY(-3px);
-  border-color: #00ff00;
-  box-shadow: 0 5px 15px rgba(0, 255, 0, 0.1);
+/* Spotify içermeyen entry'lere çerçeve */
+.entry:not(.no-border) {
+  border: 2px solid limegreen;
 }
 
+/* Child entry'ler için özel stil */
 .child-entry {
   background: rgba(0, 50, 0, 0.3);
-  border-left: 3px solid limegreen;
   margin-top: 10px;
   margin-left: 30px;
+  border-left: 3px solid limegreen;
+  border: none;
 }
 
-.timestamp {
-  font-size: 0.85rem;
-  color: #90ee90;
-  margin-bottom: 5px;
-  font-family: monospace;
-}
-
-.entry-id {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  font-size: 0.8rem;
-  font-weight: bold;
-  background: rgba(50, 205, 50, 0.2);
-  padding: 3px 8px;
+/* Spotify embed stilleri */
+.entry iframe[src*="spotify.com"] {
+  width: 100%;
+  height: 80px;
   border-radius: 12px;
-  color: #00ff00;
+  margin: 10px 0;
+  border: none !important;
 }
 
-.content {
-  color: #e0ffe0;
-  font-size: 1rem;
-  line-height: 1.5;
-  padding-right: 10px;
-}
-
-/* Mobil için */
+/* MOBİL UYUM */
 @media (max-width: 768px) {
   .entry {
     padding: 12px;
@@ -600,32 +548,20 @@ canvas {
   
   .child-entry {
     margin-left: 15px !important;
+    border-left-width: 2px;
   }
   
-  .entry-id {
-    top: 7px;
-    right: 7px;
-    font-size: 0.6rem;
+  .entry:not(.no-border) {
+    border-width: 1px;
   }
   
-  .content {
-    padding-right: 10px;
-    font-size: 0.8rem;
-  }
-   .timestamp {
-    font-size: 0.7rem;
-    color: #90ee90;
-    margin-bottom: 5px;
-    font-family: monospace;
-}
-  .gallery-grid {
-    grid-template-columns: repeat(4, 1fr);
+  .entry iframe[src*="spotify.com"] {
+    height: 80px;
+    margin: 8px 0;
   }
 }
-}
+
 /* Galeri*/
-/* Galeri genel */
-/* --- FOTO GALERİ --- */
 .photo-gallery {
   text-align: center;
   background: #000;
@@ -651,7 +587,7 @@ canvas {
 
 .gallery-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* Mobilde 4 sütun */
+  grid-template-columns: repeat(4, 1fr);
   gap: 5px;
   width: 100%;
   max-width: 600px;
@@ -701,7 +637,8 @@ canvas {
   box-shadow: 0 0 20px limegreen;
   display: flex;
   justify-content: center;
-  align-items: }
+  align-items: center;
+}
 
 #modal-Image {
   width: auto;
@@ -719,12 +656,13 @@ canvas {
   font-size: 40px;
   cursor: pointer;
 }
+
 .translation-icon {
   display: inline-block;
-  width: 30px;               /* Başlangıç genişliği artırıldı */
-  height: 20px;              /* Yükseklik sabit (dikdörtgen form) */
+  width: 30px;
+  height: 20px;
   background-position: center;
-  background-size: cover;    /* Bayrağın tamamını kaplamasını sağlar */
+  background-size: cover;
   background-repeat: no-repeat;
   cursor: pointer;
   margin-left: 7px;
@@ -738,10 +676,9 @@ canvas {
 }
 
 .translation-icon:hover {
-  transform: scale(1.5);     /* Dikdörtgen oranını koruyarak büyütme */
-  /* width: 36px; */         /* Alternatif: Eğer transform kullanmak istemezseniz */
-  /* height: 24px; */        /* Bu değerlerle de manuel büyütebilirsiniz */
+  transform: scale(1.5);
 }
+
 .tooltip-box {
   position: absolute;
   top: -32px;
@@ -759,57 +696,36 @@ canvas {
   animation: fadeIn 0.2s ease forwards;
 }
 
-@keyframes fadeIn {
-  to {
-    opacity: 1;
-  }
+/* ÖZEL UĞUR BÖCEĞİ STİLİ */
+.bug-icon {
+  color: #FF142E;
+  font-size: 1em;
+  margin: 0 5px;
+  vertical-align: middle;
+  animation: pulse 2s infinite;
 }
-
-
-/* Gösterilecek durumda */
-.translation-icon.show-tooltip .tooltip-box {
-  opacity: 1;
-}
-
-/* Mobilde ekran taşmasını engelle */
-@media (max-width: 600px) {
-  .tooltip-box {
-    left: 50%;
-    transform: translate(-50%, -110%);
-    max-width: 90vw;
-    font-size: 12px;
-    padding: 5px 8px;
-  }
-}
-
-/* ÖZEL UĞUR BÖCEĞİ STİLİ (mevcut CSS ile çakışmayacak) */
-    .bug-icon {
-            color: #FF142E; /* Kırmızı renk */
-            font-size: 1em;
-            margin: 0 5px;
-            vertical-align: middle;
-            animation: pulse 2s infinite;
-        }
         
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
-        }
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
         
-        .ladybug-brand {
-            font-size: 5rem;
-            font-weight: 800;
-            color: #333;
-        }
-    .bug-iconentry {
-            color: #FF142E; /* Kırmızı renk */
-            font-size: 1em;
-            margin: 0 2px;
-            vertical-align: middle;
-            animation: pulse 2s infinite;
-        }
-/* --------------- ETKİLEŞİM BUTONLARI --------------- */
+.ladybug-brand {
+  font-size: 5rem;
+  font-weight: 800;
+  color: #333;
+}
+
+.bug-iconentry {
+  color: #FF142E;
+  font-size: 1em;
+  margin: 0 2px;
+  vertical-align: middle;
+  animation: pulse 2s infinite;
+}
+
+/* ETKİLEŞİM BUTONLARI */
 .interaction-buttons {
   position: absolute;
   bottom: -32px;
@@ -909,22 +825,25 @@ canvas {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-5px); }
 }
+
 .ethical-hacker-link {
- display: inline-flex;  /* Yazı ve ikonu yan yana hizalar */
-  align-items: center;   /* Dikeyde ortalar */
-  gap: 8px;             /* İkon ile yazı arası boşluk */
-  text-decoration: none; /* Alt çizgiyi kaldırır */
-  color: inherit;       /* Varsayılan renk */
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: inherit;
 }
 
 .hacker-icon {
-  width: 25px; /* Adjust as needed */
-  height: 25px; /* Adjust as needed */
+  width: 25px;
+  height: 25px;
 }
+
 .hackerwhite-icon {
-  width: 40px; /* Adjust as needed */
-  height: 40px; /* Adjust as /* Masaüstü görünümü */
+  width: 40px;
+  height: 40px;
 }
+
 .spotify-embed {
   width: 100%;
   height: 83px;
@@ -938,6 +857,5 @@ canvas {
     width: 120%;
     height: 82px;
     border: 1px solid limegreen;
-  
   }
-
+}
