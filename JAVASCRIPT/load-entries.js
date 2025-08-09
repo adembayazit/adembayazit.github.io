@@ -12,7 +12,6 @@ const pinsCache = {
 };
 
 let currentEntries = [];
-let lastEntryObserver = null;
 
 // 2. PROXY HELPER FONKSİYONU
 async function fetchViaProxy(path, method = 'GET', body = null) {
@@ -55,7 +54,57 @@ async function loadInteractions() {
   }
 }
 
-// 4. ENTRY İŞLEME FONKSİYONLARI
+// ÇEVİRİ İKONLARINI EKLEME FONKSİYONU
+async function addTranslationIcons() {
+  const entries = document.querySelectorAll(".entry");
+  if (entries.length === 0) return;
+
+  entries.forEach(entry => {
+    const idDiv = entry.querySelector(".entry-id");
+    const contentDiv = entry.querySelector(".content");
+    const originalContent = contentDiv?.innerHTML?.trim();
+    if (!idDiv || !originalContent) return;
+    
+    if (idDiv.querySelector(".translation-icon")) return;
+
+    const idValue = parseInt(idDiv.textContent.replace(/\D/g, ''));
+    if (isNaN(idValue)) return;
+
+    const translationEntry = currentEntries.find(item => item.id === idValue);
+    
+    if (!translationEntry?.content_tr) return;
+
+    const icon = document.createElement("span");
+    icon.classList.add("translation-icon", "fi", "fi-tr");
+    icon.title = "Çeviriyi göster/gizle";
+    
+    const langCode = translationEntry?.lang || 'tr';
+    icon.classList.add(`fi-${langCode}`);
+
+    icon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      icon.classList.toggle("active");
+      
+      if (icon.classList.contains("active")) {
+        if (translationEntry.content_tr) {
+          contentDiv.innerHTML = translationEntry.content_tr;
+        }
+      } else {
+        contentDiv.innerHTML = originalContent;
+      }
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!icon.contains(e.target) && !contentDiv.contains(e.target)) {
+        icon.classList.remove("active");
+        contentDiv.innerHTML = originalContent;
+      }
+    });
+
+    idDiv.appendChild(icon);
+  });
+}
+
 function processEntries(entries) {
   const container = document.getElementById("entries");
   if (!container) {
@@ -66,7 +115,7 @@ function processEntries(entries) {
   container.innerHTML = "";
 
   const actualEntries = entries.records || entries;
-  currentEntries = [...actualEntries];
+  currentEntries = [...actualEntries]; // Global değişkene kaydet
   
   const sortedEntries = [...actualEntries].sort((a, b) => new Date(b.date) - new Date(a.date));
   const last7Entries = sortedEntries.slice(0, 7);
@@ -99,18 +148,13 @@ function processEntries(entries) {
         .forEach(child => createEntryElement(child, container, 1));
     });
 
-  setupAutoRefresh();
+  // Çeviri ikonlarını ekle
+  addTranslationIcons();
 }
 
 function createEntryElement(entry, container, depth) {
   const entryDiv = document.createElement("div");
   entryDiv.className = `entry ${depth > 0 ? 'child-entry' : ''}`;
-  
-  // Spotify kontrolü
-  const hasSpotify = entry.content.includes('open.spotify.com');
-  if (hasSpotify) {
-    entryDiv.classList.add('has-spotify');
-  }
 
   const time = new Date(entry.date).toLocaleString("tr-TR", {
     year: "numeric", 
@@ -123,37 +167,12 @@ function createEntryElement(entry, container, depth) {
   const likeCount = likesCache.data[entry.id] || 0;
   const pinCount = pinsCache.data[entry.id] || 0;
 
-  // Entry ID için daha şık bir tasarım
-  const entryIdHTML = `
-    <div class="entry-id">
-      <i class="fas fa-hashtag"></i>
-      ${entry.id}
-    </div>
-  `;
-
-  // İçerik işleme - Spotify embed ekleme
-  let processedContent = entry.content;
-  if (hasSpotify) {
-    const spotifyUrlMatch = entry.content.match(/https:\/\/open\.spotify\.com\/[^\s]+/);
-    if (spotifyUrlMatch) {
-      const spotifyUrl = spotifyUrlMatch[0];
-      const spotifyEmbed = `
-        <iframe src="https://open.spotify.com/embed/${spotifyUrl.split('open.spotify.com/')[1]}"
-                class="spotify-embed" 
-                frameborder="0" 
-                allowtransparency="true" 
-                allow="encrypted-media"></iframe>
-      `;
-      processedContent = entry.content.replace(spotifyUrl, '') + spotifyEmbed;
-    }
-  }
-
   entryDiv.innerHTML = `
     <div class="timestamp">
-      <i class="fas fa-bug bug-iconentry"></i> ${time}
+      <span class="fa-solid fa-bug bug-iconentry"></span> ${time}
     </div>
-    ${entryIdHTML}
-    <div class="content">${processedContent}</div>
+    <div class="entry-id">#${entry.id}</div>
+    <div class="content">${entry.content}</div>
     <div class="interaction-buttons">
       <div class="daisy-like" data-entry-id="${entry.id}">
         <img src="IMAGES/daisy.svg" class="daisy-icon" alt="Beğen" />
@@ -168,70 +187,14 @@ function createEntryElement(entry, container, depth) {
 
   container.appendChild(entryDiv);
 
-  // Etkileşim butonlarına event listener ekle
   const likeIcon = entryDiv.querySelector(".daisy-icon");
   likeIcon?.addEventListener("click", () => handleLikeClick(entry.id, entryDiv));
 
   const pinIcon = entryDiv.querySelector(".pine-icon");
   pinIcon?.addEventListener("click", () => handlePinClick(entry.id, entryDiv));
-
-  // Çeviri ikonu ekleme (eğer çeviri varsa)
-  if (entry.content_tr) {
-    const idDiv = entryDiv.querySelector(".entry-id");
-    if (idDiv) {
-      const icon = document.createElement("span");
-      icon.classList.add("translation-icon", "fi", `fi-${entry.lang || 'tr'}`);
-      icon.title = "Çeviriyi göster/gizle";
-      idDiv.appendChild(icon);
-      
-      const contentDiv = entryDiv.querySelector(".content");
-      const originalContent = contentDiv.innerHTML;
-      
-      icon.addEventListener("click", (e) => {
-        e.stopPropagation();
-        icon.classList.toggle("active");
-        contentDiv.innerHTML = icon.classList.contains("active") 
-          ? entry.content_tr 
-          : originalContent;
-      });
-    }
-  }
 }
 
-// 5. OTOMATİK YENİLEME SİSTEMİ
-function setupAutoRefresh() {
-  // Önceki observer'ı temizle
-  if (lastEntryObserver) {
-    lastEntryObserver.disconnect();
-  }
-
-  const lastEntry = document.querySelector(".entry:last-child");
-  if (!lastEntry) return;
-
-  lastEntryObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        checkForNewEntries();
-      }
-    });
-  }, { threshold: 0.1 });
-
-  lastEntryObserver.observe(lastEntry);
-}
-
-async function checkForNewEntries() {
-  try {
-    const entries = await fetchViaProxy('/b/68933248ae596e708fc2fbbc/latest');
-    const newEntryCount = entries.records?.length || entries.length;
-    if (newEntryCount > currentEntries.length) {
-      initializeApp();
-    }
-  } catch (error) {
-    console.error("New entries check failed:", error);
-  }
-}
-
-// 6. ETKİLEŞİM FONKSİYONLARI
+// 4. INTERACTION FONKSİYONLARI
 async function handleLikeClick(entryId, entryDiv) {
   if (likesCache.isUpdating) return;
 
@@ -242,7 +205,7 @@ async function handleLikeClick(entryId, entryDiv) {
 
   try {
     likeCountSpan.textContent = currentCount + 1;
-    likeIcon.classList.add("liked");
+    likeIcon.style.transform = 'scale(1.2)';
     
     likesCache.data[entryId] = currentCount + 1;
     localStorage.setItem('entryLikes', JSON.stringify(likesCache.data));
@@ -256,8 +219,8 @@ async function handleLikeClick(entryId, entryDiv) {
   } finally {
     likesCache.isUpdating = false;
     setTimeout(() => {
-      likeIcon.classList.remove("liked");
-    }, 600);
+      likeIcon.style.transform = 'scale(1)';
+    }, 300);
   }
 }
 
@@ -304,7 +267,7 @@ async function updateInteractionsOnServer(entryId, newLikeCount, newPinCount) {
   }
 }
 
-// 7. UYGULAMA BAŞLATMA
+// 5. BAŞLANGIÇ FONKSİYONU
 async function initializeApp() {
   try {
     await loadInteractions();
@@ -323,5 +286,5 @@ async function initializeApp() {
   }
 }
 
-// UYGULAMAYI BAŞLAT
+// 6. UYGULAMAYI BAŞLAT
 document.addEventListener("DOMContentLoaded", initializeApp);
