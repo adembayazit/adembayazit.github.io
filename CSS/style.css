@@ -1,4 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+@import url('https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/css/flag-icons.min.css');
 
 * {
     margin: 0;
@@ -24,7 +26,6 @@ body {
     justify-content: space-between;
     align-items: center;
     z-index: 100;
-    /* border-radius: 100px; */
 }
 
 .logo {
@@ -36,7 +37,6 @@ body {
     pointer-events: none;
     opacity: 0;
     animation: slideTop 1s ease forwards;
-    
 }
 
 .navbar a {
@@ -49,21 +49,6 @@ body {
     opacity: 0;
     animation: slideTop .5s ease forwards;
     animation-delay: calc(.2s * var(--i));
-}
-.navbar a::after {
-    content: '';
-    width: 0;
-    height: 2px;
-    background: black;
-    border-radius: 50%;
-    position: absolute;
-    left: 0;
-    bottom: -3px;
-    transition: 0.6s;
-}
-
-.navbar a:hover::after {
-    width: 100%;
 }
 
 .navbar a:hover {
@@ -85,7 +70,6 @@ body {
 .home-content {
     max-width: 600px;
     padding: 50px;
-    /* margin-left: -30px; */
 }
 
 .home-content h1 {
@@ -103,10 +87,6 @@ body {
     opacity: 0;
     animation: slideLeft 1s ease forwards;
     animation-delay: 1s;
-}
-
-.mu {
-    margin-top: 50px;
 }
 
 .home-content h1, h3 {
@@ -142,7 +122,6 @@ body {
     opacity: 0;
     animation: zoomIn 1s ease forwards;
     animation-delay: 0.4s;
-    
 }
 
 .home-sci a:hover {
@@ -183,7 +162,6 @@ body {
 .home-img .glowing-circle {
     width: 100%;
     height: 100%;
-   
     border-radius: 50%;
     display: flex;
     justify-content: center;
@@ -229,303 +207,18 @@ body {
     z-index: 1;
 }
 
-.navbar-1 a {
-    font-size: 18px;
-    color: #fff;
-    text-decoration: none;
-    font-weight: 500;
-    margin-left: 50px;
-    text-align-last: center;
-}
-
-.navbar-1 a.active, 
-.navbar-1 a:hover {
-    background: linear-gradient(45deg, rgb(0, 0, 0), rgb(0, 0, 0));
-    -webkit-text-fill-color: transparent;
-    background-clip: border-box;
-    -webkit-background-clip: text;
-}
-
-canvas {
-    position: fixed;
-    top: auto;
-    left: auto;
-    background-color: black;
-    z-index: -1;
-    background-size:cover;
-    background-blend-mode: multiply;
-    background-size: auto;
-    scroll-behavior: smooth;
-}
-
-
-/* ---------------------------About----------------------- */
-
-.about {
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 70px 10% 0;
-    margin-top: 10% ;
-}
-    
-.about-img img{
-    padding: auto;
-}
-
-.about-content h3{
-    font-size: 32px;
-    font-weight: 700;
-    opacity: 0;
-    animation: slideLeft 1s ease forwards;
-    animation-delay: 1s;
-}
-
-.about-content p{
-    font-size: 16px;
-    margin: 20px 0 0;
-    text-align: left;
-    opacity: 0;
-    animation: slideLeft 1s ease forwards;
-    animation-delay: 1.3s;
-}
-
-/* Animation */
-@keyframes slideTop {
-    0% {
-        opacity: 0;
-        transform: translateY(100px);
-    }
-
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }    
-}
-
-@keyframes slideRight {
-    0% {
-        opacity: 0;
-        transform: translateX(-100px);
-    }
-
-    100% {
-        opacity: 1;
-        transform: translateX(0);
-    }    
-}
-
-@keyframes slideLeft {
-    0% {
-        opacity: 0;
-        transform: translateX(100px);
-    }
-
-    100% {
-        opacity: 1;
-        transform: translateX(0);
-    }    
-}
-
-@keyframes zoomIn {
-    0% {
-        opacity: 0;
-        transform: scale(0);
-    }
-
-    100% {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-@keyframes floatImage {
-    0% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-24px);
-    }
-
-    100%{
-        transform: translate(0);
-    }
-}
-
-@keyframes circleRotate {
-    0% {
-        transform: rotate(0);
-    }
-    
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
-@keyframes fadeIn {
-    0% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 1;
-    }
-  }
-/* ---------------------------Mobil----------------------- */
-@media (max-width: 768px) {
-
-    #microblog {
-    position: relative;
-    z-index: 99;
-    background-color: black;
-    padding: 1rem;
-    margin-top: 120px;  /* Yukarıdan boşluk */
-    margin-bottom: 1rem;
-    }
-
-    .home {
-        flex-direction: column;
-        align-items: center;
-        padding: 20px;
-        text-align: center;
-    }
-
-    .home-content {
-        max-width: 100%;
-        padding: 0 15px;
-    }
-
-    .home-content h1 {
-        font-size: 36px;
-    }
-
-    .home-content h3 {
-        font-size: 24px;
-    }
-
-    .home-content p {
-        font-size: 14px;
-        line-height: 1.6;
-    }
-
-    .home-img {
-        width: 270px;
-        height: 270px;
-        margin-top: 40px;
-        position: relative;
-        z-index: 1;
-    }
-
-    .glowing-circle {
-        width: 100%;
-        height: 100%;
-    }
-
-    .glowing-circle .image {
-        width: 255px;
-        height: 255px;
-    }
-
-    .home-sci {
-        display: flex;
-        justify-content: center;
-        flex-wrap: wrap;
-        margin-top: 20px;
-    }
-
-    .home-sci a {
-        margin: 10px;
-    }
-
-    .btn-box {
-        display: inline-block;
-        margin-top: 30px;
-        padding: 10px 24px;
-        font-size: 14px;
-        position: relative;
-        z-index: 2;
-    }
-
-    header.header {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .navbar a {
-        display: block;
-        margin: 10px 0;
-    }
-    .mu {
-        margin-top: 120px;
-    }
-}
-/* ---------------------------Navbar----------------------- */
-
-/* Genel dropdown alanı */
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-
-/* Açılır menü düğmesi (üst link) */
-.dropbtn {
-  font-size: 18px;
-  color: #fff;
-  text-decoration: none;
-  font-weight: 500;
-  margin-left: 10px;
-  cursor: pointer;
-}
-
-/* Açılır menü içeriği (başlangıçta gizli) */
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: green;
-  min-width: 160px;
-  z-index: 100;
-  border: 1px solid white;
-  border-radius: 10px;
-}
-
-.dropdown-content a {
-  color: white;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-}
-
-.dropdown-content a:hover {
-  color: white;
-  background-color: limegreen; /* veya sadece 'green' */
-  text-shadow: 0 0 10px green;
-}
-
-/* Hover ile gösterme */
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-
-/* microblog */
+/* Microblog Section */
 #microblog {
   width: 100%;
   padding: 60px 10%;
   background: transparent;
+  position: relative;
+  z-index: 99;
+  margin-top: 120px;
 }
 
-.microblog .section-title {
-  color: white;
-  font-size: 1.5rem;
-  text-align: center;
-  margin-bottom: 2rem;
-  text-shadow: 0 0 5px limegreen;
-}
-
-/* Entry container */
 .entries {
-  background: black;
+  background: rgba(0, 0, 0, 0.7);
   border: 2px solid limegreen;
   border-radius: 20px;
   padding: 2rem;
@@ -535,28 +228,29 @@ canvas {
   box-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
 }
 
-/* --------------------------- HİYERARŞİK LİSTE STİLLERİ ------------------------- */
-#entries {
-  position: relative;
-  min-height: 500px;
-  padding-left: 6;
-}
-
+/* Entry Styles */
 .entry {
   position: relative;
   background: rgba(0, 30, 0, 0.2);
-  border: 1px solid rgba(50, 205, 50, 0.3);
   border-radius: 8px;
   padding: 15px;
   margin-bottom: 15px;
   transition: all 0.3s;
   z-index: 2;
+  border: 1px solid rgba(50, 205, 50, 0.3);
+}
+
+.entry.has-spotify {
+  border: 1px solid transparent;
 }
 
 .entry:hover {
   transform: translateY(-3px);
-  border-color: #00ff00;
   box-shadow: 0 5px 15px rgba(0, 255, 0, 0.1);
+}
+
+.entry:hover:not(.has-spotify) {
+  border-color: #00ff00;
 }
 
 .child-entry {
@@ -583,239 +277,52 @@ canvas {
   padding: 3px 8px;
   border-radius: 12px;
   color: #00ff00;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .content {
   color: #e0ffe0;
   font-size: 1rem;
-  line-height: 1.5;
-  padding-right: 10px;
+  line-height: 1.6;
+  padding-right: 30px;
+  word-break: break-word;
 }
 
-/* Mobil için */
-@media (max-width: 768px) {
-  .entry {
-    padding: 12px;
-  }
-  
-  .child-entry {
-    margin-left: 15px !important;
-  }
-  
-  .entry-id {
-    top: 7px;
-    right: 7px;
-    font-size: 0.6rem;
-  }
-  
-  .content {
-    padding-right: 10px;
-    font-size: 0.8rem;
-  }
-   .timestamp {
-    font-size: 0.7rem;
-    color: #90ee90;
-    margin-bottom: 5px;
-    font-family: monospace;
-}
-  .gallery-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-}
-/* Galeri*/
-/* Galeri genel */
-/* --- FOTO GALERİ --- */
-.photo-gallery {
-  text-align: center;
-  background: #000;
-  padding: 40px 0;
-  border-top: 2px solid limegreen;
-  border-bottom: 2px solid limegreen;
-  color: #fff;
-}
-
-.photo-gallery .section-title {
-  color: #fff;
-  text-align: center;
-  text-shadow: 1px 1px 8px limegreen;
-  font-size: 22px;
-  margin-bottom: 20px;
-}
-
-.gallery-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr); /* Mobilde 4 sütun */
-  gap: 5px;
+/* Spotify Embed */
+.spotify-embed {
   width: 100%;
-  max-width: 600px;
-  padding: 10px;
-}
-
-.gallery-photo {
-  width: 100%;
-  aspect-ratio: 1/1;
-  object-fit: cover;
-  border-radius: 4px;
-  transition: transform 0.3s ease;
-  cursor: pointer;
-}
-
-.gallery-photo:hover {
-  transform: scale(1.05);
-}
-
-.load-more {
-  background: limegreen;
-  color: black;
-  padding: 10px 20px;
+  height: 80px;
+  border-radius: 12px;
   margin-top: 10px;
   border: none;
-  cursor: pointer;
-  font-weight: bold;
 }
 
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 1000;
-  left: 0;
-  top: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.85);
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-content {
-  max-width: 90vw;
-  max-height: 90vh;
-  border: 2px solid limegreen;
-  box-shadow: 0 0 20px limegreen;
-  display: flex;
-  justify-content: center;
-  align-items: }
-
-#modal-Image {
-  width: auto;
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-  border-radius: 5px;
-}
-
-.close {
-  position: absolute;
-  top: 30px;
-  right: 40px;
-  color: white;
-  font-size: 40px;
-  cursor: pointer;
-}
+/* Translation Icon */
 .translation-icon {
   display: inline-block;
-  width: 30px;               /* Başlangıç genişliği artırıldı */
-  height: 20px;              /* Yükseklik sabit (dikdörtgen form) */
-  background-position: center;
-  background-size: cover;    /* Bayrağın tamamını kaplamasını sağlar */
+  width: 24px;
+  height: 16px;
+  background-size: contain;
   background-repeat: no-repeat;
+  background-position: center;
   cursor: pointer;
-  margin-left: 7px;
-  padding: 0;
-  box-sizing: border-box;
-  line-height: 0;
-  vertical-align: middle;
-  border: 0.5px solid transparent;
+  margin-left: 5px;
   transition: all 0.2s ease;
-  overflow: hidden;
 }
 
 .translation-icon:hover {
-  transform: scale(1.5);     /* Dikdörtgen oranını koruyarak büyütme */
-  /* width: 36px; */         /* Alternatif: Eğer transform kullanmak istemezseniz */
-  /* height: 24px; */        /* Bu değerlerle de manuel büyütebilirsiniz */
-}
-.tooltip-box {
-  position: absolute;
-  top: -32px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: rgba(0,0,0,0.75);
-  color: white;
-  padding: 6px 10px;
-  border-radius: 6px;
-  font-size: 13px;
-  white-space: nowrap;
-  z-index: 999;
-  pointer-events: none;
-  opacity: 0;
-  animation: fadeIn 0.2s ease forwards;
+  transform: scale(1.2);
 }
 
-@keyframes fadeIn {
-  to {
-    opacity: 1;
-  }
-}
-
-
-/* Gösterilecek durumda */
-.translation-icon.show-tooltip .tooltip-box {
-  opacity: 1;
-}
-
-/* Mobilde ekran taşmasını engelle */
-@media (max-width: 600px) {
-  .tooltip-box {
-    left: 50%;
-    transform: translate(-50%, -110%);
-    max-width: 90vw;
-    font-size: 12px;
-    padding: 5px 8px;
-  }
-}
-
-/* ÖZEL UĞUR BÖCEĞİ STİLİ (mevcut CSS ile çakışmayacak) */
-    .bug-icon {
-            color: #FF142E; /* Kırmızı renk */
-            font-size: 1em;
-            margin: 0 5px;
-            vertical-align: middle;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
-        }
-        
-        .ladybug-brand {
-            font-size: 5rem;
-            font-weight: 800;
-            color: #333;
-        }
-    .bug-iconentry {
-            color: #FF142E; /* Kırmızı renk */
-            font-size: 1em;
-            margin: 0 2px;
-            vertical-align: middle;
-            animation: pulse 2s infinite;
-        }
-/* --------------- ETKİLEŞİM BUTONLARI --------------- */
+/* Interaction Buttons */
 .interaction-buttons {
   position: absolute;
   bottom: -32px;
   right: 5px;
   display: flex;
-  align-items: right;
+  align-items: center;
   gap: 12px;
 }
 
@@ -862,29 +369,38 @@ canvas {
   color: #4CAF50;
 }
 
-/* Mobil uyum */
-@media (max-width: 768px) {
-  .interaction-buttons {
-    gap: 1px;
-    right: 5px;
-    bottom: -24px;
-  }
-  
-  .daisy-icon, .pine-icon {
-    width: 16px;
-    height: 16px;
-  }
-  
-  .like-count, .pin-count {
-    font-size: 12px;
-  }
-  
-  .daisy-like, .pine-pin {
-    padding: 0px 0px;
-  }
+/* Animations */
+@keyframes slideTop {
+    0% { opacity: 0; transform: translateY(100px); }
+    100% { opacity: 1; transform: translateY(0); }    
 }
 
-/* Animasyonlar */
+@keyframes slideRight {
+    0% { opacity: 0; transform: translateX(-100px); }
+    100% { opacity: 1; transform: translateX(0); }    
+}
+
+@keyframes slideLeft {
+    0% { opacity: 0; transform: translateX(100px); }
+    100% { opacity: 1; transform: translateX(0); }    
+}
+
+@keyframes zoomIn {
+    0% { opacity: 0; transform: scale(0); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes floatImage {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-24px); }
+    100%{ transform: translate(0); }
+}
+
+@keyframes circleRotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+}
+
 @keyframes pulse-gold {
   0% { transform: scale(1); }
   50% { transform: scale(1.2); filter: drop-shadow(0 0 6px #f9f120); }
@@ -905,38 +421,79 @@ canvas {
   animation: pulse-green 0.6s ease;
 }
 
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
-}
-.ethical-hacker-link {
- display: inline-flex;  /* Yazı ve ikonu yan yana hizalar */
-  align-items: center;   /* Dikeyde ortalar */
-  gap: 8px;             /* İkon ile yazı arası boşluk */
-  text-decoration: none; /* Alt çizgiyi kaldırır */
-  color: inherit;       /* Varsayılan renk */
+/* Bug Icon */
+.bug-iconentry {
+  color: #FF142E;
+  font-size: 1em;
+  margin: 0 2px;
+  vertical-align: middle;
+  animation: pulse 2s infinite;
 }
 
-.hacker-icon {
-  width: 25px; /* Adjust as needed */
-  height: 25px; /* Adjust as needed */
-}
-.hackerwhite-icon {
-  width: 40px; /* Adjust as needed */
-  height: 40px; /* Adjust as /* Masaüstü görünümü */
-}
-.spotify-embed {
-  width: 100%;
-  height: 83px;
-  border-radius: 12px;
-  border: 1px solid limegreen;
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
 }
 
-/* Mobil görünümü (767px ve altı) */
-@media (max-width: 767px) {
-  .spotify-embed {
-    width: 120%;
-    height: 82px;
-    border: 1px solid limegreen;
-  
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  #microblog {
+    padding: 1rem;
+    margin-top: 100px;
   }
+  
+  .entries {
+    padding: 1rem;
+  }
+  
+  .entry {
+    padding: 12px;
+    margin-bottom: 20px;
+  }
+  
+  .child-entry {
+    margin-left: 15px !important;
+  }
+  
+  .entry-id {
+    top: 10px;
+    right: 10px;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+  }
+  
+  .content {
+    padding-right: 10px;
+    font-size: 0.9rem;
+  }
+  
+  .timestamp {
+    font-size: 0.7rem;
+  }
+  
+  .interaction-buttons {
+    gap: 8px;
+    right: 5px;
+    bottom: -24px;
+  }
+  
+  .daisy-icon, .pine-icon {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .like-count, .pin-count {
+    font-size: 12px;
+  }
+  
+  .spotify-embed {
+    width: 100%;
+    height: 80px;
+  }
+  
+  .translation-icon {
+    width: 20px;
+    height: 14px;
+  }
+}
