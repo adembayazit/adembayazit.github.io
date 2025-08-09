@@ -12,6 +12,9 @@ const pinsCache = {
 };
 
 let currentEntries = [];
+let lastEntryCount = 0;
+let refreshInterval = 30000; // 30 saniyede bir kontrol
+let checkInterval;
 
 // 2. PROXY HELPER FONKSİYONU
 async function fetchViaProxy(path, method = 'GET', body = null) {
@@ -117,6 +120,15 @@ function processEntries(entries) {
   const actualEntries = entries.records || entries;
   currentEntries = [...actualEntries]; // Global değişkene kaydet
   
+  // Yeni entry kontrolü
+  if (actualEntries.length !== lastEntryCount) {
+    lastEntryCount = actualEntries.length;
+    if (lastEntryCount > 0) {
+      // Yeni entry geldiğinde sayfayı en üste kaydır
+      window.scrollTo(0, 0);
+    }
+  }
+
   const sortedEntries = [...actualEntries].sort((a, b) => new Date(b.date) - new Date(a.date));
   const last7Entries = sortedEntries.slice(0, 7);
 
@@ -155,6 +167,12 @@ function processEntries(entries) {
 function createEntryElement(entry, container, depth) {
   const entryDiv = document.createElement("div");
   entryDiv.className = `entry ${depth > 0 ? 'child-entry' : ''}`;
+
+  // Spotify link kontrolü
+  const hasSpotifyLink = entry.content.includes('open.spotify.com');
+  if (!hasSpotifyLink) {
+    entryDiv.classList.add('regular-entry');
+  }
 
   const time = new Date(entry.date).toLocaleString("tr-TR", {
     year: "numeric", 
@@ -267,17 +285,37 @@ async function updateInteractionsOnServer(entryId, newLikeCount, newPinCount) {
   }
 }
 
+// Yeni entry kontrol fonksiyonu
+async function checkForNewEntries() {
+  try {
+    const entries = await fetchViaProxy('/b/68933248ae596e708fc2fbbc/latest');
+    const actualEntries = entries.records || entries;
+    
+    if (actualEntries.length !== lastEntryCount) {
+      processEntries(entries);
+    }
+  } catch (error) {
+    console.error('Error checking for new entries:', error);
+  }
+}
+
 // 5. BAŞLANGIÇ FONKSİYONU
 async function initializeApp() {
   try {
     await loadInteractions();
     const entries = await fetchViaProxy('/b/68933248ae596e708fc2fbbc/latest');
     processEntries(entries);
+    
+    // Otomatik yenileme kontrolünü başlat
+    checkInterval = setInterval(checkForNewEntries, refreshInterval);
   } catch (error) {
     console.error("Initialization error:", error);
     try {
       const response = await fetch("entries.json");
       processEntries(await response.json());
+      
+      // Fallback için de kontrolü başlat
+      checkInterval = setInterval(checkForNewEntries, refreshInterval);
     } catch (fallbackError) {
       console.error("Fallback failed:", fallbackError);
       document.getElementById("entries").innerHTML = 
@@ -288,3 +326,10 @@ async function initializeApp() {
 
 // 6. UYGULAMAYI BAŞLAT
 document.addEventListener("DOMContentLoaded", initializeApp);
+
+// Sayfa kapatılırken interval'i temizle
+window.addEventListener('beforeunload', () => {
+  if (checkInterval) {
+    clearInterval(checkInterval);
+  }
+});
