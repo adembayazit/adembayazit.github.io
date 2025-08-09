@@ -155,12 +155,6 @@ function processEntries(entries) {
 function createEntryElement(entry, container, depth) {
   const entryDiv = document.createElement("div");
   entryDiv.className = `entry ${depth > 0 ? 'child-entry' : ''}`;
-  
-  // Spotify iframe kontrolü
-  const hasSpotifyIframe = /<iframe[^>]*src=["'][^"']*spotify\.com[^"']*["'][^>]*>/i.test(entry.content);
-  if (!hasSpotifyIframe) {
-    entryDiv.classList.add('entry-border');
-  }
 
   const time = new Date(entry.date).toLocaleString("tr-TR", {
     year: "numeric", 
