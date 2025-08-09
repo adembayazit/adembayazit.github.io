@@ -1,7 +1,5 @@
-İşte isteklerinize göre yeniden düzenlenmiş CSS kodunuz:
-
-```css
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
 
 * {
     margin: 0;
@@ -13,17 +11,325 @@
 body {
     background-color: black;
     color: rgb(255, 255, 255);
+    overflow-x: hidden;
+}
+
+/* --------------------------- HEADER STYLES --------------------------- */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px 10%;
+    background: transparent;
+    background: linear-gradient(45deg, rgba(0, 0, 0, 0.548), green, rgba(0, 0, 0, 0.548));
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 20px rgba(0, 100, 0, 0.5);
+}
+
+.logo {
+    font-size: 25px;
+    color: white;
+    text-shadow: 5px 5px 10px black;
+    text-decoration: none;
+    font-weight: 600;
+    pointer-events: none;
+    opacity: 0;
+    animation: slideTop 1s ease forwards;
+}
+
+.navbar a {
+    display: inline-block;
+    font-size: 18px;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+    margin-left: 35px;
+    opacity: 0;
+    animation: slideTop .5s ease forwards;
+    animation-delay: calc(.2s * var(--i));
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.navbar a::after {
+    content: '';
+    width: 0;
+    height: 2px;
+    background: black;
+    border-radius: 50%;
+    position: absolute;
+    left: 0;
+    bottom: -3px;
+    transition: 0.6s;
+}
+
+.navbar a:hover::after {
+    width: 100%;
+}
+
+.navbar a:hover {
+    background: linear-gradient(45deg, rgb(0, 0, 0), rgb(0, 0, 0));
+    -webkit-text-fill-color: transparent;
+    background-clip: border-box;
+    -webkit-background-clip: text;
+}
+
+/* --------------------------- HOME SECTION --------------------------- */
+.home {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 70px 10% 0;
+    position: relative;
+}
+
+.home-content {
+    max-width: 600px;
+    padding: 50px;
+}
+
+.home-content h1 {
+    font-size: 56px;
+    font-weight: 700;
+    line-height: 1.2;
+    opacity: 0;
+    animation: slideRight 1s ease forwards;
+    animation-delay: .7s;
+    margin-bottom: 20px;
+}   
+
+.home-content h3 {
+    font-size: 32px;
+    font-weight: 700;
+    opacity: 0;
+    animation: slideLeft 1s ease forwards;
+    animation-delay: 1s;
+    margin-bottom: 15px;
+}
+
+.home-content h1, h3 {
+    text-shadow: 5px 4px 10px green;
+}
+
+.home-content h3 span {
+    color: rgb(0, 255, 0);
+}
+
+.home-content p {
+    font-size: 16px;
+    margin: 20px 0 0;
+    text-align: left;
+    opacity: 0;
+    animation: slideLeft 1s ease forwards;
+    animation-delay: 1.3s;
+    line-height: 1.6;
+    color: #e0ffe0;
+}
+
+.home-sci {
+    display: flex;
+    margin-top: 30px;
+}
+
+.home-sci a {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    background: black;
+    border: 2px solid green;
+    border-radius: 50%;
+    font-size: 20px;
+    color: green;
+    text-decoration: none;
+    margin-right: 15px;
+    opacity: 0;
+    animation: zoomIn 1s ease forwards;
+    animation-delay: 0.4s;
+    transition: all 0.3s ease;
+}
+
+.home-sci a:hover {
+    background: green;
+    color: black;
+    box-shadow: 0 0 20px green;
+    transform: translateY(-5px);
+}
+
+.btn-box {
+    display: inline-block;
+    padding: 12px 28px;
+    background: green;
+    border-radius: 40px;
+    font-size: 16px;
+    color: black;
+    letter-spacing: 1px;
+    text-decoration: none;
+    font-weight: 600;
+    opacity: 0;
+    animation: zoomIn 1s ease forwards;
+    animation-delay: 0.4s;
+    margin-top: 20px;
+    transition: all 0.3s ease;
+}
+
+.btn-box:hover {
+    box-shadow: 0 0 5px green,
+    0 0 25px green, 0 0 50px green,
+    0 0 100px green, 0 0 200px green;
+    transform: translateY(-3px);
+}
+
+.home-img {
+    width: 410px;
+    height: 410px;
+    opacity: 0;
+    animation: zoomIn 1s ease forwards, floatImage 4s ease-in-out infinite;
+    animation-delay: 2.1s, 3.1s;
+}
+
+.home-img .glowing-circle {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.home-img .glowing-circle::after {
+    content: '';
+    position: absolute;
+    width: 380px;
+    height: 380px;
+    background-color:black;
+    border-radius: 50%;
+}
+
+.glowing-circle span {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(black, rgba(0, 128, 0, 0.411));
+    border-radius: 50%;
+    animation: circleRotate 5s linear infinite;
+}
+
+.glowing-circle span:nth-child(1) {
+    filter: blur(10px);
+}
+
+.image img {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%);
+    max-width: 350px;
+    object-fit: cover;
+}
+
+.glowing-circle .image {
+    position: relative;
+    width: 380px;
+    height: 380px;
+    border-radius: 50%;
+    z-index: 1;
+}
+
+/* --------------------------- ABOUT SECTION --------------------------- */
+.about {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 70px 10% 0;
+    margin-top: 10%;
+    gap: 50px;
+}
+
+.about-img {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.about-img img {
+    max-width: 100%;
+    border-radius: 20px;
+    box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+}
+
+.about-content {
+    flex: 1;
+    max-width: 600px;
+}
+
+.about-content h3 {
+    font-size: 32px;
+    font-weight: 700;
+    opacity: 0;
+    animation: slideLeft 1s ease forwards;
+    animation-delay: 0.5s;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px limegreen;
+}
+
+.about-content p {
+    font-size: 16px;
+    margin: 20px 0 0;
+    text-align: left;
+    opacity: 0;
+    animation: slideLeft 1s ease forwards;
+    animation-delay: 0.8s;
+    line-height: 1.6;
+    color: #e0ffe0;
+}
+
+/* --------------------------- MICROBLOG SECTION --------------------------- */
+#microblog {
+    width: 100%;
+    padding: 100px 10%;
+    background: transparent;
+    position: relative;
+}
+
+.microblog .section-title {
+    color: white;
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 3rem;
+    text-shadow: 0 0 10px limegreen;
+    opacity: 0;
+    animation: slideTop 1s ease forwards;
+}
+
+/* Entry container */
+.entries {
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid limegreen;
+    border-radius: 20px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    box-shadow: 0 0 30px rgba(0, 255, 0, 0.1);
+    backdrop-filter: blur(10px);
 }
 
 /* --------------------------- ENTRY STYLES --------------------------- */
 #entries {
     position: relative;
     min-height: 500px;
-    padding: 20px;
-    background: rgba(0, 0, 0, 0.7);
-    border-radius: 15px;
-    margin: 20px auto;
-    max-width: 800px;
 }
 
 .entry {
@@ -34,14 +340,12 @@ body {
     margin-bottom: 25px;
     transition: all 0.3s ease;
     z-index: 2;
-    border: 1px solid rgba(50, 205, 50, 0.3);
 }
 
 /* Ana entry hover efekti */
 .entry:not(.child-entry):hover {
     transform: translateY(-3px);
     box-shadow: 0 5px 15px rgba(0, 255, 0, 0.2);
-    border-color: limegreen;
     background: rgba(0, 50, 0, 0.3);
 }
 
@@ -117,6 +421,8 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 3px;
     transition: all 0.2s ease;
+    background-size: cover;
+    background-position: center;
 }
 
 .translation-icon:hover {
@@ -185,12 +491,340 @@ body {
     height: 80px;
     border-radius: 12px;
     margin: 10px 0;
+    border: 1px solid limegreen;
+}
+
+/* --------------------------- GALLERY SECTION --------------------------- */
+.photo-gallery {
+    text-align: center;
+    background: #000;
+    padding: 80px 10%;
+    border-top: 2px solid limegreen;
+    border-bottom: 2px solid limegreen;
+}
+
+.photo-gallery .section-title {
+    color: #fff;
+    text-align: center;
+    text-shadow: 1px 1px 8px limegreen;
+    font-size: 2rem;
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: slideTop 1s ease forwards;
+}
+
+.gallery-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+    width: 100%;
+    max-width: 1200px;
+    padding: 20px;
+}
+
+.gallery-photo {
+    width: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid rgba(50, 205, 50, 0.3);
+}
+
+.gallery-photo:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(50, 205, 50, 0.5);
+    border-color: limegreen;
+}
+
+.load-more {
+    background: limegreen;
+    color: black;
+    padding: 12px 30px;
+    margin-top: 30px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.load-more:hover {
+    background: #00ff00;
+    box-shadow: 0 0 20px limegreen;
+    transform: translateY(-3px);
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.9);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    max-width: 90vw;
+    max-height: 90vh;
+    border: 2px solid limegreen;
+    box-shadow: 0 0 30px limegreen;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+#modal-Image {
+    width: auto;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 5px;
+}
+
+.close {
+    position: absolute;
+    top: 30px;
+    right: 40px;
+    color: white;
+    font-size: 40px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.close:hover {
+    color: limegreen;
+    transform: scale(1.2);
+}
+
+/* --------------------------- FOOTER --------------------------- */
+footer {
+    background: rgba(0, 0, 0, 0.8);
+    padding: 30px 10%;
+    text-align: center;
+    border-top: 1px solid limegreen;
+}
+
+.footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.footer-links {
+    display: flex;
+    gap: 30px;
+}
+
+.footer-links a {
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: limegreen;
+    text-shadow: 0 0 10px limegreen;
+}
+
+.copyright {
+    color: #90ee90;
+    font-size: 0.9rem;
+}
+
+/* --------------------------- DROPDOWN MENU --------------------------- */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropbtn {
+    font-size: 18px;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+    margin-left: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: rgba(0, 100, 0, 0.9);
+    min-width: 160px;
+    z-index: 100;
+    border: 1px solid white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.dropdown-content a {
+    color: white;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    transition: all 0.3s ease;
+}
+
+.dropdown-content a:hover {
+    color: white;
+    background-color: limegreen;
+    padding-left: 25px;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* --------------------------- TOOLTIP --------------------------- */
+.tooltip-box {
+    position: absolute;
+    top: -32px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0,0,0,0.85);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    white-space: nowrap;
+    z-index: 999;
+    pointer-events: none;
+    opacity: 0;
+    transition: all 0.3s ease;
+    border: 1px solid limegreen;
+}
+
+.translation-icon.show-tooltip .tooltip-box {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-5px);
+}
+
+/* --------------------------- UĞUR BÖCEĞİ İKONU --------------------------- */
+.bug-icon {
+    color: #FF142E;
+    font-size: 1em;
+    margin: 0 5px;
+    vertical-align: middle;
+    animation: pulse 2s infinite;
+}
+
+.bug-iconentry {
+    color: #FF142E;
+    font-size: 1em;
+    margin: 0 2px;
+    vertical-align: middle;
+    animation: pulse 2s infinite;
+}
+
+/* --------------------------- ETHICAL HACKER LINK --------------------------- */
+.ethical-hacker-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+}
+
+.ethical-hacker-link:hover {
+    color: limegreen;
+}
+
+.hacker-icon {
+    width: 25px;
+    height: 25px;
+    transition: all 0.3s ease;
+}
+
+.ethical-hacker-link:hover .hacker-icon {
+    filter: drop-shadow(0 0 5px limegreen);
 }
 
 /* --------------------------- MOBILE STYLES --------------------------- */
 @media (max-width: 768px) {
-    #entries {
-        padding: 15px;
+    .header {
+        padding: 15px 5%;
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .navbar {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+    }
+    
+    .navbar a {
+        margin: 0 10px;
+    }
+    
+    .home {
+        flex-direction: column;
+        padding: 120px 5% 50px;
+        text-align: center;
+    }
+    
+    .home-content {
+        padding: 0;
+        margin-bottom: 50px;
+    }
+    
+    .home-content h1 {
+        font-size: 36px;
+    }
+    
+    .home-content h3 {
+        font-size: 24px;
+    }
+    
+    .home-img {
+        width: 300px;
+        height: 300px;
+    }
+    
+    .glowing-circle::after {
+        width: 280px;
+        height: 280px;
+    }
+    
+    .glowing-circle .image {
+        width: 280px;
+        height: 280px;
+    }
+    
+    .about {
+        flex-direction: column;
+        padding: 80px 5% 50px;
+    }
+    
+    .about-img {
+        margin-bottom: 30px;
+    }
+    
+    #microblog {
+        padding: 80px 5%;
+    }
+    
+    .entries {
+        padding: 1rem;
     }
     
     .entry {
@@ -199,18 +833,12 @@ body {
     
     .child-entry {
         margin-left: 20px;
-        padding-left: 10px;
     }
     
     .entry-id {
         top: 10px;
         right: 10px;
         font-size: 0.8rem;
-        padding: 3px 8px;
-    }
-    
-    .content {
-        font-size: 0.9rem;
     }
     
     .interaction-buttons {
@@ -219,12 +847,18 @@ body {
         gap: 10px;
     }
     
-    .daisy-like, .pine-pin {
-        padding: 3px 8px;
+    .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
     
-    .spotify-embed {
-        height: 80px;
+    .modal-content {
+        max-width: 95vw;
+    }
+    
+    .close {
+        top: 20px;
+        right: 20px;
+        font-size: 30px;
     }
 }
 
@@ -262,98 +896,60 @@ body {
     }
 }
 
+@keyframes zoomIn {
+    0% {
+        opacity: 0;
+        transform: scale(0);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes floatImage {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-24px);
+    }
+    100%{
+        transform: translate(0);
+    }
+}
+
+@keyframes circleRotate {
+    0% {
+        transform: rotate(0);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
 @keyframes pulse {
     0% { transform: scale(1); }
     50% { transform: scale(1.1); }
     100% { transform: scale(1); }
 }
 
-/* Uğur böceği ikonu */
-.bug-iconentry {
-    color: #FF142E;
-    font-size: 1em;
-    margin-right: 5px;
-    animation: pulse 2s infinite;
+@keyframes pulse-gold {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); filter: drop-shadow(0 0 6px #f9f120); }
+    100% { transform: scale(1); }
 }
 
-/* Diğer stiller (header, home vb.) aynı kalmıştır, bu kısmı korudum */
-.header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    padding: 20px 10%;
-    background: transparent;
-    background: linear-gradient(45deg, rgba(0, 0, 0, 0.548), green, rgba(0, 0, 0, 0.548));
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 100;
+@keyframes pulse-green {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); filter: drop-shadow(0 0 6px #4CAF50); }
+    100% { transform: scale(1); }
 }
 
-.logo {
-    font-size: 25px;
-    color: white;
-    text-shadow: 5px 5px 10px black;
-    text-decoration: none;
-    font-weight: 600;
-    pointer-events: none;
-    opacity: 0;
-    animation: slideTop 1s ease forwards;
+.liked {
+    animation: pulse-gold 0.6s ease;
 }
 
-.navbar a {
-    display: inline-block;
-    font-size: 18px;
-    color: #fff;
-    text-decoration: none;
-    font-weight: 500;
-    margin-left: 35px;
-    opacity: 0;
-    animation: slideTop .5s ease forwards;
-    animation-delay: calc(.2s * var(--i));
+.pinned {
+    animation: pulse-green 0.6s ease;
 }
-
-.home {
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 70px 10% 0;
-}
-
-/* ... Diğer stiller aynen korunmuştur ... */
-```
-
-Bu CSS'de yaptığım değişiklikler:
-
-1. **Entry Hover Efekti**:
-   - Ana entryler üzerine gelince hafif yukarı kalkıyor ve gölge oluşuyor
-   - Child entryler üzerine gelince sağa doğru kayıyor ve arka plan rengi koyulaşıyor
-
-2. **Child Entry Stili**:
-   - Sol tarafta kalın lime yeşil bir çizgi eklendi
-   - Ana entrylere göre biraz içeride başlıyor (margin-left)
-   - Arka plan rengi daha koyu yeşil
-
-3. **Spotify Linki Olan Entryler**:
-   - `:has()` seçicisi ile Spotify iframe'i içeren entryler tespit ediliyor
-   - Bu entrylerde kenarlık olmuyor ve arka plan rengi daha açık
-   - Spotify embed çerçevesi lime yeşil border ile görünüyor
-
-4. **Spotify Linki Olmayan Entryler**:
-   - Sol tarafta 4px kalınlığında lime yeşil çizgi
-   - Daha belirgin bir şekilde ayrılıyor
-
-5. **Genel Düzenlemeler**:
-   - Entry içi padding'ler artırıldı
-   - Yazı boyutları ve renk kontrastları iyileştirildi
-   - Etkileşim butonları daha belirgin hale getirildi
-   - Mobil uyumluluk korundu
-
-6. **Diğer Elementler**:
-   - Header, home gibi diğer bölümlerin stilleri korundu
-   - Animasyonlar aynen bırakıldı
-
-Bu CSS, isteklerinizi tam olarak karşılayacak şekilde entry görünümünü düzenlerken, diğer bölümlerde herhangi bir değişiklik yapmamıştır.
