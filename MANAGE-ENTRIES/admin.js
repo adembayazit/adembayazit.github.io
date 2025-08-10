@@ -88,7 +88,7 @@
             padding: 1rem;
         }
         
-        .editor-container, .stats-container, .entries-container, .media-container {
+        .editor-container, .stats-container, .entries-container {
             background: rgba(0, 30, 0, 0.7);
             border: 1px solid var(--primary-color);
             border-radius: 5px;
@@ -98,7 +98,7 @@
             overflow: hidden;
         }
         
-        .editor-container::after, .stats-container::after, .entries-container::after, .media-container::after {
+        .editor-container::after, .stats-container::after, .entries-container::after {
             content: "";
             position: absolute;
             top: 0;
@@ -418,66 +418,6 @@
             color: #aaa;
         }
         
-        /* Media sections */
-        .media-section {
-            margin-bottom: 1rem;
-            padding: 1rem;
-            background: rgba(0, 20, 0, 0.5);
-            border: 1px solid var(--primary-color);
-            border-radius: 3px;
-        }
-        
-        .media-section h4 {
-            margin-top: 0;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .media-input-group {
-            display: flex;
-            gap: 5px;
-            margin-bottom: 10px;
-        }
-        
-        .media-input-group input {
-            flex: 1;
-            padding: 8px;
-            background: #111;
-            border: 1px solid var(--primary-color);
-            color: var(--text-color);
-            font-family: 'Courier New', monospace;
-            border-radius: 3px;
-            font-size: 0.9rem;
-        }
-        
-        .media-input-group button {
-            background: var(--primary-color);
-            color: black;
-            border: none;
-            padding: 0 12px;
-            cursor: pointer;
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
-            border-radius: 3px;
-        }
-        
-        .media-preview {
-            margin-top: 10px;
-            padding: 10px;
-            background: rgba(0, 30, 0, 0.3);
-            border-radius: 3px;
-            min-height: 50px;
-        }
-        
-        blockquote {
-            border-left: 3px solid var(--primary-color);
-            padding-left: 10px;
-            margin: 10px 0;
-            color: #ccc;
-            font-style: italic;
-        }
-        
         @keyframes scanline {
             0% { transform: translateX(-100%); }
             100% { transform: translateX(100%); }
@@ -548,7 +488,6 @@
                     <button onclick="formatText('trContent', 'italic')" title="İtalik"><i class="fas fa-italic"></i></button>
                     <button onclick="formatText('trContent', 'underline')" title="Altı Çizili"><i class="fas fa-underline"></i></button>
                     <button onclick="formatText('trContent', 'quote')" title="Tırnak İşareti"><i class="fas fa-quote-right"></i></button>
-                    <button onclick="insertLineBreak('trContent')" title="Satır Boşluğu"><i class="fas fa-arrow-down"></i></button>
                     <button onclick="clearFormatting('trContent')" title="Temizle"><i class="fas fa-eraser"></i></button>
                 </div>
                 <textarea id="trContent" placeholder="Türkçe içerik..." oninput="updateCharCounters()"></textarea>
@@ -562,40 +501,10 @@
                     <button onclick="formatText('enContent', 'italic')" title="Italic"><i class="fas fa-italic"></i></button>
                     <button onclick="formatText('enContent', 'underline')" title="Underline"><i class="fas fa-underline"></i></button>
                     <button onclick="formatText('enContent', 'quote')" title="Quote"><i class="fas fa-quote-right"></i></button>
-                    <button onclick="insertLineBreak('enContent')" title="Line Break"><i class="fas fa-arrow-down"></i></button>
                     <button onclick="clearFormatting('enContent')" title="Clear"><i class="fas fa-eraser"></i></button>
                 </div>
                 <textarea id="enContent" placeholder="English content..." oninput="updateCharCounters()"></textarea>
                 <div class="char-counter" id="en-counter">0 karakter</div>
-            </div>
-            
-            <!-- Media container for Spotify and YouTube -->
-            <div class="media-container">
-                <h3><i class="fas fa-music"></i> Medya Ekle</h3>
-                
-                <div class="media-section">
-                    <h4><i class="fab fa-spotify"></i> Spotify</h4>
-                    <div class="media-input-group">
-                        <input type="text" id="spotifyUrl" placeholder="Spotify URL veya embed kodu">
-                        <button onclick="previewSpotify()"><i class="fas fa-eye"></i> Önizleme</button>
-                    </div>
-                    <div class="media-preview" id="spotify-preview">
-                        Spotify önizleme burada görünecek...
-                    </div>
-                    <button class="submit-btn" onclick="addSpotifyToContent()"><i class="fas fa-plus"></i> İçeriğe Ekle</button>
-                </div>
-                
-                <div class="media-section">
-                    <h4><i class="fab fa-youtube"></i> YouTube</h4>
-                    <div class="media-input-group">
-                        <input type="text" id="youtubeUrl" placeholder="YouTube URL veya video ID">
-                        <button onclick="previewYouTube()"><i class="fas fa-eye"></i> Önizleme</button>
-                    </div>
-                    <div class="media-preview" id="youtube-preview">
-                        YouTube önizleme burada görünecek...
-                    </div>
-                    <button class="submit-btn" onclick="addYouTubeToContent()"><i class="fas fa-plus"></i> İçeriğe Ekle</button>
-                </div>
             </div>
             
             <!-- Preview section -->
@@ -910,19 +819,8 @@
             // Altı çizili: <u>altı çizili</u>
             formatted = formatted.replace(/<u>(.*?)<\/u>/g, '<u>$1</u>');
             
-            // Alıntı: > alıntı (birden fazla satır için)
-            formatted = formatted.replace(/(^|\n)> (.*?)(\n|$)/g, '$1<blockquote>$2</blockquote>$3');
-            
-            // Spotify embed
-            formatted = formatted.replace(/\[spotify:(.*?)\]/g, 
-                '<iframe style="border-radius:12px" src="https://open.spotify.com/embed/$1" width="100%" height="80" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>');
-            
-            // YouTube embed
-            formatted = formatted.replace(/\[youtube:(.*?)\]/g, 
-                '<iframe width="100%" height="315" src="https://www.youtube.com/embed/$1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>');
-            
-            // Satır sonlarını <br> ile değiştir
-            formatted = formatted.replace(/\n/g, '<br>');
+            // Alıntı: > alıntı
+            formatted = formatted.replace(/^> (.*)$/gm, '<blockquote>$1</blockquote>');
             
             return formatted;
         }
@@ -1148,20 +1046,6 @@
             updateCharCounters();
         }
         
-        function insertLineBreak(textareaId) {
-            const textarea = document.getElementById(textareaId);
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            
-            // İki satır boşluk ekle
-            textarea.value = textarea.value.substring(0, start) + '\n\n' + textarea.value.substring(end);
-            textarea.focus();
-            textarea.setSelectionRange(start + 2, start + 2);
-            
-            // Karakter sayaçlarını güncelle
-            updateCharCounters();
-        }
-        
         function clearFormatting(textareaId) {
             const textarea = document.getElementById(textareaId);
             const start = textarea.selectionStart;
@@ -1180,233 +1064,6 @@
             
             // Karakter sayaçlarını güncelle
             updateCharCounters();
-        }
-        
-        // Spotify fonksiyonları
-        function previewSpotify() {
-            const spotifyUrl = document.getElementById('spotifyUrl').value.trim();
-            const previewEl = document.getElementById('spotify-preview');
-            
-            if (!spotifyUrl) {
-                previewEl.innerHTML = 'Lütfen bir Spotify URL veya embed kodu girin.';
-                return;
-            }
-            
-            // URL'den embed kodunu çıkar
-            let embedCode = '';
-            
-            // Eğer zaten embed kodu ise
-            if (spotifyUrl.includes('<iframe')) {
-                embedCode = spotifyUrl;
-            } 
-            // URL ise
-            else {
-                // Spotify URL'sinden URI çıkar
-                let uri = '';
-                
-                // Track URL: https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT
-                if (spotifyUrl.includes('open.spotify.com/track/')) {
-                    const parts = spotifyUrl.split('track/');
-                    if (parts.length > 1) {
-                        const trackId = parts[1].split('?')[0];
-                        uri = `track/${trackId}`;
-                    }
-                }
-                // Playlist URL: https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M
-                else if (spotifyUrl.includes('open.spotify.com/playlist/')) {
-                    const parts = spotifyUrl.split('playlist/');
-                    if (parts.length > 1) {
-                        const playlistId = parts[1].split('?')[0];
-                        uri = `playlist/${playlistId}`;
-                    }
-                }
-                // Album URL: https://open.spotify.com/album/6DEjYFkNZh67HP7R9PSZvv
-                else if (spotifyUrl.includes('open.spotify.com/album/')) {
-                    const parts = spotifyUrl.split('album/');
-                    if (parts.length > 1) {
-                        const albumId = parts[1].split('?')[0];
-                        uri = `album/${albumId}`;
-                    }
-                }
-                
-                if (uri) {
-                    embedCode = `<iframe style="border-radius:12px" src="https://open.spotify.com/embed/${uri}" width="100%" height="80" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>`;
-                } else {
-                    previewEl.innerHTML = 'Geçersiz Spotify URL. Lütfen track, playlist veya album URL girin.';
-                    return;
-                }
-            }
-            
-            previewEl.innerHTML = embedCode;
-        }
-        
-        function addSpotifyToContent() {
-            const spotifyUrl = document.getElementById('spotifyUrl').value.trim();
-            const previewEl = document.getElementById('spotify-preview');
-            
-            if (!spotifyUrl) {
-                showMessage('Lütfen bir Spotify URL girin!', 'error');
-                return;
-            }
-            
-            // Hangi textarea aktifse ona ekle
-            const activeTextarea = document.activeElement.id === 'trContent' ? 'trContent' : 'enContent';
-            const textarea = document.getElementById(activeTextarea);
-            
-            let spotifyCode = '';
-            
-            // Eğer zaten embed kodu ise
-            if (spotifyUrl.includes('<iframe')) {
-                // Embed kodundan URI çıkar
-                const srcMatch = spotifyUrl.match(/src="https:\/\/open\.spotify\.com\/embed\/([^"]+)"/);
-                if (srcMatch && srcMatch[1]) {
-                    spotifyCode = `[spotify:${srcMatch[1]}]`;
-                }
-            } 
-            // URL ise
-            else {
-                // Spotify URL'sinden URI çıkar
-                let uri = '';
-                
-                // Track URL: https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT
-                if (spotifyUrl.includes('open.spotify.com/track/')) {
-                    const parts = spotifyUrl.split('track/');
-                    if (parts.length > 1) {
-                        const trackId = parts[1].split('?')[0];
-                        uri = `track/${trackId}`;
-                    }
-                }
-                // Playlist URL: https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M
-                else if (spotifyUrl.includes('open.spotify.com/playlist/')) {
-                    const parts = spotifyUrl.split('playlist/');
-                    if (parts.length > 1) {
-                        const playlistId = parts[1].split('?')[0];
-                        uri = `playlist/${playlistId}`;
-                    }
-                }
-                // Album URL: https://open.spotify.com/album/6DEjYFkNZh67HP7R9PSZvv
-                else if (spotifyUrl.includes('open.spotify.com/album/')) {
-                    const parts = spotifyUrl.split('album/');
-                    if (parts.length > 1) {
-                        const albumId = parts[1].split('?')[0];
-                        uri = `album/${albumId}`;
-                    }
-                }
-                
-                if (uri) {
-                    spotifyCode = `[spotify:${uri}]`;
-                } else {
-                    showMessage('Geçersiz Spotify URL. Lütfen track, playlist veya album URL girin.', 'error');
-                    return;
-                }
-            }
-            
-            // Textarea'ya ekle
-            const startPos = textarea.selectionStart;
-            const endPos = textarea.selectionEnd;
-            
-            textarea.value = textarea.value.substring(0, startPos) + 
-                            (startPos === endPos ? spotifyCode : '') + 
-                            textarea.value.substring(endPos);
-            
-            // Eğer seçili metin yoksa, imleci kodun sonuna taşı
-            if (startPos === endPos) {
-                textarea.focus();
-                textarea.setSelectionRange(startPos + spotifyCode.length, startPos + spotifyCode.length);
-            }
-            
-            // Önizlemeyi güncelle
-            updateCharCounters();
-            
-            showMessage('Spotify embed kodu eklendi!', 'success');
-        }
-        
-        // YouTube fonksiyonları
-        function previewYouTube() {
-            const youtubeUrl = document.getElementById('youtubeUrl').value.trim();
-            const previewEl = document.getElementById('youtube-preview');
-            
-            if (!youtubeUrl) {
-                previewEl.innerHTML = 'Lütfen bir YouTube URL veya video ID girin.';
-                return;
-            }
-            
-            // Video ID'sini çıkar
-            let videoId = '';
-            
-            // URL formatları:
-            // https://www.youtube.com/watch?v=dQw4w9WgXcQ
-            // https://youtu.be/dQw4w9WgXcQ
-            // https://www.youtube.com/embed/dQw4w9WgXcQ
-            // dQw4w9WgXcQ (direkt ID)
-            
-            if (youtubeUrl.includes('youtube.com/watch?v=')) {
-                videoId = youtubeUrl.split('v=')[1].split('&')[0];
-            } else if (youtubeUrl.includes('youtu.be/')) {
-                videoId = youtubeUrl.split('youtu.be/')[1].split('?')[0];
-            } else if (youtubeUrl.includes('youtube.com/embed/')) {
-                videoId = youtubeUrl.split('embed/')[1].split('?')[0];
-            } else if (/^[a-zA-Z0-9_-]{11}$/.test(youtubeUrl)) {
-                videoId = youtubeUrl;
-            } else {
-                previewEl.innerHTML = 'Geçersiz YouTube URL. Lütfen geçerli bir video URL veya ID girin.';
-                return;
-            }
-            
-            const embedCode = `<iframe width="100%" height="315" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-            
-            previewEl.innerHTML = embedCode;
-        }
-        
-        function addYouTubeToContent() {
-            const youtubeUrl = document.getElementById('youtubeUrl').value.trim();
-            const previewEl = document.getElementById('youtube-preview');
-            
-            if (!youtubeUrl) {
-                showMessage('Lütfen bir YouTube URL girin!', 'error');
-                return;
-            }
-            
-            // Hangi textarea aktifse ona ekle
-            const activeTextarea = document.activeElement.id === 'trContent' ? 'trContent' : 'enContent';
-            const textarea = document.getElementById(activeTextarea);
-            
-            // Video ID'sini çıkar
-            let videoId = '';
-            
-            if (youtubeUrl.includes('youtube.com/watch?v=')) {
-                videoId = youtubeUrl.split('v=')[1].split('&')[0];
-            } else if (youtubeUrl.includes('youtu.be/')) {
-                videoId = youtubeUrl.split('youtu.be/')[1].split('?')[0];
-            } else if (youtubeUrl.includes('youtube.com/embed/')) {
-                videoId = youtubeUrl.split('embed/')[1].split('?')[0];
-            } else if (/^[a-zA-Z0-9_-]{11}$/.test(youtubeUrl)) {
-                videoId = youtubeUrl;
-            } else {
-                showMessage('Geçersiz YouTube URL. Lütfen geçerli bir video URL veya ID girin.', 'error');
-                return;
-            }
-            
-            const youtubeCode = `[youtube:${videoId}]`;
-            
-            // Textarea'ya ekle
-            const startPos = textarea.selectionStart;
-            const endPos = textarea.selectionEnd;
-            
-            textarea.value = textarea.value.substring(0, startPos) + 
-                            (startPos === endPos ? youtubeCode : '') + 
-                            textarea.value.substring(endPos);
-            
-            // Eğer seçili metin yoksa, imleci kodun sonuna taşı
-            if (startPos === endPos) {
-                textarea.focus();
-                textarea.setSelectionRange(startPos + youtubeCode.length, startPos + youtubeCode.length);
-            }
-            
-            // Önizlemeyi güncelle
-            updateCharCounters();
-            
-            showMessage('YouTube embed kodu eklendi!', 'success');
         }
     </script>
 </body>
