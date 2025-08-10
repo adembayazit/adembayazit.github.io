@@ -925,22 +925,7 @@ canvas {
   width: 40px; /* Adjust as needed */
   height: 40px; /* Adjust as /* Masaüstü görünümü */
 }
-.spotify-embed {
-  width: 100%;
-  height: 83px;
-  border-radius: 12px;
-  border: 1px solid limegreen;
-}
-
-/* Mobil görünümü (767px ve altı) */
-@media (max-width: 767px) {
-  .spotify-embed {
-    width: 100%;
-    height: 82px;
-    border: 1px solid limegreen;
-  
-  }
-
+/* YouTube Embed */
 .youtube-embed {
   position: relative;
   width: 100%;
@@ -962,20 +947,39 @@ canvas {
   border: none;
 }
 
+/* Spotify Embed */
+.spotify-embed {
+  width: 100%;
+  min-height: 80px;
+  border-radius: 12px;
+  border: 1px solid #1DB954; /* Spotify yeşili */
+  background: #191414; /* Spotify siyahı */
+  margin: 10px 0;
+  overflow: hidden;
+}
+
+.spotify-embed iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
 /* Mobil görünümü (767px ve altı) */
 @media (max-width: 767px) {
-  .spotify-embed {
-    width: 100%;
-    height: 82px;
-    border: 1px solid #32cd32;
-    border-radius: 8px;
-    margin: 8px 0;
-  }
-
   .youtube-embed {
     padding-bottom: 75%; /* Mobilde daha uzun oran */
-    border-radius: 8px; /* Mobilde daha küçük radius */
-    border: 1px solid #ff0000;
+    border-radius: 8px;
+  }
+
+  .spotify-embed {
+    min-height: 82px;
+    border-radius: 8px;
+  }
+  
+  /* Spotify compact player için özel stil */
+  .spotify-embed.compact {
+    min-height: 80px;
+    border-radius: 12px 12px 0 0;
   }
 }
  
