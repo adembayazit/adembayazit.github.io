@@ -130,7 +130,7 @@ function processEntries(entries) {
   }
 
   const sortedEntries = [...actualEntries].sort((a, b) => new Date(b.date) - new Date(a.date));
-  const last7Entries = sortedEntries.slice(0, 7);
+  const last7Entries = sortedEntries.slice(0, 8);
 
   const entriesMap = new Map();
   const parentEntries = [];
