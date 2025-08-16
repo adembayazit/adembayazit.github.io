@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const loadMoreBtn = document.getElementById("load-more");
   const modal = document.getElementById("modal");
   const modalImg = document.getElementById("modal-img");
-  const modalInfo = document.getElementById("modal-info"); // Yeni ekledik
+  const modalInfo = document.getElementById("modal-info"); // Bilgiler için alan
   const closeBtn = document.querySelector(".close");
 
   let allPhotos = [];
@@ -22,34 +22,25 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderPhotos() {
     galleryGrid.innerHTML = "";
     allPhotos.slice(0, visibleCount).forEach(photo => {
-      const photoContainer = document.createElement("div");
-      photoContainer.classList.add("photo-container");
-      
       const img = document.createElement("img");
       img.src = photo.src;
       img.classList.add("gallery-photo");
       img.alt = "Gallery Photo";
       
-      const infoText = document.createElement("div");
-      infoText.classList.add("photo-info");
-      infoText.innerHTML = `
-        <small>${photo.date} ${photo.time}</small>
-        <small>${photo.location}</small>
-      `;
-      
       img.addEventListener("click", () => {
         modal.style.display = "flex";
         modalImg.src = img.src;
+        // Modal içinde bilgileri göster
         modalInfo.innerHTML = `
-          <p>${photo.date} ${photo.time}</p>
-          <p>${photo.location}</p>
+          <div class="photo-info">
+            <small>${photo.date} ${photo.time}</small>
+            <small>${photo.location}</small>
+          </div>
         `;
         document.body.style.overflow = "hidden";
       });
       
-      photoContainer.appendChild(img);
-      photoContainer.appendChild(infoText);
-      galleryGrid.appendChild(photoContainer);
+      galleryGrid.appendChild(img);
     });
 
     loadMoreBtn.style.display = visibleCount < allPhotos.length ? "block" : "none";
