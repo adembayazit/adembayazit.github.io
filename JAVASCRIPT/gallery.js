@@ -33,8 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Modal içinde bilgileri göster
         modalInfo.innerHTML = `
           <div class="photo-info">
-            <small>${photo.date} ${photo.time}</small>
-            <small>${photo.location}</small>
+            <small>${photo.date} ${photo.time} ${photo.location}</small>
           </div>
         `;
         document.body.style.overflow = "hidden";
