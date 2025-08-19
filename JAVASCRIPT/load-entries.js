@@ -1,4 +1,4 @@
-1. GLOBAL DEĞİŞKENLER
+// 1. GLOBAL DEĞİŞKENLER
 const likesCache = {
   data: {},
   lastUpdated: 0,
