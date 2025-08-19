@@ -65,7 +65,7 @@ async function addTranslationIcons() {
   entries.forEach(entry => {
     const idDiv = entry.querySelector(".entry-id");
     const contentDiv = entry.querySelector(".content");
-    const originalContent = contentDiv?.innerHTML?.trim();
+    const originalContent = contentDiv?.textContent?.trim();
     if (!idDiv || !originalContent) return;
     
     if (idDiv.querySelector(".translation-icon")) return;
@@ -90,17 +90,17 @@ async function addTranslationIcons() {
       
       if (icon.classList.contains("active")) {
         if (translationEntry.content_tr) {
-          contentDiv.innerHTML = translationEntry.content_tr;
+          contentDiv.textContent = translationEntry.content_tr;
         }
       } else {
-        contentDiv.innerHTML = originalContent;
+        contentDiv.textContent = originalContent;
       }
     });
 
     document.addEventListener("click", (e) => {
       if (!icon.contains(e.target) && !contentDiv.contains(e.target)) {
         icon.classList.remove("active");
-        contentDiv.innerHTML = originalContent;
+        contentDiv.textContent = originalContent;
       }
     });
 
@@ -115,7 +115,7 @@ function processEntries(entries) {
     return;
   }
   
-  container.innerHTML = "";
+  container.textContent = "";
 
   const actualEntries = entries.records || entries;
   currentEntries = [...actualEntries]; // Global değişkene kaydet
@@ -185,7 +185,7 @@ function createEntryElement(entry, container, depth) {
   const likeCount = likesCache.data[entry.id] || 0;
   const pinCount = pinsCache.data[entry.id] || 0;
 
-  entryDiv.innerHTML = `
+  entryDiv.textContent = `
     <div class="timestamp">
       <span class="fa-solid fa-bug bug-iconentry"></span> ${time}
     </div>
@@ -318,7 +318,7 @@ async function initializeApp() {
       checkInterval = setInterval(checkForNewEntries, refreshInterval);
     } catch (fallbackError) {
       console.error("Fallback failed:", fallbackError);
-      document.getElementById("entries").innerHTML = 
+      document.getElementById("entries").textContent = 
         '<div class="error">Veriler yüklenirken bir hata oluştu</div>';
     }
   }
