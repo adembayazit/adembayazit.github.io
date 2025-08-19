@@ -65,7 +65,7 @@ async function addTranslationIcons() {
   entries.forEach(entry => {
     const idDiv = entry.querySelector(".entry-id");
     const contentDiv = entry.querySelector(".content");
-    let originalContent = contentDiv?.innerHTML?.trim();
+    const originalContent = contentDiv?.innerHTML?.trim();
     if (!idDiv || !originalContent) return;
     
     if (idDiv.querySelector(".translation-icon")) return;
