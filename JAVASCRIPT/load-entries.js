@@ -1,4 +1,4 @@
-// 1. GLOBAL DEĞİŞKENLER
+1. GLOBAL DEĞİŞKENLER
 const likesCache = {
   data: {},
   lastUpdated: 0,
@@ -65,7 +65,7 @@ async function addTranslationIcons() {
   entries.forEach(entry => {
     const idDiv = entry.querySelector(".entry-id");
     const contentDiv = entry.querySelector(".content");
-    const originalContent = contentDiv?.textContent?.trim();
+    const originalContent = contentDiv?.innerHTML?.trim();
     if (!idDiv || !originalContent) return;
     
     if (idDiv.querySelector(".translation-icon")) return;
@@ -90,17 +90,17 @@ async function addTranslationIcons() {
       
       if (icon.classList.contains("active")) {
         if (translationEntry.content_tr) {
-          contentDiv.textContent = translationEntry.content_tr;
+          contentDiv.innerHTML = translationEntry.content_tr;
         }
       } else {
-        contentDiv.textContent = originalContent;
+        contentDiv.innerHTML = originalContent;
       }
     });
 
     document.addEventListener("click", (e) => {
       if (!icon.contains(e.target) && !contentDiv.contains(e.target)) {
         icon.classList.remove("active");
-        contentDiv.textContent = originalContent;
+        contentDiv.innerHTML = originalContent;
       }
     });
 
@@ -115,7 +115,7 @@ function processEntries(entries) {
     return;
   }
   
-  container.textContent = "";
+  container.innerHTML = "";
 
   const actualEntries = entries.records || entries;
   currentEntries = [...actualEntries]; // Global değişkene kaydet
@@ -185,7 +185,7 @@ function createEntryElement(entry, container, depth) {
   const likeCount = likesCache.data[entry.id] || 0;
   const pinCount = pinsCache.data[entry.id] || 0;
 
-  entryDiv.textContent = `
+  entryDiv.innerHTML = `
     <div class="timestamp">
       <span class="fa-solid fa-bug bug-iconentry"></span> ${time}
     </div>
@@ -318,7 +318,7 @@ async function initializeApp() {
       checkInterval = setInterval(checkForNewEntries, refreshInterval);
     } catch (fallbackError) {
       console.error("Fallback failed:", fallbackError);
-      document.getElementById("entries").textContent = 
+      document.getElementById("entries").innerHTML = 
         '<div class="error">Veriler yüklenirken bir hata oluştu</div>';
     }
   }
@@ -332,4 +332,4 @@ window.addEventListener('beforeunload', () => {
   if (checkInterval) {
     clearInterval(checkInterval);
   }
-});
+}); siliyor sanki
