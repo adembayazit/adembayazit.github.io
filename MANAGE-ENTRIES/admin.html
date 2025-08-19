@@ -14,6 +14,7 @@
             --error-color: #ff3333;
             --success-color: #00ff00;
             --warning-color: #ffcc00;
+            --spotify-color: #1DB954;
         }
         
         body {
@@ -110,8 +111,7 @@
         }
         
         .form-group {
-            margin-bottom: 1.5rem;
-            position: relative;
+            margin-bottom: 1rem;
         }
         
         label {
@@ -152,10 +152,22 @@
             cursor: pointer;
             border-radius: 3px;
             font-size: 0.8rem;
+            transition: all 0.2s;
         }
         
         .editor-toolbar button:hover {
             background: var(--primary-color);
+            color: black;
+        }
+        
+        .editor-toolbar .spotify-btn {
+            background: #111;
+            border: 1px solid var(--spotify-color);
+            color: var(--spotify-color);
+        }
+        
+        .editor-toolbar .spotify-btn:hover {
+            background: var(--spotify-color);
             color: black;
         }
         
@@ -259,7 +271,6 @@
         
         .entry-content {
             margin-bottom: 0.3rem;
-            white-space: pre-line;
         }
         
         .entry-meta {
@@ -345,77 +356,89 @@
             color: white;
         }
         
-        /* Preview container */
+        /* Ön izleme stilleri */
         .preview-container {
-            margin-top: 1rem;
-            padding: 1rem;
-            background: rgba(0, 20, 0, 0.5);
-            border: 1px solid var(--primary-color);
+            margin-top: 5px;
+            padding: 8px;
+            background: rgba(0, 30, 0, 0.3);
+            border: 1px dashed var(--primary-color);
             border-radius: 3px;
+            font-size: 0.8rem;
         }
         
-        .preview-header {
+        .preview-title {
+            font-weight: bold;
+            margin-bottom: 5px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
         }
         
-        .preview-content {
-            padding: 1rem;
-            background: rgba(0, 30, 0, 0.3);
-            border-radius: 3px;
-            min-height: 80px;
-            white-space: pre-line;
+        .char-count {
+            font-size: 0.7rem;
+            color: #aaa;
         }
         
-        /* Search box */
-        .search-box {
+        .search-container {
+            margin-bottom: 1rem;
+        }
+        
+        .search-input {
             display: flex;
-            margin-bottom: 10px;
             gap: 5px;
         }
         
-        .search-box input {
+        .search-input input {
             flex: 1;
-            padding: 8px;
-            background: #111;
-            border: 1px solid var(--primary-color);
-            color: var(--text-color);
-            font-family: 'Courier New', monospace;
-            border-radius: 3px;
-            font-size: 0.9rem;
         }
         
-        .search-box button {
+        .search-input button {
             background: var(--primary-color);
             color: black;
             border: none;
-            padding: 0 12px;
+            padding: 0 10px;
             cursor: pointer;
+            border-radius: 3px;
+        }
+        
+        /* Ön izleme içeriği stilleri */
+        #trContent-preview, #enContent-preview,
+        [id$="-preview"] {
             font-family: 'Courier New', monospace;
+            line-height: 1.5;
+        }
+        
+        #trContent-preview strong, #enContent-preview strong,
+        [id$="-preview"] strong {
+            color: var(--primary-color);
             font-weight: bold;
-            border-radius: 3px;
         }
         
-        /* Character counter */
-        .char-counter {
-            position: absolute;
-            bottom: -20px;
-            right: 0;
-            font-size: 0.7rem;
-            color: #aaa;
-            background: rgba(0, 30, 0, 0.7);
-            padding: 2px 5px;
-            border-radius: 3px;
+        #trContent-preview em, #enContent-preview em,
+        [id$="-preview"] em {
+            font-style: italic;
         }
         
-        .counter-container {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 5px;
-            font-size: 0.8rem;
+        #trContent-preview u, #enContent-preview u,
+        [id$="-preview"] u {
+            text-decoration: underline;
+        }
+        
+        #trContent-preview blockquote, #enContent-preview blockquote,
+        [id$="-preview"] blockquote {
+            border-left: 3px solid var(--primary-color);
+            padding-left: 10px;
+            margin: 5px 0;
             color: #aaa;
+        }
+        
+        /* Spotify embed stilleri */
+        .spotify-embed {
+            width: 100%;
+            height: 152px;
+            border-radius: 12px;
+            margin: 10px 0;
+            border: 1px solid var(--spotify-color);
+            overflow: hidden;
         }
         
         @keyframes scanline {
@@ -428,7 +451,19 @@
             50% { transform: scale(1.2); }
             100% { transform: scale(1); }
         }
-        
+        /* Youtube embed stilleri */
+        .youtube-embed {
+            width: 100%;
+            margin: 10px 0;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #ff0000;
+            border-radius: 8px;
+}
+
+.youtube-embed iframe {
+    display: block;
+}
         /* Tablet ve daha büyük ekranlar */
         @media (min-width: 768px) {
             .admin-container {
@@ -454,6 +489,13 @@
             .logout-btn {
                 padding: 8px 15px;
                 font-size: 0.9rem;
+            }
+        }
+        
+        /* Mobil uyumluluk */
+        @media (max-width: 767px) {
+            .spotify-embed {
+                height: 80px;
             }
         }
     </style>
@@ -488,11 +530,20 @@
                     <button onclick="formatText('trContent', 'italic')" title="İtalik"><i class="fas fa-italic"></i></button>
                     <button onclick="formatText('trContent', 'underline')" title="Altı Çizili"><i class="fas fa-underline"></i></button>
                     <button onclick="formatText('trContent', 'quote')" title="Tırnak İşareti"><i class="fas fa-quote-right"></i></button>
-                    <button onclick="formatText('trContent', 'strikethrough')" title="Üstü Çizili"><i class="fas fa-strikethrough"></i></button>
+                    <button onclick="formatText('trContent', 'paragraph')" title="Paragraf"><i class="fas fa-paragraph"></i></button>
                     <button onclick="clearFormatting('trContent')" title="Temizle"><i class="fas fa-eraser"></i></button>
+                    <!-- Spotify butonu eklendi -->
+                    <button class="spotify-btn" onclick="addSpotifyEmbed('trContent')" title="Spotify Ekle"><i class="fab fa-spotify"></i></button>
+                    <button class="Youtube-btn" onclick="addYoutubeEmbed('trContent')" title="Youtube Ekle"><i class="fab fa-youtube"></i></button>
                 </div>
-                <textarea id="trContent" placeholder="Türkçe içerik..." oninput="updateCharCounters()"></textarea>
-                <div class="char-counter" id="tr-counter">0 karakter</div>
+                <textarea id="trContent" placeholder="Türkçe içerik..." oninput="updatePreview('trContent')"></textarea>
+                <div class="preview-container">
+                    <div class="preview-title">
+                        <span>Ön İzleme:</span>
+                        <span class="char-count"><span id="trContent-count">0</span> karakter</span>
+                    </div>
+                    <div id="trContent-preview"></div>
+                </div>
             </div>
             
             <div class="form-group">
@@ -502,24 +553,19 @@
                     <button onclick="formatText('enContent', 'italic')" title="Italic"><i class="fas fa-italic"></i></button>
                     <button onclick="formatText('enContent', 'underline')" title="Underline"><i class="fas fa-underline"></i></button>
                     <button onclick="formatText('enContent', 'quote')" title="Quote"><i class="fas fa-quote-right"></i></button>
-                    <button onclick="formatText('enContent', 'strikethrough')" title="Strikethrough"><i class="fas fa-strikethrough"></i></button>
+                    <button onclick="formatText('enContent', 'paragraph')" title="Pparagraph"><i class="fas fa-paragraph"></i></button>
                     <button onclick="clearFormatting('enContent')" title="Clear"><i class="fas fa-eraser"></i></button>
+                    <!-- Spotify butonu eklendi -->
+                    <button class="spotify-btn" onclick="addSpotifyEmbed('enContent')" title="Add Spotify"><i class="fab fa-spotify"></i></button>
+                    <button class="youtube-btn" onclick="addYoutubeEmbed('enContent')" title="Add Youtube"><i class="fab fa-youtube"></i></button>
                 </div>
-                <textarea id="enContent" placeholder="English content..." oninput="updateCharCounters()"></textarea>
-                <div class="char-counter" id="en-counter">0 karakter</div>
-            </div>
-            
-            <!-- Preview section -->
-            <div class="preview-container">
-                <div class="preview-header">
-                    <h4><i class="fas fa-eye"></i> Önizleme</h4>
-                    <div class="counter-container">
-                        <span>Türkçe: <span id="preview-tr-chars">0</span> karakter</span>
-                        <span>İngilizce: <span id="preview-en-chars">0</span> karakter</span>
+                <textarea id="enContent" placeholder="English content..." oninput="updatePreview('enContent')"></textarea>
+                <div class="preview-container">
+                    <div class="preview-title">
+                        <span>Preview:</span>
+                        <span class="char-count"><span id="enContent-count">0</span> characters</span>
                     </div>
-                </div>
-                <div class="preview-content" id="preview-content">
-                    İçerik önizleme burada görünecek...
+                    <div id="enContent-preview"></div>
                 </div>
             </div>
             
@@ -547,14 +593,15 @@
                 </div>
             </div>
             
-            <h3><i class="fas fa-history"></i> Son Entryler</h3>
-            
-            <!-- Search box -->
-            <div class="search-box">
-                <input type="text" id="search-query" placeholder="ID veya içerik ile ara..." onkeyup="if(event.key === 'Enter') searchEntries()">
-                <button onclick="searchEntries()"><i class="fas fa-search"></i> Ara</button>
+            <div class="search-container">
+                <h3><i class="fas fa-search"></i> Entry Ara</h3>
+                <div class="search-input">
+                    <input type="number" id="searchId" placeholder="Entry ID girin">
+                    <button onclick="searchEntry()"><i class="fas fa-search"></i></button>
+                </div>
             </div>
             
+            <h3><i class="fas fa-history"></i> Son Entryler</h3>
             <div class="entries-list" id="recent-entries">
                 <!-- Son entryler buraya eklenecek -->
             </div>
@@ -574,25 +621,11 @@
             } else {
                 loadStats();
                 loadRecentEntries();
-                updateCharCounters();
+                // İlk yüklemede ön izlemeleri güncelle
+                updatePreview('trContent');
+                updatePreview('enContent');
             }
         });
-        
-        // Karakter sayacını güncelle
-        function updateCharCounters() {
-            const trContent = document.getElementById('trContent').value;
-            const enContent = document.getElementById('enContent').value;
-            
-            document.getElementById('tr-counter').textContent = `${trContent.length} karakter`;
-            document.getElementById('en-counter').textContent = `${enContent.length} karakter`;
-            
-            // Önizlemede karakter sayılarını güncelle
-            document.getElementById('preview-tr-chars').textContent = trContent.length;
-            document.getElementById('preview-en-chars').textContent = enContent.length;
-            
-            // Önizleme içeriğini güncelle
-            document.getElementById('preview-content').innerHTML = formatForDisplay(trContent) || 'İçerik önizleme burada görünecek...';
-        }
         
         async function fetchFromJsonBin(binId, method = 'GET', data = null) {
             try {
@@ -631,6 +664,124 @@
                 // Hata durumunda rastgele ID üret
                 return Math.floor(Math.random() * 900000) + 100000;
             }
+        }
+        
+        // Spotify eklemek için fonksiyon
+        function addSpotifyEmbed(textareaId) {
+            // Kullanıcıdan Spotify URL'sini al
+            const spotifyUrl = prompt("Spotify URL veya Track ID girin:");
+            if (!spotifyUrl) return;
+            
+            // Track ID'yi URL'den çıkart
+            let trackId = extractTrackId(spotifyUrl);
+            if (!trackId) {
+                alert("Geçersiz Spotify URL veya Track ID!");
+                return;
+            }
+            
+            // Spotify embed kodu oluştur
+            const spotifyEmbed = `<iframe 
+                class="spotify-embed"
+                src="https://open.spotify.com/embed/track/${trackId}?utm_source=generator&theme=0" 
+                frameborder="0"
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+                loading="lazy">
+            </iframe>`;
+            
+            // İlgili textarea'ya ekle
+            insertAtCursor(textareaId, spotifyEmbed);
+            
+            // Ön izlemeyi güncelle
+            updatePreview(textareaId);
+        }
+        
+        // Spotify URL'sinden Track ID çıkartma
+        function extractTrackId(url) {
+            // Eğer zaten bir ID gibi görünüyorsa (sadece harf ve rakam, 22 karakter) doğrudan dön
+            if (/^[a-zA-Z0-9]{22}$/.test(url)) {
+                return url;
+            }
+            
+            // URL'den track ID'yi çıkarmak için regex
+            const regex = /open\.spotify\.com\/track\/([a-zA-Z0-9]{22})/;
+            const match = url.match(regex);
+            if (match && match[1]) {
+                return match[1];
+            }
+            
+            return null;
+        }
+        // Youtube eklemek için fonksiyon
+function addYoutubeEmbed(textareaId) {
+    // Kullanıcıdan Youtube URL'sini al
+    const youtubeUrl = prompt("Youtube URL veya Video ID girin:");
+    if (!youtubeUrl) return;
+    
+    // Video ID'yi URL'den çıkart
+    let videoId = extractYoutubeId(youtubeUrl);
+    if (!videoId) {
+        alert("Geçersiz Youtube URL veya Video ID!");
+        return;
+    }
+    
+    // Youtube embed kodu oluştur
+    const youtubeEmbed = `<div class="youtube-embed">
+        <iframe 
+            width="100%" 
+            height="315" 
+            src="https://www.youtube.com/embed/${videoId}" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+        </iframe>
+    </div>`;
+    
+    // İlgili textarea'ya ekle
+    insertAtCursor(textareaId, youtubeEmbed);
+    
+    // Ön izlemeyi güncelle
+    updatePreview(textareaId);
+}
+
+// Youtube URL'sinden Video ID çıkartma
+function extractYoutubeId(url) {
+    // Eğer zaten bir ID gibi görünüyorsa (11 karakter) doğrudan dön
+    if (/^[a-zA-Z0-9_-]{11}$/.test(url)) {
+        return url;
+    }
+    
+    // Çeşitli Youtube URL formatları için regex'ler
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    
+    if (match && match[2].length === 11) {
+        return match[2];
+    }
+    
+    // Shorts URL'si için
+    const shortsRegExp = /youtube\.com\/shorts\/([^\/\?]+)/;
+    const shortsMatch = url.match(shortsRegExp);
+    
+    if (shortsMatch && shortsMatch[1]) {
+        return shortsMatch[1];
+    }
+    
+    return null;
+}
+        // İmleç konumuna metin ekleme
+        function insertAtCursor(textareaId, text) {
+            const textarea = document.getElementById(textareaId);
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            
+            // Eğer seçili bir metin varsa, onun yerine ekle, yoksa imleç konumuna ekle
+            textarea.value = textarea.value.substring(0, start) + text + textarea.value.substring(end);
+            
+            // İmleci eklenen metnin sonuna taşı
+            const newCursorPos = start + text.length;
+            textarea.selectionStart = newCursorPos;
+            textarea.selectionEnd = newCursorPos;
+            textarea.focus();
         }
         
         async function submitEntry() {
@@ -690,8 +841,9 @@
                 document.getElementById('trContent').value = '';
                 document.getElementById('enContent').value = '';
                 
-                // Karakter sayaçlarını sıfırla
-                updateCharCounters();
+                // Ön izlemeleri temizle
+                updatePreview('trContent');
+                updatePreview('enContent');
                 
                 // İstatistikleri ve son entryleri güncelle
                 await updateStats();
@@ -730,7 +882,7 @@
                     let displayContent = entry.content_tr || entry.content;
                     
                     entryEl.innerHTML = `
-                        <div class="entry-content">${formatForDisplay(displayContent)}</div>
+                        <div class="entry-content">${displayContent}</div>
                         <div class="entry-meta">
                             <span>ID: ${entry.id}</span>
                             <span>${formatDate(entry.date)}</span>
@@ -748,83 +900,49 @@
             }
         }
         
-        // Arama fonksiyonu
-        async function searchEntries() {
-            const query = document.getElementById('search-query').value.trim().toLowerCase();
-            const recentEntriesContainer = document.getElementById('recent-entries');
-            
-            if (!query) {
-                // Arama kutusu boşsa son 5 entry'yi göster
+        async function searchEntry() {
+            const searchId = document.getElementById('searchId').value;
+            if (!searchId) {
                 loadRecentEntries();
                 return;
             }
             
             try {
                 const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
-                const allEntries = Array.isArray(entries) ? entries : (entries.records || []);
-                
-                const filteredEntries = allEntries.filter(entry => {
-                    // ID'ye göre arama
-                    if (entry.id.toString().includes(query)) return true;
-                    
-                    // İçeriğe göre arama
-                    if (entry.content && entry.content.toLowerCase().includes(query)) return true;
-                    if (entry.content_tr && entry.content_tr.toLowerCase().includes(query)) return true;
-                    
-                    return false;
-                });
-                
+                const recentEntriesContainer = document.getElementById('recent-entries');
                 recentEntriesContainer.innerHTML = '';
                 
-                if (filteredEntries.length === 0) {
-                    recentEntriesContainer.innerHTML = '<p>Hiç entry bulunamadı.</p>';
+                let entriesArray = Array.isArray(entries) ? entries : (entries.records || []);
+                const entry = entriesArray.find(e => e.id === parseInt(searchId));
+                
+                if (!entry) {
+                    recentEntriesContainer.innerHTML = '<p>Entry bulunamadı.</p>';
                     return;
                 }
                 
-                filteredEntries.slice(0, 10).forEach(entry => {
-                    const entryEl = document.createElement('div');
-                    entryEl.className = 'entry-item';
-                    
-                    let displayContent = entry.content_tr || entry.content;
-                    
-                    entryEl.innerHTML = `
-                        <div class="entry-content">${formatForDisplay(displayContent)}</div>
-                        <div class="entry-meta">
-                            <span>ID: ${entry.id}</span>
-                            <span>${formatDate(entry.date)}</span>
-                        </div>
-                        <div class="entry-actions">
-                            <button onclick="editEntry(${entry.id})" title="Düzenle"><i class="fas fa-edit"></i></button>
-                            <button onclick="confirmDelete(${entry.id})" title="Sil"><i class="fas fa-trash"></i></button>
-                        </div>
-                    `;
-                    
-                    recentEntriesContainer.appendChild(entryEl);
-                });
+                const entryEl = document.createElement('div');
+                entryEl.className = 'entry-item';
                 
+                // İçerik belirleme (TR varsa TR, yoksa EN)
+                let displayContent = entry.content_tr || entry.content;
+                
+                entryEl.innerHTML = `
+                    <div class="entry-content">${displayContent}</div>
+                    <div class="entry-meta">
+                        <span>ID: ${entry.id}</span>
+                        <span>${formatDate(entry.date)}</span>
+                    </div>
+                    <div class="entry-actions">
+                        <button onclick="editEntry(${entry.id})" title="Düzenle"><i class="fas fa-edit"></i></button>
+                        <button onclick="confirmDelete(${entry.id})" title="Sil"><i class="fas fa-trash"></i></button>
+                    </div>
+                `;
+                
+                recentEntriesContainer.appendChild(entryEl);
             } catch (error) {
-                console.error('Arama hatası:', error);
-                showMessage(`Arama sırasında hata: ${error.message}`, 'error');
+                console.error('Entry arama hatası:', error);
+                showMessage(`Arama hatası: ${error.message}`, 'error');
             }
-        }
-        
-        // Görselleştirme için formatlama
-        function formatForDisplay(text) {
-            if (!text) return '';
-            
-            // Kalın metin: **kalın**
-            let formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            
-            // İtalik metin: _italik_
-            formatted = formatted.replace(/_(.*?)_/g, '<em>$1</em>');
-            
-            // Altı çizili: <u>altı çizili</u>
-            formatted = formatted.replace(/<u>(.*?)<\/u>/g, '<u>$1</u>');
-            
-            // Alıntı: > alıntı
-            formatted = formatted.replace(/^> (.*)$/gm, '<blockquote>$1</blockquote>');
-            
-            return formatted;
         }
         
         async function editEntry(entryId) {
@@ -855,13 +973,25 @@
                     editForm.innerHTML = `
                         <div class="form-group">
                             <label for="edit-tr-${entryId}">Türkçe İçerik:</label>
-                            <textarea id="edit-tr-${entryId}">${entry.content_tr || ''}</textarea>
-                            <div class="char-counter" id="edit-tr-counter-${entryId}">${entry.content_tr ? entry.content_tr.length : 0} karakter</div>
+                            <textarea id="edit-tr-${entryId}" oninput="updateEditPreview(${entryId}, 'tr')">${entry.content_tr || ''}</textarea>
+                            <div class="preview-container">
+                                <div class="preview-title">
+                                    <span>Ön İzleme:</span>
+                                    <span class="char-count"><span id="edit-tr-${entryId}-count">0</span> karakter</span>
+                                </div>
+                                <div id="edit-tr-${entryId}-preview"></div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="edit-en-${entryId}">İngilizce İçerik:</label>
-                            <textarea id="edit-en-${entryId}">${entry.content || ''}</textarea>
-                            <div class="char-counter" id="edit-en-counter-${entryId}">${entry.content ? entry.content.length : 0} karakter</div>
+                            <textarea id="edit-en-${entryId}" oninput="updateEditPreview(${entryId}, 'en')">${entry.content || ''}</textarea>
+                            <div class="preview-container">
+                                <div class="preview-title">
+                                    <span>Preview:</span>
+                                    <span class="char-count"><span id="edit-en-${entryId}-count">0</span> characters</span>
+                                </div>
+                                <div id="edit-en-${entryId}-preview"></div>
+                            </div>
                         </div>
                         <div class="edit-actions">
                             <button class="save-btn" onclick="saveEntry(${entryId})"><i class="fas fa-save"></i> Kaydet</button>
@@ -870,16 +1000,9 @@
                     `;
                     targetItem.appendChild(editForm);
                     
-                    // Edit alanları için karakter sayacını güncelle
-                    document.getElementById(`edit-tr-${entryId}`).addEventListener('input', function() {
-                        document.getElementById(`edit-tr-counter-${entryId}`).textContent = 
-                            `${this.value.length} karakter`;
-                    });
-                    
-                    document.getElementById(`edit-en-${entryId}`).addEventListener('input', function() {
-                        document.getElementById(`edit-en-counter-${entryId}`).textContent = 
-                            `${this.value.length} karakter`;
-                    });
+                    // Edit preview'ları güncelle
+                    updateEditPreview(entryId, 'tr');
+                    updateEditPreview(entryId, 'en');
                 }
                 
                 editForm.style.display = 'block';
@@ -911,8 +1034,8 @@
                 // Entry'yi güncelle
                 entriesArray[entryIndex] = {
                     ...entriesArray[entryIndex],
-                    content: enContent || '',
                     content_tr: trContent || null,
+                    content: enContent || '',
                     date: new Date().toISOString()
                 };
                 
@@ -1017,6 +1140,29 @@
             window.location.href = 'index.html';
         }
         
+        // Ön izleme güncelleme fonksiyonları
+        function updatePreview(textareaId) {
+            const textarea = document.getElementById(textareaId);
+            const preview = document.getElementById(`${textareaId}-preview`);
+            const charCount = document.getElementById(`${textareaId}-count`);
+            
+            if (textarea && preview && charCount) {
+                preview.innerHTML = textarea.value.replace(/\n/g, '<br>');
+                charCount.textContent = textarea.value.length;
+            }
+        }
+        
+        function updateEditPreview(entryId, lang) {
+            const textarea = document.getElementById(`edit-${lang}-${entryId}`);
+            const preview = document.getElementById(`edit-${lang}-${entryId}-preview`);
+            const charCount = document.getElementById(`edit-${lang}-${entryId}-count`);
+            
+            if (textarea && preview && charCount) {
+                preview.innerHTML = textarea.value.replace(/\n/g, '<br>');
+                charCount.textContent = textarea.value.length;
+            }
+        }
+        
         // Metin düzenleme fonksiyonları
         function formatText(textareaId, format) {
             const textarea = document.getElementById(textareaId);
@@ -1027,16 +1173,16 @@
             
             switch(format) {
                 case 'bold':
-                    formattedText = `**${selectedText}**`;
+                    formattedText = `<strong>${selectedText}</strong>`;
                     break;
                 case 'italic':
-                    formattedText = `_${selectedText}_`;
+                    formattedText = `<em>${selectedText}</em>`;
                     break;
                 case 'underline':
                     formattedText = `<u>${selectedText}</u>`;
                     break;
                 case 'quote':
-                    formattedText = `> ${selectedText}`;
+                    formattedText = `<blockquote>${selectedText}</blockquote>`;
                     break;
             }
             
@@ -1044,8 +1190,7 @@
             textarea.focus();
             textarea.setSelectionRange(start + formattedText.length, start + formattedText.length);
             
-            // Karakter sayaçlarını güncelle
-            updateCharCounters();
+            updatePreview(textareaId);
         }
         
         function clearFormatting(textareaId) {
@@ -1055,17 +1200,16 @@
             const selectedText = textarea.value.substring(start, end);
             
             const cleanedText = selectedText
-                .replace(/\*\*(.*?)\*\*/g, '$1')
-                .replace(/_(.*?)_/g, '$1')
+                .replace(/<strong>(.*?)<\/strong>/g, '$1')
+                .replace(/<em>(.*?)<\/em>/g, '$1')
                 .replace(/<u>(.*?)<\/u>/g, '$1')
-                .replace(/^>\s?(.*)$/gm, '$1');
+                .replace(/<blockquote>(.*?)<\/blockquote>/g, '$1');
                 
             textarea.value = textarea.value.substring(0, start) + cleanedText + textarea.value.substring(end);
             textarea.focus();
             textarea.setSelectionRange(start + cleanedText.length, start + cleanedText.length);
             
-            // Karakter sayaçlarını güncelle
-            updateCharCounters();
+            updatePreview(textareaId);
         }
     </script>
 </body>
