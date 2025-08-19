@@ -486,10 +486,9 @@
                 <div class="editor-toolbar">
                     <button onclick="formatText('trContent', 'bold')" title="Kalın"><i class="fas fa-bold"></i></button>
                     <button onclick="formatText('trContent', 'italic')" title="İtalik"><i class="fas fa-italic"></i></button>
-                    <button onclick="formatText('trContent', 'boldItalic')" title="Kalın İtalik"><i class="fas fa-bold"></i><i class="fas fa-italic"></i></button>
                     <button onclick="formatText('trContent', 'underline')" title="Altı Çizili"><i class="fas fa-underline"></i></button>
                     <button onclick="formatText('trContent', 'quote')" title="Tırnak İşareti"><i class="fas fa-quote-right"></i></button>
-                    <button onclick="addNewLine('trContent')" title="Yeni Satır"><i class="fas fa-level-down-alt"></i></button>
+                    <button onclick="formatText('trContent', 'strikethrough')" title="Üstü Çizili"><i class="fas fa-strikethrough"></i></button>
                     <button onclick="clearFormatting('trContent')" title="Temizle"><i class="fas fa-eraser"></i></button>
                 </div>
                 <textarea id="trContent" placeholder="Türkçe içerik..." oninput="updateCharCounters()"></textarea>
@@ -501,10 +500,9 @@
                 <div class="editor-toolbar">
                     <button onclick="formatText('enContent', 'bold')" title="Bold"><i class="fas fa-bold"></i></button>
                     <button onclick="formatText('enContent', 'italic')" title="Italic"><i class="fas fa-italic"></i></button>
-                    <button onclick="formatText('enContent', 'boldItalic')" title="Bold Italic"><i class="fas fa-bold"></i><i class="fas fa-italic"></i></button>
                     <button onclick="formatText('enContent', 'underline')" title="Underline"><i class="fas fa-underline"></i></button>
                     <button onclick="formatText('enContent', 'quote')" title="Quote"><i class="fas fa-quote-right"></i></button>
-                    <button onclick="addNewLine('enContent')" title="New Line"><i class="fas fa-level-down-alt"></i></button>
+                    <button onclick="formatText('enContent', 'strikethrough')" title="Strikethrough"><i class="fas fa-strikethrough"></i></button>
                     <button onclick="clearFormatting('enContent')" title="Clear"><i class="fas fa-eraser"></i></button>
                 </div>
                 <textarea id="enContent" placeholder="English content..." oninput="updateCharCounters()"></textarea>
@@ -820,17 +818,11 @@
             // İtalik metin: _italik_
             formatted = formatted.replace(/_(.*?)_/g, '<em>$1</em>');
             
-            // Kalın ve italik metin: ***kalın italik***
-            formatted = formatted.replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>');
-            
             // Altı çizili: <u>altı çizili</u>
             formatted = formatted.replace(/<u>(.*?)<\/u>/g, '<u>$1</u>');
             
             // Alıntı: > alıntı
             formatted = formatted.replace(/^> (.*)$/gm, '<blockquote>$1</blockquote>');
-            
-            // Paragraf: <p>paragraf</p>
-            formatted = formatted.replace(/<p>(.*?)<\/p>/g, '<p>$1</p>');
             
             return formatted;
         }
@@ -1040,9 +1032,6 @@
                 case 'italic':
                     formattedText = `_${selectedText}_`;
                     break;
-                case 'boldItalic':
-                    formattedText = `***${selectedText}***`;
-                    break;
                 case 'underline':
                     formattedText = `<u>${selectedText}</u>`;
                     break;
@@ -1059,22 +1048,6 @@
             updateCharCounters();
         }
         
-        // Yeni satır ekleme fonksiyonu
-        function addNewLine(textareaId) {
-            const textarea = document.getElementById(textareaId);
-            const start = textarea.selectionStart;
-            
-            textarea.value = textarea.value.substring(0, start) + '<p></p>' + textarea.value.substring(start);
-            textarea.focus();
-            
-            // İmleci <p> etiketleri arasına yerleştir
-            const newPosition = start + 3;
-            textarea.setSelectionRange(newPosition, newPosition);
-            
-            // Karakter sayaçlarını güncelle
-            updateCharCounters();
-        }
-        
         function clearFormatting(textareaId) {
             const textarea = document.getElementById(textareaId);
             const start = textarea.selectionStart;
@@ -1084,10 +1057,8 @@
             const cleanedText = selectedText
                 .replace(/\*\*(.*?)\*\*/g, '$1')
                 .replace(/_(.*?)_/g, '$1')
-                .replace(/\*\*\*(.*?)\*\*\*/g, '$1')
                 .replace(/<u>(.*?)<\/u>/g, '$1')
-                .replace(/^>\s?(.*)$/gm, '$1')
-                .replace(/<p>(.*?)<\/p>/g, '$1');
+                .replace(/^>\s?(.*)$/gm, '$1');
                 
             textarea.value = textarea.value.substring(0, start) + cleanedText + textarea.value.substring(end);
             textarea.focus();
