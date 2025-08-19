@@ -332,4 +332,4 @@ window.addEventListener('beforeunload', () => {
   if (checkInterval) {
     clearInterval(checkInterval);
   }
-}); siliyor sanki
+});
