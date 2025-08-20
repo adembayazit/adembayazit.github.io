@@ -185,12 +185,21 @@ function createEntryElement(entry, container, depth) {
     const likeCount = likesCache.data[entry.id] || 0;
     const pinCount = pinsCache.data[entry.id] || 0;
 
+    // İçeriği işle - boşlukları koru
+    let processedContent = entry.content;
+    
+    // Boş p etiketlerini kaldır
+    processedContent = processedContent.replace(/<p>\s*<\/p>/g, '');
+    
+    // Boşlukları korumak için gerekli düzenlemeler
+    processedContent = processedContent.replace(/\n/g, '<br>');
+    
     entryDiv.innerHTML = `
         <div class="timestamp">
             <span class="fa-solid fa-bug bug-iconentry"></span> ${time}
         </div>
         <div class="entry-id">#${entry.id}</div>
-        <div class="content">${entry.content}</div>
+        <div class="content">${processedContent}</div>
         <div class="interaction-buttons">
             <div class="daisy-like" data-entry-id="${entry.id}">
                 <img src="IMAGES/daisy.svg" class="daisy-icon" alt="Beğen" />
