@@ -166,6 +166,29 @@
             gap: 10px;
         }
 
+        /* Son entry için özel stil */
+        .latest-entry {
+            border: 2px solid #ffcc00 !important;
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.4) !important;
+            background: rgba(255, 204, 0, 0.1) !important;
+            position: relative;
+            order: -1; /* Başa taşı */
+        }
+
+        .latest-entry::before {
+            content: "EN SON EKLENEN";
+            position: absolute;
+            top: -12px;
+            right: 15px;
+            background: #ffcc00;
+            color: black;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 4px;
+            z-index: 10;
+        }
+
         /* Mobil için stiller */
         @media (max-width: 768px) {
             .microblog-container {
@@ -181,6 +204,12 @@
                 justify-content: center; /* İkonları da ortala */
                 filter: drop-shadow(0 0 5px limegreen);
                 color:white;
+            }
+
+            .latest-entry::before {
+                right: 50%;
+                transform: translateX(50%);
+                font-size: 10px;
             }
         }
     </style>
@@ -341,6 +370,7 @@
         let parentEntries = [];
         let displayedEntries = 0;
         const entriesPerPage = 20;
+        let latestEntryId = null; // En son eklenen entry ID'sini saklamak için
 
         // 2. PROXY HELPER FONKSİYONU
         async function fetchViaProxy(path, method = 'GET', body = null) {
@@ -450,6 +480,11 @@
           const entryDiv = document.createElement("div");
           entryDiv.className = `entry ${depth > 0 ? 'child-entry' : ''}`;
           
+          // En son eklenen entry ise özel sınıf ekle
+          if (entry.id === latestEntryId) {
+            entryDiv.classList.add('latest-entry');
+          }
+          
           if (depth > 0) {
             entryDiv.style.marginLeft = (depth * 30) + 'px';
           }
@@ -512,7 +547,13 @@
           for (let i = startIndex; i < endIndex; i++) {
             const parentEntry = parentEntries[i];
             const entryElement = createEntryElement(parentEntry, 0);
-            container.appendChild(entryElement);
+            
+            // En son eklenen entry ise container'ın en başına ekle
+            if (parentEntry.id === latestEntryId) {
+              container.insertBefore(entryElement, container.firstChild);
+            } else {
+              container.appendChild(entryElement);
+            }
             
             // Bu parent entry'nin child entry'lerini bul ve ekle
             const childEntries = allEntries.filter(e => 
@@ -521,7 +562,14 @@
             
             childEntries.forEach(childEntry => {
               const childElement = createEntryElement(childEntry, 1);
-              container.appendChild(childElement);
+              
+              // En son eklenen entry ise container'ın en başına ekle
+              if (childEntry.id === latestEntryId) {
+                container.insertBefore(childElement, container.firstChild);
+              } else {
+                // Child entry'leri parent'ın hemen altına ekle
+                container.insertBefore(childElement, entryElement.nextSibling);
+              }
             });
           }
           
@@ -619,6 +667,13 @@
             const entriesData = await fetchViaProxy('/b/68933248ae596e708fc2fbbc/latest');
             allEntries = entriesData.records || entriesData;
             
+            // En son eklenen entry'nin ID'sini bul
+            if (allEntries.length > 0) {
+              // Tarihe göre sırala (en yeni en başta)
+              const sortedByDate = [...allEntries].sort((a, b) => new Date(b.date) - new Date(a.date));
+              latestEntryId = sortedByDate[0].id;
+            }
+            
             // Sadece parent entry'leri (references'i olmayan) bul
             parentEntries = allEntries.filter(entry => !entry.references || entry.references.length === 0);
             
@@ -638,6 +693,12 @@
               const response = await fetch("entries.json");
               const entriesData = await response.json();
               allEntries = entriesData.records || entriesData;
+              
+              // En son eklenen entry'nin ID'sini bul
+              if (allEntries.length > 0) {
+                const sortedByDate = [...allEntries].sort((a, b) => new Date(b.date) - new Date(a.date));
+                latestEntryId = sortedByDate[0].id;
+              }
               
               // Sadece parent entry'leri (references'i olmayan) bul
               parentEntries = allEntries.filter(entry => !entry.references || entry.references.length === 0);
