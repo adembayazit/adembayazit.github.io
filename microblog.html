@@ -116,6 +116,13 @@
         .dropdown:hover .dropdown-content {
             display: block;
         }
+
+        /* Mobil için back-to-home boşluğu */
+        @media (max-width: 768px) {
+            .back-to-home {
+                margin-bottom: 20px; /* 5px daha fazla boşluk */
+            }
+        }
     </style>
 </head>
 <body>
@@ -168,6 +175,7 @@
         };
 
         let allEntries = [];
+        let parentEntries = [];
         let displayedEntries = 0;
         const entriesPerPage = 20;
 
@@ -329,22 +337,23 @@
           const loadingElement = document.getElementById("loading");
           const loadMoreBtn = document.getElementById("loadMoreBtn");
           
-          if (startIndex >= allEntries.length) {
+          if (startIndex >= parentEntries.length) {
             loadMoreBtn.style.display = 'none';
             return;
           }
           
           loadingElement.style.display = 'block';
           
-          // Yeni entry'leri ekle
-          const endIndex = Math.min(startIndex + count, allEntries.length);
+          // Yeni parent entry'leri ekle
+          const endIndex = Math.min(startIndex + count, parentEntries.length);
           for (let i = startIndex; i < endIndex; i++) {
-            const entryElement = createEntryElement(allEntries[i], 0);
+            const parentEntry = parentEntries[i];
+            const entryElement = createEntryElement(parentEntry, 0);
             container.appendChild(entryElement);
             
-            // Bu entry'nin alt entry'lerini bul ve ekle
+            // Bu parent entry'nin child entry'lerini bul ve ekle
             const childEntries = allEntries.filter(e => 
-              e.references && e.references.includes(allEntries[i].id)
+              e.references && e.references.includes(parentEntry.id)
             );
             
             childEntries.forEach(childEntry => {
@@ -354,15 +363,15 @@
           }
           
           displayedEntries = endIndex;
-          document.getElementById('entryCount').textContent = `Total ${displayedEntries} entry showing (Total ${allEntries.length} entry)`;
+          document.getElementById('entryCount').textContent = `Total ${allEntries.length} entries loaded`;
           
           // Çeviri ikonlarını ekle
           addTranslationIcons();
           
           loadingElement.style.display = 'none';
           
-          // Tüm entry'ler gösterildiyse butonu gizle
-          if (displayedEntries >= allEntries.length) {
+          // Tüm parent entry'ler gösterildiyse butonu gizle
+          if (displayedEntries >= parentEntries.length) {
             loadMoreBtn.style.display = 'none';
           }
         }
@@ -447,10 +456,13 @@
             const entriesData = await fetchViaProxy('/b/68933248ae596e708fc2fbbc/latest');
             allEntries = entriesData.records || entriesData;
             
-            // Entry'leri tarihe göre sırala (yeniden eskiye)
-            allEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
+            // Sadece parent entry'leri (references'i olmayan) bul
+            parentEntries = allEntries.filter(entry => !entry.references || entry.references.length === 0);
             
-            // İlk 20 entry'yi göster
+            // Parent entry'leri tarihe göre sırala (yeniden eskiye)
+            parentEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            // İlk 20 parent entry'yi göster
             displayEntries(0, entriesPerPage);
             
             // Daha fazla yükle butonuna event listener ekle
@@ -463,7 +475,11 @@
               const response = await fetch("entries.json");
               const entriesData = await response.json();
               allEntries = entriesData.records || entriesData;
-              allEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
+              
+              // Sadece parent entry'leri (references'i olmayan) bul
+              parentEntries = allEntries.filter(entry => !entry.references || entry.references.length === 0);
+              
+              parentEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
               displayEntries(0, entriesPerPage);
               
               document.getElementById('loadMoreBtn').addEventListener('click', () => {
