@@ -212,6 +212,16 @@
             z-index: 10;
         }
 
+        /* Yeni eklenen entry için animasyon */
+        @keyframes highlightNewEntry {
+            0% { background-color: rgba(255, 204, 0, 0.3); }
+            100% { background-color: rgba(255, 204, 0, 0.1); }
+        }
+
+        .new-entry {
+            animation: highlightNewEntry 2s ease-in-out;
+        }
+
         /* Mobil için stiller */
         @media (max-width: 768px) {
             .microblog-container {
@@ -396,6 +406,7 @@
         const entriesPerPage = 20;
         let latestEntryId = null; // En son eklenen entry ID'sini saklamak için
         let parentOfLatestId = null; // En son eklenen entry'nin parent ID'sini saklamak için
+        let lastCheckTime = new Date().toISOString(); // Son kontrol zamanı
 
         // 2. PROXY HELPER FONKSİYONU
         async function fetchViaProxy(path, method = 'GET', body = null) {
@@ -560,12 +571,47 @@
           return entryDiv;
         }
 
+        // Entry'leri tarihe göre sırala (yeni en başta)
+        function sortEntriesByDate(entries) {
+          return entries.sort((a, b) => new Date(b.date) - new Date(a.date));
+        }
+
+        // Parent entry'leri ve child entry'leri doğru sıralama
+        function organizeEntries() {
+          // Önce tüm entry'leri tarihe göre sırala
+          const sortedEntries = sortEntriesByDate([...allEntries]);
+          
+          // Parent entry'leri bul (references'i olmayan veya boş olan)
+          parentEntries = sortedEntries.filter(entry => !entry.references || entry.references.length === 0);
+          
+          // Child entry'leri parent'larına göre grupla
+          const childEntriesByParent = {};
+          sortedEntries.forEach(entry => {
+            if (entry.references && entry.references.length > 0) {
+              const parentId = entry.references[0];
+              if (!childEntriesByParent[parentId]) {
+                childEntriesByParent[parentId] = [];
+              }
+              childEntriesByParent[parentId].push(entry);
+            }
+          });
+          
+          // Child entry'leri de tarihe göre sırala (yeni en başta)
+          Object.keys(childEntriesByParent).forEach(parentId => {
+            childEntriesByParent[parentId] = sortEntriesByDate(childEntriesByParent[parentId]);
+          });
+          
+          return { parentEntries, childEntriesByParent };
+        }
+
         function displayEntries(startIndex, count) {
           const container = document.getElementById("entries");
           const loadingElement = document.getElementById("loading");
           const loadMoreBtn = document.getElementById("loadMoreBtn");
           
-          if (startIndex >= parentEntries.length) {
+          const { parentEntries: organizedParents, childEntriesByParent } = organizeEntries();
+          
+          if (startIndex >= organizedParents.length) {
             loadMoreBtn.style.display = 'none';
             return;
           }
@@ -573,9 +619,9 @@
           loadingElement.style.display = 'block';
           
           // Yeni parent entry'leri ekle
-          const endIndex = Math.min(startIndex + count, parentEntries.length);
+          const endIndex = Math.min(startIndex + count, organizedParents.length);
           for (let i = startIndex; i < endIndex; i++) {
-            const parentEntry = parentEntries[i];
+            const parentEntry = organizedParents[i];
             const entryElement = createEntryElement(parentEntry, 0);
             
             // En son eklenen entry veya parent ise container'ın en başına ekle
@@ -586,9 +632,7 @@
             }
             
             // Bu parent entry'nin child entry'lerini bul ve ekle
-            const childEntries = allEntries.filter(e => 
-              e.references && e.references.includes(parentEntry.id)
-            );
+            const childEntries = childEntriesByParent[parentEntry.id] || [];
             
             childEntries.forEach(childEntry => {
               const childElement = createEntryElement(childEntry, 1);
@@ -617,7 +661,7 @@
           loadingElement.style.display = 'none';
           
           // Tüm parent entry'ler gösterildiyse butonu gizle
-          if (displayedEntries >= parentEntries.length) {
+          if (displayedEntries >= organizedParents.length) {
             loadMoreBtn.style.display = 'none';
           }
         }
@@ -695,6 +739,58 @@
           }
         }
 
+        // Yeni entry kontrolü
+        async function checkForNewEntries() {
+          try {
+            const entriesData = await fetchViaProxy('/b/68933248ae596e708fc2fbbc/latest');
+            const newAllEntries = entriesData.records || entriesData;
+            
+            // Yeni entry var mı kontrol et
+            if (newAllEntries.length > allEntries.length) {
+              // Yeni entry'leri bul
+              const newEntries = newAllEntries.filter(newEntry => 
+                !allEntries.some(oldEntry => oldEntry.id === newEntry.id)
+              );
+              
+              if (newEntries.length > 0) {
+                // En yeni entry'yi işaretle
+                const sortedNewEntries = sortEntriesByDate(newEntries);
+                latestEntryId = sortedNewEntries[0].id;
+                
+                // Yeni entry'nin parent'ını bul
+                const latestEntry = newAllEntries.find(entry => entry.id === latestEntryId);
+                if (latestEntry && latestEntry.references && latestEntry.references.length > 0) {
+                  parentOfLatestId = latestEntry.references[0];
+                }
+                
+                // Tüm entry'leri güncelle
+                allEntries = newAllEntries;
+                
+                // Sayfayı yenile
+                document.getElementById("entries").innerHTML = "";
+                displayedEntries = 0;
+                displayEntries(0, entriesPerPage);
+                
+                // Yeni entry'yi vurgula
+                const newEntryElement = document.querySelector(`.entry-id[data-entry-id="${latestEntryId}"]`)?.closest('.entry');
+                if (newEntryElement) {
+                  newEntryElement.classList.add('new-entry');
+                  
+                  // Sayfayı yeni entry'ye kaydır
+                  setTimeout(() => {
+                    newEntryElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  }, 500);
+                }
+              }
+            }
+            
+            // Son kontrol zamanını güncelle
+            lastCheckTime = new Date().toISOString();
+          } catch (error) {
+            console.error('Yeni entry kontrolü sırasında hata:', error);
+          }
+        }
+
         // 5. BAŞLANGIÇ FONKSİYONU
         async function initializeApp() {
           try {
@@ -705,7 +801,7 @@
             // En son eklenen entry'nin ID'sini bul
             if (allEntries.length > 0) {
               // Tarihe göre sırala (en yeni en başta)
-              const sortedByDate = [...allEntries].sort((a, b) => new Date(b.date) - new Date(a.date));
+              const sortedByDate = sortEntriesByDate([...allEntries]);
               latestEntryId = sortedByDate[0].id;
               
               // En son eklenen entry'nin parent'ını bul
@@ -715,36 +811,16 @@
               }
             }
             
-            // Sadece parent entry'leri (references'i olmayan) bul
-            parentEntries = allEntries.filter(entry => !entry.references || entry.references.length === 0);
-            
-            // Parent entry'leri tarihe göre sırala (yeniden eskiye)
-            parentEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
-            
-            // En son eklenen entry ve parent'ını başa taşı
-            if (latestEntryId) {
-              const latestEntryIndex = parentEntries.findIndex(entry => entry.id === latestEntryId);
-              if (latestEntryIndex !== -1) {
-                const latestEntry = parentEntries.splice(latestEntryIndex, 1)[0];
-                parentEntries.unshift(latestEntry);
-              }
-              
-              if (parentOfLatestId) {
-                const parentOfLatestIndex = parentEntries.findIndex(entry => entry.id === parentOfLatestId);
-                if (parentOfLatestIndex !== -1) {
-                  const parentOfLatest = parentEntries.splice(parentOfLatestIndex, 1)[0];
-                  parentEntries.unshift(parentOfLatest);
-                }
-              }
-            }
-            
-            // İlk 20 parent entry'yi göster
+            // Entry'leri düzenle ve göster
             displayEntries(0, entriesPerPage);
             
             // Daha fazla yükle butonuna event listener ekle
             document.getElementById('loadMoreBtn').addEventListener('click', () => {
               displayEntries(displayedEntries, entriesPerPage);
             });
+            
+            // 30 saniyede bir yeni entry kontrol et
+            setInterval(checkForNewEntries, 30000);
           } catch (error) {
             console.error("Initialization error:", error);
             try {
@@ -754,7 +830,7 @@
               
               // En son eklenen entry'nin ID'sini bul
               if (allEntries.length > 0) {
-                const sortedByDate = [...allEntries].sort((a, b) => new Date(b.date) - new Date(a.date));
+                const sortedByDate = sortEntriesByDate([...allEntries]);
                 latestEntryId = sortedByDate[0].id;
                 
                 // En son eklenen entry'nin parent'ını bul
@@ -764,33 +840,15 @@
                 }
               }
               
-              // Sadece parent entry'leri (references'i olmayan) bul
-              parentEntries = allEntries.filter(entry => !entry.references || entry.references.length === 0);
-              
-              parentEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
-              
-              // En son eklenen entry ve parent'ını başa taşı
-              if (latestEntryId) {
-                const latestEntryIndex = parentEntries.findIndex(entry => entry.id === latestEntryId);
-                if (latestEntryIndex !== -1) {
-                  const latestEntry = parentEntries.splice(latestEntryIndex, 1)[0];
-                  parentEntries.unshift(latestEntry);
-                }
-                
-                if (parentOfLatestId) {
-                  const parentOfLatestIndex = parentEntries.findIndex(entry => entry.id === parentOfLatestId);
-                  if (parentOfLatestIndex !== -1) {
-                    const parentOfLatest = parentEntries.splice(parentOfLatestIndex, 1)[0];
-                    parentEntries.unshift(parentOfLatest);
-                  }
-                }
-              }
-              
+              // Entry'leri düzenle ve göster
               displayEntries(0, entriesPerPage);
               
               document.getElementById('loadMoreBtn').addEventListener('click', () => {
                 displayEntries(displayedEntries, entriesPerPage);
               });
+              
+              // 30 saniyede bir yeni entry kontrol et
+              setInterval(checkForNewEntries, 30000);
             } catch (fallbackError) {
               console.error("Fallback failed:", fallbackError);
               document.getElementById("entries").innerHTML = 
