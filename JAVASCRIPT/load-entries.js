@@ -242,8 +242,8 @@
           // Entry'leri grupla (ilk koddaki algoritma)
           groupedEntries = groupEntries(actualEntries);
           
-          // İlk 7 grubu göster (toplamda 7 entry değil, 7 grup)
-          const groupsToShow = groupedEntries.slice(0, 7);
+          // İlk 5 grubu göster (toplamda 5 entry değil, 5 grup)
+          const groupsToShow = groupedEntries.slice(0, 5);
           
           // Grupları ekrana bas
           groupsToShow.forEach(group => {
