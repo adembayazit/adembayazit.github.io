@@ -189,6 +189,29 @@
             z-index: 10;
         }
 
+        /* Parent entry için özel stil */
+        .parent-of-latest {
+            border: 2px solid #ff9900 !important;
+            box-shadow: 0 0 15px rgba(255, 153, 0, 0.4) !important;
+            background: rgba(255, 153, 0, 0.1) !important;
+            position: relative;
+            order: -2; /* En son eklenenden önce */
+        }
+
+        .parent-of-latest::before {
+            content: "PARENT ENTRY";
+            position: absolute;
+            top: -12px;
+            right: 15px;
+            background: #ff9900;
+            color: black;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 4px;
+            z-index: 10;
+        }
+
         /* Mobil için stiller */
         @media (max-width: 768px) {
             .microblog-container {
@@ -206,7 +229,8 @@
                 color:white;
             }
 
-            .latest-entry::before {
+            .latest-entry::before,
+            .parent-of-latest::before {
                 right: 50%;
                 transform: translateX(50%);
                 font-size: 10px;
@@ -371,6 +395,7 @@
         let displayedEntries = 0;
         const entriesPerPage = 20;
         let latestEntryId = null; // En son eklenen entry ID'sini saklamak için
+        let parentOfLatestId = null; // En son eklenen entry'nin parent ID'sini saklamak için
 
         // 2. PROXY HELPER FONKSİYONU
         async function fetchViaProxy(path, method = 'GET', body = null) {
@@ -485,6 +510,11 @@
             entryDiv.classList.add('latest-entry');
           }
           
+          // En son eklenen entry'nin parent'i ise özel sınıf ekle
+          if (entry.id === parentOfLatestId) {
+            entryDiv.classList.add('parent-of-latest');
+          }
+          
           if (depth > 0) {
             entryDiv.style.marginLeft = (depth * 30) + 'px';
           }
@@ -548,8 +578,8 @@
             const parentEntry = parentEntries[i];
             const entryElement = createEntryElement(parentEntry, 0);
             
-            // En son eklenen entry ise container'ın en başına ekle
-            if (parentEntry.id === latestEntryId) {
+            // En son eklenen entry veya parent ise container'ın en başına ekle
+            if (parentEntry.id === latestEntryId || parentEntry.id === parentOfLatestId) {
               container.insertBefore(entryElement, container.firstChild);
             } else {
               container.appendChild(entryElement);
@@ -568,7 +598,12 @@
                 container.insertBefore(childElement, container.firstChild);
               } else {
                 // Child entry'leri parent'ın hemen altına ekle
-                container.insertBefore(childElement, entryElement.nextSibling);
+                const nextElement = entryElement.nextSibling;
+                if (nextElement) {
+                  container.insertBefore(childElement, nextElement);
+                } else {
+                  container.appendChild(childElement);
+                }
               }
             });
           }
@@ -672,6 +707,12 @@
               // Tarihe göre sırala (en yeni en başta)
               const sortedByDate = [...allEntries].sort((a, b) => new Date(b.date) - new Date(a.date));
               latestEntryId = sortedByDate[0].id;
+              
+              // En son eklenen entry'nin parent'ını bul
+              const latestEntry = allEntries.find(entry => entry.id === latestEntryId);
+              if (latestEntry && latestEntry.references && latestEntry.references.length > 0) {
+                parentOfLatestId = latestEntry.references[0];
+              }
             }
             
             // Sadece parent entry'leri (references'i olmayan) bul
@@ -679,6 +720,23 @@
             
             // Parent entry'leri tarihe göre sırala (yeniden eskiye)
             parentEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            // En son eklenen entry ve parent'ını başa taşı
+            if (latestEntryId) {
+              const latestEntryIndex = parentEntries.findIndex(entry => entry.id === latestEntryId);
+              if (latestEntryIndex !== -1) {
+                const latestEntry = parentEntries.splice(latestEntryIndex, 1)[0];
+                parentEntries.unshift(latestEntry);
+              }
+              
+              if (parentOfLatestId) {
+                const parentOfLatestIndex = parentEntries.findIndex(entry => entry.id === parentOfLatestId);
+                if (parentOfLatestIndex !== -1) {
+                  const parentOfLatest = parentEntries.splice(parentOfLatestIndex, 1)[0];
+                  parentEntries.unshift(parentOfLatest);
+                }
+              }
+            }
             
             // İlk 20 parent entry'yi göster
             displayEntries(0, entriesPerPage);
@@ -698,12 +756,36 @@
               if (allEntries.length > 0) {
                 const sortedByDate = [...allEntries].sort((a, b) => new Date(b.date) - new Date(a.date));
                 latestEntryId = sortedByDate[0].id;
+                
+                // En son eklenen entry'nin parent'ını bul
+                const latestEntry = allEntries.find(entry => entry.id === latestEntryId);
+                if (latestEntry && latestEntry.references && latestEntry.references.length > 0) {
+                  parentOfLatestId = latestEntry.references[0];
+                }
               }
               
               // Sadece parent entry'leri (references'i olmayan) bul
               parentEntries = allEntries.filter(entry => !entry.references || entry.references.length === 0);
               
               parentEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
+              
+              // En son eklenen entry ve parent'ını başa taşı
+              if (latestEntryId) {
+                const latestEntryIndex = parentEntries.findIndex(entry => entry.id === latestEntryId);
+                if (latestEntryIndex !== -1) {
+                  const latestEntry = parentEntries.splice(latestEntryIndex, 1)[0];
+                  parentEntries.unshift(latestEntry);
+                }
+                
+                if (parentOfLatestId) {
+                  const parentOfLatestIndex = parentEntries.findIndex(entry => entry.id === parentOfLatestId);
+                  if (parentOfLatestIndex !== -1) {
+                    const parentOfLatest = parentEntries.splice(parentOfLatestIndex, 1)[0];
+                    parentEntries.unshift(parentOfLatest);
+                  }
+                }
+              }
+              
               displayEntries(0, entriesPerPage);
               
               document.getElementById('loadMoreBtn').addEventListener('click', () => {
