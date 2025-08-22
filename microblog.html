@@ -165,6 +165,11 @@
             gap: 10px;
         }
 
+        /* Lady Bug yazısı için düzeltme - her zaman beyaz */
+        .bug-icon {
+            color: white !important;
+        }
+
         /* Mobil için stiller */
         @media (max-width: 768px) {
             .microblog-container {
@@ -176,7 +181,7 @@
             }
             
             .section-title {
-                color: white;
+                color: white; /* Mobilde beyaz */
                 text-align: center; /* Mobilde ortala */
                 justify-content: center; /* İkonları da ortala */
             }
@@ -659,7 +664,76 @@
     </script>
 
     <!-- Matrix Arka Plan Script'i -->
-    <script src="/JAVASCRIPT/matrix.js"></script>
+    <script>
+        // Matrix efekti için düzenlenmiş kod
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Ekran boyutunu ayarla
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        // İlk boyutlandırma
+        resizeCanvas();
+
+        // Ekran boyutu değiştiğinde canvas'ı yeniden boyutlandır
+        window.addEventListener('resize', resizeCanvas);
+        
+        // Ekran yönü değiştiğinde canvas'ı yeniden boyutlandır
+        window.addEventListener('orientationchange', function() {
+            // Kısa bir gecikme ekleyerek ekranın tam dönmesini bekleyelim
+            setTimeout(function() {
+                resizeCanvas();
+                initMatrix();
+            }, 300);
+        });
+
+        const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン';
+        const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const nums = '0123456789';
+        const symbols = '!@#$%^&*()_+-=[]{}|;:,.<>?/';
+
+        const alphabet = katakana + latin + nums + symbols;
+
+        const fontSize = 14;
+        let columns = Math.floor(canvas.width / fontSize);
+        
+        // Matrix efekti için rain drops
+        const rainDrops = [];
+        
+        function initMatrix() {
+            columns = Math.floor(canvas.width / fontSize);
+            rainDrops.length = 0;
+            
+            for (let x = 0; x < columns; x++) {
+                rainDrops[x] = 1;
+            }
+        }
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#0F0';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < rainDrops.length; i++) {
+                const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+                ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+                
+                if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    rainDrops[i] = 0;
+                }
+                rainDrops[i]++;
+            }
+        }
+
+        // Matrix animasyonunu başlat
+        initMatrix();
+        const matrixInterval = setInterval(drawMatrix, 33);
+    </script>
     
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-0WNL3VLY3F"></script>
