@@ -9,17 +9,42 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Open Graph (Facebook, WhatsApp, LinkedIn vs.) -->   
+    <meta property="og:title" content="Adem Bayazıt | All Microblog Entries" />
+    <meta property="og:description" content="Explore all entries in Adem Bayazıt's cybersecurity microblog." />
+    <meta property="og:image" content="https://adembayazit.com/IMAGES/preview.png" />
+    <meta property="og:url" content="https://adembayazit.com/microblog.html" />
+    <meta property="og:type" content="website" />
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Adem Bayazıt - All Microblog Entries">
+    <meta name="twitter:description" content="Explore all entries in Adem Bayazıt's cybersecurity microblog.">
+    <meta name="twitter:image" content="https://adembayazit.com/IMAGES/preview.png">
+    <meta name="twitter:image:alt" content="Adem Bayazıt">
+    
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-TFN7XD9Z');</script>
+    <!-- End Google Tag Manager -->
     <style>
+        html {
+          scroll-behavior: smooth;
+        }
         /* Özel stiller */
         .microblog-container {
             width: 100%;
             padding: 60px 10%;
             background: transparent;
             margin-top: 80px;
+            position: relative;
+            z-index: 1;
         }
         
         .entries-container {
-            background: black;
+            background: rgba(0, 0, 0, 0.7);
             border: 2px solid limegreen;
             border-radius: 20px;
             padding: 1rem;
@@ -27,6 +52,7 @@
             flex-direction: column;
             gap: 1.5rem;
             box-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
+            backdrop-filter: blur(5px);
         }
         
         .load-more-container {
@@ -117,15 +143,37 @@
             display: block;
         }
 
+        /* Matrix Canvas için stiller */
+        #matrixCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
         /* Mobil için back-to-home boşluğu */
         @media (max-width: 768px) {
+            .microblog-container {
+                padding: 60px 5%;
+            }
+            
             .back-to-home {
-                margin-bottom: 20px; /* 5px daha fazla boşluk */
+                margin-bottom: 20px;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TFN7XD9Z"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    
+    <!-- Matrix Arka Plan Canvas'ı -->
+    <canvas id="matrixCanvas"></canvas>
+
     <header class="header">
         <a href="/" class="logo"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">{adembayazit} </a>
         <nav class="navbar">
@@ -155,10 +203,105 @@
         </div>
     </section>
 
-    <footer style="text-align: center; padding: 20px; font-size: 14px; color: white; margin-top: 50px;">
+    <footer style="text-align: center; padding: 20px; font-size: 14px; color: white; margin-top: 50px; position: relative; z-index: 1;">
         <hr style="margin-bottom: 10px; border-color: limegreen;" />
         <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.2 | July 2025</p>
     </footer>
+
+    <!-- Sarı Nokta (IP Göstergesi) -->
+    <script>
+        const dot = document.createElement('div');
+        dot.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 18px;
+            height: 18px;
+            background: #f9d71c;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 10px rgba(50, 205, 50, 0.8);
+            cursor: pointer;
+            z-index: 9999;
+            transition: all 0.3s;
+        `;
+
+        const tooltip = document.createElement('div');
+        tooltip.style.cssText = `
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            min-width: 240px;
+            backdrop-filter: blur(5px);
+        `;
+
+        dot.appendChild(tooltip);
+        document.body.appendChild(dot);
+
+        dot.addEventListener('mouseenter', () => tooltip.style.opacity = '1');
+        dot.addEventListener('mouseleave', () => tooltip.style.opacity = '0');
+        fetch('https://ipinfo.io/json?token=68a1229187303a')
+            .then(async res => {
+                if (!res.ok) {
+                    const text = await res.text();
+                    throw new Error(`Hatalı cevap (${res.status}): ${text}`);
+                }
+                return res.json();
+            })
+            .then(data => {
+                const now = new Date();
+                const {
+                    ip, hostname, city, region,
+                    country, loc, org, postal, timezone
+                } = data;
+
+                tooltip.innerHTML = `
+                    <div style="margin-bottom: 3px; font-weight: bold; color: #00ff00;">✓ User IP Detected</div>
+                    <div><strong>IP:</strong> ${ip}</div>
+                    <div><strong>Host:</strong> ${hostname}</div>
+                    <div><strong>City:</strong> ${city}</div>
+                    <div><strong>Country:</strong> ${country}</div>
+                    <div><strong>Location</strong> ${loc}</div>
+                    <div><strong>Postal:</strong> ${postal}</div>
+                    <div><strong>Org:</strong> ${org}</div>
+                    <div><strong>Time:</strong> ${now.toLocaleString('tr-TR')}</div>
+                    <div style="font-size: 9px; margin-top: 4px; color: #ccc;">${navigator.userAgent.split(' ')[0]}</div>
+                `;
+
+                // POST ile Netlify fonksiyonuna gönder
+                fetch('https://adembayazit.netlify.app/.netlify/functions/log-visitor', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ip, hostname, city, region,
+                        country, loc, org, postal,
+                        timezone, timestamp: now.toISOString(),
+                        userAgent: navigator.userAgent
+                    })
+                }).then(res => res.json())
+                    .then(console.log)
+                    .catch(err => console.error("POST hatası:", err));
+            })
+            .catch(error => {
+                const now = new Date();
+                tooltip.innerHTML = `
+                    <div style="margin-bottom: 5px; font-weight: bold; color: #ff5555;">❌ Hata</div>
+                    <div><strong>Zaman:</strong> ${now.toLocaleString('tr-TR')}</div>
+                    <div><strong>Mesaj:</strong> ${error.message}</div>
+                `;
+                dot.style.background = "#ff5555";
+            });
+    </script>
 
     <script>
         // 1. GLOBAL DEĞİŞKENLER
@@ -495,6 +638,18 @@
 
         // 6. UYGULAMAYI BAŞLAT
         document.addEventListener("DOMContentLoaded", initializeApp);
+    </script>
+
+    <!-- Matrix Arka Plan Script'i -->
+    <script src="/JAVASCRIPT/matrix.js"></script>
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0WNL3VLY3F"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-0WNL3VLY3F');
     </script>
 </body>
 </html>
