@@ -74,13 +74,67 @@
             margin-bottom: 15px;
             font-style: italic;
         }
+        
+        /* Dropdown stilleri */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropbtn {
+            font-size: 18px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: green;
+            min-width: 160px;
+            z-index: 100;
+            border: 1px solid white;
+            border-radius: 10px;
+        }
+
+        .dropdown-content a {
+            color: white;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            color: white;
+            background-color: limegreen;
+            text-shadow: 0 0 10px green;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
     </style>
 </head>
 <body>
     <header class="header">
         <a href="/" class="logo"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">{adembayazit} </a>
         <nav class="navbar">
-            <a href="/" style="--i:1;" class="active">Ana Sayfa</a>
+            <a href="/" style="--i:1;">Ana Sayfa</a>
+            <div class="dropdown">
+                <a href="#" style="--i:5;" class="dropbtn"> <img src="IMAGES/Ata.svg" alt="Ata Icon" class="ata-icon"><span class="fi fi-tr"></span> <span class='bx bx-code-alt'></span> Ethical Hacker <span class='bx bx-chevron-down'></span></a>
+                <div class="dropdown-content">
+                    <a href="#tools"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hacker-icon"> What is an Ethical Hacker?</a>
+                    <a href="#reports"><img src="IMAGES/glossary.svg" alt="Glossary" class="glossary-icon"> Cybersecurity Glossary</a>
+                    <a href="#payloads"><img src="IMAGES/soc.svg" alt="Soc" class="soc-icon"> What is a SOC ?</a>
+                    <a href="#payloads"><img src="IMAGES/vulnerabilities.svg" alt="Vulnerabilities" class="vulnerabilities-icon"> Vulnerabilities</a>
+                    <a href="#payloads"><img src="IMAGES/steganography.svg" alt="Steganography" class="steganography-icon"> Steganography</a>
+                    <a href="#payloads"><img src="IMAGES/cryptography.svg" alt="Cryptography" class="cryptography-icon"> Cryptography</a>    
+                    <a href="#payloads"><img src="IMAGES/education.svg" alt="Education" class="education-icon"> Cybersecurity Learning Resources</a>
+                </div>
+            </div>
         </nav>
     </header>
 
@@ -222,9 +276,13 @@
           });
         }
 
-        function createEntryElement(entry) {
+        function createEntryElement(entry, depth = 0) {
           const entryDiv = document.createElement("div");
-          entryDiv.className = `entry`;
+          entryDiv.className = `entry ${depth > 0 ? 'child-entry' : ''}`;
+          
+          if (depth > 0) {
+            entryDiv.style.marginLeft = (depth * 30) + 'px';
+          }
 
           const time = new Date(entry.date).toLocaleString("tr-TR", {
             year: "numeric", 
@@ -282,8 +340,18 @@
           // Yeni entry'leri ekle
           const endIndex = Math.min(startIndex + count, allEntries.length);
           for (let i = startIndex; i < endIndex; i++) {
-            const entryElement = createEntryElement(allEntries[i]);
+            const entryElement = createEntryElement(allEntries[i], 0);
             container.appendChild(entryElement);
+            
+            // Bu entry'nin alt entry'lerini bul ve ekle
+            const childEntries = allEntries.filter(e => 
+              e.references && e.references.includes(allEntries[i].id)
+            );
+            
+            childEntries.forEach(childEntry => {
+              const childElement = createEntryElement(childEntry, 1);
+              container.appendChild(childElement);
+            });
           }
           
           displayedEntries = endIndex;
