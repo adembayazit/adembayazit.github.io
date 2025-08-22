@@ -13,10 +13,9 @@
 
         let allEntries = [];
         let groupedEntries = [];
-        let displayedEntries = 0;
-        const entriesPerPage = 20;
-        let latestEntryId = null;
-        let parentOfLatestId = null;
+        let refreshInterval = 30000; // 30 saniyede bir kontrol
+        let checkInterval;
+        let lastEntryCount = 0;
 
         // 2. PROXY HELPER FONKSİYONU
         async function fetchViaProxy(path, method = 'GET', body = null) {
@@ -54,7 +53,7 @@
               likesCache.data = JSON.parse(localLikes);
               pinsCache.data = JSON.parse(localPins);
             } catch (parseError) {
-              console.Error('Local storage parse error:', parseError);
+              console.error('Local storage parse error:', parseError);
             }
           }
         }
@@ -117,63 +116,7 @@
           });
         }
 
-        function createEntryElement(entry, depth = 0) {
-          const entryDiv = document.createElement("div");
-          entryDiv.className = `entry ${depth > 0 ? 'child-entry' : ''}`;
-          
-          if (entry.id === latestEntryId) {
-            entryDiv.classList.add('latest-entry');
-          }
-          
-          if (entry.id === parentOfLatestId) {
-            entryDiv.classList.add('parent-of-latest');
-          }
-          
-          if (depth > 0) {
-            entryDiv.style.marginLeft = (depth * 30) + 'px';
-          }
-
-          const time = new Date(entry.date).toLocaleString("tr-TR", {
-            year: "numeric", 
-            month: "2-digit", 
-            day: "2-digit", 
-            hour: "2-digit", 
-            minute: "2-digit"
-          }).replace(",", "");
-
-          const likeCount = likesCache.data[entry.id] || 0;
-          const pinCount = pinsCache.data[entry.id] || 0;
-
-          const formattedContent = formatContent(entry.content);
-
-          entryDiv.innerHTML = `
-            <div class="timestamp">
-              <span class="fa-solid fa-bug bug-iconentry"></span> ${time}
-            </div>
-            <div class="entry-id">#${entry.id}</div>
-            <div class="content">${formattedContent}</div>
-            <div class="interaction-buttons">
-              <div class="daisy-like" data-entry-id="${entry.id}">
-                <img src="/IMAGES/daisy.svg" class="daisy-icon" alt="Beğen" />
-                <span class="like-count">${likeCount}</span>
-              </div>
-              <div class="pine-pin" data-entry-id="${entry.id}">
-                <img src="/IMAGES/pine.svg" class="pine-icon" alt="Pinle" />
-                <span class="pin-count">${pinCount}</span>
-              </div>
-            </div>
-          `;
-
-          const likeIcon = entryDiv.querySelector(".daisy-icon");
-          likeIcon?.addEventListener("click", () => handleLikeClick(entry.id, entryDiv));
-
-          const pinIcon = entryDiv.querySelector(".pine-icon");
-          pinIcon?.addEventListener("click", () => handlePinClick(entry.id, entryDiv));
-
-          return entryDiv;
-        }
-
-        // Entry'leri gruplama fonksiyonu
+        // Entry'leri gruplama fonksiyonu (ilk koddan alındı)
         function groupEntries(entries) {
           const parentMap = new Map();
           const childMap = new Map();
@@ -221,23 +164,89 @@
           return groups;
         }
 
-        function displayEntries(startIndex, count) {
-          const container = document.getElementById("entries");
-          const loadingElement = document.getElementById("loading");
-          const loadMoreBtn = document.getElementById("loadMoreBtn");
+        function createEntryElement(entry, depth = 0) {
+          const entryDiv = document.createElement("div");
+          entryDiv.className = `entry ${depth > 0 ? 'child-entry' : ''}`;
           
-          if (startIndex >= groupedEntries.length) {
-            loadMoreBtn.style.display = 'none';
+          // Spotify link kontrolü
+          const hasSpotifyLink = entry.content.includes('open.spotify.com');
+          if (!hasSpotifyLink) {
+            entryDiv.classList.add('regular-entry');
+          }
+
+          if (depth > 0) {
+            entryDiv.style.marginLeft = (depth * 30) + 'px';
+          }
+
+          const time = new Date(entry.date).toLocaleString("tr-TR", {
+            year: "numeric", 
+            month: "2-digit", 
+            day: "2-digit", 
+            hour: "2-digit", 
+            minute: "2-digit"
+          }).replace(",", "");
+
+          const likeCount = likesCache.data[entry.id] || 0;
+          const pinCount = pinsCache.data[entry.id] || 0;
+
+          const formattedContent = formatContent(entry.content);
+
+          entryDiv.innerHTML = `
+            <div class="timestamp">
+              <span class="fa-solid fa-bug bug-iconentry"></span> ${time}
+            </div>
+            <div class="entry-id">#${entry.id}</div>
+            <div class="content">${formattedContent}</div>
+            <div class="interaction-buttons">
+              <div class="daisy-like" data-entry-id="${entry.id}">
+                <img src="/IMAGES/daisy.svg" class="daisy-icon" alt="Beğen" />
+                <span class="like-count">${likeCount}</span>
+              </div>
+              <div class="pine-pin" data-entry-id="${entry.id}">
+                <img src="/IMAGES/pine.svg" class="pine-icon" alt="Pinle" />
+                <span class="pin-count">${pinCount}</span>
+              </div>
+            </div>
+          `;
+
+          const likeIcon = entryDiv.querySelector(".daisy-icon");
+          likeIcon?.addEventListener("click", () => handleLikeClick(entry.id, entryDiv));
+
+          const pinIcon = entryDiv.querySelector(".pine-icon");
+          pinIcon?.addEventListener("click", () => handlePinClick(entry.id, entryDiv));
+
+          return entryDiv;
+        }
+
+        function processEntries(entries) {
+          const container = document.getElementById("entries");
+          if (!container) {
+            console.error('Entries container not found!');
             return;
           }
           
-          loadingElement.style.display = 'block';
+          container.innerHTML = "";
+
+          const actualEntries = entries.records || entries;
+          allEntries = [...actualEntries];
           
-          // Yeni grupları ekle
-          const endIndex = Math.min(startIndex + count, groupedEntries.length);
-          for (let i = startIndex; i < endIndex; i++) {
-            const group = groupedEntries[i];
-            
+          // Yeni entry kontrolü
+          if (actualEntries.length !== lastEntryCount) {
+            lastEntryCount = actualEntries.length;
+            if (lastEntryCount > 0) {
+              // Yeni entry geldiğinde sayfayı en üste kaydır
+              window.scrollTo(0, 0);
+            }
+          }
+
+          // Entry'leri grupla (ilk koddaki algoritma)
+          groupedEntries = groupEntries(actualEntries);
+          
+          // İlk 7 grubu göster (toplamda 7 entry değil, 7 grup)
+          const groupsToShow = groupedEntries.slice(0, 7);
+          
+          // Grupları ekrana bas
+          groupsToShow.forEach(group => {
             // Grup container'ı oluştur
             const groupDiv = document.createElement("div");
             groupDiv.className = "entry-group";
@@ -253,19 +262,10 @@
             });
             
             container.appendChild(groupDiv);
-          }
-          
-          displayedEntries = endIndex;
-          document.getElementById('entryCount').textContent = `Total ${allEntries.length} entries loaded`;
-          
+          });
+
           // Çeviri ikonlarını ekle
           addTranslationIcons();
-          
-          loadingElement.style.display = 'none';
-          
-          if (displayedEntries >= groupedEntries.length) {
-            loadMoreBtn.style.display = 'none';
-          }
         }
 
         // 4. INTERACTION FONKSİYONLARI
@@ -341,62 +341,37 @@
           }
         }
 
+        // Yeni entry kontrol fonksiyonu
+        async function checkForNewEntries() {
+          try {
+            const entries = await fetchViaProxy('/b/68933248ae596e708fc2fbbc/latest');
+            const actualEntries = entries.records || entries;
+            
+            if (actualEntries.length !== lastEntryCount) {
+              processEntries(entries);
+            }
+          } catch (error) {
+            console.error('Error checking for new entries:', error);
+          }
+        }
+
         // 5. BAŞLANGIÇ FONKSİYONU
         async function initializeApp() {
           try {
             await loadInteractions();
-            const entriesData = await fetchViaProxy('/b/68933248ae596e708fc2fbbc/latest');
-            allEntries = entriesData.records || entriesData;
+            const entries = await fetchViaProxy('/b/68933248ae596e708fc2fbbc/latest');
+            processEntries(entries);
             
-            // Tüm entry'leri tarihe göre yeniden eskiye sırala
-            allEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
-            
-            // En son eklenen entry'nin ID'sini bul
-            if (allEntries.length > 0) {
-              latestEntryId = allEntries[0].id;
-              
-              // En son eklenen entry'nin parent'ını bul
-              const latestEntry = allEntries.find(entry => entry.id === latestEntryId);
-              if (latestEntry && latestEntry.references && latestEntry.references.length > 0) {
-                parentOfLatestId = latestEntry.references[0];
-              }
-            }
-            
-            // Entry'leri grupla
-            groupedEntries = groupEntries(allEntries);
-            
-            // İlk 20 grubu göster
-            displayEntries(0, entriesPerPage);
-            
-            // Daha fazla yükle butonuna event listener ekle
-            document.getElementById('loadMoreBtn').addEventListener('click', () => {
-              displayEntries(displayedEntries, entriesPerPage);
-            });
+            // Otomatik yenileme kontrolünü başlat
+            checkInterval = setInterval(checkForNewEntries, refreshInterval);
           } catch (error) {
             console.error("Initialization error:", error);
             try {
               const response = await fetch("entries.json");
-              const entriesData = await response.json();
-              allEntries = entriesData.records || entriesData;
+              processEntries(await response.json());
               
-              allEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
-              
-              if (allEntries.length > 0) {
-                latestEntryId = allEntries[0].id;
-                
-                const latestEntry = allEntries.find(entry => entry.id === latestEntryId);
-                if (latestEntry && latestEntry.references && latestEntry.references.length > 0) {
-                  parentOfLatestId = latestEntry.references[0];
-                }
-              }
-              
-              groupedEntries = groupEntries(allEntries);
-              
-              displayEntries(0, entriesPerPage);
-              
-              document.getElementById('loadMoreBtn').addEventListener('click', () => {
-                displayEntries(displayedEntries, entriesPerPage);
-              });
+              // Fallback için de kontrolü başlat
+              checkInterval = setInterval(checkForNewEntries, refreshInterval);
             } catch (fallbackError) {
               console.error("Fallback failed:", fallbackError);
               document.getElementById("entries").innerHTML = 
@@ -407,3 +382,10 @@
 
         // 6. UYGULAMAYI BAŞLAT
         document.addEventListener("DOMContentLoaded", initializeApp);
+
+        // Sayfa kapatılırken interval'i temizle
+        window.addEventListener('beforeunload', () => {
+          if (checkInterval) {
+            clearInterval(checkInterval);
+          }
+        });
