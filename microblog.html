@@ -661,60 +661,7 @@
     </script>
 
     <!-- Matrix Arka Plan Script'i -->
-    <script>
-        // Matrix efekti için JavaScript kodu
-        const canvas = document.getElementById('matrixCanvas');
-        const ctx = canvas.getContext('2d');
-
-        // Canvas boyutunu ayarla
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-
-        // İlk boyutlandırma
-        resizeCanvas();
-
-        // Yeniden boyutlandırma olayını dinle
-        window.addEventListener('resize', resizeCanvas);
-        window.addEventListener('orientationchange', resizeCanvas);
-
-        // Matrix karakterleri
-        const matrixChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}";
-        const fontSize = 14;
-        const columns = Math.floor(canvas.width / fontSize);
-        
-        // Her kolon için düşüş pozisyonu
-        const drops = [];
-        for (let i = 0; i < columns; i++) {
-            drops[i] = 1;
-        }
-
-        // Matrix efekti çizimi
-        function drawMatrix() {
-            // Yarı saydam siyah arkaplan
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.04)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            ctx.fillStyle = '#0F0'; // Yeşil renk
-            ctx.font = fontSize + 'px monospace';
-
-            for (let i = 0; i < drops.length; i++) {
-                const text = matrixChars[Math.floor(Math.random() * matrixChars.length)];
-                
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
-                
-                drops[i]++;
-            }
-        }
-
-        // Animasyonu başlat
-        setInterval(drawMatrix, 35);
-    </script>
+    <script src="/JAVASCRIPT/matrix.js"></script>
     
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-0WNL3VLY3F"></script>
