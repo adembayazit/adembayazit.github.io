@@ -702,11 +702,12 @@
             const entriesData = await fetchViaProxy('/b/68933248ae596e708fc2fbbc/latest');
             allEntries = entriesData.records || entriesData;
             
+            // Tüm entry'leri tarihe göre yeniden eskiye sırala
+            allEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
             // En son eklenen entry'nin ID'sini bul
             if (allEntries.length > 0) {
-              // Tarihe göre sırala (en yeni en başta)
-              const sortedByDate = [...allEntries].sort((a, b) => new Date(b.date) - new Date(a.date));
-              latestEntryId = sortedByDate[0].id;
+              latestEntryId = allEntries[0].id;
               
               // En son eklenen entry'nin parent'ını bul
               const latestEntry = allEntries.find(entry => entry.id === latestEntryId);
@@ -715,7 +716,7 @@
               }
             }
             
-            // Sadece parent entry'leri (references'i olmayan) bul
+            // Parent entry'leri bul (references'i olmayan)
             parentEntries = allEntries.filter(entry => !entry.references || entry.references.length === 0);
             
             // Parent entry'leri tarihe göre sırala (yeniden eskiye)
@@ -723,18 +724,20 @@
             
             // En son eklenen entry ve parent'ını başa taşı
             if (latestEntryId) {
-              const latestEntryIndex = parentEntries.findIndex(entry => entry.id === latestEntryId);
-              if (latestEntryIndex !== -1) {
-                const latestEntry = parentEntries.splice(latestEntryIndex, 1)[0];
-                parentEntries.unshift(latestEntry);
-              }
-              
+              // Önce parent'ı başa al
               if (parentOfLatestId) {
                 const parentOfLatestIndex = parentEntries.findIndex(entry => entry.id === parentOfLatestId);
                 if (parentOfLatestIndex !== -1) {
                   const parentOfLatest = parentEntries.splice(parentOfLatestIndex, 1)[0];
                   parentEntries.unshift(parentOfLatest);
                 }
+              }
+              
+              // Sonra en son entry'yi başa al
+              const latestEntryIndex = parentEntries.findIndex(entry => entry.id === latestEntryId);
+              if (latestEntryIndex !== -1) {
+                const latestEntry = parentEntries.splice(latestEntryIndex, 1)[0];
+                parentEntries.unshift(latestEntry);
               }
             }
             
@@ -752,37 +755,35 @@
               const entriesData = await response.json();
               allEntries = entriesData.records || entriesData;
               
-              // En son eklenen entry'nin ID'sini bul
+              // Yukarıdaki sıralama ve düzenleme işlemlerini tekrarla
+              allEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
+              
               if (allEntries.length > 0) {
-                const sortedByDate = [...allEntries].sort((a, b) => new Date(b.date) - new Date(a.date));
-                latestEntryId = sortedByDate[0].id;
+                latestEntryId = allEntries[0].id;
                 
-                // En son eklenen entry'nin parent'ını bul
                 const latestEntry = allEntries.find(entry => entry.id === latestEntryId);
                 if (latestEntry && latestEntry.references && latestEntry.references.length > 0) {
                   parentOfLatestId = latestEntry.references[0];
                 }
               }
               
-              // Sadece parent entry'leri (references'i olmayan) bul
               parentEntries = allEntries.filter(entry => !entry.references || entry.references.length === 0);
               
               parentEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
               
-              // En son eklenen entry ve parent'ını başa taşı
               if (latestEntryId) {
-                const latestEntryIndex = parentEntries.findIndex(entry => entry.id === latestEntryId);
-                if (latestEntryIndex !== -1) {
-                  const latestEntry = parentEntries.splice(latestEntryIndex, 1)[0];
-                  parentEntries.unshift(latestEntry);
-                }
-                
                 if (parentOfLatestId) {
                   const parentOfLatestIndex = parentEntries.findIndex(entry => entry.id === parentOfLatestId);
                   if (parentOfLatestIndex !== -1) {
                     const parentOfLatest = parentEntries.splice(parentOfLatestIndex, 1)[0];
                     parentEntries.unshift(parentOfLatest);
                   }
+                }
+                
+                const latestEntryIndex = parentEntries.findIndex(entry => entry.id === latestEntryId);
+                if (latestEntryIndex !== -1) {
+                  const latestEntry = parentEntries.splice(latestEntryIndex, 1)[0];
+                  parentEntries.unshift(latestEntry);
                 }
               }
               
