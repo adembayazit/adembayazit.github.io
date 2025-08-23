@@ -233,6 +233,192 @@
             font-size: 16px;
         }
 
+        /* GELİŞTİRİLMİŞ TASARIM - Entry içi */
+        .entry {
+            background: rgba(30, 30, 30, 0.9);
+            border: 1px solid #00cc00;
+            border-radius: 10px;
+            padding: 15px;
+            position: relative;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .entry:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 255, 0, 0.4);
+        }
+        
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #333;
+        }
+        
+        /* GELİŞTİRİLMİŞ BAYRAK VE ID TASARIMI */
+        .entry-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            padding: 8px 15px;
+            border-radius: 50px;
+            border: 1px solid #444;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); }
+            50% { box-shadow: 0 4px 15px rgba(227, 10, 23, 0.4); }
+            100% { box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); }
+        }
+        
+        .entry-id {
+            background: #e30a17;
+            color: white;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 14px;
+            box-shadow: 0 0 5px rgba(227, 10, 23, 0.7);
+            transition: all 0.3s;
+        }
+        
+        .entry-id:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(227, 10, 23, 0.9);
+        }
+        
+        .flag-container {
+            position: relative;
+            width: 30px;
+            height: 20px;
+            border-radius: 2px;
+            overflow: hidden;
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+            transition: transform 0.3s;
+        }
+        
+        .flag-container:hover {
+            transform: scale(1.1);
+        }
+        
+        .turkish-flag {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, #e30a17 70%, white 70%);
+        }
+        
+        .turkish-flag::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 35%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+        }
+        
+        .turkish-flag::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 42%;
+            transform: translate(-50%, -50%);
+            width: 4px;
+            height: 4px;
+            background: #e30a17;
+            border-radius: 50%;
+        }
+        
+        /* Tarih formatı - sadece sayılar */
+        .timestamp {
+            color: #aaa;
+            font-size: 12px;
+            font-variant-numeric: tabular-nums;
+        }
+        
+        .entry-content {
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        /* GELİŞTİRİLMİŞ DAISY VE PINE İKONLARI */
+        .interaction-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .daisy-like, .pine-pin {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .daisy-like:hover {
+            background: rgba(50, 205, 50, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .pine-pin:hover {
+            background: rgba(30, 144, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .daisy-icon, .pine-icon {
+            width: 20px;
+            height: 20px;
+            transition: all 0.3s;
+        }
+        
+        .daisy-icon {
+            color: #32cd32;
+        }
+        
+        .pine-icon {
+            color: #1e90ff;
+        }
+        
+        .daisy-like:hover .daisy-icon {
+            transform: rotate(15deg) scale(1.2);
+            color: #00ff00;
+        }
+        
+        .pine-pin:hover .pine-icon {
+            transform: rotate(-15deg) scale(1.2);
+            color: #00bfff;
+        }
+        
+        .like-count, .pin-count {
+            font-size: 14px;
+            min-width: 20px;
+            text-align: center;
+        }
+        
+        .action-animation {
+            animation: pop 0.5s ease;
+        }
+        
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
         /* Mobil için stiller */
         @media (max-width: 768px) {
             .microblog-container {
@@ -255,6 +441,26 @@
                 right: 50%;
                 transform: translateX(50%);
                 font-size: 10px;
+            }
+            
+            .entry-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .entry-info {
+                padding: 6px 12px;
+            }
+            
+            .entry-id {
+                font-size: 12px;
+                padding: 3px 8px;
+            }
+            
+            .flag-container {
+                width: 25px;
+                height: 17px;
             }
         }
     </style>
@@ -533,6 +739,7 @@
             entryDiv.style.marginLeft = (depth * 30) + 'px';
           }
 
+          // Tarih formatını sadece sayısal yap
           const time = new Date(entry.date).toLocaleString("tr-TR", {
             year: "numeric", 
             month: "2-digit", 
@@ -547,27 +754,32 @@
           const formattedContent = formatContent(entry.content);
 
           entryDiv.innerHTML = `
-            <div class="timestamp">
-              <span class="fa-solid fa-bug bug-iconentry"></span> ${time}
+            <div class="entry-header">
+                <div class="entry-info">
+                    <div class="flag-container">
+                        <div class="turkish-flag"></div>
+                    </div>
+                    <div class="entry-id">#${entry.id}</div>
+                </div>
+                <div class="timestamp">${time}</div>
             </div>
-            <div class="entry-id">#${entry.id}</div>
             <div class="content">${formattedContent}</div>
             <div class="interaction-buttons">
               <div class="daisy-like" data-entry-id="${entry.id}">
-                <img src="/IMAGES/daisy.svg" class="daisy-icon" alt="Beğen" />
+                <i class="fas fa-heart daisy-icon"></i>
                 <span class="like-count">${likeCount}</span>
               </div>
               <div class="pine-pin" data-entry-id="${entry.id}">
-                <img src="/IMAGES/pine.svg" class="pine-icon" alt="Pinle" />
+                <i class="fas fa-thumbtack pine-icon"></i>
                 <span class="pin-count">${pinCount}</span>
               </div>
             </div>
           `;
 
-          const likeIcon = entryDiv.querySelector(".daisy-icon");
+          const likeIcon = entryDiv.querySelector(".daisy-like");
           likeIcon?.addEventListener("click", () => handleLikeClick(entry.id, entryDiv));
 
-          const pinIcon = entryDiv.querySelector(".pine-icon");
+          const pinIcon = entryDiv.querySelector(".pine-pin");
           pinIcon?.addEventListener("click", () => handlePinClick(entry.id, entryDiv));
 
           return entryDiv;
@@ -679,7 +891,7 @@
 
           try {
             likeCountSpan.textContent = currentCount + 1;
-            likeIcon.style.transform = 'scale(1.2)';
+            likeIcon.classList.add("action-animation");
             
             likesCache.data[entryId] = currentCount + 1;
             localStorage.setItem('entryLikes', JSON.stringify(likesCache.data));
@@ -693,8 +905,8 @@
           } finally {
             likesCache.isUpdating = false;
             setTimeout(() => {
-              likeIcon.style.transform = 'scale(1)';
-            }, 300);
+              likeIcon.classList.remove("action-animation");
+            }, 500);
           }
         }
 
@@ -708,7 +920,7 @@
 
           try {
             pinCountSpan.textContent = currentCount + 1;
-            pinIcon.classList.add("pinned");
+            pinIcon.classList.add("action-animation");
             
             pinsCache.data[entryId] = currentCount + 1;
             localStorage.setItem('entryPins', JSON.stringify(pinsCache.data));
@@ -722,8 +934,8 @@
           } finally {
             pinsCache.isUpdating = false;
             setTimeout(() => {
-              pinIcon.classList.remove("pinned");
-            }, 600);
+              pinIcon.classList.remove("action-animation");
+            }, 500);
           }
         }
 
