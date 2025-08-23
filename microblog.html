@@ -259,36 +259,19 @@
             color: red;
         }
 
-        /* Entry düzeni için düzenlemeler */
-        .entry {
-            position: relative;
-            padding: 15px;
-            margin-bottom: 15px;
-            background: rgba(30, 30, 30, 0.8);
-            border-radius: 8px;
-            border: 1px solid rgba(0, 255, 0, 0.3);
-        }
-
-        .content {
-            margin-bottom: 20px; /* İçerik ile butonlar arasında boşluk */
-            line-height: 1.5;
-        }
-
         /* Daisy ve Pine ikonları için yuvarlak animasyonlu tasarım */
         .interaction-buttons {
             display: flex;
             justify-content: flex-end;
             gap: 15px;
-            margin-top: 20px; /* Üstten boşluk eklendi */
-            padding-top: 15px; /* İçerikten ayrılsın diye üst padding */
-            border-top: 1px solid rgba(0, 255, 0, 0.2); /* Ayırıcı çizgi */
+            margin-top: 15px;
         }
         
         .daisy-like, .pine-pin {
             display: flex;
             align-items: center;
             gap: 5px;
-            padding: 8px 15px;
+            padding:5px 20px;
             border-radius: 20px;
             background: rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(0, 255, 0, 0.3);
@@ -307,21 +290,33 @@
         }
         
         .daisy-icon, .pine-icon {
-            width: 24px;
-            height: 24px;
+            width: 30px;
+            height: 30px;
             transition: all 0.3s;
             border-radius: 50%;
             padding: 5px;
             background: rgba(0, 0, 0, 0.3);
         }
         
+        .daisy-icon {
+            /*color: #32cd32;*/
+        }
+        
+        .pine-icon {
+            /*color: #1e90ff;*/
+        }
+        
         .daisy-like:hover .daisy-icon {
             transform: rotate(15deg) scale(1.2);
+            color: #00ff00;
+            /*background: rgba(50, 205, 50, 0.3); */
             box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
         }
         
         .pine-pin:hover .pine-icon {
             transform: rotate(-15deg) scale(1.2);
+            color: #00bfff;
+            /* background: rgba(30, 144, 255, 0.3); */
             box-shadow: 0 0 10px rgba(30, 144, 255, 0.5);
         }
         
@@ -329,7 +324,6 @@
             font-size: 14px;
             min-width: 20px;
             text-align: center;
-            color: #ccc;
         }
         
         .action-animation {
@@ -340,20 +334,6 @@
             0% { transform: scale(1); }
             50% { transform: scale(1.3); }
             100% { transform: scale(1); }
-        }
-
-        /* Entry ID stili */
-        .entry-id {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: #e30a17;
-            color: white;
-            font-weight: bold;
-            padding: 3px 8px;
-            border-radius: 10px;
-            font-size: 12px;
-            box-shadow: 0 0 5px rgba(227, 10, 23, 0.7);
         }
 
         /* Mobil için stiller */
@@ -378,18 +358,6 @@
                 right: 50%;
                 transform: translateX(50%);
                 font-size: 10px;
-            }
-
-            .interaction-buttons {
-                justify-content: center;
-            }
-
-            .entry-id {
-                position: relative;
-                top: unset;
-                right: unset;
-                display: inline-block;
-                margin-bottom: 10px;
             }
         }
     </style>
@@ -876,7 +844,7 @@
           }
         }
 
-        // 5. BAşLANGIÇ FONKSIYONU
+        // 5. BAŞLANGIÇ FONKSİYONU
         async function initializeApp() {
           try {
             await loadInteractions();
