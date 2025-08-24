@@ -1,24 +1,12 @@
-
-const imagekit = new ImageKit({
-  publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
-  privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
-  urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT
-});
-
-// The fix: Add colon to private key before base64 encoding
-const privateKeyWithColon = `${process.env.IMAGEKIT_PRIVATE_KEY}:`;
-const encodedPrivateKey = Buffer.from(privateKeyWithColon).toString('base64');
-
-
 const ImageKit = require("imagekit");
+const crypto = require("crypto");
 
 exports.handler = async (event, context) => {
   // CORS headers
   const headers = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Credentials': 'true'
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
   };
 
   // Handle preflight request
@@ -31,34 +19,33 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    console.log('Environment variables check:');
-    console.log('PUBLIC_KEY exists:', !!process.env.IMAGEKIT_PUBLIC_KEY);
-    console.log('PRIVATE_KEY exists:', !!process.env.IMAGEKIT_PRIVATE_KEY);
-    console.log('URL_ENDPOINT exists:', !!process.env.IMAGEKIT_URL_ENDPOINT);
-
-    const { 
-      IMAGEKIT_PUBLIC_KEY, 
-      IMAGEKIT_PRIVATE_KEY, 
-      IMAGEKIT_URL_ENDPOINT 
+    const {
+      IMAGEKIT_PUBLIC_KEY,
+      IMAGEKIT_PRIVATE_KEY,
+      IMAGEKIT_URL_ENDPOINT
     } = process.env;
 
     if (!IMAGEKIT_PUBLIC_KEY || !IMAGEKIT_PRIVATE_KEY || !IMAGEKIT_URL_ENDPOINT) {
-      throw new Error('ImageKit environment variables are not set');
+      throw new Error('Missing ImageKit environment variables');
     }
 
-    // Private key format kontrolü
-    if (!IMAGEKIT_PRIVATE_KEY.startsWith('private_')) {
-      throw new Error('Invalid private key format. Should start with "private_"');
-    }
-
-    const imagekit = new ImageKit({
-      publicKey: IMAGEKIT_PUBLIC_KEY,
-      privateKey: IMAGEKIT_PRIVATE_KEY,
-      urlEndpoint: IMAGEKIT_URL_ENDPOINT
-    });
-     const authenticationParameters = imagekit.getAuthenticationParameters();
+    // Manuel olarak authentication parametreleri oluştur
+    const token = Math.random().toString(36).substring(2);
+    const expire = Math.floor(Date.now() / 1000) + (60 * 60); // 1 saat
+    const privateKeyWithColon = IMAGEKIT_PRIVATE_KEY.endsWith(':') 
+      ? IMAGEKIT_PRIVATE_KEY 
+      : IMAGEKIT_PRIVATE_KEY + ':';
     
-    console.log('Auth parameters generated successfully');
+    const signature = crypto
+      .createHmac('sha1', privateKeyWithColon)
+      .update(token + expire)
+      .digest('hex');
+
+    const authenticationParameters = {
+      token: token,
+      expire: expire,
+      signature: signature
+    };
     
     return {
       statusCode: 200,
@@ -66,15 +53,12 @@ exports.handler = async (event, context) => {
       body: JSON.stringify(authenticationParameters)
     };
   } catch (error) {
-    console.error('ImageKit auth error:', error);
-    
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ 
+      body: JSON.stringify({
         error: 'Authentication failed',
-        message: error.message,
-        details: 'Check console for more information'
+        message: error.message
       })
     };
   }
