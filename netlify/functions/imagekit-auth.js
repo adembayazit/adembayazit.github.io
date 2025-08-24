@@ -7,7 +7,6 @@ const {
 } = process.env;
 
 exports.handler = async (event) => {
-  // CORS headers
   const headers = {
     'Access-Control-Allow-Origin': 'https://adembayazit.com',
     'Access-Control-Allow-Headers': 'Content-Type',
