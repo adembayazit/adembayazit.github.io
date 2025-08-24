@@ -427,7 +427,7 @@
         
         <div class="note">
             <div class="note-title"><i class="fas fa-exclamation-circle"></i> Önemli Not</div>
-            <p>Bu test sayfası, ImageKit.io'ya dosya yüklemek için basit bir arayüz sağlar. Yüklemeler gerçek zamanlı olarak yapılır ve ilerleme durumunu gösterir. Netlify Functions kullanarak kimlik doğrulama yapar.</p>
+            <p>Bu test sayfası, ImageKit.io'ya dosya yüklemek için doğrudan API kullanır. SDK gerektirmez. Yüklemeler gerçek zamanlı olarak yapılır ve ilerleme durumunu gösterir. Netlify Functions kullanarak kimlik doğrulama yapar.</p>
         </div>
         
         <div class="footer">
@@ -435,9 +435,6 @@
         </div>
     </div>
 
-    <!-- ImageKit.io SDK -->
-    <script src="https://unpkg.com/imagekitio-javascript/dist/imagekit.min.js"></script>
-    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Elementleri seçme
@@ -558,7 +555,7 @@
                 }
             }
             
-            // Dosyayı ImageKit.io'ya yükleme
+            // Dosyayı ImageKit.io'ya yükleme (doğrudan API kullanarak)
             async function uploadFile(file) {
                 try {
                     // Kimlik doğrulama parametrelerini al
@@ -569,34 +566,31 @@
                     progressBar.style.width = '0%';
                     progressBar.textContent = '0%';
                     
-                    // ImageKit initialization - SDK global olarak yüklendi
-                    // ImageKit nesnesinin yüklendiğinden emin olmak için kontrol
-                    if (typeof ImageKit === 'undefined') {
-                        // SDK yüklenemediyse, doğrudan API'yi kullan
-                        showStatus('SDK yüklenemedi, doğrudan API kullanılıyor...', 'loading');
-                        await uploadWithDirectAPI(file, authParams);
-                        return;
-                    }
+                    // FormData oluştur
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('fileName', "test_" + Date.now() + "." + file.name.split('.').pop());
+                    formData.append('signature', authParams.signature);
+                    formData.append('expire', authParams.expire);
+                    formData.append('token', authParams.token);
                     
-                    const imagekit = new ImageKit({
-                        publicKey: authParams.publicKey,
-                        urlEndpoint: authParams.urlEndpoint || "https://ik.imagekit.io/your_imagekit_id"
+                    // XMLHttpRequest ile yükleme (progress takibi için)
+                    const xhr = new XMLHttpRequest();
+                    
+                    // Progress olayı
+                    xhr.upload.addEventListener('progress', function(e) {
+                        if (e.lengthComputable) {
+                            const percent = Math.round((e.loaded / e.total) * 100);
+                            progressBar.style.width = percent + '%';
+                            progressBar.textContent = percent + '%';
+                        }
                     });
                     
-                    // Yükleme işlemi
-                    imagekit.upload({
-                        file: file,
-                        fileName: "test_" + Date.now() + "." + file.name.split('.').pop(),
-                        token: authParams.token,
-                        signature: authParams.signature,
-                        expire: authParams.expire,
-                        tags: ["test-upload", "demo"]
-                    }, function(err, result) {
-                        if (err) {
-                            showStatus('Yükleme hatası: ' + err.message, 'error');
-                            progressContainer.style.display = 'none';
-                            console.error(err);
-                        } else {
+                    // Yükleme tamamlandığında
+                    xhr.addEventListener('load', function() {
+                        if (xhr.status >= 200 && xhr.status < 300) {
+                            const result = JSON.parse(xhr.responseText);
+                            
                             showStatus('Dosya başarıyla yüklendi!', 'success');
                             progressBar.style.width = '100%';
                             progressBar.textContent = '100%';
@@ -609,58 +603,26 @@
                             setTimeout(function() {
                                 progressContainer.style.display = 'none';
                             }, 2000);
+                        } else {
+                            showStatus('Yükleme hatası: ' + xhr.statusText, 'error');
+                            progressContainer.style.display = 'none';
+                            console.error('Yükleme hatası:', xhr.statusText);
                         }
-                    }, function(progress) {
-                        // İlerleme durumu
-                        const percent = Math.round((progress.loaded / progress.total) * 100);
-                        progressBar.style.width = percent + '%';
-                        progressBar.textContent = percent + '%';
                     });
+                    
+                    // Hata durumunda
+                    xhr.addEventListener('error', function() {
+                        showStatus('Yükleme hatası: Ağ hatası oluştu', 'error');
+                        progressContainer.style.display = 'none';
+                        console.error('Ağ hatası oluştu');
+                    });
+                    
+                    // İstek gönder
+                    xhr.open('POST', 'https://upload.imagekit.io/api/v1/files/upload');
+                    xhr.send(formData);
                     
                 } catch (error) {
                     showStatus('Yükleme hatası: ' + error.message, 'error');
-                    progressContainer.style.display = 'none';
-                    console.error(error);
-                }
-            }
-            
-            // Doğrudan API ile yükleme (SDK yüklenemediğinde)
-            async function uploadWithDirectAPI(file, authParams) {
-                try {
-                    const formData = new FormData();
-                    formData.append('file', file);
-                    formData.append('fileName', "test_" + Date.now() + "." + file.name.split('.').pop());
-                    formData.append('publicKey', authParams.publicKey);
-                    formData.append('signature', authParams.signature);
-                    formData.append('expire', authParams.expire);
-                    formData.append('token', authParams.token);
-                    
-                    const response = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
-                        method: 'POST',
-                        body: formData
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    
-                    const result = await response.json();
-                    
-                    showStatus('Dosya başarıyla yüklendi!', 'success');
-                    progressBar.style.width = '100%';
-                    progressBar.textContent = '100%';
-                    
-                    // URL'yi göster
-                    urlDisplay.textContent = result.url;
-                    urlContainer.style.display = 'block';
-                    
-                    // 2 saniye sonra progress bar'ı gizle
-                    setTimeout(function() {
-                        progressContainer.style.display = 'none';
-                    }, 2000);
-                    
-                } catch (error) {
-                    showStatus('API yükleme hatası: ' + error.message, 'error');
                     progressContainer.style.display = 'none';
                     console.error(error);
                 }
