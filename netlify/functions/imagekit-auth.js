@@ -1,60 +1,70 @@
+// .netlify/functions/imagekit-auth/imagekit-auth.js
 const ImageKit = require("imagekit");
 
 exports.handler = async (event, context) => {
-  // Sadece POST isteklerine izin ver
-  if (event.httpMethod !== "POST") {
-    return {
-      statusCode: 405,
-      body: JSON.stringify({ error: "Method not allowed" })
+    const headers = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Content-Type': 'application/json'
     };
-  }
 
-  try {
-    // ImageKit yapılandırması
-    const imagekit = new ImageKit({
-      publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
-      privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
-      urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT
-    });
-
-    // İsteğin body'sini parse et
-    let body;
-    try {
-      body = JSON.parse(event.body);
-    } catch (parseError) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: "Invalid JSON in request body" })
-      };
+    if (event.httpMethod === 'OPTIONS') {
+        return { statusCode: 200, headers, body: '' };
     }
 
-    const { fileName } = body;
+    try {
+        const { 
+            IMAGEKIT_PUBLIC_KEY, 
+            IMAGEKIT_PRIVATE_KEY, 
+            IMAGEKIT_URL_ENDPOINT 
+        } = process.env;
 
-    // Authentication parametrelerini al
-    const authenticationParameters = imagekit.getAuthenticationParameters(
-      fileName ? { fileName } : undefined
-    );
+        console.log('Environment Variables:', {
+            hasPublicKey: !!IMAGEKIT_PUBLIC_KEY,
+            hasPrivateKey: !!IMAGEKIT_PRIVATE_KEY,
+            hasEndpoint: !!IMAGEKIT_URL_ENDPOINT,
+            privateKeyStart: IMAGEKIT_PRIVATE_KEY ? IMAGEKIT_PRIVATE_KEY.substring(0, 10) + '...' : 'MISSING'
+        });
 
-    return {
-      statusCode: 200,
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type"
-      },
-      body: JSON.stringify(authenticationParameters)
-    };
-  } catch (error) {
-    console.error("Authentication error:", error);
-    
-    return {
-      statusCode: 500,
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type"
-      },
-      body: JSON.stringify({ error: "Internal server error" })
-    };
-  }
+        if (!IMAGEKIT_PUBLIC_KEY || !IMAGEKIT_PRIVATE_KEY || !IMAGEKIT_URL_ENDPOINT) {
+            throw new Error('Missing ImageKit environment variables');
+        }
+
+        // ImageKit instance'ını DOĞRU şekilde oluştur
+        // SDK otomatik olarak private key'i işler
+        const imagekit = new ImageKit({
+            publicKey: IMAGEKIT_PUBLIC_KEY,
+            privateKey: IMAGEKIT_PRIVATE_KEY, // RAW private key
+            urlEndpoint: IMAGEKIT_URL_ENDPOINT
+        });
+
+        // Authentication parametrelerini al
+        const authParams = imagekit.getAuthenticationParameters();
+        authParams.publicKey = IMAGEKIT_PUBLIC_KEY;
+
+        console.log('Generated Auth Parameters:', {
+            token: authParams.token,
+            expire: authParams.expire,
+            signature: authParams.signature,
+            signatureLength: authParams.signature.length
+        });
+
+        return {
+            statusCode: 200,
+            headers,
+            body: JSON.stringify(authParams)
+        };
+
+    } catch (error) {
+        console.error('Error in ImageKit function:', error);
+        return {
+            statusCode: 500,
+            headers,
+            body: JSON.stringify({ 
+                error: 'Authentication failed',
+                message: error.message
+            })
+        };
+    }
 };
