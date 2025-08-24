@@ -1,76 +1,73 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ImageKit HTML Upload Test</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ImageKit Upload</title>
 </head>
 <body>
-  <h2>Resim Yükleme Test</h2>
+<h2>Resim Yükle ve Önizle</h2>
 
-  <input type="file" id="fileInput" accept="image/*">
-  <button id="uploadBtn">Yükle</button>
+<input type="file" id="fileInput" accept="image/*">
+<button id="uploadBtn">Yükle</button>
 
-  <h3>Önizleme</h3>
-  <img id="preview" src="" alt="Yüklenen Resim" style="max-width:300px; display:none;">
+<img id="preview" src="" style="max-width:300px; display:none;">
+<p>Yüklenen Dosya: <a id="fileUrl" href="" target="_blank"></a></p>
 
-  <h3>Yüklenen Dosya URL</h3>
-  <a id="fileUrl" href="" target="_blank"></a>
+<script>
+const fileInput = document.getElementById('fileInput');
+const uploadBtn = document.getElementById('uploadBtn');
+const preview = document.getElementById('preview');
+const fileUrl = document.getElementById('fileUrl');
 
-  <script>
-    const fileInput = document.getElementById('fileInput');
-    const preview = document.getElementById('preview');
-    const uploadBtn = document.getElementById('uploadBtn');
-    const fileUrl = document.getElementById('fileUrl');
+let selectedFile;
 
-    let selectedFile;
+// Önizleme
+fileInput.addEventListener('change', (e) => {
+  selectedFile = e.target.files[0];
+  if (selectedFile) {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      preview.src = event.target.result;
+      preview.style.display = 'block';
+    };
+    reader.readAsDataURL(selectedFile);
+  }
+});
 
-    // Dosya seçildiğinde önizleme
-    fileInput.addEventListener('change', (e) => {
-      selectedFile = e.target.files[0];
-      if (selectedFile) {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-          preview.src = event.target.result;
-          preview.style.display = 'block';
-        };
-        reader.readAsDataURL(selectedFile);
-      }
-    });
+// Yükleme
+uploadBtn.addEventListener('click', async () => {
+  if(!selectedFile) return alert('Lütfen bir dosya seçin!');
 
-    // Upload işlemi
-    uploadBtn.addEventListener('click', () => {
-      if (!selectedFile) {
-        alert('Lütfen bir dosya seçin!');
-        return;
-      }
+  // 1️⃣ Netlify Function ile signature al
+  const sigRes = await fetch('/.netlify/functions/get-upload-signature');
+  const sigData = await sigRes.json();
 
-      const formData = new FormData();
-      formData.append('file', selectedFile);
-      formData.append('fileName', selectedFile.name); // Opsiyonel: istediğiniz dosya adı
-      formData.append('publicKey', 'YOUR_PUBLIC_KEY'); // ImageKit public key
-      formData.append('folder', '/test'); // Opsiyonel: klasör
-      formData.append('signature', 'YOUR_SIGNATURE'); // Eğer server side signature kullanıyorsanız
+  // 2️⃣ FormData hazırla
+  const formData = new FormData();
+  formData.append('file', selectedFile);
+  formData.append('fileName', selectedFile.name);
+  formData.append('publicKey', sigData.publicKey);
+  formData.append('signature', sigData.signature);
+  formData.append('expire', sigData.expire);
+  formData.append('token', sigData.token);
 
-      fetch('https://upload.imagekit.io/api/v1/files/upload', {
-        method: 'POST',
-        body: formData
-      })
-      .then(res => res.json())
-      .then(data => {
-        console.log(data);
-        if(data.url){
-          fileUrl.href = data.url;
-          fileUrl.textContent = data.url;
-        } else {
-          alert('Yükleme başarısız!');
-        }
-      })
-      .catch(err => {
-        console.error(err);
-        alert('Yükleme sırasında hata oluştu!');
-      });
-    });
-  </script>
+  // 3️⃣ ImageKit’e yükle
+  const uploadRes = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
+    method: 'POST',
+    body: formData
+  });
+
+  const uploadData = await uploadRes.json();
+  console.log(uploadData);
+
+  if(uploadData.url){
+    fileUrl.href = uploadData.url;
+    fileUrl.textContent = uploadData.url;
+  } else {
+    alert('Yükleme başarısız!');
+  }
+});
+</script>
 </body>
 </html>
