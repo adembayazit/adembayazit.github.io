@@ -1,5 +1,6 @@
 // .netlify/functions/imagekit-auth/imagekit-auth.js
 const ImageKit = require("imagekit");
+const crypto = require("crypto");
 
 exports.handler = async (event, context) => {
     const headers = {
@@ -23,30 +24,41 @@ exports.handler = async (event, context) => {
         console.log('Environment Variables Check:', {
             hasPublicKey: !!IMAGEKIT_PUBLIC_KEY,
             hasPrivateKey: !!IMAGEKIT_PRIVATE_KEY,
-            hasEndpoint: !!IMAGEKIT_URL_ENDPOINT
+            hasEndpoint: !!IMAGEKIT_URL_ENDPOINT,
+            privateKeyStart: IMAGEKIT_PRIVATE_KEY ? IMAGEKIT_PRIVATE_KEY.substring(0, 10) + '...' : 'MISSING'
         });
 
         if (!IMAGEKIT_PUBLIC_KEY || !IMAGEKIT_PRIVATE_KEY || !IMAGEKIT_URL_ENDPOINT) {
             throw new Error('Missing ImageKit environment variables');
         }
 
-        const imagekit = new ImageKit({
-            publicKey: IMAGEKIT_PUBLIC_KEY,
-            privateKey: IMAGEKIT_PRIVATE_KEY,
-            urlEndpoint: IMAGEKIT_URL_ENDPOINT
+        // MANUEL SIGNATURE OLUŞTURMA - ImageKit SDK sorunlu
+        const timestamp = Math.floor(Date.now() / 1000);
+        const nonce = crypto.randomBytes(16).toString('hex');
+        const data = timestamp + nonce;
+
+        // HMAC-SHA1 signature oluştur
+        const signature = crypto
+            .createHmac('sha1', IMAGEKIT_PRIVATE_KEY)
+            .update(data)
+            .digest('hex');
+
+        console.log('Manuel Signature Details:', {
+            timestamp: timestamp,
+            nonce: nonce,
+            data: data,
+            signature: signature,
+            signatureLength: signature.length
         });
 
-        const authParams = imagekit.getAuthenticationParameters();
-        
-        // ÖNEMLİ: publicKey'i response'a ekle
-        authParams.publicKey = IMAGEKIT_PUBLIC_KEY;
+        const authParams = {
+            token: crypto.randomBytes(16).toString('hex'),
+            expire: timestamp + 3600, // 1 saat
+            signature: signature,
+            publicKey: IMAGEKIT_PUBLIC_KEY
+        };
 
-        console.log('Generated Auth Parameters:', {
-            token: authParams.token,
-            expire: authParams.expire,
-            signature: authParams.signature,
-            publicKey: authParams.publicKey
-        });
+        console.log('Generated Auth Parameters:', authParams);
 
         return {
             statusCode: 200,
