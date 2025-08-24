@@ -23,9 +23,12 @@ exports.handler = async (event, context) => {
       };
     }
 
+    // Base64 decode private key
+    const privateKeyDecoded = Buffer.from(IMAGEKIT_PRIVATE_KEY, 'base64').toString('utf-8');
+
     const imagekit = new ImageKit({
       publicKey: IMAGEKIT_PUBLIC_KEY,
-      privateKey: IMAGEKIT_PRIVATE_KEY,
+      privateKey: privateKeyDecoded,
       urlEndpoint: IMAGEKIT_URL_ENDPOINT
     });
 
