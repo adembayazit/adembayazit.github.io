@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ImageKit.io Dosya Yükleme Testi</title>
+    <title>ImageKit.io Doğrudan API Yükleme Testi</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -288,7 +288,7 @@
             cursor: pointer;
             font-size: 16px;
             font-weight: 600;
-            transition: all 0.3s;
+            transition: all 极速飞艇开奖直播
             display: inline-flex;
             align-items: center;
             gap: 8px;
@@ -374,6 +374,14 @@
             margin-top: 10px;
         }
         
+        .solution-box {
+            background-color: #e8f4f8;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 4px;
+        }
+        
         @media (max-width: 768px) {
             .container {
                 padding: 20px;
@@ -397,8 +405,8 @@
 </head>
 <body>
     <div class="container">
-        <h1><i class="fas fa-cloud-upload-alt"></i> ImageKit.io Dosya Yükleme Testi</h1>
-        <p class="description">Dosyanızı seçin veya sürükleyip bırakın. ImageKit.io'ya yüklendikten sonra URL'sini alacaksınız.</p>
+        <h1><i class="fas fa-cloud-upload-alt"></i> ImageKit.io Doğrudan API Yükleme Testi</h1>
+        <p class="description">Dosyanızı seçin veya sürükleyip bırakın. ImageKit.io'ya doğrudan API çağrısı ile yüklenecektir.</p>
         
         <div class="instructions">
             <h3 class="instructions-title"><i class="fas fa-info-circle"></i> Nasıl Kullanılır?</h3>
@@ -451,13 +459,18 @@
         <button class="debug-toggle" id="debug-toggle">Hata Ayıklama Bilgilerini Göster</button>
         <div class="debug-info" id="debug-info"></div>
         
+        <div class="solution-box">
+            <h3><i class="fas fa-lightbulb"></i> Doğrudan API Entegrasyonu</h3>
+            <p>Bu sayfa, ImageKit.io'nun frontend SDK'sını kullanmaz. Doğrudan REST API endpoint'ine istek gönderir. Bu sayede beta API sorunlarından kaçınır.</p>
+        </div>
+        
         <div class="note">
             <div class="note-title"><i class="fas fa-exclamation-circle"></i> Önemli Not</div>
-            <p>Bu test sayfası, ImageKit.io v2 API'sini kullanır. URL endpoint: <strong>https://ik.imagekit.io/adembayazit</strong></p>
+            <p>Bu test sayfası, ImageKit.io v2 API'sini doğrudan kullanır. URL endpoint: <strong>https://ik.imagekit.io/adembayazit</strong></p>
         </div>
         
         <div class="footer">
-            <p>ImageKit.io Dosya Yükleme Test Arayüzü © 2023</p>
+            <p>ImageKit.io Doğrudan API Yükleme Test Arayüzü © 2023</p>
         </div>
     </div>
 
@@ -481,6 +494,7 @@
             
             // Sabit URL endpoint
             const URL_ENDPOINT = "https://ik.imagekit.io/adembayazit";
+            const UPLOAD_ENDPOINT = "https://upload.imagekit.io/api/v2/files/upload";
             
             // Hata ayıklama bilgilerini göster/gizle
             debugToggle.addEventListener('click', function() {
@@ -606,7 +620,7 @@
                 }
             }
             
-            // Dosyayı ImageKit.io'ya yükleme (v2 API kullanarak)
+            // Dosyayı ImageKit.io'ya yükleme (doğrudan API kullanarak)
             async function uploadFile(file) {
                 try {
                     // Kimlik doğrulama parametrelerini al
@@ -621,11 +635,13 @@
                     const formData = new FormData();
                     formData.append('file', file);
                     formData.append('fileName', "test_" + Date.now() + "." + file.name.split('.').pop());
+                    
+                    // Doğrudan API için gerekli parametreler
                     formData.append('signature', authParams.signature);
                     formData.append('expire', authParams.expire);
                     formData.append('token', authParams.token);
                     
-                    // PublicKey ekle (gerekli olabilir)
+                    // PublicKey ekle (gerekli)
                     if (authParams.publicKey) {
                         formData.append('publicKey', authParams.publicKey);
                     }
@@ -679,7 +695,14 @@
                             }
                         } else {
                             addDebugInfo('ImageKit API hata yanıtı: ' + xhr.responseText);
-                            showStatus('Yükleme hatası: ' + xhr.status + ' - ' + xhr.statusText, 'error');
+                            
+                            // Invalid token hatasını özel olarak işle
+                            if (xhr.responseText.includes('invalid token')) {
+                                showStatus('Geçersiz token hatası. Lütfen Netlify Function yapılandırmanızı kontrol edin.', 'error');
+                            } else {
+                                showStatus('Yükleme hatası: ' + xhr.status + ' - ' + xhr.statusText, 'error');
+                            }
+                            
                             progressContainer.style.display = 'none';
                         }
                     });
@@ -691,9 +714,9 @@
                         progressContainer.style.display = 'none';
                     });
                     
-                    // İstek gönder (v2 API endpoint'i)
-                    xhr.open('POST', 'https://upload.imagekit.io/api/v2/files/upload');
-                    addDebugInfo('ImageKit v2 API isteği gönderiliyor: https://upload.imagekit.io/api/v2/files/upload');
+                    // İstek gönder (doğrudan API endpoint'i)
+                    xhr.open('POST', UPLOAD_ENDPOINT);
+                    addDebugInfo('ImageKit API isteği gönderiliyor: ' + UPLOAD_ENDPOINT);
                     xhr.send(formData);
                     
                 } catch (error) {
