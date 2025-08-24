@@ -1,46 +1,54 @@
-const crypto = require('crypto');
+const ImageKit = require("imagekit");
 
-exports.handler = async (event) => {
-  try {
-    const publicKey = process.env.IMAGEKIT_PUBLIC_KEY;
-    const privateKey = process.env.IMAGEKIT_PRIVATE_KEY;
-    const urlEndpoint = process.env.IMAGEKIT_URL_ENDPOINT;
+exports.handler = async (event, context) => {
+  // CORS headers
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
+  };
 
-    // 1. Expire parametresi (30 dakika)
-    const timestamp = Math.floor(Date.now() / 1000);
-    const expiry = timestamp + 1800;
-
-    // 2. Signature oluşturma (ImageKit formatı)
-    const stringToSign = privateKey + expiry;
-    const signature = crypto
-      .createHmac('sha1', privateKey)
-      .update(stringToSign)
-      .digest('hex');
-
+  // Handle preflight request
+  if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      },
-      body: JSON.stringify({
-        signature,
-        expire: expiry,
-        token: timestamp.toString(),
-        apiKey: publicKey,
-        urlEndpoint: urlEndpoint
-      })
+      headers,
+      body: ''
     };
+  }
 
+  try {
+    const {
+      IMAGEKIT_PUBLIC_KEY,
+      IMAGEKIT_PRIVATE_KEY,
+      IMAGEKIT_URL_ENDPOINT
+    } = process.env;
+
+    if (!IMAGEKIT_PUBLIC_KEY || !IMAGEKIT_PRIVATE_KEY || !IMAGEKIT_URL_ENDPOINT) {
+      throw new Error('Missing ImageKit environment variables');
+    }
+
+    // Create ImageKit instance with proper encoding
+    const imagekit = new ImageKit({
+      publicKey: IMAGEKIT_PUBLIC_KEY,
+      privateKey: IMAGEKIT_PRIVATE_KEY,
+      urlEndpoint: IMAGEKIT_URL_ENDPOINT
+    });
+
+    // Get authentication parameters
+    const authenticationParameters = imagekit.getAuthenticationParameters();
+    
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify(authenticationParameters)
+    };
   } catch (error) {
     return {
       statusCode: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      },
-      body: JSON.stringify({ 
-        error: 'Authentication Failed',
+      headers,
+      body: JSON.stringify({
+        error: 'Authentication failed',
         message: error.message
       })
     };
