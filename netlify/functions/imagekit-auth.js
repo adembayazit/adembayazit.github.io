@@ -24,15 +24,14 @@ exports.handler = async (event, context) => {
         console.log('Environment Variables Check:', {
             hasPublicKey: !!IMAGEKIT_PUBLIC_KEY,
             hasPrivateKey: !!IMAGEKIT_PRIVATE_KEY,
-            hasEndpoint: !!IMAGEKIT_URL_ENDPOINT,
-            privateKeyStart: IMAGEKIT_PRIVATE_KEY ? IMAGEKIT_PRIVATE_KEY.substring(0, 10) + '...' : 'MISSING'
+            hasEndpoint: !!IMAGEKIT_URL_ENDPOINT
         });
 
         if (!IMAGEKIT_PUBLIC_KEY || !IMAGEKIT_PRIVATE_KEY || !IMAGEKIT_URL_ENDPOINT) {
             throw new Error('Missing ImageKit environment variables');
         }
 
-        // MANUEL SIGNATURE OLUŞTURMA - ImageKit SDK sorunlu
+        // MANUEL SIGNATURE OLUŞTURMA
         const timestamp = Math.floor(Date.now() / 1000);
         const nonce = crypto.randomBytes(16).toString('hex');
         const data = timestamp + nonce;
@@ -43,17 +42,17 @@ exports.handler = async (event, context) => {
             .update(data)
             .digest('hex');
 
-        console.log('Manuel Signature Details:', {
+        console.log('Signature Details:', {
             timestamp: timestamp,
             nonce: nonce,
             data: data,
-            signature: signature,
-            signatureLength: signature.length
+            signature: signature
         });
 
+        // ÖNEMLİ DÜZELTME: Expire 1 saatten AZ olmalı (örn: 55 dakika)
         const authParams = {
             token: crypto.randomBytes(16).toString('hex'),
-            expire: timestamp + 3600, // 1 saat
+            expire: timestamp + 3300, // 55 dakika (3300 saniye) - 1 saatten az
             signature: signature,
             publicKey: IMAGEKIT_PUBLIC_KEY
         };
