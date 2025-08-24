@@ -25,14 +25,17 @@ exports.handler = async (event, context) => {
             IMAGEKIT_URL_ENDPOINT 
         } = process.env;
 
-        if (!IMAGEKIT_PUBLIC_KEY || !IMAGEKIT_PRIVATE_KEY || !IMAGEKIT_URL_ENDPOINT) {
+        const privateKeyWithColon = `${process.env.IMAGEKIT_PRIVATE_KEY}:`;
+        const encodedPrivateKey = Buffer.from(privateKeyWithColon).toString('base64');
+        
+        if (!IMAGEKIT_PUBLIC_KEY || !encodedPrivateKey || !IMAGEKIT_URL_ENDPOINT) {
             throw new Error('Missing ImageKit environment variables');
         }
 
         // Create ImageKit instance with proper encoding
         const imagekit = new ImageKit({
             publicKey: IMAGEKIT_PUBLIC_KEY,
-            privateKey: IMAGEKIT_PRIVATE_KEY,
+            privateKey: encodedPrivateKey,
             urlEndpoint: IMAGEKIT_URL_ENDPOINT
         });
 
