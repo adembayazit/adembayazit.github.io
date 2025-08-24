@@ -1,4 +1,3 @@
-// netlify/functions/imagekit-auth.js
 const ImageKit = require("imagekit");
 
 const {
