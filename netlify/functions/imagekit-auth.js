@@ -20,7 +20,7 @@ exports.handler = async (event, context) => {
             IMAGEKIT_URL_ENDPOINT 
         } = process.env;
 
-        console.log('Environment Variables Check:', {
+        console.log('Environment Variables:', {
             hasPublicKey: !!IMAGEKIT_PUBLIC_KEY,
             hasPrivateKey: !!IMAGEKIT_PRIVATE_KEY,
             hasEndpoint: !!IMAGEKIT_URL_ENDPOINT,
@@ -31,33 +31,31 @@ exports.handler = async (event, context) => {
             throw new Error('Missing ImageKit environment variables');
         }
 
-        // ÖNEMLİ: Private key'e iki nokta üst üste ekleyip base64 encode et
-        const privateKeyWithColon = `${IMAGEKIT_PRIVATE_KEY}:`;
-        const encodedPrivateKey = Buffer.from(privateKeyWithColon).toString('base64');
-        
-        console.log('Encoding details:', {
-            originalPrivateKey: IMAGEKIT_PRIVATE_KEY,
-            withColon: privateKeyWithColon,
-            encoded: encodedPrivateKey
-        });
-
-        // ImageKit instance'ını doğru şekilde oluştur
+        // ImageKit instance'ını DOĞRU şekilde oluştur
+        // SDK otomatik olarak private key'i işler
         const imagekit = new ImageKit({
             publicKey: IMAGEKIT_PUBLIC_KEY,
-            privateKey: encodedPrivateKey, // ENCODE EDİLMİŞ private key
+            privateKey: IMAGEKIT_PRIVATE_KEY, // RAW private key
             urlEndpoint: IMAGEKIT_URL_ENDPOINT
         });
 
+        // Authentication parametrelerini al
         const authParams = imagekit.getAuthenticationParameters();
         authParams.publicKey = IMAGEKIT_PUBLIC_KEY;
 
-        console.log('Authentication parameters generated successfully');
+        console.log('Generated Auth Parameters:', {
+            token: authParams.token,
+            expire: authParams.expire,
+            signature: authParams.signature,
+            signatureLength: authParams.signature.length
+        });
 
         return {
             statusCode: 200,
             headers,
             body: JSON.stringify(authParams)
         };
+
     } catch (error) {
         console.error('Error in ImageKit function:', error);
         return {
@@ -65,8 +63,7 @@ exports.handler = async (event, context) => {
             headers,
             body: JSON.stringify({ 
                 error: 'Authentication failed',
-                message: error.message,
-                details: 'Check private key encoding with colon suffix'
+                message: error.message
             })
         };
     }
