@@ -43,8 +43,8 @@ exports.handler = async (event, context) => {
     }
 
     const imagekit = new ImageKit({
-      publicKey: IMAGEKIT_PUBLIC_KEY
-      privateKey: IMAGEKIT_PRIVATE_KEY
+      publicKey: IMAGEKIT_PUBLIC_KEY,
+      privateKey: IMAGEKIT_PRIVATE_KEY,
       urlEndpoint: IMAGEKIT_URL_ENDPOINT
     });
 
