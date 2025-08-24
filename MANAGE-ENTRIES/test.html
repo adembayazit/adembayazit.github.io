@@ -453,7 +453,7 @@
         
         <div class="note">
             <div class="note-title"><i class="fas fa-exclamation-circle"></i> Önemli Not</div>
-            <p>Bu test sayfası, ImageKit.io'ya dosya yüklemek için doğrudan API kullanır. 400 hatası genellikle kimlik doğrulama parametrelerindeki bir sorundan kaynaklanır. Lütfen endpoint URL'nizin doğru olduğundan emin olun.</p>
+            <p>Bu test sayfası, ImageKit.io v2 API'sini kullanır. URL endpoint: <strong>https://ik.imagekit.io/adembayazit</strong></p>
         </div>
         
         <div class="footer">
@@ -478,6 +478,9 @@
             const saveConfigBtn = document.getElementById('save-config');
             const debugToggle = document.getElementById('debug-toggle');
             const debugInfo = document.getElementById('debug-info');
+            
+            // Sabit URL endpoint
+            const URL_ENDPOINT = "https://ik.imagekit.io/adembayazit";
             
             // Hata ayıklama bilgilerini göster/gizle
             debugToggle.addEventListener('click', function() {
@@ -603,7 +606,7 @@
                 }
             }
             
-            // Dosyayı ImageKit.io'ya yükleme (doğrudan API kullanarak)
+            // Dosyayı ImageKit.io'ya yükleme (v2 API kullanarak)
             async function uploadFile(file) {
                 try {
                     // Kimlik doğrulama parametrelerini al
@@ -688,9 +691,9 @@
                         progressContainer.style.display = 'none';
                     });
                     
-                    // İstek gönder
+                    // İstek gönder (v2 API endpoint'i)
                     xhr.open('POST', 'https://upload.imagekit.io/api/v2/files/upload');
-                    addDebugInfo('ImageKit API isteği gönderiliyor: https://upload.imagekit.io/api/v2/files/upload');
+                    addDebugInfo('ImageKit v2 API isteği gönderiliyor: https://upload.imagekit.io/api/v2/files/upload');
                     xhr.send(formData);
                     
                 } catch (error) {
