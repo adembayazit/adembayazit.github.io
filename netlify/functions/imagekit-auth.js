@@ -4,8 +4,9 @@ exports.handler = async (event, context) => {
   // CORS headers
   const headers = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Credentials': 'true'
   };
 
   // Handle preflight request
@@ -18,25 +19,36 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    const {
-      IMAGEKIT_PUBLIC_KEY,
-      IMAGEKIT_PRIVATE_KEY,
-      IMAGEKIT_URL_ENDPOINT
+    console.log('Environment variables check:');
+    console.log('PUBLIC_KEY exists:', !!process.env.IMAGEKIT_PUBLIC_KEY);
+    console.log('PRIVATE_KEY exists:', !!process.env.IMAGEKIT_PRIVATE_KEY);
+    console.log('URL_ENDPOINT exists:', !!process.env.IMAGEKIT_URL_ENDPOINT);
+
+    const { 
+      IMAGEKIT_PUBLIC_KEY, 
+      IMAGEKIT_PRIVATE_KEY, 
+      IMAGEKIT_URL_ENDPOINT 
     } = process.env;
 
     if (!IMAGEKIT_PUBLIC_KEY || !IMAGEKIT_PRIVATE_KEY || !IMAGEKIT_URL_ENDPOINT) {
-      throw new Error('Missing ImageKit environment variables');
+      throw new Error('ImageKit environment variables are not set');
     }
 
-    // Create ImageKit instance with proper encoding
+    // Private key format kontrolü
+    if (!IMAGEKIT_PRIVATE_KEY.startsWith('private_')) {
+      throw new Error('Invalid private key format. Should start with "private_"');
+    }
+
     const imagekit = new ImageKit({
       publicKey: IMAGEKIT_PUBLIC_KEY,
       privateKey: IMAGEKIT_PRIVATE_KEY,
       urlEndpoint: IMAGEKIT_URL_ENDPOINT
     });
-
-    // Get authentication parameters
-    const authenticationParameters = imagekit.getAuthenticationParameters();
+     const privateKeyWithColon = `${process.env.IMAGEKIT_PRIVATE_KEY}:`;
+     const encodedPrivateKey = Buffer.from(privateKeyWithColon).toString('base64');
+     const authenticationParameters = imagekit.getAuthenticationParameters();
+    
+    console.log('Auth parameters generated successfully');
     
     return {
       statusCode: 200,
@@ -44,12 +56,15 @@ exports.handler = async (event, context) => {
       body: JSON.stringify(authenticationParameters)
     };
   } catch (error) {
+    console.error('ImageKit auth error:', error);
+    
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({
+      body: JSON.stringify({ 
         error: 'Authentication failed',
-        message: error.message
+        message: error.message,
+        details: 'Check console for more information'
       })
     };
   }
