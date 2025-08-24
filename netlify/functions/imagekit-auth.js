@@ -41,7 +41,7 @@ exports.handler = async (event, context) => {
 
         // Authentication parametrelerini al
         const authParams = imagekit.getAuthenticationParameters();
-        authParams.publicKey = IMAGEKIT_PUBLIC_KEY;
+        // authParams.publicKey = IMAGEKIT_PUBLIC_KEY;
 
         console.log('Generated Auth Parameters:', {
             token: authParams.token,
