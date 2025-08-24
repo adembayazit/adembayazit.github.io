@@ -931,6 +931,7 @@ async function getImageKitAuth() {
 }
 
 // Düzeltilmiş medya yükleme fonksiyonu
+// Düzeltilmiş medya yükleme fonksiyonu
 async function handleMediaUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
@@ -947,13 +948,14 @@ async function handleMediaUpload(event) {
         // ImageKit authentication parametrelerini al
         const authData = await getImageKitAuth();
         
-        // FormData oluştur
+        // FormData oluştur - PUBLIC KEY EKLENDİ
         const formData = new FormData();
         formData.append('file', file);
         formData.append('fileName', `media_${Date.now()}_${file.name}`);
         formData.append('signature', authData.signature);
         formData.append('token', authData.token);
         formData.append('expire', authData.expire);
+        formData.append('publicKey', authData.publicKey); // BU SATIR EKLENDİ
         
         showDebugInfo('ImageKit upload çağrısı yapılıyor...');
         
