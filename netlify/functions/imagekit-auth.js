@@ -1,5 +1,4 @@
 // .netlify/functions/imagekit-auth/imagekit-auth.js
-const ImageKit = require("imagekit");
 const crypto = require("crypto");
 
 exports.handler = async (event, context) => {
@@ -24,7 +23,8 @@ exports.handler = async (event, context) => {
         console.log('Environment Variables Check:', {
             hasPublicKey: !!IMAGEKIT_PUBLIC_KEY,
             hasPrivateKey: !!IMAGEKIT_PRIVATE_KEY,
-            hasEndpoint: !!IMAGEKIT_URL_ENDPOINT
+            hasEndpoint: !!IMAGEKIT_URL_ENDPOINT,
+            privateKeyStart: IMAGEKIT_PRIVATE_KEY ? IMAGEKIT_PRIVATE_KEY.substring(0, 10) + '...' : 'MISSING'
         });
 
         if (!IMAGEKIT_PUBLIC_KEY || !IMAGEKIT_PRIVATE_KEY || !IMAGEKIT_URL_ENDPOINT) {
@@ -36,28 +36,33 @@ exports.handler = async (event, context) => {
         const nonce = crypto.randomBytes(16).toString('hex');
         const data = timestamp + nonce;
 
+        console.log('Signature Generation Details:', {
+            timestamp: timestamp,
+            nonce: nonce,
+            data: data,
+            privateKey: IMAGEKIT_PRIVATE_KEY.substring(0, 10) + '...' // Güvenlik için sadece ilk 10 karakter
+        });
+
         // HMAC-SHA1 signature oluştur
         const signature = crypto
             .createHmac('sha1', IMAGEKIT_PRIVATE_KEY)
             .update(data)
             .digest('hex');
 
-        console.log('Signature Details:', {
-            timestamp: timestamp,
-            nonce: nonce,
-            data: data,
-            signature: signature
+        console.log('Generated Signature:', {
+            signature: signature,
+            signatureLength: signature.length,
+            signatureType: typeof signature
         });
 
-        // ÖNEMLİ DÜZELTME: Expire 1 saatten AZ olmalı (örn: 55 dakika)
         const authParams = {
-            token: crypto.randomBytes(16).toString('hex'),
-            expire: timestamp + 3300, // 55 dakika (3300 saniye) - 1 saatten az
+            token: nonce, // nonce'u token olarak kullan
+            expire: timestamp + 3300, // 55 dakika
             signature: signature,
             publicKey: IMAGEKIT_PUBLIC_KEY
         };
 
-        console.log('Generated Auth Parameters:', authParams);
+        console.log('Final Auth Parameters:', authParams);
 
         return {
             statusCode: 200,
@@ -72,7 +77,8 @@ exports.handler = async (event, context) => {
             headers,
             body: JSON.stringify({ 
                 error: 'Authentication failed',
-                message: error.message
+                message: error.message,
+                details: 'Check private key and signature generation'
             })
         };
     }
