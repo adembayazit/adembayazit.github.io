@@ -33,7 +33,7 @@ exports.handler = async (event, context) => {
     });
 
     const authenticationParameters = imagekit.getAuthenticationParameters();
-    
+
     return {
       statusCode: 200,
       headers,
