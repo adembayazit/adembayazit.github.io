@@ -29,13 +29,12 @@ exports.handler = async (event, context) => {
       throw new Error('Missing ImageKit environment variables');
     }
 
-    // Manuel olarak authentication parametreleri oluştur
-    const token = Math.random().toString(36).substring(2);
-    const expire = Math.floor(Date.now() / 1000) + (60 * 60); // 1 saat
-    const privateKeyWithColon = IMAGEKIT_PRIVATE_KEY.endsWith(':') 
-      ? IMAGEKIT_PRIVATE_KEY 
-      : IMAGEKIT_PRIVATE_KEY + ':';
+    // The fix: Add colon to private key before base64 encoding
+    const privateKeyWithColon = `${IMAGEKIT_PRIVATE_KEY}:`;
     
+    // Manuel authentication parametreleri oluştur
+    const token = crypto.randomBytes(16).toString('hex');
+    const expire = Math.floor(Date.now() / 1000) + 3600; // 1 saat
     const signature = crypto
       .createHmac('sha1', privateKeyWithColon)
       .update(token + expire)
