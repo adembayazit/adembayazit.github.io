@@ -368,7 +368,6 @@
             color: white;
         }
         
-        /* Ön izleme stilleri */
         .preview-container {
             margin-top: 5px;
             padding: 8px;
@@ -412,7 +411,6 @@
             border-radius: 3px;
         }
         
-        /* Ön izleme içeriği stilleri */
         #trContent-preview, #enContent-preview,
         [id$="-preview"] {
             font-family: 'Courier New', monospace;
@@ -443,7 +441,6 @@
             color: #aaa;
         }
         
-        /* Spotify embed stilleri */
         .spotify-embed {
             width: 100%;
             height: 152px;
@@ -453,7 +450,6 @@
             overflow: hidden;
         }
         
-        /* Youtube embed stilleri */
         .youtube-embed {
             width: 100%;
             margin: 10px 0;
@@ -478,42 +474,6 @@
             100% { transform: scale(1); }
         }
         
-        /* Tablet ve daha büyük ekranlar */
-        @media (min-width: 768px) {
-            .admin-container {
-                display: grid;
-                grid-template-columns: 2fr 1fr;
-                gap: 1.5rem;
-                padding: 1.5rem;
-            }
-            
-            .stats-grid {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 1rem;
-            }
-            
-            .logo {
-                font-size: 1rem;
-            }
-            
-            .logo h2 {
-                font-size: 1.2rem;
-            }
-            
-            .logout-btn {
-                padding: 8px 15px;
-                font-size: 0.9rem;
-            }
-        }
-        
-        /* Mobil uyumluluk */
-        @media (max-width: 767px) {
-            .spotify-embed {
-                height: 80px;
-            }
-        }
-
-        /* Yeni eklenen medya yükleme stilleri */
         .media-upload-container {
             margin-top: 10px;
             padding: 10px;
@@ -565,7 +525,6 @@
             color: black;
         }
 
-        /* Yeni eklenen hata ayıklama mesajı */
         .debug-info {
             font-size: 0.7rem;
             color: #888;
@@ -576,7 +535,6 @@
             display: none;
         }
         
-        /* Yeni eklenen alternatif yükleme seçeneği */
         .alternative-upload {
             margin-top: 10px;
             padding: 10px;
@@ -589,6 +547,39 @@
         .alternative-upload a {
             color: var(--primary-color);
             text-decoration: underline;
+        }
+
+        @media (min-width: 768px) {
+            .admin-container {
+                display: grid;
+                grid-template-columns: 2fr 1fr;
+                gap: 1.5rem;
+                padding: 1.5rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1rem;
+            }
+            
+            .logo {
+                font-size: 1rem;
+            }
+            
+            .logo h2 {
+                font-size: 1.2rem;
+            }
+            
+            .logout-btn {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 767px) {
+            .spotify-embed {
+                height: 80px;
+            }
         }
     </style>
 </head>
@@ -701,32 +692,26 @@
         </div>
     </div>
 
-    <!-- Gizli dosya yükleme inputu -->
     <input type="file" id="media-file-input" style="display: none;" accept="image/*,video/*" onchange="handleMediaUpload(event)">
 
     <script>
-        // JSONBin.io API ayarları
         const ENTRIES_BIN_ID = '68933248ae596e708fc2fbbc';
         const INTERACTIONS_BIN_ID = '68862fd97b4b8670d8a81945';
         const PROXY_URL = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
         
-        // Global değişkenler
         let activeTextareaId = null;
 
-        // Oturum kontrolü
         window.addEventListener('DOMContentLoaded', () => {
             if (!localStorage.getItem('adminAuth') || localStorage.getItem('adminAuth') !== 'true') {
                 window.location.href = 'index.html';
             } else {
                 loadStats();
                 loadRecentEntries();
-                // İlk yüklemede ön izlemeleri güncelle
                 updatePreview('trContent');
                 updatePreview('enContent');
             }
         });
 
-        // Hata ayıklama için debug mesajı göster
         function showDebugInfo(message) {
             const debugEl = document.getElementById('debug-info');
             debugEl.textContent = message;
@@ -763,30 +748,24 @@
                 
                 if (entries.length === 0) return 1;
                 
-                // En yüksek ID'yi bul
                 const maxId = Math.max(...entries.map(e => e.id));
                 return maxId + 1;
             } catch (error) {
                 console.error('ID alınırken hata:', error);
-                // Hata durumunda rastgele ID üret
                 return Math.floor(Math.random() * 900000) + 100000;
             }
         }
         
-        // Spotify eklemek için fonksiyon
         function addSpotifyEmbed(textareaId) {
-            // Kullanıcıdan Spotify URL'sini al
             const spotifyUrl = prompt("Spotify URL veya Track ID girin:");
             if (!spotifyUrl) return;
             
-            // Track ID'yi URL'den çıkart
             let trackId = extractTrackId(spotifyUrl);
             if (!trackId) {
                 alert("Geçersiz Spotify URL veya Track ID!");
                 return;
             }
             
-            // Spotify embed kodu oluştur
             const spotifyEmbed = `<div class="spotify-embed">
                 <iframe 
                     src="https://open.spotify.com/embed/track/${trackId}?utm_source=generator&theme=0" 
@@ -796,21 +775,15 @@
                 </iframe>
             </div>`;
             
-            // İlgili textarea'ya ekle
             insertAtCursor(textareaId, spotifyEmbed);
-            
-            // Ön izlemeyi güncelle
             updatePreview(textareaId);
         }
         
-        // Spotify URL'sinden Track ID çıkartma
         function extractTrackId(url) {
-            // Eğer zaten bir ID gibi görünüyorsa (sadece harf ve rakam, 22 karakter) doğrudan dön
             if (/^[a-zA-Z0-9]{22}$/.test(url)) {
                 return url;
             }
             
-            // URL'den track ID'yi çıkarmak için regex
             const regex = /open\.spotify\.com\/track\/([a-zA-Z0-9]{22})/;
             const match = url.match(regex);
             if (match && match[1]) {
@@ -820,20 +793,16 @@
             return null;
         }
         
-        // Youtube eklemek için fonksiyon
         function addYoutubeEmbed(textareaId) {
-            // Kullanıcıdan Youtube URL'sini al
             const youtubeUrl = prompt("Youtube URL veya Video ID girin:");
             if (!youtubeUrl) return;
             
-            // Video ID'yi URL'den çıkart
             let videoId = extractYoutubeId(youtubeUrl);
             if (!videoId) {
                 alert("Geçersiz Youtube URL veya Video ID!");
                 return;
             }
             
-            // Youtube embed kodu oluştur
             const youtubeEmbed = `<div class="youtube-embed">
                 <iframe 
                     width="100%" 
@@ -845,21 +814,15 @@
                 </iframe>
             </div>`;
             
-            // İlgili textarea'ya ekle
             insertAtCursor(textareaId, youtubeEmbed);
-            
-            // Ön izlemeyi güncelle
             updatePreview(textareaId);
         }
 
-        // Youtube URL'sinden Video ID çıkartma
         function extractYoutubeId(url) {
-            // Eğer zaten bir ID gibi görünüyorsa (11 karakter) doğrudan dön
             if (/^[a-zA-Z0-9_-]{11}$/.test(url)) {
                 return url;
             }
             
-            // Çeşitli Youtube URL formatları için regex'ler
             const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
             const match = url.match(regExp);
             
@@ -867,7 +830,6 @@
                 return match[2];
             }
             
-            // Shorts URL'si için
             const shortsRegExp = /youtube\.com\/shorts\/([^\/\?]+)/;
             const shortsMatch = url.match(shortsRegExp);
             
@@ -878,23 +840,19 @@
             return null;
         }
         
-        // İmleç konumuna metin ekleme
         function insertAtCursor(textareaId, text) {
             const textarea = document.getElementById(textareaId);
             const start = textarea.selectionStart;
             const end = textarea.selectionEnd;
             
-            // Eğer seçili bir metin varsa, onun yerine ekle, yoksa imleç konumuna ekle
             textarea.value = textarea.value.substring(0, start) + text + textarea.value.substring(end);
             
-            // İmleci eklenen metnin sonuna taşı
             const newCursorPos = start + text.length;
             textarea.selectionStart = newCursorPos;
             textarea.selectionEnd = newCursorPos;
             textarea.focus();
         }
         
-        // Medya yükleme fonksiyonları
         function openMediaUpload(textareaId) {
             activeTextareaId = textareaId;
             document.getElementById('media-file-input').click();
@@ -904,7 +862,6 @@
             const file = event.target.files[0];
             if (!file) return;
             
-            // Dosya türü kontrolü
             if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
                 showMessage('Sadece fotoğraf veya video yükleyebilirsiniz!', 'error');
                 return;
@@ -914,7 +871,6 @@
                 showMessage('Dosya yükleniyor...', 'warning');
                 showDebugInfo('Authentication parametreleri alınıyor...');
                 
-                // ImageKit.io authentication parametrelerini al
                 const authResponse = await fetch('https://adembayazit.netlify.app/.netlify/functions/imagekit-auth');
                 
                 if (!authResponse.ok) {
@@ -922,9 +878,8 @@
                 }
                 
                 const authData = await authResponse.json();
-                showDebugInfo('Auth data alındı: ' + JSON.stringify(authData).substring(0, 100) + '...');
+                showDebugInfo('Auth data alındı');
                 
-                // FormData oluştur
                 const formData = new FormData();
                 formData.append('file', file);
                 formData.append('fileName', file.name);
@@ -933,28 +888,27 @@
                 formData.append('expire', authData.expire);
                 formData.append('publicKey', authData.publicKey);
                 
-                showDebugInfo('ImageKit upload çağrısı yapılıyor...');
-                // ImageKit.io'ya yükle
-                const uploadResponse = await fetch('https://upload.imagekit.io/api/v2/files/upload', {
+                showDebugInfo('ImageKit upload çağrılıyor...');
+                
+                const uploadResponse = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
                     method: 'POST',
                     body: formData
                 });
                 
-                showDebugInfo('Upload response alındı: ' + uploadResponse.status);
+                showDebugInfo('Upload response: ' + uploadResponse.status);
                 
                 if (!uploadResponse.ok) {
                     const errorText = await uploadResponse.text();
-                    throw new Error(`Upload hatası: ${uploadResponse.status} - ${errorText}`);
+                    showDebugInfo('Upload error: ' + errorText);
+                    throw new Error(`Upload hatası: ${uploadResponse.status}`);
                 }
                 
                 const uploadData = await uploadResponse.json();
                 showDebugInfo('Upload başarılı: ' + uploadData.url);
                 
-                // URL'yi ilgili textarea'ya ekle
                 const textarea = document.getElementById(activeTextareaId);
                 const url = uploadData.url;
                 
-                // Medya türüne göre embed kodu oluştur
                 let mediaTag;
                 if (file.type.startsWith('image/')) {
                     mediaTag = `<img src="${url}" alt="Yüklenen resim" style="max-width: 100%; height: auto;">`;
@@ -962,34 +916,27 @@
                     mediaTag = `<video src="${url}" controls style="max-width: 100%; height: auto;"></video>`;
                 }
                 
-                // Textarea'ya ekle
                 insertAtCursor(activeTextareaId, `\n${mediaTag}\n`);
-                
-                // Ön izlemeyi güncelle
                 updatePreview(activeTextareaId);
                 
                 showMessage('Dosya başarıyla yüklendi!', 'success');
                 showDebugInfo('');
+                
             } catch (error) {
                 console.error('Yükleme hatası:', error);
-                let errorMessage = error.message || 'Bilinmeyen hata';
+                let errorMessage = error.message;
                 
-                // Daha anlaşılır hata mesajı
                 if (errorMessage.includes('Failed to fetch')) {
-                    errorMessage = 'Sunucuya bağlanılamadı. Lütfen internet bağlantınızı kontrol edin.';
-                } else if (errorMessage.includes('Unexpected token')) {
-                    errorMessage = 'Sunucudan beklenmeyen yanıt alındı. Lütfen yapılandırmayı kontrol edin.';
+                    errorMessage = 'Sunucuya bağlanılamadı. İnternet bağlantınızı kontrol edin.';
                 }
                 
                 showMessage(`Yükleme hatası: ${errorMessage}`, 'error');
                 showDebugInfo('Hata detayı: ' + errorMessage);
                 
-                // Alternatif yükleme seçeneği göster
                 showAlternativeUploadOption();
             }
         }
         
-        // Alternatif yükleme seçeneği göster
         function showAlternativeUploadOption() {
             const responseEl = document.getElementById('response-message');
             const alternativeHtml = `
@@ -999,7 +946,6 @@
                 </div>
             `;
             
-            // Eğer zaten bir alternatif yükleme seçeneği yoksa ekle
             if (!responseEl.nextElementSibling || !responseEl.nextElementSibling.classList.contains('alternative-upload')) {
                 responseEl.insertAdjacentHTML('afterend', alternativeHtml);
             }
@@ -1024,14 +970,11 @@
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...';
                 
-                // Mevcut entry'leri çek
                 const currentData = await fetchFromJsonBin(ENTRIES_BIN_ID);
                 let entries = Array.isArray(currentData) ? currentData : (currentData.records || []);
                 
-                // Entry ID belirle
                 let entryId = entryIdInput.value ? parseInt(entryIdInput.value) : await getNextId();
                 
-                // ID zaten var mı kontrol et
                 if (entryIdInput.value && entries.some(e => e.id === entryId)) {
                     showMessage('Bu ID zaten kullanılıyor!', 'error');
                     submitBtn.disabled = false;
@@ -1039,34 +982,27 @@
                     return;
                 }
                 
-                // Yeni entry oluştur
                 const newEntry = {
                     id: entryId,
                     date: new Date().toISOString(),
-                    content: enContent || '', // İngilizce içerik
-                    content_tr: trContent || null, // Türkçe içerik
+                    content: enContent || '',
+                    content_tr: trContent || null,
                     references: referenceId ? [parseInt(referenceId)] : []
                 };
                 
-                // Yeni listeyi hazırla
                 const updatedEntries = [newEntry, ...entries];
-                
-                // JSONBin'e gönder
                 await fetchFromJsonBin(ENTRIES_BIN_ID, 'PUT', updatedEntries);
                 
                 showMessage('Entry başarıyla eklendi!', 'success');
                 
-                // Formu temizle
                 entryIdInput.value = '';
                 document.getElementById('referenceId').value = '';
                 document.getElementById('trContent').value = '';
                 document.getElementById('enContent').value = '';
                 
-                // Ön izlemeleri temizle
                 updatePreview('trContent');
                 updatePreview('enContent');
                 
-                // İstatistikleri ve son entryleri güncelle
                 await updateStats();
                 await loadRecentEntries();
             } catch (error) {
@@ -1085,7 +1021,6 @@
                 const recentEntriesContainer = document.getElementById('recent-entries');
                 recentEntriesContainer.innerHTML = '';
                 
-                // En son 5 entry'yi göster
                 const recentEntries = Array.isArray(entries) ? 
                     entries.slice(0, 5) : 
                     (entries.records ? entries.records.slice(0, 5) : []);
@@ -1099,7 +1034,6 @@
                     const entryEl = document.createElement('div');
                     entryEl.className = 'entry-item';
                     
-                    // İçerik belirleme (TR varsa TR, yoksa EN)
                     let displayContent = entry.content_tr || entry.content;
                     
                     entryEl.innerHTML = `
@@ -1145,7 +1079,6 @@
                 const entryEl = document.createElement('div');
                 entryEl.className = 'entry-item';
                 
-                // İçerik belirleme (TR varsa TR, yoksa EN)
                 let displayContent = entry.content_tr || entry.content;
                 
                 entryEl.innerHTML = `
@@ -1180,14 +1113,12 @@
                     return;
                 }
                 
-                // Entry item'ını bul
                 const entryItems = document.querySelectorAll('.entry-item');
                 const targetItem = Array.from(entryItems).find(item => 
                     item.querySelector('.entry-meta span').textContent.includes(`ID: ${entryId}`));
                 
                 if (!targetItem) return;
                 
-                // Edit formu oluştur veya göster
                 let editForm = targetItem.querySelector('.edit-form');
                 
                 if (!editForm) {
@@ -1223,7 +1154,6 @@
                     `;
                     targetItem.appendChild(editForm);
                     
-                    // Edit preview'ları güncelle
                     updateEditPreview(entryId, 'tr');
                     updateEditPreview(entryId, 'en');
                 }
@@ -1254,7 +1184,6 @@
                     return;
                 }
                 
-                // Entry'yi güncelle
                 entriesArray[entryIndex] = {
                     ...entriesArray[entryIndex],
                     content_tr: trContent || null,
@@ -1262,12 +1191,9 @@
                     date: new Date().toISOString()
                 };
                 
-                // JSONBin'e gönder
                 await fetchFromJsonBin(ENTRIES_BIN_ID, 'PUT', entriesArray);
                 
                 showMessage('Entry başarıyla güncellendi!', 'success');
-                
-                // Listeyi yenile
                 await loadRecentEntries();
             } catch (error) {
                 console.error('Entry kaydetme hatası:', error);
@@ -1301,12 +1227,9 @@
                 
                 const updatedEntries = entriesArray.filter(e => e.id !== entryId);
                 
-                // JSONBin'e gönder
                 await fetchFromJsonBin(ENTRIES_BIN_ID, 'PUT', updatedEntries);
                 
                 showMessage('Entry başarıyla silindi!', 'success');
-                
-                // Listeyi yenile
                 await loadRecentEntries();
                 await updateStats();
             } catch (error) {
@@ -1355,7 +1278,7 @@
             
             setTimeout(() => {
                 responseEl.style.display = 'none';
-            }, 500);
+            }, 5000);
         }
         
         function logout() {
@@ -1363,7 +1286,6 @@
             window.location.href = 'index.html';
         }
         
-        // Ön izleme güncelleme fonksiyonları
         function updatePreview(textareaId) {
             const textarea = document.getElementById(textareaId);
             const preview = document.getElementById(`${textareaId}-preview`);
@@ -1386,7 +1308,6 @@
             }
         }
         
-        // Metin düzenleme fonksiyonları
         function formatText(textareaId, format) {
             const textarea = document.getElementById(textareaId);
             const start = textarea.selectionStart;
