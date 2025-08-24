@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<title>ImageKit Upload Test</title>
-<style>
-  body { font-family: sans-serif; padding: 20px; background: #f5f5f5; }
-  input, button { margin: 5px 0; }
-  #fileList img { max-width: 150px; margin: 5px; border: 1px solid #ccc; border-radius: 5px; }
-  #status { margin-top: 10px; font-weight: bold; }
-</style>
+  <meta charset="UTF-8">
+  <title>ImageKit Upload Test</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #f5f5f5; }
+    input, button { margin: 5px 0; }
+    #fileList img { max-width: 150px; margin: 5px; border: 1px solid #ccc; border-radius: 5px; }
+    #status { margin-top: 10px; font-weight: bold; }
+  </style>
 </head>
 <body>
 
@@ -51,10 +51,8 @@ uploadBtn.addEventListener("click", async () => {
   statusDiv.textContent = "⏳ Yükleniyor...";
 
   try {
-    // 1) Auth parametrelerini al
-    const auth = await fetch("/.netlify/functions/imagekit-auth").then(r=>r.json());
+    const auth = await fetch("/.netlify/functions/imagekit-auth").then(r => r.json());
 
-    // 2) FormData oluştur
     const formData = new FormData();
     formData.append("file", input.files[0]);
     formData.append("fileName", input.files[0].name);
@@ -63,25 +61,21 @@ uploadBtn.addEventListener("click", async () => {
     formData.append("signature", auth.signature);
     formData.append("publicKey", auth.publicKey);
 
-    // 3) Upload isteği
     const res = await fetch("https://upload.imagekit.io/api/v2/files/upload", {
       method: "POST",
       body: formData
     });
 
     const data = await res.json();
-    console.log(data);
-
-    if(data.url) {
+    if (data.url) {
       statusDiv.innerHTML = `✅ Yüklendi: <a href="${data.url}" target="_blank">${data.name}</a>`;
       loadFiles();
     } else {
       statusDiv.textContent = "❌ Yükleme başarısız: " + JSON.stringify(data);
     }
 
-  } catch(e) {
+  } catch (e) {
     statusDiv.textContent = "❌ Hata: " + e.message;
-    console.error(e);
   }
 });
 
