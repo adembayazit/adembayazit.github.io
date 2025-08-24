@@ -130,6 +130,15 @@
             border-radius: 10px;
             border-left: 4px solid #3b82f6;
         }
+        .key-info {
+            background: #334155;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+            font-family: 'Fira Code', monospace;
+            font-size: 12px;
+            word-break: break-all;
+        }
     </style>
 </head>
 <body>
@@ -139,6 +148,7 @@
         <div class="config-box">
             <strong>🔧 Config:</strong><br>
             Public Key: public_tHOgsielmH7GLPe3fLQkHMUztUY=<br>
+            Private Key: private_5ZSa************************<br>
             Auth URL: https://adembayazit.netlify.app/.netlify/functions/imagekit-auth<br>
             Upload URL: https://upload.imagekit.io/api/v1/files/upload
         </div>
@@ -180,8 +190,8 @@
         
         // MANUAL PUBLIC KEY - ImageKit dashboard'dan alın
         const MANUAL_PUBLIC_KEY = 'public_tHOgsielmH7GLPe3fLQkHMUztUY=';
-        // MANUAL PRIVATE KEY - ImageKit dashboard'dan alın (DİKKAT: Güvenlik riski, sadece test için)
-        const MANUAL_PRIVATE_KEY = 'private_xxxxxxxxxxxxxxxxxxxxxxxxxxxx'; // BURAYA PRIVATE KEY'İNİZİ YAZIN
+        // MANUAL PRIVATE KEY - ImageKit dashboard'dan alın
+        const MANUAL_PRIVATE_KEY = 'private_5ZSa************************'; // BURAYA TAM PRIVATE KEY'İNİZİ YAZIN
         
         function log(message, className = '') {
             const line = document.createElement('div');
@@ -230,226 +240,45 @@
             });
             
             log('🟢 Test merkezi hazır!', 'success');
-            log('ℹ️ Lütfen "1. Auth Testi" butonuna tıklayarak başlayın', 'info');
-            log('⚠️ Manuel signature testi için private key güncellemesi gerekli!', 'warning');
+            log('🔑 Private Key ayarlandı', 'info');
+            log('ℹ️ Lütfen "4. 🔐 Manuel Signature Testi" butonuna tıklayın', 'info');
         });
 
-        async function testAuth() {
-            setLoading(authBtn, true);
-            clearLog();
+        async function testPrivateKey() {
+            log('🔐 Private Key Kontrolü...', 'info');
+            log(`🔑 Private Key: ${MANUAL_PRIVATE_KEY.substring(0, 15)}...`, 'debug');
+            log(`📏 Uzunluk: ${MANUAL_PRIVATE_KEY.length} karakter`, 'debug');
             
-            try {
-                log('🔑 Auth endpoint çağrılıyor...', 'info');
-                log(`🌐 URL: https://adembayazit.netlify.app/.netlify/functions/imagekit-auth`, 'debug');
-                
-                const response = await fetch('https://adembayazit.netlify.app/.netlify/functions/imagekit-auth');
-                
-                log(`📡 Response status: ${response.status}`, 'info');
-                
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
-                }
-                
-                const data = await response.json();
-                log('✅ Auth başarılı!', 'success');
-                log(`🎫 Token: ${data.token}`, 'debug');
-                log(`🔏 Signature: ${data.signature}`, 'debug');
-                log(`📏 Signature Length: ${data.signature.length}`, 'debug');
-                log(`⏰ Expire: ${data.expire}`, 'debug');
-                
-                // PublicKey kontrolü
-                if (data.publicKey) {
-                    log(`🔑 PublicKey: ${data.publicKey}`, 'success');
-                } else {
-                    log(`⚠️ PublicKey: UNDEFINED! Manuel key kullanılacak`, 'warning');
-                    log(`🔑 Manuel PublicKey: ${MANUAL_PUBLIC_KEY}`, 'debug');
-                }
-                
-                return data;
-                
-            } catch (error) {
-                log(`❌ Auth hatası: ${error.message}`, 'error');
-                throw error;
-            } finally {
-                setLoading(authBtn, false);
-            }
-        }
-
-        async function testUpload() {
-            setLoading(uploadBtn, true);
-            
-            try {
-                log('📦 Upload testi başlıyor...', 'info');
-                
-                // Önce auth parametrelerini al
-                const authData = await testAuth();
-                
-                // PublicKey belirle
-                const publicKeyToUse = authData.publicKey || MANUAL_PUBLIC_KEY;
-                log(`🔑 Kullanılacak PublicKey: ${publicKeyToUse}`, 'info');
-                
-                // Test dosyası oluştur
-                const testContent = 'ImageKit test dosyası - ' + new Date().toISOString() + '\n' +
-                                  'Bu dosja ImageKit upload testi için oluşturulmuştur.\n' +
-                                  'Test zamanı: ' + new Date().toLocaleString('tr-TR');
-                const testFile = new File([testContent], `test_${Date.now()}.txt`, { 
-                    type: 'text/plain' 
-                });
-                
-                log(`📄 Test dosyası oluşturuldu: ${testFile.name} (${testFile.size} bytes)`, 'info');
-                
-                // FormData oluştur
-                const formData = new FormData();
-                formData.append('file', testFile);
-                formData.append('fileName', testFile.name);
-                formData.append('publicKey', publicKeyToUse);
-                formData.append('signature', authData.signature);
-                formData.append('token', authData.token);
-                formData.append('expire', authData.expire);
-                
-                log('🚀 Upload isteği gönderiliyor...', 'info');
-                log(`🌐 Hedef: https://upload.imagekit.io/api/v1/files/upload`, 'debug');
-                
-                // Upload isteği
-                const uploadResponse = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                log(`📨 Response status: ${uploadResponse.status} ${uploadResponse.statusText}`, 'info');
-                
-                const resultText = await uploadResponse.text();
-                
-                if (!uploadResponse.ok) {
-                    log(`❌ Upload hatası:`, 'error');
-                    log(resultText, 'error');
-                    
-                    // Hata analizi
-                    if (resultText.includes('invalid signature')) {
-                        log('🔐 CRITICAL: Geçersiz signature!', 'error');
-                        log('🔐 ImageKit SDK signature üretiminde sorun var', 'error');
-                        log('🔐 Lütfen "4. Manuel Signature Testi" butonunu deneyin', 'error');
-                    } else if (resultText.includes('account cannot be authenticated')) {
-                        log('🔐 Hata: Hesap kimlik doğrulaması başarısız', 'error');
-                        log('🔐 Private key kontrol edilmeli', 'error');
-                    }
-                    
-                    return;
-                }
-                
-                const result = JSON.parse(resultText);
-                log('🎉 UPLOAD BAŞARILI!', 'success');
-                log(`📎 URL: ${result.url}`, 'info');
-                log(`🆔 File ID: ${result.fileId}`, 'info');
-                log(`📊 Boyut: ${result.size} bytes`, 'info');
-                log(`🏷️ Tür: ${result.fileType}`, 'info');
-                
-                // Önizleme
-                if (result.fileType === 'image') {
-                    preview.style.display = 'block';
-                    previewContent.innerHTML = `
-                        <img src="${result.url}" style="max-width: 300px; border-radius: 8px; margin: 10px 0;">
-                        <br><a href="${result.url}" target="_blank">🔗 Tam boyutta aç</a>
-                    `;
-                }
-                
-            } catch (error) {
-                log(`❌ Beklenmeyen hata: ${error.message}`, 'error');
-            } finally {
-                setLoading(uploadBtn, false);
-            }
-        }
-
-        async function testWithRealFile() {
-            const fileInput = document.getElementById('testFile');
-            const file = fileInput.files[0];
-            
-            if (!file) {
-                log('❌ Lütfen önce bir dosya seçin!', 'error');
-                return;
+            // Private key format kontrolü
+            if (!MANUAL_PRIVATE_KEY.startsWith('private_')) {
+                log('❌ HATA: Private key "private_" ile başlamalı!', 'error');
+                return false;
             }
             
-            setLoading(realFileBtn, true);
-            
-            try {
-                log(`📁 Gerçek dosya testi: ${file.name}`, 'info');
-                
-                // Önce auth parametrelerini al
-                const authData = await testAuth();
-                
-                // PublicKey belirle
-                const publicKeyToUse = authData.publicKey || MANUAL_PUBLIC_KEY;
-                
-                // FormData oluştur
-                const formData = new FormData();
-                formData.append('file', file);
-                formData.append('fileName', `real_${Date.now()}_${file.name}`);
-                formData.append('publicKey', publicKeyToUse);
-                formData.append('signature', authData.signature);
-                formData.append('token', authData.token);
-                formData.append('expire', authData.expire);
-                
-                log('🚀 Gerçek dosya upload başlatılıyor...', 'info');
-                
-                // Upload isteği
-                const uploadResponse = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                log(`📨 Response status: ${uploadResponse.status}`, 'info');
-                
-                const resultText = await uploadResponse.text();
-                
-                if (!uploadResponse.ok) {
-                    log(`❌ Upload hatası: ${resultText}`, 'error');
-                    return;
-                }
-                
-                const result = JSON.parse(resultText);
-                log('🎉 GERÇEK DOSYA UPLOAD BAŞARILI!', 'success');
-                log(`📎 URL: ${result.url}`, 'info');
-                log(`🆔 File ID: ${result.fileId}`, 'info');
-                
-                // Önizleme
-                preview.style.display = 'block';
-                if (result.fileType === 'image') {
-                    previewContent.innerHTML = `
-                        <img src="${result.url}" style="max-width: 400px; border-radius: 8px;">
-                        <br><a href="${result.url}" target="_blank">🔗 Tam boyutta aç</a>
-                    `;
-                } else {
-                    previewContent.innerHTML = `
-                        <p>📂 Dosya: ${file.name}</p>
-                        <p>🏷️ Tür: ${result.fileType}</p>
-                        <a href="${result.url}" target="_blank" class="btn">🔗 Dosyayı Aç</a>
-                    `;
-                }
-                
-            } catch (error) {
-                log(`❌ Hata: ${error.message}`, 'error');
-            } finally {
-                setLoading(realFileBtn, false);
+            if (MANUAL_PRIVATE_KEY.length < 40) {
+                log('❌ HATA: Private key çok kısa!', 'error');
+                return false;
             }
+            
+            log('✅ Private key formatı uygun', 'success');
+            return true;
         }
 
         async function testManualSignature() {
+            if (!await testPrivateKey()) {
+                return;
+            }
+            
             setLoading(manualSigBtn, true);
             
             try {
                 log('🔐 Manuel signature testi başlıyor...', 'info');
                 
-                if (MANUAL_PRIVATE_KEY === 'private_xxxxxxxxxxxxxxxxxxxxxxxxxxxx') {
-                    log('❌ HATA: Lütfen MANUAL_PRIVATE_KEY değişkenini güncelleyin!', 'error');
-                    log('ℹ️ ImageKit dashboard → Settings → API Keys → Private Key', 'info');
-                    return;
-                }
-                
                 // Timestamp ve nonce oluştur
                 const timestamp = Math.floor(Date.now() / 1000);
-                const nonce = Math.random().toString(36).substring(2, 15) + 
-                             Math.random().toString(36).substring(2, 15);
+                const nonce = Array.from(crypto.getRandomValues(new Uint8Array(16)))
+                    .map(b => b.toString(16).padStart(2, '0'))
+                    .join('');
                 
                 log(`⏰ Timestamp: ${timestamp}`, 'debug');
                 log(`🎲 Nonce: ${nonce}`, 'debug');
@@ -475,40 +304,199 @@
                 const signatureArray = Array.from(new Uint8Array(signatureBuffer));
                 const signature = signatureArray.map(b => b.toString(16).padStart(2, '0')).join('');
                 
-                log(`🔏 Manuel Signature: ${signature}`, 'debug');
-                log(`📏 Signature Length: ${signature.length}`, 'debug');
+                log(`🔏 Signature: ${signature.substring(0, 20)}...`, 'debug');
+                log(`📏 Signature Length: ${signature.length} karakter`, 'debug');
+                
+                // Expire süresi (55 dakika)
+                const expireTime = timestamp + 3300;
                 
                 // Test için upload deneyelim
-                const testFile = new File(['Manuel signature test'], 'manual_test.txt');
+                const testContent = 'Manuel signature test - ' + new Date().toISOString();
+                const testFile = new File([testContent], 'manual_test.txt', {
+                    type: 'text/plain'
+                });
+                
                 const formData = new FormData();
                 formData.append('file', testFile);
                 formData.append('fileName', 'manual_test.txt');
                 formData.append('publicKey', MANUAL_PUBLIC_KEY);
                 formData.append('signature', signature);
                 formData.append('token', nonce);
-                formData.append('expire', timestamp + 3600);
+                formData.append('expire', expireTime);
                 
-                log('🚀 Manuel signature ile upload denemesi...', 'info');
+                log('📋 Gönderilen parametreler:', 'debug');
+                log(`- publicKey: ${MANUAL_PUBLIC_KEY.substring(0, 20)}...`, 'debug');
+                log(`- signature: ${signature.substring(0, 20)}...`, 'debug');
+                log(`- token: ${nonce.substring(0, 20)}...`, 'debug');
+                log(`- expire: ${expireTime} (55 dakika)`, 'debug');
+                
+                log('🚀 Upload isteği gönderiliyor...', 'info');
                 
                 const response = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
                     method: 'POST',
                     body: formData
                 });
                 
-                const result = await response.text();
-                log(`📨 Response: ${response.status}`, response.ok ? 'success' : 'error');
-                log(`📝 Result: ${result}`, response.ok ? 'debug' : 'error');
+                const resultText = await response.text();
+                log(`📨 Response Status: ${response.status}`, response.ok ? 'success' : 'error');
                 
-                if (response.ok) {
-                    const resultData = JSON.parse(result);
+                if (!response.ok) {
+                    log(`❌ Hata Detayı: ${resultText}`, 'error');
+                    
+                    if (resultText.includes('invalid signature')) {
+                        log('🔐 KRİTİK HATA: Signature geçersiz', 'error');
+                        log('🔐 Olası nedenler:', 'error');
+                        log('🔐 1. Private key yanlış olabilir', 'error');
+                        log('🔐 2. Signature algoritmasında sorun', 'error');
+                        log('🔐 3. ImageKit hesap ayarlarında sorun', 'error');
+                    }
+                } else {
+                    const resultData = JSON.parse(resultText);
                     log('🎉 MANUEL SIGNATURE BAŞARILI!', 'success');
                     log(`📎 URL: ${resultData.url}`, 'info');
+                    log(`🆔 File ID: ${resultData.fileId}`, 'info');
+                    
+                    // Önizleme
+                    preview.style.display = 'block';
+                    previewContent.innerHTML = `
+                        <div class="success">
+                            ✅ Upload başarılı!<br>
+                            📎 <a href="${resultData.url}" target="_blank">Dosyayı görüntüle</a><br>
+                            🆔 File ID: ${resultData.fileId}<br>
+                            📊 Size: ${resultData.size} bytes
+                        </div>
+                    `;
                 }
                 
             } catch (error) {
                 log(`❌ Manuel signature hatası: ${error.message}`, 'error');
+                console.error('Detailed error:', error);
             } finally {
                 setLoading(manualSigBtn, false);
+            }
+        }
+
+        async function testAuth() {
+            setLoading(authBtn, true);
+            clearLog();
+            
+            try {
+                log('🔑 Auth endpoint çağrılıyor...', 'info');
+                
+                const response = await fetch('https://adembayazit.netlify.app/.netlify/functions/imagekit-auth');
+                
+                log(`📡 Response status: ${response.status}`, 'info');
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+                }
+                
+                const data = await response.json();
+                log('✅ Auth başarılı!', 'success');
+                log(`🎫 Token: ${data.token.substring(0, 20)}...`, 'debug');
+                log(`🔏 Signature: ${data.signature.substring(0, 20)}...`, 'debug');
+                log(`📏 Signature Length: ${data.signature.length}`, 'debug');
+                log(`⏰ Expire: ${data.expire}`, 'debug');
+                log(`🔑 PublicKey: ${data.publicKey.substring(0, 20)}...`, 'debug');
+                
+                return data;
+                
+            } catch (error) {
+                log(`❌ Auth hatası: ${error.message}`, 'error');
+                throw error;
+            } finally {
+                setLoading(authBtn, false);
+            }
+        }
+
+        async function testUpload() {
+            setLoading(uploadBtn, true);
+            
+            try {
+                log('📦 Upload testi başlıyor...', 'info');
+                
+                const authData = await testAuth();
+                
+                const testContent = 'ImageKit test - ' + new Date().toISOString();
+                const testFile = new File([testContent], `test_${Date.now()}.txt`);
+                
+                const formData = new FormData();
+                formData.append('file', testFile);
+                formData.append('fileName', testFile.name);
+                formData.append('publicKey', authData.publicKey);
+                formData.append('signature', authData.signature);
+                formData.append('token', authData.token);
+                formData.append('expire', authData.expire);
+                
+                log('🚀 Upload isteği gönderiliyor...', 'info');
+                
+                const response = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const resultText = await response.text();
+                log(`📨 Response: ${response.status}`, response.ok ? 'success' : 'error');
+                
+                if (!response.ok) {
+                    log(`❌ Hata: ${resultText}`, 'error');
+                } else {
+                    const resultData = JSON.parse(resultText);
+                    log('🎉 Upload başarılı!', 'success');
+                    log(`📎 URL: ${resultData.url}`, 'info');
+                }
+                
+            } catch (error) {
+                log(`❌ Upload hatası: ${error.message}`, 'error');
+            } finally {
+                setLoading(uploadBtn, false);
+            }
+        }
+
+        async function testWithRealFile() {
+            const fileInput = document.getElementById('testFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                log('❌ Lütfen önce bir dosya seçin!', 'error');
+                return;
+            }
+            
+            setLoading(realFileBtn, true);
+            
+            try {
+                const authData = await testAuth();
+                
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('fileName', `real_${Date.now()}_${file.name}`);
+                formData.append('publicKey', authData.publicKey);
+                formData.append('signature', authData.signature);
+                formData.append('token', authData.token);
+                formData.append('expire', authData.expire);
+                
+                log('🚀 Gerçek dosya upload başlatılıyor...', 'info');
+                
+                const response = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const resultText = await response.text();
+                
+                if (!response.ok) {
+                    log(`❌ Upload hatası: ${resultText}`, 'error');
+                } else {
+                    const resultData = JSON.parse(resultText);
+                    log('🎉 Upload başarılı!', 'success');
+                    log(`📎 URL: ${resultData.url}`, 'info');
+                }
+                
+            } catch (error) {
+                log(`❌ Hata: ${error.message}`, 'error');
+            } finally {
+                setLoading(realFileBtn, false);
             }
         }
     </script>
