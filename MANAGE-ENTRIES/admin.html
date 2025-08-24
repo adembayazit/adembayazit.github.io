@@ -1,91 +1,151 @@
-async function handleMediaUpload(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  
-  // Dosya türü kontrolü
-  if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
-    showMessage('Sadece fotoğraf veya video yükleyebilirsiniz!', 'error');
-    return;
-  }
-  
-  try {
-    showMessage('Dosya yükleniyor...', 'warning');
-    showDebugInfo('Authentication parametreleri alınıyor...');
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fotoğraf Gösterimi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        
+        header {
+            background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .photo-container {
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .photo-frame {
+            border: 15px solid #2c3e50;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            max-width: 100%;
+            overflow: hidden;
+        }
+        
+        .photo {
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .info {
+            margin-top: 20px;
+            text-align: center;
+            color: #555;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: #4b6cb7;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+            padding: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .photo-frame {
+                border-width: 10px;
+            }
+            
+            .info {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Fotoğraf Gösterimi</h1>
+            <p>ImageKit.io ile barındırılan görsel</p>
+        </header>
+        
+        <div class="photo-container">
+            <div class="photo-frame">
+                <img src="https://ik.imagekit.io/adembayazit/IMG_0402.jpeg?updatedAt=1756032610109" 
+                     alt="Gösterilen Fotoğraf" 
+                     class="photo"
+                     onload="document.querySelector('.loading').style.display = 'none';"
+                     onerror="document.querySelector('.loading').innerHTML = '<p>Fotoğraf yüklenirken bir hata oluştu. Lütfen bağlantıyı kontrol edin.</p>';">
+            </div>
+            
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Fotoğraf yükleniyor...</p>
+            </div>
+            
+            <div class="info">
+                <p>Yukarıdaki görsel ImageKit.io üzerinden sağlanmaktadır. Fotoğrafın yüklenmesi internet hızınıza bağlı olarak birkaç saniye sürebilir.</p>
+            </div>
+        </div>
+    </div>
     
-    // ImageKit.io authentication parametrelerini al
-    const authResponse = await fetch('https://adembayazit.netlify.app/.netlify/functions/imagekit-auth');
-    
-    if (!authResponse.ok) {
-      const errorText = await authResponse.text();
-      throw new Error(`Auth endpoint hatası: ${authResponse.status} - ${errorText}`);
-    }
-    
-    const authData = await authResponse.json();
-    showDebugInfo('Auth data alındı: ' + JSON.stringify(authData).substring(0, 100) + '...');
-    
-    // FormData oluştur
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('fileName', file.name);
-    formData.append('signature', authData.signature);
-    formData.append('token', authData.token);
-    formData.append('expire', authData.expire);
-    formData.append('publicKey', authData.publicKey);
-    
-    showDebugInfo('ImageKit upload çağrısı yapılıyor...');
-    // ImageKit.io'ya yükle
-    const uploadResponse = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
-      method: 'POST',
-      body: formData
-    });
-    
-    showDebugInfo('Upload response alındı: ' + uploadResponse.status);
-    
-    if (!uploadResponse.ok) {
-      const errorText = await uploadResponse.text();
-      throw new Error(`Upload hatası: ${uploadResponse.status} - ${errorText}`);
-    }
-    
-    const uploadData = await uploadResponse.json();
-    showDebugInfo('Upload başarılı: ' + uploadData.url);
-    
-    // URL'yi ilgili textarea'ya ekle
-    const textarea = document.getElementById(activeTextareaId);
-    const url = uploadData.url;
-    
-    // Medya türüne göre embed kodu oluştur
-    let mediaTag;
-    if (file.type.startsWith('image/')) {
-      mediaTag = `<img src="${url}" alt="Yüklenen resim" style="max-width: 100%; height: auto;">`;
-    } else if (file.type.startsWith('video/')) {
-      mediaTag = `<video src="${url}" controls style="max-width: 100%; height: auto;"></video>`;
-    }
-    
-    // Textarea'ya ekle
-    insertAtCursor(activeTextareaId, `\n${mediaTag}\n`);
-    
-    // Ön izlemeyi güncelle
-    updatePreview(activeTextareaId);
-    
-    showMessage('Dosya başarıyla yüklendi!', 'success');
-    showDebugInfo('');
-  } catch (error) {
-    console.error('Yükleme hatası:', error);
-    let errorMessage = error.message || 'Bilinmeyen hata';
-    
-    // Daha anlaşılır hata mesajı
-    if (errorMessage.includes('Failed to fetch')) {
-      errorMessage = 'Sunucuya bağlanılamadı. Lütfen internet bağlantınızı kontrol edin.';
-    } else if (errorMessage.includes('Unexpected token')) {
-      errorMessage = 'Sunucudan beklenmeyen yanıt alındı. Lütfen yapılandırmayı kontrol edin.';
-    } else if (errorMessage.includes('403')) {
-      errorMessage = 'Yetkilendirme hatası. Lütfen API anahtarlarını kontrol edin.';
-    }
-    
-    showMessage(`Yükleme hatası: ${errorMessage}`, 'error');
-    showDebugInfo('Hata detayı: ' + errorMessage);
-    
-    // Alternatif yükleme seçeneği göster
-    showAlternativeUploadOption();
-  }
-}
+    <footer>
+        <p>© 2023 Fotoğraf Gösterici | Tüm hakları saklıdır.</p>
+    </footer>
+</body>
+</html>
