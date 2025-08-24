@@ -931,48 +931,63 @@ async function getImageKitAuth() {
 }
 
 // Düzeltilmiş medya yükleme fonksiyonu
-// Yeni medya yükleme fonksiyonu - Direct Upload
+// Düzeltilmiş medya yükleme fonksiyonu
 async function handleMediaUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
     
     try {
         showMessage('Dosya yükleniyor...', 'warning');
-        showDebugInfo('Direct upload deneniyor...');
+        showDebugInfo('Dosya seçildi: ' + file.name + ' (' + file.type + ')');
         
-        // Önce authentication parametrelerini al
+        // Önce Netlify fonksiyonundan auth parametrelerini al
+        showDebugInfo('Auth parametreleri alınıyor...');
         const authData = await getImageKitAuth();
-        showDebugInfo('Auth data: ' + JSON.stringify(authData));
+        showDebugInfo('Auth data alındı: ' + JSON.stringify({
+            token: authData.token,
+            expire: authData.expire,
+            signature: authData.signature.substring(0, 10) + '...',
+            publicKey: authData.publicKey
+        }));
         
-        // FormData oluştur
+        // FormData oluştur - SADECE GEREKLİ PARAMETRELER
         const formData = new FormData();
         formData.append('file', file);
         formData.append('fileName', `media_${Date.now()}_${file.name}`);
+        formData.append('publicKey', authData.publicKey);
         formData.append('signature', authData.signature);
         formData.append('token', authData.token);
         formData.append('expire', authData.expire);
-        formData.append('publicKey', authData.publicKey);
         
-        showDebugInfo('Upload başlıyor...');
+        showDebugInfo('ImageKit upload başlatılıyor...');
         
-        // ImageKit'e yükle
+        // ImageKit'e yükleme isteği
         const uploadResponse = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
             method: 'POST',
             body: formData
         });
         
-        showDebugInfo('Upload response: ' + uploadResponse.status);
+        showDebugInfo('Upload response status: ' + uploadResponse.status);
         
         if (!uploadResponse.ok) {
             const errorText = await uploadResponse.text();
-            showDebugInfo('Upload error: ' + errorText);
-            throw new Error(`Upload hatası: ${uploadResponse.status}`);
+            showDebugInfo('Upload error response: ' + errorText);
+            
+            // Daha spesifik hata mesajı
+            let errorMessage = `Upload hatası: ${uploadResponse.status}`;
+            if (errorText.includes('account cannot be authenticated')) {
+                errorMessage = 'ImageKit hesap kimlik doğrulama hatası. Lütfen API anahtarlarını kontrol edin.';
+            } else if (errorText.includes('signature')) {
+                errorMessage = 'İmza doğrulama hatası. Private key yanlış olabilir.';
+            }
+            
+            throw new Error(errorMessage);
         }
         
         const uploadData = await uploadResponse.json();
-        showDebugInfo('Upload başarılı: ' + JSON.stringify(uploadData));
+        showDebugInfo('Upload başarılı! Response: ' + JSON.stringify(uploadData));
         
-        // URL'yi ekle
+        // URL'yi ilgili textarea'ya ekle
         const textarea = document.getElementById(activeTextareaId);
         let mediaTag;
         
@@ -985,102 +1000,38 @@ async function handleMediaUpload(event) {
         insertAtCursor(activeTextareaId, `\n${mediaTag}\n`);
         updatePreview(activeTextareaId);
         showMessage('Dosya başarıyla yüklendi!', 'success');
+        showDebugInfo('');
         
     } catch (error) {
         console.error('Yükleme hatası:', error);
-        showDebugInfo('Hata: ' + error.message);
-        showMessage('Yükleme hatası. Lütfen console ve debug bilgilerini kontrol edin.', 'error');
+        showDebugInfo('Hata detayı: ' + error.message);
+        showMessage('Yükleme hatası: ' + error.message, 'error');
+        
+        // Özel hata durumları için öneriler
+        if (error.message.includes('hesap kimlik doğrulama')) {
+            showDebugInfo('Öneri: ImageKit dashboard → Settings → API Keys bölümünden private key\'i kontrol edin');
+        }
     }
 }
-        // Alternatif yükleme seçeneği göster
-        function showAlternativeUploadOption() {
-            const responseEl = document.getElementById('response-message');
-            const alternativeHtml = `
-                <div class="alternative-upload">
-                    <p>Alternatif olarak, dosyayı manuel olarak yükleyip URL'sini ekleyebilirsiniz:</p>
-                    <p><a href="https://imagekit.io/dashboard/media-library" target="_blank">ImageKit Media Library</a></p>
-                </div>
-            `;
-            
-            // Eğer zaten bir alternatif yükleme seçeneği yoksa ekle
-            if (!responseEl.nextElementSibling || !responseEl.nextElementSibling.classList.contains('alternative-upload')) {
-                responseEl.insertAdjacentHTML('afterend', alternativeHtml);
-            }
+
+// Debug için getImageKitAuth fonksiyonu
+async function getImageKitAuth() {
+    try {
+        showDebugInfo('ImageKit auth endpoint çağrılıyor...');
+        const response = await fetch('https://adembayazit.netlify.app/.netlify/functions/imagekit-auth');
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Auth endpoint hatası: ${response.status} - ${errorText}`);
         }
         
-        async function submitEntry() {
-            const entryIdInput = document.getElementById('entryId');
-            const referenceId = document.getElementById('referenceId').value;
-            const trContent = document.getElementById('trContent').value;
-            const enContent = document.getElementById('enContent').value;
-            const responseEl = document.getElementById('response-message');
-            
-            responseEl.style.display = 'none';
-            
-            if (!trContent && !enContent) {
-                showMessage('Lütfen en az bir dilde içerik girin!', 'error');
-                return;
-            }
-            
-            try {
-                const submitBtn = document.querySelector('.submit-btn');
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...';
-                
-                // Mevcut entry'leri çek
-                const currentData = await fetchFromJsonBin(ENTRIES_BIN_ID);
-                let entries = Array.isArray(currentData) ? currentData : (currentData.records || []);
-                
-                // Entry ID belirle
-                let entryId = entryIdInput.value ? parseInt(entryIdInput.value) : await getNextId();
-                
-                // ID zaten var mı kontrol et
-                if (entryIdInput.value && entries.some(e => e.id === entryId)) {
-                    showMessage('Bu ID zaten kullanılıyor!', 'error');
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Entry Ekle';
-                    return;
-                }
-                
-                // Yeni entry oluştur
-                const newEntry = {
-                    id: entryId,
-                    date: new Date().toISOString(),
-                    content: enContent || '', // İngilizce içerik
-                    content_tr: trContent || null, // Türkçe içerik
-                    references: referenceId ? [parseInt(referenceId)] : []
-                };
-                
-                // Yeni listeyi hazırla
-                const updatedEntries = [newEntry, ...entries];
-                
-                // JSONBin'e gönder
-                await fetchFromJsonBin(ENTRIES_BIN_ID, 'PUT', updatedEntries);
-                
-                showMessage('Entry başarıyla eklendi!', 'success');
-                
-                // Formu temizle
-                entryIdInput.value = '';
-                document.getElementById('referenceId').value = '';
-                document.getElementById('trContent').value = '';
-                document.getElementById('enContent').value = '';
-                
-                // Ön izlemeleri temizle
-                updatePreview('trContent');
-                updatePreview('enContent');
-                
-                // İstatistikleri ve son entryleri güncelle
-                await updateStats();
-                await loadRecentEntries();
-            } catch (error) {
-                showMessage(`Hata: ${error.message}`, 'error');
-                console.error('Entry ekleme hatası:', error);
-            } finally {
-                const submitBtn = document.querySelector('.submit-btn');
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Entry Ekle';
-            }
-        }
+        const authData = await response.json();
+        return authData;
+    } catch (error) {
+        console.error('ImageKit auth hatası:', error);
+        throw error;
+    }
+}
         
         async function loadRecentEntries() {
             try {
