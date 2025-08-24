@@ -1,15 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ImageKit Secure Upload</title>
+<style>
+  body { font-family: Arial; padding: 20px; }
+  #uploadStatus { margin-top: 10px; color: green; }
+</style>
+</head>
+<body>
+<h2>ImageKit Upload</h2>
+<input type="file" id="fileInput">
+<button id="uploadBtn">Upload</button>
+<div id="uploadStatus"></div>
+
+<script src="https://unpkg.com/imagekit-javascript/dist/imagekit.min.js"></script>
+<script>
 const fileInput = document.getElementById('fileInput');
 const uploadBtn = document.getElementById('uploadBtn');
+const uploadStatus = document.getElementById('uploadStatus');
 
 uploadBtn.addEventListener('click', async () => {
     const file = fileInput.files[0];
-    if (!file) return alert("Please select a file!");
+    if (!file) {
+        alert("Please select a file!");
+        return;
+    }
 
     console.log("Selected file:", file);
     console.log("File name:", file.name);
 
     const imagekit = new ImageKit({
-        publicKey: "public_xxxxxxx",
+        publicKey: "public_xxxxxxx",  // Netlify env’den gelen public key
         urlEndpoint: "https://ik.imagekit.io/your_imagekit_id",
         authenticationEndpoint: "/.netlify/functions/imagekit-auth"
     });
@@ -17,12 +39,16 @@ uploadBtn.addEventListener('click', async () => {
     try {
         const result = await imagekit.upload({
             file: file,
-            fileName: file.name || "default_name.jpg"  // file.name boşsa fallback
+            fileName: file.name || "default_name.jpg"  // Dosya adı boşsa fallback
         });
         console.log("Upload success:", result);
-        alert("Upload successful! URL: " + result.url);
+        uploadStatus.textContent = "Upload successful! URL: " + result.url;
     } catch (err) {
         console.error("Upload error:", err);
-        alert("Upload failed. Check console.");
+        uploadStatus.style.color = "red";
+        uploadStatus.textContent = "Upload failed. Check console for details.";
     }
 });
+</script>
+</body>
+</html>
