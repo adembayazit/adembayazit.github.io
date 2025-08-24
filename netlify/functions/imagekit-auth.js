@@ -1,3 +1,15 @@
+
+const imagekit = new ImageKit({
+  publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
+  privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
+  urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT
+});
+
+// The fix: Add colon to private key before base64 encoding
+const privateKeyWithColon = `${process.env.IMAGEKIT_PRIVATE_KEY}:`;
+const encodedPrivateKey = Buffer.from(privateKeyWithColon).toString('base64');
+
+
 const ImageKit = require("imagekit");
 
 exports.handler = async (event, context) => {
@@ -44,8 +56,6 @@ exports.handler = async (event, context) => {
       privateKey: IMAGEKIT_PRIVATE_KEY,
       urlEndpoint: IMAGEKIT_URL_ENDPOINT
     });
-     const privateKeyWithColon = `${process.env.IMAGEKIT_PRIVATE_KEY}:`;
-     const encodedPrivateKey = Buffer.from(privateKeyWithColon).toString('base64');
      const authenticationParameters = imagekit.getAuthenticationParameters();
     
     console.log('Auth parameters generated successfully');
