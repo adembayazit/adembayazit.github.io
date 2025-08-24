@@ -17,9 +17,6 @@ exports.handler = async (event) => {
       .update(stringToSign)
       .digest('hex');
 
-    // 3. Basic auth için base64 encoding
-    const authHeader = 'Basic ' + Buffer.from(privateKey + ':').toString('base64');
-
     return {
       statusCode: 200,
       headers: {
@@ -29,17 +26,23 @@ exports.handler = async (event) => {
       body: JSON.stringify({
         signature,
         expire: expiry,
-        token: timestamp,
+        token: timestamp.toString(),
         apiKey: publicKey,
-        urlEndpoint: urlEndpoint,
-        authorization: authHeader
+        urlEndpoint: urlEndpoint
       })
     };
 
   } catch (error) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: error.message })
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      },
+      body: JSON.stringify({ 
+        error: 'Authentication Failed',
+        message: error.message
+      })
     };
   }
 };
