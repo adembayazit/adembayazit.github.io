@@ -570,6 +570,12 @@
                     progressBar.textContent = '0%';
                     
                     // ImageKit initialization - SDK global olarak yüklendi
+                    // ImageKit nesnesinin yüklendiğinden emin olmak için kontrol
+                    if (typeof ImageKit === 'undefined') {
+                        showStatus('ImageKit SDK yüklenemedi. Lütfen sayfayı yenileyin.', 'error');
+                        return;
+                    }
+                    
                     const imagekit = new ImageKit({
                         publicKey: authParams.publicKey,
                         urlEndpoint: authParams.urlEndpoint || "https://ik.imagekit.io/your_imagekit_id"
