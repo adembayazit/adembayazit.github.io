@@ -557,6 +557,17 @@
             background: var(--primary-color);
             color: black;
         }
+
+        /* Yeni eklenen hata ayıklama mesajı */
+        .debug-info {
+            font-size: 0.7rem;
+            color: #888;
+            margin-top: 5px;
+            padding: 5px;
+            background: rgba(0, 30, 0, 0.2);
+            border-radius: 3px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -634,6 +645,7 @@
             
             <button class="submit-btn" onclick="submitEntry()"><i class="fas fa-paper-plane"></i> Entry Ekle</button>
             <div id="response-message"></div>
+            <div id="debug-info" class="debug-info"></div>
         </div>
         
         <div class="stats-container">
@@ -695,6 +707,14 @@
                 updatePreview('enContent');
             }
         });
+
+        // Hata ayıklama için debug mesajı göster
+        function showDebugInfo(message) {
+            const debugEl = document.getElementById('debug-info');
+            debugEl.textContent = message;
+            debugEl.style.display = 'block';
+            console.log('DEBUG:', message);
+        }
         
         async function fetchFromJsonBin(binId, method = 'GET', data = null) {
             try {
@@ -873,10 +893,17 @@
             
             try {
                 showMessage('Dosya yükleniyor...', 'warning');
+                showDebugInfo('Authentication parametreleri alınıyor...');
                 
                 // ImageKit.io authentication parametrelerini al
                 const authResponse = await fetch('/.netlify/functions/imagekit-auth');
+                
+                if (!authResponse.ok) {
+                    throw new Error(`Auth endpoint hatası: ${authResponse.status}`);
+                }
+                
                 const authData = await authResponse.json();
+                showDebugInfo('Auth data alındı: ' + JSON.stringify(authData).substring(0, 100) + '...');
                 
                 // FormData oluştur
                 const formData = new FormData();
@@ -887,17 +914,22 @@
                 formData.append('expire', authData.expire);
                 formData.append('publicKey', authData.publicKey);
                 
+                showDebugInfo('ImageKit upload çağrısı yapılıyor...');
                 // ImageKit.io'ya yükle
                 const uploadResponse = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
                     method: 'POST',
                     body: formData
                 });
                 
+                showDebugInfo('Upload response alındı: ' + uploadResponse.status);
+                
                 if (!uploadResponse.ok) {
-                    throw new Error('Yükleme başarısız');
+                    const errorText = await uploadResponse.text();
+                    throw new Error(`Upload hatası: ${uploadResponse.status} - ${errorText}`);
                 }
                 
                 const uploadData = await uploadResponse.json();
+                showDebugInfo('Upload başarılı: ' + uploadData.url);
                 
                 // URL'yi ilgili textarea'ya ekle
                 const textarea = document.getElementById(activeTextareaId);
@@ -918,9 +950,20 @@
                 updatePreview(activeTextareaId);
                 
                 showMessage('Dosya başarıyla yüklendi!', 'success');
+                showDebugInfo('');
             } catch (error) {
                 console.error('Yükleme hatası:', error);
-                showMessage(`Yükleme hatası: ${error.message}`, 'error');
+                let errorMessage = error.message || 'Bilinmeyen hata';
+                
+                // Daha anlaşılır hata mesajı
+                if (errorMessage.includes('Failed to fetch')) {
+                    errorMessage = 'Sunucuya bağlanılamadı. Lütfen internet bağlantınızı kontrol edin.';
+                } else if (errorMessage.includes('Unexpected token')) {
+                    errorMessage = 'Sunucudan beklenmeyen yanıt alındı. Lütfen yapılandırmayı kontrol edin.';
+                }
+                
+                showMessage(`Yükleme hatası: ${errorMessage}`, 'error');
+                showDebugInfo('Hata detayı: ' + errorMessage);
             }
         }
         
