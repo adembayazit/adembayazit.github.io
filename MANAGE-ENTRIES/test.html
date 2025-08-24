@@ -1,23 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>ImageKit Upload Example</title>
-</head>
-<body>
-<h2>ImageKit Upload</h2>
-<input type="file" id="fileInput">
-<button id="uploadBtn">Upload</button>
+const fileInput = document.getElementById('fileInput');
+const uploadBtn = document.getElementById('uploadBtn');
 
-<script src="https://unpkg.com/imagekit-javascript/dist/imagekit.min.js"></script>
-<script>
-document.getElementById('uploadBtn').addEventListener('click', async () => {
-    const file = document.getElementById('fileInput').files[0];
+uploadBtn.addEventListener('click', async () => {
+    const file = fileInput.files[0];
     if (!file) return alert("Please select a file!");
 
-    // 1️⃣ ImageKit instance
+    console.log("Selected file:", file);
+    console.log("File name:", file.name);
+
     const imagekit = new ImageKit({
-        publicKey: "public_xxxxxxx",  // Netlify env’deki public key
+        publicKey: "public_xxxxxxx",
         urlEndpoint: "https://ik.imagekit.io/your_imagekit_id",
         authenticationEndpoint: "/.netlify/functions/imagekit-auth"
     });
@@ -25,15 +17,12 @@ document.getElementById('uploadBtn').addEventListener('click', async () => {
     try {
         const result = await imagekit.upload({
             file: file,
-            fileName: file.name
+            fileName: file.name || "default_name.jpg"  // file.name boşsa fallback
         });
-        console.log("Upload Success:", result);
+        console.log("Upload success:", result);
         alert("Upload successful! URL: " + result.url);
     } catch (err) {
-        console.error("Upload Error:", err);
+        console.error("Upload error:", err);
         alert("Upload failed. Check console.");
     }
 });
-</script>
-</body>
-</html>
