@@ -1,102 +1,85 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <title>ImageKit Upload & Liste Demo</title>
-  <style>
-    body { font-family: sans-serif; padding: 20px; background: #f5f5f5; }
-    .preview img { max-width: 150px; margin: 5px; border: 2px solid #ccc; border-radius: 5px; }
-    button { margin-top: 10px; padding: 8px 12px; cursor: pointer; }
-    #uploadStatus { margin-top: 10px; font-weight: bold; }
-  </style>
+<meta charset="UTF-8">
+<title>ImageKit Upload Demo</title>
+<style>
+body { font-family: sans-serif; padding: 20px; }
+img { max-width: 150px; margin: 5px; border: 1px solid #ccc; border-radius: 5px; }
+</style>
 </head>
 <body>
 
-  <h2>📤 ImageKit Upload Demo</h2>
-  <input type="file" id="fileInput" />
-  <button id="uploadBtn">Yükle</button>
-  <div id="uploadStatus"></div>
+<h2>📤 ImageKit Upload Demo</h2>
+<input type="file" id="fileInput" accept="image/*" />
+<button id="uploadBtn">Yükle</button>
+<div id="status"></div>
 
-  <h3>📂 Yüklü Dosyalar</h3>
-  <button id="refreshBtn">Listeyi Yenile</button>
-  <div id="fileList" class="preview"></div>
+<h3>📂 Yüklü Dosyalar</h3>
+<button id="refreshBtn">Listeyi Yenile</button>
+<div id="fileList"></div>
 
-  <script>
-    const uploadBtn = document.getElementById("uploadBtn");
-    const refreshBtn = document.getElementById("refreshBtn");
-    const statusDiv = document.getElementById("uploadStatus");
-    const fileList = document.getElementById("fileList");
+<script>
+const uploadBtn = document.getElementById("uploadBtn");
+const refreshBtn = document.getElementById("refreshBtn");
+const statusDiv = document.getElementById("status");
+const fileList = document.getElementById("fileList");
 
-    // Dosya yükleme
-    uploadBtn.addEventListener("click", async () => {
-      const fileInput = document.getElementById("fileInput");
-      if (!fileInput.files.length) return alert("Dosya seç!");
+async function loadFiles() {
+  fileList.innerHTML = "⏳ Liste alınıyor...";
+  try {
+    const res = await fetch("/.netlify/functions/ik-list");
+    const files = await res.json();
+    if (!Array.isArray(files)) { fileList.innerHTML = "❌ Hata"; return; }
+    fileList.innerHTML = "";
+    files.slice(0,10).forEach(f => {
+      const img = document.createElement("img");
+      img.src = f.url; img.title = f.name;
+      fileList.appendChild(img);
+    });
+  } catch(e) { fileList.innerHTML = "❌ " + e.message; }
+}
 
-      statusDiv.textContent = "⏳ Yükleniyor...";
+uploadBtn.addEventListener("click", async () => {
+  const input = document.getElementById("fileInput");
+  if(!input.files.length) return alert("Dosya seçin!");
+  statusDiv.textContent = "⏳ Yükleniyor...";
 
-      try {
-        // 1) Auth parametrelerini al
-        const auth = await fetch("/.netlify/functions/imagekit-auth").then(r => r.json());
-        console.log("Auth params:", auth);
+  try {
+    // Auth parametrelerini al
+    const auth = await fetch("/.netlify/functions/imagekit-auth").then(r=>r.json());
+    console.log("Auth:", auth);
 
-        // 2) FormData oluştur
-        const formData = new FormData();
-        formData.append("file", fileInput.files[0]);
-        formData.append("fileName", fileInput.files[0].name);
-        formData.append("token", auth.token);
-        formData.append("expire", auth.expire);
-        formData.append("signature", auth.signature);
-        formData.append("publicKey", auth.publicKey);
+    const formData = new FormData();
+    formData.append("file", input.files[0]);
+    formData.append("fileName", input.files[0].name);
+    formData.append("token", auth.token);
+    formData.append("expire", String(auth.expire));
+    formData.append("signature", auth.signature);
+    formData.append("publicKey", auth.publicKey);
 
-        // 3) Upload isteği
-        const res = await fetch("https://upload.imagekit.io/api/v1/files/upload", {
-          method: "POST",
-          body: formData // ❌ Header yok!
-        });
-
-        const data = await res.json();
-
-        if (data.url) {
-          statusDiv.innerHTML = `✅ Yüklendi: <a href="${data.url}" target="_blank">${data.name}</a>`;
-          loadFiles(); // Yüklendikten sonra listeyi güncelle
-        } else {
-          statusDiv.textContent = "❌ Yükleme başarısız: " + JSON.stringify(data);
-        }
-
-      } catch (err) {
-        console.error(err);
-        statusDiv.textContent = "❌ Hata: " + err.message;
-      }
+    const res = await fetch("https://upload.imagekit.io/api/v1/files/upload", {
+      method: "POST",
+      body: formData // ❌ header ekleme yok
     });
 
-    // Yüklü dosyaları listeleme
-    async function loadFiles() {
-      fileList.innerHTML = "⏳ Liste alınıyor...";
-      try {
-        const res = await fetch("/.netlify/functions/ik-list");
-        const files = await res.json();
-
-        if (!Array.isArray(files)) {
-          fileList.innerHTML = "❌ Hata: " + JSON.stringify(files);
-          return;
-        }
-
-        fileList.innerHTML = "";
-        files.slice(0, 10).forEach(file => {
-          const img = document.createElement("img");
-          img.src = file.url;
-          img.title = file.name;
-          fileList.appendChild(img);
-        });
-
-      } catch (err) {
-        fileList.textContent = "❌ Liste alınamadı: " + err.message;
-      }
+    const data = await res.json();
+    if(data.url) {
+      statusDiv.innerHTML = `✅ Yüklendi: <a href="${data.url}" target="_blank">${data.name}</a>`;
+      loadFiles();
+    } else {
+      statusDiv.textContent = "❌ Yükleme başarısız: " + JSON.stringify(data);
     }
 
-    refreshBtn.addEventListener("click", loadFiles);
-    loadFiles(); // Sayfa açıldığında listeyi otomatik çek
-  </script>
+  } catch(e) {
+    statusDiv.textContent = "❌ Hata: " + e.message;
+    console.error(e);
+  }
+});
+
+refreshBtn.addEventListener("click", loadFiles);
+loadFiles();
+</script>
 
 </body>
 </html>
