@@ -1,7 +1,7 @@
 const ImageKit = require("imagekit");
 
 exports.handler = async (event, context) => {
-  // CORS headers - daha kapsamlı
+  // CORS headers
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
@@ -42,15 +42,33 @@ exports.handler = async (event, context) => {
       };
     }
 
+    // DEBUG: Anahtar formatlarını kontrol et (ilk birkaç karakter)
+    console.log('Public key starts with:', IMAGEKIT_PUBLIC_KEY.substring(0, 10));
+    console.log('Private key starts with:', IMAGEKIT_PRIVATE_KEY.substring(0, 10));
+    console.log('URL Endpoint:', IMAGEKIT_URL_ENDPOINT);
+
+    // ImageKit initialization - support önerilerine göre
     const imagekit = new ImageKit({
       publicKey: IMAGEKIT_PUBLIC_KEY,
       privateKey: IMAGEKIT_PRIVATE_KEY,
       urlEndpoint: IMAGEKIT_URL_ENDPOINT
     });
 
-    const authenticationParameters = imagekit.getAuthenticationParameters();
+    // Alternative authentication method deneyelim
+    const timestamp = Math.floor(Date.now() / 1000);
+    const signature = imagekit.getAuthenticationParameters(timestamp);
     
-    console.log('Auth parameters generated successfully');
+    const authenticationParameters = {
+      token: signature.token,
+      expire: signature.expire,
+      signature: signature.signature
+    };
+
+    console.log('Auth parameters generated successfully:', {
+      token: authenticationParameters.token.substring(0, 20) + '...',
+      expire: authenticationParameters.expire,
+      signature: authenticationParameters.signature.substring(0, 20) + '...'
+    });
     
     return {
       statusCode: 200,
@@ -58,15 +76,19 @@ exports.handler = async (event, context) => {
       body: JSON.stringify(authenticationParameters)
     };
   } catch (error) {
-    console.error('ImageKit auth error:', error);
+    console.error('ImageKit auth error details:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
     
     return {
       statusCode: 500,
       headers,
       body: JSON.stringify({ 
         error: 'Authentication failed',
-        message: error.message,
-        details: 'Check console for more information'
+        message: 'Please check your ImageKit credentials',
+        details: 'Ensure your keys are correct and account is active'
       })
     };
   }
