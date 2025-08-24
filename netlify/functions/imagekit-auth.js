@@ -34,7 +34,7 @@ exports.handler = async (event, context) => {
     
     // Manuel authentication parametreleri oluştur
     const token = crypto.randomBytes(16).toString('hex');
-    const expire = Math.floor(Date.now() / 1000) + 3600; // 1 saat
+    const expire = Math.floor(Date.now() / 1000) + (60 * 30); // 30 dakika (1 saatten az)
     const signature = crypto
       .createHmac('sha1', privateKeyWithColon)
       .update(token + expire)
