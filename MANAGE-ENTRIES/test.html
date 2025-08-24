@@ -1,73 +1,362 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ImageKit Upload</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ImageKit.io Dosya Yükleme Testi</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            max-width: 500px;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .content {
+            padding: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px dashed #ccc;
+            border-radius: 6px;
+            background-color: #f9f9f9;
+            transition: all 0.3s;
+        }
+        
+        input[type="file"]:hover {
+            border-color: #4b6cb7;
+            background-color: #edf2ff;
+        }
+        
+        button {
+            background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(75, 108, 183, 0.4);
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .progress-container {
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        .status {
+            text-align: center;
+            font-size: 14px;
+            color: #555;
+        }
+        
+        .result {
+            margin-top: 25px;
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #f8f9fa;
+            display: none;
+        }
+        
+        .success {
+            display: block;
+            border-left: 4px solid #28a745;
+        }
+        
+        .error {
+            display: block;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .result h3 {
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .result p {
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .url-link {
+            color: #4b6cb7;
+            text-decoration: none;
+            word-break: break-all;
+        }
+        
+        .url-link:hover {
+            text-decoration: underline;
+        }
+        
+        .note {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff4e6;
+            border-radius: 6px;
+            border-left: 4px solid #ffa94d;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .note h3 {
+            margin-bottom: 8px;
+            color: #e67700;
+        }
+    </style>
 </head>
 <body>
-<h2>Resim Yükle ve Önizle</h2>
+    <div class="container">
+        <div class="header">
+            <h1>ImageKit.io Dosya Yükleme Testi</h1>
+            <p>Dosyanızı ImageKit.io servisine yükleyin</p>
+        </div>
+        
+        <div class="content">
+            <form id="uploadForm" onsubmit="uploadFile(event)">
+                <div class="form-group">
+                    <label for="fileInput">Dosyayı Seçin</label>
+                    <input type="file" id="fileInput" required>
+                </div>
+                
+                <button type="submit" id="uploadButton">Dosyayı Yükle</button>
+            </form>
+            
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-bar">
+                    <div class="progress" id="progressBar"></div>
+                </div>
+                <div class="status" id="statusText">İşlem başlatılıyor...</div>
+            </div>
+            
+            <div class="result" id="resultContainer">
+                <!-- Sonuçlar burada gösterilecek -->
+            </div>
+            
+            <div class="note">
+                <h3>Önemli Not:</h3>
+                <p>Bu test sayfası, ImageKit.io'nun çalışma mantığını göstermek içindir. Gerçek yükleme işlemi için kendi sunucunuzda bir authentication endpoint oluşturmalısınız.</p>
+            </div>
+        </div>
+    </div>
 
-<input type="file" id="fileInput" accept="image/*">
-<button id="uploadBtn">Yükle</button>
-
-<img id="preview" src="" style="max-width:300px; display:none;">
-<p>Yüklenen Dosya: <a id="fileUrl" href="" target="_blank"></a></p>
-
-<script>
-const fileInput = document.getElementById('fileInput');
-const uploadBtn = document.getElementById('uploadBtn');
-const preview = document.getElementById('preview');
-const fileUrl = document.getElementById('fileUrl');
-
-let selectedFile;
-
-// Önizleme
-fileInput.addEventListener('change', (e) => {
-  selectedFile = e.target.files[0];
-  if (selectedFile) {
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      preview.src = event.target.result;
-      preview.style.display = 'block';
-    };
-    reader.readAsDataURL(selectedFile);
-  }
-});
-
-// Yükleme
-uploadBtn.addEventListener('click', async () => {
-  if(!selectedFile) return alert('Lütfen bir dosya seçin!');
-
-  // 1️⃣ Netlify Function ile signature al
-  const sigRes = await fetch('https://adembayazit.netlify.app//.netlify/functions/get-upload-signature');
-  const sigData = await sigRes.json();
-
-  // 2️⃣ FormData hazırla
-  const formData = new FormData();
-  formData.append('file', selectedFile);
-  formData.append('fileName', selectedFile.name);
-  formData.append('publicKey', sigData.publicKey);
-  formData.append('signature', sigData.signature);
-  formData.append('expire', sigData.expire);
-  formData.append('token', sigData.token);
-
-  // 3️⃣ ImageKit’e yükle
-  const uploadRes = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
-    method: 'POST',
-    body: formData
-  });
-
-  const uploadData = await uploadRes.json();
-  console.log(uploadData);
-
-  if(uploadData.url){
-    fileUrl.href = uploadData.url;
-    fileUrl.textContent = uploadData.url;
-  } else {
-    alert('Yükleme başarısız!');
-  }
-});
-</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        // Bu örnek için sabit değerler kullanıyoruz
+        // Gerçek uygulamada bu değerler sunucudan alınmalıdır
+        const DEMO_AUTH_DATA = {
+            token: "demo-token-" + Math.random().toString(36).substring(2),
+            expire: Math.floor(Date.now() / 1000) + 3600, // 1 saat sonra
+            signature: "demo-signature-" + Math.random().toString(36).substring(2)
+        };
+        
+        // Sunucu endpoint'inin simülasyonu
+        function getAuthenticationFromServer(fileName, callback) {
+            // Gerçek uygulamada bu, sunucuya AJAX isteği yapar
+            console.log("Sunucudan authentication verisi alınıyor...");
+            
+            // Simüle edilmiş gecikme
+            setTimeout(() => {
+                callback(DEMO_AUTH_DATA);
+            }, 1000);
+        }
+        
+        function uploadFile(event) {
+            event.preventDefault();
+            
+            const fileInput = document.getElementById('fileInput');
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+            const statusText = document.getElementById('statusText');
+            const resultContainer = document.getElementById('resultContainer');
+            const uploadButton = document.getElementById('uploadButton');
+            
+            // Dosya kontrolü
+            if (!fileInput.files || fileInput.files.length === 0) {
+                showResult(false, "Lütfen bir dosya seçin.");
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            const fileName = file.name || "uploaded_file";
+            
+            // UI durumunu güncelle
+            uploadButton.disabled = true;
+            progressContainer.style.display = 'block';
+            resultContainer.style.display = 'none';
+            progressBar.style.width = '10%';
+            statusText.textContent = 'Authentication bilgileri alınıyor...';
+            
+            // Authentication bilgilerini al
+            getAuthenticationFromServer(fileName, function(authData) {
+                progressBar.style.width = '30%';
+                statusText.textContent = 'Dosya yükleniyor...';
+                
+                const formData = new FormData();
+                formData.append("file", file);
+                formData.append("fileName", fileName);
+                formData.append("token", authData.token);
+                formData.append("expire", authData.expire);
+                formData.append("signature", authData.signature);
+                
+                // ImageKit.io'ya yükleme isteği
+                // NOT: Bu demo için çalışmayacak, gerçek uygulamada sunucu token'ı gerekiyor
+                $.ajax({
+                    url: "https://upload.imagekit.io/api/v2/files/upload",
+                    method: "POST",
+                    mimeType: "multipart/form-data",
+                    dataType: "json",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    xhr: function() {
+                        const xhr = new window.XMLHttpRequest();
+                        xhr.upload.addEventListener("progress", function(evt) {
+                            if (evt.lengthComputable) {
+                                const percentComplete = (evt.loaded / evt.total) * 100;
+                                progressBar.style.width = percentComplete + '%';
+                                statusText.textContent = 'Yükleniyor: %' + Math.round(percentComplete);
+                            }
+                        }, false);
+                        return xhr;
+                    },
+                    success: function(response) {
+                        progressBar.style.width = '100%';
+                        statusText.textContent = 'Yükleme başarılı!';
+                        
+                        // Başarılı sonucu göster
+                        showResult(true, {
+                            url: response.url,
+                            fileId: response.fileId,
+                            name: response.name
+                        });
+                        
+                        uploadButton.disabled = false;
+                    },
+                    error: function(xhr, status, error) {
+                        progressContainer.style.display = 'none';
+                        uploadButton.disabled = false;
+                        
+                        // Hata mesajını göster
+                        let errorMsg = "Yükleme hatası: ";
+                        
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMsg += xhr.responseJSON.message;
+                        } else {
+                            errorMsg += "Sunucuya bağlanılamıyor. Lütfen authentication endpoint'inizi kontrol edin.";
+                        }
+                        
+                        showResult(false, errorMsg);
+                    }
+                });
+            });
+        }
+        
+        function showResult(isSuccess, data) {
+            const resultContainer = document.getElementById('resultContainer');
+            resultContainer.className = 'result';
+            
+            if (isSuccess) {
+                resultContainer.classList.add('success');
+                resultContainer.innerHTML = `
+                    <h3>✅ Yükleme Başarılı!</h3>
+                    <p><strong>Dosya ID:</strong> ${data.fileId}</p>
+                    <p><strong>Dosya Adı:</strong> ${data.name}</p>
+                    <p><strong>URL:</strong> <a href="${data.url}" class="url-link" target="_blank">${data.url}</a></p>
+                `;
+            } else {
+                resultContainer.classList.add('error');
+                resultContainer.innerHTML = `
+                    <h3>❌ Yükleme Başarısız</h3>
+                    <p>${data}</p>
+                    <p>Lütfen browser konsolunu ve sunucu yapılandırmanızı kontrol edin.</p>
+                `;
+            }
+            
+            resultContainer.style.display = 'block';
+        }
+        
+        // Sayfa yüklendiğinde
+        $(document).ready(function() {
+            console.log("ImageKit.io yükleme test sayfası hazır.");
+            console.log("NOT: Bu demo sayfası gerçek yükleme yapamaz, sadece arayüzü gösterir.");
+        });
+    </script>
 </body>
 </html>
