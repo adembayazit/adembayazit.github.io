@@ -1,7 +1,7 @@
 const ImageKit = require("imagekit");
 
 exports.handler = async (event, context) => {
-  // CORS headers - daha kapsamlı
+  // CORS headers
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
@@ -19,25 +19,19 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    console.log('Environment variables check:');
-    console.log('PUBLIC_KEY exists:', !!process.env.IMAGEKIT_PUBLIC_KEY);
-    console.log('PRIVATE_KEY exists:', !!process.env.IMAGEKIT_PRIVATE_KEY);
-    console.log('URL_ENDPOINT exists:', !!process.env.IMAGEKIT_URL_ENDPOINT);
+    // Doğrudan anahtarları burada tanımlayın (test için)
+    const IMAGEKIT_PUBLIC_KEY = "public_EMs+xIzB1E/RR1lTEYSeBEntBLU=";
+    const IMAGEKIT_PRIVATE_KEY = "private_Nw0S************************";
+    const IMAGEKIT_URL_ENDPOINT = "https://ik.imagekit.io/adembayazit";
 
-    const { 
-      IMAGEKIT_PUBLIC_KEY, 
-      IMAGEKIT_PRIVATE_KEY, 
-      IMAGEKIT_URL_ENDPOINT 
-    } = process.env;
-
+    // Anahtarların boş olup olmadığını kontrol edin
     if (!IMAGEKIT_PUBLIC_KEY || !IMAGEKIT_PRIVATE_KEY || !IMAGEKIT_URL_ENDPOINT) {
-      console.error('Missing ImageKit environment variables');
       return {
         statusCode: 500,
         headers,
         body: JSON.stringify({ 
           error: 'Authentication failed',
-          message: 'ImageKit environment variables are not set'
+          message: 'ImageKit keys are not set. Please replace the placeholder values with your actual keys.'
         })
       };
     }
@@ -65,8 +59,7 @@ exports.handler = async (event, context) => {
       headers,
       body: JSON.stringify({ 
         error: 'Authentication failed',
-        message: error.message,
-        details: 'Check console for more information'
+        message: error.message
       })
     };
   }
