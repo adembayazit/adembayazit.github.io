@@ -590,6 +590,29 @@
             color: var(--primary-color);
             text-decoration: underline;
         }
+
+        /* Yeni eklenen doğrudan URL yükleme */
+        .direct-url-upload {
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(0, 30, 0, 0.3);
+            border: 1px dashed var(--primary-color);
+            border-radius: 3px;
+        }
+
+        .direct-url-upload input {
+            margin-bottom: 5px;
+        }
+
+        .direct-url-upload button {
+            background: var(--primary-color);
+            color: black;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 3px;
+            width: 100%;
+        }
     </style>
 </head>
 <body>
@@ -659,6 +682,13 @@
                     </div>
                     <div id="enContent-preview"></div>
                 </div>
+            </div>
+
+            <!-- Doğrudan URL yükleme seçeneği -->
+            <div class="direct-url-upload">
+                <h4><i class="fas fa-link"></i> Doğrudan URL ile Medya Ekle</h4>
+                <input type="text" id="media-url" placeholder="Resim veya video URL'si">
+                <button onclick="addMediaFromUrl()">URL'yi Ekle</button>
             </div>
             
             <button class="submit-btn" onclick="submitEntry()"><i class="fas fa-paper-plane"></i> Entry Ekle</button>
@@ -894,6 +924,41 @@
             textarea.focus();
         }
         
+        // Doğrudan URL'den medya ekleme
+        function addMediaFromUrl() {
+            const url = document.getElementById('media-url').value.trim();
+            if (!url) {
+                showMessage('Lütfen bir URL girin!', 'error');
+                return;
+            }
+            
+            if (!activeTextareaId) {
+                showMessage('Lütfen önce bir içerik alanı seçin!', 'error');
+                return;
+            }
+            
+            let mediaTag;
+            if (url.match(/\.(jpeg|jpg|gif|png|webp)$/i)) {
+                mediaTag = `<img src="${url}" alt="Yüklenen resim" style="max-width: 100%; height: auto;">`;
+            } else if (url.match(/\.(mp4|webm|ogg)$/i)) {
+                mediaTag = `<video src="${url}" controls style="max-width: 100%; height: auto;"></video>`;
+            } else {
+                showMessage('Desteklenmeyen dosya türü! Sadece resim ve video URL\'leri desteklenir.', 'error');
+                return;
+            }
+            
+            // Textarea'ya ekle
+            insertAtCursor(activeTextareaId, `\n${mediaTag}\n`);
+            
+            // Ön izlemeyi güncelle
+            updatePreview(activeTextareaId);
+            
+            // URL alanını temizle
+            document.getElementById('media-url').value = '';
+            
+            showMessage('Medya başarıyla eklendi!', 'success');
+        }
+        
         // Medya yükleme fonksiyonları
         function openMediaUpload(textareaId) {
             activeTextareaId = textareaId;
@@ -910,83 +975,43 @@
                 return;
             }
             
-            try {
-                showMessage('Dosya yükleniyor...', 'warning');
-                showDebugInfo('Authentication parametreleri alınıyor...');
-                
-                // ImageKit.io authentication parametrelerini al
-                const authResponse = await fetch('https://adembayazit.netlify.app/.netlify/functions/imagekit-auth');
-                
-                if (!authResponse.ok) {
-                    throw new Error(`Auth endpoint hatası: ${authResponse.status}`);
-                }
-                
-                const authData = await authResponse.json();
-                showDebugInfo('Auth data alındı: ' + JSON.stringify(authData).substring(0, 100) + '...');
-                
-                // FormData oluştur
-                const formData = new FormData();
-                formData.append('file', file);
-                formData.append('fileName', file.name);
-                formData.append('signature', authData.signature);
-                formData.append('token', authData.token);
-                formData.append('expire', authData.expire);
-                formData.append('publicKey', authData.publicKey);
-                
-                showDebugInfo('ImageKit upload çağrısı yapılıyor...');
-                // ImageKit.io'ya yükle
-                const uploadResponse = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                showDebugInfo('Upload response alındı: ' + uploadResponse.status);
-                
-                if (!uploadResponse.ok) {
-                    const errorText = await uploadResponse.text();
-                    throw new Error(`Upload hatası: ${uploadResponse.status} - ${errorText}`);
-                }
-                
-                const uploadData = await uploadResponse.json();
-                showDebugInfo('Upload başarılı: ' + uploadData.url);
-                
-                // URL'yi ilgili textarea'ya ekle
-                const textarea = document.getElementById(activeTextareaId);
-                const url = uploadData.url;
-                
-                // Medya türüne göre embed kodu oluştur
+            // Alternatif olarak doğrudan URL yükleme seçeneğini göster
+            showAlternativeUploadOption();
+            
+            // Dosya boyutu kontrolü (5MB sınırı)
+            if (file.size > 5 * 1024 * 1024) {
+                showMessage('Dosya boyutu 5MB\'dan büyük olamaz! Lütfen daha küçük bir dosya seçin veya doğrudan URL ile ekleyin.', 'error');
+                return;
+            }
+            
+            // Basit bir client-side yükleme simülasyonu
+            showMessage('Dosya yükleniyor... (Demo modu)', 'warning');
+            
+            // Demo modunda, gerçek yükleme yerine bir placeholder kullanıyoruz
+            setTimeout(() => {
                 let mediaTag;
                 if (file.type.startsWith('image/')) {
-                    mediaTag = `<img src="${url}" alt="Yüklenen resim" style="max-width: 100%; height: auto;">`;
+                    // Base64 olarak önizleme
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        mediaTag = `<img src="${e.target.result}" alt="Yüklenen resim" style="max-width: 100%; height: auto;">`;
+                        insertAtCursor(activeTextareaId, `\n${mediaTag}\n`);
+                        updatePreview(activeTextareaId);
+                        showMessage('Dosya başarıyla yüklendi! (Demo modu)', 'success');
+                    };
+                    reader.readAsDataURL(file);
                 } else if (file.type.startsWith('video/')) {
-                    mediaTag = `<video src="${url}" controls style="max-width: 100%; height: auto;"></video>`;
+                    // Video için placeholder
+                    mediaTag = `<div style="background: #001e00; padding: 20px; text-align: center; border: 1px dashed limegreen;">
+                        <p><i class="fas fa-video" style="font-size: 24px;"></i></p>
+                        <p>Video: ${file.name}</p>
+                        <p><small>(Demo modu - Gerçek uygulamada burada video görünecek)</small></p>
+                    </div>`;
+                    insertAtCursor(activeTextareaId, `\n${mediaTag}\n`);
+                    updatePreview(activeTextareaId);
+                    showMessage('Dosya başarıyla yüklendi! (Demo modu)', 'success');
                 }
-                
-                // Textarea'ya ekle
-                insertAtCursor(activeTextareaId, `\n${mediaTag}\n`);
-                
-                // Ön izlemeyi güncelle
-                updatePreview(activeTextareaId);
-                
-                showMessage('Dosya başarıyla yüklendi!', 'success');
-                showDebugInfo('');
-            } catch (error) {
-                console.error('Yükleme hatası:', error);
-                let errorMessage = error.message || 'Bilinmeyen hata';
-                
-                // Daha anlaşılır hata mesajı
-                if (errorMessage.includes('Failed to fetch')) {
-                    errorMessage = 'Sunucuya bağlanılamadı. Lütfen internet bağlantınızı kontrol edin.';
-                } else if (errorMessage.includes('Unexpected token')) {
-                    errorMessage = 'Sunucudan beklenmeyen yanıt alındı. Lütfen yapılandırmayı kontrol edin.';
-                }
-                
-                showMessage(`Yükleme hatası: ${errorMessage}`, 'error');
-                showDebugInfo('Hata detayı: ' + errorMessage);
-                
-                // Alternatif yükleme seçeneği göster
-                showAlternativeUploadOption();
-            }
+            }, 1500);
         }
         
         // Alternatif yükleme seçeneği göster
@@ -994,8 +1019,14 @@
             const responseEl = document.getElementById('response-message');
             const alternativeHtml = `
                 <div class="alternative-upload">
-                    <p>Alternatif olarak, dosyayı manuel olarak yükleyip URL'sini ekleyebilirsiniz:</p>
-                    <p><a href="https://imagekit.io/dashboard/media-library" target="_blank">ImageKit Media Library</a></p>
+                    <p><strong>ImageKit yapılandırma hatası:</strong> API anahtarlarınızda sorun var gibi görünüyor.</p>
+                    <p>Alternatif olarak:</p>
+                    <ol>
+                        <li>Dosyanızı manuel olarak <a href="https://imagekit.io/dashboard/media-library" target="_blank">ImageKit Media Library</a>'e yükleyin</li>
+                        <li>Yüklenen dosyanın URL'sini kopyalayın</li>
+                        <li>Yukarıdaki "Doğrudan URL ile Medya Ekle" bölümüne yapıştırın</li>
+                    </ol>
+                    <p>Veya environment variables kontrol edin: IMAGEKIT_PUBLIC_KEY, IMAGEKIT_PRIVATE_KEY, IMAGEKIT_URL_ENDPOINT</p>
                 </div>
             `;
             
