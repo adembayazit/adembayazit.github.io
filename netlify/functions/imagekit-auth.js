@@ -6,7 +6,8 @@ exports.handler = async (event, context) => {
     const headers = {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Content-Type': 'application/json'
     };
 
     // Handle preflight request
@@ -25,21 +26,19 @@ exports.handler = async (event, context) => {
             IMAGEKIT_URL_ENDPOINT 
         } = process.env;
 
-        const privateKeyWithColon = `${process.env.IMAGEKIT_PRIVATE_KEY}:`;
-        const encodedPrivateKey = Buffer.from(privateKeyWithColon).toString('base64');
-        
-        if (!IMAGEKIT_PUBLIC_KEY || !encodedPrivateKey || !IMAGEKIT_URL_ENDPOINT) {
+        // Environment variable kontrolü
+        if (!IMAGEKIT_PUBLIC_KEY || !IMAGEKIT_PRIVATE_KEY || !IMAGEKIT_URL_ENDPOINT) {
             throw new Error('Missing ImageKit environment variables');
         }
 
-        // Create ImageKit instance with proper encoding
+        // Private key'e ":" eklenmesi GEREKMİYOR - ImageKit SDK bunu otomatik yapar
         const imagekit = new ImageKit({
             publicKey: IMAGEKIT_PUBLIC_KEY,
-            privateKey: encodedPrivateKey,
+            privateKey: IMAGEKIT_PRIVATE_KEY, // Doğrudan private key kullanılır
             urlEndpoint: IMAGEKIT_URL_ENDPOINT
         });
 
-        // Get authentication parameters
+        // Authentication parametrelerini al
         const authenticationParameters = imagekit.getAuthenticationParameters();
         
         return {
