@@ -351,6 +351,29 @@
             font-size: 14px;
         }
         
+        .debug-info {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            font-family: monospace;
+            font-size: 14px;
+            display: none;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .debug-toggle {
+            background: none;
+            border: none;
+            color: #3498db;
+            cursor: pointer;
+            text-decoration: underline;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
         @media (max-width: 768px) {
             .container {
                 padding: 20px;
@@ -425,9 +448,12 @@
             </button>
         </div>
         
+        <button class="debug-toggle" id="debug-toggle">Hata Ayıklama Bilgilerini Göster</button>
+        <div class="debug-info" id="debug-info"></div>
+        
         <div class="note">
             <div class="note-title"><i class="fas fa-exclamation-circle"></i> Önemli Not</div>
-            <p>Bu test sayfası, ImageKit.io'ya dosya yüklemek için doğrudan API kullanır. SDK gerektirmez. Yüklemeler gerçek zamanlı olarak yapılır ve ilerleme durumunu gösterir. Netlify Functions kullanarak kimlik doğrulama yapar.</p>
+            <p>Bu test sayfası, ImageKit.io'ya dosya yüklemek için doğrudan API kullanır. 400 hatası genellikle kimlik doğrulama parametrelerindeki bir sorundan kaynaklanır. Lütfen endpoint URL'nizin doğru olduğundan emin olun.</p>
         </div>
         
         <div class="footer">
@@ -450,6 +476,19 @@
             const copyBtn = document.getElementById('copy-btn');
             const authEndpointInput = document.getElementById('auth-endpoint');
             const saveConfigBtn = document.getElementById('save-config');
+            const debugToggle = document.getElementById('debug-toggle');
+            const debugInfo = document.getElementById('debug-info');
+            
+            // Hata ayıklama bilgilerini göster/gizle
+            debugToggle.addEventListener('click', function() {
+                if (debugInfo.style.display === 'none' || !debugInfo.style.display) {
+                    debugInfo.style.display = 'block';
+                    debugToggle.textContent = 'Hata Ayıklama Bilgilerini Gizle';
+                } else {
+                    debugInfo.style.display = 'none';
+                    debugToggle.textContent = 'Hata Ayıklama Bilgilerini Göster';
+                }
+            });
             
             // Yapılandırma ayarlarını yükle
             let authEndpoint = localStorage.getItem('imagekitAuthEndpoint');
@@ -536,6 +575,7 @@
                 
                 try {
                     showStatus('Kimlik doğrulama yapılıyor...', 'loading');
+                    addDebugInfo('Kimlik doğrulama endpointine istek gönderiliyor: ' + authEndpoint);
                     
                     const response = await fetch(authEndpoint, {
                         method: 'GET',
@@ -544,12 +584,20 @@
                         }
                     });
                     
+                    addDebugInfo('Endpoint yanıt durumu: ' + response.status);
+                    
                     if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
+                        const errorText = await response.text();
+                        addDebugInfo('Endpoint hata yanıtı: ' + errorText);
+                        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
                     }
                     
-                    return await response.json();
+                    const authData = await response.json();
+                    addDebugInfo('Kimlik doğrulama başarılı. Alınan veri: ' + JSON.stringify(authData));
+                    
+                    return authData;
                 } catch (error) {
+                    addDebugInfo('Kimlik doğrulama hatası: ' + error.message);
                     showStatus('Kimlik doğrulama hatası: ' + error.message, 'error');
                     throw error;
                 }
@@ -574,6 +622,20 @@
                     formData.append('expire', authParams.expire);
                     formData.append('token', authParams.token);
                     
+                    // PublicKey ekle (gerekli olabilir)
+                    if (authParams.publicKey) {
+                        formData.append('publicKey', authParams.publicKey);
+                    }
+                    
+                    addDebugInfo('ImageKit API isteği hazırlanıyor. Gönderilen parametreler:');
+                    for (var pair of formData.entries()) {
+                        if (pair[0] !== 'file') {
+                            addDebugInfo('- ' + pair[0] + ': ' + pair[1]);
+                        } else {
+                            addDebugInfo('- file: ' + pair[1].name + ' (' + pair[1].type + ')');
+                        }
+                    }
+                    
                     // XMLHttpRequest ile yükleme (progress takibi için)
                     const xhr = new XMLHttpRequest();
                     
@@ -588,44 +650,61 @@
                     
                     // Yükleme tamamlandığında
                     xhr.addEventListener('load', function() {
+                        addDebugInfo('ImageKit API yanıt durumu: ' + xhr.status);
+                        
                         if (xhr.status >= 200 && xhr.status < 300) {
-                            const result = JSON.parse(xhr.responseText);
-                            
-                            showStatus('Dosya başarıyla yüklendi!', 'success');
-                            progressBar.style.width = '100%';
-                            progressBar.textContent = '100%';
-                            
-                            // URL'yi göster
-                            urlDisplay.textContent = result.url;
-                            urlContainer.style.display = 'block';
-                            
-                            // 2 saniye sonra progress bar'ı gizle
-                            setTimeout(function() {
+                            try {
+                                const result = JSON.parse(xhr.responseText);
+                                addDebugInfo('ImageKit API başarılı yanıt: ' + JSON.stringify(result));
+                                
+                                showStatus('Dosya başarıyla yüklendi!', 'success');
+                                progressBar.style.width = '100%';
+                                progressBar.textContent = '100%';
+                                
+                                // URL'yi göster
+                                urlDisplay.textContent = result.url;
+                                urlContainer.style.display = 'block';
+                                
+                                // 2 saniye sonra progress bar'ı gizle
+                                setTimeout(function() {
+                                    progressContainer.style.display = 'none';
+                                }, 2000);
+                            } catch (e) {
+                                addDebugInfo('Yanıt ayrıştırma hatası: ' + e.message);
+                                showStatus('Yanıt işleme hatası: ' + e.message, 'error');
                                 progressContainer.style.display = 'none';
-                            }, 2000);
+                            }
                         } else {
-                            showStatus('Yükleme hatası: ' + xhr.statusText, 'error');
+                            addDebugInfo('ImageKit API hata yanıtı: ' + xhr.responseText);
+                            showStatus('Yükleme hatası: ' + xhr.status + ' - ' + xhr.statusText, 'error');
                             progressContainer.style.display = 'none';
-                            console.error('Yükleme hatası:', xhr.statusText);
                         }
                     });
                     
                     // Hata durumunda
                     xhr.addEventListener('error', function() {
+                        addDebugInfo('Ağ hatası oluştu');
                         showStatus('Yükleme hatası: Ağ hatası oluştu', 'error');
                         progressContainer.style.display = 'none';
-                        console.error('Ağ hatası oluştu');
                     });
                     
                     // İstek gönder
                     xhr.open('POST', 'https://upload.imagekit.io/api/v1/files/upload');
+                    addDebugInfo('ImageKit API isteği gönderiliyor: https://upload.imagekit.io/api/v1/files/upload');
                     xhr.send(formData);
                     
                 } catch (error) {
+                    addDebugInfo('Yükleme hatası: ' + error.message);
                     showStatus('Yükleme hatası: ' + error.message, 'error');
                     progressContainer.style.display = 'none';
-                    console.error(error);
                 }
+            }
+            
+            // Hata ayıklama bilgisi ekle
+            function addDebugInfo(message) {
+                const timestamp = new Date().toLocaleTimeString();
+                debugInfo.innerHTML += `<div><strong>[${timestamp}]</strong> ${message}</div>`;
+                debugInfo.scrollTop = debugInfo.scrollHeight;
             }
             
             // Durum mesajını göster
