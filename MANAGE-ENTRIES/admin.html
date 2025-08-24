@@ -931,87 +931,65 @@ async function getImageKitAuth() {
 }
 
 // Düzeltilmiş medya yükleme fonksiyonu
-// Düzeltilmiş medya yükleme fonksiyonu
+// Yeni medya yükleme fonksiyonu - Direct Upload
 async function handleMediaUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
     
-    // Dosya türü kontrolü
-    if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
-        showMessage('Sadece fotoğraf veya video yükleyebilirsiniz!', 'error');
-        return;
-    }
-    
     try {
         showMessage('Dosya yükleniyor...', 'warning');
+        showDebugInfo('Direct upload deneniyor...');
         
-        // ImageKit authentication parametrelerini al
+        // Önce authentication parametrelerini al
         const authData = await getImageKitAuth();
+        showDebugInfo('Auth data: ' + JSON.stringify(authData));
         
-        // FormData oluştur - PUBLIC KEY EKLENDİ
+        // FormData oluştur
         const formData = new FormData();
         formData.append('file', file);
         formData.append('fileName', `media_${Date.now()}_${file.name}`);
         formData.append('signature', authData.signature);
         formData.append('token', authData.token);
         formData.append('expire', authData.expire);
-        formData.append('publicKey', authData.publicKey); // BU SATIR EKLENDİ
+        formData.append('publicKey', authData.publicKey);
         
-        showDebugInfo('ImageKit upload çağrısı yapılıyor...');
+        showDebugInfo('Upload başlıyor...');
         
-        // ImageKit.io'ya yükle
+        // ImageKit'e yükle
         const uploadResponse = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
             method: 'POST',
             body: formData
         });
         
-        showDebugInfo('Upload response status: ' + uploadResponse.status);
+        showDebugInfo('Upload response: ' + uploadResponse.status);
         
         if (!uploadResponse.ok) {
             const errorText = await uploadResponse.text();
-            throw new Error(`Upload hatası: ${uploadResponse.status} - ${errorText}`);
+            showDebugInfo('Upload error: ' + errorText);
+            throw new Error(`Upload hatası: ${uploadResponse.status}`);
         }
         
         const uploadData = await uploadResponse.json();
-        showDebugInfo('Upload başarılı: ' + uploadData.url);
+        showDebugInfo('Upload başarılı: ' + JSON.stringify(uploadData));
         
-        // URL'yi ilgili textarea'ya ekle
+        // URL'yi ekle
         const textarea = document.getElementById(activeTextareaId);
-        const url = uploadData.url;
-        
-        // Medya türüne göre embed kodu oluştur
         let mediaTag;
+        
         if (file.type.startsWith('image/')) {
-            mediaTag = `<img src="${url}" alt="Yüklenen resim" style="max-width: 100%; height: auto;">`;
+            mediaTag = `<img src="${uploadData.url}" alt="Yüklenen resim" style="max-width: 100%; height: auto;">`;
         } else if (file.type.startsWith('video/')) {
-            mediaTag = `<video src="${url}" controls style="max-width: 100%; height: auto;"></video>`;
+            mediaTag = `<video src="${uploadData.url}" controls style="max-width: 100%; height: auto;"></video>`;
         }
         
-        // Textarea'ya ekle
         insertAtCursor(activeTextareaId, `\n${mediaTag}\n`);
-        
-        // Ön izlemeyi güncelle
         updatePreview(activeTextareaId);
-        
         showMessage('Dosya başarıyla yüklendi!', 'success');
-        showDebugInfo('');
         
     } catch (error) {
         console.error('Yükleme hatası:', error);
-        let errorMessage = error.message || 'Bilinmeyen hata';
-        
-        // Daha anlaşılır hata mesajı
-        if (errorMessage.includes('Failed to fetch')) {
-            errorMessage = 'Sunucuya bağlanılamadı. Lütfen internet bağlantınızı kontrol edin.';
-        } else if (errorMessage.includes('Unexpected token')) {
-            errorMessage = 'Sunucudan beklenmeyen yanıt alındı. Lütfen yapılandırmayı kontrol edin.';
-        }
-        
-        showMessage(`Yükleme hatası: ${errorMessage}`, 'error');
-        showDebugInfo('Hata detayı: ' + errorMessage);
-        
-        // Alternatif yükleme seçeneği göster
-        showAlternativeUploadOption();
+        showDebugInfo('Hata: ' + error.message);
+        showMessage('Yükleme hatası. Lütfen console ve debug bilgilerini kontrol edin.', 'error');
     }
 }
         // Alternatif yükleme seçeneği göster
