@@ -7,101 +7,147 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 900px;
+            max-width: 1000px;
             margin: 50px auto;
             padding: 20px;
-            background: #f0f8ff;
+            background: #0f172a;
+            color: #e2e8f0;
         }
         .container {
-            background: white;
+            background: #1e293b;
             padding: 30px;
             border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            border: 1px solid #334155;
         }
         h1 {
-            color: #2c5282;
+            color: #60a5fa;
             text-align: center;
             margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(96, 165, 250, 0.3);
         }
         .btn {
-            background: #2c5282;
+            background: #3b82f6;
             color: white;
             padding: 12px 24px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             font-size: 16px;
-            margin: 10px 5px;
+            margin: 8px 5px;
             transition: all 0.3s;
+            font-weight: bold;
         }
         .btn:hover {
-            background: #1a365d;
+            background: #2563eb;
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
         }
         .btn:disabled {
-            background: #a0aec0;
+            background: #475569;
             cursor: not-allowed;
             transform: none;
+            box-shadow: none;
         }
         .btn-success {
-            background: #38a169;
+            background: #10b981;
+        }
+        .btn-success:hover {
+            background: #059669;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+        .btn-warning {
+            background: #f59e0b;
+        }
+        .btn-warning:hover {
+            background: #d97706;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
         }
         .btn-danger {
-            background: #e53e3e;
+            background: #ef4444;
+        }
+        .btn-danger:hover {
+            background: #dc2626;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
         }
         .log-container {
-            background: #edf2f7;
-            border: 2px solid #e2e8f0;
+            background: #0f172a;
+            border: 2px solid #334155;
             border-radius: 10px;
             padding: 20px;
             margin-top: 25px;
-            max-height: 400px;
+            max-height: 500px;
             overflow-y: auto;
-            font-family: 'Courier New', monospace;
+            font-family: 'Fira Code', 'Courier New', monospace;
             font-size: 14px;
             line-height: 1.5;
         }
-        .success { color: #38a169; font-weight: bold; }
-        .error { color: #e53e3e; font-weight: bold; }
-        .info { color: #3182ce; }
-        .debug { color: #718096; }
-        .warning { color: #d69e2e; }
+        .success { color: #10b981; font-weight: bold; }
+        .error { color: #ef4444; font-weight: bold; }
+        .info { color: #60a5fa; }
+        .debug { color: #94a3b8; }
+        .warning { color: #f59e0b; }
         .file-input {
-            margin: 15px 0;
-            padding: 10px;
-            border: 2px dashed #cbd5e0;
+            margin: 20px 0;
+            padding: 15px;
+            border: 2px dashed #475569;
             border-radius: 8px;
-            background: #f7fafc;
+            background: #1e293b;
         }
         .status {
-            padding: 10px;
-            border-radius: 5px;
-            margin: 10px 0;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 12px 0;
             font-weight: bold;
+            background: #334155;
         }
         .loading {
             display: inline-block;
             width: 20px;
             height: 20px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #3498db;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid #60a5fa;
             border-radius: 50%;
             animation: spin 1s linear infinite;
+            margin-right: 10px;
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        .config-box {
+            background: #334155;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: 'Fira Code', monospace;
+            font-size: 13px;
+        }
+        .section {
+            margin: 25px 0;
+            padding: 20px;
+            background: #1e293b;
+            border-radius: 10px;
+            border-left: 4px solid #3b82f6;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🔄 ImageKit Upload Test Sayfası</h1>
+        <h1>🔄 ImageKit Upload Test Merkezi</h1>
         
+        <div class="config-box">
+            <strong>🔧 Config:</strong><br>
+            Public Key: public_tHOgsielmH7GLPe3fLQkHMUztUY=<br>
+            Auth URL: https://adembayazit.netlify.app/.netlify/functions/imagekit-auth<br>
+            Upload URL: https://upload.imagekit.io/api/v1/files/upload
+        </div>
+
         <div style="text-align: center; margin-bottom: 25px;">
             <button class="btn" onclick="testAuth()" id="authBtn">1. 🔑 Auth Testi</button>
             <button class="btn" onclick="testUpload()" id="uploadBtn">2. 📤 Upload Testi</button>
             <button class="btn btn-success" onclick="testWithRealFile()" id="realFileBtn">3. 📁 Gerçek Dosya Testi</button>
+            <button class="btn btn-warning" onclick="testManualSignature()" id="manualSigBtn">4. 🔐 Manuel Signature Testi</button>
             <button class="btn btn-danger" onclick="clearLog()">🗑️ Temizle</button>
         </div>
 
@@ -111,8 +157,8 @@
             <div id="fileInfo"></div>
         </div>
 
-        <div>
-            <h3>📊 Sonuçlar:</h3>
+        <div class="section">
+            <h3>📊 Detaylı Loglar:</h3>
             <div class="log-container" id="log"></div>
         </div>
 
@@ -127,12 +173,15 @@
         const authBtn = document.getElementById('authBtn');
         const uploadBtn = document.getElementById('uploadBtn');
         const realFileBtn = document.getElementById('realFileBtn');
+        const manualSigBtn = document.getElementById('manualSigBtn');
         const fileInfo = document.getElementById('fileInfo');
         const preview = document.getElementById('preview');
         const previewContent = document.getElementById('previewContent');
         
         // MANUAL PUBLIC KEY - ImageKit dashboard'dan alın
         const MANUAL_PUBLIC_KEY = 'public_tHOgsielmH7GLPe3fLQkHMUztUY=';
+        // MANUAL PRIVATE KEY - ImageKit dashboard'dan alın (DİKKAT: Güvenlik riski, sadece test için)
+        const MANUAL_PRIVATE_KEY = 'private_xxxxxxxxxxxxxxxxxxxxxxxxxxxx'; // BURAYA PRIVATE KEY'İNİZİ YAZIN
         
         function log(message, className = '') {
             const line = document.createElement('div');
@@ -164,6 +213,7 @@
             authBtn.setAttribute('data-original', authBtn.innerHTML);
             uploadBtn.setAttribute('data-original', uploadBtn.innerHTML);
             realFileBtn.setAttribute('data-original', realFileBtn.innerHTML);
+            manualSigBtn.setAttribute('data-original', manualSigBtn.innerHTML);
             
             // Dosya seçim event'i
             document.getElementById('testFile').addEventListener('change', function(e) {
@@ -179,8 +229,9 @@
                 }
             });
             
-            log('🟢 Test sayfası hazır!', 'success');
+            log('🟢 Test merkezi hazır!', 'success');
             log('ℹ️ Lütfen "1. Auth Testi" butonuna tıklayarak başlayın', 'info');
+            log('⚠️ Manuel signature testi için private key güncellemesi gerekli!', 'warning');
         });
 
         async function testAuth() {
@@ -202,15 +253,17 @@
                 
                 const data = await response.json();
                 log('✅ Auth başarılı!', 'success');
-                log(`🎫 Token: ${data.token.substring(0, 20)}...`, 'debug');
-                log(`🔏 Signature: ${data.signature.substring(0, 20)}...`, 'debug');
+                log(`🎫 Token: ${data.token}`, 'debug');
+                log(`🔏 Signature: ${data.signature}`, 'debug');
+                log(`📏 Signature Length: ${data.signature.length}`, 'debug');
                 log(`⏰ Expire: ${data.expire}`, 'debug');
                 
                 // PublicKey kontrolü
                 if (data.publicKey) {
-                    log(`🔑 PublicKey: ${data.publicKey.substring(0, 20)}...`, 'success');
+                    log(`🔑 PublicKey: ${data.publicKey}`, 'success');
                 } else {
-                    log(`⚠️ PublicKey: UNDEFINED! Manuel key kullanılacak: ${MANUAL_PUBLIC_KEY.substring(0, 20)}...`, 'warning');
+                    log(`⚠️ PublicKey: UNDEFINED! Manuel key kullanılacak`, 'warning');
+                    log(`🔑 Manuel PublicKey: ${MANUAL_PUBLIC_KEY}`, 'debug');
                 }
                 
                 return data;
@@ -234,7 +287,7 @@
                 
                 // PublicKey belirle
                 const publicKeyToUse = authData.publicKey || MANUAL_PUBLIC_KEY;
-                log(`🔑 Kullanılacak PublicKey: ${publicKeyToUse.substring(0, 20)}...`, 'info');
+                log(`🔑 Kullanılacak PublicKey: ${publicKeyToUse}`, 'info');
                 
                 // Test dosyası oluştur
                 const testContent = 'ImageKit test dosyası - ' + new Date().toISOString() + '\n' +
@@ -273,12 +326,13 @@
                     log(resultText, 'error');
                     
                     // Hata analizi
-                    if (resultText.includes('account cannot be authenticated')) {
-                        log('🔐 Hata: Hesap kimlik doğrulaması başarısız. Private key kontrol edilmeli.', 'error');
-                    } else if (resultText.includes('invalid signature')) {
-                        log('🔐 Hata: Geçersiz imza. Signature doğru oluşturulmamış.', 'error');
-                    } else if (resultText.includes('expired')) {
-                        log('⏰ Hata: Token süresi dolmuş.', 'error');
+                    if (resultText.includes('invalid signature')) {
+                        log('🔐 CRITICAL: Geçersiz signature!', 'error');
+                        log('🔐 ImageKit SDK signature üretiminde sorun var', 'error');
+                        log('🔐 Lütfen "4. Manuel Signature Testi" butonunu deneyin', 'error');
+                    } else if (resultText.includes('account cannot be authenticated')) {
+                        log('🔐 Hata: Hesap kimlik doğrulaması başarısız', 'error');
+                        log('🔐 Private key kontrol edilmeli', 'error');
                     }
                     
                     return;
@@ -377,6 +431,84 @@
                 log(`❌ Hata: ${error.message}`, 'error');
             } finally {
                 setLoading(realFileBtn, false);
+            }
+        }
+
+        async function testManualSignature() {
+            setLoading(manualSigBtn, true);
+            
+            try {
+                log('🔐 Manuel signature testi başlıyor...', 'info');
+                
+                if (MANUAL_PRIVATE_KEY === 'private_xxxxxxxxxxxxxxxxxxxxxxxxxxxx') {
+                    log('❌ HATA: Lütfen MANUAL_PRIVATE_KEY değişkenini güncelleyin!', 'error');
+                    log('ℹ️ ImageKit dashboard → Settings → API Keys → Private Key', 'info');
+                    return;
+                }
+                
+                // Timestamp ve nonce oluştur
+                const timestamp = Math.floor(Date.now() / 1000);
+                const nonce = Math.random().toString(36).substring(2, 15) + 
+                             Math.random().toString(36).substring(2, 15);
+                
+                log(`⏰ Timestamp: ${timestamp}`, 'debug');
+                log(`🎲 Nonce: ${nonce}`, 'debug');
+                
+                // Data string oluştur (timestamp + nonce)
+                const data = timestamp + nonce;
+                log(`📝 Data: ${data}`, 'debug');
+                
+                // HMAC-SHA1 signature oluştur
+                const encoder = new TextEncoder();
+                const keyData = encoder.encode(MANUAL_PRIVATE_KEY);
+                const dataBuffer = encoder.encode(data);
+                
+                const key = await crypto.subtle.importKey(
+                    'raw',
+                    keyData,
+                    { name: 'HMAC', hash: 'SHA-1' },
+                    false,
+                    ['sign']
+                );
+                
+                const signatureBuffer = await crypto.subtle.sign('HMAC', key, dataBuffer);
+                const signatureArray = Array.from(new Uint8Array(signatureBuffer));
+                const signature = signatureArray.map(b => b.toString(16).padStart(2, '0')).join('');
+                
+                log(`🔏 Manuel Signature: ${signature}`, 'debug');
+                log(`📏 Signature Length: ${signature.length}`, 'debug');
+                
+                // Test için upload deneyelim
+                const testFile = new File(['Manuel signature test'], 'manual_test.txt');
+                const formData = new FormData();
+                formData.append('file', testFile);
+                formData.append('fileName', 'manual_test.txt');
+                formData.append('publicKey', MANUAL_PUBLIC_KEY);
+                formData.append('signature', signature);
+                formData.append('token', nonce);
+                formData.append('expire', timestamp + 3600);
+                
+                log('🚀 Manuel signature ile upload denemesi...', 'info');
+                
+                const response = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.text();
+                log(`📨 Response: ${response.status}`, response.ok ? 'success' : 'error');
+                log(`📝 Result: ${result}`, response.ok ? 'debug' : 'error');
+                
+                if (response.ok) {
+                    const resultData = JSON.parse(result);
+                    log('🎉 MANUEL SIGNATURE BAŞARILI!', 'success');
+                    log(`📎 URL: ${resultData.url}`, 'info');
+                }
+                
+            } catch (error) {
+                log(`❌ Manuel signature hatası: ${error.message}`, 'error');
+            } finally {
+                setLoading(manualSigBtn, false);
             }
         }
     </script>
