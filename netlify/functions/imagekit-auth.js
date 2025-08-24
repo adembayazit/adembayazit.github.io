@@ -1,5 +1,14 @@
 const ImageKit = require("imagekit");
-const crypto = require("crypto");
+
+// The fix: Add colon to private key before base64 encoding
+const privateKeyWithColon = `${process.env.IMAGEKIT_PRIVATE_KEY}:`;
+const encodedPrivateKey = Buffer.from(privateKeyWithColon).toString('base64');
+
+const imagekit = new ImageKit({
+  publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
+  privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
+  urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT
+});
 
 exports.handler = async (event, context) => {
   // CORS headers
@@ -29,22 +38,8 @@ exports.handler = async (event, context) => {
       throw new Error('Missing ImageKit environment variables');
     }
 
-    // The fix: Add colon to private key before base64 encoding
-    const privateKeyWithColon = `${IMAGEKIT_PRIVATE_KEY}:`;
-    
-    // Manuel authentication parametreleri oluştur
-    const token = crypto.randomBytes(16).toString('hex');
-    const expire = Math.floor(Date.now() / 1000) + (60 * 30); // 30 dakika (1 saatten az)
-    const signature = crypto
-      .createHmac('sha1', privateKeyWithColon)
-      .update(token + expire)
-      .digest('hex');
-
-    const authenticationParameters = {
-      token: token,
-      expire: expire,
-      signature: signature
-    };
+    // Get authentication parameters
+    const authenticationParameters = imagekit.getAuthenticationParameters();
     
     return {
       statusCode: 200,
