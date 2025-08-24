@@ -1,12 +1,12 @@
 const ImageKit = require("imagekit");
 
 exports.handler = async (event, context) => {
-  // CORS headers
+  // CORS headers - daha kapsamlı
   const headers = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Credentials': 'true'
+    'Access-Control-Max-Age': '86400'
   };
 
   // Handle preflight request
@@ -31,17 +31,20 @@ exports.handler = async (event, context) => {
     } = process.env;
 
     if (!IMAGEKIT_PUBLIC_KEY || !IMAGEKIT_PRIVATE_KEY || !IMAGEKIT_URL_ENDPOINT) {
-      throw new Error('ImageKit environment variables are not set');
-    }
-
-    // Private key format kontrolü
-    if (!IMAGEKIT_PRIVATE_KEY.startsWith('private_')) {
-      throw new Error('Invalid private key format. Should start with "private_"');
+      console.error('Missing ImageKit environment variables');
+      return {
+        statusCode: 500,
+        headers,
+        body: JSON.stringify({ 
+          error: 'Authentication failed',
+          message: 'ImageKit environment variables are not set'
+        })
+      };
     }
 
     const imagekit = new ImageKit({
-      publicKey: IMAGEKIT_PUBLIC_KEY,
-      privateKey: IMAGEKIT_PRIVATE_KEY,
+      publicKey: IMAGEKIT_PUBLIC_KEY
+      privateKey: IMAGEKIT_PRIVATE_KEY
       urlEndpoint: IMAGEKIT_URL_ENDPOINT
     });
 
