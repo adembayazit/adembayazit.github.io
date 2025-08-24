@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ImageKit.io Dosya Yükleme Testi</title>
+    <title>ImageKit.io Netlify Entegrasyonu</title>
     <style>
         * {
             box-sizing: border-box;
@@ -26,7 +26,7 @@
             border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
             width: 100%;
-            max-width: 500px;
+            max-width: 600px;
             overflow: hidden;
         }
         
@@ -165,6 +165,18 @@
             text-decoration: underline;
         }
         
+        .image-preview {
+            margin-top: 15px;
+            text-align: center;
+        }
+        
+        .image-preview img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 6px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+        
         .note {
             margin-top: 20px;
             padding: 15px;
@@ -184,18 +196,18 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>ImageKit.io Dosya Yükleme Testi</h1>
-            <p>Dosyanızı ImageKit.io servisine yükleyin</p>
+            <h1>ImageKit.io Netlify Entegrasyonu</h1>
+            <p>Netlify Functions ile güvenli dosya yükleme</p>
         </div>
         
         <div class="content">
             <form id="uploadForm" onsubmit="uploadFile(event)">
                 <div class="form-group">
-                    <label for="fileInput">Dosyayı Seçin</label>
+                    <label for="fileInput">Yüklenecek Dosya</label>
                     <input type="file" id="fileInput" required>
                 </div>
                 
-                <button type="submit" id="uploadButton">Dosyayı Yükle</button>
+                <button type="submit" id="uploadButton">Dosyayı ImageKit'e Yükle</button>
             </form>
             
             <div class="progress-container" id="progressContainer">
@@ -210,34 +222,25 @@
             </div>
             
             <div class="note">
-                <h3>Önemli Not:</h3>
-                <p>Bu test sayfası, ImageKit.io'nun çalışma mantığını göstermek içindir. Gerçek yükleme işlemi için kendi sunucunuzda bir authentication endpoint oluşturmalısınız.</p>
+                <h3>Netlify Kurulumu:</h3>
+                <p>1. Netlify site ayarlarında aşağıdaki environment variables'ları ekleyin:</p>
+                <ul>
+                    <li><code>IMAGEKIT_PUBLIC_KEY</code> - ImageKit public key</li>
+                    <li><code>IMAGEKIT_PRIVATE_KEY</code> - ImageKit private key</li>
+                    <li><code>IMAGEKIT_URL_ENDPOINT</code> - ImageKit URL endpoint</li>
+                </ul>
+                <p>2. <code>netlify/functions/imagekit-auth.js</code> dosyasını yukarıdaki kodla güncelleyin</p>
+                <p>3. <code>package.json</code> dosyasına <code>imagekitio-v3</code> dependency'sini ekleyin</p>
             </div>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
-        // Bu örnek için sabit değerler kullanıyoruz
-        // Gerçek uygulamada bu değerler sunucudan alınmalıdır
-        const DEMO_AUTH_DATA = {
-            token: "demo-token-" + Math.random().toString(36).substring(2),
-            expire: Math.floor(Date.now() / 1000) + 3600, // 1 saat sonra
-            signature: "demo-signature-" + Math.random().toString(36).substring(2)
-        };
+        // Netlify Functions endpoint URL'si
+        const AUTH_ENDPOINT = '/.netlify/functions/imagekit-auth';
         
-        // Sunucu endpoint'inin simülasyonu
-        function getAuthenticationFromServer(fileName, callback) {
-            // Gerçek uygulamada bu, sunucuya AJAX isteği yapar
-            console.log("Sunucudan authentication verisi alınıyor...");
-            
-            // Simüle edilmiş gecikme
-            setTimeout(() => {
-                callback(DEMO_AUTH_DATA);
-            }, 1000);
-        }
-        
-        function uploadFile(event) {
+        // ImageKit yükleme fonksiyonu
+        async function uploadFile(event) {
             event.preventDefault();
             
             const fileInput = document.getElementById('fileInput');
@@ -254,7 +257,7 @@
             }
             
             const file = fileInput.files[0];
-            const fileName = file.name || "uploaded_file";
+            const fileName = file.name;
             
             // UI durumunu güncelle
             uploadButton.disabled = true;
@@ -263,10 +266,24 @@
             progressBar.style.width = '10%';
             statusText.textContent = 'Authentication bilgileri alınıyor...';
             
-            // Authentication bilgilerini al
-            getAuthenticationFromServer(fileName, function(authData) {
+            try {
+                // Netlify Function'dan authentication token al
+                const authResponse = await fetch(AUTH_ENDPOINT, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ fileName })
+                });
+                
+                if (!authResponse.ok) {
+                    throw new Error(`Authentication hatası: ${authResponse.status}`);
+                }
+                
+                const authData = await authResponse.json();
+                
                 progressBar.style.width = '30%';
-                statusText.textContent = 'Dosya yükleniyor...';
+                statusText.textContent = 'Dosya ImageKit\'e yükleniyor...';
                 
                 const formData = new FormData();
                 formData.append("file", file);
@@ -276,56 +293,36 @@
                 formData.append("signature", authData.signature);
                 
                 // ImageKit.io'ya yükleme isteği
-                // NOT: Bu demo için çalışmayacak, gerçek uygulamada sunucu token'ı gerekiyor
-                $.ajax({
-                    url: "https://upload.imagekit.io/api/v2/files/upload",
+                const uploadResponse = await fetch("https://upload.imagekit.io/api/v2/files/upload", {
                     method: "POST",
-                    mimeType: "multipart/form-data",
-                    dataType: "json",
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    xhr: function() {
-                        const xhr = new window.XMLHttpRequest();
-                        xhr.upload.addEventListener("progress", function(evt) {
-                            if (evt.lengthComputable) {
-                                const percentComplete = (evt.loaded / evt.total) * 100;
-                                progressBar.style.width = percentComplete + '%';
-                                statusText.textContent = 'Yükleniyor: %' + Math.round(percentComplete);
-                            }
-                        }, false);
-                        return xhr;
-                    },
-                    success: function(response) {
-                        progressBar.style.width = '100%';
-                        statusText.textContent = 'Yükleme başarılı!';
-                        
-                        // Başarılı sonucu göster
-                        showResult(true, {
-                            url: response.url,
-                            fileId: response.fileId,
-                            name: response.name
-                        });
-                        
-                        uploadButton.disabled = false;
-                    },
-                    error: function(xhr, status, error) {
-                        progressContainer.style.display = 'none';
-                        uploadButton.disabled = false;
-                        
-                        // Hata mesajını göster
-                        let errorMsg = "Yükleme hatası: ";
-                        
-                        if (xhr.responseJSON && xhr.responseJSON.message) {
-                            errorMsg += xhr.responseJSON.message;
-                        } else {
-                            errorMsg += "Sunucuya bağlanılamıyor. Lütfen authentication endpoint'inizi kontrol edin.";
-                        }
-                        
-                        showResult(false, errorMsg);
-                    }
+                    body: formData
                 });
-            });
+                
+                if (!uploadResponse.ok) {
+                    const errorData = await uploadResponse.json();
+                    throw new Error(`Yükleme hatası: ${errorData.message || uploadResponse.status}`);
+                }
+                
+                const response = await uploadResponse.json();
+                
+                progressBar.style.width = '100%';
+                statusText.textContent = 'Yükleme başarılı!';
+                
+                // Başarılı sonucu göster
+                showResult(true, {
+                    url: response.url,
+                    fileId: response.fileId,
+                    name: response.name,
+                    fileType: response.fileType
+                });
+                
+            } catch (error) {
+                // Hata mesajını göster
+                showResult(false, error.message);
+                console.error("Yükleme hatası detayları:", error);
+            } finally {
+                uploadButton.disabled = false;
+            }
         }
         
         function showResult(isSuccess, data) {
@@ -338,24 +335,34 @@
                     <h3>✅ Yükleme Başarılı!</h3>
                     <p><strong>Dosya ID:</strong> ${data.fileId}</p>
                     <p><strong>Dosya Adı:</strong> ${data.name}</p>
+                    <p><strong>Dosya Türü:</strong> ${data.fileType}</p>
                     <p><strong>URL:</strong> <a href="${data.url}" class="url-link" target="_blank">${data.url}</a></p>
                 `;
+                
+                // Resim önizleme
+                if (data.fileType.startsWith('image/')) {
+                    resultContainer.innerHTML += `
+                        <div class="image-preview">
+                            <img src="${data.url}" alt="Yüklenen resim">
+                        </div>
+                    `;
+                }
             } else {
                 resultContainer.classList.add('error');
                 resultContainer.innerHTML = `
                     <h3>❌ Yükleme Başarısız</h3>
                     <p>${data}</p>
-                    <p>Lütfen browser konsolunu ve sunucu yapılandırmanızı kontrol edin.</p>
+                    <p>Lütfen ayarları ve Netlify environment variables'ları kontrol edin.</p>
                 `;
             }
             
             resultContainer.style.display = 'block';
+            document.getElementById('progressContainer').style.display = 'none';
         }
         
         // Sayfa yüklendiğinde
-        $(document).ready(function() {
-            console.log("ImageKit.io yükleme test sayfası hazır.");
-            console.log("NOT: Bu demo sayfası gerçek yükleme yapamaz, sadece arayüzü gösterir.");
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("ImageKit.io Netlify entegrasyon sayfası hazır.");
         });
     </script>
 </body>
