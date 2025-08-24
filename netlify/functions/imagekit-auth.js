@@ -2,7 +2,6 @@
 const ImageKit = require("imagekit");
 
 exports.handler = async (event, context) => {
-    // CORS headers
     const headers = {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
@@ -10,13 +9,8 @@ exports.handler = async (event, context) => {
         'Content-Type': 'application/json'
     };
 
-    // Handle preflight request
     if (event.httpMethod === 'OPTIONS') {
-        return {
-            statusCode: 200,
-            headers,
-            body: ''
-        };
+        return { statusCode: 200, headers, body: '' };
     }
 
     try {
@@ -26,27 +20,34 @@ exports.handler = async (event, context) => {
             IMAGEKIT_URL_ENDPOINT 
         } = process.env;
 
-        // Environment variable kontrolü
+        console.log('Env vars:', { 
+            hasPublicKey: !!IMAGEKIT_PUBLIC_KEY,
+            hasPrivateKey: !!IMAGEKIT_PRIVATE_KEY,
+            hasEndpoint: !!IMAGEKIT_URL_ENDPOINT
+        });
+
         if (!IMAGEKIT_PUBLIC_KEY || !IMAGEKIT_PRIVATE_KEY || !IMAGEKIT_URL_ENDPOINT) {
             throw new Error('Missing ImageKit environment variables');
         }
 
-        // Private key'e ":" eklenmesi GEREKMİYOR - ImageKit SDK bunu otomatik yapar
         const imagekit = new ImageKit({
             publicKey: IMAGEKIT_PUBLIC_KEY,
-            privateKey: IMAGEKIT_PRIVATE_KEY, // Doğrudan private key kullanılır
+            privateKey: IMAGEKIT_PRIVATE_KEY,
             urlEndpoint: IMAGEKIT_URL_ENDPOINT
         });
 
-        // Authentication parametrelerini al
-        const authenticationParameters = imagekit.getAuthenticationParameters();
-        
+        const authParams = imagekit.getAuthenticationParameters();
+        authParams.publicKey = IMAGEKIT_PUBLIC_KEY;
+
+        console.log('Generated auth params:', authParams);
+
         return {
             statusCode: 200,
             headers,
-            body: JSON.stringify(authenticationParameters)
+            body: JSON.stringify(authParams)
         };
     } catch (error) {
+        console.error('Error in function:', error);
         return {
             statusCode: 500,
             headers,
