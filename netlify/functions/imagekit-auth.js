@@ -1,27 +1,47 @@
 const ImageKit = require("imagekit");
 
-exports.handler = async () => {
-  const { IMAGEKIT_PUBLIC_KEY, IMAGEKIT_PRIVATE_KEY, IMAGEKIT_URL_ENDPOINT } = process.env;
+exports.handler = async (event, context) => {
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'GET,POST, OPTIONS',
+    'Content-Type': 'application/json'
+  };
 
-  if (!IMAGEKIT_PUBLIC_KEY || !IMAGEKIT_PRIVATE_KEY || !IMAGEKIT_URL_ENDPOINT) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: "Eksik environment variable" })
-    };
+  if (event.httpMethod === 'OPTIONS') {
+    return { statusCode: 200, headers, body: '' };
   }
 
-  const imagekit = new ImageKit({
-    publicKey: IMAGEKIT_PUBLIC_KEY,
-    privateKey: IMAGEKIT_PRIVATE_KEY,
-    urlEndpoint: IMAGEKIT_URL_ENDPOINT,
-  });
+  try {
+    const { IMAGEKIT_PUBLIC_KEY, IMAGEKIT_PRIVATE_KEY, IMAGEKIT_URL_ENDPOINT } = process.env;
 
-  const authParams = imagekit.getAuthenticationParameters();
-  authParams.publicKey = IMAGEKIT_PUBLIC_KEY;
+    if (!IMAGEKIT_PUBLIC_KEY || !IMAGEKIT_PRIVATE_KEY || !IMAGEKIT_URL_ENDPOINT) {
+      return {
+        statusCode: 500,
+        headers,
+        body: JSON.stringify({ error: 'Missing ImageKit environment variables' })
+      };
+    }
 
-  return {
-    statusCode: 200,
-    headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-    body: JSON.stringify(authParams)
-  };
+    const imagekit = new ImageKit({
+      publicKey: IMAGEKIT_PUBLIC_KEY,
+      privateKey: IMAGEKIT_PRIVATE_KEY,
+      urlEndpoint: IMAGEKIT_URL_ENDPOINT
+    });
+
+    const authenticationParameters = imagekit.getAuthenticationParameters();
+    
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify(authenticationParameters)
+    };
+
+  } catch (error) {
+    return {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({ error: 'Authentication failed', message: error.message })
+    };
+  }
 };
