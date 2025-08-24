@@ -5,50 +5,75 @@
 <title>ImageKit Secure Upload</title>
 <style>
   body { font-family: Arial; padding: 20px; }
-  #uploadStatus { margin-top: 10px; color: green; }
+  #dropZone {
+    width: 100%; height: 150px; border: 2px dashed #ccc; display:flex; align-items:center; justify-content:center;
+    margin-bottom: 10px; cursor: pointer; color: #666;
+  }
+  #dropZone.dragover { border-color: #333; color: #333; }
+  #uploadStatus { margin-top: 10px; }
 </style>
 </head>
 <body>
-<h2>ImageKit Upload</h2>
-<input type="file" id="fileInput">
-<button id="uploadBtn">Upload</button>
+
+<h2>Drag & Drop / File Upload</h2>
+<div id="dropZone">Drop files here or click to select</div>
+<input type="file" id="fileInput" style="display:none" multiple>
 <div id="uploadStatus"></div>
 
 <script src="https://unpkg.com/imagekit-javascript/dist/imagekit.min.js"></script>
 <script>
+const dropZone = document.getElementById('dropZone');
 const fileInput = document.getElementById('fileInput');
-const uploadBtn = document.getElementById('uploadBtn');
 const uploadStatus = document.getElementById('uploadStatus');
 
-uploadBtn.addEventListener('click', async () => {
-    const file = fileInput.files[0];
-    if (!file) {
-        alert("Please select a file!");
-        return;
-    }
-
-    console.log("Selected file:", file);
-    console.log("File name:", file.name);
-
-    const imagekit = new ImageKit({
-        publicKey: "public_xxxxxxx",  // Netlify env’den gelen public key
-        urlEndpoint: "https://ik.imagekit.io/your_imagekit_id",
-        authenticationEndpoint: "/.netlify/functions/imagekit-auth"
-    });
-
-    try {
-        const result = await imagekit.upload({
-            file: file,
-            fileName: file.name || "default_name.jpg"  // Dosya adı boşsa fallback
-        });
-        console.log("Upload success:", result);
-        uploadStatus.textContent = "Upload successful! URL: " + result.url;
-    } catch (err) {
-        console.error("Upload error:", err);
-        uploadStatus.style.color = "red";
-        uploadStatus.textContent = "Upload failed. Check console for details.";
-    }
+const imagekit = new ImageKit({
+    publicKey: "public_xxxxxxx",  // Netlify env’den gelen public key
+    urlEndpoint: "https://ik.imagekit.io/your_imagekit_id",
+    authenticationEndpoint: "/.netlify/functions/imagekit-auth"
 });
+
+// Drag & Drop events
+dropZone.addEventListener('click', () => fileInput.click());
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', e => { e.preventDefault(); dropZone.classList.remove('dragover'); });
+dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    const files = e.dataTransfer.files;
+    if (files.length > 0) handleFiles(files);
+});
+
+fileInput.addEventListener('change', () => {
+    if (fileInput.files.length > 0) handleFiles(fileInput.files);
+});
+
+function handleFiles(files) {
+    uploadStatus.innerHTML = '';
+    Array.from(files).forEach(file => {
+        const status = document.createElement('div');
+        status.textContent = `Uploading ${file.name}...`;
+        uploadStatus.appendChild(status);
+
+        imagekit.upload({
+            file: file,
+            fileName: file.name || "default_name.jpg",
+            extensions: [
+                { name: "google-auto-tagging", maxTags: 5, minConfidence: 95 }
+            ]
+        }, function(error, result) {
+            if(error){
+                console.error("Upload error:", error);
+                status.textContent = `Error uploading ${file.name}`;
+                status.style.color = "red";
+            } else {
+                console.log("Upload success:", result);
+                status.textContent = `Uploaded: ${file.name} | URL: ${result.url} | Tags: ${JSON.stringify(result.googleAutoTags)}`;
+                status.style.color = "green";
+            }
+        });
+    });
+}
 </script>
+
 </body>
 </html>
