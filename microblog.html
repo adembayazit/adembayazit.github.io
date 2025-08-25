@@ -297,21 +297,31 @@
             width: 30px;
             height: 30px;
             transition: all 0.3s;
-            /* Border ve arkaplanı kaldır */
-            border: none !important;
-            background: none !important;
+            border-radius: 50%;
+            padding: 5px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .daisy-icon {
+            /*color: #32cd32;*/
+        }
+        
+        .pine-icon {
+            /*color: #1e90ff;*/
         }
         
         .daisy-like:hover .daisy-icon {
             transform: rotate(15deg) scale(1.2);
-            /* Hover efektlerini düzenle */
-            box-shadow: none;
+            color: #00ff00;
+            /*background: rgba(50, 205, 50, 0.3); */
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
         }
         
         .pine-pin:hover .pine-icon {
             transform: rotate(-15deg) scale(1.2);
-            /* Hover efektlerini düzenle */
-            box-shadow: none;
+            color: #00bfff;
+            /* background: rgba(30, 144, 255, 0.3); */
+            box-shadow: 0 0 10px rgba(30, 144, 255, 0.5);
         }
         
         .like-count, .pin-count {
@@ -331,7 +341,7 @@
         }
 
         /* Yeni eklenen stiller */
-        .entry img {
+        .entry-content img {
             max-width: 100%;
             height: auto;
             border-radius: 8px;
@@ -341,7 +351,7 @@
             border: 1px solid rgba(0, 255, 0, 0.3);
         }
         
-        .entry img:hover {
+        .entry-content img:hover {
             transform: scale(1.02);
             box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
         }
@@ -428,22 +438,24 @@
         }
         
         /* Küçük resimler için özel stil */
-        img.small-image {
+        .entry-content img.small-image {
             max-width: 300px !important;
             display: block;
             margin-left: auto;
             margin-right: auto;
         }
         
-        /* Modal için loading animasyonu */
-        .modal-loading {
-            display: none;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            font-size: 20px;
+        /* İnteraksiyon butonlarındaki img'ler için stilleri sıfırla */
+        .interaction-buttons img {
+            cursor: default !important;
+            max-width: 30px !important;
+            border: none !important;
+            box-shadow: none !important;
+            margin: 0 !important;
+        }
+        
+        .interaction-buttons img:hover {
+            transform: none !important;
         }
 
         /* Mobil için stiller */
@@ -530,8 +542,7 @@
     <!-- Modal (Lightbox) HTML -->
     <div id="imageModal" class="modal">
         <span class="close">&times;</span>
-        <div class="modal-loading" id="modalLoading">Loading...</div>
-        <img class="modal-content" id="modalImage" onload="document.getElementById('modalLoading').style.display='none'" onerror="document.getElementById('modalLoading').style.display='none'">
+        <img class="modal-content" id="modalImage">
         <div id="caption"></div>
     </div>
 
@@ -683,28 +694,22 @@
         const modalImg = document.getElementById("modalImage");
         const captionText = document.getElementById("caption");
         const closeModal = document.querySelector(".close");
-        const modalLoading = document.getElementById("modalLoading");
         
         // Modalı aç
         function openModal(imgSrc, altText) {
             modal.style.display = "block";
-            modalLoading.style.display = "block";
-            modalImg.style.display = "none";
-            captionText.innerHTML = altText || "Resim açıklaması yok";
-            
-            // Önceki event listener'ları temizle
-            document.removeEventListener('keydown', handleKeyPress);
-            
-            // Yeni event listener ekle
-            document.addEventListener('keydown', handleKeyPress);
-            
-            // Resmi yükle
             modalImg.src = imgSrc;
+            captionText.innerHTML = altText || "Resim açıklaması yok";
+            document.body.style.overflow = 'hidden'; // Sayfa kaydırmayı engelle
+            
+            // Klavye ile kapatma için event listener ekle
+            document.addEventListener('keydown', handleKeyPress);
         }
         
         // Modalı kapat
         function closeImageModal() {
             modal.style.display = "none";
+            document.body.style.overflow = 'auto'; // Sayfa kaydırmayı geri getir
             document.removeEventListener('keydown', handleKeyPress);
         }
         
@@ -720,18 +725,6 @@
                 closeImageModal();
             }
         });
-        
-        // Resim yüklendiğinde
-        modalImg.onload = function() {
-            modalLoading.style.display = "none";
-            modalImg.style.display = "block";
-        };
-        
-        // Resim yüklenirken hata olursa
-        modalImg.onerror = function() {
-            modalLoading.style.display = "none";
-            captionText.innerHTML = "Resim yüklenirken hata oluştu";
-        };
         
         // YouTube linklerini embed formatına dönüştür
         function convertYouTubeLinks(content) {
@@ -772,26 +765,31 @@
         
         // Resimleri işle ve modal için event listener ekle
         function processImages() {
-            document.querySelectorAll('.entry img').forEach(img => {
-                // Daisy ve pine ikonlarını ve diğer SVG'leri atla
-                if (img.closest('.interaction-buttons') || 
-                    img.src.includes('/IMAGES/') || 
-                    !img.src.includes('imagekit.io')) {
-                    return;
-                }
-                
-                // Resmin boyutlarını kontrol et
-                img.onload = function() {
-                    // Küçük resimler için özel sınıf ekle
-                    if (this.naturalWidth < 400) {
-                        this.classList.add('small-image');
+            // Sadece entry içeriğindeki resimlere tıklama olayı ekle
+            document.querySelectorAll('.entry-content img').forEach(img => {
+                // İnteraksiyon butonlarındaki img'leri hariç tut
+                if (!img.closest('.interaction-buttons')) {
+                    // Resmin boyutlarını kontrol et
+                    img.onload = function() {
+                        // Küçük resimler için özel sınıf ekle
+                        if (this.naturalWidth < 400) {
+                            this.classList.add('small-image');
+                        }
+                    };
+                    
+                    // Eğer resim zaten yüklenmişse
+                    if (img.complete) {
+                        if (img.naturalWidth < 400) {
+                            img.classList.add('small-image');
+                        }
                     }
-                };
-                
-                // Tıklama eventi ekle
-                img.addEventListener('click', function() {
-                    openModal(this.src, this.alt);
-                });
+                    
+                    // Tıklama eventi ekle
+                    img.addEventListener('click', function(e) {
+                        e.stopPropagation(); // Olayın diğer elementlere yayılmasını engelle
+                        openModal(this.src, this.alt);
+                    });
+                }
             });
         }
 
@@ -834,7 +832,7 @@
 
           entries.forEach(entry => {
             const idDiv = entry.querySelector(".entry-id");
-            const contentDiv = entry.querySelector(".content");
+            const contentDiv = entry.querySelector(".entry-content");
             const originalContent = contentDiv?.innerHTML?.trim();
             if (!idDiv || !originalContent) return;
             
@@ -912,7 +910,7 @@
               <span class="fa-solid fa-bug bug-iconentry"></span> ${time}
             </div>
             <div class="entry-id">#${entry.id}</div>
-            <div class="content">${formattedContent}</div>
+            <div class="entry-content">${formattedContent}</div>
             <div class="interaction-buttons">
               <div class="daisy-like" data-entry-id="${entry.id}">
                 <img src="/IMAGES/daisy.svg" class="daisy-icon" alt="Beğen" />
@@ -932,9 +930,7 @@
           pinIcon?.addEventListener("click", () => handlePinClick(entry.id, entryDiv));
 
           // Entry oluşturulduktan sonra resimleri işle
-          setTimeout(() => {
-              processImages();
-          }, 0);
+          setTimeout(processImages, 0);
           
           return entryDiv;
         }
@@ -1026,9 +1022,6 @@
           
           // Çeviri ikonlarını ekle
           addTranslationIcons();
-          
-          // Resimleri işle
-          processImages();
           
           loadingElement.style.display = 'none';
           
