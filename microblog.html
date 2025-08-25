@@ -85,7 +85,7 @@
         
         .back-to-home {
             display: inline-block;
-            margin: 30px 0;
+            margin: 30px 0; /* Daha fazla boşluk eklendi */
             color: limegreen;
             text-decoration: none;
             font-weight: bold;
@@ -340,124 +340,6 @@
             100% { transform: scale(1); }
         }
 
-        /* Yeni eklenen stiller */
-        .entry-content img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            margin: 10px 0;
-            border: 1px solid rgba(0, 255, 0, 0.3);
-        }
-        
-        .entry-content img:hover {
-            transform: scale(1.02);
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
-        }
-        
-        /* Lightbox/modal stilleri */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            padding-top: 50px;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(5px);
-        }
-        
-        .modal-content {
-            margin: auto;
-            display: block;
-            max-width: 95%;
-            max-height: 95%;
-            border: 2px solid limegreen;
-            border-radius: 8px;
-            box-shadow: 0 0 30px rgba(0, 255, 0, 0.5);
-            animation: zoom 0.3s;
-        }
-        
-        @keyframes zoom {
-            from {transform: scale(0.9)}
-            to {transform: scale(1)}
-        }
-        
-        .close {
-            position: absolute;
-            top: 15px;
-            right: 35px;
-            color: #f1f1f1;
-            font-size: 40px;
-            font-weight: bold;
-            transition: 0.3s;
-            cursor: pointer;
-            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-        }
-        
-        .close:hover,
-        .close:focus {
-            color: #ff0000;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        
-        #caption {
-            margin: auto;
-            display: block;
-            width: 80%;
-            max-width: 700px;
-            text-align: center;
-            color: #ccc;
-            padding: 10px 0;
-            height: 150px;
-        }
-        
-        /* YouTube embed responsive stilleri */
-        .video-container {
-            position: relative;
-            padding-bottom: 56.25%; /* 16:9 aspect ratio */
-            height: 0;
-            overflow: hidden;
-            margin: 15px 0;
-            border-radius: 8px;
-            border: 1px solid rgba(0, 255, 0, 0.3);
-        }
-        
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-        
-        /* Küçük resimler için özel stil */
-        .entry-content img.small-image {
-            max-width: 300px !important;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        /* İnteraksiyon butonlarındaki img'ler için stilleri sıfırla */
-        .interaction-buttons img {
-            cursor: default !important;
-            max-width: 30px !important;
-            border: none !important;
-            box-shadow: none !important;
-            margin: 0 !important;
-        }
-        
-        .interaction-buttons img:hover {
-            transform: none !important;
-        }
-
         /* Mobil için stiller */
         @media (max-width: 768px) {
             .microblog-container {
@@ -480,23 +362,6 @@
                 right: 50%;
                 transform: translateX(50%);
                 font-size: 10px;
-            }
-            
-            /* Modal için mobil stiller */
-            .modal-content {
-                max-width: 100%;
-                max-height: 85%;
-            }
-            
-            .close {
-                top: 10px;
-                right: 20px;
-                font-size: 30px;
-            }
-            
-            #caption {
-                width: 90%;
-                font-size: 14px;
             }
         }
     </style>
@@ -538,13 +403,6 @@
             <button id="loadMoreBtn" class="load-more-btn">More Entry (20) <span class='bx bx-chevron-down'></span></button>
         </div>
     </section>
-
-    <!-- Modal (Lightbox) HTML -->
-    <div id="imageModal" class="modal">
-        <span class="close">&times;</span>
-        <img class="modal-content" id="modalImage">
-        <div id="caption"></div>
-    </div>
 
     <footer style="text-align: center; padding: 20px; font-size: 14px; color: white; margin-top: 50px; position: relative; z-index: 1;">
         <hr style="margin-bottom: 10px; border-color: limegreen;" />
@@ -688,112 +546,7 @@
           }
         }
 
-        // 3. MODAL (LIGHTBOX) FONKSİYONLARI
-        // Modal elementlerini al
-        const modal = document.getElementById("imageModal");
-        const modalImg = document.getElementById("modalImage");
-        const captionText = document.getElementById("caption");
-        const closeModal = document.querySelector(".close");
-        
-        // Modalı aç
-        function openModal(imgSrc, altText) {
-            modal.style.display = "block";
-            modalImg.src = imgSrc;
-            captionText.innerHTML = altText || "Resim açıklaması yok";
-            document.body.style.overflow = 'hidden'; // Sayfa kaydırmayı engelle
-            
-            // Klavye ile kapatma için event listener ekle
-            document.addEventListener('keydown', handleKeyPress);
-        }
-        
-        // Modalı kapat
-        function closeImageModal() {
-            modal.style.display = "none";
-            document.body.style.overflow = 'auto'; // Sayfa kaydırmayı geri getir
-            document.removeEventListener('keydown', handleKeyPress);
-        }
-        
-        // Klavye kısayolları
-        function handleKeyPress(e) {
-            if (e.key === "Escape") closeImageModal();
-        }
-        
-        // Kapatma düğmesi ve dışarı tıklama eventleri
-        closeModal.addEventListener("click", closeImageModal);
-        modal.addEventListener("click", function(event) {
-            if (event.target === modal) {
-                closeImageModal();
-            }
-        });
-        
-        // YouTube linklerini embed formatına dönüştür
-        function convertYouTubeLinks(content) {
-            // YouTube URL'lerini tanımla
-            const youtubeRegex = /(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/gi;
-            
-            // Eğer içerik YouTube linki içeriyorsa
-            if (content.match(youtubeRegex)) {
-                const url = content.match(youtubeRegex)[0];
-                let videoId = '';
-                
-                // Video ID'sini çıkar
-                if (url.includes('youtube.com')) {
-                    videoId = url.split('v=')[1];
-                    const ampersandPosition = videoId.indexOf('&');
-                    if (ampersandPosition !== -1) {
-                        videoId = videoId.substring(0, ampersandPosition);
-                    }
-                } else if (url.includes('youtu.be')) {
-                    videoId = url.split('/').pop();
-                }
-                
-                // Embed kodu oluştur
-                if (videoId) {
-                    return `<div class="video-container">
-                        <iframe src="https://www.youtube.com/embed/${videoId}" 
-                                frameborder="0" 
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                allowfullscreen>
-                        </iframe>
-                    </div>`;
-                }
-            }
-            
-            // YouTube linki değilse orijinal içeriği döndür
-            return content;
-        }
-        
-        // Resimleri işle ve modal için event listener ekle
-        function processImages() {
-            // Sadece entry içeriğindeki resimlere tıklama olayı ekle
-            document.querySelectorAll('.entry-content img').forEach(img => {
-                // İnteraksiyon butonlarındaki img'leri hariç tut
-                if (!img.closest('.interaction-buttons')) {
-                    // Resmin boyutlarını kontrol et
-                    img.onload = function() {
-                        // Küçük resimler için özel sınıf ekle
-                        if (this.naturalWidth < 400) {
-                            this.classList.add('small-image');
-                        }
-                    };
-                    
-                    // Eğer resim zaten yüklenmişse
-                    if (img.complete) {
-                        if (img.naturalWidth < 400) {
-                            img.classList.add('small-image');
-                        }
-                    }
-                    
-                    // Tıklama eventi ekle
-                    img.addEventListener('click', function(e) {
-                        e.stopPropagation(); // Olayın diğer elementlere yayılmasını engelle
-                        openModal(this.src, this.alt);
-                    });
-                }
-            });
-        }
-
-        // 4. TEMEL FONKSİYONLAR
+        // 3. TEMEL FONKSİYONLAR
         async function loadInteractions() {
           try {
             const result = await fetchViaProxy('/b/68862fd97b4b8670d8a81945/latest');
@@ -815,14 +568,9 @@
 
         // HTML içeriğini düzgün işlemek için yardımcı fonksiyon
         function formatContent(content) {
-            // Önce YouTube linklerini dönüştür
-            content = convertYouTubeLinks(content);
-            
-            // Sonra diğer formatlamaları yap
-            content = content.replace(/<br\s*\/?>/gi, '<br>');
-            content = content.replace(/<p>\s*<\/p>/gi, '');
-            
-            return content;
+          content = content.replace(/<br\s*\/?>/gi, '<br>');
+          content = content.replace(/<p>\s*<\/p>/gi, '');
+          return content;
         }
 
         // ÇEVİRİ İKONLARINI EKLEME FONKSİYONU
@@ -832,7 +580,7 @@
 
           entries.forEach(entry => {
             const idDiv = entry.querySelector(".entry-id");
-            const contentDiv = entry.querySelector(".entry-content");
+            const contentDiv = entry.querySelector(".content");
             const originalContent = contentDiv?.innerHTML?.trim();
             if (!idDiv || !originalContent) return;
             
@@ -910,7 +658,7 @@
               <span class="fa-solid fa-bug bug-iconentry"></span> ${time}
             </div>
             <div class="entry-id">#${entry.id}</div>
-            <div class="entry-content">${formattedContent}</div>
+            <div class="content">${formattedContent}</div>
             <div class="interaction-buttons">
               <div class="daisy-like" data-entry-id="${entry.id}">
                 <img src="/IMAGES/daisy.svg" class="daisy-icon" alt="Beğen" />
@@ -929,9 +677,6 @@
           const pinIcon = entryDiv.querySelector(".pine-pin");
           pinIcon?.addEventListener("click", () => handlePinClick(entry.id, entryDiv));
 
-          // Entry oluşturulduktan sonra resimleri işle
-          setTimeout(processImages, 0);
-          
           return entryDiv;
         }
 
@@ -1030,7 +775,7 @@
           }
         }
 
-        // 5. INTERACTION FONKSİYONLARI
+        // 4. INTERACTION FONKSİYONLARI
         async function handleLikeClick(entryId, entryDiv) {
           if (likesCache.isUpdating) return;
 
@@ -1103,7 +848,7 @@
           }
         }
 
-        // 6. BAŞLANGIÇ FONKSİYONU
+        // 5. BAŞLANGIÇ FONKSİYONU
         async function initializeApp() {
           try {
             await loadInteractions();
@@ -1167,7 +912,7 @@
           }
         }
 
-        // 7. UYGULAMAYI BAŞLAT
+        // 6. UYGULAMAYI BAŞLAT
         document.addEventListener("DOMContentLoaded", initializeApp);
     </script>
 
