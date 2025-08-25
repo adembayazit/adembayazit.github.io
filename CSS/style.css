@@ -656,16 +656,26 @@ canvas {
     white-space: pre-wrap;
   }
 
-   .content img {
-            max-width: auto;
-            height: auto;
+ /* Entry içindeki görseller için özel stil */
+        .content img {
+            max-width: 300px;    /* Masaüstü için 300px */
+            height: auto;        /* Oranları koru */
             border-radius: 8px;
             margin: 10px 0;
             cursor: pointer;
             transition: all 0.3s ease;
             border: 1px solid rgba(0, 255, 0, 0.3);
-            display: block;
-            margin: 10px auto;
+            display: block;      /* Ortalamak için block yap */
+            margin-left: auto;   /* Sol ve sağ margin auto */
+            margin-right: auto;  /* ile ortala */
+        }
+
+        /* Mobil görünüm için medya sorgusu */
+        @media (max-width: 768px) {
+            .content img {
+                max-width: 100%; /* Mobilde içerik kutusuna sığacak */
+                height: auto;    /* Oranları koru */
+            }
         }
         
    .timestamp {
