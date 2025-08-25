@@ -251,6 +251,15 @@
             overflow-y: auto;
             white-space: pre-wrap;
         }
+        
+        .image-preview {
+            max-width: 300px;
+            max-height: 200px;
+            margin-top: 15px;
+            border-radius: 8px;
+            border: 2px solid #475569;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -282,8 +291,9 @@
                 <h3>📤 Dosya Yükleme</h3>
                 <div class="file-input">
                     <h4>📂 Yüklenecek Dosyayı Seçin:</h4>
-                    <input type="file" id="testFile" accept=".txt,.jpg,.jpeg,.png,.pdf,.mp4">
+                    <input type="file" id="testFile" accept=".txt,.jpg,.jpeg,.png,.pdf,.mp4,.gif,.webp">
                     <div id="fileInfo"></div>
+                    <img id="imagePreview" class="image-preview" alt="Önizleme">
                 </div>
                 
                 <div class="form-group">
@@ -336,6 +346,7 @@ curl --location 'https://upload.imagekit.io/api/v1/files/upload' \
         const uploadBtn = document.getElementById('uploadBtn');
         const manualUploadBtn = document.getElementById('manualUploadBtn');
         const fileInfo = document.getElementById('fileInfo');
+        const imagePreview = document.getElementById('imagePreview');
         const privateKeyInput = document.getElementById('privateKeyInput');
         const publicKeyInput = document.getElementById('publicKeyInput');
         const fileNameInput = document.getElementById('fileNameInput');
@@ -629,6 +640,20 @@ curl --location 'https://upload.imagekit.io/api/v1/files/upload' \
             }
         }
 
+        // Görsel önizleme fonksiyonu
+        function previewImage(file) {
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                imagePreview.style.display = 'none';
+            }
+        }
+
         // Sayfa yüklendiğinde
         window.addEventListener('load', () => {
             // Buton orijinal text'lerini kaydet
@@ -653,6 +678,13 @@ curl --location 'https://upload.imagekit.io/api/v1/files/upload' \
                             fileNameInput.value = file.name;
                         }
                         updateCurlCommand();
+                        
+                        // Eğer dosya bir resim ise önizleme göster
+                        if (file.type.startsWith('image/')) {
+                            previewImage(file);
+                        } else {
+                            imagePreview.style.display = 'none';
+                        }
                     }
                 });
             }
