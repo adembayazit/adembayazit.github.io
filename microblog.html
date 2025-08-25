@@ -297,31 +297,21 @@
             width: 30px;
             height: 30px;
             transition: all 0.3s;
-            border-radius: 50%;
-            padding: 5px;
-            background: rgba(0, 0, 0, 0.3);
-        }
-        
-        .daisy-icon {
-            /*color: #32cd32;*/
-        }
-        
-        .pine-icon {
-            /*color: #1e90ff;*/
+            /* Border ve arkaplanı kaldır */
+            border: none !important;
+            background: none !important;
         }
         
         .daisy-like:hover .daisy-icon {
             transform: rotate(15deg) scale(1.2);
-            color: #00ff00;
-            /*background: rgba(50, 205, 50, 0.3); */
-            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+            /* Hover efektlerini düzenle */
+            box-shadow: none;
         }
         
         .pine-pin:hover .pine-icon {
             transform: rotate(-15deg) scale(1.2);
-            color: #00bfff;
-            /* background: rgba(30, 144, 255, 0.3); */
-            box-shadow: 0 0 10px rgba(30, 144, 255, 0.5);
+            /* Hover efektlerini düzenle */
+            box-shadow: none;
         }
         
         .like-count, .pin-count {
@@ -942,7 +932,9 @@
           pinIcon?.addEventListener("click", () => handlePinClick(entry.id, entryDiv));
 
           // Entry oluşturulduktan sonra resimleri işle
-          setTimeout(processImages, 0);
+          setTimeout(() => {
+              processImages();
+          }, 0);
           
           return entryDiv;
         }
