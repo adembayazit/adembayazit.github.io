@@ -262,7 +262,7 @@
         }
         
         .entries-list {
-            max-height: 300px;
+            max-height: 400px;
             overflow-y: auto;
             margin-top: 0.5rem;
         }
@@ -283,6 +283,19 @@
         
         .entry-content {
             margin-bottom: 0.3rem;
+            max-height: 150px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .entry-content:after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            background: linear-gradient(transparent, rgba(0, 30, 0, 0.8));
         }
         
         .entry-meta {
@@ -415,6 +428,7 @@
         [id$="-preview"] {
             font-family: 'Courier New', monospace;
             line-height: 1.5;
+            overflow: hidden;
         }
         
         #trContent-preview strong, #enContent-preview strong,
@@ -441,6 +455,17 @@
             color: #aaa;
         }
         
+        /* Medya içerikleri için responsive stiller */
+        #trContent-preview img, #enContent-preview img,
+        #trContent-preview video, #enContent-preview video,
+        [id$="-preview"] img, [id$="-preview"] video {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 5px 0;
+            border: 1px solid var(--primary-color);
+        }
+        
         .spotify-embed {
             width: 100%;
             height: 152px;
@@ -448,6 +473,12 @@
             margin: 10px 0;
             border: 1px solid var(--spotify-color);
             overflow: hidden;
+        }
+        
+        .spotify-embed iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
         }
           
         .youtube-embed {
@@ -460,7 +491,10 @@
         }
 
         .youtube-embed iframe {
+            width: 100%;
+            height: 315px;
             display: block;
+            border: none;
         }
         
         @keyframes scanline {
@@ -579,6 +613,15 @@
         @media (max-width: 767px) {
             .spotify-embed {
                 height: 80px;
+            }
+            
+            .youtube-embed iframe {
+                height: 200px;
+            }
+            
+            .entry-meta {
+                flex-direction: column;
+                gap: 3px;
             }
         }
     </style>
@@ -911,9 +954,9 @@
                 
                 let mediaTag;
                 if (file.type.startsWith('image/')) {
-                    mediaTag = `<img src="${url}" alt="Yüklenen resim" style="height: auto;">`;
+                    mediaTag = `<img src="${url}" alt="Yüklenen resim" style="max-width: 100%; height: auto;">`;
                 } else if (file.type.startsWith('video/')) {
-                    mediaTag = `<video src="${url}" controls style="height: auto;"></video>`;
+                    mediaTag = `<video src="${url}" controls style="max-width: 100%; height: auto;"></video>`;
                 }
                 
                 insertAtCursor(activeTextareaId, `\n${mediaTag}\n`);
@@ -1022,8 +1065,8 @@
                 recentEntriesContainer.innerHTML = '';
                 
                 const recentEntries = Array.isArray(entries) ? 
-                    entries.slice(0, 5) : 
-                    (entries.records ? entries.records.slice(0, 5) : []);
+                    entries.slice(0, 7) :  // 5 yerine 7 entry göster
+                    (entries.records ? entries.records.slice(0, 7) : []);
                 
                 if (recentEntries.length === 0) {
                     recentEntriesContainer.innerHTML = '<p>Henüz entry bulunmamaktadır.</p>';
@@ -1292,7 +1335,20 @@
             const charCount = document.getElementById(`${textareaId}-count`);
             
             if (textarea && preview && charCount) {
-                preview.innerHTML = textarea.value.replace(/\n/g, '<br>');
+                // Özel medya içerikleri için işleme
+                let content = textarea.value;
+                
+                // Video etiketlerini işle
+                content = content.replace(/<video([^>]*)>/g, '<video$1 style="max-width: 100%; height: auto;">');
+                
+                // Resim etiketlerini işle
+                content = content.replace(/<img([^>]*)>/g, '<img$1 style="max-width: 100%; height: auto;">');
+                
+                // Spotify ve YouTube embed'leri için işleme
+                content = content.replace(/<div class="spotify-embed">([\s\S]*?)<\/div>/g, '<div class="spotify-embed" style="max-width: 100%;">$1</div>');
+                content = content.replace(/<div class="youtube-embed">([\s\S]*?)<\/div>/g, '<div class="youtube-embed" style="max-width: 100%;">$1</div>');
+                
+                preview.innerHTML = content.replace(/\n/g, '<br>');
                 charCount.textContent = textarea.value.length;
             }
         }
@@ -1303,7 +1359,19 @@
             const charCount = document.getElementById(`edit-${lang}-${entryId}-count`);
             
             if (textarea && preview && charCount) {
-                preview.innerHTML = textarea.value.replace(/\n/g, '<br>');
+                let content = textarea.value;
+                
+                // Video etiketlerini işle
+                content = content.replace(/<video([^>]*)>/g, '<video$1 style="max-width: 100%; height: auto;">');
+                
+                // Resim etiketlerini işle
+                content = content.replace(/<img([^>]*)>/g, '<img$1 style="max-width: 100%; height: auto;">');
+                
+                // Spotify ve YouTube embed'leri için işleme
+                content = content.replace(/<div class="spotify-embed">([\s\S]*?)<\/div>/g, '<div class="spotify-embed" style="max-width: 100%;">$1</div>');
+                content = content.replace(/<div class="youtube-embed">([\s\S]*?)<\/div>/g, '<div class="youtube-embed" style="max-width: 100%;">$1</div>');
+                
+                preview.innerHTML = content.replace(/\n/g, '<br>');
                 charCount.textContent = textarea.value.length;
             }
         }
