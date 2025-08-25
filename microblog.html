@@ -444,6 +444,17 @@
             margin-left: auto;
             margin-right: auto;
         }
+        
+        /* Modal için loading animasyonu */
+        .modal-loading {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 20px;
+        }
 
         /* Mobil için stiller */
         @media (max-width: 768px) {
@@ -529,7 +540,8 @@
     <!-- Modal (Lightbox) HTML -->
     <div id="imageModal" class="modal">
         <span class="close">&times;</span>
-        <img class="modal-content" id="modalImage">
+        <div class="modal-loading" id="modalLoading">Loading...</div>
+        <img class="modal-content" id="modalImage" onload="document.getElementById('modalLoading').style.display='none'" onerror="document.getElementById('modalLoading').style.display='none'">
         <div id="caption"></div>
     </div>
 
@@ -681,15 +693,23 @@
         const modalImg = document.getElementById("modalImage");
         const captionText = document.getElementById("caption");
         const closeModal = document.querySelector(".close");
+        const modalLoading = document.getElementById("modalLoading");
         
         // Modalı aç
         function openModal(imgSrc, altText) {
             modal.style.display = "block";
-            modalImg.src = imgSrc;
+            modalLoading.style.display = "block";
+            modalImg.style.display = "none";
             captionText.innerHTML = altText || "Resim açıklaması yok";
             
-            // Klavye ile kapatma için event listener ekle
+            // Önceki event listener'ları temizle
+            document.removeEventListener('keydown', handleKeyPress);
+            
+            // Yeni event listener ekle
             document.addEventListener('keydown', handleKeyPress);
+            
+            // Resmi yükle
+            modalImg.src = imgSrc;
         }
         
         // Modalı kapat
@@ -710,6 +730,18 @@
                 closeImageModal();
             }
         });
+        
+        // Resim yüklendiğinde
+        modalImg.onload = function() {
+            modalLoading.style.display = "none";
+            modalImg.style.display = "block";
+        };
+        
+        // Resim yüklenirken hata olursa
+        modalImg.onerror = function() {
+            modalLoading.style.display = "none";
+            captionText.innerHTML = "Resim yüklenirken hata oluştu";
+        };
         
         // YouTube linklerini embed formatına dönüştür
         function convertYouTubeLinks(content) {
@@ -751,6 +783,13 @@
         // Resimleri işle ve modal için event listener ekle
         function processImages() {
             document.querySelectorAll('.entry img').forEach(img => {
+                // Daisy ve pine ikonlarını ve diğer SVG'leri atla
+                if (img.closest('.interaction-buttons') || 
+                    img.src.includes('/IMAGES/') || 
+                    !img.src.includes('imagekit.io')) {
+                    return;
+                }
+                
                 // Resmin boyutlarını kontrol et
                 img.onload = function() {
                     // Küçük resimler için özel sınıf ekle
@@ -995,6 +1034,9 @@
           
           // Çeviri ikonlarını ekle
           addTranslationIcons();
+          
+          // Resimleri işle
+          processImages();
           
           loadingElement.style.display = 'none';
           
