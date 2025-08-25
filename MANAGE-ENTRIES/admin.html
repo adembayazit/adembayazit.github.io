@@ -3,1362 +3,929 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Paneli - adembayazit.com</title>
+    <title>All Entries - Adem Bayazıt</title>
+    <link rel="icon" type="image/png" href="/IMAGES/ab.png">
+    <link rel="stylesheet" href="/CSS/style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Open Graph (Facebook, WhatsApp, LinkedIn vs.) -->   
+    <meta property="og:title" content="Adem Bayazıt | All Microblog LadyBuG Entries" />
+    <meta property="og:description" content="Adem Bayazıt Ethical Hacker Cybersecurity LadyBuG Entries." />
+    <meta property="og:image" content="https://adembayazit.com/IMAGES/preview.png" />
+    <meta property="og:url" content="https://adembayazit.com/microblog.html" />
+    <meta property="og:type" content="website" />
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Adem Bayazıt - All Microblog LadyBuG Entries">
+    <meta name="twitter:description" content="Adem Bayazıt Ethical Hacker Cybersecurity LadyBuG Entries.">
+    <meta name="twitter:image" content="https://adembayazit.com/IMAGES/preview.png">
+    <meta name="twitter:image:alt" content="Adem Bayazıt">
+    
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-TFN7XD9Z');</script>
+    <!-- End Google Tag Manager -->
     <style>
-        :root {
-            --primary-color: limegreen;
-            --secondary-color: #001e00;
-            --text-color: limegreen;
-            --bg-color: #000;
-            --error-color: #ff3333;
-            --success-color: #00ff00;
-            --warning-color: #ffcc00;
-            --spotify-color: #1DB954;
-            --youtube-color: #FF0000;
+        html {
+          scroll-behavior: smooth;
+        }
+        /* Özel stiller */
+        .microblog-container {
+            width: 100%;
+            padding: 60px 10%;
+            background: transparent;
+            margin-top: 80px;
+            position: relative;
+            z-index: 1;
         }
         
-        body {
-            background: var(--bg-color);
-            color: var(--text-color);
-            font-family: 'Courier New', monospace;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
-        
-        .admin-header {
-            background: rgba(0, 30, 0, 0.9);
-            border-bottom: 1px solid var(--primary-color);
+        .entries-container {
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid limegreen;
+            border-radius: 20px;
             padding: 1rem;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+            flex-direction: column;
+            gap: 1.5rem;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
+            backdrop-filter: blur(5px);
         }
         
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.9rem;
+        .load-more-container {
+            text-align: center;
+            margin-top: 20px;
         }
         
-        .logo img {
-            height: 30px;
-            filter: drop-shadow(0 0 5px var(--primary-color));
-        }
-        
-        .logo h2 {
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 1rem;
-        }
-        
-        .bug-icon {
-            color: red;
-            animation: bugPulse 1.5s infinite;
-        }
-        
-        .logout-btn {
-            background: var(--primary-color);
+        .load-more-btn {
+            background: green;
             color: black;
+            padding: 10px 20px;
             border: none;
-            padding: 6px 10px;
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
+            border-radius: 5px;
             cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        
+        .load-more-btn:hover {
+            background: #00cc00;
+            box-shadow: 0 0 10px limegreen;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+            color: limegreen;
+        }
+        
+        .back-to-home {
+            display: inline-block;
+            margin: 30px 0; /* Daha fazla boşluk eklendi */
+            color: limegreen;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .back-to-home:hover {
+            text-decoration: underline;
+            color: #00ff00;
+        }
+        
+        .entry-count {
+            color: #90ee90;
+            margin-bottom: 15px;
+            font-style: italic;
+            text-align: center;
+        }
+        
+        /* Dropdown stilleri */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropbtn {
+            font-size: 18px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: green;
+            min-width: 160px;
+            z-index: 100;
+            border: 1px solid white;
+            border-radius: 10px;
+        }
+
+        .dropdown-content a {
+            color: white;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            color: white;
+            background-color: limegreen;
+            text-shadow: 0 0 10px green;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+      /* Matrix Canvas için stiller */
+        #matrixCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        /* Başlık stili */
+        .section-title {
+            text-align: left;
+            margin-bottom: 25px;
+            color: white;
             display: flex;
             align-items: center;
-            gap: 5px;
-            border-radius: 3px;
-            transition: all 0.3s;
-            font-size: 0.8rem;
+            filter: drop-shadow(0 0 5px limegreen);
+            gap: 10px;
         }
-        
-        .logout-btn:hover {
-            box-shadow: 0 0 10px var(--primary-color);
-            transform: translateY(-2px);
+
+        /* Son entry için özel stil */
+        .latest-entry {
+            border: 1px solid #ff0000; !important;
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.4) !important;
+            /*background: rgba(255, 204, 0, 0.1) !important;
+            position: relative;
+            order: -1; /* Başa taşı */
         }
-        
-        .admin-container {
+
+        .latest-entry::before {
+            content: "LAST ENTRY";
+            position: absolute;
+            top: -12px;
+            right: 80px;
+            background: red;
+            color: black;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 4px;
+            z-index: 10;
+        }
+
+        /* Parent entry için özel stil */
+        .parent-of-latest {
+            border: 1px solid #ffffff; !important;
+            box-shadow: 0 0 15px rgba(255, 153, 0, 0.4) !important;
+            /*background: rgba(255, 153, 0, 0.1) !important;
+            position: relative;
+            order: -2; /* En son eklenenden önce */
+        }
+
+        .parent-of-latest::before {
+            content: "PARENT ENTRY";
+            position: absolute;
+            top: -12px;
+            right: 80px;
+            background: white;
+            color: black;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 4px;
+            z-index: 10;
+        }
+
+        /* Grup stilleri */
+        .entry-group {
             display: flex;
             flex-direction: column;
             gap: 1rem;
-            padding: 1rem;
+            margin-bottom: 1.5rem;
         }
-        
-        .editor-container, .stats-container, .entries-container {
-            background: rgba(0, 30, 0, 0.7);
-            border: 1px solid var(--primary-color);
-            border-radius: 5px;
-            padding: 1rem;
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);
+
+        .group-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #90ee90;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .group-header i {
+            font-size: 16px;
+        }
+
+        /* Tarih ve içerik arasındaki çizgi */
+        .timestamp {
+            color: #90ee90;
+            font-size: 12px;
             position: relative;
-            overflow: hidden;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
         }
         
-        .editor-container::after, .stats-container::after, .entries-container::after {
+        .timestamp::after {
             content: "";
             position: absolute;
-            top: 0;
+            bottom: 0;
             left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
-            animation: scanline 3s linear infinite;
-        }
-        
-        .form-group {
-            margin-bottom: 1rem;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 0.3rem;
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-        
-        input[type="number"], textarea, input[type="text"] {
             width: 100%;
-            padding: 8px;
-            background: #111;
-            border: 1px solid var(--primary-color);
-            color: var(--text-color);
-            font-family: 'Courier New', monospace;
-            border-radius: 3px;
-            font-size: 0.9rem;
+            height: 1px;
+            background: linear-gradient(to right, rgba(0, 255, 0, 0.5), transparent);
         }
         
-        textarea {
-            min-height: 100px;
-            resize: vertical;
+        .bug-iconentry {
+            margin-right: 8px;
+            color: red;
         }
-        
-        .editor-toolbar {
+
+        /* Daisy ve Pine ikonları için yuvarlak animasyonlu tasarım */
+        .interaction-buttons {
+             width: 45px;
+             height: 35px;
             display: flex;
-            gap: 5px;
-            margin-bottom: 5px;
-            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 10px;
+            bottom: -47px;
+            margin-top: 10px;
         }
         
-        .editor-toolbar button {
-            background: #111;
-            border: 1px solid var(--primary-color);
-            color: var(--text-color);
-            padding: 4px 8px;
-            cursor: pointer;
-            border-radius: 3px;
-            font-size: 0.8rem;
-            transition: all 0.2s;
-        }
-        
-        .editor-toolbar button:hover {
-            background: var(--primary-color);
-            color: black;
-        }
-        
-        .editor-toolbar .spotify-btn {
-            background: #111;
-            border: 1px solid var(--spotify-color);
-            color: var(--spotify-color);
-        }
-        
-        .editor-toolbar .spotify-btn:hover {
-            background: var(--spotify-color);
-            color: black;
-        }
-        
-        .editor-toolbar .youtube-btn {
-            background: #111;
-            border: 1px solid var(--youtube-color);
-            color: var(--youtube-color);
-        }
-        
-        .editor-toolbar .youtube-btn:hover {
-            background: var(--youtube-color);
-            color: white;
-        }
-        
-        .submit-btn {
-            background: var(--primary-color);
-            color: black;
-            border: none;
-            padding: 8px 15px;
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
-            cursor: pointer;
+        .daisy-like, .pine-pin {
             display: flex;
             align-items: center;
             gap: 5px;
-            border-radius: 3px;
+            padding:5px 20px;
+            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            cursor: pointer;
             transition: all 0.3s;
-            width: 100%;
-            justify-content: center;
-            font-size: 0.9rem;
         }
         
-        .submit-btn:hover {
-            box-shadow: 0 0 15px var(--primary-color);
+        .daisy-like:hover {
+            background: rgba(50, 205, 50, 0.2);
             transform: translateY(-2px);
         }
         
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0.5rem;
-            margin-bottom: 1rem;
+        .pine-pin:hover {
+            background: rgba(30, 144, 255, 0.2);
+            transform: translateY(-2px);
         }
         
-        .stat-box {
-            background: rgba(0, 30, 0, 0.5);
-            border: 1px solid var(--primary-color);
-            padding: 0.5rem;
+        .daisy-icon, .pine-icon {
+            width: 30px;
+            height: 30px;
+            transition: all 0.3s;
+            border-radius: 50%;
+            padding: 5px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .daisy-icon {
+            /*color: #32cd32;*/
+        }
+        
+        .pine-icon {
+            /*color: #1e90ff;*/
+        }
+        
+        .daisy-like:hover .daisy-icon {
+            transform: rotate(15deg) scale(1.2);
+            color: #00ff00;
+            /*background: rgba(50, 205, 50, 0.3); */
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+        
+        .pine-pin:hover .pine-icon {
+            transform: rotate(-15deg) scale(1.2);
+            color: #00bfff;
+            /* background: rgba(30, 144, 255, 0.3); */
+            box-shadow: 0 0 10px rgba(30, 144, 255, 0.5);
+        }
+        
+        .like-count, .pin-count {
+            font-size: 14px;
+            min-width: 20px;
             text-align: center;
-            border-radius: 3px;
-            font-size: 0.8rem;
         }
         
-        .stat-box i {
-            font-size: 1rem;
-            margin-bottom: 0.3rem;
-            color: var(--primary-color);
+        .action-animation {
+            animation: pop 0.5s ease;
         }
         
-        .stat-box span {
-            display: block;
-            font-size: 1rem;
-            font-weight: bold;
-        }
-        
-        #response-message {
-            padding: 8px;
-            margin-top: 10px;
-            border-radius: 3px;
-            text-align: center;
-            display: none;
-            font-size: 0.9rem;
-        }
-        
-        .success {
-            background: rgba(0, 255, 0, 0.1);
-            border: 1px solid var(--success-color);
-            color: var(--success-color);
-        }
-        
-        .error {
-            background: rgba(255, 0, 0, 0.1);
-            border: 1px solid var(--error-color);
-            color: var(--error-color);
-        }
-        
-        .warning {
-            background: rgba(255, 204, 0, 0.1);
-            border: 1px solid var(--warning-color);
-            color: var(--warning-color);
-        }
-        
-        .entries-list {
-            max-height: 300px;
-            overflow-y: auto;
-            margin-top: 0.5rem;
-        }
-        
-        .entry-item {
-            background: rgba(0, 30, 0, 0.5);
-            border: 1px solid var(--primary-color);
-            padding: 0.8rem;
-            margin-bottom: 0.8rem;
-            border-radius: 3px;
-            position: relative;
-            font-size: 0.9rem;
-        }
-        
-        .entry-item:hover {
-            background: rgba(0, 60, 0, 0.5);
-        }
-        
-        .entry-content {
-            margin-bottom: 0.3rem;
-        }
-        
-        .entry-meta {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.7rem;
-            color: #aaa;
-        }
-        
-        .entry-actions {
-            position: absolute;
-            top: 3px;
-            right: 3px;
-            display: none;
-        }
-        
-        .entry-item:hover .entry-actions {
-            display: flex;
-            gap: 3px;
-        }
-        
-        .entry-actions button {
-            background: rgba(0, 0, 0, 0.7);
-            border: 1px solid var(--primary-color);
-            color: var(--text-color);
-            width: 20px;
-            height: 20px;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 0.7rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .entry-actions button:hover {
-            background: var(--primary-color);
-            color: black;
-        }
-        
-        .edit-form {
-            display: none;
-            margin-top: 0.5rem;
-            padding: 0.8rem;
-            background: rgba(0, 60, 0, 0.5);
-            border: 1px solid var(--primary-color);
-            border-radius: 3px;
-            font-size: 0.9rem;
-        }
-        
-        .edit-form textarea {
-            min-height: 80px;
-        }
-        
-        .edit-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 8px;
-        }
-        
-        .edit-actions button {
-            flex: 1;
-            padding: 4px;
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 3px;
-        }
-        
-        .save-btn {
-            background: var(--primary-color);
-            color: black;
-        }
-        
-        .cancel-btn {
-            background: #333;
-            color: white;
-        }
-        
-        .delete-btn {
-            background: var(--error-color);
-            color: white;
-        }
-        
-        .preview-container {
-            margin-top: 5px;
-            padding: 8px;
-            background: rgba(0, 30, 0, 0.3);
-            border: 1px dashed var(--primary-color);
-            border-radius: 3px;
-            font-size: 0.8rem;
-        }
-        
-        .preview-title {
-            font-weight: bold;
-            margin-bottom: 5px;
-            display: flex;
-            justify-content: space-between;
-        }
-        
-        .char-count {
-            font-size: 0.7rem;
-            color: #aaa;
-        }
-        
-        .search-container {
-            margin-bottom: 1rem;
-        }
-        
-        .search-input {
-            display: flex;
-            gap: 5px;
-        }
-        
-        .search-input input {
-            flex: 1;
-        }
-        
-        .search-input button {
-            background: var(--primary-color);
-            color: black;
-            border: none;
-            padding: 0 10px;
-            cursor: pointer;
-            border-radius: 3px;
-        }
-        
-        #trContent-preview, #enContent-preview,
-        [id$="-preview"] {
-            font-family: 'Courier New', monospace;
-            line-height: 1.5;
-        }
-        
-        #trContent-preview strong, #enContent-preview strong,
-        [id$="-preview"] strong {
-            color: var(--primary-color);
-            font-weight: bold;
-        }
-        
-        #trContent-preview em, #enContent-preview em,
-        [id$="-preview"] em {
-            font-style: italic;
-        }
-        
-        #trContent-preview u, #enContent-preview u,
-        [id$="-preview"] u {
-            text-decoration: underline;
-        }
-        
-        #trContent-preview blockquote, #enContent-preview blockquote,
-        [id$="-preview"] blockquote {
-            border-left: 3px solid var(--primary-color);
-            padding-left: 10px;
-            margin: 5px 0;
-            color: #aaa;
-        }
-        
-        .spotify-embed {
-            width: 100%;
-            height: 152px;
-            border-radius: 12px;
-            margin: 10px 0;
-            border: 1px solid var(--spotify-color);
-            overflow: hidden;
-        }
-        
-        .youtube-embed {
-            width: 100%;
-            margin: 10px 0;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid var(--youtube-color);
-            border-radius: 8px;
-        }
-
-        .youtube-embed iframe {
-            display: block;
-        }
-        
-        @keyframes scanline {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-        
-        @keyframes bugPulse {
+        @keyframes pop {
             0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
+            50% { transform: scale(1.3); }
             100% { transform: scale(1); }
         }
-        
-        .media-upload-container {
-            margin-top: 10px;
-            padding: 10px;
-            background: rgba(0, 30, 0, 0.3);
-            border: 1px dashed var(--primary-color);
-            border-radius: 3px;
-        }
 
-        .upload-preview {
-            max-width: 100%;
-            max-height: 200px;
-            margin-top: 10px;
-            display: none;
-        }
-
-        .upload-status {
-            margin-top: 5px;
-            font-size: 0.8rem;
-        }
-
-        .progress-bar {
-            height: 5px;
-            background: #001e00;
-            border-radius: 3px;
-            margin-top: 5px;
-            overflow: hidden;
-        }
-
-        .progress {
-            height: 100%;
-            background: var(--primary-color);
-            width: 0%;
-            transition: width 0.3s;
-        }
-
-        .media-btn {
-            background: #111;
-            border: 1px solid var(--primary-color);
-            color: var(--text-color);
-            padding: 4px 8px;
-            cursor: pointer;
-            border-radius: 3px;
-            font-size: 0.8rem;
-            transition: all 0.2s;
-        }
-
-        .media-btn:hover {
-            background: var(--primary-color);
-            color: black;
-        }
-
-        .debug-info {
-            font-size: 0.7rem;
-            color: #888;
-            margin-top: 5px;
-            padding: 5px;
-            background: rgba(0, 30, 0, 0.2);
-            border-radius: 3px;
-            display: none;
-        }
-        
-        .alternative-upload {
-            margin-top: 10px;
-            padding: 10px;
-            background: rgba(0, 30, 0, 0.3);
-            border: 1px dashed var(--primary-color);
-            border-radius: 3px;
-            font-size: 0.8rem;
-        }
-        
-        .alternative-upload a {
-            color: var(--primary-color);
-            text-decoration: underline;
-        }
-
-        @media (min-width: 768px) {
-            .admin-container {
-                display: grid;
-                grid-template-columns: 2fr 1fr;
-                gap: 1.5rem;
-                padding: 1.5rem;
+        /* Mobil için stiller */
+        @media (max-width: 768px) {
+            .microblog-container {
+                padding: 60px 5%;
             }
             
-            .stats-grid {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 1rem;
+            .back-to-home {
+                margin: 25px 0; /* Mobilde de yeterli boşluk */
             }
             
-            .logo {
-                font-size: 1rem;
+            .section-title {
+                text-align: center; /* Mobilde ortala */
+                justify-content: center; /* İkonları da ortala */
+                filter: drop-shadow(0 0 5px limegreen);
+                color:white;
             }
-            
-            .logo h2 {
-                font-size: 1.2rem;
-            }
-            
-            .logout-btn {
-                padding: 8px 15px;
-                font-size: 0.9rem;
-            }
-        }
-        
-        @media (max-width: 767px) {
-            .spotify-embed {
-                height: 80px;
+
+            .latest-entry::before,
+            .parent-of-latest::before {
+                right: 50%;
+                transform: translateX(50%);
+                font-size: 10px;
             }
         }
     </style>
 </head>
 <body>
-    <header class="admin-header">
-        <div class="logo">
-            <img src="../IMAGES/hackerwhite.svg" alt="adembayazit.com" class="hacker-icon">
-            <h2>LadyB<span class="fa-solid fa-bug bug-icon"></span>G Admin</h2>
-        </div>
-        <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Çıkış</button>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TFN7XD9Z"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    
+    <!-- Matrix Arka Plan Canvas'ı -->
+    <canvas id="matrixCanvas"></canvas>
+
+    <header class="header">
+        <a href="/" class="logo"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">{adembayazit} </a>
+        <nav class="navbar">
+            <div class="dropdown">
+                <a href="#" style="--i:5;" class="dropbtn"> <img src="IMAGES/Ata.svg" alt="Ata Icon" class="ata-icon"><span class="fi fi-tr"></span> <span class='bx bx-code-alt'></span> Ethical Hacker <span class='bx bx-chevron-down'></span></a>
+                <div class="dropdown-content">
+                    <a href="#tools"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hacker-icon"> What is an Ethical Hacker?</a>
+                    <a href="#reports"><img src="IMAGES/glossary.svg" alt="Glossary" class="glossary-icon"> Cybersecurity Glossary</a>
+                    <a href="#payloads"><img src="IMAGES/soc.svg" alt="Soc" class="soc-icon"> What is a SOC ?</a>
+                    <a href="#payloads"><img src="IMAGES/vulnerabilities.svg" alt="Vulnerabilities" class="vulnerabilities-icon"> Vulnerabilities</a>
+                    <a href="#payloads"><img src="IMAGES/steganography.svg" alt="Steganography" class="steganography-icon"> Steganography</a>
+                    <a href="#payloads"><img src="IMAGES/cryptography.svg" alt="Cryptography" class="cryptography-icon"> Cryptography</a>    
+                    <a href="#payloads"><img src="IMAGES/education.svg" alt="Education" class="education-icon"> Cybersecurity Learning Resources</a>
+                </div>
+            </div>
+        </nav>
     </header>
 
-    <div class="admin-container">
-        <div class="editor-container">
-            <h3><i class="fas fa-plus-circle"></i> Yeni Entry Ekle</h3>
-            
-            <div class="form-group">
-                <label for="entryId"><i class="fas fa-hashtag"></i> Entry ID:</label>
-                <input type="number" id="entryId" placeholder="Otomatik ID için boş bırakın">
-            </div>
-            
-            <div class="form-group">
-                <label for="referenceId"><i class="fas fa-link"></i> Referans ID (opsiyonel):</label>
-                <input type="number" id="referenceId" placeholder="Referans ID">
-            </div>
-            
-            <div class="form-group">
-                <label for="trContent"><i class="fas fa-language"></i> Türkçe İçerik:</label>
-                <div class="editor-toolbar">
-                    <button onclick="formatText('trContent', 'bold')" title="Kalın"><i class="fas fa-bold"></i></button>
-                    <button onclick="formatText('trContent', 'italic')" title="İtalik"><i class="fas fa-italic"></i></button>
-                    <button onclick="formatText('trContent', 'underline')" title="Altı Çizili"><i class="fas fa-underline"></i></button>
-                    <button onclick="formatText('trContent', 'quote')" title="Tırnak İşareti"><i class="fas fa-quote-right"></i></button>
-                    <button onclick="formatText('trContent', 'paragraph')" title="Paragraf"><i class="fas fa-paragraph"></i></button>
-                    <button onclick="clearFormatting('trContent')" title="Temizle"><i class="fas fa-eraser"></i></button>
-                    <button class="spotify-btn" onclick="addSpotifyEmbed('trContent')" title="Spotify Ekle"><i class="fab fa-spotify"></i></button>
-                    <button class="youtube-btn" onclick="addYoutubeEmbed('trContent')" title="Youtube Ekle"><i class="fab fa-youtube"></i></button>
-                    <button class="media-btn" onclick="openMediaUpload('trContent')" title="Fotoğraf/Video Ekle"><i class="fas fa-camera"></i></button>
-                </div>
-                <textarea id="trContent" placeholder="Türkçe içerik..." oninput="updatePreview('trContent')"></textarea>
-                <div class="preview-container">
-                    <div class="preview-title">
-                        <span>Ön İzleme:</span>
-                        <span class="char-count"><span id="trContent-count">0</span> karakter</span>
-                    </div>
-                    <div id="trContent-preview"></div>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="enContent"><i class="fas fa-globe"></i> İngilizce İçerik:</label>
-                <div class="editor-toolbar">
-                    <button onclick="formatText('enContent', 'bold')" title="Bold"><i class="fas fa-bold"></i></button>
-                    <button onclick="formatText('enContent', 'italic')" title="Italic"><i class="fas fa-italic"></i></button>
-                    <button onclick="formatText('enContent', 'underline')" title="Underline"><i class="fas fa-underline"></i></button>
-                    <button onclick="formatText('enContent', 'quote')" title="Quote"><i class="fas fa-quote-right"></i></button>
-                    <button onclick="formatText('enContent', 'paragraph')" title="Paragraph"><i class="fas fa-paragraph"></i></button>
-                    <button onclick="clearFormatting('enContent')" title="Clear"><i class="fas fa-eraser"></i></button>
-                    <button class="spotify-btn" onclick="addSpotifyEmbed('enContent')" title="Add Spotify"><i class="fab fa-spotify"></i></button>
-                    <button class="youtube-btn" onclick="addYoutubeEmbed('enContent')" title="Add Youtube"><i class="fab fa-youtube"></i></button>
-                    <button class="media-btn" onclick="openMediaUpload('enContent')" title="Add Photo/Video"><i class="fas fa-camera"></i></button>
-                </div>
-                <textarea id="enContent" placeholder="English content..." oninput="updatePreview('enContent')"></textarea>
-                <div class="preview-container">
-                    <div class="preview-title">
-                        <span>Preview:</span>
-                        <span class="char-count"><span id="enContent-count">0</span> characters</span>
-                    </div>
-                    <div id="enContent-preview"></div>
-                </div>
-            </div>
-            
-            <button class="submit-btn" onclick="submitEntry()"><i class="fas fa-paper-plane"></i> Entry Ekle</button>
-            <div id="response-message"></div>
-            <div id="debug-info" class="debug-info"></div>
+    <section class="microblog-container">
+        <a href="/" class="back-to-home"><i class='bx bx-arrow-back'></i> Back to Home</a>
+        <h2 class="section-title"><i class="fa-solid fa-pager"></i> All LadyB<span class="fa-solid fa-bug bug-icon"></span>G Entries</h2>
+        <div class="entry-count" id="entryCount">Total 0 Entry</div>
+        <div id="entries" class="entries-container"></div>
+        <div class="loading" id="loading">Loading...</div>
+        <div class="load-more-container">
+            <button id="loadMoreBtn" class="load-more-btn">More Entry (20) <span class='bx bx-chevron-down'></span></button>
         </div>
-        
-        <div class="stats-container">
-            <h3><i class="fas fa-chart-bar"></i> İstatistikler</h3>
-            <div class="stats-grid">
-                <div class="stat-box">
-                    <i class="fas fa-heart"></i>
-                    <span id="total-likes">0</span>
-                    <small>Toplam Beğeni</small>
-                </div>
-                <div class="stat-box">
-                    <i class="fas fa-thumbtack"></i>
-                    <span id="total-pins">0</span>
-                    <small>Toplam Pin</small>
-                </div>
-                <div class="stat-box">
-                    <i class="fas fa-file-alt"></i>
-                    <span id="total-entries">0</span>
-                    <small>Toplam Entry</small>
-                </div>
-            </div>
-            
-            <div class="search-container">
-                <h3><i class="fas fa-search"></i> Entry Ara</h3>
-                <div class="search-input">
-                    <input type="number" id="searchId" placeholder="Entry ID girin">
-                    <button onclick="searchEntry()"><i class="fas fa-search"></i></button>
-                </div>
-            </div>
-            
-            <h3><i class="fas fa-history"></i> Son Entryler</h3>
-            <div class="entries-list" id="recent-entries">
-                <!-- Son entryler buraya eklenecek -->
-            </div>
-        </div>
-    </div>
+    </section>
 
-    <input type="file" id="media-file-input" style="display: none;" accept="image/*,video/*" onchange="handleMediaUpload(event)">
+    <footer style="text-align: center; padding: 20px; font-size: 14px; color: white; margin-top: 50px; position: relative; z-index: 1;">
+        <hr style="margin-bottom: 10px; border-color: limegreen;" />
+        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.2 | July 2025</p>
+    </footer>
+
+    <!-- Sarı Nokta (IP Göstergesi) -->
+    <script>
+        const dot = document.createElement('div');
+        dot.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 18px;
+            height: 18px;
+            background: #f9d71c;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 10px rgba(50, 205, 50, 0.8);
+            cursor: pointer;
+            z-index: 9999;
+            transition: all 0.3s;
+        `;
+
+        const tooltip = document.createElement('div');
+        tooltip.style.cssText = `
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            min-width: 240px;
+            backdrop-filter: blur(5px);
+        `;
+
+        dot.appendChild(tooltip);
+        document.body.appendChild(dot);
+
+        dot.addEventListener('mouseenter', () => tooltip.style.opacity = '1');
+        dot.addEventListener('mouseleave', () => tooltip.style.opacity = '0');
+        fetch('https://ipinfo.io/json?token=68a1229187303a')
+            .then(async res => {
+                if (!res.ok) {
+                    const text = await res.text();
+                    throw new Error(`Hatalı cevap (${res.status}): ${text}`);
+                }
+                return res.json();
+            })
+            .then(data => {
+                const now = new Date();
+                const {
+                    ip, hostname, city, region,
+                    country, loc, org, postal, timezone
+                } = data;
+
+                tooltip.innerHTML = `
+                    <div style="margin-bottom: 3px; font-weight: bold; color: #00ff00;">✓ User IP Detected</div>
+                    <div><strong>IP:</strong> ${ip}</div>
+                    <div><strong>Host:</strong> ${hostname}</div>
+                    <div><strong>City:</strong> ${city}</div>
+                    <div><strong>Country:</strong> ${country}</div>
+                    <div><strong>Location</strong> ${loc}</div>
+                    <div><strong>Postal:</strong> ${postal}</div>
+                    <div><strong>Org:</strong> ${org}</div>
+                    <div><strong>Time:</strong> ${now.toLocaleString('tr-TR')}</div>
+                    <div style="font-size: 9px; margin-top: 4px; color: #ccc;">${navigator.userAgent.split(' ')[0]}</div>
+                `;
+
+                // POST ile Netlify fonksiyonuna gönder
+                fetch('https://adembayazit.netlify.app/.netlify/functions/log-visitor', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ip, hostname, city, region,
+                        country, loc, org, postal,
+                        timezone, timestamp: now.toISOString(),
+                        userAgent: navigator.userAgent
+                    })
+                }).then(res => res.json())
+                    .then(console.log)
+                    .catch(err => console.error("POST hatası:", err));
+            })
+            .catch(error => {
+                const now = new Date();
+                tooltip.innerHTML = `
+                    <div style="margin-bottom: 5px; font-weight: bold; color: #ff5555;">❌ Hata</div>
+                    <div><strong>Zaman:</strong> ${now.toLocaleString('tr-TR')}</div>
+                    <div><strong>Mesaj:</strong> ${error.message}</div>
+                `;
+                dot.style.background = "#ff5555";
+            });
+    </script>
 
     <script>
-        const ENTRIES_BIN_ID = '68933248ae596e708fc2fbbc';
-        const INTERACTIONS_BIN_ID = '68862fd97b4b8670d8a81945';
-        const PROXY_URL = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
-        
-        let activeTextareaId = null;
+        // 1. GLOBAL DEĞİŞKENLER
+        const likesCache = {
+          data: {},
+          lastUpdated: 0,
+          isUpdating: false
+        };
 
-        window.addEventListener('DOMContentLoaded', () => {
-            if (!localStorage.getItem('adminAuth') || localStorage.getItem('adminAuth') !== 'true') {
-                window.location.href = 'index.html';
+        const pinsCache = {
+          data: {},
+          lastUpdated: 0,
+          isUpdating: false
+        };
+
+        let allEntries = [];
+        let groupedEntries = [];
+        let displayedEntries = 0;
+        const entriesPerPage = 20;
+        let latestEntryId = null;
+        let parentOfLatestId = null;
+
+        // 2. PROXY HELPER FONKSİYONU
+        async function fetchViaProxy(path, method = 'GET', body = null) {
+          const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
+          
+          try {
+            const response = await fetch(proxyUrl, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ path, method, body })
+            });
+
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return await response.json();
+          } catch (error) {
+            console.error('Proxy error:', error);
+            throw error;
+          }
+        }
+
+        // 3. TEMEL FONKSİYONLAR
+        async function loadInteractions() {
+          try {
+            const result = await fetchViaProxy('/b/68862fd97b4b8670d8a81945/latest');
+            likesCache.data = result.likes || {};
+            pinsCache.data = result.pins || {};
+            likesCache.lastUpdated = pinsCache.lastUpdated = Date.now();
+          } catch (error) {
+            console.error('loadInteractions error:', error);
+            try {
+              const localLikes = localStorage.getItem('entryLikes') || '{}';
+              const localPins = localStorage.getItem('entryPins') || '{}';
+              likesCache.data = JSON.parse(localLikes);
+              pinsCache.data = JSON.parse(localPins);
+            } catch (parseError) {
+              console.Error('Local storage parse error:', parseError);
+            }
+          }
+        }
+
+        // HTML içeriğini düzgün işlemek için yardımcı fonksiyon
+        function formatContent(content) {
+          content = content.replace(/<br\s*\/?>/gi, '<br>');
+          content = content.replace(/<p>\s*<\/p>/gi, '');
+          return content;
+        }
+
+        // ÇEVİRİ İKONLARINI EKLEME FONKSİYONU
+        async function addTranslationIcons() {
+          const entries = document.querySelectorAll(".entry");
+          if (entries.length === 0) return;
+
+          entries.forEach(entry => {
+            const idDiv = entry.querySelector(".entry-id");
+            const contentDiv = entry.querySelector(".content");
+            const originalContent = contentDiv?.innerHTML?.trim();
+            if (!idDiv || !originalContent) return;
+            
+            if (idDiv.querySelector(".translation-icon")) return;
+
+            const idValue = parseInt(idDiv.textContent.replace(/\D/g, ''));
+            if (isNaN(idValue)) return;
+
+            const translationEntry = allEntries.find(item => item.id === idValue);
+            
+            if (!translationEntry?.content_tr) return;
+
+            const icon = document.createElement("span");
+            icon.classList.add("translation-icon", "fi", "fi-tr");
+            icon.title = "Çeviriyi göster/gizle";
+            
+            const langCode = translationEntry?.lang || 'tr';
+            icon.classList.add(`fi-${langCode}`);
+
+            icon.addEventListener("click", (e) => {
+              e.stopPropagation();
+              icon.classList.toggle("active");
+              
+              if (icon.classList.contains("active")) {
+                if (translationEntry.content_tr) {
+                  contentDiv.innerHTML = formatContent(translationEntry.content_tr);
+                }
+              } else {
+                contentDiv.innerHTML = originalContent;
+              }
+            });
+
+            document.addEventListener("click", (e) => {
+              if (!icon.contains(e.target) && !contentDiv.contains(e.target)) {
+                icon.classList.remove("active");
+                contentDiv.innerHTML = originalContent;
+              }
+            });
+
+            idDiv.appendChild(icon);
+          });
+        }
+
+        function createEntryElement(entry, depth = 0) {
+          const entryDiv = document.createElement("div");
+          entryDiv.className = `entry ${depth > 0 ? 'child-entry' : ''}`;
+          
+          if (entry.id === latestEntryId) {
+            entryDiv.classList.add('latest-entry');
+          }
+          
+          if (entry.id === parentOfLatestId) {
+            entryDiv.classList.add('parent-of-latest');
+          }
+          
+          if (depth > 0) {
+            entryDiv.style.marginLeft = (depth * 30) + 'px';
+          }
+
+          const time = new Date(entry.date).toLocaleString("tr-TR", {
+            year: "numeric", 
+            month: "2-digit", 
+            day: "2-digit", 
+            hour: "2-digit", 
+            minute: "2-digit"
+          }).replace(",", "");
+
+          const likeCount = likesCache.data[entry.id] || 0;
+          const pinCount = pinsCache.data[entry.id] || 0;
+
+          const formattedContent = formatContent(entry.content);
+
+          entryDiv.innerHTML = `
+            <div class="timestamp">
+              <span class="fa-solid fa-bug bug-iconentry"></span> ${time}
+            </div>
+            <div class="entry-id">#${entry.id}</div>
+            <div class="content">${formattedContent}</div>
+            <div class="interaction-buttons">
+              <div class="daisy-like" data-entry-id="${entry.id}">
+                <img src="/IMAGES/daisy.svg" class="daisy-icon" alt="Beğen" />
+                <span class="like-count">${likeCount}</span>
+              </div>
+              <div class="pine-pin" data-entry-id="${entry.id}">
+                <img src="/IMAGES/pine.svg" class="pine-icon" alt="Pinle" />
+                <span class="pin-count">${pinCount}</span>
+              </div>
+            </div>
+          `;
+
+          const likeIcon = entryDiv.querySelector(".daisy-like");
+          likeIcon?.addEventListener("click", () => handleLikeClick(entry.id, entryDiv));
+
+          const pinIcon = entryDiv.querySelector(".pine-pin");
+          pinIcon?.addEventListener("click", () => handlePinClick(entry.id, entryDiv));
+
+          return entryDiv;
+        }
+
+        // Entry'leri gruplama fonksiyonu
+        function groupEntries(entries) {
+          const parentMap = new Map();
+          const childMap = new Map();
+          const parentEntries = [];
+          
+          // Önce tüm entry'leri parent ve child olarak ayır
+          entries.forEach(entry => {
+            if (!entry.references || entry.references.length === 0) {
+              parentEntries.push(entry);
             } else {
-                loadStats();
-                loadRecentEntries();
-                updatePreview('trContent');
-                updatePreview('enContent');
+              const parentId = entry.references[0];
+              if (!childMap.has(parentId)) {
+                childMap.set(parentId, []);
+              }
+              childMap.get(parentId).push(entry);
             }
-        });
-
-        function showDebugInfo(message) {
-            const debugEl = document.getElementById('debug-info');
-            debugEl.textContent = message;
-            debugEl.style.display = 'block';
-            console.log('DEBUG:', message);
-        }
-        
-        async function fetchFromJsonBin(binId, method = 'GET', data = null) {
-            try {
-                const response = await fetch(PROXY_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        path: `/b/${binId}${method === 'GET' ? '/latest' : ''}`,
-                        method,
-                        body: data
-                    })
-                });
-                
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                return await response.json();
-            } catch (error) {
-                console.error('JSONBin fetch error:', error);
-                throw error;
-            }
-        }
-        
-        async function getNextId() {
-            try {
-                const currentData = await fetchFromJsonBin(ENTRIES_BIN_ID);
-                let entries = Array.isArray(currentData) ? currentData : (currentData.records || []);
-                
-                if (entries.length === 0) return 1;
-                
-                const maxId = Math.max(...entries.map(e => e.id));
-                return maxId + 1;
-            } catch (error) {
-                console.error('ID alınırken hata:', error);
-                return Math.floor(Math.random() * 900000) + 100000;
-            }
-        }
-        
-        function addSpotifyEmbed(textareaId) {
-            const spotifyUrl = prompt("Spotify URL veya Track ID girin:");
-            if (!spotifyUrl) return;
+          });
+          
+          // Parent entry'leri tarihe göre sırala (yeniden eskiye)
+          parentEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
+          
+          // Parent entry'leri grupla ve child'larını ekle
+          const groups = [];
+          parentEntries.forEach(parent => {
+            const children = childMap.get(parent.id) || [];
             
-            let trackId = extractTrackId(spotifyUrl);
-            if (!trackId) {
-                alert("Geçersiz Spotify URL veya Track ID!");
-                return;
-            }
+            // Child'ları tarihe göre sırala (yeniden eskiye)
+            children.sort((a, b) => new Date(b.date) - new Date(a.date));
             
-            const spotifyEmbed = `<div class="spotify-embed">
-                <iframe 
-                    src="https://open.spotify.com/embed/track/${trackId}?utm_source=generator&theme=0" 
-                    frameborder="0"
-                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
-                    loading="lazy">
-                </iframe>
-            </div>`;
+            // Grubun tarihini belirle (en yeni tarih - parent veya child'lardan)
+            const groupDate = children.length > 0 
+              ? new Date(Math.max(new Date(parent.date), ...children.map(c => new Date(c.date))))
+              : new Date(parent.date);
             
-            insertAtCursor(textareaId, spotifyEmbed);
-            updatePreview(textareaId);
-        }
-        
-        function extractTrackId(url) {
-            if (/^[a-zA-Z0-9]{22}$/.test(url)) {
-                return url;
-            }
-            
-            const regex = /open\.spotify\.com\/track\/([a-zA-Z0-9]{22})/;
-            const match = url.match(regex);
-            if (match && match[1]) {
-                return match[1];
-            }
-            
-            return null;
-        }
-        
-        function addYoutubeEmbed(textareaId) {
-            const youtubeUrl = prompt("Youtube URL veya Video ID girin:");
-            if (!youtubeUrl) return;
-            
-            let videoId = extractYoutubeId(youtubeUrl);
-            if (!videoId) {
-                alert("Geçersiz Youtube URL veya Video ID!");
-                return;
-            }
-            
-            const youtubeEmbed = `<div class="youtube-embed">
-                <iframe 
-                    width="100%" 
-                    height="315" 
-                    src="https://www.youtube.com/embed/${videoId}" 
-                    frameborder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    allowfullscreen>
-                </iframe>
-            </div>`;
-            
-            insertAtCursor(textareaId, youtubeEmbed);
-            updatePreview(textareaId);
+            groups.push({
+              parent,
+              children,
+              groupDate
+            });
+          });
+          
+          // Grupları grup tarihine göre sırala (yeniden eskiye)
+          groups.sort((a, b) => b.groupDate - a.groupDate);
+          
+          return groups;
         }
 
-        function extractYoutubeId(url) {
-            if (/^[a-zA-Z0-9_-]{11}$/.test(url)) {
-                return url;
-            }
+        function displayEntries(startIndex, count) {
+          const container = document.getElementById("entries");
+          const loadingElement = document.getElementById("loading");
+          const loadMoreBtn = document.getElementById("loadMoreBtn");
+          
+          if (startIndex >= groupedEntries.length) {
+            loadMoreBtn.style.display = 'none';
+            return;
+          }
+          
+          loadingElement.style.display = 'block';
+          
+          // Yeni grupları ekle
+          const endIndex = Math.min(startIndex + count, groupedEntries.length);
+          for (let i = startIndex; i < endIndex; i++) {
+            const group = groupedEntries[i];
             
-            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-            const match = url.match(regExp);
+            // Grup container'ı oluştur
+            const groupDiv = document.createElement("div");
+            groupDiv.className = "entry-group";
             
-            if (match && match[2].length === 11) {
-                return match[2];
-            }
+            // Parent entry'yi ekle
+            const parentElement = createEntryElement(group.parent, 0);
+            groupDiv.appendChild(parentElement);
             
-            const shortsRegExp = /youtube\.com\/shorts\/([^\/\?]+)/;
-            const shortsMatch = url.match(shortsRegExp);
+            // Child entry'leri ekle
+            group.children.forEach(child => {
+              const childElement = createEntryElement(child, 1);
+              groupDiv.appendChild(childElement);
+            });
             
-            if (shortsMatch && shortsMatch[1]) {
-                return shortsMatch[1];
-            }
-            
-            return null;
-        }
-        
-        function insertAtCursor(textareaId, text) {
-            const textarea = document.getElementById(textareaId);
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            
-            textarea.value = textarea.value.substring(0, start) + text + textarea.value.substring(end);
-            
-            const newCursorPos = start + text.length;
-            textarea.selectionStart = newCursorPos;
-            textarea.selectionEnd = newCursorPos;
-            textarea.focus();
-        }
-        
-        function openMediaUpload(textareaId) {
-            activeTextareaId = textareaId;
-            document.getElementById('media-file-input').click();
+            container.appendChild(groupDiv);
+          }
+          
+          displayedEntries = endIndex;
+          document.getElementById('entryCount').textContent = `Total ${allEntries.length} entries loaded`;
+          
+          // Çeviri ikonlarını ekle
+          addTranslationIcons();
+          
+          loadingElement.style.display = 'none';
+          
+          if (displayedEntries >= groupedEntries.length) {
+            loadMoreBtn.style.display = 'none';
+          }
         }
 
-        async function handleMediaUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+        // 4. INTERACTION FONKSİYONLARI
+        async function handleLikeClick(entryId, entryDiv) {
+          if (likesCache.isUpdating) return;
+
+          likesCache.isUpdating = true;
+          const likeCountSpan = entryDiv.querySelector(".like-count");
+          const likeContainer = entryDiv.querySelector(".daisy-like");
+          const currentCount = parseInt(likeCountSpan.textContent) || 0;
+
+          try {
+            likeCountSpan.textContent = currentCount + 1;
+            likeContainer.classList.add("action-animation");
             
-            if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
-                showMessage('Sadece fotoğraf veya video yükleyebilirsiniz!', 'error');
-                return;
-            }
+            likesCache.data[entryId] = currentCount + 1;
+            localStorage.setItem('entryLikes', JSON.stringify(likesCache.data));
             
-            try {
-                showMessage('Dosya yükleniyor...', 'warning');
-                showDebugInfo('Authentication parametreleri alınıyor...');
-                
-                const authResponse = await fetch('https://adembayazit.netlify.app/.netlify/functions/imagekit-auth');
-                
-                if (!authResponse.ok) {
-                    throw new Error(`Auth endpoint hatası: ${authResponse.status}`);
-                }
-                
-                const authData = await authResponse.json();
-                showDebugInfo('Auth data alındı');
-                
-                const formData = new FormData();
-                formData.append('file', file);
-                formData.append('fileName', file.name);
-                formData.append('signature', authData.signature);
-                formData.append('token', authData.token);
-                formData.append('expire', authData.expire);
-                formData.append('publicKey', authData.publicKey);
-                
-                showDebugInfo('ImageKit upload çağrılıyor...');
-                
-                const uploadResponse = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                showDebugInfo('Upload response: ' + uploadResponse.status);
-                
-                if (!uploadResponse.ok) {
-                    const errorText = await uploadResponse.text();
-                    showDebugInfo('Upload error: ' + errorText);
-                    throw new Error(`Upload hatası: ${uploadResponse.status}`);
-                }
-                
-                const uploadData = await uploadResponse.json();
-                showDebugInfo('Upload başarılı: ' + uploadData.url);
-                
-                const textarea = document.getElementById(activeTextareaId);
-                const url = uploadData.url;
-                
-                let mediaTag;
-                if (file.type.startsWith('image/')) {
-                    mediaTag = `<img src="${url}" alt="Yüklenen resim" style="max-width: 100%; height: auto;">`;
-                } else if (file.type.startsWith('video/')) {
-                    mediaTag = `<video src="${url}" controls style="max-width: 100%; height: auto;"></video>`;
-                }
-                
-                insertAtCursor(activeTextareaId, `\n${mediaTag}\n`);
-                updatePreview(activeTextareaId);
-                
-                showMessage('Dosya başarıyla yüklendi!', 'success');
-                showDebugInfo('');
-                
-            } catch (error) {
-                console.error('Yükleme hatası:', error);
-                let errorMessage = error.message;
-                
-                if (errorMessage.includes('Failed to fetch')) {
-                    errorMessage = 'Sunucuya bağlanılamadı. İnternet bağlantınızı kontrol edin.';
-                }
-                
-                showMessage(`Yükleme hatası: ${errorMessage}`, 'error');
-                showDebugInfo('Hata detayı: ' + errorMessage);
-                
-                showAlternativeUploadOption();
-            }
-        }
-        
-        function showAlternativeUploadOption() {
-            const responseEl = document.getElementById('response-message');
-            const alternativeHtml = `
-                <div class="alternative-upload">
-                    <p>Alternatif olarak, dosyayı manuel olarak yükleyip URL'sini ekleyebilirsiniz:</p>
-                    <p><a href="https://imagekit.io/dashboard/media-library" target="_blank">ImageKit Media Library</a></p>
-                </div>
-            `;
-            
-            if (!responseEl.nextElementSibling || !responseEl.nextElementSibling.classList.contains('alternative-upload')) {
-                responseEl.insertAdjacentHTML('afterend', alternativeHtml);
-            }
-        }
-        
-        async function submitEntry() {
-            const entryIdInput = document.getElementById('entryId');
-            const referenceId = document.getElementById('referenceId').value;
-            const trContent = document.getElementById('trContent').value;
-            const enContent = document.getElementById('enContent').value;
-            const responseEl = document.getElementById('response-message');
-            
-            responseEl.style.display = 'none';
-            
-            if (!trContent && !enContent) {
-                showMessage('Lütfen en az bir dilde içerik girin!', 'error');
-                return;
-            }
-            
-            try {
-                const submitBtn = document.querySelector('.submit-btn');
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...';
-                
-                const currentData = await fetchFromJsonBin(ENTRIES_BIN_ID);
-                let entries = Array.isArray(currentData) ? currentData : (currentData.records || []);
-                
-                let entryId = entryIdInput.value ? parseInt(entryIdInput.value) : await getNextId();
-                
-                if (entryIdInput.value && entries.some(e => e.id === entryId)) {
-                    showMessage('Bu ID zaten kullanılıyor!', 'error');
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Entry Ekle';
-                    return;
-                }
-                
-                const newEntry = {
-                    id: entryId,
-                    date: new Date().toISOString(),
-                    content: enContent || '',
-                    content_tr: trContent || null,
-                    references: referenceId ? [parseInt(referenceId)] : []
-                };
-                
-                const updatedEntries = [newEntry, ...entries];
-                await fetchFromJsonBin(ENTRIES_BIN_ID, 'PUT', updatedEntries);
-                
-                showMessage('Entry başarıyla eklendi!', 'success');
-                
-                entryIdInput.value = '';
-                document.getElementById('referenceId').value = '';
-                document.getElementById('trContent').value = '';
-                document.getElementById('enContent').value = '';
-                
-                updatePreview('trContent');
-                updatePreview('enContent');
-                
-                await updateStats();
-                await loadRecentEntries();
-            } catch (error) {
-                showMessage(`Hata: ${error.message}`, 'error');
-                console.error('Entry ekleme hatası:', error);
-            } finally {
-                const submitBtn = document.querySelector('.submit-btn');
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Entry Ekle';
-            }
-        }
-        
-        async function loadRecentEntries() {
-            try {
-                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
-                const recentEntriesContainer = document.getElementById('recent-entries');
-                recentEntriesContainer.innerHTML = '';
-                
-                const recentEntries = Array.isArray(entries) ? 
-                    entries.slice(0, 5) : 
-                    (entries.records ? entries.records.slice(0, 5) : []);
-                
-                if (recentEntries.length === 0) {
-                    recentEntriesContainer.innerHTML = '<p>Henüz entry bulunmamaktadır.</p>';
-                    return;
-                }
-                
-                recentEntries.forEach(entry => {
-                    const entryEl = document.createElement('div');
-                    entryEl.className = 'entry-item';
-                    
-                    let displayContent = entry.content_tr || entry.content;
-                    
-                    entryEl.innerHTML = `
-                        <div class="entry-content">${displayContent}</div>
-                        <div class="entry-meta">
-                            <span>ID: ${entry.id}</span>
-                            <span>Referans ID: ${entry.references}</span>
-                            <span>${formatDate(entry.date)}</span>
-                        </div>
-                        <div class="entry-actions">
-                            <button onclick="editEntry(${entry.id})" title="Düzenle"><i class="fas fa-edit"></i></button>
-                            <button onclick="confirmDelete(${entry.id})" title="Sil"><i class="fas fa-trash"></i></button>
-                        </div>
-                    `;
-                    
-                    recentEntriesContainer.appendChild(entryEl);
-                });
-            } catch (error) {
-                console.error('Son entryleri yükleme hatası:', error);
-            }
-        }
-        
-        async function searchEntry() {
-            const searchId = document.getElementById('searchId').value;
-            if (!searchId) {
-                loadRecentEntries();
-                return;
-            }
-            
-            try {
-                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
-                const recentEntriesContainer = document.getElementById('recent-entries');
-                recentEntriesContainer.innerHTML = '';
-                
-                let entriesArray = Array.isArray(entries) ? entries : (entries.records || []);
-                const entry = entriesArray.find(e => e.id === parseInt(searchId));
-                
-                if (!entry) {
-                    recentEntriesContainer.innerHTML = '<p>Entry bulunamadı.</p>';
-                    return;
-                }
-                
-                const entryEl = document.createElement('div');
-                entryEl.className = 'entry-item';
-                
-                let displayContent = entry.content_tr || entry.content;
-                
-                entryEl.innerHTML = `
-                    <div class="entry-content">${displayContent}</div>
-                    <div class="entry-meta">
-                        <span>ID: ${entry.id}</span>
-                        <span>Referans ID: ${entry.references}</span>
-                        <span>${formatDate(entry.date)}</span>
-                    </div>
-                    <div class="entry-actions">
-                        <button onclick="editEntry(${entry.id})" title="Düzenle"><i class="fas fa-edit"></i></button>
-                        <button onclick="confirmDelete(${entry.id})" title="Sil"><i class="fas fa-trash"></i></button>
-                    </div>
-                `;
-                
-                recentEntriesContainer.appendChild(entryEl);
-            } catch (error) {
-                console.error('Entry arama hatası:', error);
-                showMessage(`Arama hatası: ${error.message}`, 'error');
-            }
-        }
-        
-        async function editEntry(entryId) {
-            try {
-                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
-                const entry = Array.isArray(entries) ? 
-                    entries.find(e => e.id === entryId) : 
-                    (entries.records ? entries.records.find(e => e.id === entryId) : null);
-                
-                if (!entry) {
-                    showMessage('Entry bulunamadı!', 'error');
-                    return;
-                }
-                
-                const entryItems = document.querySelectorAll('.entry-item');
-                const targetItem = Array.from(entryItems).find(item => 
-                    item.querySelector('.entry-meta span').textContent.includes(`ID: ${entryId}`));
-                
-                if (!targetItem) return;
-                
-                let editForm = targetItem.querySelector('.edit-form');
-                
-                if (!editForm) {
-                    editForm = document.createElement('div');
-                    editForm.className = 'edit-form';
-                    editForm.innerHTML = `
-                        <div class="form-group">
-                            <label for="edit-tr-${entryId}">Türkçe İçerik:</label>
-                            <textarea id="edit-tr-${entryId}" oninput="updateEditPreview(${entryId}, 'tr')">${entry.content_tr || ''}</textarea>
-                            <div class="preview-container">
-                                <div class="preview-title">
-                                    <span>Ön İzleme:</span>
-                                    <span class="char-count"><span id="edit-tr-${entryId}-count">0</span> karakter</span>
-                                </div>
-                                <div id="edit-tr-${entryId}-preview"></div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="edit-en-${entryId}">İngilizce İçerik:</label>
-                            <textarea id="edit-en-${entryId}" oninput="updateEditPreview(${entryId}, 'en')">${entry.content || ''}</textarea>
-                            <div class="preview-container">
-                                <div class="preview-title">
-                                    <span>Preview:</span>
-                                    <span class="char-count"><span id="edit-en-${entryId}-count">0</span> characters</span>
-                                </div>
-                                <div id="edit-en-${entryId}-preview"></div>
-                            </div>
-                        </div>
-                        <div class="edit-actions">
-                            <button class="save-btn" onclick="saveEntry(${entryId})"><i class="fas fa-save"></i> Kaydet</button>
-                            <button class="cancel-btn" onclick="cancelEdit(${entryId})"><i class="fas fa-times"></i> İptal</button>
-                        </div>
-                    `;
-                    targetItem.appendChild(editForm);
-                    
-                    updateEditPreview(entryId, 'tr');
-                    updateEditPreview(entryId, 'en');
-                }
-                
-                editForm.style.display = 'block';
-            } catch (error) {
-                console.error('Entry düzenleme hatası:', error);
-                showMessage(`Düzenleme hatası: ${error.message}`, 'error');
-            }
-        }
-        
-        async function saveEntry(entryId) {
-            try {
-                const trContent = document.getElementById(`edit-tr-${entryId}`).value;
-                const enContent = document.getElementById(`edit-en-${entryId}`).value;
-                
-                if (!trContent && !enContent) {
-                    showMessage('En az bir dilde içerik girin!', 'error');
-                    return;
-                }
-                
-                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
-                let entriesArray = Array.isArray(entries) ? entries : (entries.records || []);
-                
-                const entryIndex = entriesArray.findIndex(e => e.id === entryId);
-                if (entryIndex === -1) {
-                    showMessage('Entry bulunamadı!', 'error');
-                    return;
-                }
-                
-                entriesArray[entryIndex] = {
-                    ...entriesArray[entryIndex],
-                    content_tr: trContent || null,
-                    content: enContent || '',
-                    date: new Date().toISOString()
-                };
-                
-                await fetchFromJsonBin(ENTRIES_BIN_ID, 'PUT', entriesArray);
-                
-                showMessage('Entry başarıyla güncellendi!', 'success');
-                await loadRecentEntries();
-            } catch (error) {
-                console.error('Entry kaydetme hatası:', error);
-                showMessage(`Kaydetme hatası: ${error.message}`, 'error');
-            }
-        }
-        
-        function cancelEdit(entryId) {
-            const entryItems = document.querySelectorAll('.entry-item');
-            const targetItem = Array.from(entryItems).find(item => 
-                item.querySelector('.entry-meta span').textContent.includes(`ID: ${entryId}`));
-            
-            if (targetItem) {
-                const editForm = targetItem.querySelector('.edit-form');
-                if (editForm) {
-                    editForm.style.display = 'none';
-                }
-            }
-        }
-        
-        function confirmDelete(entryId) {
-            if (confirm('Bu entryi silmek istediğinize emin misiniz?')) {
-                deleteEntry(entryId);
-            }
-        }
-        
-        async function deleteEntry(entryId) {
-            try {
-                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
-                let entriesArray = Array.isArray(entries) ? entries : (entries.records || []);
-                
-                const updatedEntries = entriesArray.filter(e => e.id !== entryId);
-                
-                await fetchFromJsonBin(ENTRIES_BIN_ID, 'PUT', updatedEntries);
-                
-                showMessage('Entry başarıyla silindi!', 'success');
-                await loadRecentEntries();
-                await updateStats();
-            } catch (error) {
-                console.error('Entry silme hatası:', error);
-                showMessage(`Silme hatası: ${error.message}`, 'error');
-            }
-        }
-        
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('tr-TR') + ' ' + date.toLocaleTimeString('tr-TR');
-        }
-        
-        async function updateStats() {
-            try {
-                const entriesData = await fetchFromJsonBin(ENTRIES_BIN_ID);
-                const interactions = await fetchFromJsonBin(INTERACTIONS_BIN_ID);
-                
-                const totalEntries = Array.isArray(entriesData) ? 
-                    entriesData.length : 
-                    (entriesData.records ? entriesData.records.length : 0);
-                
-                const totalLikes = interactions.likes ? 
-                    Object.values(interactions.likes).reduce((a, b) => a + b, 0) : 0;
-                
-                const totalPins = interactions.pins ? 
-                    Object.values(interactions.pins).reduce((a, b) => a + b, 0) : 0;
-                
-                document.getElementById('total-entries').textContent = totalEntries;
-                document.getElementById('total-likes').textContent = totalLikes;
-                document.getElementById('total-pins').textContent = totalPins;
-            } catch (error) {
-                console.error('İstatistik güncelleme hatası:', error);
-            }
-        }
-        
-        async function loadStats() {
-            await updateStats();
-        }
-        
-        function showMessage(message, type) {
-            const responseEl = document.getElementById('response-message');
-            responseEl.textContent = message;
-            responseEl.className = type;
-            responseEl.style.display = 'block';
-            
+            await updateInteractionsOnServer(entryId, currentCount + 1, null);
+            likesCache.lastUpdated = Date.now();
+          } catch (error) {
+            console.error('Like update failed:', error);
+            likeCountSpan.textContent = currentCount;
+            likesCache.data[entryId] = currentCount;
+          } finally {
+            likesCache.isUpdating = false;
             setTimeout(() => {
-                responseEl.style.display = 'none';
-            }, 5000);
+              likeContainer.classList.remove("action-animation");
+            }, 500);
+          }
         }
-        
-        function logout() {
-            localStorage.removeItem('adminAuth');
-            window.location.href = 'index.html';
-        }
-        
-        function updatePreview(textareaId) {
-            const textarea = document.getElementById(textareaId);
-            const preview = document.getElementById(`${textareaId}-preview`);
-            const charCount = document.getElementById(`${textareaId}-count`);
+
+        async function handlePinClick(entryId, entryDiv) {
+          if (pinsCache.isUpdating) return;
+
+          pinsCache.isUpdating = true;
+          const pinCountSpan = entryDiv.querySelector(".pin-count");
+          const pinContainer = entryDiv.querySelector(".pine-pin");
+          const currentCount = parseInt(pinCountSpan.textContent) || 0;
+
+          try {
+            pinCountSpan.textContent = currentCount + 1;
+            pinContainer.classList.add("action-animation");
             
-            if (textarea && preview && charCount) {
-                preview.innerHTML = textarea.value.replace(/\n/g, '<br>');
-                charCount.textContent = textarea.value.length;
+            pinsCache.data[entryId] = currentCount + 1;
+            localStorage.setItem('entryPins', JSON.stringify(pinsCache.data));
+            
+            await updateInteractionsOnServer(entryId, null, currentCount + 1);
+            pinsCache.lastUpdated = Date.now();
+          } catch (error) {
+            console.error('Pin update failed:', error);
+            pinCountSpan.textContent = currentCount;
+            pinsCache.data[entryId] = currentCount;
+          } finally {
+            pinsCache.isUpdating = false;
+            setTimeout(() => {
+              pinContainer.classList.remove("action-animation");
+            }, 500);
+          }
+        }
+
+        async function updateInteractionsOnServer(entryId, newLikeCount, newPinCount) {
+          const updatedLikes = newLikeCount !== null ? { ...likesCache.data, [entryId]: newLikeCount } : likesCache.data;
+          const updatedPins = newPinCount !== null ? { ...pinsCache.data, [entryId]: newPinCount } : pinsCache.data;
+
+          try {
+            await fetchViaProxy('/b/68862fd97b4b8670d8a81945', 'PUT', {
+              likes: updatedLikes,
+              pins: updatedPins
+            });
+          } catch (error) {
+            throw new Error('Failed to update data on server');
+          }
+        }
+
+        // 5. BAŞLANGIÇ FONKSİYONU
+        async function initializeApp() {
+          try {
+            await loadInteractions();
+            const entriesData = await fetchViaProxy('/b/68933248ae596e708fc2fbbc/latest');
+            allEntries = entriesData.records || entriesData;
+            
+            // Tüm entry'leri tarihe göre yeniden eskiye sırala
+            allEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            // En son eklenen entry'nin ID'sini bul
+            if (allEntries.length > 0) {
+              latestEntryId = allEntries[0].id;
+              
+              // En son eklenen entry'nin parent'ını bul
+              const latestEntry = allEntries.find(entry => entry.id === latestEntryId);
+              if (latestEntry && latestEntry.references && latestEntry.references.length > 0) {
+                parentOfLatestId = latestEntry.references[0];
+              }
             }
-        }
-        
-        function updateEditPreview(entryId, lang) {
-            const textarea = document.getElementById(`edit-${lang}-${entryId}`);
-            const preview = document.getElementById(`edit-${lang}-${entryId}-preview`);
-            const charCount = document.getElementById(`edit-${lang}-${entryId}-count`);
             
-            if (textarea && preview && charCount) {
-                preview.innerHTML = textarea.value.replace(/\n/g, '<br>');
-                charCount.textContent = textarea.value.length;
-            }
-        }
-        
-        function formatText(textareaId, format) {
-            const textarea = document.getElementById(textareaId);
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            const selectedText = textarea.value.substring(start, end);
-            let formattedText = '';
+            // Entry'leri grupla
+            groupedEntries = groupEntries(allEntries);
             
-            switch(format) {
-                case 'bold':
-                    formattedText = `<strong>${selectedText}</strong>`;
-                    break;
-                case 'italic':
-                    formattedText = `<em>${selectedText}</em>`;
-                    break;
-                case 'underline':
-                    formattedText = `<u>${selectedText}</u>`;
-                    break;
-                case 'paragraph':
-                    formattedText = `<p>${selectedText}</p>`;
-                    break;
-                case 'quote':
-                    formattedText = `<blockquote>${selectedText}</blockquote>`;
-                    break;
-            }
+            // İlk 20 grubu göster
+            displayEntries(0, entriesPerPage);
             
-            textarea.value = textarea.value.substring(0, start) + formattedText + textarea.value.substring(end);
-            textarea.focus();
-            textarea.setSelectionRange(start + formattedText.length, start + formattedText.length);
-            
-            updatePreview(textareaId);
-        }
-        
-        function clearFormatting(textareaId) {
-            const textarea = document.getElementById(textareaId);
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            const selectedText = textarea.value.substring(start, end);
-            
-            const cleanedText = selectedText
-                .replace(/<strong>(.*?)<\/strong>/g, '$1')
-                .replace(/<em>(.*?)<\/em>/g, '$1')
-                .replace(/<u>(.*?)<\/u>/g, '$1')
-                .replace(/<p>(.*?)<\/p>/g, '$1')
-                .replace(/<blockquote>(.*?)<\/blockquote>/g, '$1');
+            // Daha fazla yükle butonuna event listener ekle
+            document.getElementById('loadMoreBtn').addEventListener('click', () => {
+              displayEntries(displayedEntries, entriesPerPage);
+            });
+          } catch (error) {
+            console.error("Initialization error:", error);
+            try {
+              const response = await fetch("entries.json");
+              const entriesData = await response.json();
+              allEntries = entriesData.records || entriesData;
+              
+              allEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
+              
+              if (allEntries.length > 0) {
+                latestEntryId = allEntries[0].id;
                 
-            textarea.value = textarea.value.substring(0, start) + cleanedText + textarea.value.substring(end);
-            textarea.focus();
-            textarea.setSelectionRange(start + cleanedText.length, start + cleanedText.length);
-            
-            updatePreview(textareaId);
+                const latestEntry = allEntries.find(entry => entry.id === latestEntryId);
+                if (latestEntry && latestEntry.references && latestEntry.references.length > 0) {
+                  parentOfLatestId = latestEntry.references[0];
+                }
+              }
+              
+              groupedEntries = groupEntries(allEntries);
+              
+              displayEntries(0, entriesPerPage);
+              
+              document.getElementById('loadMoreBtn').addEventListener('click', () => {
+                displayEntries(displayedEntries, entriesPerPage);
+              });
+            } catch (fallbackError) {
+              console.error("Fallback failed:", fallbackError);
+              document.getElementById("entries").innerHTML = 
+                '<div class="error">Veriler yüklenirken bir hata oluştu</div>';
+            }
+          }
         }
+
+        // 6. UYGULAMAYI BAŞLAT
+        document.addEventListener("DOMContentLoaded", initializeApp);
+    </script>
+
+    <!-- Matrix Arka Plan Script'i -->
+    <script src="/JAVASCRIPT/matrix.js"></script>
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0WNL3VLY3F"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-0WNL3VLY3F');
     </script>
 </body>
 </html>
