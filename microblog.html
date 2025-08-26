@@ -2187,61 +2187,6 @@
         // 7. UYGULAMAYI BAŞLAT
         document.addEventListener("DOMContentLoaded", initializeApp);
     </script>
-
-    <!-- Matrix Arka Plan Script'i -->
-    <script>
-        // Matrix efekti için basit bir implementasyon
-        const canvas = document.getElementById('matrixCanvas');
-        const ctx = canvas.getContext('2d');
-
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        const letters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-        const lettersArray = letters.split('');
-
-        const fontSize = 14;
-        const columns = canvas.width / fontSize;
-
-        const drops = [];
-        for (let i = 0; i < columns; i++) {
-            drops[i] = 1;
-        }
-
-        function draw() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.fillStyle = '#0F0';
-            ctx.font = `${fontSize}px monospace`;
-
-            for (let i = 0; i < drops.length; i++) {
-                const text = lettersArray[Math.floor(Math.random() * lettersArray.length)];
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
-
-                drops[i]++;
-            }
-        }
-
-        setInterval(draw, 33);
-
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
-    </script>
-    
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0WNL3VLY3F"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-0WNL3VLY3F');
-    </script>
+    <script src="/JAVASCRIPT/matrix.js"></script>
 </body>
 </html>
