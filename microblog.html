@@ -433,10 +433,60 @@
             box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
             animation: slideIn 0.5s ease;
             cursor: pointer;
+            transition: all 0.3s ease;
         }
         
         .new-entry-notification:hover {
             background: rgba(0, 130, 0, 0.95);
+        }
+        
+        .new-entry-notification.minimized {
+            max-width: 40px;
+            max-height: 40px;
+            overflow: hidden;
+            padding: 8px;
+            border-radius: 50%;
+            animation: none;
+        }
+        
+        .new-entry-notification.minimized .notification-content {
+            display: none;
+        }
+        
+        .new-entry-notification.minimized .minimize-btn {
+            display: none;
+        }
+        
+        .new-entry-notification.minimized .notification-bell {
+            display: block;
+            font-size: 20px;
+            text-align: center;
+        }
+        
+        .notification-bell {
+            display: none;
+        }
+        
+        .minimize-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .minimize-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
         
         @keyframes slideIn {
@@ -519,6 +569,12 @@
             .new-entries-badge {
                 top: 80px;
                 right: 10px;
+            }
+            
+            .new-entry-notification.minimized {
+                bottom: 10px;
+                right: 10px;
+                left: auto;
             }
         }
     </style>
@@ -691,6 +747,9 @@
         let newestEntryIdFromServer = null;
         let newEntriesCount = 0;
         let currentScrollPosition = 0;
+        let lastNotifiedEntryId = 0; // Son bildirim gösterilen entry ID'si
+        let notificationElement = null; // Bildirim elementi
+        let notificationTimeout = null; // Bildirim zaman aşımı
 
         // 2. PROXY HELPER FONKSİYONU
         async function fetchViaProxy(path, method = 'GET', body = null) {
@@ -1061,7 +1120,7 @@
           }
         }
 
-        // 5. YENİ ENTRY KONTROLÜ ve BİLDİRİM
+        // 5. YENİ ENTRY KONTROLÜ ve BİLDİRİM - GÜNCELLENDİ
         function startPolling() {
           // 30 saniyede bir yeni entry kontrol et
           checkInterval = setInterval(() => {
@@ -1082,8 +1141,8 @@
             // İstemcideki en yeni entry ID'si
             const clientNewestEntryId = allEntries.length > 0 ? Math.max(...allEntries.map(e => e.id)) : 0;
             
-            // Sunucuda daha yeni bir entry var mı?
-            if (newestServerEntry.id > clientNewestEntryId) {
+            // Sunucuda daha yeni bir entry var mı ve daha önce bildirim gösterilmemiş mi?
+            if (newestServerEntry.id > clientNewestEntryId && newestServerEntry.id > lastNotifiedEntryId) {
               // Yeni entry sayısını hesapla
               const newEntryCount = serverEntries.filter(entry => entry.id > clientNewestEntryId).length;
               
@@ -1091,8 +1150,8 @@
               showNewEntriesNotification(newEntryCount);
               newEntriesCount = newEntryCount;
               
-              // Sunucudaki en yeni entry ID'sini sakla
-              newestEntryIdFromServer = newestServerEntry.id;
+              // Son bildirim gösterilen entry ID'sini güncelle
+              lastNotifiedEntryId = newestServerEntry.id;
             }
           } catch (error) {
             console.error('Yeni entry kontrol hatası:', error);
@@ -1101,42 +1160,69 @@
 
         function showNewEntriesNotification(count) {
           // Önceki bildirim varsa kaldır
-          const existingNotification = document.getElementById('new-entries-notification');
-          if (existingNotification) {
-            existingNotification.remove();
+          if (notificationElement) {
+            notificationElement.remove();
+          }
+          
+          if (notificationTimeout) {
+            clearTimeout(notificationTimeout);
           }
           
           // Bildirim oluştur
-          const notification = document.createElement('div');
-          notification.id = 'new-entries-notification';
-          notification.className = 'new-entry-notification';
-          notification.innerHTML = `
-            <div style="margin-bottom: 10px; font-weight: bold;">
-              <i class="fa-solid fa-bell"></i> ${count} New Entries!
+          notificationElement = document.createElement('div');
+          notificationElement.className = 'new-entry-notification';
+          notificationElement.innerHTML = `
+            <button class="minimize-btn">−</button>
+            <div class="notification-content">
+              <div style="margin-bottom: 10px; font-weight: bold;">
+                <i class="fa-solid fa-bell"></i> ${count} New Entries!
+              </div>
+              <div style="font-size: 14px; margin-bottom: 10px;">
+                Click to refresh and view new entries.
+              </div>
             </div>
-            <div style="font-size: 14px; margin-bottom: 10px;">
-              Click to refresh and view new entries.
+            <div class="notification-bell">
+              <i class="fa-solid fa-bell"></i>
             </div>
           `;
           
-          notification.addEventListener('click', () => {
-            // Sayfayı yenile
+          notificationElement.addEventListener('click', (e) => {
+            // Minimize butonuna tıklanmışsa küçült
+            if (e.target.classList.contains('minimize-btn')) {
+              e.stopPropagation();
+              minimizeNotification();
+              return;
+            }
+            
+            // Diğer tıklamalarda sayfayı yenile
             location.reload();
           });
           
-          document.body.appendChild(notification);
+          document.body.appendChild(notificationElement);
           
-          // 10 saniye sonra bildirimi otomatik kaldır
-          setTimeout(() => {
-            if (notification.parentNode) {
-              notification.style.animation = 'slideOut 0.5s ease';
-              setTimeout(() => {
-                if (notification.parentNode) {
-                  notification.parentNode.removeChild(notification);
-                }
-              }, 500);
-            }
+          // 10 saniye sonra bildirimi otomatik küçült
+          notificationTimeout = setTimeout(() => {
+            minimizeNotification();
           }, 10000);
+        }
+        
+        function minimizeNotification() {
+          if (notificationElement) {
+            notificationElement.classList.add('minimized');
+            
+            // Küçültülmüş bildirime tıklanınca tekrar büyüt
+            const handleMinimizedClick = () => {
+              notificationElement.classList.remove('minimized');
+              notificationElement.removeEventListener('click', handleMinimizedClick);
+              
+              // 10 saniye sonra tekrar küçült
+              notificationTimeout = setTimeout(() => {
+                minimizeNotification();
+              }, 10000);
+            };
+            
+            notificationElement.addEventListener('click', handleMinimizedClick);
+          }
         }
 
         // 6. UYGULAMAYI BAŞLAT
