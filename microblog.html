@@ -499,6 +499,7 @@
             border-radius: 8px;
             border: 1px solid var(--border-color);
             background-color: #000;
+            min-height: 200px; /* Minimum yükseklik eklendi */
         }
         
         .slider-container {
@@ -517,10 +518,9 @@
         }
         
         .slider-item img {
-            max-width: 100%;
-            max-height: 400px;
-            width: auto;
+            width: 100%;
             height: auto;
+            max-height: 500px;
             object-fit: contain;
             border-radius: 0;
             margin: 0;
@@ -1315,7 +1315,7 @@
             '<div class="video-container"><iframe src="https://www.youtube.com/embed/$4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>');
           
           // Birden fazla resim için slider oluştur
-          content = content.replace(/(<img[^>]+>){2,}/g, (imgs) => {
+          content = content.replace(/(<img[^>]+>\s*){2,}/g, (imgs) => {
             const images = imgs.match(/<img[^>]+>/g);
             if (images && images.length > 1) {
               return createImageSlider(images);
@@ -1409,6 +1409,9 @@
               updateSlider();
             });
           });
+          
+          // İlk slide'ı göster
+          updateSlider();
         }
 
         // Tüm slider'ları başlat
