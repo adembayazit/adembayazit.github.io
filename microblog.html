@@ -417,11 +417,11 @@
             border: none;
         }
 
-        /* Yeni bildirim stilleri */
+        /* Yeni bildirim stilleri - SOL TARAF İÇİN GÜNCELLENDİ */
         .new-entry-notification {
             position: fixed;
             bottom: 20px;
-            right: 20px;
+            left: 20px;
             background: rgba(0, 100, 0, 0.9);
             color: white;
             padding: 15px;
@@ -431,7 +431,7 @@
             max-width: 300px;
             backdrop-filter: blur(5px);
             box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
-            animation: slideIn 0.5s ease;
+            animation: slideInLeft 0.5s ease;
             cursor: pointer;
             transition: all 0.3s ease;
         }
@@ -470,7 +470,7 @@
         .minimize-btn {
             position: absolute;
             top: 5px;
-            left: 5px;
+            left: 5px; /* Sağdan sola taşındı */
             background: transparent;
             border: none;
             color: white;
@@ -489,20 +489,20 @@
             background: rgba(255, 255, 255, 0.2);
         }
         
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
+        @keyframes slideInLeft {
+            from { transform: translateX(-100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
         
-        @keyframes slideOut {
+        @keyframes slideOutLeft {
             from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(-100%); opacity: 0; }
         }
         
         .new-entries-badge {
             position: fixed;
             top: 100px;
-            right: 20px;
+            left: 20px; /* Sağdan sola taşındı */
             background: red;
             color: white;
             border-radius: 50%;
@@ -561,20 +561,20 @@
             
             .new-entry-notification {
                 bottom: 10px;
-                right: 10px;
                 left: 10px;
+                right: 10px;
                 max-width: none;
             }
             
             .new-entries-badge {
                 top: 80px;
-                right: 10px;
+                left: 10px; /* Sağdan sola taşındı */
             }
             
             .new-entry-notification.minimized {
                 bottom: 10px;
-                right: 10px;
-                left: auto;
+                left: 10px; /* Sağdan sola taşındı */
+                right: auto;
             }
         }
     </style>
