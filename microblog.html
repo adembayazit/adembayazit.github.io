@@ -71,12 +71,12 @@
             flex-shrink: 0;
             position: sticky;
             top: 90px;
-            height: calc(100vh - 100px);
+            height: calc(100vh - 180px); /* Düzeltme: Footer altında kalmaması için yükseklik azaltıldı */
             overflow-y: auto;
             display: flex;
             flex-direction: column;
             gap: 20px;
-            background-color: #000; /* Arka plan siyah yapıldı */
+            background-color: #000;
             border-radius: 10px;
             padding: 15px;
         }
@@ -92,12 +92,12 @@
             flex-shrink: 0;
             position: sticky;
             top: 90px;
-            height: calc(100vh - 100px);
+            height: calc(100vh - 180px); /* Düzeltme: Footer altında kalmaması için yükseklik azaltıldı */
             overflow-y: auto;
             display: flex;
             flex-direction: column;
             gap: 20px;
-            background-color: #000; /* Arka plan siyah yapıldı */
+            background-color: #000;
             border-radius: 10px;
             padding: 15px;
         }
@@ -325,7 +325,7 @@
             display: flex;
             justify-content: flex-end;
             gap: 10px;
-            margin-top: 25px; /* Butonlar aşağı kaydırıldı */
+            margin-top: 25px;
             flex-wrap: wrap;
         }
         
@@ -691,6 +691,68 @@
             color: #90ee90;
         }
 
+        /* Yeni bildirim stili */
+        .new-entry-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid var(--primary-color);
+            border-radius: 10px;
+            padding: 15px;
+            z-index: 1000;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+            backdrop-filter: blur(5px);
+            cursor: pointer;
+            transition: all 0.3s;
+            max-width: 300px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .new-entry-notification:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 25px rgba(0, 255, 0, 0.5);
+        }
+        
+        .new-entry-notification.minimized {
+            width: auto;
+            padding: 10px;
+        }
+        
+        .new-entry-notification.minimized .notification-content {
+            display: none;
+        }
+        
+        .notification-content {
+            flex: 1;
+        }
+        
+        .notification-bell {
+            background: var(--primary-color);
+            color: black;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            position: relative;
+        }
+        
+        .minimize-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: transparent;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+            font-size: 16px;
+        }
+
         /* Mobil için stiller */
         @media (max-width: 1200px) {
             .sidebar, .right-sidebar {
@@ -699,16 +761,19 @@
             
             .page-container {
                 flex-direction: column;
+                padding: 0 10px; /* Mobilde kenar boşlukları eklendi */
             }
             
             .main-content {
                 max-width: 100%;
+                width: 100%;
             }
             
             /* Mobil için istatistik ve arama bölümü */
             .mobile-widgets {
                 display: block;
-                margin-top: 20px;
+                margin-top: 0;
+                order: 2; /* Arama çubuğunu yukarı taşımak için */
             }
             
             .mobile-stats {
@@ -741,6 +806,27 @@
                 display: flex;
                 margin-bottom: 15px;
             }
+            
+            /* Entry count'u footer üstüne taşıma */
+            .entry-count {
+                order: 100;
+                margin-top: 20px;
+                margin-bottom: 5px;
+            }
+            
+            /* Microblog container düzeni */
+            .microblog-container {
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .back-to-home { order: 1; }
+            .section-title { order: 2; }
+            .mobile-widgets { order: 3; }
+            #entries { order: 4; }
+            .loading { order: 5; }
+            .load-more-container { order: 6; }
+            .entry-count { order: 7; } /* Footer'ın hemen üstüne */
         }
         
         @media (min-width: 1201px) {
@@ -806,6 +892,16 @@
             .slider-item img {
                 max-height: 250px;
             }
+            
+            /* Mobilde içerik kenar boşlukları */
+            .entries-container {
+                margin: 0 5px;
+                padding: 15px;
+            }
+            
+            .content img {
+                border-radius: 6px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -824,6 +920,16 @@
             
             .slider-item img {
                 max-height: 200px;
+            }
+            
+            /* Daha küçük ekranlar için ek kenar boşlukları */
+            .page-container {
+                padding: 0 5px;
+            }
+            
+            .entries-container {
+                margin: 0 2px;
+                padding: 10px;
             }
         }
     </style>
@@ -914,14 +1020,8 @@
             <section class="microblog-container">
                 <a href="/" class="back-to-home"><i class='bx bx-arrow-back'></i> Back to Home</a>
                 <h2 class="section-title"><i class="fa-solid fa-pager"></i> All LadyB<span class="fa-solid fa-bug bug-icon"></span>G Entries</h2>
-                <div class="entry-count" id="entryCount">Total 0 Entry</div>
-                <div id="entries" class="entries-container"></div>
-                <div class="loading" id="loading">Loading...</div>
-                <div class="load-more-container">
-                    <button id="loadMoreBtn" class="load-more-btn">More Entry (20) <span class='bx bx-chevron-down'></span></button>
-                </div>
                 
-                <!-- Mobil için istatistik ve arama -->
+                <!-- Mobil için istatistik ve arama - YUKARI TAŞINDI -->
                 <div class="mobile-widgets">
                     <div class="mobile-stats">
                         <div class="mobile-stat-item">
@@ -946,6 +1046,13 @@
                         <input type="text" class="search-input" placeholder="Search entries..." id="mobile-search-input">
                         <button class="search-button" id="mobile-search-btn"><i class="fas fa-search"></i></button>
                     </div>
+                </div>
+                
+                <div class="entry-count" id="entryCount">Total 0 Entry</div>
+                <div id="entries" class="entries-container"></div>
+                <div class="loading" id="loading">Loading...</div>
+                <div class="load-more-container">
+                    <button id="loadMoreBtn" class="load-more-btn">More Entry (20) <span class='bx bx-chevron-down'></span></button>
                 </div>
             </section>
         </main>
