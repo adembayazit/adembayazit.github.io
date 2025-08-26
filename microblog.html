@@ -30,22 +30,82 @@
     })(window,document,'script','dataLayer','GTM-TFN7XD9Z');</script>
     <!-- End Google Tag Manager -->
     <style>
+        :root {
+            --main-bg-color: #000;
+            --primary-color: limegreen;
+            --secondary-color: #00cc00;
+            --accent-color: #ff0000;
+            --text-color: #fff;
+            --card-bg: rgba(0, 0, 0, 0.7);
+            --border-color: limegreen;
+            --sidebar-width: 300px;
+            --content-max-width: 800px;
+        }
+        
         html {
           scroll-behavior: smooth;
         }
-        /* Özel stiller */
-        .microblog-container {
-            width: 100%;
-            padding: 60px 10%;
-            background: transparent;
-            margin-top: 80px;
+        
+        body {
+            background-color: var(--main-bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        
+        /* Layout */
+        .page-container {
+            display: flex;
+            max-width: 1400px;
+            margin: 80px auto 0;
+            padding: 0 15px;
+            gap: 20px;
             position: relative;
             z-index: 1;
         }
         
+        .sidebar {
+            width: var(--sidebar-width);
+            flex-shrink: 0;
+            position: sticky;
+            top: 90px;
+            height: calc(100vh - 100px);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .main-content {
+            flex: 1;
+            max-width: var(--content-max-width);
+            margin: 0 auto;
+        }
+        
+        .right-sidebar {
+            width: var(--sidebar-width);
+            flex-shrink: 0;
+            position: sticky;
+            top: 90px;
+            height: calc(100vh - 100px);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        /* Özel stiller */
+        .microblog-container {
+            width: 100%;
+            background: transparent;
+            position: relative;
+        }
+        
         .entries-container {
-            background: rgba(0, 0, 0, 0.7);
-            border: 2px solid limegreen;
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
             border-radius: 20px;
             padding: 1rem;
             display: flex;
@@ -72,21 +132,21 @@
         }
         
         .load-more-btn:hover {
-            background: #00cc00;
-            box-shadow: 0 0 10px limegreen;
+            background: var(--secondary-color);
+            box-shadow: 0 0 10px var(--primary-color);
         }
         
         .loading {
             display: none;
             text-align: center;
             margin: 20px 0;
-            color: limegreen;
+            color: var(--primary-color);
         }
         
         .back-to-home {
             display: inline-block;
             margin: 30px 0;
-            color: limegreen;
+            color: var(--primary-color);
             text-decoration: none;
             font-weight: bold;
             font-size: 16px;
@@ -94,7 +154,7 @@
         
         .back-to-home:hover {
             text-decoration: underline;
-            color: #00ff00;
+            color: var(--secondary-color);
         }
         
         .entry-count {
@@ -138,7 +198,7 @@
 
         .dropdown-content a:hover {
             color: white;
-            background-color: limegreen;
+            background-color: var(--primary-color);
             text-shadow: 0 0 10px green;
         }
 
@@ -163,13 +223,13 @@
             color: white;
             display: flex;
             align-items: center;
-            filter: drop-shadow(0 0 5px limegreen);
+            filter: drop-shadow(0 0 5px var(--primary-color));
             gap: 10px;
         }
 
         /* Son entry için özel stil */
         .latest-entry {
-            border: 1px solid #ff0000; !important;
+            border: 2px solid var(--accent-color) !important;
             box-shadow: 0 0 15px rgba(255, 204, 0, 0.4) !important;
         }
 
@@ -178,7 +238,7 @@
             position: absolute;
             top: -12px;
             right: 80px;
-            background: red;
+            background: var(--accent-color);
             color: black;
             font-size: 12px;
             font-weight: bold;
@@ -189,7 +249,7 @@
 
         /* Parent entry için özel stil */
         .parent-of-latest {
-            border: 1px solid #ffffff; !important;
+            border: 2px solid #ffffff !important;
             box-shadow: 0 0 15px rgba(255, 153, 0, 0.4) !important;
         }
 
@@ -251,7 +311,7 @@
         
         .bug-iconentry {
             margin-right: 8px;
-            color: red;
+            color: var(--accent-color);
         }
 
         /* Daisy ve Pine ikonları için yuvarlak animasyonlu tasarım */
@@ -298,7 +358,7 @@
         
         .daisy-like:hover .daisy-icon {
             transform: rotate(15deg) scale(1.2);
-            color: #00ff00;
+            color: var(--secondary-color);
             box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
         }
         
@@ -347,7 +407,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            border: 2px solid limegreen;
+            border: 2px solid var(--primary-color);
             border-radius: 8px;
             box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
             animation: zoom 0.3s ease;
@@ -373,22 +433,20 @@
         
         .close:hover,
         .close:focus {
-            color: limegreen;
+            color: var(--primary-color);
             text-decoration: none;
             cursor: pointer;
         }
         
         /* Entry içindeki görseller için stiller */
         .content img {
-            max-width: 300px;
+            max-width: 100%;
             height: auto;
             border-radius: 8px;
             margin: 10px 0;
             cursor: pointer;
             transition: all 0.3s ease;
             border: 1px solid rgba(0, 255, 0, 0.3);
-            display: block;
-            margin: 10px auto;
         }
         
         .content img:hover {
@@ -426,7 +484,7 @@
             color: white;
             padding: 15px;
             border-radius: 8px;
-            border: 1px solid limegreen;
+            border: 1px solid var(--primary-color);
             z-index: 1000;
             max-width: 300px;
             backdrop-filter: blur(5px);
@@ -543,11 +601,194 @@
             50% { transform: scale(1.1); }
             100% { transform: scale(1); }
         }
+        
+        /* Sidebar stilleri */
+        .sidebar-widget {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);
+            backdrop-filter: blur(5px);
+        }
+        
+        .sidebar-widget h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            border: 1px solid rgba(0, 255, 0, 0.2);
+        }
+        
+        .stat-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #90ee90;
+        }
+        
+        .search-box {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px 0 0 5px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+        }
+        
+        .search-button {
+            padding: 10px 15px;
+            background: var(--primary-color);
+            color: black;
+            border: none;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+        }
+        
+        .tag-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+        }
+        
+        .tag {
+            padding: 5px 10px;
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--primary-color);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .tag:hover {
+            background: rgba(0, 255, 0, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        /* Slider stilleri */
+        .image-slider {
+            position: relative;
+            margin: 15px 0;
+            overflow: hidden;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .slider-container {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+        
+        .slider-image {
+            min-width: 100%;
+            height: auto;
+            border-radius: 0;
+            margin: 0;
+            cursor: pointer;
+        }
+        
+        .slider-nav {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+        
+        .slider-btn {
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            color: var(--primary-color);
+            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            pointer-events: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+            transition: all 0.3s;
+        }
+        
+        .slider-btn:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+        
+        .slider-dots {
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .dot.active {
+            background: var(--primary-color);
+            transform: scale(1.2);
+        }
 
         /* Mobil için stiller */
+        @media (max-width: 1200px) {
+            .sidebar, .right-sidebar {
+                display: none;
+            }
+            
+            .page-container {
+                flex-direction: column;
+            }
+            
+            .main-content {
+                max-width: 100%;
+            }
+        }
+        
         @media (max-width: 768px) {
             .microblog-container {
-                padding: 60px 5%;
+                padding: 60px 5% 20px;
             }
             
             .back-to-home {
@@ -557,7 +798,7 @@
             .section-title {
                 text-align: center;
                 justify-content: center;
-                filter: drop-shadow(0 0 5px limegreen);
+                filter: drop-shadow(0 0 5px var(--primary-color));
                 color:white;
             }
 
@@ -596,6 +837,14 @@
                 left: 10px; /* Sağdan sola taşındı */
                 right: auto;
             }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar-widget {
+                padding: 15px;
+            }
         }
     </style>
 </head>
@@ -632,20 +881,102 @@
         </nav>
     </header>
 
-    <section class="microblog-container">
-        <a href="/" class="back-to-home"><i class='bx bx-arrow-back'></i> Back to Home</a>
-        <h2 class="section-title"><i class="fa-solid fa-pager"></i> All LadyB<span class="fa-solid fa-bug bug-icon"></span>G Entries</h2>
-        <div class="entry-count" id="entryCount">Total 0 Entry</div>
-        <div id="entries" class="entries-container"></div>
-        <div class="loading" id="loading">Loading...</div>
-        <div class="load-more-container">
-            <button id="loadMoreBtn" class="load-more-btn">More Entry (20) <span class='bx bx-chevron-down'></span></button>
-        </div>
-    </section>
+    <div class="page-container">
+        <aside class="sidebar">
+            <div class="sidebar-widget">
+                <h3><i class="fas fa-chart-line"></i> Statistics</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="total-entries">0</div>
+                        <div class="stat-label">Total Entries</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="total-likes">0</div>
+                        <div class="stat-label">Total Likes</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="total-pins">0</div>
+                        <div class="stat-label">Total Pins</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="this-month">0</div>
+                        <div class="stat-label">This Month</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-widget">
+                <h3><i class="fas fa-search"></i> Search</h3>
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="Search entries...">
+                    <button class="search-button"><i class="fas fa-search"></i></button>
+                </div>
+                <div class="tag-cloud">
+                    <span class="tag">#cybersecurity</span>
+                    <span class="tag">#hacking</span>
+                    <span class="tag">#bugbounty</span>
+                    <span class="tag">#pentest</span>
+                    <span class="tag">#privacy</span>
+                </div>
+            </div>
+            
+            <div class="sidebar-widget">
+                <h3><i class="fas fa-fire"></i> Trending</h3>
+                <div id="trending-entries">
+                    <div style="padding: 10px; text-align: center; color: #90ee90;">
+                        Loading trending entries...
+                    </div>
+                </div>
+            </div>
+        </aside>
+        
+        <main class="main-content">
+            <section class="microblog-container">
+                <a href="/" class="back-to-home"><i class='bx bx-arrow-back'></i> Back to Home</a>
+                <h2 class="section-title"><i class="fa-solid fa-pager"></i> All LadyB<span class="fa-solid fa-bug bug-icon"></span>G Entries</h2>
+                <div class="entry-count" id="entryCount">Total 0 Entry</div>
+                <div id="entries" class="entries-container"></div>
+                <div class="loading" id="loading">Loading...</div>
+                <div class="load-more-container">
+                    <button id="loadMoreBtn" class="load-more-btn">More Entry (20) <span class='bx bx-chevron-down'></span></button>
+                </div>
+            </section>
+        </main>
+        
+        <aside class="right-sidebar">
+            <div class="sidebar-widget">
+                <h3><i class="fas fa-calendar"></i> Recent Activity</h3>
+                <div id="recent-activity">
+                    <div style="padding: 10px; text-align: center; color: #90ee90;">
+                        Loading activity...
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-widget">
+                <h3><i class="fas fa-star"></i> Popular Entries</h3>
+                <div id="popular-entries">
+                    <div style="padding: 10px; text-align: center; color: #90ee90;">
+                        Loading popular entries...
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-widget">
+                <h3><i class="fas fa-users"></i> Community</h3>
+                <div style="text-align: center;">
+                    <p style="font-size: 14px; margin-bottom: 15px;">Join the cybersecurity community</p>
+                    <button style="background: var(--primary-color); color: black; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                        <i class="fab fa-discord"></i> Discord Server
+                    </button>
+                </div>
+            </div>
+        </aside>
+    </div>
 
     <footer style="text-align: center; padding: 20px; font-size: 14px; color: white; margin-top: 50px; position: relative; z-index: 1;">
-        <hr style="margin-bottom: 10px; border-color: limegreen;" />
-        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.2 | July 2025</p>
+        <hr style="margin-bottom: 10px; border-color: var(--primary-color);" />
+        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.4.0 | July 2025</p>
     </footer>
 
     <!-- Sarı Nokta (IP Göstergesi) -->
@@ -799,6 +1130,9 @@
             likesCache.data = result.likes || {};
             pinsCache.data = result.pins || {};
             likesCache.lastUpdated = pinsCache.lastUpdated = Date.now();
+            
+            // İstatistikleri güncelle
+            updateStatistics();
           } catch (error) {
             console.error('loadInteractions error:', error);
             try {
@@ -806,10 +1140,31 @@
               const localPins = localStorage.getItem('entryPins') || '{}';
               likesCache.data = JSON.parse(localLikes);
               pinsCache.data = JSON.parse(localPins);
+              updateStatistics();
             } catch (parseError) {
               console.Error('Local storage parse error:', parseError);
             }
           }
+        }
+        
+        // İstatistikleri güncelleme fonksiyonu
+        function updateStatistics() {
+          const totalLikes = Object.values(likesCache.data).reduce((sum, count) => sum + count, 0);
+          const totalPins = Object.values(pinsCache.data).reduce((sum, count) => sum + count, 0);
+          
+          document.getElementById('total-entries').textContent = allEntries.length;
+          document.getElementById('total-likes').textContent = totalLikes;
+          document.getElementById('total-pins').textContent = totalPins;
+          
+          // Bu ayın entry sayısını hesapla
+          const thisMonth = new Date().getMonth();
+          const thisYear = new Date().getFullYear();
+          const thisMonthEntries = allEntries.filter(entry => {
+            const entryDate = new Date(entry.date);
+            return entryDate.getMonth() === thisMonth && entryDate.getFullYear() === thisYear;
+          }).length;
+          
+          document.getElementById('this-month').textContent = thisMonthEntries;
         }
 
         // HTML içeriğini düzgün işlemek için yardımcı fonksiyon
@@ -821,7 +1176,117 @@
           content = content.replace(/(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/g, 
             '<div class="video-container"><iframe src="https://www.youtube.com/embed/$4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>');
           
+          // Birden fazla resim için slider oluştur
+          content = content.replace(/(<img[^>]+>){2,}/g, (imgs) => {
+            const images = imgs.match(/<img[^>]+>/g);
+            if (images && images.length > 1) {
+              return createImageSlider(images);
+            }
+            return imgs;
+          });
+          
           return content;
+        }
+        
+        // Resim slider'ı oluşturma fonksiyonu
+        function createImageSlider(images) {
+          const sliderId = 'slider-' + Math.random().toString(36).substr(2, 9);
+          
+          let sliderHtml = `
+            <div class="image-slider" id="${sliderId}">
+              <div class="slider-container">
+          `;
+          
+          images.forEach(img => {
+            sliderHtml += `<div class="slider-item">${img}</div>`;
+          });
+          
+          sliderHtml += `
+              </div>
+              <div class="slider-nav">
+                <button class="slider-btn prev-btn"><i class="fas fa-chevron-left"></i></button>
+                <button class="slider-btn next-btn"><i class="fas fa-chevron-right"></i></button>
+              </div>
+              <div class="slider-dots">
+          `;
+          
+          for (let i = 0; i < images.length; i++) {
+            sliderHtml += `<div class="dot ${i === 0 ? 'active' : ''}" data-index="${i}"></div>`;
+          }
+          
+          sliderHtml += `
+              </div>
+            </div>
+          `;
+          
+          // Slider'ı başlatmak için bir fonksiyon ekle
+          setTimeout(() => {
+            initSlider(sliderId);
+          }, 100);
+          
+          return sliderHtml;
+        }
+        
+        // Slider başlatma fonksiyonu
+        function initSlider(sliderId) {
+          const slider = document.getElementById(sliderId);
+          if (!slider) return;
+          
+          const container = slider.querySelector('.slider-container');
+          const items = slider.querySelectorAll('.slider-item');
+          const prevBtn = slider.querySelector('.prev-btn');
+          const nextBtn = slider.querySelector('.next-btn');
+          const dots = slider.querySelectorAll('.dot');
+          
+          let currentIndex = 0;
+          const totalItems = items.length;
+          
+          // Slider'ı güncelle
+          function updateSlider() {
+            container.style.transform = `translateX(-${currentIndex * 100}%)`;
+            
+            // Noktaları güncelle
+            dots.forEach((dot, index) => {
+              dot.classList.toggle('active', index === currentIndex);
+            });
+          }
+          
+          // Sonraki slayt
+          function nextSlide() {
+            currentIndex = (currentIndex + 1) % totalItems;
+            updateSlider();
+          }
+          
+          // Önceki slayt
+          function prevSlide() {
+            currentIndex = (currentIndex - 1 + totalItems) % totalItems;
+            updateSlider();
+          }
+          
+          // Olay dinleyicileri ekle
+          if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+          if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+          
+          // Noktalara tıklama
+          dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+              currentIndex = index;
+              updateSlider();
+            });
+          });
+          
+          // Otomatik kaydırma (isteğe bağlı)
+          // let autoSlide = setInterval(nextSlide, 5000);
+          
+          // Slider üzerine gelince otomatik kaydırmayı durdur
+          /* slider.addEventListener('mouseenter', () => {
+            clearInterval(autoSlide);
+          });
+          
+          // Slider'dan çıkınca otomatik kaydırmayı yeniden başlat
+          slider.addEventListener('mouseleave', () => {
+            autoSlide = setInterval(nextSlide, 5000);
+          }); */
         }
 
         // Görsel modal işlevselliği
@@ -1053,6 +1518,9 @@
           displayedEntries = endIndex;
           document.getElementById('entryCount').textContent = `Total ${allEntries.length} entries loaded`;
           
+          // İstatistikleri güncelle
+          updateStatistics();
+          
           // Çeviri ikonlarını ekle
           addTranslationIcons();
           
@@ -1085,6 +1553,9 @@
             
             await updateInteractionsOnServer(entryId, currentCount + 1, null);
             likesCache.lastUpdated = Date.now();
+            
+            // İstatistikleri güncelle
+            updateStatistics();
           } catch (error) {
             console.error('Like update failed:', error);
             likeCountSpan.textContent = currentCount;
@@ -1114,6 +1585,9 @@
             
             await updateInteractionsOnServer(entryId, null, currentCount + 1);
             pinsCache.lastUpdated = Date.now();
+            
+            // İstatistikleri güncelle
+            updateStatistics();
           } catch (error) {
             console.error('Pin update failed:', error);
             pinCountSpan.textContent = currentCount;
@@ -1286,6 +1760,14 @@
               }, 100);
             });
             
+            // Popüler ve trend entry'leri yükle
+            loadPopularEntries();
+            loadTrendingEntries();
+            loadRecentActivity();
+            
+            // Arama işlevselliği
+            setupSearch();
+            
             // Polling'i başlat
             startPolling();
             
@@ -1322,6 +1804,14 @@
                 }, 100);
               });
 
+              // Popüler ve trend entry'leri yükle
+              loadPopularEntries();
+              loadTrendingEntries();
+              loadRecentActivity();
+              
+              // Arama işlevselliği
+              setupSearch();
+
               // Fallback: polling'i başlat
               startPolling();
             } catch (fallbackError) {
@@ -1330,6 +1820,183 @@
                 '<div class="error">Veriler yüklenirken bir hata oluştu</div>';
             }
           }
+        }
+        
+        // Popüler entry'leri yükle
+        function loadPopularEntries() {
+          const popularContainer = document.getElementById('popular-entries');
+          if (!popularContainer) return;
+          
+          // Beğeni sayısına göre sırala
+          const popular = [...allEntries].sort((a, b) => {
+            const aLikes = likesCache.data[a.id] || 0;
+            const bLikes = likesCache.data[b.id] || 0;
+            return bLikes - aLikes;
+          }).slice(0, 5);
+          
+          if (popular.length === 0) {
+            popularContainer.innerHTML = '<div style="padding: 10px; text-align: center; color: #90ee90;">No popular entries yet</div>';
+            return;
+          }
+          
+          let html = '';
+          popular.forEach(entry => {
+            const likes = likesCache.data[entry.id] || 0;
+            const contentSnippet = entry.content.replace(/<[^>]*>/g, '').substring(0, 60) + '...';
+            const date = new Date(entry.date).toLocaleDateString('tr-TR');
+            
+            html += `
+              <div style="padding: 10px; border-bottom: 1px solid rgba(0, 255, 0, 0.2);">
+                <div style="font-size: 12px; color: #90ee90;">#${entry.id} • ${date}</div>
+                <div style="font-size: 14px; margin: 5px 0;">${contentSnippet}</div>
+                <div style="display: flex; align-items: center; gap: 10px; font-size: 12px;">
+                  <span><i class="fas fa-heart" style="color: #ff5555;"></i> ${likes}</span>
+                  <a href="#entry-${entry.id}" style="color: var(--primary-color); text-decoration: none;">View →</a>
+                </div>
+              </div>
+            `;
+          });
+          
+          popularContainer.innerHTML = html;
+        }
+        
+        // Trend entry'leri yükle
+        function loadTrendingEntries() {
+          const trendingContainer = document.getElementById('trending-entries');
+          if (!trendingContainer) return;
+          
+          // Son 7 gün içindeki entry'leri al
+          const oneWeekAgo = new Date();
+          oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+          
+          const recentEntries = allEntries.filter(entry => new Date(entry.date) >= oneWeekAgo);
+          
+          // Beğeni sayısına göre sırala
+          const trending = recentEntries.sort((a, b) => {
+            const aLikes = likesCache.data[a.id] || 0;
+            const bLikes = likesCache.data[b.id] || 0;
+            return bLikes - aLikes;
+          }).slice(0, 5);
+          
+          if (trending.length === 0) {
+            trendingContainer.innerHTML = '<div style="padding: 10px; text-align: center; color: #90ee90;">No trending entries</div>';
+            return;
+          }
+          
+          let html = '';
+          trending.forEach(entry => {
+            const likes = likesCache.data[entry.id] || 0;
+            const contentSnippet = entry.content.replace(/<[^>]*>/g, '').substring(0, 60) + '...';
+            const date = new Date(entry.date).toLocaleDateString('tr-TR');
+            
+            html += `
+              <div style="padding: 10px; border-bottom: 1px solid rgba(0, 255, 0, 0.2);">
+                <div style="font-size: 12px; color: #90ee90;">#${entry.id} • ${date}</div>
+                <div style="font-size: 14px; margin: 5px 0;">${contentSnippet}</div>
+                <div style="display: flex; align-items: center; gap: 10px; font-size: 12px;">
+                  <span><i class="fas fa-fire" style="color: orange;"></i> ${likes}</span>
+                  <a href="#entry-${entry.id}" style="color: var(--primary-color); text-decoration: none;">View →</a>
+                </div>
+              </div>
+            `;
+          });
+          
+          trendingContainer.innerHTML = html;
+        }
+        
+        // Son aktiviteleri yükle
+        function loadRecentActivity() {
+          const activityContainer = document.getElementById('recent-activity');
+          if (!activityContainer) return;
+          
+          // Son 10 entry'i al
+          const recent = allEntries.slice(0, 5);
+          
+          if (recent.length === 0) {
+            activityContainer.innerHTML = '<div style="padding: 10px; text-align: center; color: #90ee90;">No recent activity</div>';
+            return;
+          }
+          
+          let html = '';
+          recent.forEach(entry => {
+            const date = new Date(entry.date).toLocaleDateString('tr-TR', {
+              hour: '2-digit',
+              minute: '2-digit'
+            });
+            const contentSnippet = entry.content.replace(/<[^>]*>/g, '').substring(0, 40) + '...';
+            
+            html += `
+              <div style="padding: 10px; border-bottom: 1px solid rgba(0, 255, 0, 0.2);">
+                <div style="font-size: 12px; color: #90ee90;">${date}</div>
+                <div style="font-size: 14px; margin: 5px 0;">${contentSnippet}</div>
+                <a href="#entry-${entry.id}" style="color: var(--primary-color); text-decoration: none; font-size: 12px;">View →</a>
+              </div>
+            `;
+          });
+          
+          activityContainer.innerHTML = html;
+        }
+        
+        // Arama işlevselliği
+        function setupSearch() {
+          const searchInput = document.querySelector('.search-input');
+          const searchButton = document.querySelector('.search-button');
+          
+          if (!searchInput || !searchButton) return;
+          
+          const performSearch = () => {
+            const query = searchInput.value.trim().toLowerCase();
+            if (query.length < 2) return;
+            
+            const results = allEntries.filter(entry => 
+              entry.content.toLowerCase().includes(query) || 
+              (entry.id && entry.id.toString().includes(query))
+            );
+            
+            // Arama sonuçlarını göster
+            displaySearchResults(results, query);
+          };
+          
+          searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+              performSearch();
+            }
+          });
+          
+          searchButton.addEventListener('click', performSearch);
+        }
+        
+        // Arama sonuçlarını göster
+        function displaySearchResults(results, query) {
+          const container = document.getElementById("entries");
+          const loadMoreBtn = document.getElementById("loadMoreBtn");
+          const entryCount = document.getElementById("entryCount");
+          
+          if (results.length === 0) {
+            container.innerHTML = `
+              <div style="text-align: center; padding: 30px; color: #90ee90;">
+                <i class="fas fa-search" style="font-size: 24px; margin-bottom: 10px;"></i>
+                <div>No results found for "${query}"</div>
+              </div>
+            `;
+            loadMoreBtn.style.display = 'none';
+            entryCount.textContent = `0 results for "${query}"`;
+            return;
+          }
+          
+          // Sonuçları göster
+          container.innerHTML = '';
+          entryCount.textContent = `${results.length} results for "${query}"`;
+          
+          results.forEach(entry => {
+            const entryElement = createEntryElement(entry);
+            container.appendChild(entryElement);
+          });
+          
+          loadMoreBtn.style.display = 'none';
+          
+          // Çeviri ikonlarını ekle
+          addTranslationIcons();
         }
 
         // 7. UYGULAMAYI BAŞLAT
