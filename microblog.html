@@ -76,6 +76,9 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
+            background-color: #000; /* Arka plan siyah yapıldı */
+            border-radius: 10px;
+            padding: 15px;
         }
         
         .main-content {
@@ -94,6 +97,9 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
+            background-color: #000; /* Arka plan siyah yapıldı */
+            border-radius: 10px;
+            padding: 15px;
         }
         
         /* Özel stiller */
@@ -319,7 +325,7 @@
             display: flex;
             justify-content: flex-end;
             gap: 10px;
-            margin-top: 10px;
+            margin-top: 25px; /* Butonlar aşağı kaydırıldı */
             flex-wrap: wrap;
         }
         
@@ -485,28 +491,37 @@
             border: none;
         }
 
-        /* Slider stilleri - GÜNCELLENDİ */
+        /* Slider stilleri - TAMAMEN YENİLENDİ */
         .image-slider {
             position: relative;
             margin: 15px 0;
             overflow: hidden;
             border-radius: 8px;
             border: 1px solid var(--border-color);
+            background-color: #000;
         }
         
         .slider-container {
             display: flex;
             transition: transform 0.5s ease;
+            height: 100%;
         }
         
         .slider-item {
             min-width: 100%;
             flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #000;
         }
         
         .slider-item img {
-            width: 100%;
+            max-width: 100%;
+            max-height: 400px;
+            width: auto;
             height: auto;
+            object-fit: contain;
             border-radius: 0;
             margin: 0;
             cursor: pointer;
@@ -520,10 +535,11 @@
             justify-content: space-between;
             transform: translateY(-50%);
             pointer-events: none;
+            z-index: 20;
         }
         
         .slider-btn {
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.7);
             border: none;
             color: var(--primary-color);
             font-size: 24px;
@@ -541,12 +557,13 @@
         }
         
         .slider-btn:hover {
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.9);
+            transform: scale(1.1);
         }
         
         .slider-dots {
             position: absolute;
-            bottom: 10px;
+            bottom: 15px;
             width: 100%;
             display: flex;
             justify-content: center;
@@ -555,8 +572,8 @@
         }
         
         .dot {
-            width: 10px;
-            height: 10px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.5);
             cursor: pointer;
@@ -566,6 +583,7 @@
         .dot.active {
             background: var(--primary-color);
             transform: scale(1.2);
+            box-shadow: 0 0 5px var(--primary-color);
         }
 
         /* Kaydırma çubukları için özel stiller */
@@ -587,6 +605,90 @@
 
         ::-webkit-scrollbar-thumb:hover {
             background: var(--secondary-color);
+        }
+
+        /* Sidebar widget stilleri */
+        .sidebar-widget {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .sidebar-widget h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            border: 1px solid rgba(0, 255, 0, 0.2);
+        }
+        
+        .stat-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #90ee90;
+        }
+        
+        .search-box {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px 0 0 5px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+        }
+        
+        .search-button {
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-left: none;
+            border-radius: 0 5px 5px 0;
+            background: var(--primary-color);
+            color: black;
+            cursor: pointer;
+        }
+        
+        .tag-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        
+        .tag {
+            padding: 5px 10px;
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            font-size: 12px;
+            color: #90ee90;
         }
 
         /* Mobil için stiller */
@@ -611,7 +713,7 @@
             
             .mobile-stats {
                 display: grid;
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(4, 1fr);
                 gap: 10px;
                 margin-bottom: 15px;
             }
@@ -686,7 +788,7 @@
             }
             
             .mobile-stats {
-                grid-template-columns: repeat(4, 1fr);
+                grid-template-columns: repeat(2, 1fr);
             }
             
             .mobile-stat-item {
@@ -699,6 +801,29 @@
             
             .mobile-stat-label {
                 font-size: 10px;
+            }
+            
+            .slider-item img {
+                max-height: 250px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .mobile-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .interaction-buttons {
+                gap: 5px;
+            }
+            
+            .daisy-like, .pine-pin, .share-entry, .copy-link {
+                padding: 5px 8px;
+                font-size: 12px;
+            }
+            
+            .slider-item img {
+                max-height: 200px;
             }
         }
     </style>
@@ -763,8 +888,8 @@
             <div class="sidebar-widget">
                 <h3><i class="fas fa-search"></i> Search</h3>
                 <div class="search-box">
-                    <input type="text" class="search-input" placeholder="Search entries...">
-                    <button class="search-button"><i class="fas fa-search"></i></button>
+                    <input type="text" class="search-input" placeholder="Search entries..." id="desktop-search-input">
+                    <button class="search-button" id="desktop-search-btn"><i class="fas fa-search"></i></button>
                 </div>
                 <div class="tag-cloud">
                     <span class="tag">#cybersecurity</span>
@@ -818,8 +943,8 @@
                     </div>
                     
                     <div class="mobile-search">
-                        <input type="text" class="search-input" placeholder="Search entries..." style="flex: 1;">
-                        <button class="search-button"><i class="fas fa-search"></i></button>
+                        <input type="text" class="search-input" placeholder="Search entries..." id="mobile-search-input">
+                        <button class="search-button" id="mobile-search-btn"><i class="fas fa-search"></i></button>
                     </div>
                 </div>
             </section>
@@ -858,7 +983,7 @@
 
     <footer style="text-align: center; padding: 20px; font-size: 14px; color: white; margin-top: 50px; position: relative; z-index: 1;">
         <hr style="margin-bottom: 10px; border-color: var(--primary-color);" />
-        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.4.0 | July 2025</p>
+        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.4.1 | July 2025</p>
     </footer>
 
     <!-- Sarı Nokta (IP Göstergesi) -->
@@ -1086,7 +1211,7 @@
           return content;
         }
         
-        // Resim slider'ı oluşturma fonksiyonu - GÜNCELLENDİ
+        // Resim slider'ı oluşturma fonksiyonu - TAMAMEN YENİLENDİ
         function createImageSlider(images) {
           const sliderId = 'slider-' + Math.random().toString(36).substr(2, 9);
           
@@ -1120,7 +1245,7 @@
           return sliderHtml;
         }
 
-        // Slider başlatma fonksiyonu - GÜNCELLENDİ
+        // Slider başlatma fonksiyonu - TAMAMEN YENİLENDİ
         function initSlider(sliderId) {
           const slider = document.getElementById(sliderId);
           if (!slider) return;
@@ -1169,19 +1294,6 @@
               updateSlider();
             });
           });
-          
-          // Otomatik kaydırma (isteğe bağlı)
-          // let autoSlide = setInterval(nextSlide, 5000);
-          
-          // Slider üzerine gelince otomatik kaydırmayı durdur
-          /* slider.addEventListener('mouseenter', () => {
-            clearInterval(autoSlide);
-          });
-          
-          // Slider'dan çıkınca otomatik kaydırmayı yeniden başlat
-          slider.addEventListener('mouseleave', () => {
-            autoSlide = setInterval(nextSlide, 5000);
-          }); */
         }
 
         // Tüm slider'ları başlat
@@ -1317,18 +1429,18 @@
             <div class="content">${formattedContent}</div>
             <div class="interaction-buttons">
               <div class="daisy-like" data-entry-id="${entry.id}">
-                <img src="/IMAGES/daisy.svg" class="daisy-icon" alt="Beğen" />
+                <i class="fas fa-heart daisy-icon"></i>
                 <span class="like-count">${likeCount}</span>
               </div>
               <div class="pine-pin" data-entry-id="${entry.id}">
-                <img src="/IMAGES/pine.svg" class="pine-icon" alt="Pinle" />
+                <i class="fas fa-thumbtack pine-icon"></i>
                 <span class="pin-count">${pinCount}</span>
               </div>
               <div class="share-entry" data-entry-id="${entry.id}">
-                <img src="/IMAGES/share.svg" class="share-icon" alt="Paylaş" />
+                <i class="fas fa-share-alt share-icon"></i>
               </div>
               <div class="copy-link" data-entry-id="${entry.id}">
-                <img src="/IMAGES/link.svg" class="link-icon" alt="Linki Kopyala" />
+                <i class="fas fa-link link-icon"></i>
               </div>
               <div class="view-count">
                 <i class="fas fa-eye"></i> ${viewCount}
@@ -1616,7 +1728,7 @@
           }
         }
 
-        // 5. YENİ ENTRY KONTROLÜ ve BİLDİRİM - GÜNCELLENDİ
+        // 5. YENİ ENTRY KONTROLÜ ve BİLDİRİM
         function startPolling() {
           // 30 saniyede bir yeni entry kontrol et
           checkInterval = setInterval(() => {
@@ -1939,52 +2051,68 @@
           activityContainer.innerHTML = html;
         }
         
-        // Arama işlevselliği
+        // Arama işlevselliği - GÜNCELLENDİ (ID araması düzeltildi)
         function setupSearch() {
-          const searchInput = document.querySelector('.search-input');
-          const searchButton = document.querySelector('.search-button');
-          const mobileSearchInput = document.querySelector('.mobile-search .search-input');
-          const mobileSearchButton = document.querySelector('.mobile-search .search-button');
+          const searchInput = document.getElementById('desktop-search-input');
+          const searchButton = document.getElementById('desktop-search-btn');
+          const mobileSearchInput = document.getElementById('mobile-search-input');
+          const mobileSearchButton = document.getElementById('mobile-search-btn');
           
           const performSearch = (query) => {
-            if (query.length < 2) return;
+            if (query.length < 1) {
+              // Arama kutusu boşsa tüm entry'leri göster
+              const container = document.getElementById("entries");
+              container.innerHTML = '';
+              displayEntries(0, entriesPerPage);
+              document.getElementById('loadMoreBtn').style.display = 'block';
+              document.getElementById('entryCount').textContent = `Total ${allEntries.length} entries loaded`;
+              return;
+            }
             
-            const results = allEntries.filter(entry => 
-              entry.content.toLowerCase().includes(query) || 
-              (entry.id && entry.id.toString().includes(query))
-            );
+            // Sayısal bir değer mi kontrol et (ID araması)
+            const isIdSearch = !isNaN(query) && query.trim() !== '';
+            
+            const results = allEntries.filter(entry => {
+              if (isIdSearch) {
+                // ID araması: tam eşleşme
+                return entry.id.toString() === query;
+              } else {
+                // Metin araması: içerikte ara
+                return entry.content.toLowerCase().includes(query.toLowerCase());
+              }
+            });
             
             // Arama sonuçlarını göster
-            displaySearchResults(results, query);
+            displaySearchResults(results, query, isIdSearch);
           };
           
           if (searchInput && searchButton) {
             searchInput.addEventListener('keypress', (e) => {
               if (e.key === 'Enter') {
-                performSearch(searchInput.value.trim().toLowerCase());
+                performSearch(searchInput.value.trim());
               }
             });
             
             searchButton.addEventListener('click', () => {
-              performSearch(searchInput.value.trim().toLowerCase());
+              performSearch(searchInput.value.trim());
             });
           }
           
           if (mobileSearchInput && mobileSearchButton) {
             mobileSearchInput.addEventListener('keypress', (e) => {
               if (e.key === 'Enter') {
-                performSearch(mobileSearchInput.value.trim().toLowerCase());
+                performSearch(mobileSearchInput.value.trim());
               }
             });
             
             mobileSearchButton.addEventListener('click', () => {
-              performSearch(mobileSearchInput.value.trim().toLowerCase());
+              performSearch(mobileSearchInput.value.trim());
             });
           }
         }
         
-        // Arama sonuçlarını göster
-        function displaySearchResults(results, query) {
+        // Arama sonuçlarını göster - GÜNCELLENDİ
+        function displaySearchResults(results, query, isIdSearch) {
           const container = document.getElementById("entries");
           const loadMoreBtn = document.getElementById("loadMoreBtn");
           const entryCount = document.getElementById("entryCount");
@@ -1994,6 +2122,7 @@
               <div style="text-align: center; padding: 30px; color: #90ee90;">
                 <i class="fas fa-search" style="font-size: 24px; margin-bottom: 10px;"></i>
                 <div>No results found for "${query}"</div>
+                ${isIdSearch ? `<div style="margin-top: 10px; font-size: 14px;">Make sure you entered the correct ID number.</div>` : ''}
               </div>
             `;
             loadMoreBtn.style.display = 'none';
@@ -2003,12 +2132,48 @@
           
           // Sonuçları göster
           container.innerHTML = '';
-          entryCount.textContent = `${results.length} results for "${query}"`;
+          entryCount.textContent = `${results.length} result${results.length !== 1 ? 's' : ''} for "${query}"`;
           
-          results.forEach(entry => {
-            const entryElement = createEntryElement(entry);
-            container.appendChild(entryElement);
-          });
+          // ID aramasıysa ve sadece 1 sonuç varsa, grubuyla birlikte göster
+          if (isIdSearch && results.length === 1) {
+            const entry = results[0];
+            const parentId = entry.references && entry.references.length > 0 ? entry.references[0] : null;
+            
+            if (parentId) {
+              // Parent entry'yi bul
+              const parentEntry = allEntries.find(e => e.id === parentId);
+              if (parentEntry) {
+                // Parent ve child'ı birlikte göster
+                const groupDiv = document.createElement("div");
+                groupDiv.className = "entry-group";
+                groupDiv.id = `group-${parentEntry.id}`;
+                
+                // Parent entry'yi ekle
+                const parentElement = createEntryElement(parentEntry, 0);
+                groupDiv.appendChild(parentElement);
+                
+                // Child entry'leri ekle (sadece aranan child'ı)
+                const childElement = createEntryElement(entry, 1);
+                groupDiv.appendChild(childElement);
+                
+                container.appendChild(groupDiv);
+              } else {
+                // Parent bulunamadıysa sadece entry'yi göster
+                const entryElement = createEntryElement(entry);
+                container.appendChild(entryElement);
+              }
+            } else {
+              // Parent yoksa sadece entry'yi göster
+              const entryElement = createEntryElement(entry);
+              container.appendChild(entryElement);
+            }
+          } else {
+            // Çoklu sonuçlar veya metin araması
+            results.forEach(entry => {
+              const entryElement = createEntryElement(entry);
+              container.appendChild(entryElement);
+            });
+          }
           
           loadMoreBtn.style.display = 'none';
           
@@ -2024,7 +2189,51 @@
     </script>
 
     <!-- Matrix Arka Plan Script'i -->
-    <script src="/JAVASCRIPT/matrix.js"></script>
+    <script>
+        // Matrix efekti için basit bir implementasyon
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const letters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+        const lettersArray = letters.split('');
+
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+
+        const drops = [];
+        for (let i = 0; i < columns; i++) {
+            drops[i] = 1;
+        }
+
+        function draw() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#0F0';
+            ctx.font = `${fontSize}px monospace`;
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = lettersArray[Math.floor(Math.random() * lettersArray.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+
+                drops[i]++;
+            }
+        }
+
+        setInterval(draw, 33);
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
     
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-0WNL3VLY3F"></script>
