@@ -417,6 +417,63 @@
             border: none;
         }
 
+        /* Yeni bildirim stilleri */
+        .new-entry-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 100, 0, 0.9);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid limegreen;
+            z-index: 1000;
+            max-width: 300px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+            animation: slideIn 0.5s ease;
+            cursor: pointer;
+        }
+        
+        .new-entry-notification:hover {
+            background: rgba(0, 130, 0, 0.95);
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+        
+        .new-entries-badge {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: red;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 999;
+            cursor: pointer;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
         /* Mobil için stiller */
         @media (max-width: 768px) {
             .microblog-container {
@@ -450,6 +507,18 @@
                 top: 10px;
                 right: 20px;
                 font-size: 30px;
+            }
+            
+            .new-entry-notification {
+                bottom: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
+            
+            .new-entries-badge {
+                top: 80px;
+                right: 10px;
             }
         }
     </style>
@@ -618,6 +687,10 @@
         const entriesPerPage = 20;
         let latestEntryId = null;
         let parentOfLatestId = null;
+        let checkInterval;
+        let newestEntryIdFromServer = null;
+        let newEntriesCount = 0;
+        let currentScrollPosition = 0;
 
         // 2. PROXY HELPER FONKSİYONU
         async function fetchViaProxy(path, method = 'GET', body = null) {
@@ -761,6 +834,7 @@
         function createEntryElement(entry, depth = 0) {
           const entryDiv = document.createElement("div");
           entryDiv.className = `entry ${depth > 0 ? 'child-entry' : ''}`;
+          entryDiv.id = `entry-${entry.id}`;
           
           if (entry.id === latestEntryId) {
             entryDiv.classList.add('latest-entry');
@@ -882,6 +956,7 @@
             // Grup container'ı oluştur
             const groupDiv = document.createElement("div");
             groupDiv.className = "entry-group";
+            groupDiv.id = `group-${group.parent.id}`;
             
             // Parent entry'yi ekle
             const parentElement = createEntryElement(group.parent, 0);
@@ -907,6 +982,10 @@
           if (displayedEntries >= groupedEntries.length) {
             loadMoreBtn.style.display = 'none';
           }
+          
+          // Daha fazla yükle butonunun metnini güncelle
+          const remaining = groupedEntries.length - displayedEntries;
+          loadMoreBtn.textContent = `More Entry (${Math.min(remaining, entriesPerPage)}) ${remaining > 0 ? '' : ''}`;
         }
 
         // 4. INTERACTION FONKSİYONLARI
@@ -982,40 +1061,121 @@
           }
         }
 
-        // 5. BAŞLANGIÇ FONKSİYONU
+        // 5. YENİ ENTRY KONTROLÜ ve BİLDİRİM
+        function startPolling() {
+          // 30 saniyede bir yeni entry kontrol et
+          checkInterval = setInterval(() => {
+            checkForNewEntries();
+          }, 30000);
+        }
+
+        async function checkForNewEntries() {
+          try {
+            const entriesData = await fetchViaProxy('/b/68933248ae596e708fc2fbbc/latest');
+            const serverEntries = entriesData.records || entriesData;
+            
+            // Sunucudaki en yeni entry'nin ID'sini bul
+            const newestServerEntry = serverEntries.reduce((newest, entry) => {
+              return (!newest || entry.id > newest.id) ? entry : newest;
+            }, { id: 0 });
+            
+            // İstemcideki en yeni entry ID'si
+            const clientNewestEntryId = allEntries.length > 0 ? Math.max(...allEntries.map(e => e.id)) : 0;
+            
+            // Sunucuda daha yeni bir entry var mı?
+            if (newestServerEntry.id > clientNewestEntryId) {
+              // Yeni entry sayısını hesapla
+              const newEntryCount = serverEntries.filter(entry => entry.id > clientNewestEntryId).length;
+              
+              // Bildirim göster
+              showNewEntriesNotification(newEntryCount);
+              newEntriesCount = newEntryCount;
+              
+              // Sunucudaki en yeni entry ID'sini sakla
+              newestEntryIdFromServer = newestServerEntry.id;
+            }
+          } catch (error) {
+            console.error('Yeni entry kontrol hatası:', error);
+          }
+        }
+
+        function showNewEntriesNotification(count) {
+          // Önceki bildirim varsa kaldır
+          const existingNotification = document.getElementById('new-entries-notification');
+          if (existingNotification) {
+            existingNotification.remove();
+          }
+          
+          // Bildirim oluştur
+          const notification = document.createElement('div');
+          notification.id = 'new-entries-notification';
+          notification.className = 'new-entry-notification';
+          notification.innerHTML = `
+            <div style="margin-bottom: 10px; font-weight: bold;">
+              <i class="fa-solid fa-bell"></i> ${count} New Entries!
+            </div>
+            <div style="font-size: 14px; margin-bottom: 10px;">
+              Click to refresh and view new entries.
+            </div>
+          `;
+          
+          notification.addEventListener('click', () => {
+            // Sayfayı yenile
+            location.reload();
+          });
+          
+          document.body.appendChild(notification);
+          
+          // 10 saniye sonra bildirimi otomatik kaldır
+          setTimeout(() => {
+            if (notification.parentNode) {
+              notification.style.animation = 'slideOut 0.5s ease';
+              setTimeout(() => {
+                if (notification.parentNode) {
+                  notification.parentNode.removeChild(notification);
+                }
+              }, 500);
+            }
+          }, 10000);
+        }
+
+        // 6. UYGULAMAYI BAŞLAT
         async function initializeApp() {
           try {
             await loadInteractions();
             const entriesData = await fetchViaProxy('/b/68933248ae596e708fc2fbbc/latest');
             allEntries = entriesData.records || entriesData;
             
-            // Tüm entry'leri tarihe göre yeniden eskiye sırala
             allEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
             
-            // En son eklenen entry'nin ID'sini bul
             if (allEntries.length > 0) {
               latestEntryId = allEntries[0].id;
               
-              // En son eklenen entry'nin parent'ını bul
               const latestEntry = allEntries.find(entry => entry.id === latestEntryId);
               if (latestEntry && latestEntry.references && latestEntry.references.length > 0) {
                 parentOfLatestId = latestEntry.references[0];
               }
             }
             
-            // Entry'leri grupla
             groupedEntries = groupEntries(allEntries);
             
-            // Görsel modalını kur
             setupImageModal();
-            
-            // İlk 20 grubu göster
             displayEntries(0, entriesPerPage);
             
-            // Daha fazla yükle butonuna event listener ekle
             document.getElementById('loadMoreBtn').addEventListener('click', () => {
+              // Mevcut scroll pozisyonunu kaydet
+              currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
               displayEntries(displayedEntries, entriesPerPage);
+              
+              // Yeni içerik yüklendikten sonra scroll pozisyonunu koru
+              setTimeout(() => {
+                window.scrollTo(0, currentScrollPosition);
+              }, 100);
             });
+            
+            // Polling'i başlat
+            startPolling();
+            
           } catch (error) {
             console.error("Initialization error:", error);
             try {
@@ -1036,14 +1196,21 @@
               
               groupedEntries = groupEntries(allEntries);
               
-              // Görsel modalını kur
               setupImageModal();
               
               displayEntries(0, entriesPerPage);
               
               document.getElementById('loadMoreBtn').addEventListener('click', () => {
+                currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
                 displayEntries(displayedEntries, entriesPerPage);
+                
+                setTimeout(() => {
+                  window.scrollTo(0, currentScrollPosition);
+                }, 100);
               });
+
+              // Fallback: polling'i başlat
+              startPolling();
             } catch (fallbackError) {
               console.error("Fallback failed:", fallbackError);
               document.getElementById("entries").innerHTML = 
@@ -1052,7 +1219,7 @@
           }
         }
 
-        // 6. UYGULAMAYI BAŞLAT
+        // 7. UYGULAMAYI BAŞLAT
         document.addEventListener("DOMContentLoaded", initializeApp);
     </script>
 
