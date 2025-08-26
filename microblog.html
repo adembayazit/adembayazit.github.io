@@ -316,25 +316,24 @@
 
         /* Daisy ve Pine ikonları için yuvarlak animasyonlu tasarım */
         .interaction-buttons {
-            width: 45px;
-            height: 35px;
             display: flex;
             justify-content: flex-end;
             gap: 10px;
-            bottom: -47px;
             margin-top: 10px;
+            flex-wrap: wrap;
         }
         
-        .daisy-like, .pine-pin {
+        .daisy-like, .pine-pin, .share-entry, .copy-link {
             display: flex;
             align-items: center;
             gap: 5px;
-            padding:5px 20px;
+            padding: 5px 10px;
             border-radius: 20px;
             background: rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(0, 255, 0, 0.3);
             cursor: pointer;
             transition: all 0.3s;
+            font-size: 14px;
         }
         
         .daisy-like:hover {
@@ -347,12 +346,17 @@
             transform: translateY(-2px);
         }
         
-        .daisy-icon, .pine-icon {
-            width: 30px;
-            height: 30px;
+        .share-entry:hover, .copy-link:hover {
+            background: rgba(128, 0, 128, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .daisy-icon, .pine-icon, .share-icon, .link-icon {
+            width: 20px;
+            height: 20px;
             transition: all 0.3s;
             border-radius: 50%;
-            padding: 5px;
+            padding: 3px;
             background: rgba(0, 0, 0, 0.3);
         }
         
@@ -368,7 +372,13 @@
             box-shadow: 0 0 10px rgba(30, 144, 255, 0.5);
         }
         
-        .like-count, .pin-count {
+        .share-entry:hover .share-icon, .copy-link:hover .link-icon {
+            transform: scale(1.2);
+            color: #9370db;
+            box-shadow: 0 0 10px rgba(147, 112, 219, 0.5);
+        }
+        
+        .like-count, .pin-count, .view-count {
             font-size: 14px;
             min-width: 20px;
             text-align: center;
@@ -475,227 +485,7 @@
             border: none;
         }
 
-        /* Yeni bildirim stilleri - SOL TARAF İÇİN GÜNCELLENDİ */
-        .new-entry-notification {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: #008000; /* Green background */
-            color: white;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid var(--primary-color);
-            z-index: 1000;
-            max-width: 300px;
-            backdrop-filter: blur(5px);
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
-            animation: slideInLeft 0.5s ease;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .new-entry-notification:hover {
-            background: #006400; /* Darker green on hover */
-        }
-        
-        .new-entry-notification.minimized {
-            max-width: 40px;
-            max-height: 40px;
-            padding: 5px;
-            animation: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            background: none;
-            border: none;
-        }
-        
-        .new-entry-notification.minimized .notification-content {
-            display: none;
-        }
-        
-        .new-entry-notification.minimized .minimize-btn {
-            display: none;
-        }
-        
-        .new-entry-notification.minimized .notification-bell {
-            display: block;
-            position: relative;
-        }
-        
-        .notification-bell {
-            display: none;
-            position: relative;
-        }
-        
-        .notification-count {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: red;
-            color: white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 7px;
-            font-weight: bold;
-        }
-        
-        .minimize-btn {
-            position: absolute;
-            top: 5px;
-            left: 5px; /* Sağdan sola taşındı */
-            background: transparent;
-            border: none;
-            color: white;
-            cursor: pointer;
-            font-size: 16px;
-            padding: 0;
-            width: 20px;
-            height: 20px;
-            border-radius: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .minimize-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-        
-        @keyframes slideInLeft {
-            from { transform: translateX(-100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        
-        @keyframes slideOutLeft {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(-100%); opacity: 0; }
-        }
-        
-        .new-entries-badge {
-            position: fixed;
-            top: 100px;
-            left: 20px; /* Sağdan sola taşındı */
-            background: red;
-            color: white;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-            z-index: 999;
-            cursor: pointer;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-        
-        /* Sidebar stilleri */
-        .sidebar-widget {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);
-            backdrop-filter: blur(5px);
-        }
-        
-        .sidebar-widget h3 {
-            margin-top: 0;
-            color: var(--primary-color);
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        
-        .stat-item {
-            text-align: center;
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 8px;
-            border: 1px solid rgba(0, 255, 0, 0.2);
-        }
-        
-        .stat-value {
-            font-size: 18px;
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-        
-        .stat-label {
-            font-size: 12px;
-            color: #90ee90;
-        }
-        
-        .search-box {
-            display: flex;
-            margin-bottom: 15px;
-        }
-        
-        .search-input {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 5px 0 0 5px;
-            background: rgba(0, 0, 0, 0.5);
-            color: white;
-        }
-        
-        .search-button {
-            padding: 10px 15px;
-            background: var(--primary-color);
-            color: black;
-            border: none;
-            border-radius: 0 5px 5px 0;
-            cursor: pointer;
-        }
-        
-        .tag-cloud {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 15px;
-        }
-        
-        .tag {
-            padding: 5px 10px;
-            background: rgba(0, 255, 0, 0.1);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            font-size: 12px;
-            color: var(--primary-color);
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .tag:hover {
-            background: rgba(0, 255, 0, 0.3);
-            transform: translateY(-2px);
-        }
-        
-        /* Slider stilleri */
+        /* Slider stilleri - GÜNCELLENDİ */
         .image-slider {
             position: relative;
             margin: 15px 0;
@@ -709,8 +499,13 @@
             transition: transform 0.5s ease;
         }
         
-        .slider-image {
+        .slider-item {
             min-width: 100%;
+            flex-shrink: 0;
+        }
+        
+        .slider-item img {
+            width: 100%;
             height: auto;
             border-radius: 0;
             margin: 0;
@@ -742,6 +537,7 @@
             justify-content: center;
             margin: 0 10px;
             transition: all 0.3s;
+            z-index: 10;
         }
         
         .slider-btn:hover {
@@ -755,6 +551,7 @@
             display: flex;
             justify-content: center;
             gap: 8px;
+            z-index: 10;
         }
         
         .dot {
@@ -771,6 +568,27 @@
             transform: scale(1.2);
         }
 
+        /* Kaydırma çubukları için özel stiller */
+        ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 10px;
+            border: 2px solid var(--main-bg-color);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-color);
+        }
+
         /* Mobil için stiller */
         @media (max-width: 1200px) {
             .sidebar, .right-sidebar {
@@ -783,6 +601,49 @@
             
             .main-content {
                 max-width: 100%;
+            }
+            
+            /* Mobil için istatistik ve arama bölümü */
+            .mobile-widgets {
+                display: block;
+                margin-top: 20px;
+            }
+            
+            .mobile-stats {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+                margin-bottom: 15px;
+            }
+            
+            .mobile-stat-item {
+                text-align: center;
+                padding: 10px;
+                background: var(--card-bg);
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+            }
+            
+            .mobile-stat-value {
+                font-size: 16px;
+                font-weight: bold;
+                color: var(--primary-color);
+            }
+            
+            .mobile-stat-label {
+                font-size: 12px;
+                color: #90ee90;
+            }
+            
+            .mobile-search {
+                display: flex;
+                margin-bottom: 15px;
+            }
+        }
+        
+        @media (min-width: 1201px) {
+            .mobile-widgets {
+                display: none;
             }
         }
         
@@ -820,30 +681,24 @@
                 font-size: 30px;
             }
             
-            .new-entry-notification {
-                bottom: 10px;
-                left: 10px;
-                right: 10px;
-                max-width: none;
+            .interaction-buttons {
+                justify-content: center;
             }
             
-            .new-entries-badge {
-                top: 80px;
-                left: 10px; /* Sağdan sola taşındı */
+            .mobile-stats {
+                grid-template-columns: repeat(4, 1fr);
             }
             
-            .new-entry-notification.minimized {
-                bottom: 15px;
-                left: 10px; /* Sağdan sola taşındı */
-                right: auto;
+            .mobile-stat-item {
+                padding: 8px;
             }
             
-            .stats-grid {
-                grid-template-columns: 1fr;
+            .mobile-stat-value {
+                font-size: 14px;
             }
             
-            .sidebar-widget {
-                padding: 15px;
+            .mobile-stat-label {
+                font-size: 10px;
             }
         }
     </style>
@@ -939,6 +794,33 @@
                 <div class="loading" id="loading">Loading...</div>
                 <div class="load-more-container">
                     <button id="loadMoreBtn" class="load-more-btn">More Entry (20) <span class='bx bx-chevron-down'></span></button>
+                </div>
+                
+                <!-- Mobil için istatistik ve arama -->
+                <div class="mobile-widgets">
+                    <div class="mobile-stats">
+                        <div class="mobile-stat-item">
+                            <div class="mobile-stat-value" id="mobile-total-entries">0</div>
+                            <div class="mobile-stat-label">Entries</div>
+                        </div>
+                        <div class="mobile-stat-item">
+                            <div class="mobile-stat-value" id="mobile-total-likes">0</div>
+                            <div class="mobile-stat-label">Likes</div>
+                        </div>
+                        <div class="mobile-stat-item">
+                            <div class="mobile-stat-value" id="mobile-total-pins">0</div>
+                            <div class="mobile-stat-label">Pins</div>
+                        </div>
+                        <div class="mobile-stat-item">
+                            <div class="mobile-stat-value" id="mobile-this-month">0</div>
+                            <div class="mobile-stat-label">This Month</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mobile-search">
+                        <input type="text" class="search-input" placeholder="Search entries..." style="flex: 1;">
+                        <button class="search-button"><i class="fas fa-search"></i></button>
+                    </div>
                 </div>
             </section>
         </main>
@@ -1088,6 +970,12 @@
           isUpdating: false
         };
 
+        const viewsCache = {
+          data: {},
+          lastUpdated: 0,
+          isUpdating: false
+        };
+
         let allEntries = [];
         let groupedEntries = [];
         let displayedEntries = 0;
@@ -1129,7 +1017,8 @@
             const result = await fetchViaProxy('/b/68862fd97b4b8670d8a81945/latest');
             likesCache.data = result.likes || {};
             pinsCache.data = result.pins || {};
-            likesCache.lastUpdated = pinsCache.lastUpdated = Date.now();
+            viewsCache.data = result.views || {};
+            likesCache.lastUpdated = pinsCache.lastUpdated = viewsCache.lastUpdated = Date.now();
             
             // İstatistikleri güncelle
             updateStatistics();
@@ -1138,8 +1027,10 @@
             try {
               const localLikes = localStorage.getItem('entryLikes') || '{}';
               const localPins = localStorage.getItem('entryPins') || '{}';
+              const localViews = localStorage.getItem('entryViews') || '{}';
               likesCache.data = JSON.parse(localLikes);
               pinsCache.data = JSON.parse(localPins);
+              viewsCache.data = JSON.parse(localViews);
               updateStatistics();
             } catch (parseError) {
               console.Error('Local storage parse error:', parseError);
@@ -1151,10 +1042,16 @@
         function updateStatistics() {
           const totalLikes = Object.values(likesCache.data).reduce((sum, count) => sum + count, 0);
           const totalPins = Object.values(pinsCache.data).reduce((sum, count) => sum + count, 0);
+          const totalViews = Object.values(viewsCache.data).reduce((sum, count) => sum + count, 0);
           
           document.getElementById('total-entries').textContent = allEntries.length;
           document.getElementById('total-likes').textContent = totalLikes;
           document.getElementById('total-pins').textContent = totalPins;
+          
+          // Mobil istatistikleri güncelle
+          document.getElementById('mobile-total-entries').textContent = allEntries.length;
+          document.getElementById('mobile-total-likes').textContent = totalLikes;
+          document.getElementById('mobile-total-pins').textContent = totalPins;
           
           // Bu ayın entry sayısını hesapla
           const thisMonth = new Date().getMonth();
@@ -1165,6 +1062,7 @@
           }).length;
           
           document.getElementById('this-month').textContent = thisMonthEntries;
+          document.getElementById('mobile-this-month').textContent = thisMonthEntries;
         }
 
         // HTML içeriğini düzgün işlemek için yardımcı fonksiyon
@@ -1188,7 +1086,7 @@
           return content;
         }
         
-        // Resim slider'ı oluşturma fonksiyonu
+        // Resim slider'ı oluşturma fonksiyonu - GÜNCELLENDİ
         function createImageSlider(images) {
           const sliderId = 'slider-' + Math.random().toString(36).substr(2, 9);
           
@@ -1219,15 +1117,10 @@
             </div>
           `;
           
-          // Slider'ı başlatmak için bir fonksiyon ekle
-          setTimeout(() => {
-            initSlider(sliderId);
-          }, 100);
-          
           return sliderHtml;
         }
-        
-        // Slider başlatma fonksiyonu
+
+        // Slider başlatma fonksiyonu - GÜNCELLENDİ
         function initSlider(sliderId) {
           const slider = document.getElementById(sliderId);
           if (!slider) return;
@@ -1237,6 +1130,8 @@
           const prevBtn = slider.querySelector('.prev-btn');
           const nextBtn = slider.querySelector('.next-btn');
           const dots = slider.querySelectorAll('.dot');
+          
+          if (!container || items.length === 0) return;
           
           let currentIndex = 0;
           const totalItems = items.length;
@@ -1287,6 +1182,14 @@
           slider.addEventListener('mouseleave', () => {
             autoSlide = setInterval(nextSlide, 5000);
           }); */
+        }
+
+        // Tüm slider'ları başlat
+        function initAllSliders() {
+          const sliders = document.querySelectorAll('.image-slider');
+          sliders.forEach(slider => {
+            initSlider(slider.id);
+          });
         }
 
         // Görsel modal işlevselliği
@@ -1402,6 +1305,7 @@
 
           const likeCount = likesCache.data[entry.id] || 0;
           const pinCount = pinsCache.data[entry.id] || 0;
+          const viewCount = viewsCache.data[entry.id] || 0;
 
           const formattedContent = formatContent(entry.content);
 
@@ -1420,6 +1324,15 @@
                 <img src="/IMAGES/pine.svg" class="pine-icon" alt="Pinle" />
                 <span class="pin-count">${pinCount}</span>
               </div>
+              <div class="share-entry" data-entry-id="${entry.id}">
+                <img src="/IMAGES/share.svg" class="share-icon" alt="Paylaş" />
+              </div>
+              <div class="copy-link" data-entry-id="${entry.id}">
+                <img src="/IMAGES/link.svg" class="link-icon" alt="Linki Kopyala" />
+              </div>
+              <div class="view-count">
+                <i class="fas fa-eye"></i> ${viewCount}
+              </div>
             </div>
           `;
 
@@ -1428,6 +1341,15 @@
 
           const pinIcon = entryDiv.querySelector(".pine-pin");
           pinIcon?.addEventListener("click", () => handlePinClick(entry.id, entryDiv));
+
+          const shareIcon = entryDiv.querySelector(".share-entry");
+          shareIcon?.addEventListener("click", () => handleShareClick(entry.id));
+
+          const copyLinkIcon = entryDiv.querySelector(".copy-link");
+          copyLinkIcon?.addEventListener("click", () => handleCopyLinkClick(entry.id));
+
+          // Görüntülenme sayısını güncelle
+          updateViewCount(entry.id);
 
           return entryDiv;
         }
@@ -1524,6 +1446,9 @@
           // Çeviri ikonlarını ekle
           addTranslationIcons();
           
+          // Slider'ları başlat
+          setTimeout(initAllSliders, 100);
+          
           loadingElement.style.display = 'none';
           
           if (displayedEntries >= groupedEntries.length) {
@@ -1551,7 +1476,7 @@
             likesCache.data[entryId] = currentCount + 1;
             localStorage.setItem('entryLikes', JSON.stringify(likesCache.data));
             
-            await updateInteractionsOnServer(entryId, currentCount + 1, null);
+            await updateInteractionsOnServer(entryId, currentCount + 1, null, null);
             likesCache.lastUpdated = Date.now();
             
             // İstatistikleri güncelle
@@ -1583,7 +1508,7 @@
             pinsCache.data[entryId] = currentCount + 1;
             localStorage.setItem('entryPins', JSON.stringify(pinsCache.data));
             
-            await updateInteractionsOnServer(entryId, null, currentCount + 1);
+            await updateInteractionsOnServer(entryId, null, currentCount + 1, null);
             pinsCache.lastUpdated = Date.now();
             
             // İstatistikleri güncelle
@@ -1600,14 +1525,91 @@
           }
         }
 
-        async function updateInteractionsOnServer(entryId, newLikeCount, newPinCount) {
+        async function updateViewCount(entryId) {
+          if (viewsCache.isUpdating) return;
+          
+          // Aynı oturumda aynı entry için birden fazla görüntülenme saymasın
+          const viewedEntries = JSON.parse(sessionStorage.getItem('viewedEntries') || '{}');
+          if (viewedEntries[entryId]) return;
+          
+          viewsCache.isUpdating = true;
+          const currentCount = viewsCache.data[entryId] || 0;
+
+          try {
+            viewsCache.data[entryId] = currentCount + 1;
+            localStorage.setItem('entryViews', JSON.stringify(viewsCache.data));
+            
+            // Oturumda bu entry'nin görüntülendiğini işaretle
+            viewedEntries[entryId] = true;
+            sessionStorage.setItem('viewedEntries', JSON.stringify(viewedEntries));
+            
+            await updateInteractionsOnServer(entryId, null, null, currentCount + 1);
+            viewsCache.lastUpdated = Date.now();
+            
+            // İstatistikleri güncelle
+            updateStatistics();
+            
+            // Görüntülenme sayısını UI'da güncelle
+            const viewCountElement = document.querySelector(`#entry-${entryId} .view-count`);
+            if (viewCountElement) {
+              viewCountElement.innerHTML = `<i class="fas fa-eye"></i> ${currentCount + 1}`;
+            }
+          } catch (error) {
+            console.error('View count update failed:', error);
+            viewsCache.data[entryId] = currentCount;
+          } finally {
+            viewsCache.isUpdating = false;
+          }
+        }
+
+        async function handleShareClick(entryId) {
+          const entryUrl = `${window.location.origin}${window.location.pathname}#entry-${entryId}`;
+          
+          if (navigator.share) {
+            try {
+              await navigator.share({
+                title: 'Adem Bayazıt - LadyBuG Entry',
+                text: 'Bu entry\'i paylaşmak istiyor musunuz?',
+                url: entryUrl,
+              });
+            } catch (error) {
+              console.log('Paylaşım iptal edildi veya hata oluştu:', error);
+            }
+          } else {
+            // Web Share API desteklenmiyorsa, linki kopyala
+            await handleCopyLinkClick(entryId);
+          }
+        }
+
+        async function handleCopyLinkClick(entryId) {
+          const entryUrl = `${window.location.origin}${window.location.pathname}#entry-${entryId}`;
+          
+          try {
+            await navigator.clipboard.writeText(entryUrl);
+            alert('Link panoya kopyalandı!');
+          } catch (error) {
+            console.error('Link kopyalanırken hata oluştu:', error);
+            // Fallback için
+            const textArea = document.createElement('textarea');
+            textArea.value = entryUrl;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            alert('Link panoya kopyalandı!');
+          }
+        }
+
+        async function updateInteractionsOnServer(entryId, newLikeCount, newPinCount, newViewCount) {
           const updatedLikes = newLikeCount !== null ? { ...likesCache.data, [entryId]: newLikeCount } : likesCache.data;
           const updatedPins = newPinCount !== null ? { ...pinsCache.data, [entryId]: newPinCount } : pinsCache.data;
+          const updatedViews = newViewCount !== null ? { ...viewsCache.data, [entryId]: newViewCount } : viewsCache.data;
 
           try {
             await fetchViaProxy('/b/68862fd97b4b8670d8a81945', 'PUT', {
               likes: updatedLikes,
-              pins: updatedPins
+              pins: updatedPins,
+              views: updatedViews
             });
           } catch (error) {
             throw new Error('Failed to update data on server');
@@ -1941,11 +1943,10 @@
         function setupSearch() {
           const searchInput = document.querySelector('.search-input');
           const searchButton = document.querySelector('.search-button');
+          const mobileSearchInput = document.querySelector('.mobile-search .search-input');
+          const mobileSearchButton = document.querySelector('.mobile-search .search-button');
           
-          if (!searchInput || !searchButton) return;
-          
-          const performSearch = () => {
-            const query = searchInput.value.trim().toLowerCase();
+          const performSearch = (query) => {
             if (query.length < 2) return;
             
             const results = allEntries.filter(entry => 
@@ -1957,13 +1958,29 @@
             displaySearchResults(results, query);
           };
           
-          searchInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-              performSearch();
-            }
-          });
+          if (searchInput && searchButton) {
+            searchInput.addEventListener('keypress', (e) => {
+              if (e.key === 'Enter') {
+                performSearch(searchInput.value.trim().toLowerCase());
+              }
+            });
+            
+            searchButton.addEventListener('click', () => {
+              performSearch(searchInput.value.trim().toLowerCase());
+            });
+          }
           
-          searchButton.addEventListener('click', performSearch);
+          if (mobileSearchInput && mobileSearchButton) {
+            mobileSearchInput.addEventListener('keypress', (e) => {
+              if (e.key === 'Enter') {
+                performSearch(mobileSearchInput.value.trim().toLowerCase());
+              }
+            });
+            
+            mobileSearchButton.addEventListener('click', () => {
+              performSearch(mobileSearchInput.value.trim().toLowerCase());
+            });
+          }
         }
         
         // Arama sonuçlarını göster
@@ -1997,6 +2014,9 @@
           
           // Çeviri ikonlarını ekle
           addTranslationIcons();
+          
+          // Slider'ları başlat
+          setTimeout(initAllSliders, 100);
         }
 
         // 7. UYGULAMAYI BAŞLAT
