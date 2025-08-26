@@ -329,7 +329,7 @@
             flex-wrap: wrap;
         }
         
-        .daisy-like, .pine-pin, .share-entry, .copy-link {
+        .daisy-like, .pine-pin, .share-entry {
             display: flex;
             align-items: center;
             gap: 5px;
@@ -352,7 +352,7 @@
             transform: translateY(-2px);
         }
         
-        .share-entry:hover, .copy-link:hover {
+        .share-entry:hover {
             background: rgba(128, 0, 128, 0.2);
             transform: translateY(-2px);
         }
@@ -378,7 +378,7 @@
             box-shadow: 0 0 10px rgba(30, 144, 255, 0.5);
         }
         
-        .share-entry:hover .share-icon, .copy-link:hover .link-icon {
+        .share-entry:hover .share-icon, .link-icon {
             transform: scale(1.2);
             color: #9370db;
             box-shadow: 0 0 10px rgba(147, 112, 219, 0.5);
@@ -817,7 +817,7 @@
                 gap: 5px;
             }
             
-            .daisy-like, .pine-pin, .share-entry, .copy-link {
+            .daisy-like, .pine-pin, .share-entry, {
                 padding: 5px 8px;
                 font-size: 12px;
             }
@@ -1428,6 +1428,9 @@
             <div class="entry-id">#${entry.id}</div>
             <div class="content">${formattedContent}</div>
             <div class="interaction-buttons">
+              <div class="view-count">
+                <i class="fas fa-eye"></i> ${viewCount}
+              </div>
               <div class="daisy-like" data-entry-id="${entry.id}">
                 <img src="/IMAGES/daisy.svg" class="daisy-icon" alt="Beğen" />
                 <span class="like-count">${likeCount}</span>
@@ -1438,12 +1441,6 @@
               </div>
               <div class="share-entry" data-entry-id="${entry.id}">
                 <i class="fas fa-share-alt share-icon"></i>
-              </div>
-              <div class="copy-link" data-entry-id="${entry.id}">
-                <i class="fas fa-link link-icon"></i>
-              </div>
-              <div class="view-count">
-                <i class="fas fa-eye"></i> ${viewCount}
               </div>
             </div>
           `;
