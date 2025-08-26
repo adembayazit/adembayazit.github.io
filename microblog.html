@@ -378,9 +378,9 @@
             cursor: pointer;
         }
         
-        /* Entry içindeki görseller için stiller - GÜNCELLENDİ */
+        /* Entry içindeki görseller için stiller */
         .content img {
-            width: 100%;
+            max-width: 300px;
             height: auto;
             border-radius: 8px;
             margin: 10px 0;
@@ -388,100 +388,12 @@
             transition: all 0.3s ease;
             border: 1px solid rgba(0, 255, 0, 0.3);
             display: block;
-            object-fit: cover;
-            aspect-ratio: 16/9;
+            margin: 10px auto;
         }
         
         .content img:hover {
             transform: scale(1.02);
             box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
-        }
-        
-        /* Fotoğraf slider için stiller - GÜNCELLENDİ */
-        .image-slider {
-            position: relative;
-            width: 100%;
-            margin: 15px auto;
-            overflow: hidden;
-            border-radius: 8px;
-            border: 1px solid rgba(0, 255, 0, 0.3);
-        }
-        
-        .slider-container {
-            display: flex;
-            transition: transform 0.5s ease;
-            width: 100%;
-        }
-        
-        .slider-item {
-            min-width: 100%;
-            position: relative;
-        }
-        
-        .slider-item img {
-            width: 100%;
-            height: auto;
-            display: block;
-            cursor: pointer;
-            object-fit: cover;
-            aspect-ratio: 16/9;
-        }
-        
-        .slider-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            transition: all 0.3s;
-        }
-        
-        .slider-nav:hover {
-            background-color: rgba(0, 255, 0, 0.7);
-            color: black;
-        }
-        
-        .slider-prev {
-            left: 10px;
-        }
-        
-        .slider-next {
-            right: 10px;
-        }
-        
-        .slider-dots {
-            position: absolute;
-            bottom: 10px;
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            z-index: 10;
-        }
-        
-        .slider-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.5);
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .slider-dot.active {
-            background-color: limegreen;
-            transform: scale(1.2);
         }
         
         /* Video container için stiller */
@@ -683,17 +595,6 @@
                 bottom: 15px;
                 left: 10px; /* Sağdan sola taşındı */
                 right: auto;
-            }
-            
-            /* Mobil için slider stilleri */
-            .image-slider {
-                max-width: 100%;
-            }
-            
-            .slider-nav {
-                width: 35px;
-                height: 35px;
-                font-size: 16px;
             }
         }
     </style>
@@ -911,114 +812,7 @@
           }
         }
 
-        // Fotoğraf slider oluşturma fonksiyonu - GÜNCELLENDİ
-        function createImageSlider(images) {
-            if (images.length <= 1) return null;
-            
-            const sliderDiv = document.createElement('div');
-            sliderDiv.className = 'image-slider';
-            
-            const sliderContainer = document.createElement('div');
-            sliderContainer.className = 'slider-container';
-            
-            images.forEach(img => {
-                const sliderItem = document.createElement('div');
-                sliderItem.className = 'slider-item';
-                
-                // Orijinal img elementini klonla ve 16:9 oranına uygun hale getir
-                const clonedImg = img.cloneNode(true);
-                clonedImg.style.width = '100%';
-                clonedImg.style.height = 'auto';
-                clonedImg.style.objectFit = 'cover';
-                clonedImg.style.aspectRatio = '16/9';
-                
-                // Tıklama olayı ekle
-                clonedImg.addEventListener('click', function() {
-                    const modal = document.getElementById("imageModal");
-                    const modalImg = document.getElementById("modalImage");
-                    modal.style.display = "block";
-                    modalImg.src = this.src;
-                });
-                
-                sliderItem.appendChild(clonedImg);
-                sliderContainer.appendChild(sliderItem);
-            });
-            
-            const prevButton = document.createElement('button');
-            prevButton.className = 'slider-nav slider-prev';
-            prevButton.innerHTML = '&#10094;';
-            
-            const nextButton = document.createElement('button');
-            nextButton.className = 'slider-nav slider-next';
-            nextButton.innerHTML = '&#10095;';
-            
-            const dotsContainer = document.createElement('div');
-            dotsContainer.className = 'slider-dots';
-            
-            images.forEach((_, index) => {
-                const dot = document.createElement('div');
-                dot.className = 'slider-dot' + (index === 0 ? ' active' : '');
-                dot.dataset.index = index;
-                dotsContainer.appendChild(dot);
-            });
-            
-            sliderDiv.appendChild(sliderContainer);
-            sliderDiv.appendChild(prevButton);
-            sliderDiv.appendChild(nextButton);
-            sliderDiv.appendChild(dotsContainer);
-            
-            // Slider işlevselliği
-            let currentSlide = 0;
-            const totalSlides = images.length;
-            
-            function goToSlide(index) {
-                if (index < 0) index = totalSlides - 1;
-                if (index >= totalSlides) index = 0;
-                
-                sliderContainer.style.transform = `translateX(-${index * 100}%)`;
-                currentSlide = index;
-                
-                // Aktif noktayı güncelle
-                dotsContainer.querySelectorAll('.slider-dot').forEach((dot, i) => {
-                    dot.classList.toggle('active', i === index);
-                });
-            }
-            
-            prevButton.addEventListener('click', () => goToSlide(currentSlide - 1));
-            nextButton.addEventListener('click', () => goToSlide(currentSlide + 1));
-            
-            // Noktalara tıklama
-            dotsContainer.querySelectorAll('.slider-dot').forEach(dot => {
-                dot.addEventListener('click', () => {
-                    goToSlide(parseInt(dot.dataset.index));
-                });
-            });
-            
-            // Dokunmatik kaydırma desteği
-            let startX, movedX;
-            sliderDiv.addEventListener('touchstart', e => {
-                startX = e.touches[0].clientX;
-            });
-            
-            sliderDiv.addEventListener('touchmove', e => {
-                movedX = e.touches[0].clientX;
-            });
-            
-            sliderDiv.addEventListener('touchend', () => {
-                const diff = startX - movedX;
-                if (Math.abs(diff) > 50) {
-                    if (diff > 0) {
-                        goToSlide(currentSlide + 1); // Sola kaydırma - sonraki
-                    } else {
-                        goToSlide(currentSlide - 1); // Sağa kaydırma - önceki
-                    }
-                }
-            });
-            
-            return sliderDiv;
-        }
-
-        // HTML içeriğini düzgün işlemek için yardımcı fonksiyon - GÜNCELLENDİ
+        // HTML içeriğini düzgün işlemek için yardımcı fonksiyon
         function formatContent(content) {
           content = content.replace(/<br\s*\/?>/gi, '<br>');
           content = content.replace(/<p>\s*<\/p>/gi, '');
@@ -1027,56 +821,7 @@
           content = content.replace(/(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/g, 
             '<div class="video-container"><iframe src="https://www.youtube.com/embed/$4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>');
           
-          // Görselleri işle - GÜNCELLENDİ
-          const tempDiv = document.createElement('div');
-          tempDiv.innerHTML = content;
-          
-          // Tüm img elementlerini bul
-          const images = tempDiv.querySelectorAll('img');
-          
-          // Görselleri gruplandır (aynı ebeveyn altındakileri)
-          const imageGroups = new Map();
-          
-          images.forEach(img => {
-            const parent = img.parentNode;
-            if (!imageGroups.has(parent)) {
-              imageGroups.set(parent, []);
-            }
-            imageGroups.get(parent).push(img);
-          });
-          
-          // Her grup için işlem yap
-          imageGroups.forEach((images, parent) => {
-            // Eğer birden fazla resim varsa slider oluştur
-            if (images.length > 1) {
-              const slider = createImageSlider(images);
-              if (slider) {
-                // İlk resmin yerine slider'ı ekle
-                images[0].parentNode.replaceChild(slider, images[0]);
-                
-                // Diğer resimleri kaldır
-                for (let i = 1; i < images.length; i++) {
-                  images[i].parentNode.removeChild(images[i]);
-                }
-              }
-            } else if (images.length === 1) {
-              // Tek bir resim varsa, 16:9 oranına uygun hale getir ve tıklama olayı ekle
-              const img = images[0];
-              img.style.width = '100%';
-              img.style.height = 'auto';
-              img.style.objectFit = 'cover';
-              img.style.aspectRatio = '16/9';
-              
-              img.addEventListener('click', function() {
-                const modal = document.getElementById("imageModal");
-                const modalImg = document.getElementById("modalImage");
-                modal.style.display = "block";
-                modalImg.src = this.src;
-              });
-            }
-          });
-          
-          return tempDiv.innerHTML;
+          return content;
         }
 
         // Görsel modal işlevselliği
@@ -1101,6 +846,15 @@
             document.addEventListener('keydown', function(event) {
                 if (event.key === "Escape") {
                     modal.style.display = "none";
+                }
+            });
+            
+            // Tüm entry görsellerine tıklanabilirlik ekle
+            document.addEventListener('click', function(event) {
+                if (event.target.tagName === 'IMG' && event.target.closest('.content')) {
+                    modal.style.display = "block";
+                    modalImg.src = event.target.src;
+                    modalImg.alt = event.target.alt;
                 }
             });
         }
