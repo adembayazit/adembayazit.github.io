@@ -380,7 +380,7 @@
         
         /* Entry içindeki görseller için stiller - GÜNCELLENDİ */
         .content img {
-            max-width: 100%;
+            width: 100%;
             height: auto;
             border-radius: 8px;
             margin: 10px 0;
@@ -388,6 +388,8 @@
             transition: all 0.3s ease;
             border: 1px solid rgba(0, 255, 0, 0.3);
             display: block;
+            object-fit: cover;
+            aspect-ratio: 16/9;
         }
         
         .content img:hover {
@@ -395,11 +397,10 @@
             box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
         }
         
-        /* Fotoğraf slider için stiller - YENİ EKLENDİ */
+        /* Fotoğraf slider için stiller - GÜNCELLENDİ */
         .image-slider {
             position: relative;
             width: 100%;
-            max-width: 600px;
             margin: 15px auto;
             overflow: hidden;
             border-radius: 8px;
@@ -422,6 +423,8 @@
             height: auto;
             display: block;
             cursor: pointer;
+            object-fit: cover;
+            aspect-ratio: 16/9;
         }
         
         .slider-nav {
@@ -908,7 +911,7 @@
           }
         }
 
-        // Fotoğraf slider oluşturma fonksiyonu - YENİ EKLENDİ
+        // Fotoğraf slider oluşturma fonksiyonu - GÜNCELLENDİ
         function createImageSlider(images) {
             if (images.length <= 1) return null;
             
@@ -921,7 +924,23 @@
             images.forEach(img => {
                 const sliderItem = document.createElement('div');
                 sliderItem.className = 'slider-item';
-                sliderItem.appendChild(img.cloneNode(true));
+                
+                // Orijinal img elementini klonla ve 16:9 oranına uygun hale getir
+                const clonedImg = img.cloneNode(true);
+                clonedImg.style.width = '100%';
+                clonedImg.style.height = 'auto';
+                clonedImg.style.objectFit = 'cover';
+                clonedImg.style.aspectRatio = '16/9';
+                
+                // Tıklama olayı ekle
+                clonedImg.addEventListener('click', function() {
+                    const modal = document.getElementById("imageModal");
+                    const modalImg = document.getElementById("modalImage");
+                    modal.style.display = "block";
+                    modalImg.src = this.src;
+                });
+                
+                sliderItem.appendChild(clonedImg);
                 sliderContainer.appendChild(sliderItem);
             });
             
@@ -1008,35 +1027,53 @@
           content = content.replace(/(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/g, 
             '<div class="video-container"><iframe src="https://www.youtube.com/embed/$4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>');
           
-          // Görselleri işle - YENİ EKLENDİ
+          // Görselleri işle - GÜNCELLENDİ
           const tempDiv = document.createElement('div');
           tempDiv.innerHTML = content;
           
           // Tüm img elementlerini bul
           const images = tempDiv.querySelectorAll('img');
           
-          // Eğer birden fazla resim varsa slider oluştur
-          if (images.length > 1) {
-            const slider = createImageSlider(images);
-            if (slider) {
-              // İlk resmin yerine slider'ı ekle
-              images[0].parentNode.replaceChild(slider, images[0]);
-              
-              // Diğer resimleri kaldır
-              for (let i = 1; i < images.length; i++) {
-                images[i].parentNode.removeChild(images[i]);
-              }
-            }
-          }
+          // Görselleri gruplandır (aynı ebeveyn altındakileri)
+          const imageGroups = new Map();
           
-          // Tekil resimlere tıklama olayı ekle
-          tempDiv.querySelectorAll('img').forEach(img => {
-            img.addEventListener('click', function() {
-              const modal = document.getElementById("imageModal");
-              const modalImg = document.getElementById("modalImage");
-              modal.style.display = "block";
-              modalImg.src = this.src;
-            });
+          images.forEach(img => {
+            const parent = img.parentNode;
+            if (!imageGroups.has(parent)) {
+              imageGroups.set(parent, []);
+            }
+            imageGroups.get(parent).push(img);
+          });
+          
+          // Her grup için işlem yap
+          imageGroups.forEach((images, parent) => {
+            // Eğer birden fazla resim varsa slider oluştur
+            if (images.length > 1) {
+              const slider = createImageSlider(images);
+              if (slider) {
+                // İlk resmin yerine slider'ı ekle
+                images[0].parentNode.replaceChild(slider, images[0]);
+                
+                // Diğer resimleri kaldır
+                for (let i = 1; i < images.length; i++) {
+                  images[i].parentNode.removeChild(images[i]);
+                }
+              }
+            } else if (images.length === 1) {
+              // Tek bir resim varsa, 16:9 oranına uygun hale getir ve tıklama olayı ekle
+              const img = images[0];
+              img.style.width = '100%';
+              img.style.height = 'auto';
+              img.style.objectFit = 'cover';
+              img.style.aspectRatio = '16/9';
+              
+              img.addEventListener('click', function() {
+                const modal = document.getElementById("imageModal");
+                const modalImg = document.getElementById("modalImage");
+                modal.style.display = "block";
+                modalImg.src = this.src;
+              });
+            }
           });
           
           return tempDiv.innerHTML;
