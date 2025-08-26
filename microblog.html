@@ -55,6 +55,27 @@
             overflow-x: hidden;
         }
         
+        /* Özel kaydırma çubukları */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 10px;
+            border: 2px solid var(--main-bg-color);
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-color);
+        }
+        
         /* Layout */
         .page-container {
             display: flex;
@@ -715,6 +736,11 @@
             border-radius: 0;
             margin: 0;
             cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .slider-image:hover {
+            transform: scale(1.02);
         }
         
         .slider-nav {
@@ -725,6 +751,7 @@
             justify-content: space-between;
             transform: translateY(-50%);
             pointer-events: none;
+            z-index: 10;
         }
         
         .slider-btn {
@@ -742,10 +769,12 @@
             justify-content: center;
             margin: 0 10px;
             transition: all 0.3s;
+            z-index: 11;
         }
         
         .slider-btn:hover {
             background: rgba(0, 0, 0, 0.8);
+            color: var(--secondary-color);
         }
         
         .slider-dots {
@@ -755,6 +784,7 @@
             display: flex;
             justify-content: center;
             gap: 8px;
+            z-index: 10;
         }
         
         .dot {
@@ -770,6 +800,50 @@
             background: var(--primary-color);
             transform: scale(1.2);
         }
+        
+        /* Üç nokta menüsü */
+        .entry-menu {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            color: #90ee90;
+            font-size: 18px;
+            z-index: 5;
+        }
+        
+        .entry-menu-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 25px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 100;
+            min-width: 120px;
+        }
+        
+        .entry-menu-content button {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 8px 12px;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .entry-menu-content button:hover {
+            background: rgba(0, 255, 0, 0.1);
+        }
+        
+        .entry:hover .entry-menu-content {
+            display: block;
+        }
 
         /* Mobil için stiller */
         @media (max-width: 1200px) {
@@ -783,12 +857,20 @@
             
             .main-content {
                 max-width: 100%;
+                padding: 0 10px;
+            }
+            
+            /* Mobil için alt kısımda istatistik ve arama */
+            .mobile-widgets {
+                display: block;
+                margin-top: 30px;
+                width: 100%;
             }
         }
         
         @media (max-width: 768px) {
             .microblog-container {
-                padding: 60px 5% 20px;
+                padding: 60px 5px 20px;
             }
             
             .back-to-home {
@@ -845,6 +927,26 @@
             .sidebar-widget {
                 padding: 15px;
             }
+            
+            /* Ana sütunu daha dar yap */
+            .main-content {
+                padding: 0 5px;
+            }
+            
+            .entries-container {
+                padding: 0.5rem;
+            }
+            
+            /* Mobilde istatistik ve arama en alta */
+            .mobile-widgets {
+                order: 3;
+                margin-top: 20px;
+            }
+        }
+        
+        /* Mobil widget'ları için stil (normalde gizli) */
+        .mobile-widgets {
+            display: none;
         }
     </style>
 </head>
@@ -972,6 +1074,46 @@
                 </div>
             </div>
         </aside>
+    </div>
+
+    <!-- Mobil için alt kısımda istatistik ve arama -->
+    <div class="mobile-widgets">
+        <div class="sidebar-widget">
+            <h3><i class="fas fa-chart-line"></i> Statistics</h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value" id="mobile-total-entries">0</div>
+                    <div class="stat-label">Total Entries</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="mobile-total-likes">0</div>
+                    <div class="stat-label">Total Likes</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="mobile-total-pins">0</div>
+                    <div class="stat-label">Total Pins</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="mobile-this-month">0</div>
+                    <div class="stat-label">This Month</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="sidebar-widget">
+            <h3><i class="fas fa-search"></i> Search</h3>
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="Search entries...">
+                <button class="search-button"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="tag-cloud">
+                <span class="tag">#cybersecurity</span>
+                <span class="tag">#hacking</span>
+                <span class="tag">#bugbounty</span>
+                <span class="tag">#pentest</span>
+                <span class="tag">#privacy</span>
+            </div>
+        </div>
     </div>
 
     <footer style="text-align: center; padding: 20px; font-size: 14px; color: white; margin-top: 50px; position: relative; z-index: 1;">
@@ -1156,6 +1298,11 @@
           document.getElementById('total-likes').textContent = totalLikes;
           document.getElementById('total-pins').textContent = totalPins;
           
+          // Mobil istatistikleri de güncelle
+          document.getElementById('mobile-total-entries').textContent = allEntries.length;
+          document.getElementById('mobile-total-likes').textContent = totalLikes;
+          document.getElementById('mobile-total-pins').textContent = totalPins;
+          
           // Bu ayın entry sayısını hesapla
           const thisMonth = new Date().getMonth();
           const thisYear = new Date().getFullYear();
@@ -1165,6 +1312,7 @@
           }).length;
           
           document.getElementById('this-month').textContent = thisMonthEntries;
+          document.getElementById('mobile-this-month').textContent = thisMonthEntries;
         }
 
         // HTML içeriğini düzgün işlemek için yardımcı fonksiyon
@@ -1198,7 +1346,9 @@
           `;
           
           images.forEach(img => {
-            sliderHtml += `<div class="slider-item">${img}</div>`;
+            // Her resme tıklanabilirlik ekle
+            const imgWithClick = img.replace('<img', '<img onclick="openModal(this)"');
+            sliderHtml += `<div class="slider-item">${imgWithClick}</div>`;
           });
           
           sliderHtml += `
@@ -1275,18 +1425,36 @@
             });
           });
           
-          // Otomatik kaydırma (isteğe bağlı)
-          // let autoSlide = setInterval(nextSlide, 5000);
+          // Dokunmatik kaydırma desteği
+          let touchStartX = 0;
+          let touchEndX = 0;
           
-          // Slider üzerine gelince otomatik kaydırmayı durdur
-          /* slider.addEventListener('mouseenter', () => {
-            clearInterval(autoSlide);
-          });
+          slider.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+          }, false);
           
-          // Slider'dan çıkınca otomatik kaydırmayı yeniden başlat
-          slider.addEventListener('mouseleave', () => {
-            autoSlide = setInterval(nextSlide, 5000);
-          }); */
+          slider.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+          }, false);
+          
+          function handleSwipe() {
+            if (touchEndX < touchStartX) {
+              nextSlide();
+            }
+            if (touchEndX > touchStartX) {
+              prevSlide();
+            }
+          }
+        }
+
+        // Modal açma fonksiyonu (global olarak tanımlandı)
+        function openModal(imgElement) {
+          const modal = document.getElementById("imageModal");
+          const modalImg = document.getElementById("modalImage");
+          modal.style.display = "block";
+          modalImg.src = imgElement.src;
+          modalImg.alt = imgElement.alt;
         }
 
         // Görsel modal işlevselliği
@@ -1311,15 +1479,6 @@
             document.addEventListener('keydown', function(event) {
                 if (event.key === "Escape") {
                     modal.style.display = "none";
-                }
-            });
-            
-            // Tüm entry görsellerine tıklanabilirlik ekle
-            document.addEventListener('click', function(event) {
-                if (event.target.tagName === 'IMG' && event.target.closest('.content')) {
-                    modal.style.display = "block";
-                    modalImg.src = event.target.src;
-                    modalImg.alt = event.target.alt;
                 }
             });
         }
@@ -1408,6 +1567,12 @@
           entryDiv.innerHTML = `
             <div class="timestamp">
               <span class="fa-solid fa-bug bug-iconentry"></span> ${time}
+              <div class="entry-menu">⋯
+                <div class="entry-menu-content">
+                  <button onclick="shareEntry(${entry.id})"><i class="fas fa-share"></i> Paylaş</button>
+                  <button onclick="copyLink(${entry.id})"><i class="fas fa-link"></i> Linki Kopyala</button>
+                </div>
+              </div>
             </div>
             <div class="entry-id">#${entry.id}</div>
             <div class="content">${formattedContent}</div>
@@ -1430,6 +1595,34 @@
           pinIcon?.addEventListener("click", () => handlePinClick(entry.id, entryDiv));
 
           return entryDiv;
+        }
+
+        // Entry paylaşma fonksiyonu
+        function shareEntry(entryId) {
+          const entryUrl = `${window.location.origin}${window.location.pathname}#entry-${entryId}`;
+          if (navigator.share) {
+            navigator.share({
+              title: 'LadyBuG Entry',
+              text: 'Bu entryi paylaş',
+              url: entryUrl,
+            })
+            .catch(console.error);
+          } else {
+            // Fallback için linki kopyala
+            copyLink(entryId);
+          }
+        }
+
+        // Link kopyalama fonksiyonu
+        function copyLink(entryId) {
+          const entryUrl = `${window.location.origin}${window.location.pathname}#entry-${entryId}`;
+          navigator.clipboard.writeText(entryUrl)
+            .then(() => {
+              alert('Link kopyalandı!');
+            })
+            .catch(err => {
+              console.error('Link kopyalanırken hata oluştu: ', err);
+            });
         }
 
         // Entry'leri gruplama fonksiyonu
@@ -1523,6 +1716,14 @@
           
           // Çeviri ikonlarını ekle
           addTranslationIcons();
+          
+          // Slider'ları başlat
+          setTimeout(() => {
+            document.querySelectorAll('.image-slider').forEach(slider => {
+              const sliderId = slider.id;
+              if (sliderId) initSlider(sliderId);
+            });
+          }, 300);
           
           loadingElement.style.display = 'none';
           
