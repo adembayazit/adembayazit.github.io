@@ -422,7 +422,7 @@
             position: fixed;
             bottom: 20px;
             left: 20px;
-            background: rgba(0, 100, 0, 0.9);
+            background: #008000; /* Green background */
             color: white;
             padding: 15px;
             border-radius: 8px;
@@ -437,16 +437,20 @@
         }
         
         .new-entry-notification:hover {
-            background: rgba(0, 130, 0, 0.95);
+            background: #006400; /* Darker green on hover */
         }
         
         .new-entry-notification.minimized {
-            max-width: 32px;
-            max-height: 32px;
+            max-width: 40px;
+            max-height: 40px;
             overflow: hidden;
-            padding: 0px;
-            border-radius: 100%;
+            padding: 5px;
+            border-radius: 50%;
             animation: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
         }
         
         .new-entry-notification.minimized .notification-content {
@@ -459,12 +463,28 @@
         
         .new-entry-notification.minimized .notification-bell {
             display: block;
-            font-size: 20px;
-            text-align: center;
+            position: relative;
         }
         
         .notification-bell {
             display: none;
+            position: relative;
+        }
+        
+        .notification-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: red;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
         }
         
         .minimize-btn {
@@ -1182,7 +1202,8 @@
               </div>
             </div>
             <div class="notification-bell">
-              <i class="fa-solid fa-bug bug-icon"></i>
+              <i class="fa-solid fa-bell"></i>
+              <span class="notification-count">${count}</span>
             </div>
           `;
           
@@ -1190,7 +1211,7 @@
             // Minimize butonuna tıklanmışsa küçült
             if (e.target.classList.contains('minimize-btn')) {
               e.stopPropagation();
-              minimizeNotification();
+              minimizeNotification(count);
               return;
             }
             
@@ -1202,13 +1223,19 @@
           
           // 10 saniye sonra bildirimi otomatik küçült
           notificationTimeout = setTimeout(() => {
-            minimizeNotification();
+            minimizeNotification(count);
           }, 10000);
         }
         
-        function minimizeNotification() {
+        function minimizeNotification(count) {
           if (notificationElement) {
             notificationElement.classList.add('minimized');
+            
+            // Sayıyı güncelle
+            const countElement = notificationElement.querySelector('.notification-count');
+            if (countElement) {
+              countElement.textContent = count;
+            }
             
             // Küçültülmüş bildirime tıklanınca tekrar büyüt
             const handleMinimizedClick = () => {
@@ -1217,7 +1244,7 @@
               
               // 10 saniye sonra tekrar küçült
               notificationTimeout = setTimeout(() => {
-                minimizeNotification();
+                minimizeNotification(count);
               }, 10000);
             };
             
