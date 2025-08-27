@@ -37,19 +37,19 @@
       }
       
       /* Yeni eklenen stiller */
-      .microblog-columns {
+      .microblog-section {
         display: flex;
         flex-wrap: wrap;
         gap: 30px;
         margin-top: 20px;
       }
       
-      .entries-column {
-        flex: 1;
+      .entries-container {
+        flex: 2;
         min-width: 300px;
       }
       
-      .explanation-column {
+      .microblog-explanation {
         flex: 1;
         min-width: 300px;
         background: rgba(15, 25, 35, 0.7);
@@ -57,9 +57,10 @@
         padding: 20px;
         box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
         border: 1px solid rgba(0, 255, 0, 0.3);
+        height: fit-content;
       }
       
-      .explanation-column h3 {
+      .microblog-explanation h3 {
         color: #f9d71c;
         margin-bottom: 15px;
         font-size: 1.4rem;
@@ -67,14 +68,14 @@
         padding-bottom: 10px;
       }
       
-      .explanation-column p {
+      .microblog-explanation p {
         line-height: 1.6;
         margin-bottom: 15px;
         color: #ccc;
       }
       
       @media (max-width: 768px) {
-        .microblog-columns {
+        .microblog-section {
           flex-direction: column;
         }
       }
@@ -186,12 +187,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <header class="header">
         <a href="#home" class="logo"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">{adembayazit} </a>
         <nav class="navbar">
-            <!-- <a href="#home" style="--i:1;" class="active">Home</a>
-            <a href="about.html" style="--i:2;">About</a>
-            <a href="skills.html" style="--i:3;">Skills</a>
-            <a href="#project" style="--i:4;">Projects</a>
-            <a href="#contact" style="--i:5;">Contact</a>
-            <a href="ethicalhacker.html" style="--i:5;">Ethical Hacker</a>  -->
             <div class="dropdown">
             <a href="#" style="--i:5; class="dropbtn"> <img src="IMAGES/Ata.svg" alt= "Ata Icon" class="ata-icon"><span class="fi fi-tr"><!-- Türkiye --></span> <span class='bx bx-code-alt'></span> Ethical Hacker <span class='bx bx-chevron-down'></span></a>
             <div class="dropdown-content">
@@ -243,7 +238,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <a href="https://github.com/adembayazit" target="_blank"><i class='bx bxl-github'></i></a>
                <a href="https://www.linkedin.com/in/adembayazit/" target="_blank"><i class='bx bxl-linkedin' ></i></a>
                <a href="https://wa.me/+905365844282" target="_blank"><i class='bx bxl-whatsapp'></i></a>
-                <!-- <a href="https://www.instagram.com/adembayazit/" target="_blank"><i class='bx bxl-instagram'></i></a> -->
             </div>
                 <a id="downloadCv" href="https://drive.google.com/file/d/17FloLfdbiQPpb1UmK-rQB5kl9S9qlYkq/view" class="btn-box">Download CV</a>
         </div>
@@ -262,24 +256,23 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <div class="container">
     <h2 class="section-title"><i class="fa-solid fa-pager"></i> LadyB <span class="fa-solid fa-bug bug-icon"></span> G  Entries</h2>
     
-    <div class="microblog-columns">
-      <!-- Sol Sütun: Mevcut Entry'ler -->
-      <div class="entries-column">
+    <div class="microblog-section">
+      <!-- Sol Taraf: Mevcut Entry'ler (load-entries.js burayı dolduracak) -->
+      <div class="entries-container">
         <div id="entries" class="entries"></div>
+        <div style="text-align: center; margin-top: 20px;">
+          <a href="microblog.html" class="btn-box">All Entry Show</a>
+        </div>
       </div>
       
-      <!-- Sağ Sütun: Açıklama -->
-      <div class="explanation-column">
+      <!-- Sağ Taraf: Açıklama -->
+      <div class="microblog-explanation">
         <h3>Why I Created This Microblog?</h3>
         <p>First of all, I want to clarify that I am not building a social media platform. I have only allocated a small area for myself on my platform to share my own opinions.</p>
         <p>Perhaps in the future, it could evolve into a social media platform. (Arz-Talep Meselesi)</p>
         <p>I am developing the platform from the ground up, completely on my own. I am not simply taking an open-source application and modifying it like others do.</p>
         <p>Furthermore, I needed a core idea for the platform. Here it is: I have shared the photos, which are the fundamental building blocks of the idea. An entirely new platform is being built upon this foundation.</p>
       </div>
-    </div>
-    
-    <div style="text-align: center; margin-top: 20px;">
-      <a href="microblog.html" class="btn-box">All Entry Show </a>
     </div>
   </div>
 </section>
