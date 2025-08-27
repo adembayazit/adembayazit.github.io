@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ethical Hacker | Adem Bayazıt</title>
- <!-- Open Graph (Facebook, WhatsApp, LinkedIn vs.) -->   
+    <!-- Open Graph (Facebook, WhatsApp, LinkedIn vs.) -->   
     <meta property="og:title" content="Adem Bayazıt | Ethical Hacker" />
     <meta property="og:description" content="Ethical Hacker, Cyber Security Analyst ve Linux Enthusiast." />
     <meta property="og:image" content="https://adembayazit.com/IMAGES/preview.png" />
@@ -25,148 +25,45 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
     <!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-TFN7XD9Z');</script>
-<!-- End Google Tag Manager -->
-     <style>
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-TFN7XD9Z');</script>
+    <!-- End Google Tag Manager -->
+    <style>
       html {
         scroll-behavior: smooth;
       }
     </style>
-    </head>
+</head>
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TFN7XD9Z"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 <script>
-  const dot = document.createElement('div');
-  dot.style.cssText = `
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 18px;
-    height: 18px;
-    background: #f9d71c;
-    border-radius: 50%;
-    border: 3px solid white;
-    box-shadow: 0 0 10px rgba(50, 205, 50, 0.8);
-    cursor: pointer;
-    z-index: 9999;
-    transition: all 0.3s;
-  `;
-
-  const tooltip = document.createElement('div');
-    tooltip.style.cssText = `
-    position: absolute;
-    bottom: 100%;
-    right: 0;
-    background: rgba(0,0,0,0.9);
-    color: white;
-    padding: 10px;
-    border-radius: 6px;
-    font-size: 14px;
-    font-family: Arial, sans-serif;
-    white-space: nowrap;
-    opacity: 0;
-    transition: opacity 0.3s;
-    pointer-events: none;
-    min-width: 240px;
-    backdrop-filter: blur(5px);
-  `;
-
-  dot.appendChild(tooltip);
-  document.body.appendChild(dot);
-
-  dot.addEventListener('mouseenter', () => tooltip.style.opacity = '1');
-  dot.addEventListener('mouseleave', () => tooltip.style.opacity = '0');
-  fetch('https://ipinfo.io/json?token=68a1229187303a') // TOKEN doğruysa böyle bırak
-    .then(async res => {
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(`Hatalı cevap (${res.status}): ${text}`);
-      }
-      return res.json();
-    })
-    .then(data => {
-      const now = new Date();
-      const {
-        ip, hostname, city, region,
-        country, loc, org, postal, timezone
-      } = data;
-
-      tooltip.innerHTML = `
-        <div style="margin-bottom: 3px; font-weight: bold; color: #00ff00;">✓ User IP Detected</div>
-        <div><strong>IP:</strong> ${ip}</div>
-        <div><strong>Host:</strong> ${hostname}</div>
-        <div><strong>City:</strong> ${city}</div>
-        <div><strong>Country:</strong> ${country}</div>
-        <div><strong>Location</strong> ${loc}</div>
-        <div><strong>Postal:</strong> ${postal}</div>
-        <div><strong>Org:</strong> ${org}</div>
-        <div><strong>Time:</strong> ${now.toLocaleString('tr-TR')}</div>
-        <div style="font-size: 9px; margin-top: 4px; color: #ccc;">${navigator.userAgent.split(' ')[0]}</div>
-      `;
-
-      // POST ile Netlify fonksiyonuna gönder
-      fetch('https://adembayazit.netlify.app/.netlify/functions/log-visitor', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ip, hostname, city, region,
-          country, loc, org, postal,
-          timezone, timestamp: now.toISOString(),
-          userAgent: navigator.userAgent
-        })
-      }).then(res => res.json())
-        .then(console.log)
-        .catch(err => console.error("POST hatası:", err));
-    })
-    .catch(error => {
-      const now = new Date();
-      tooltip.innerHTML = `
-        <div style="margin-bottom: 5px; font-weight: bold; color: #ff5555;">❌ Hata</div>
-        <div><strong>Zaman:</strong> ${now.toLocaleString('tr-TR')}</div>
-        <div><strong>Mesaj:</strong> ${error.message}</div>
-      `;
-      dot.style.background = "#ff5555";
-    });
+  // JavaScript kodları buraya gelecek
 </script>
-    <script type="module" src="/JAVASCRIPT/load-entries.js"></script>
-    <script src="/JAVASCRIPT/monitor.js"></script>
-    <canvas id="matrixCanvas"></canvas>
-                                                        <!-- Matrix -->
-    <script src="/JAVASCRIPT/matrix.js"></script>
 <body>
     <header class="header">
         <a href="#home" class="logo"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">{adembayazit} </a>
         <nav class="navbar">
-            <!-- <a href="#home" style="--i:1;" class="active">Home</a>
-            <a href="about.html" style="--i:2;">About</a>
-            <a href="skills.html" style="--i:3;">Skills</a>
-            <a href="#project" style="--i:4;">Projects</a>
-            <a href="#contact" style="--i:5;">Contact</a>
-            <a href="ethicalhacker.html" style="--i:5;">Ethical Hacker</a>  -->
             <div class="dropdown">
-            <a href="#" style="--i:5; class="dropbtn"> <img src="IMAGES/Ata.svg" alt= "Ata Icon" class="ata-icon"><span class="fi fi-tr"><!-- Türkiye --></span> <span class='bx bx-code-alt'></span> Ethical Hacker <span class='bx bx-chevron-down'></span></a>
-            <div class="dropdown-content">
-            <a href="#tools"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hacker-icon"> What is an Ethical Hacker?</a>
-            <a href="#reports"><img src="IMAGES/glossary.svg" alt="Glossary" class="glossary-icon"> Cybersecurity Glossary</a>
-            <a href="#payloads"><img src="IMAGES/soc.svg" alt="Soc" class="soc-icon"> What is a SOC ?</a>
-            <a href="#payloads"><img src="IMAGES/vulnerabilities.svg" alt="Vulnerabilities" class="vulnerabilities-icon"> Vulnerabilities</a>
-            <a href="#payloads"><img src="IMAGES/steganography.svg" alt="Steganography" class="steganography-icon"> Steganography</a>
-            <a href="#payloads"><img src="IMAGES/cryptography.svg" alt="Cryptography" class="cryptography-icon"> Cryptography</a>    
-            <a href="#payloads"><img src="IMAGES/education.svg" alt="Education" class="education-icon"> Cybersecurity Learning Resources</a>
-    </div>
-  </div>
-            
+                <a href="#" style="--i:5;" class="dropbtn"> <img src="IMAGES/Ata.svg" alt= "Ata Icon" class="ata-icon"><span class="fi fi-tr"></span> <span class='bx bx-code-alt'></span> Ethical Hacker <span class='bx bx-chevron-down'></span></a>
+                <div class="dropdown-content">
+                    <a href="#tools"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hacker-icon"> What is an Ethical Hacker?</a>
+                    <a href="#reports"><img src="IMAGES/glossary.svg" alt="Glossary" class="glossary-icon"> Cybersecurity Glossary</a>
+                    <a href="#payloads"><img src="IMAGES/soc.svg" alt="Soc" class="soc-icon"> What is a SOC ?</a>
+                    <a href="#payloads"><img src="IMAGES/vulnerabilities.svg" alt="Vulnerabilities" class="vulnerabilities-icon"> Vulnerabilities</a>
+                    <a href="#payloads"><img src="IMAGES/steganography.svg" alt="Steganography" class="steganography-icon"> Steganography</a>
+                    <a href="#payloads"><img src="IMAGES/cryptography.svg" alt="Cryptography" class="cryptography-icon"> Cryptography</a>    
+                    <a href="#payloads"><img src="IMAGES/education.svg" alt="Education" class="education-icon"> Cybersecurity Learning Resources</a>
+                </div>
+            </div>
         </nav>
     </header>
 
     <section id="home" class="home">
-
         <div class="home-content" data-scroll data-scroll-speed="-5" >
             <h3 class="mu">Hello, It's me</h3>
             <h1>Adem Bayazıt</h1>
@@ -200,7 +97,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <a href="https://github.com/adembayazit" target="_blank"><i class='bx bxl-github'></i></a>
                <a href="https://www.linkedin.com/in/adembayazit/" target="_blank"><i class='bx bxl-linkedin' ></i></a>
                <a href="https://wa.me/+905365844282" target="_blank"><i class='bx bxl-whatsapp'></i></a>
-                <!-- <a href="https://www.instagram.com/adembayazit/" target="_blank"><i class='bx bxl-instagram'></i></a> -->
             </div>
                 <a id="downloadCv" href="https://drive.google.com/file/d/17FloLfdbiQPpb1UmK-rQB5kl9S9qlYkq/view" class="btn-box">Download CV</a>
         </div>
@@ -214,45 +110,105 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </div>
             </div>
         </div>
-</section>
+    </section>
+    
     <section id="microblog" class="microblog">
-  <div class="container">
-    <h2 class="section-title"><i class="fa-solid fa-pager"></i> LadyB <span class="fa-solid fa-bug bug-icon"></span> G  Entries</h2>
-    <div id="entries" class="entries"></div>
-    <div style="text-align: center; margin-top: 20px;">
-    <a href="microblog.html" class="btn-box">All Entry Show </a></div>
-  </div>
-</section>
-<section id="photo-gallery" class="photo-gallery">
-    <h2 class="section-title"><i class="fa-solid fa-images"></i> Photographic Cryptology</h2>
-  <div class="gallery-wrapper">
-    <div id="gallery-grid" class="gallery-grid"></div>
-    <button id="load-more" class="load-more">More</button>
-  </div>
-</section>
-  <!-- Modal Büyütme -->
-  <div id="modal" class="modal">
-    <span class="close">&times;</span>
-    <span id="modal-info"></span> <!-- Bilgiler burada gösterilecek -->
-    <img class="modal-content" id="modal-img">
-  </div>
-</div>
-<footer style="text-align: center; padding: 20px; font-size: 14px; color: white;">
-  <hr style="margin-bottom: 10px; border-color: limegreen;" />
-  <p>Design & Code by <strong>Adem Bayazit</strong> | Version 1.3.2 | July 2025</p>
-</footer>
+        <div class="container">
+            <h2 class="section-title"><i class="fa-solid fa-pager"></i> LadyB <span class="fa-solid fa-bug bug-icon"></span> G Entries</h2>
+            
+            <div class="microblog-desktop-layout">
+                <!-- Sol sütun - İstatistikler -->
+                <div class="microblog-sidebar left-sidebar">
+                    <div class="sidebar-stats">
+                        <h3>Microblog Stats</h3>
+                        <div class="stat-item">
+                            <span class="stat-icon">📝</span>
+                            <span class="stat-label">Total Entries</span>
+                            <span class="stat-value" id="total-entries">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-icon">👍</span>
+                            <span class="stat-label">Total Likes</span>
+                            <span class="stat-value" id="total-likes">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-icon">📌</span>
+                            <span class="stat-label">Total Pins</span>
+                            <span class="stat-value" id="total-pins">0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="sidebar-featured">
+                        <h3>Featured Entry</h3>
+                        <div class="featured-entry" id="featured-entry">
+                            <p>Loading featured content...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Orta sütun - Ana içerik -->
+                <div class="microblog-main">
+                    <div id="entries" class="entries"></div>
+                </div>
+                
+                <!-- Sağ sütun - Ek bilgiler -->
+                <div class="microblog-sidebar right-sidebar">
+                    <div class="sidebar-about">
+                        <h3>About LadyB G</h3>
+                        <p>A personal microblog sharing cybersecurity insights, thoughts, and discoveries.</p>
+                    </div>
+                    
+                    <div class="sidebar-recent">
+                        <h3>Recent Media</h3>
+                        <div class="recent-media" id="recent-media">
+                            <!-- JavaScript ile doldurulacak -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="microblog.html" class="btn-box">All Entry Show</a>
+            </div>
+        </div>
+    </section>
+    
+    <section id="photo-gallery" class="photo-gallery">
+        <h2 class="section-title"><i class="fa-solid fa-images"></i> Photographic Cryptology</h2>
+        <div class="gallery-wrapper">
+            <div id="gallery-grid" class="gallery-grid"></div>
+            <button id="load-more" class="load-more">More</button>
+        </div>
+    </section>
+    
+    <!-- Modal Büyütme -->
+    <div id="modal" class="modal">
+        <span class="close">&times;</span>
+        <span id="modal-info"></span> <!-- Bilgiler burada gösterilecek -->
+        <img class="modal-content" id="modal-img">
+    </div>
+
+    <footer style="text-align: center; padding: 20px; font-size: 14px; color: white;">
+        <hr style="margin-bottom: 10px; border-color: limegreen;" />
+        <p>Design & Code by <strong>Adem Bayazit</strong> | Version 1.3.2 | July 2025</p>
+    </footer>
+    
     <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-0WNL3VLY3F"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-0WNL3VLY3F');
-</script>
-<!-- JS Dosyasını Bağla -->
-<script src="/JAVASCRIPT/gallery.js"></script>
-<script src="/JAVASCRIPT/log-download.js"></script>
-<script src="/JAVASCRIPT/translate-entry.js"></script>
-<script src="/JAVASCRIPT/keysound.js"></script>
-</body> 
-</html> 
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0WNL3VLY3F"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-0WNL3VLY3F');
+    </script>
+    
+    <!-- JS Dosyalarını Bağla -->
+    <script type="module" src="/JAVASCRIPT/load-entries.js"></script>
+    <script src="/JAVASCRIPT/monitor.js"></script>
+    <script src="/JAVASCRIPT/matrix.js"></script>
+    <script src="/JAVASCRIPT/gallery.js"></script>
+    <script src="/JAVASCRIPT/log-download.js"></script>
+    <script src="/JAVASCRIPT/translate-entry.js"></script>
+    <script src="/JAVASCRIPT/keysound.js"></script>
+</body>
+</html>
