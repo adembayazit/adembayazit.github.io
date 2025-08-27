@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -19,6 +19,7 @@
     <meta name="twitter:image:alt" content="Adem Bayazıt">
     
     <link rel="icon" type="png|image" href="/IMAGES/ab.png">
+    <link rel="stylesheet" href="/CSS/style.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -35,122 +36,78 @@
         scroll-behavior: smooth;
       }
       
-      /* Genel Stil */
-      body {
-        background-color: #0f1923;
-        color: #fff;
-        font-family: 'Courier New', monospace;
-        margin: 0;
-        padding: 0;
-        line-height: 1.6;
-      }
-      
-      .container {
-        width: 90%;
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px;
-      }
-      
-      .section-title {
-        text-align: center;
-        color: #f9d71c;
-        font-size: 2rem;
-        margin-bottom: 30px;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-      }
-      
-      .btn-box {
-        display: inline-block;
-        padding: 10px 20px;
-        background-color: #00ff00;
-        color: #000;
-        border: none;
-        border-radius: 5px;
-        text-decoration: none;
-        font-weight: bold;
-        transition: all 0.3s;
-        cursor: pointer;
-      }
-      
-      .btn-box:hover {
-        background-color: #f9d71c;
-        transform: translateY(-3px);
-        box-shadow: 0 5px 15px rgba(0, 255, 0, 0.4);
-      }
-      
-      /* Microblog için özel stiller */
-      .microblog-section {
+      /* Mikroblog için iki sütunlu düzen */
+      .microblog-container {
         display: flex;
-        flex-wrap: wrap;
         gap: 30px;
-        margin-top: 20px;
+        margin-top: 30px;
       }
-      
-      .entries-container {
-        flex: 2;
-        min-width: 300px;
-      }
-      
-      #entries {
-        display: grid;
-        gap: 20px;
-      }
-      
-      .entry {
-        background: rgba(15, 25, 35, 0.7);
-        border-radius: 10px;
-        padding: 20px;
-        box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
-        border: 1px solid rgba(0, 255, 0, 0.3);
-      }
-      
-      .entry-header {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 10px;
-        border-bottom: 1px solid rgba(0, 255, 0, 0.3);
-        padding-bottom: 10px;
-      }
-      
-      .entry-date {
-        color: #f9d71c;
-        font-size: 0.9rem;
-      }
-      
-      .entry-content {
-        line-height: 1.6;
-      }
-      
-      .microblog-explanation {
+
+      .entries-column {
         flex: 1;
-        min-width: 300px;
-        background: rgba(15, 25, 35, 0.7);
+      }
+
+      .explanation-column {
+        flex: 1;
+      }
+
+      .explanation-content {
+        background: rgba(10, 25, 20, 0.7);
         border-radius: 10px;
         padding: 20px;
-        box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
         border: 1px solid rgba(0, 255, 0, 0.3);
-        height: fit-content;
+        box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);
+        position: relative;
+        overflow: hidden;
       }
-      
-      .microblog-explanation h3 {
+
+      .explanation-content h3 {
         color: #f9d71c;
         margin-bottom: 15px;
         font-size: 1.4rem;
-        border-bottom: 1px solid rgba(0, 255, 0, 0.3);
+        border-bottom: 1px solid rgba(249, 215, 28, 0.3);
         padding-bottom: 10px;
       }
-      
-      .microblog-explanation p {
-        line-height: 1.6;
+
+      .explanation-content p {
         margin-bottom: 15px;
-        color: #ccc;
+        line-height: 1.6;
       }
-      
-      @media (max-width: 768px) {
-        .microblog-section {
+
+      .toggle-explanation {
+        display: none;
+        background: rgba(0, 100, 0, 0.5);
+        color: #f9d71c;
+        border: 1px solid rgba(249, 215, 28, 0.3);
+        padding: 8px 15px;
+        border-radius: 5px;
+        margin-top: 15px;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .toggle-explanation:hover {
+        background: rgba(0, 100, 0, 0.7);
+      }
+
+      /* Mobil için stil */
+      @media (max-width: 992px) {
+        .microblog-container {
           flex-direction: column;
+        }
+        
+        .explanation-content {
+          max-height: 150px;
+          overflow: hidden;
+          transition: max-height 0.5s ease;
+        }
+        
+        .explanation-content.expanded {
+          max-height: 1000px;
+        }
+        
+        .toggle-explanation {
+          display: block;
         }
       }
     </style>
@@ -159,87 +116,247 @@
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TFN7XD9Z"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
+<script>
+  const dot = document.createElement('div');
+  dot.style.cssText = `
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 18px;
+    height: 18px;
+    background: #f9d71c;
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 0 10px rgba(50, 205, 50, 0.8);
+    cursor: pointer;
+    z-index: 9999;
+    transition: all 0.3s;
+  `;
+
+  const tooltip = document.createElement('div');
+    tooltip.style.cssText = `
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    background: rgba(0,0,0,0.9);
+    color: white;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    min-width: 240px;
+    backdrop-filter: blur(5px);
+  `;
+
+  dot.appendChild(tooltip);
+  document.body.appendChild(dot);
+
+  dot.addEventListener('mouseenter', () => tooltip.style.opacity = '1');
+  dot.addEventListener('mouseleave', () => tooltip.style.opacity = '0');
+  fetch('https://ipinfo.io/json?token=68a1229187303a') // TOKEN doğruysa böyle bırak
+    .then(async res => {
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`Hatalı cevap (${res.status}): ${text}`);
+      }
+      return res.json();
+    })
+    .then(data => {
+      const now = new Date();
+      const {
+        ip, hostname, city, region,
+        country, loc, org, postal, timezone
+      } = data;
+
+      tooltip.innerHTML = `
+        <div style="margin-bottom: 3px; font-weight: bold; color: #00ff00;">✓ User IP Detected</div>
+        <div><strong>IP:</strong> ${ip}</div>
+        <div><strong>Host:</strong> ${hostname}</div>
+        <div><strong>City:</strong> ${city}</div>
+        <div><strong>Country:</strong> ${country}</div>
+        <div><strong>Location</strong> ${loc}</div>
+        <div><strong>Postal:</strong> ${postal}</div>
+        <div><strong>Org:</strong> ${org}</div>
+        <div><strong>Time:</strong> ${now.toLocaleString('tr-TR')}</div>
+        <div style="font-size: 9px; margin-top: 4px; color: #ccc;">${navigator.userAgent.split(' ')[0]}</div>
+      `;
+
+      // POST ile Netlify fonksiyonuna gönder
+      fetch('https://adembayazit.netlify.app/.netlify/functions/log-visitor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ip, hostname, city, region,
+          country, loc, org, postal,
+          timezone, timestamp: now.toISOString(),
+          userAgent: navigator.userAgent
+        })
+      }).then(res => res.json())
+        .then(console.log)
+        .catch(err => console.error("POST hatası:", err));
+    })
+    .catch(error => {
+      const now = new Date();
+      tooltip.innerHTML = `
+        <div style="margin-bottom: 5px; font-weight: bold; color: #ff5555;">❌ Hata</div>
+        <div><strong>Zaman:</strong> ${now.toLocaleString('tr-TR')}</div>
+        <div><strong>Mesaj:</strong> ${error.message}</div>
+      `;
+      dot.style.background = "#ff5555";
+    });
+</script>
+    <script type="module" src="/JAVASCRIPT/load-entries.js"></script>
+    <script src="/JAVASCRIPT/monitor.js"></script>
+    <canvas id="matrixCanvas"></canvas>
+                                                        <!-- Matrix -->
+    <script src="/JAVASCRIPT/matrix.js"></script>
 <body>
-    <section id="microblog" class="microblog">
-        <div class="container">
-            <h2 class="section-title"><i class="fa-solid fa-pager"></i> LadyB <span class="fa-solid fa-bug bug-icon"></span> G Entries</h2>
+    <header class="header">
+        <a href="#home" class="logo"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">{adembayazit} </a>
+        <nav class="navbar">
+            <!-- <a href="#home" style="--i:1;" class="active">Home</a>
+            <a href="about.html" style="--i:2;">About</a>
+            <a href="skills.html" style="--i:3;">Skills</a>
+            <a href="#project" style="--i:4;">Projects</a>
+            <a href="#contact" style="--i:5;">Contact</a>
+            <a href="ethicalhacker.html" style="--i:5;">Ethical Hacker</a>  -->
+            <div class="dropdown">
+            <a href="#" style="--i:5; class="dropbtn"> <img src="IMAGES/Ata.svg" alt= "Ata Icon" class="ata-icon"><span class="fi fi-tr"><!-- Türkiye --></span> <span class='bx bx-code-alt'></span> Ethical Hacker <span class='bx bx-chevron-down'></span></a>
+            <div class="dropdown-content">
+            <a href="#tools"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hacker-icon"> What is an Ethical Hacker?</a>
+            <a href="#reports"><img src="IMAGES/glossary.svg" alt="Glossary" class="glossary-icon"> Cybersecurity Glossary</a>
+            <a href="#payloads"><img src="IMAGES/soc.svg" alt="Soc" class="soc-icon"> What is a SOC ?</a>
+            <a href="#payloads"><img src="IMAGES/vulnerabilities.svg" alt="Vulnerabilities" class="vulnerabilities-icon"> Vulnerabilities</a>
+            <a href="#payloads"><img src="IMAGES/steganography.svg" alt="Steganography" class="steganography-icon"> Steganography</a>
+            <a href="#payloads"><img src="IMAGES/cryptography.svg" alt="Cryptography" class="cryptography-icon"> Cryptography</a>    
+            <a href="#payloads"><img src="IMAGES/education.svg" alt="Education" class="education-icon"> Cybersecurity Learning Resources</a>
+    </div>
+  </div>
             
-            <div class="microblog-section">
-                <!-- Sol Taraf: Mevcut Entry'ler (load-entries.js burayı dolduracak) -->
-                <div class="entries-container">
-                    <div id="entries" class="entries">
-                        <!-- JavaScript ile yüklenecek içerik -->
-                        <div class="entry">
-                            <div class="entry-header">
-                                <h3>Loading entries...</h3>
-                                <span class="entry-date">Please wait</span>
-                            </div>
-                            <div class="entry-content">
-                                <p>Entries are being loaded. If this message persists, check your JavaScript console for errors.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div style="text-align: center; margin-top: 20px;">
-                        <a href="microblog.html" class="btn-box">All Entry Show</a>
-                    </div>
-                </div>
-                
-                <!-- Sağ Taraf: Açıklama -->
-                <div class="microblog-explanation">
-                    <h3>Why I Created This Microblog?</h3>
-                    <p>First of all, I want to clarify that I am not building a social media platform. I have only allocated a small area for myself on my platform to share my own opinions.</p>
-                    <p>Perhaps in the future, it could evolve into a social media platform. (Arz-Talep Meselesi)</p>
-                    <p>I am developing the platform from the ground up, completely on my own. I am not simply taking an open-source application and modifying it like others do.</p>
-                    <p>Furthermore, I needed a core idea for the platform. Here it is: I have shared the photos, which are the fundamental building blocks of the idea. An entirely new platform is being built upon this foundation.</p>
+        </nav>
+    </header>
+
+    <section id="home" class="home">
+
+        <div class="home-content" data-scroll data-scroll-speed="-5" >
+            <h3 class="mu">Hello, It's me</h3>
+            <h1>Adem Bayazıt</h1>
+            <h3>And I'm a <span class="pro-text">
+                <script>
+                   var typed = new Typed(".pro-text", {
+                      strings: [
+                        "Ethical Hacker",
+                        "Network Architect", 
+                        "Cyber Security Analyst",
+                        "Programmer",
+                        "Linux Administrator",
+                        "Reverse Engineer",
+                        "Lifelong Student",
+                      ],
+                      typeSpeed: 100,   
+                      backSpeed: 100,   
+                      backDelay: 1000,  
+                      loop: true        
+                    });
+                </script>
+            </span></h3>
+            
+            <p>  &emsp; &emsp;This platform highlights my passion for cybersecurity and my commitment to ethical practices. <br> <br>
+                &emsp; &emsp;I have acquired fundamental knowledge and skills in various areas of ethical hacking, 
+                allowing me to contribute to the security of organizations and individuals. <br> <br>
+                &emsp; &emsp;Hacked my friends for testing and fun since I'm a script kiddie..  
+            </p>
+
+            <div class="home-sci">
+                <a href="https://github.com/adembayazit" target="_blank"><i class='bx bxl-github'></i></a>
+               <a href="https://www.linkedin.com/in/adembayazit/" target="_blank"><i class='bx bxl-linkedin' ></i></a>
+               <a href="https://wa.me/+905365844282" target="_blank"><i class='bx bxl-whatsapp'></i></a>
+                <!-- <a href="https://www.instagram.com/adembayazit/" target="_blank"><i class='bx bxl-instagram'></i></a> -->
+            </div>
+                <a id="downloadCv" href="https://drive.google.com/file/d/17FloLfdbiQPpb1UmK-rQB5kl9S9qlYkq/view" class="btn-box">Download CV</a>
+        </div>
+
+        <div class="home-img">
+            <div class="glowing-circle">
+                <span></span>
+                <span></span>
+                <div class="image">
+                    <img src="/IMAGES/saianon.png" alt="">
                 </div>
             </div>
         </div>
-    </section>
+</section>
+    <section id="microblog" class="microblog">
+  <div class="container">
+    <h2 class="section-title"><i class="fa-solid fa-pager"></i> LadyB <span class="fa-solid fa-bug bug-icon"></span> G Entries</h2>
+    
+    <div class="microblog-container">
+      <!-- Sol sütun: Entry'ler -->
+      <div class="entries-column">
+        <div id="entries" class="entries"></div>
+      </div>
+      
+      <!-- Sağ sütun: Açıklama -->
+      <div class="explanation-column">
+        <div class="explanation-content">
+          <h3>Mikroblog'u Neden Kurdum?</h3>
+          <p>Öncelikle, bir sosyal medya platformu inşa etmediğimi belirtmek isterim. Sadece kendi görüşlerimi paylaşmak için platformumda küçük bir alan ayırdım.</p>
+          <p>Belki gelecekte bir sosyal medya platformuna dönüşebilir. (Arz-Talep Meselesi)</p>
+          <p>Platformu tamamen sıfırdan, kendi başıma geliştiriyorum. Başkalarının yaptığı gibi açık kaynaklı bir uygulamayı alıp değiştirmiyorum.</p>
+          <p>Ayrıca, platform için bir çekirdek fikre ihtiyacım vardı. İşte burada: Fikrin temel yapı taşları olan fotoğrafları paylaştım. Bu temel üzerine tamamen yeni bir platform inşa ediliyor.</p>
+        </div>
+        <button class="toggle-explanation">Daha Fazla</button>
+      </div>
+    </div>
+    
+    <div style="text-align: center; margin-top: 20px;">
+      <a href="microblog.html" class="btn-box">Tüm Entry'leri Göster</a>
+    </div>
+  </div>
+</section>
+<section id="photo-gallery" class="photo-gallery">
+    <h2 class="section-title"><i class="fa-solid fa-images"></i> Photographic Cryptology</h2>
+  <div class="gallery-wrapper">
+    <div id="gallery-grid" class="gallery-grid"></div>
+    <button id="load-more" class="load-more">More</button>
+  </div>
+</section>
+  <!-- Modal Büyütme -->
+  <div id="modal" class="modal">
+    <span class="close">&times;</span>
+    <span id="modal-info"></span> <!-- Bilgiler burada gösterilecek -->
+    <img class="modal-content" id="modal-img">
+  </div>
+</div>
+<footer style="text-align: center; padding: 20px; font-size: 14px; color: white;">
+  <hr style="margin-bottom: 10px; border-color: limegreen;" />
+  <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.2 | July 2025</p>
+</footer>
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0WNL3VLY3F"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-0WNL3VLY3F');
+</script>
+<!-- JS Dosyasını Bağla -->
+<script src="/JAVASCRIPT/gallery.js"></script>
+<script src="/JAVASCRIPT/log-download.js"></script>
+<script src="/JAVASCRIPT/translate-entry.js"></script>
+<script src="/JAVASCRIPT/keysound.js"></script>
 
-    <!-- JavaScript dosyalarını en alta taşıdım -->
-    <script>
-        // Basit bir yükleyici simülasyonu
-        document.addEventListener('DOMContentLoaded', function() {
-            // load-entries.js dosyasının yüklenmesini simüle ediyoruz
-            setTimeout(function() {
-                const entriesContainer = document.getElementById('entries');
-                entriesContainer.innerHTML = '';
-                
-                // Örnek entry'ler
-                const sampleEntries = [
-                    {
-                        title: 'Cybersecurity Awareness',
-                        date: '2023-10-15',
-                        content: 'Today I worked on a new penetration testing methodology. The key is to always think like an attacker but act as a defender.'
-                    },
-                    {
-                        title: 'New Tool Discovery',
-                        date: '2023-10-10',
-                        content: 'Discovered an interesting new open-source tool for network analysis. Will share my findings after thorough testing.'
-                    },
-                    {
-                        title: 'Linux Kernel Update',
-                        date: '2023-10-05',
-                        content: 'The latest Linux kernel update addresses several critical vulnerabilities. Always remember to keep your systems updated!'
-                    }
-                ];
-                
-                sampleEntries.forEach(entry => {
-                    const entryElement = document.createElement('div');
-                    entryElement.className = 'entry';
-                    entryElement.innerHTML = `
-                        <div class="entry-header">
-                            <h3>${entry.title}</h3>
-                            <span class="entry-date">${entry.date}</span>
-                        </div>
-                        <div class="entry-content">
-                            <p>${entry.content}</p>
-                        </div>
-                    `;
-                    entriesContainer.appendChild(entryElement);
-                });
-            }, 1000);
-        });
-    </script>
-</body>
+<script>
+  // Mobilde açıklama metnini genişletme/daraltma
+  document.querySelector('.toggle-explanation').addEventListener('click', function() {
+    const content = document.querySelector('.explanation-content');
+    content.classList.toggle('expanded');
+    this.textContent = content.classList.contains('expanded') ? 'Daha Az' : 'Daha Fazla';
+  });
+</script>
+</body> 
 </html>
