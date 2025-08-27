@@ -1,4 +1,4 @@
- @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 
 * {
     margin: 0;
@@ -563,10 +563,9 @@ canvas {
 .child-entry {
   background: rgba(0, 50, 0, 0.3);
   border-left: 3px solid limegreen;
-  margin-top: 10px;
+  margin-top: 32px;
   margin-left: 30px;
 }
-
 .timestamp {
   font-size: 0.85rem;
   color: #90ee90;
@@ -582,8 +581,10 @@ canvas {
   font-weight: 600;
   background: rgba(50, 205, 50, 0.2);
   padding: 2px 6px;
-  border-radius: 12px;
+  border-radius: 8px;
   color: #00ff00;
+  justify-content: center;
+  align-items: center;
 }
 
 .content {
@@ -591,6 +592,25 @@ canvas {
   font-size: 1rem;
   line-height: 1.5;
   padding-right: 10px;
+}
+
+/* Blockquote stilleri */
+   .content blockquote {
+  margin: 1rem 0;
+  padding: 0.8rem 1rem;
+  border-left: 3px solid limegreen; /* baştaki çizgi */
+  color: #00b300;                   /* içerik rengi (yeşil ton) */
+  background: rgba(0, 255, 0, 0.06);/* hafif yeşil arka plan (isteğe bağlı) */
+  font-style: italic;               /* istersen çıkar */
+}
+
+}
+
+/* BR etiketi için stil - satır aralığını artırıyoruz */
+.content br {
+    display: block;
+    content: "";
+    margin-bottom: 12px;
 }
 
 /* Mobil için */
@@ -607,12 +627,78 @@ canvas {
     top: 7px;
     right: 7px;
     font-size: 0.7rem;
+    justify-content: center;
+    align-items: center;
   }
+
+/* Blockquote stilleri */
+   .content blockquote {
+  margin: 1rem 0;
+  padding: 0.8rem 1rem;
+  border-left: 3px solid limegreen; /* baştaki çizgi */
+  color: #00b300;                   /* içerik rengi (yeşil ton) */
+  background: rgba(0, 255, 0, 0.06);/* hafif yeşil arka plan (isteğe bağlı) */
+  font-style: italic;               /* istersen çıkar */
+}
+
+}
+
+/* BR etiketi için stil - satır aralığını artırıyoruz */
+.content br {
+    display: block;
+    content: "";
+    margin-bottom: 12px;
+}
   
   .content {
     padding-right: 10px;
     font-size: 0.8rem;
+    white-space: pre-wrap;
   }
+
+ /* Entry içindeki görseller için özel stil */
+        .content img{
+            max-width: 300px;    /* Masaüstü için 300px */
+            height: auto;        /* Oranları koru */
+            border-radius: 8px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            display: block;      /* Ortalamak için block yap */
+            margin-left: auto;   /* Sol ve sağ margin auto */
+            margin-right: auto;  /* ile ortala */
+        }
+        
+        .content video {
+            max-width: 300px;    /* Masaüstü için 300px */
+            height: auto;        /* Oranları koru */
+            border-radius: 8px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            display: block;      /* Ortalamak için block yap */
+            aspect-ratio: 16/9; /* Video oranını korur */
+            object-fit: cover; 
+            margin-left: auto;   /* Sol ve sağ margin auto */
+            margin-right: auto;  /* ile ortala */
+        }
+
+
+        /* Mobil görünüm için medya sorgusu */
+        @media (max-width: 768px) {
+            .content img,video {
+                max-width: 100%; /* Mobilde içerik kutusuna sığacak */
+                height: auto;    /* Oranları koru */
+            }
+            
+            .content video {
+                max-width: 100%; /* Mobilde içerik kutusuna sığacak */
+                height: auto;    /* Oranları koru */
+            }
+        }
+        
    .timestamp {
     font-size: 0.7rem;
     color: #90ee90;
@@ -757,6 +843,8 @@ canvas {
   border: 0.5px solid transparent;
   transition: all 0.2s ease;
   overflow: hidden;
+  justify-content: center;
+  align-items: center;
 }
 
 .translation-icon:hover {
@@ -1024,8 +1112,14 @@ canvas {
   width: 100%;
   height: 100%;
   border: none;
-}
-
+}      
+  .video-player {
+            width: 100%;
+            height: 100%;
+            display: block;
+            aspect-ratio: 16/9; /* Video oranını korur */
+            object-fit: cover; /* Videoyu kutuya sığdırır */
+        }
 /* Mobil görünümü (767px ve altı) */
 @media (max-width: 767px) {
   .youtube-embed {
@@ -1044,13 +1138,11 @@ canvas {
     border-radius: 12px 12px 0 0;
   }
   #modal-info {
-  position: absolute;
-  top: 70px;
+  margin-top: 80px;        /* Fotoğraf ile arasında boşluk */
   color: white;
-  text-align: center;
   font-size: 14px;
   cursor: pointer;
-  }
+}
  .gallery-grid {
     grid-template-columns: repeat(4, 1fr);
   }
@@ -1062,5 +1154,12 @@ canvas {
   max-width: 600px;
   padding: 10px;
 }
+  .video-player {
+            width: 100%;
+            height: 100%;
+            display: block;
+            aspect-ratio: 16/9; /* Video oranını korur */
+            object-fit: cover; /* Videoyu kutuya sığdırır */
+        }
 }
  
