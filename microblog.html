@@ -2170,7 +2170,7 @@
           }).slice(0, 5);
           
           if (trending.length === 0) {
-            trendingContainer.innerHTML = '<div style="padding: 10px; text-align: center; color: #90ee90;">No trending entries</div>';
+            Container.innerHTML = '<div style="padding: 10px; text-align: center; color: #90ee90;">No  entries</div>';
             return;
           }
           
@@ -2195,7 +2195,22 @@
           
           trendingContainer.innerHTML = html;
         }
-        
+            
+          // sayfa ilk yüklendiğinde hash varsa kaydır
+          if (window.location.hash) {
+            const targetId = window.location.hash.substring(1);
+            const scrollToEntry = () => {
+            const targetEl = document.getElementById(targetId);
+            if (targetEl) {
+             targetEl.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    };
+
+    // entry'ler async yüklendiği için biraz beklet
+    setTimeout(scrollToEntry, 500);
+  }
+});
+
         // Son aktiviteleri yükle
         function loadRecentActivity() {
           const activityContainer = document.getElementById('recent-activity');
