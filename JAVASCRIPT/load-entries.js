@@ -1,4 +1,4 @@
-// 1. GLOBAL DEĞİŞKENLER
+    // 1. GLOBAL DEĞİŞKENLER
         const likesCache = {
           data: {},
           lastUpdated: 0,
@@ -62,6 +62,20 @@
         function formatContent(content) {
           content = content.replace(/<br\s*\/?>/gi, '<br>');
           content = content.replace(/<p>\s*<\/p>/gi, '');
+          
+          // Birden fazla img etiketi varsa sadece ilkini göster
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = content;
+          
+          const images = tempDiv.querySelectorAll('img');
+          if (images.length > 1) {
+            // İlk img dışındakileri kaldır
+            for (let i = 1; i < images.length; i++) {
+              images[i].remove();
+            }
+            content = tempDiv.innerHTML;
+          }
+          
           return content;
         }
 
@@ -367,8 +381,30 @@
           } catch (error) {
             console.error("Initialization error:", error);
             try {
-              const response = await fetch("entries.json");
-              processEntries(await response.json());
+              // Demo verileri (gerçek API'ye erişilemezse)
+              const demoEntries = {
+                records: [
+                  {
+                    id: 123,
+                    date: "2023-09-15T14:30:00Z",
+                    content: "Bugün harika bir gün! <img src='https://picsum.photos/200/100'><img src='https://picsum.photos/201/101'>",
+                    references: []
+                  },
+                  {
+                    id: 122,
+                    date: "2023-09-15T13:15:00Z",
+                    content: "Merhaba dünya! <img src='https://picsum.photos/202/102'>",
+                    references: [123]
+                  },
+                  {
+                    id: 121,
+                    date: "2023-09-14T18:45:00Z",
+                    content: "Bu entry birden fazla resim içeriyor. <img src='https://picsum.photos/203/103'><img src='https://picsum.photos/204/104'><img src='https://picsum.photos/205/105'>",
+                    references: []
+                  }
+                ]
+              };
+              processEntries(demoEntries);
               
               // Fallback için de kontrolü başlat
               checkInterval = setInterval(checkForNewEntries, refreshInterval);
