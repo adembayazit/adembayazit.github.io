@@ -499,15 +499,14 @@
             object-fit: cover;
         }
 
-        /* Slider stilleri - 16/9 ORANI ve TAM KAPLAMA için GÜNCELLENDİ */
+        /* Slider stilleri - MOBİL UYUMLU HALE GETİRİLDİ */
         .image-slider {
             position: relative;
-            margin: 0 0 20px 0;
+            margin: -20px 0;
             overflow: hidden;
             border-radius: 8px;
-            background-color: rgba(10, 25, 20, 0.7);
-            width: 100%;
-            aspect-ratio: 16/9; /* 16:9 oranı için */
+            background-color: rgba(10, 25, 20, 0.7);;
+            min-height: 200px;
         }
         
         .slider-container {
@@ -524,29 +523,16 @@
             align-items: center;
             justify-content: center;
             background-color: #000;
-            position: relative;
-            aspect-ratio: 16/9; /* 16:9 oranı için */
         }
         
         .slider-item img {
             width: 100%;
-            height: 100%;
-            object-fit: cover; /* Resmi container'a sığdır ve kırp */
+            height: auto;
+            max-height: 500px;
+            object-fit: contain;
             border-radius: 0;
             margin: 0;
             cursor: pointer;
-        }
-        
-        /* Üstten çizgi efekti - Instagram benzeri görünüm */
-        .slider-item::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.5), transparent);
-            z-index: 5;
         }
         
         .slider-nav {
@@ -1375,7 +1361,7 @@
           return content;
         }
         
-        // Resim slider'ı oluşturma fonksiyonu - 16/9 ORANI ve TAM KAPLAMA için GÜNCELLENDİ
+        // Resim slider'ı oluşturma fonksiyonu - MOBİL UYUMLU
         function createImageSlider(images) {
           const sliderId = 'slider-' + Math.random().toString(36).substr(2, 9);
           
@@ -1409,7 +1395,7 @@
           return sliderHtml;
         }
 
-        // Slider başlatma fonksiyonu - 16/9 ORANI için GÜNCELLENDİ
+        // Slider başlatma fonksiyonu - MOBİL UYUMLU
         function initSlider(sliderId) {
           const slider = document.getElementById(sliderId);
           if (!slider) return;
@@ -2079,7 +2065,7 @@
               const headerHeight = header ? header.offsetHeight : 80;
               
               setTimeout(() => {
-                // Elementin pozisyonunu hesapla và header yüksekliği kadar aşağı kaydır
+                // Elementin pozisyonunu hesapla ve header yüksekliği kadar aşağı kaydır
                 const elementPosition = entryElement.getBoundingClientRect().top;
                 const offsetPosition = elementPosition + window.pageYOffset - headerHeight;
                 
@@ -2397,7 +2383,7 @@
           container.innerHTML = '';
           entryCount.textContent = `${results.length} result${results.length !== 1 ? 's' : ''} for "${query}"`;
           
-          // ID aramasıysa ve sadece 1 sonuç varsa, grubuyla birlike göster
+          // ID aramasıysa ve sadece 1 sonuç varsa, grubuyla birlikte göster
           if (isIdSearch && results.length === 1) {
             const entry = results[0];
             const parentId = entry.references && entry.references.length > 0 ? entry.references[0] : null;
