@@ -1655,7 +1655,7 @@
           const childMap = new Map();
           const parentEntries = [];
           
-          // Önce tüm entry'leri parent ve child olarak ayır
+          // Önce tüm entry'leri parent and child olarak ayır
           entries.forEach(entry => {
             if (!entry.references || entry.references.length === 0) {
               parentEntries.push(entry);
@@ -1697,13 +1697,14 @@
           return groups;
         }
 
-        function displayEntries(startIndex, count) {
+        function displayEntries(startIndex, count, callback) {
           const container = document.getElementById("entries");
           const loadingElement = document.getElementById("loading");
           const loadMoreBtn = document.getElementById("loadMoreBtn");
           
           if (startIndex >= groupedEntries.length) {
             loadMoreBtn.style.display = 'none';
+            if (callback) callback();
             return;
           }
           
@@ -1753,6 +1754,9 @@
           // Daha fazla yükle butonunun metnini güncelle
           const remaining = groupedEntries.length - displayedEntries;
           loadMoreBtn.textContent = `More Entry (${Math.min(remaining, entriesPerPage)}) ${remaining > 0 ? '' : ''}`;
+          
+          // Callback'i çağır (hash kontrolü için)
+          if (callback) callback();
         }
 
         // 4. INTERACTION FONKSİYONLARI
@@ -2023,7 +2027,35 @@
           }
         }
 
-        // 6. UYGULAMAYI BAŞLAT
+        // 6. HASH YÖNLENDİRME FONKSİYONU
+        function scrollToEntryFromHash() {
+          const hash = window.location.hash;
+          if (hash.startsWith('#entry-')) {
+            const entryId = hash.substring(7); // 'entry-' kısmını çıkar
+            const entryElement = document.getElementById(`entry-${entryId}`);
+            
+            if (entryElement) {
+              // Entry bulundu, scroll yap
+              setTimeout(() => {
+                entryElement.scrollIntoView({ behavior: 'smooth' });
+                
+                // Entry'yi vurgula
+                entryElement.style.backgroundColor = 'rgba(0, 255, 0, 0.1)';
+                setTimeout(() => {
+                  entryElement.style.backgroundColor = '';
+                }, 3000);
+              }, 500);
+            } else {
+              // Entry henüz yüklenmemiş, daha fazla yükle ve tekrar dene
+              if (displayedEntries < groupedEntries.length) {
+                currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+                displayEntries(displayedEntries, entriesPerPage, scrollToEntryFromHash);
+              }
+            }
+          }
+        }
+
+        // 7. UYGULAMAYI BAŞLAT
         async function initializeApp() {
           try {
             await loadInteractions();
@@ -2044,17 +2076,18 @@
             groupedEntries = groupEntries(allEntries);
             
             setupImageModal();
-            displayEntries(0, entriesPerPage);
+            displayEntries(0, entriesPerPage, scrollToEntryFromHash);
             
             document.getElementById('loadMoreBtn').addEventListener('click', () => {
               // Mevcut scroll pozisyonunu kaydet
               currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
-              displayEntries(displayedEntries, entriesPerPage);
-              
-              // Yeni içerik yüklendikten sonra scroll pozisyonunu koru
-              setTimeout(() => {
+              displayEntries(displayedEntries, entriesPerPage, () => {
+                // Yeni içerik yüklendikten sonra scroll pozisyonunu koru
                 window.scrollTo(0, currentScrollPosition);
-              }, 100);
+                
+                // Hash kontrolü yap
+                scrollToEntryFromHash();
+              });
             });
             
             // Popüler ve trend entry'leri yükle
@@ -2090,15 +2123,14 @@
               
               setupImageModal();
               
-              displayEntries(0, entriesPerPage);
+              displayEntries(0, entriesPerPage, scrollToEntryFromHash);
               
               document.getElementById('loadMoreBtn').addEventListener('click', () => {
                 currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
-                displayEntries(displayedEntries, entriesPerPage);
-                
-                setTimeout(() => {
+                displayEntries(displayedEntries, entriesPerPage, () => {
                   window.scrollTo(0, currentScrollPosition);
-                }, 100);
+                  scrollToEntryFromHash();
+                });
               });
 
               // Popüler ve trend entry'leri yükle
@@ -2367,7 +2399,7 @@
           setTimeout(initAllSliders, 100);
         }
 
-        // 7. UYGULAMAYI BAŞLAT
+        // 8. UYGULAMAYI BAŞLAT
         document.addEventListener("DOMContentLoaded", initializeApp);
     </script>
     <script src="/JAVASCRIPT/matrix.js"></script>
