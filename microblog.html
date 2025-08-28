@@ -2028,16 +2028,27 @@
         }
 
         // 6. HASH YÖNLENDİRME FONKSİYONU
+        // ScrollToEntryFromHash fonksiyonunu güncelle
         function scrollToEntryFromHash() {
           const hash = window.location.hash;
           if (hash.startsWith('#entry-')) {
-            const entryId = hash.substring(7); // 'entry-' kısmını çıkar
+            const entryId = hash.substring(7);
             const entryElement = document.getElementById(`entry-${entryId}`);
             
             if (entryElement) {
-              // Entry bulundu, scroll yap
+              // Header yüksekliğini al ve offset hesapla
+              const header = document.querySelector('.header');
+              const headerHeight = header ? header.offsetHeight : 80;
+              
               setTimeout(() => {
-                entryElement.scrollIntoView({ behavior: 'smooth' });
+                // Elementin pozisyonunu hesapla ve header yüksekliği kadar aşağı kaydır
+                const elementPosition = entryElement.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerHeight;
+                
+                window.scrollTo({
+                  top: offsetPosition,
+                  behavior: 'smooth'
+                });
                 
                 // Entry'yi vurgula
                 entryElement.style.backgroundColor = 'rgba(0, 255, 0, 0.1)';
@@ -2046,7 +2057,6 @@
                 }, 3000);
               }, 500);
             } else {
-              // Entry henüz yüklenmemiş, daha fazla yükle ve tekrar dene
               if (displayedEntries < groupedEntries.length) {
                 currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
                 displayEntries(displayedEntries, entriesPerPage, scrollToEntryFromHash);
