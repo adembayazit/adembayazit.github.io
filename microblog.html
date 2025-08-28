@@ -1643,9 +1643,8 @@
           const copyLinkIcon = entryDiv.querySelector(".copy-link");
           copyLinkIcon?.addEventListener("click", () => handleCopyLinkClick(entry.id));
 
-          // Görüntülenme sayısını güncelle
-          updateViewCount(entry.id);
-
+          // Görüntülenme sayısını güncelle - SADECE GÖRÜNÜR OLDUĞUNDA
+          // Bu kısmı Intersection Observer ile değiştireceğiz
           return entryDiv;
         }
 
@@ -1745,6 +1744,9 @@
           // Slider'ları başlat
           setTimeout(initAllSliders, 100);
           
+          // GÖRÜNÜM SAYAÇLARINI GÜNCELLE - DEĞİŞİKLİK BURADA
+          updateViewCountsForVisibleEntries();
+          
           loadingElement.style.display = 'none';
           
           if (displayedEntries >= groupedEntries.length) {
@@ -1824,6 +1826,7 @@
           }
         }
 
+        // GÖRÜNÜM SAYACI GÜNCELLEME FONKSİYONU - YENİ VERSİYON
         async function updateViewCount(entryId) {
           if (viewsCache.isUpdating) return;
           
@@ -1859,6 +1862,27 @@
           } finally {
             viewsCache.isUpdating = false;
           }
+        }
+
+        // YENİ: Intersection Observer ile görünür entry'lerin view count'unu güncelle
+        function updateViewCountsForVisibleEntries() {
+          const entries = document.querySelectorAll('.entry');
+          
+          const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                const entryId = entry.target.id.replace('entry-', '');
+                updateViewCount(entryId);
+                // Güncelleme yapıldıktan sonra observe'i durdur
+                observer.unobserve(entry.target);
+              }
+            });
+          }, { threshold: 0.5 });
+          
+          // Tüm entry'leri gözle
+          entries.forEach(entry => {
+            observer.observe(entry);
+          });
         }
 
         async function handleShareClick(entryId) {
@@ -2407,6 +2431,9 @@
           
           // Slider'ları başlat
           setTimeout(initAllSliders, 100);
+          
+          // GÖRÜNÜM SAYAÇLARINI GÜNCELLE
+          updateViewCountsForVisibleEntries();
         }
 
         // 8. UYGULAMAYI BAŞLAT
