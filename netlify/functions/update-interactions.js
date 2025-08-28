@@ -3,11 +3,40 @@ const fetch = require("node-fetch");
 exports.handler = async function (event) {
   const BIN_ID = "68862fd97b4b8670d8a81945";
   const MASTER_KEY = process.env.JSONBIN_MASTER_KEY;
+  const ALLOWED_ORIGIN = "https://adembayazit.com";
 
+  // CORS headers
+  const headers = {
+    'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'PUT, OPTIONS'
+  };
+
+  // Preflight request handling
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers,
+      body: ''
+    };
+  }
+
+  // Origin validation
+  const requestOrigin = event.headers.origin || event.headers.Origin;
+  if (requestOrigin !== ALLOWED_ORIGIN) {
+    return {
+      statusCode: 403,
+      headers,
+      body: JSON.stringify({ error: 'Origin not allowed' })
+    };
+  }
+
+  // Main PUT request handling
   if (event.httpMethod !== "PUT") {
     return {
       statusCode: 405,
-      body: "Only PUT allowed"
+      headers,
+      body: JSON.stringify({ error: 'Method not allowed' })
     };
   }
 
@@ -29,11 +58,13 @@ exports.handler = async function (event) {
 
     return {
       statusCode: 200,
+      headers,
       body: JSON.stringify(json)
     };
   } catch (err) {
     return {
       statusCode: 500,
+      headers,
       body: JSON.stringify({ error: err.message })
     };
   }
