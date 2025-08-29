@@ -1342,9 +1342,7 @@
         }
 
         // HTML içeriğini düzgün işlemek için yardımcı fonksiyon
-        function formatContent(content, entryId) {
-          let sliderCount = 0; // Slider sayaçı
-
+        function formatContent(content) {
           content = content.replace(/<br\s*\/?>/gi, '<br>');
           content = content.replace(/<p>\s*<\/p>/gi, '');
           
@@ -1356,9 +1354,7 @@
           content = content.replace(/(<img[^>]+>\s*){2,}/g, (imgs) => {
             const images = imgs.match(/<img[^>]+>/g);
             if (images && images.length > 1) {
-              const sliderHtml = createImageSlider(images, entryId, sliderCount);
-              sliderCount++;
-              return sliderHtml;
+              return createImageSlider(images);
             }
             return imgs;
           });
@@ -1367,8 +1363,8 @@
         }
         
         // Resim slider'ı oluşturma fonksiyonu - TAMAMEN YENİLENDİ
-        function createImageSlider(images, entryId, sliderIndex) {
-          const sliderId = `slider-${entryId}-${sliderIndex}`;
+        function createImageSlider(images) {
+          const sliderId = 'slider-' + Math.random().toString(36).substr(2, 9);
           
           let sliderHtml = `
             <div class="image-slider" id="${sliderId}">
@@ -1427,8 +1423,7 @@
           
           if (!container || items.length === 0) return;
           
-          // Slider state'ini kontrol et, yoksa 0'dan başlat
-          let currentIndex = slidersState[sliderId]?.currentIndex || 0;
+          let currentIndex = 0;
           const totalItems = items.length;
           
           // Slider durumunu kaydet
@@ -1552,6 +1547,8 @@
             const closeModal = function() {
                 modal.style.display = "none";
                 document.body.style.overflow = "auto"; // Scroll'u tekrar etkinleştir
+                // Modal kapatıldığında slider'ları yeniden başlat
+                setTimeout(initAllSliders, 100);
             };
             
             closeBtn.onclick = closeModal;
@@ -1614,7 +1611,7 @@
               
               if (icon.classList.contains("active")) {
                 if (translationEntry.content_tr) {
-                  contentDiv.innerHTML = formatContent(translationEntry.content_tr, translationEntry.id);
+                  contentDiv.innerHTML = formatContent(translationEntry.content_tr);
                 }
               } else {
                 contentDiv.innerHTML = originalContent;
@@ -1661,7 +1658,7 @@
           const pinCount = pinsCache.data[entry.id] || 0;
           const viewCount = viewsCache.data[entry.id] || 0;
 
-          const formattedContent = formatContent(entry.content, entry.id);
+          const formattedContent = formatContent(entry.content);
 
           entryDiv.innerHTML = `
             <div class="timestamp">
@@ -2469,7 +2466,7 @@
             } else {
               // Parent yoksa sadece entry'yi göster
               const entryElement = createEntryElement(entry);
-                container.appendChild(entryElement);
+              container.appendChild(entryElement);
             }
           } else {
             // Çoklu sonuçlar veya metin araması
