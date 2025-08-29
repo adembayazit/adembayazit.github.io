@@ -1323,7 +1323,27 @@
             }
           }
         }
-        
+         // Boş <p> etiketlerini ve gereksiz boşlukları temizle
+          const paragraphs = tempDiv.querySelectorAll('p');
+          paragraphs.forEach(p => {
+            // İçeriği olmayan veya sadece boşluk içeren <p> etiketlerini kaldır
+            if (!p.textContent.trim() && p.children.length === 0) {
+              p.remove();
+            }
+          });
+          
+          // Gereksiz <br> etiketlerini temizle
+          const lineBreaks = tempDiv.querySelectorAll('br');
+          lineBreaks.forEach(br => {
+            // Eğer <br> etiketinden sonra başka bir <br> geliyorsa veya bir önceki kardeş yoksa kaldır
+            if (br.nextElementSibling && br.nextElementSibling.tagName === 'BR') {
+              br.remove();
+            }
+          });
+          
+          // İçeriği temizlenmiş olarak döndür
+          return tempDiv.innerHTML.trim();
+        }
         // İstatistikleri güncelleme fonksiyonu
         function updateStatistics() {
           const totalLikes = Object.values(likesCache.data).reduce((sum, count) => sum + count, 0);
