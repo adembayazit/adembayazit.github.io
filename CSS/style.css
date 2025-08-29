@@ -770,65 +770,86 @@ canvas {
   font-weight: bold;
 }
 
+/* Modal için yeni stiller */
 .modal {
   display: none;
   position: fixed;
   z-index: 1000;
   left: 0;
   top: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.85);
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.9);
   justify-content: center;
   align-items: center;
+  flex-direction: column;
 }
 
 .modal-content {
-  max-width: 90vw;
-  max-height: 90vh;
+  max-width: 90%;
+  max-height: 80%;
   border: 2px solid green;
   box-shadow: 0 0 20px green;
   border-radius: 5px;
-  display: flex;
-  justify-content: center;
-  align-items: }
-
-#modal-Image {
-  width: auto;
-  max-width: 100%;
-  max-height: 100%;
   object-fit: contain;
-  border-radius: 5px;
 }
 
-/* Modal içindeki bilgiler için stil */
 #modal-info {
-  position: absolute;
-  top: 5px;
+  position: relative;
   color: white;
+  background: rgba(0,0,0,0.7);
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-size: 16px;
+  margin-bottom: 10px;
   text-align: center;
-  font-size: 14px;
-  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
 }
 
-#modal-info small {
-  display: block;
-}
-
-/* Resimlerin grid görünümü için */
-.gallery-photo {
-  cursor: pointer;
-  transition: transform 0.3s;
+.modal-info-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .close {
   position: absolute;
-  top: 30px;
-  right: 40px;
-  color: white;
+  top: 20px;
+  right: 30px;
+  color: #f1f1f1;
   font-size: 40px;
+  font-weight: bold;
   cursor: pointer;
+  z-index: 1001;
 }
+
+.close:hover {
+  color: #bbb;
+}
+
+/* Mobil için */
+@media (max-width: 768px) {
+  #modal-info {
+    flex-direction: column;
+    gap: 5px;
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+  
+  .close {
+    top: 10px;
+    right: 20px;
+    font-size: 30px;
+  }
+  
+  .gallery-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
 .translation-icon {
   display: inline-block;
   width: 30px;               /* Başlangıç genişliği artırıldı */
@@ -1262,4 +1283,3 @@ canvas {
     height: 140px;
   }
 }
- 
