@@ -1,4 +1,4 @@
-    // 1. GLOBAL DEĞİŞKENLER
+// 1. GLOBAL DEĞİŞKENLER
         const likesCache = {
           data: {},
           lastUpdated: 0,
@@ -58,25 +58,43 @@
           }
         }
 
-        // HTML içeriğini düzgün işlemek için yardımcı fonksiyon
+        // HTML içeriğini düzgün işlemek için yardımcı fonksiyon - GÜNCELLENDİ
         function formatContent(content) {
-          content = content.replace(/<br\s*\/?>/gi, '<br>');
-          content = content.replace(/<p>\s*<\/p>/gi, '');
+          if (!content) return '';
           
-          // Birden fazla img etiketi varsa sadece ilkini göster
+          // Geçici div oluşturarak içeriği parse et
           const tempDiv = document.createElement('div');
           tempDiv.innerHTML = content;
           
+          // Birden fazla img etiketi varsa sadece ilkini göster
           const images = tempDiv.querySelectorAll('img');
           if (images.length > 1) {
             // İlk img dışındakileri kaldır
             for (let i = 1; i < images.length; i++) {
               images[i].remove();
             }
-            content = tempDiv.innerHTML;
           }
           
-          return content;
+          // Boş <p> etiketlerini ve gereksiz boşlukları temizle
+          const paragraphs = tempDiv.querySelectorAll('p');
+          paragraphs.forEach(p => {
+            // İçeriği olmayan veya sadece boşluk içeren <p> etiketlerini kaldır
+            if (!p.textContent.trim() && p.children.length === 0) {
+              p.remove();
+            }
+          });
+          
+          // Gereksiz <br> etiketlerini temizle
+          const lineBreaks = tempDiv.querySelectorAll('br');
+          lineBreaks.forEach(br => {
+            // Eğer <br> etiketinden sonra başka bir <br> geliyorsa veya bir önceki kardeş yoksa kaldır
+            if (br.nextElementSibling && br.nextElementSibling.tagName === 'BR') {
+              br.remove();
+            }
+          });
+          
+          // İçeriği temizlenmiş olarak döndür
+          return tempDiv.innerHTML.trim();
         }
 
         // ÇEVİRİ İKONLARINI EKLEME FONKSİYONU
@@ -115,14 +133,14 @@
                   contentDiv.innerHTML = formatContent(translationEntry.content_tr);
                 }
               } else {
-                contentDiv.innerHTML = originalContent;
+                contentDiv.innerHTML = formatContent(originalContent);
               }
             });
 
             document.addEventListener("click", (e) => {
               if (!icon.contains(e.target) && !contentDiv.contains(e.target)) {
                 icon.classList.remove("active");
-                contentDiv.innerHTML = originalContent;
+                contentDiv.innerHTML = formatContent(originalContent);
               }
             });
 
