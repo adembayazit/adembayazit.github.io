@@ -499,15 +499,15 @@
             object-fit: cover;
         }
 
-        /* Slider stilleri - DÜZENLENMİŞ HALİ */
+        /* YENİ SLIDER STİLLERİ - TAMAMEN DÜZENLENDİ */
         .image-slider {
             position: relative;
             margin: 10px 0;
             overflow: hidden;
             border-radius: 8px;
-            min-height: 200px;
-            background: transparent;
+            background: #000;
             width: 100%;
+            aspect-ratio: 16/9;
         }
         
         .slider-container {
@@ -515,6 +515,9 @@
             transition: transform 0.4s ease;
             height: 100%;
             width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
         
         .slider-item {
@@ -524,8 +527,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: transparent;
-            border: 0;
+            background: #000;
         }
         
         .slider-item img {
@@ -535,8 +537,7 @@
             border-radius: 0;
             margin: 0;
             cursor: pointer;
-            background: transparent;
-            border: 0;
+            display: block;
         }
         
         .slider-nav {
@@ -911,12 +912,8 @@
                 font-size: 10px;
             }
             
-            .slider-item img {
-                max-height: 300px;
-            }
-            
             .image-slider {
-                min-height: 180px;
+                aspect-ratio: 4/3;
             }
             
             .slider-btn {
@@ -950,12 +947,9 @@
                 font-size: 12px;
             }
             
-            .slider-item img {
-                max-height: 250px;
-            }
-            
             .image-slider {
-                min-height: 160px;
+                aspect-ratio: 1/1;
+                min-height: 250px;
             }
             
             .slider-btn {
@@ -1268,6 +1262,9 @@
         let lastNotifiedEntryId = 0;
         let notificationElement = null;
         let notificationTimeout = null;
+        
+        // Slider durumlarını saklamak için nesne
+        const slidersState = {};
 
         // 2. PROXY HELPER FONKSİYONU
         async function fetchViaProxy(path, method = 'GET', body = null) {
@@ -1365,7 +1362,7 @@
           return content;
         }
         
-        // Resim slider'ı oluşturma fonksiyonu - DÜZENLENMİŞ HALİ
+        // Resim slider'ı oluşturma fonksiyonu - TAMAMEN YENİLENDİ
         function createImageSlider(images) {
           const sliderId = 'slider-' + Math.random().toString(36).substr(2, 9);
           
@@ -1399,10 +1396,24 @@
           return sliderHtml;
         }
 
-        // Slider başlatma fonksiyonu - DÜZENLENMİŞ HALİ
+        // Slider başlatma fonksiyonu - TAMAMEN YENİLENDİ
         function initSlider(sliderId) {
           const slider = document.getElementById(sliderId);
           if (!slider) return;
+          
+          // Eğer bu slider zaten başlatıldıysa, önceki olay dinleyicilerini temizle
+          if (slidersState[sliderId]) {
+            const { prevBtn, nextBtn, dots, container } = slidersState[sliderId];
+            
+            if (prevBtn && prevBtn.cloneNode) prevBtn.replaceWith(prevBtn.cloneNode(true));
+            if (nextBtn && nextBtn.cloneNode) nextBtn.replaceWith(nextBtn.cloneNode(true));
+            
+            if (dots && dots.length) {
+              dots.forEach((dot, index) => {
+                if (dot && dot.cloneNode) dot.replaceWith(dot.cloneNode(true));
+              });
+            }
+          }
           
           const container = slider.querySelector('.slider-container');
           const items = slider.querySelectorAll('.slider-item');
@@ -1415,6 +1426,17 @@
           let currentIndex = 0;
           const totalItems = items.length;
           
+          // Slider durumunu kaydet
+          slidersState[sliderId] = {
+            container,
+            items,
+            prevBtn,
+            nextBtn,
+            dots,
+            currentIndex,
+            totalItems
+          };
+          
           // Slider'ı güncelle
           function updateSlider() {
             // Konteyner genişliğini yeniden hesapla
@@ -1425,6 +1447,9 @@
             dots.forEach((dot, index) => {
               dot.classList.toggle('active', index === currentIndex);
             });
+            
+            // Durumu güncelle
+            slidersState[sliderId].currentIndex = currentIndex;
           }
           
           // Sonraki slayt
@@ -1440,29 +1465,45 @@
           }
           
           // Olay dinleyicileri ekle
-          if (nextBtn) nextBtn.addEventListener('click', nextSlide);
-          if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+          if (nextBtn) {
+            nextBtn.addEventListener('click', nextSlide);
+            slidersState[sliderId].nextHandler = nextSlide;
+          }
+          
+          if (prevBtn) {
+            prevBtn.addEventListener('click', prevSlide);
+            slidersState[sliderId].prevHandler = prevSlide;
+          }
           
           // Noktalara tıklama
           dots.forEach((dot, index) => {
-            dot.addEventListener('click', () => {
+            const clickHandler = () => {
               currentIndex = index;
               updateSlider();
-            });
+            };
+            
+            dot.addEventListener('click', clickHandler);
+            slidersState[sliderId][`dotHandler-${index}`] = clickHandler;
           });
           
           // Mobil dokunma olayları
           let startX = 0;
           let endX = 0;
           
-          container.addEventListener('touchstart', (e) => {
+          const touchStartHandler = (e) => {
             startX = e.touches[0].clientX;
-          }, { passive: true });
+          };
           
-          container.addEventListener('touchend', (e) => {
+          const touchEndHandler = (e) => {
             endX = e.changedTouches[0].clientX;
             handleSwipe();
-          }, { passive: true });
+          };
+          
+          container.addEventListener('touchstart', touchStartHandler, { passive: true });
+          container.addEventListener('touchend', touchEndHandler, { passive: true });
+          
+          slidersState[sliderId].touchStartHandler = touchStartHandler;
+          slidersState[sliderId].touchEndHandler = touchEndHandler;
           
           function handleSwipe() {
             const diffX = startX - endX;
@@ -1485,6 +1526,7 @@
           // Yeniden boyutlandırmada slider'ı güncelle
           const resizeObserver = new ResizeObserver(updateSlider);
           resizeObserver.observe(slider);
+          slidersState[sliderId].resizeObserver = resizeObserver;
         }
 
         // Tüm slider'ları başlat
@@ -1502,24 +1544,26 @@
             const closeBtn = document.getElementsByClassName("close")[0];
             
             // Modal'ı kapat
-            closeBtn.onclick = function() {
+            const closeModal = function() {
                 modal.style.display = "none";
                 document.body.style.overflow = "auto"; // Scroll'u tekrar etkinleştir
-            }
+                // Modal kapatıldığında slider'ları yeniden başlat
+                setTimeout(initAllSliders, 100);
+            };
+            
+            closeBtn.onclick = closeModal;
             
             // Modal dışına tıklayınca kapat
             modal.onclick = function(event) {
                 if (event.target === modal) {
-                    modal.style.display = "none";
-                    document.body.style.overflow = "auto"; // Scroll'u tekrar etkinleştir
+                    closeModal();
                 }
-            }
+            };
             
             // ESC tuşu ile kapat
             document.addEventListener('keydown', function(event) {
                 if (event.key === "Escape") {
-                    modal.style.display = "none";
-                    document.body.style.overflow = "auto"; // Scroll'u tekrar etkinleştir
+                    closeModal();
                 }
             });
             
