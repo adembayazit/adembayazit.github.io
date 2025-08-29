@@ -110,7 +110,7 @@
         }
         
         .entries-container {
-            background: rgba(10, 25, 20, 0.7);;
+            background: rgba(10, 25, 20, 0.7);
             border: 1px solid var(--border-color);
             border-radius: 20px;
             padding: 1rem;
@@ -499,17 +499,16 @@
             object-fit: cover;
         }
 
-        /* Slider stilleri - MOBİL UYUMLU HALE GETİRİLDİ */
+        /* Slider stilleri - DÜZENLENMİŞ HALİ */
         .image-slider {
             position: relative;
-            margin: -40px 0;
+            margin: 10px 0;
             overflow: hidden;
             border-radius: 8px;
             min-height: 200px;
-            aspect-ratio: 16/9; /* Video oranını korur */
-            object-fit: cover;
+            aspect-ratio: 16/9;
             background: transparent;
-            
+            width: 100%;
         }
         
         .slider-container {
@@ -522,22 +521,23 @@
         .slider-item {
             flex: 0 0 auto;
             width: 100%;
+            height: 100%;
+            display: flex;
             align-items: center;
             justify-content: center;
             background: transparent;
-            border:0;
+            border: 0;
         }
         
         .slider-item img {
             width: 100%;
-            height: auto;
-            max-height: 500px;
-            object-fit: contain;
+            height: 100%;
+            object-fit: cover;
             border-radius: 0;
             margin: 0;
             cursor: pointer;
             background: transparent;
-            border:0;
+            border: 0;
         }
         
         .slider-nav {
@@ -549,7 +549,7 @@
             transform: translateY(-50%);
             pointer-events: none;
             z-index: 20;
-            padding: 0 0px;
+            padding: 0 10px;
             box-sizing: border-box;
         }
         
@@ -1366,7 +1366,7 @@
           return content;
         }
         
-        // Resim slider'ı oluşturma fonksiyonu - MOBİL UYUMLU
+        // Resim slider'ı oluşturma fonksiyonu - DÜZENLENMİŞ HALİ
         function createImageSlider(images) {
           const sliderId = 'slider-' + Math.random().toString(36).substr(2, 9);
           
@@ -1400,7 +1400,7 @@
           return sliderHtml;
         }
 
-        // Slider başlatma fonksiyonu - MOBİL UYUMLU
+        // Slider başlatma fonksiyonu - DÜZENLENMİŞ HALİ
         function initSlider(sliderId) {
           const slider = document.getElementById(sliderId);
           if (!slider) return;
@@ -1484,7 +1484,8 @@
           updateSlider();
           
           // Yeniden boyutlandırmada slider'ı güncelle
-          window.addEventListener('resize', updateSlider);
+          const resizeObserver = new ResizeObserver(updateSlider);
+          resizeObserver.observe(slider);
         }
 
         // Tüm slider'ları başlat
@@ -1495,7 +1496,7 @@
           });
         }
 
-        // Görsel modal işlevselliği
+        // Görsel modal işlevselliği - DÜZENLENMİŞ HALİ
         function setupImageModal() {
             const modal = document.getElementById("imageModal");
             const modalImg = document.getElementById("modalImage");
@@ -1504,12 +1505,14 @@
             // Modal'ı kapat
             closeBtn.onclick = function() {
                 modal.style.display = "none";
+                document.body.style.overflow = "auto"; // Scroll'u tekrar etkinleştir
             }
             
             // Modal dışına tıklayınca kapat
             modal.onclick = function(event) {
                 if (event.target === modal) {
                     modal.style.display = "none";
+                    document.body.style.overflow = "auto"; // Scroll'u tekrar etkinleştir
                 }
             }
             
@@ -1517,6 +1520,7 @@
             document.addEventListener('keydown', function(event) {
                 if (event.key === "Escape") {
                     modal.style.display = "none";
+                    document.body.style.overflow = "auto"; // Scroll'u tekrar etkinleştir
                 }
             });
             
@@ -1526,6 +1530,7 @@
                     modal.style.display = "block";
                     modalImg.src = event.target.src;
                     modalImg.alt = event.target.alt;
+                    document.body.style.overflow = "hidden"; // Scroll'u devre dışı bırak
                 }
             });
         }
@@ -1749,7 +1754,7 @@
           // Slider'ları başlat
           setTimeout(initAllSliders, 100);
           
-          // GÖRÜNÜM SAYAÇLARINI GÜNCELLE - DEĞİŞİKLİK BURADA
+          // GÖRÜNÜM SAYAÇLARINI GÜNCELLE
           updateViewCountsForVisibleEntries();
           
           loadingElement.style.display = 'none';
@@ -1831,7 +1836,7 @@
           }
         }
 
-        // GÖRÜNÜM SAYACI GÜNCELLEME FONKSİYONU - YENİ VERSİYON
+        // GÖRÜNÜM SAYACI GÜNCELLEME FONKSİYONU
         async function updateViewCount(entryId) {
           if (viewsCache.isUpdating) return;
           
@@ -1869,7 +1874,7 @@
           }
         }
 
-        // YENİ: Intersection Observer ile görünür entry'lerin view count'unu güncelle
+        // Intersection Observer ile görünür entry'lerin view count'unu güncelle
         function updateViewCountsForVisibleEntries() {
           const entries = document.querySelectorAll('.entry');
           
@@ -2057,7 +2062,6 @@
         }
 
         // 6. HASH YÖNLENDİRME FONKSİYONU
-        // ScrollToEntryFromHash fonksiyonunu güncelle
         function scrollToEntryFromHash() {
           const hash = window.location.hash;
           if (hash.startsWith('#entry-')) {
