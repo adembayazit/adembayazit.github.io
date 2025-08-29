@@ -1547,8 +1547,11 @@
             const closeModal = function() {
                 modal.style.display = "none";
                 document.body.style.overflow = "auto"; // Scroll'u tekrar etkinleştir
-                // Modal kapatıldığında slider'ları yeniden başlat
-                setTimeout(initAllSliders, 100);
+                // Modal kapatıldığında slider'ları yeniden başlat ve boşlukları temizle
+                setTimeout(() => {
+                    initAllSliders();
+                    clearSliderGaps();
+                }, 100);
             };
             
             closeBtn.onclick = closeModal;
@@ -1576,6 +1579,62 @@
                     document.body.style.overflow = "hidden"; // Scroll'u devre dışı bırak
                 }
             });
+        }
+
+        // Slider boşluklarını temizleme fonksiyonu
+        function clearSliderGaps() {
+            const sliders = document.querySelectorAll('.image-slider');
+            sliders.forEach(slider => {
+                // Slider yüksekliğini içeriğe göre ayarla
+                const container = slider.querySelector('.slider-container');
+                if (container) {
+                    const items = container.querySelectorAll('.slider-item');
+                    if (items.length > 0) {
+                        // İlk öğenin yüksekliğini al
+                        const firstItem = items[0];
+                        const img = firstItem.querySelector('img');
+                        if (img && img.complete) {
+                            slider.style.height = 'auto';
+                            container.style.height = 'auto';
+                        } else if (img) {
+                            // Resim yüklenmemişse yüklenmesini bekle
+                            img.onload = function() {
+                                slider.style.height = 'auto';
+                                container.style.height = 'auto';
+                            };
+                        }
+                    }
+                }
+            });
+            
+            // Tüm içerik alanındaki boşlukları kontrol et
+            const contents = document.querySelectorAll('.content');
+            contents.forEach(content => {
+                // Görsel olmayan boşlukları temizle
+                const children = content.children;
+                if (children.length === 0 && content.textContent.trim() === '') {
+                    content.style.display = 'none';
+                } else {
+                    content.style.display = '';
+                }
+            });
+        }
+
+        // Scroll sonrası slider'ları sıfırlama
+        function resetSlidersOnScroll() {
+            for (const sliderId in slidersState) {
+                const state = slidersState[sliderId];
+                if (state && state.currentIndex !== 0) {
+                    state.currentIndex = 0;
+                    const slideWidth = state.container.offsetWidth;
+                    state.container.style.transform = `translateX(0px)`;
+                    
+                    // Noktaları güncelle
+                    state.dots.forEach((dot, index) => {
+                        dot.classList.toggle('active', index === 0);
+                    });
+                }
+            }
         }
 
         // ÇEVİRİ İKONLARINI EKLEME FONKSİYONU
@@ -1795,7 +1854,10 @@
           addTranslationIcons();
           
           // Slider'ları başlat
-          setTimeout(initAllSliders, 100);
+          setTimeout(() => {
+            initAllSliders();
+            clearSliderGaps(); // İlk yüklemede boşlukları temizle
+          }, 100);
           
           // GÖRÜNÜM SAYAÇLARINI GÜNCELLE
           updateViewCountsForVisibleEntries();
@@ -2187,6 +2249,18 @@
             // Polling'i başlat
             startPolling();
             
+            // Scroll event listener ekle
+            let scrollTimeout;
+            window.addEventListener('scroll', function() {
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(function() {
+                    resetSlidersOnScroll();
+                }, 150);
+            });
+            
+            // İlk yüklemede boşlukları temizle
+            setTimeout(clearSliderGaps, 500);
+            
           } catch (error) {
             console.error("Initialization error:", error);
             try {
@@ -2229,6 +2303,19 @@
 
               // Fallback: polling'i başlat
               startPolling();
+              
+              // Scroll event listener ekle
+              let scrollTimeout;
+              window.addEventListener('scroll', function() {
+                  clearTimeout(scrollTimeout);
+                  scrollTimeout = setTimeout(function() {
+                      resetSlidersOnScroll();
+                  }, 150);
+              });
+              
+              // İlk yüklemede boşlukları temizle
+              setTimeout(clearSliderGaps, 500);
+              
             } catch (fallbackError) {
               console.error("Fallback failed:", fallbackError);
               document.getElementById("entries").innerHTML = 
