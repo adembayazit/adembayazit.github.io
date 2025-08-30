@@ -184,122 +184,116 @@
           font-size: 30px;
         }
       }
+
+      /* Slider stilleri */
+      .image-slider {
+        position: relative;
+        margin: 10px 0;
+        overflow: hidden;
+        border-radius: 8px;
+        background: #000;
+        width: 100%;
+        aspect-ratio: 16/9;
+      }
+      
+      .slider-container {
+        display: flex;
+        transition: transform 0.4s ease;
+        height: 100%;
+        width: 100%;
+      }
+      
+      .slider-item {
+        flex: 0 0 auto;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #000;
+      }
+      
+      .slider-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 0;
+        margin: 0;
+        cursor: pointer;
+        display: block;
+      }
+      
+      .slider-nav {
+        position: absolute;
+        top: 50%;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        transform: translateY(-50%);
+        pointer-events: none;
+        z-index: 20;
+        padding: 0 10px;
+        box-sizing: border-box;
+      }
+      
+      .slider-btn {
+        background: rgba(0, 0, 0, 0.7);
+        border: none;
+        color: limegreen;
+        font-size: 24px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        pointer-events: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+        z-index: 10;
+      }
+      
+      .slider-btn:hover {
+        background: rgba(0, 0, 0, 0.9);
+        transform: scale(1.1);
+      }
+      
+      .slider-dots {
+        position: absolute;
+        bottom: 15px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        z-index: 10;
+      }
+      
+      .dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+      
+      .dot.active {
+        background: limegreen;
+        transform: scale(1.2);
+        box-shadow: 0 0 5px limegreen;
+      }
     </style>
 </head>
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TFN7XD9Z"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
-<script>
-  const dot = document.createElement('div');
-  dot.style.cssText = `
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 18px;
-    height: 18px;
-    background: #f9d71c;
-    border-radius: 50%;
-    border: 3px solid white;
-    box-shadow: 0 0 10px rgba(50, 205, 50, 0.8);
-    cursor: pointer;
-    z-index: 9999;
-    transition: all 0.3s;
-  `;
-
-  const tooltip = document.createElement('div');
-    tooltip.style.cssText = `
-    position: absolute;
-    bottom: 100%;
-    right: 0;
-    background: rgba(0,0,0,0.9);
-    color: white;
-    padding: 10px;
-    border-radius: 6px;
-    font-size: 14px;
-    font-family: Arial, sans-serif;
-    white-space: nowrap;
-    opacity: 0;
-    transition: opacity 0.3s;
-    pointer-events: none;
-    min-width: 240px;
-    backdrop-filter: blur(5px);
-  `;
-
-  dot.appendChild(tooltip);
-  document.body.appendChild(dot);
-
-  dot.addEventListener('mouseenter', () => tooltip.style.opacity = '1');
-  dot.addEventListener('mouseleave', () => tooltip.style.opacity = '0');
-  fetch('https://ipinfo.io/json?token=68a1229187303a') // TOKEN doğruysa böyle bırak
-    .then(async res => {
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(`Hatalı cevap (${res.status}): ${text}`);
-      }
-      return res.json();
-    })
-    .then(data => {
-      const now = new Date();
-      const {
-        ip, hostname, city, region,
-        country, loc, org, postal, timezone
-      } = data;
-
-      tooltip.innerHTML = `
-        <div style="margin-bottom: 3px; font-weight: bold; color: #00ff00;">✓ User IP Detected</div>
-        <div><strong>IP:</strong> ${ip}</div>
-        <div><strong>Host:</strong> ${hostname}</div>
-        <div><strong>City:</strong> ${city}</div>
-        <div><strong>Country:</strong> ${country}</div>
-        <div><strong>Location</strong> ${loc}</div>
-        <div><strong>Postal:</strong> ${postal}</div>
-        <div><strong>Org:</strong> ${org}</div>
-        <div><strong>Time:</strong> ${now.toLocaleString('tr-TR')}</div>
-        <div style="font-size: 9px; margin-top: 4px; color: #ccc;">${navigator.userAgent.split(' ')[0]}</div>
-      `;
-
-      // POST ile Netlify fonksiyonuna gönder
-      fetch('https://adembayazit.netlify.app/.netlify/functions/log-visitor', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ip, hostname, city, region,
-          country, loc, org, postal,
-          timezone, timestamp: now.toISOString(),
-          userAgent: navigator.userAgent
-        })
-      }).then(res => res.json())
-        .then(console.log)
-        .catch(err => console.error("POST hatası:", err));
-    })
-    .catch(error => {
-      const now = new Date();
-      tooltip.innerHTML = `
-        <div style="margin-bottom: 5px; font-weight: bold; color: #ff5555;">❌ Hata</div>
-        <div><strong>Zaman:</strong> ${now.toLocaleString('tr-TR')}</div>
-        <div><strong>Mesaj:</strong> ${error.message}</div>
-      `;
-      dot.style.background = "#ff5555";
-    });
-</script>
-    <script type="module" src="/JAVASCRIPT/load-entries.js"></script>
-    <script src="/JAVASCRIPT/monitor.js"></script>
-    <canvas id="matrixCanvas"></canvas>
-                                                        <!-- Matrix -->
-    <script src="/JAVASCRIPT/matrix.js"></script>
 <body>
     <header class="header">
         <a href="#home" class="logo"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">{adembayazit} </a>
         <nav class="navbar">
-            <!-- <a href="#home" style="--i:1;" class="active">Home</a>
-            <a href="about.html" style="--i:2;">About</a>
-            <a href="skills.html" style="--i:3;">Skills</a>
-            <a href="#project" style="--i:4;">Projects</a>
-            <a href="#contact" style="--i:5;">Contact</a>
-            <a href="ethicalhacker.html" style="--i:5;">Ethical Hacker</a>  -->
             <div class="dropdown">
-            <a href="#" style="--i:5; class="dropbtn"> <img src="IMAGES/Ata.svg" alt= "Ata Icon" class="ata-icon"><span class="fi fi-tr"><!-- Türkiye --></span> <span class='bx bx-code-alt'></span> Ethical Hacker <span class='bx bx-chevron-down'></span></a>
+            <a href="#" style="--i:5;" class="dropbtn"> <img src="IMAGES/Ata.svg" alt= "Ata Icon" class="ata-icon"><span class="fi fi-tr"></span> <span class='bx bx-code-alt'></span> Ethical Hacker <span class='bx bx-chevron-down'></span></a>
             <div class="dropdown-content">
             <a href="#tools"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hacker-icon"> What is an Ethical Hacker?</a>
             <a href="#reports"><img src="IMAGES/glossary.svg" alt="Glossary" class="glossary-icon"> Cybersecurity Glossary</a>
@@ -310,12 +304,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <a href="#payloads"><img src="IMAGES/education.svg" alt="Education" class="education-icon"> Cybersecurity Learning Resources</a>
     </div>
   </div>
-            
         </nav>
     </header>
 
     <section id="home" class="home">
-
         <div class="home-content" data-scroll data-scroll-speed="-5" >
             <h3 class="mu">Hello, It's me</h3>
             <h1>Adem Bayazıt</h1>
@@ -349,7 +341,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <a href="https://github.com/adembayazit" target="_blank"><i class='bx bxl-github'></i></a>
                <a href="https://www.linkedin.com/in/adembayazit/" target="_blank"><i class='bx bxl-linkedin' ></i></a>
                <a href="https://wa.me/+905365844282" target="_blank"><i class='bx bxl-whatsapp'></i></a>
-                <!-- <a href="https://www.instagram.com/adembayazit/" target="_blank"><i class='bx bxl-instagram'></i></a> -->
             </div>
                 <a id="downloadCv" href="https://drive.google.com/file/d/17FloLfdbiQPpb1UmK-rQB5kl9S9qlYkq/view" class="btn-box">Download CV</a>
         </div>
@@ -481,6 +472,166 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       }
     }
   });
+
+  // IP Göstergesi için kod
+  const dot = document.createElement('div');
+  dot.style.cssText = `
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 18px;
+    height: 18px;
+    background: #f9d71c;
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 0 10px rgba(50, 205, 50, 0.8);
+    cursor: pointer;
+    z-index: 9999;
+    transition: all 0.3s;
+  `;
+
+  const tooltip = document.createElement('div');
+  tooltip.style.cssText = `
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    background: rgba(0,0,0,0.9);
+    color: white;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    min-width: 240px;
+    backdrop-filter: blur(5px);
+  `;
+
+  dot.appendChild(tooltip);
+  document.body.appendChild(dot);
+
+  dot.addEventListener('mouseenter', () => tooltip.style.opacity = '1');
+  dot.addEventListener('mouseleave', () => tooltip.style.opacity = '0');
+  
+  fetch('https://ipinfo.io/json?token=68a1229187303a')
+    .then(async res => {
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`Hatalı cevap (${res.status}): ${text}`);
+      }
+      return res.json();
+    })
+    .then(data => {
+      const now = new Date();
+      const { ip, hostname, city, region, country, loc, org, postal, timezone } = data;
+
+      tooltip.innerHTML = `
+        <div style="margin-bottom: 3px; font-weight: bold; color: #00ff00;">✓ User IP Detected</div>
+        <div><strong>IP:</strong> ${ip}</div>
+        <div><strong>Host:</strong> ${hostname}</div>
+        <div><strong>City:</strong> ${city}</div>
+        <div><strong>Country:</strong> ${country}</div>
+        <div><strong>Location</strong> ${loc}</div>
+        <div><strong>Postal:</strong> ${postal}</div>
+        <div><strong>Org:</strong> ${org}</div>
+        <div><strong>Time:</strong> ${now.toLocaleString('tr-TR')}</div>
+        <div style="font-size: 9px; margin-top: 4px; color: #ccc;">${navigator.userAgent.split(' ')[0]}</div>
+      `;
+
+      // POST ile Netlify fonksiyonuna gönder
+      fetch('https://adembayazit.netlify.app/.netlify/functions/log-visitor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ip, hostname, city, region, country, loc, org, postal,
+          timezone, timestamp: now.toISOString(), userAgent: navigator.userAgent
+        })
+      }).catch(err => console.error("POST hatası:", err));
+    })
+    .catch(error => {
+      const now = new Date();
+      tooltip.innerHTML = `
+        <div style="margin-bottom: 5px; font-weight: bold; color: #ff5555;">❌ Hata</div>
+        <div><strong>Zaman:</strong> ${now.toLocaleString('tr-TR')}</div>
+        <div><strong>Mesaj:</strong> ${error.message}</div>
+      `;
+      dot.style.background = "#ff5555";
+    });
+
+  // Slider işlevselliği
+  const initSlider = (sliderId) => {
+    const slider = document.getElementById(sliderId);
+    if (!slider) return;
+    
+    const container = slider.querySelector('.slider-container');
+    const items = slider.querySelectorAll('.slider-item');
+    const prevBtn = slider.querySelector('.prev-btn');
+    const nextBtn = slider.querySelector('.next-btn');
+    const dots = slider.querySelectorAll('.dot');
+    
+    if (!container || items.length === 0) return;
+    
+    let currentIndex = 0;
+    const totalItems = items.length;
+    
+    // Slider'ı güncelle
+    const updateSlider = () => {
+      const slideWidth = slider.offsetWidth;
+      container.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+      
+      // Noktaları güncelle
+      dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentIndex);
+      });
+    };
+    
+    // Sonraki slayt
+    const nextSlide = () => {
+      currentIndex = (currentIndex + 1) % totalItems;
+      updateSlider();
+    };
+    
+    // Önceki slayt
+    const prevSlide = () => {
+      currentIndex = (currentIndex - 1 + totalItems) % totalItems;
+      updateSlider();
+    };
+    
+    // Olay dinleyicileri ekle
+    if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+    if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+    
+    // Noktalara tıklama
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        currentIndex = index;
+        updateSlider();
+      });
+    });
+    
+    // İlk slider konumunu ayarla
+    updateSlider();
+  };
+
+  // Tüm slider'ları başlat
+  const initAllSliders = () => {
+    const sliders = document.querySelectorAll('.image-slider');
+    sliders.forEach(slider => {
+      initSlider(slider.id);
+    });
+  };
+
+  // Sayfa yüklendiğinde slider'ları başlat
+  window.addEventListener('load', function() {
+    setTimeout(() => {
+      initAllSliders();
+    }, 500);
+  });
 </script>
+<!-- Matrix Canvas ve Script -->
+<canvas id="matrixCanvas"></canvas>
+<script src="/JAVASCRIPT/matrix.js"></script>
 </body> 
 </html>
