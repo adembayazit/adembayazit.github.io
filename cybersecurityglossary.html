@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Security Glossary - Adem Bayazıt</title>
+    <link rel="stylesheet" href="CSS/style.css">
+    <style>
+        /* Glossary specific styles */
+        .glossary-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .glossary-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .alphabet-filter {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 30px;
+            padding: 15px;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .alphabet-filter button {
+            padding: 8px 12px;
+            background: var(--nav-bg);
+            color: var(--text-color);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .alphabet-filter button:hover,
+        .alphabet-filter button.active {
+            background: var(--accent-color);
+            color: white;
+        }
+        
+        .glossary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .term-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        
+        .term-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .term-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        
+        .term-title {
+            margin: 0;
+            font-size: 1.2rem;
+            color: var(--accent-color);
+        }
+        
+        .expand-button {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-color);
+            transition: transform 0.3s ease;
+        }
+        
+        .term-summary {
+            margin-top: 10px;
+            color: var(--text-color);
+            font-size: 0.95rem;
+        }
+        
+        .term-detail {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            margin-top: 15px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+        }
+        
+        .term-card.expanded .term-detail {
+            max-height: 500px;
+        }
+        
+        .term-card.expanded .expand-button {
+            transform: rotate(45deg);
+        }
+        
+        .letter-section {
+            margin-bottom: 40px;
+        }
+        
+        .letter-heading {
+            font-size: 1.8rem;
+            color: var(--accent-color);
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 12px 20px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            font-size: 1rem;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2rem;
+            color: var(--text-light);
+        }
+        
+        @media (max-width: 768px) {
+            .glossary-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .alphabet-filter {
+                overflow-x: auto;
+                justify-content: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header (same as your main page) -->
+    <header>
+        <div class="container">
+            <div id="branding">
+                <h1>Adem Bayazıt</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html#about">About</a></li>
+                    <li><a href="index.html#projects">Projects</a></li>
+                    <li><a href="index.html#blog">Blog</a></li>
+                    <li><a href="index.html#contact">Contact</a></li>
+                    <li class="current"><a href="glossary.html">Glossary</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Glossary Content -->
+    <section class="glossary-container">
+        <div class="glossary-header">
+            <h1>Cyber Security Glossary</h1>
+            <p>Your comprehensive guide to cybersecurity terminology</p>
+        </div>
+        
+        <input type="text" id="searchInput" class="search-box" placeholder="Search for terms...">
+        
+        <div class="alphabet-filter" id="alphabetFilter">
+            <!-- Alphabet buttons will be generated by JavaScript -->
+        </div>
+        
+        <div id="glossaryContent">
+            <!-- Glossary terms will be loaded here -->
+        </div>
+    </section>
+
+    <!-- Footer (same as your main page) -->
+    <footer>
+        <p>Adem Bayazıt &copy; 2023</p>
+    </footer>
+
+    <script>
+        // Glossary data
+        const glossaryTerms = [
+            { term: "Access Control", definition: "Access Control ensures that resources are only granted to those users who are entitled to them.", letter: "A" },
+            { term: "Access Control List (ACL)", definition: "A mechanism that implements access control for a system resource by listing the identities of the system entities that are permitted to access the resource.", letter: "A" },
+            { term: "Access Control Service", definition: "A security service that provides protection of system resources against unauthorized access. The two basic mechanisms for implementing this service are ACLs and tickets.", letter: "A" },
+            { term: "Access Management", definition: "Access Management is the maintenance of access information which consists of four tasks: account administration, maintenance, monitoring, and revocation.", letter: "A" },
+            { term: "Access Matrix", definition: "An Access Matrix uses rows to represent subjects and columns to represent objects with privileges listed in each cell.", letter: "A" },
+            { term: "Account Harvesting", definition: "Account Harvesting is the process of collecting all the legitimate account names on a system.", letter: "A" },
+            { term: "ACK Piggybacking", definition: "ACK piggybacking is the practice of sending an ACK inside another packet going to the same destination.", letter: "A" },
+            { term: "Active Content", definition: "Program code embedded in the contents of a web page. When the page is accessed by a web browser, the embedded code is automatically downloaded and executed on the user's workstation. Ex. Java, ActiveX (MS)", letter: "A" },
+            { term: "Activity Monitors", definition: "Activity monitors aim to prevent virus infection by monitoring for malicious activity on a system, and blocking that activity when possible.", letter: "A" },
+            { term: "Address Resolution Protocol (ARP)", definition: "Address Resolution Protocol (ARP) is a protocol for mapping an Internet Protocol address to a physical machine address that is recognized in the local network.", letter: "A" },
+            { term: "Advanced Encryption Standard (AES)", definition: "An encryption standard being developed by NIST. Intended to specify an unclassified, publicly-disclosed, symmetric encryption algorithm.", letter: "A" },
+            { term: "Algorithm", definition: "A finite set of step-by-step instructions for a problem-solving or computation procedure, especially one that can be implemented by a computer.", letter: "A" },
+            { term: "Applet", definition: "Java programs; an application program that uses the client's web browser to provide a user interface.", letter: "A" },
+            { term: "ARPANET", definition: "Advanced Research Projects Agency Network, a pioneer packet-switched network that was built in the early 1970s under contract to the US Government.", letter: "A" },
+            { term: "Asymmetric Cryptography", definition: "Public-key cryptography; A modern branch of cryptography in which the algorithms employ a pair of keys (a public key and a private key).", letter: "A" },
+            { term: "Asymmetric Warfare", definition: "Asymmetric warfare is the fact that a small investment, properly leveraged, can yield incredible results.", letter: "A" },
+            { term: "Auditing", definition: "Auditing is the information gathering and analysis of assets to ensure such things as policy compliance and security from vulnerabilities.", letter: "A" },
+            { term: "Authentication", definition: "Authentication is the process of confirming the correctness of the claimed identity.", letter: "A" },
+            { term: "Authenticity", definition: "Authenticity is the validity and conformance of the original information.", letter: "A" },
+            { term: "Authorization", definition: "Authorization is the approval, permission, or empowerment for someone or something to do something.", letter: "A" },
+            { term: "Autonomous System", definition: "One network or series of networks that are all under one administrative control.", letter: "A" },
+            { term: "Availability", definition: "Availability is the need to ensure that the business purpose of the system can be met and that it is accessible to those who need to use it.", letter: "A" },
+            { term: "Backdoor", definition: "A backdoor is a tool installed after a compromise to give an attacker easier access to the compromised system around any security mechanisms that are in place.", letter: "B" },
+            { term: "Bandwidth", definition: "Commonly used to mean the capacity of a communication channel to pass data through the channel in a given amount of time.", letter: "B" },
+            { term: "Banner", definition: "A banner is the information that is displayed to a remote user trying to connect to a service.", letter: "B" },
+            { term: "Basic Authentication", definition: "Basic Authentication is the simplest web-based authentication scheme that works by sending the username and password with each request.", letter: "B" },
+            { term: "Bastion Host", definition: "A bastion host has been hardened in anticipation of vulnerabilities that have not been discovered yet.", letter: "B" },
+            { term: "BIND", definition: "BIND stands for Berkeley Internet Name Domain and is an implementation of DNS.", letter: "B" },
+            { term: "Biometrics", definition: "Biometrics use physical characteristics of the users to determine access.", letter: "B" },
+            { term: "Bit", definition: "The smallest unit of information storage; a contraction of the term 'binary digit'.", letter: "B" },
+            { term: "Block Cipher", definition: "A block cipher encrypts one block of data at a time.", letter: "B" },
+            { term: "Blue Team", definition: "The people who perform defensive cybersecurity tasks.", letter: "B" },
+            { term: "Boot Record Infector", definition: "A boot record infector is a piece of malware that inserts malicious code into the boot sector of a disk.", letter: "B" },
+            { term: "Border Gateway Protocol (BGP)", definition: "An inter-autonomous system routing protocol.", letter: "B" },
+            { term: "Botnet", definition: "A botnet is a large number of compromised computers that are used to create and send spam or viruses.", letter: "B" },
+            { term: "Bridge", definition: "A product that connects a local area network (LAN) to another local area network that uses the same protocol.", letter: "B" },
+            { term: "British Standard 7799", definition: "A standard code of practice and provides guidance on how to secure an information system.", letter: "B" },
+            { term: "Broadcast", definition: "To simultaneously send the same message to multiple recipients.", letter: "B" },
+            { term: "Broadcast Address", definition: "An address used to broadcast a datagram to all hosts on a given network using UDP or ICMP protocol.", letter: "B" },
+            { term: "Browser", definition: "A client computer program that can retrieve and display information from servers on the World Wide Web.", letter: "B" },
+            { term: "Brute Force", definition: "A cryptanalysis technique or other kind of attack method involving an exhaustive procedure that tries all possibilities.", letter: "B" },
+            { term: "Buffer Overflow", definition: "A buffer overflow occurs when a program or process tries to store more data in a buffer than it was intended to hold.", letter: "B" },
+            { term: "Business Continuity Plan (BCP)", definition: "A Business Continuity Plan is the plan for emergency response, backup operations, and post-disaster recovery.", letter: "B" },
+            { term: "Business Impact Analysis (BIA)", definition: "A Business Impact Analysis determines what levels of impact to a system are tolerable.", letter: "B" },
+            { term: "Byte", definition: "A fundamental unit of computer storage; the smallest addressable unit in a computer's architecture.", letter: "B" },
+            { term: "Cache", definition: "A special high-speed storage mechanism.", letter: "C" },
+            { term: "Cache Cramming", definition: "Cache Cramming is the technique of tricking a browser to run cached Java code from the local disk.", letter: "C" },
+            { term: "Cache Poisoning", definition: "Malicious or misleading data from a remote name server is saved [cached] by another name server.", letter: "C" },
+            { term: "Call Admission Control (CAC)", definition: "The inspection and control all inbound and outbound voice network activity.", letter: "C" },
+            { term: "Cell", definition: "A cell is a unit of data transmitted over an ATM network.", letter: "C" },
+            { term: "Certificate-Based Authentication", definition: "Certificate-Based Authentication is the use of SSL and certificates to authenticate and encrypt HTTP traffic.", letter: "C" },
+            { term: "CGI", definition: "Common Gateway Interface. This mechanism is used by HTTP servers to pass parameters to executable scripts.", letter: "C" },
+            { term: "Chain of Custody", definition: "Chain of Custody is the important application of the Federal rules of evidence and its handling.", letter: "C" },
+            { term: "Challenge-Handshake Authentication Protocol (CHAP)", definition: "The Challenge-Handshake Authentication Protocol uses a challenge/response authentication mechanism.", letter: "C" },
+            { term: "Checksum", definition: "A value that is computed by a function that is dependent on the contents of a data object.", letter: "C" },
+            { term: "Cipher", definition: "A cryptographic algorithm for encryption and decryption.", letter: "C" },
+            { term: "Ciphertext", definition: "Ciphertext is the encrypted form of the message being sent.", letter: "C" },
+            { term: "Circuit Switched Network", definition: "A circuit switched network is where a single continuous physical circuit connected two endpoints.", letter: "C" },
+            { term: "Client", definition: "A system entity that requests and uses a service provided by another system entity, called a 'server'.", letter: "C" },
+            { term: "Cloud Computing", definition: "Utilization of remote servers in the data-center of a cloud provider to store, manage, and process your data.", letter: "C" },
+            { term: "Cold/Warm/Hot Disaster Recovery Site", definition: "Different levels of disaster recovery sites with varying hardware redundancy and failover times.", letter: "C" },
+            { term: "Collision", definition: "A collision occurs when multiple systems transmit simultaneously on the same wire.", letter: "C" },
+            { term: "Competitive Intelligence", definition: "Competitive Intelligence is espionage using legal, or at least not obviously illegal, means.", letter: "C" },
+            { term: "Computer Emergency Response Team (CERT)", definition: "An organization that studies computer and network INFOSEC.", letter: "C" },
+            { term: "Computer Network", definition: "A collection of host computers together with the sub-network or inter-network.", letter: "C" },
+            { term: "Confidentiality", definition: "Confidentiality is the need to ensure that information is disclosed only to those who are authorized to view it.", letter: "C" },
+            { term: "Configuration Management", definition: "Establish a known baseline condition and manage it.", letter: "C" },
+            { term: "Cookie", definition: "Data exchanged between an HTTP server and a browser to store state information on the client side.", letter: "C" },
+            { term: "Corruption", definition: "A threat action that undesirably alters system operation by adversely modifying system functions or data.", letter: "C" },
+            { term: "Cost Benefit Analysis", definition: "A cost benefit analysis compares the cost of implementing countermeasures with the value of the reduced risk.", letter: "C" },
+            { term: "Countermeasure", definition: "Reactive methods used to prevent an exploit from successfully occurring once a threat has been detected.", letter: "C" },
+            { term: "Covert Channels", definition: "Covert Channels are the means by which information can be communicated between two parties in a covert fashion.", letter: "C" },
+            { term: "Crimeware", definition: "A type of malware used by cyber criminals to make money off of the infected system.", letter: "C" },
+            { term: "Cron", definition: "Cron is a Unix application that runs jobs for users and administrators at scheduled times of the day.", letter: "C" },
+            { term: "Crossover Cable", definition: "A crossover cable reverses the pairs of cables at the other end.", letter: "C" },
+            { term: "Cryptanalysis", definition: "The mathematical science that deals with analysis of a cryptographic system.", letter: "C" },
+            { term: "Cryptographic Algorithm or Hash", definition: "An algorithm that employs the science of cryptography.", letter: "C" },
+            { term: "Cut-Through", definition: "Cut-Through is a method of switching where only the header of a packet is read before it is forwarded.", letter: "C" },
+            { term: "Cyber-Attack", definition: "A cyber- attack is any unauthorized attempt to access, disrupt, steal, or damage computer systems, networks, or data.", letter: "C" },
+            { term: "Cybersecurity Risk Assessment", definition: "The systematic process of identifying, analyzing, and evaluating potential threats.", letter: "C" },
+            { term: "Cyclic Redundancy Check (CRC)", definition: "A type of checksum algorithm that is not a cryptographic hash.", letter: "C" },
+            // Add more terms here following the same pattern
+            { term: "Zero-Day Exploit", definition: "A zero-day exploit refers to a cyberattack that takes advantage of a software, hardware, or firmware vulnerability that is unknown to the vendor or the public.", letter: "Z" },
+            { term: "Zombies", definition: "A zombie computer is a computer connected to the Internet that has been compromised by a hacker.", letter: "Z" }
+        ];
+
+        // Function to generate alphabet filter
+        function generateAlphabetFilter() {
+            const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#";
+            const filterContainer = document.getElementById('alphabetFilter');
+            
+            // Add "All" button
+            const allButton = document.createElement('button');
+            allButton.textContent = 'All';
+            allButton.setAttribute('data-letter', 'all');
+            allButton.classList.add('active');
+            filterContainer.appendChild(allButton);
+            
+            // Add alphabet buttons
+            for (let char of alphabet) {
+                const button = document.createElement('button');
+                button.textContent = char;
+                button.setAttribute('data-letter', char);
+                filterContainer.appendChild(button);
+            }
+        }
+
+        // Function to render glossary terms
+        function renderGlossaryTerms(filter = 'all') {
+            const glossaryContent = document.getElementById('glossaryContent');
+            glossaryContent.innerHTML = '';
+            
+            // Group terms by letter
+            const groupedTerms = {};
+            glossaryTerms.forEach(term => {
+                if (filter !== 'all' && term.letter !== filter) return;
+                
+                if (!groupedTerms[term.letter]) {
+                    groupedTerms[term.letter] = [];
+                }
+                groupedTerms[term.letter].push(term);
+            });
+            
+            // If no results
+            if (Object.keys(groupedTerms).length === 0) {
+                glossaryContent.innerHTML = '<div class="no-results">No terms found matching your search.</div>';
+                return;
+            }
+            
+            // Sort letters
+            const sortedLetters = Object.keys(groupedTerms).sort();
+            
+            // Render each letter section
+            sortedLetters.forEach(letter => {
+                const letterSection = document.createElement('div');
+                letterSection.className = 'letter-section';
+                letterSection.id = `letter-${letter}`;
+                
+                const letterHeading = document.createElement('h2');
+                letterHeading.className = 'letter-heading';
+                letterHeading.textContent = letter;
+                letterSection.appendChild(letterHeading);
+                
+                const grid = document.createElement('div');
+                grid.className = 'glossary-grid';
+                
+                // Sort terms alphabetically
+                groupedTerms[letter].sort((a, b) => a.term.localeCompare(b.term));
+                
+                // Add terms
+                groupedTerms[letter].forEach(term => {
+                    const termCard = document.createElement('div');
+                    termCard.className = 'term-card';
+                    termCard.innerHTML = `
+                        <div class="term-header">
+                            <h3 class="term-title">${term.term}</h3>
+                            <button class="expand-button">+</button>
+                        </div>
+                        <div class="term-summary">${term.definition.substring(0, 100)}...</div>
+                        <div class="term-detail">${term.definition}</div>
+                    `;
+                    grid.appendChild(termCard);
+                });
+                
+                letterSection.appendChild(grid);
+                glossaryContent.appendChild(letterSection);
+            });
+            
+            // Add event listeners to expand buttons
+            document.querySelectorAll('.term-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    this.classList.toggle('expanded');
+                });
+            });
+        }
+
+        // Function to filter terms by search
+        function filterTermsBySearch() {
+            const searchText = document.getElementById('searchInput').value.toLowerCase();
+            
+            if (searchText === '') {
+                renderGlossaryTerms();
+                return;
+            }
+            
+            const filteredTerms = glossaryTerms.filter(term => 
+                term.term.toLowerCase().includes(searchText) || 
+                term.definition.toLowerCase().includes(searchText)
+            );
+            
+            const glossaryContent = document.getElementById('glossaryContent');
+            glossaryContent.innerHTML = '';
+            
+            if (filteredTerms.length === 0) {
+                glossaryContent.innerHTML = '<div class="no-results">No terms found matching your search.</div>';
+                return;
+            }
+            
+            const grid = document.createElement('div');
+            grid.className = 'glossary-grid';
+            
+            filteredTerms.forEach(term => {
+                const termCard = document.createElement('div');
+                termCard.className = 'term-card';
+                termCard.innerHTML = `
+                    <div class="term-header">
+                        <h3 class="term-title">${term.term}</h3>
+                        <button class="expand-button">+</button>
+                    </div>
+                    <div class="term-summary">${term.definition.substring(0, 100)}...</div>
+                    <div class="term-detail">${term.definition}</div>
+                `;
+                grid.appendChild(termCard);
+            });
+            
+            glossaryContent.appendChild(grid);
+            
+            // Add event listeners to expand buttons
+            document.querySelectorAll('.term-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    this.classList.toggle('expanded');
+                });
+            });
+        }
+
+        // Initialize the glossary
+        document.addEventListener('DOMContentLoaded', function() {
+            generateAlphabetFilter();
+            renderGlossaryTerms();
+            
+            // Add event listeners to alphabet filter buttons
+            document.querySelectorAll('.alphabet-filter button').forEach(button => {
+                button.addEventListener('click', function() {
+                    // Update active button
+                    document.querySelectorAll('.alphabet-filter button').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    const letter = this.getAttribute('data-letter');
+                    if (letter === 'all') {
+                        renderGlossaryTerms();
+                    } else {
+                        renderGlossaryTerms(letter);
+                    }
+                });
+            });
+            
+            // Add event listener to search input
+            document.getElementById('searchInput').addEventListener('input', filterTermsBySearch);
+        });
+    </script>
+</body>
+</html>
