@@ -3,22 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Siber Güvenlik Sözlüğü - Adem Bayazıt</title>
+    <title>All Entries - Adem Bayazıt</title>
     <link rel="icon" type="image/png" href="/IMAGES/ab.png">
     <link rel="stylesheet" href="/CSS/style.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Open Graph (Facebook, WhatsApp, LinkedIn vs.) -->   
-    <meta property="og:title" content="Adem Bayazıt | Siber Güvenlik Sözlüğü" />
-    <meta property="og:description" content="A'dan Z'ye kapsamlı siber güvenlik terimleri sözlüğü." />
+    <meta property="og:title" content="Adem Bayazıt | All Microblog LadyBuG Entries" />
+    <meta property="og:description" content="Adem Bayazıt Ethical Hacker Cybersecurity LadyBuG Entries." />
     <meta property="og:image" content="https://adembayazit.com/IMAGES/preview_entry.png" />
-    <meta property="og:url" content="https://adembayazit.com/sozluk.html" />
+    <meta property="og:url" content="https://adembayazit.com/microblog.html" />
     <meta property="og:type" content="website" />
 
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Adem Bayazıt - Siber Güvenlik Sözlüğü">
-    <meta name="twitter:description" content="A'dan Z'ye kapsamlı siber güvenlik terimleri sözlüğü.">
+    <meta name="twitter:title" content="Adem Bayazıt - All Microblog LadyBuG Entries">
+    <meta name="twitter:description" content="Adem Bayazıt Ethical Hacker Cybersecurity LadyBuG Entries.">
     <meta name="twitter:image" content="https://adembayazit.com/IMAGES/preview_entry.png">
     <meta name="twitter:image:alt" content="Adem Bayazıt">
     
@@ -103,186 +103,557 @@
         }
         
         /* Özel stiller */
-        .glossary-container {
+        .microblog-container {
             width: 100%;
             background: transparent;
             position: relative;
         }
         
-        .letters-nav {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 5px;
-            margin-bottom: 20px;
-            padding: 10px;
+        .entries-container {
             background: rgba(10, 25, 20, 0.7);
             border: 1px solid var(--border-color);
-            border-radius: 10px;
-            position: sticky;
-            top: 70px;
-            z-index: 10;
+            border-radius: 20px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
             backdrop-filter: blur(5px);
         }
         
-        .letter-link {
-            display: inline-block;
-            padding: 5px 10px;
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: bold;
-            border: 1px solid var(--border-color);
-            border-radius: 5px;
-            transition: all 0.3s;
-            min-width: 30px;
+        .load-more-container {
             text-align: center;
+            margin-top: 20px;
         }
         
-        .letter-link:hover, .letter-link.active {
-            background: var(--primary-color);
+        .load-more-btn {
+            background: green;
             color: black;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        
+        .load-more-btn:hover {
+            background: var(--secondary-color);
             box-shadow: 0 0 10px var(--primary-color);
         }
         
-        .letter-section {
-            margin-bottom: 30px;
-            scroll-margin-top: 120px;
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+            color: var(--primary-color);
         }
         
-        .letter-section h3 {
-            font-size: 24px;
+        .back-to-home {
+            display: inline-block;
+            margin: 30px 0;
             color: var(--primary-color);
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .back-to-home:hover {
+            text-decoration: underline;
+            color: var(--secondary-color);
+        }
+        
+        .entry-count {
+            color: #90ee90;
             margin-bottom: 15px;
+            font-style: italic;
+            text-align: center;
+        }
+        
+        /* Dropdown stilleri */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropbtn {
+            font-size: 18px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: green;
+            min-width: 160px;
+            z-index: 100;
+            border: 1px solid white;
+            border-radius: 10px;
+        }
+
+        .dropdown-content a {
+            color: white;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            color: white;
+            background-color: var(--primary-color);
+            text-shadow: 0 0 10px green;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* Matrix Canvas için stiller */
+        #matrixCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        /* Başlık stili */
+        .section-title {
+            text-align: center;
+            margin-bottom: 25px;
+            color: white;
+            display: flex;
+            align-items: center;
+            filter: drop-shadow(0 0 5px white);
+            gap: 10px;
+        }
+
+        /* Son entry için özel stil */
+        .latest-entry {
+            border: 1px solid var(--accent-color) !important;
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.4) !important;
+        }
+
+        .latest-entry::before {
+            content: "LAST ENTRY";
+            position: absolute;
+            top: -12px;
+            right: 80px;
+            background: var(--accent-color);
+            color: black;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 4px;
+            z-index: 10;
+        }
+
+        /* Parent entry için özel stil */
+        .parent-of-latest {
+            border: 2px solid #ffffff !important;
+            box-shadow: 0 0 15px rgba(255, 153, 0, 0.4) !important;
+        }
+
+        .parent-of-latest::before {
+            content: "PARENT ENTRY";
+            position: absolute;
+            top: -12px;
+            right: 80px;
+            background: white;
+            color: black;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 4px;
+            z-index: 10;
+        }
+
+        /* Grup stilleri */
+        .entry-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .group-header {
             display: flex;
             align-items: center;
             gap: 10px;
+            color: #90ee90;
+            font-size: 14px;
+            margin-bottom: 5px;
         }
-        
-        .terms-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 15px;
+
+        .group-header i {
+            font-size: 16px;
         }
-        
-        .term-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 15px;
+
+        /* Tarih ve içerik arasındaki çizgi */
+        .timestamp {
+            color: #90ee90;
+            font-size: 12px;
             position: relative;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .timestamp::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(to right, rgba(0, 255, 0, 0.5), transparent);
+        }
+        
+        .bug-iconentry {
+            margin-right: 8px;
+            color: var(--accent-color);
+        }
+
+        /* Daisy ve Pine ikonları için yuvarlak animasyonlu tasarım */
+        .interaction-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .daisy-like, .pine-pin, .share-entry {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            cursor: pointer;
             transition: all 0.3s;
-            box-shadow: 0 0 10px rgba(0, 255, 0, 0.1);
-        }
-        
-        .term-card:nth-child(even) {
-            background: rgba(20, 40, 30, 0.7);
-        }
-        
-        .term-title {
-            font-weight: bold;
-            font-size: 18px;
-            margin-bottom: 10px;
-            color: var(--primary-color);
-            padding-right: 30px;
-        }
-        
-        .term-short-desc {
             font-size: 14px;
-            margin-bottom: 10px;
-            color: #ccc;
         }
         
-        .term-full-desc {
+        .daisy-like:hover {
+            background: rgba(50, 205, 50, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .pine-pin:hover {
+            background: rgba(30, 144, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .share-entry:hover {
+            background: rgba(128, 0, 128, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .daisy-icon, .pine-icon, .share-icon, .link-icon {
+            width: 20px;
+            height: 20px;
+            transition: all 0.3s;
+            border-radius: 50%;
+            padding: 3px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .daisy-like:hover .daisy-icon {
+            transform: rotate(15deg) scale(1.2);
+            color: var(--secondary-color);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+        
+        .pine-pin:hover .pine-icon {
+            transform: rotate(-15deg) scale(1.2);
+            color: #00bfff;
+            box-shadow: 0 0 10px rgba(30, 144, 255, 0.5);
+        }
+        
+        .share-entry:hover .share-icon, .link-icon {
+            transform: scale(1.2);
+            color: #9370db;
+            box-shadow: 0 0 10px rgba(147, 112, 219, 0.5);
+        }
+        
+        .like-count, .pin-count {
             font-size: 14px;
+            min-width: 20px;
+            text-align: center;
+            display: flex; 
+            align-items: center
+        }
+        
+        .view-count {
+            font-size: 14px;
+            min-width: 20px;
+            text-align: center;
+            display: flex; 
+            align-items: center;
+        
+        }
+        
+        .action-animation {
+            animation: pop 0.5s ease;
+        }
+        
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        /* Görsel modal için stiller - GÜNCELLENDİ */
+        .modal {
             display: none;
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px solid rgba(0, 255, 0, 0.3);
-            color: #eee;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(5px);
         }
         
-        .term-expand {
+        .modal-content {
+            display: block;
+            margin: auto;
+            max-width: 90%;
+            max-height: 80vh;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+            animation: zoom 0.3s ease;
+        }
+        
+        @keyframes zoom {
+            from {transform: translate(-50%, -50%) scale(0.9); opacity: 0;}
+            to {transform: translate(-50%, -50%) scale(1); opacity: 1;}
+        }
+        
+        .close {
             position: absolute;
             top: 15px;
-            right: 15px;
-            background: transparent;
-            color: var(--primary-color);
-            border: 1px solid var(--primary-color);
-            border-radius: 50%;
-            width: 25px;
-            height: 25px;
-            cursor: pointer;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
             font-weight: bold;
+            transition: 0.3s;
+            z-index: 1001;
+            cursor: pointer;
+            text-shadow: 0 0 5px #000;
+        }
+        
+        .close:hover,
+        .close:focus {
+            color: var(--primary-color);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        /* Modal navigasyon butonları */
+        .modal-nav {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+            padding: 0 20px;
+            box-sizing: border-box;
+            z-index: 1001;
+            pointer-events: none;
+        }
+        
+        .modal-nav-btn {
+            background: rgba(0, 0, 0, 0.7);
+            border: none;
+            color: var(--primary-color);
+            font-size: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.3s;
+            pointer-events: auto;
         }
         
-        .term-expand:hover {
-            background: var(--primary-color);
-            color: black;
-            transform: rotate(90deg);
+        .modal-nav-btn:hover {
+            background: rgba(0, 0, 0, 0.9);
+            transform: scale(1.1);
         }
         
-        .term-card.expanded .term-expand {
-            transform: rotate(45deg);
-        }
-        
-        .term-card.expanded .term-expand:hover {
-            transform: rotate(0deg);
-        }
-        
-        .search-box {
-            display: flex;
-            margin-bottom: 15px;
-            position: relative;
-        }
-        
-        .search-input {
-            flex: 1;
-            padding: 10px 15px;
-            border: 1px solid var(--border-color);
-            border-radius: 5px;
-            background: rgba(0, 0, 0, 0.5);
-            color: white;
-        }
-        
-        .search-button {
+        .modal-counter {
             position: absolute;
-            right: 5px;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 16px;
+            z-index: 1001;
+        }
+        
+        /* Entry içindeki görseller için stiller */
+        .content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+        }
+        
+        .content img:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+        
+        /* Video container için stiller */
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+        }
+        
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* YENİ SLIDER STİLLERİ - TAMAMEN DÜZENLENDİ */
+        .image-slider {
+            position: relative;
+            margin: 10px 0;
+            overflow: hidden;
+            border-radius: 8px;
+            background: #000;
+            width: 100%;
+            aspect-ratio: 16/9;
+            min-height: 200px;
+        }
+        
+        .slider-container {
+            display: flex;
+            transition: transform 0.4s ease;
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        .slider-item {
+            flex: 0 0 auto;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+        }
+        
+        .slider-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 0;
+            margin: 0;
+            cursor: pointer;
+            display: block;
+        }
+        
+        .slider-nav {
+            position: absolute;
             top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
             transform: translateY(-50%);
-            background: transparent;
+            pointer-events: none;
+            z-index: 20;
+            padding: 0 10px;
+            box-sizing: border-box;
+        }
+        
+        .slider-btn {
+            background: rgba(0, 0, 0, 0.7);
             border: none;
             color: var(--primary-color);
+            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
             cursor: pointer;
-            padding: 5px 10px;
+            pointer-events: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            z-index: 10;
         }
         
-        .no-results {
-            text-align: center;
-            padding: 30px;
-            color: #90ee90;
-            grid-column: 1 / -1;
+        .slider-btn:hover {
+            background: rgba(0, 0, 0, 0.9);
+            transform: scale(1.1);
         }
         
-        .mobile-letters-scroll {
-            display: none;
-            overflow-x: auto;
-            white-space: nowrap;
-            padding: 10px 0;
-            margin-bottom: 15px;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
+        .slider-dots {
+            position: absolute;
+            bottom: 15px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            z-index: 10;
         }
         
-        .mobile-letters-scroll::-webkit-scrollbar {
-            display: none;
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s;
         }
         
+        .dot.active {
+            background: var(--primary-color);
+            transform: scale(1.2);
+            box-shadow: 0 0 5px var(--primary-color);
+        }
+
         /* Kaydırma çubukları için özel stiller */
         ::-webkit-scrollbar {
             width: 12px;
@@ -303,17 +674,7 @@
         ::-webkit-scrollbar-thumb:hover {
             background: var(--secondary-color);
         }
-        
-        /* Matrix Canvas için stiller */
-        #matrixCanvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-        }
-        
+
         /* Sidebar widget stilleri */
         .sidebar-widget {
             background: rgba(0, 0, 0, 0.8);
@@ -359,6 +720,30 @@
             color: #90ee90;
         }
         
+        .search-box {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px 0 0 5px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+        }
+        
+        .search-button {
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-left: none;
+            border-radius: 0 5px 5px 0;
+            background: var(--primary-color);
+            color: black;
+            cursor: pointer;
+        }
+        
         .tag-cloud {
             display: flex;
             flex-wrap: wrap;
@@ -373,7 +758,78 @@
             font-size: 12px;
             color: #90ee90;
         }
+
+        /* Yeni bildirim stili */
+        .new-entry-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px  white;
+            border-radius: 10px;
+            padding: 15px;
+            z-index: 1000;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+            backdrop-filter: blur(5px);
+            cursor: pointer;
+            transition: all 0.3s;
+            max-width: 300px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
         
+        .new-entry-notification:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 25px rgba(0, 255, 0, 0.5);
+        }
+        
+        .new-entry-notification.minimized {
+            width: auto;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .new-entry-notification.minimized .notification-content {
+            display: none;
+        }
+        
+        .notification-content {
+            flex: 1;
+        }
+        
+        .notification-bell {
+            color: red;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            position: relative;
+        }
+        
+        .minimize-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: transparent;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .interaction-buttons {
+          position: absolute;
+          bottom: -45px;
+          right: 5px;
+          display: flex;
+          align-items: right;
+          gap: 12px;
+        }
+
         /* Mobil için stiller */
         @media (max-width: 1200px) {
             .sidebar, .right-sidebar {
@@ -389,38 +845,204 @@
                 max-width: 100%;
                 width: 100%;
             }
+            
+            /* Mobil için istatistik ve arama bölümü */
+            .mobile-widgets {
+                display: block;
+                margin-top: 0;
+                order: 2;
+            }
+            
+            .mobile-stats {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 5px;
+                margin-bottom: 10px;
+            }
+            
+            .mobile-stat-item {
+                text-align: center;
+                padding: 5px;
+                background: var(--card-bg);
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+            }
+            
+            .mobile-stat-value {
+                font-size: 12px;
+                font-weight: bold;
+                color: var(--primary-color);
+            }
+            
+            .mobile-stat-label {
+                font-size: 12px;
+                color: #90ee90;
+            }
+            
+            .mobile-search {
+                display: flex;
+                margin-bottom: 15px;
+            }
+            
+            /* Entry count'u footer üstüne taşıma */
+            .entry-count {
+                order: 100;
+                margin-top: 20px;
+                margin-bottom: 5px;
+            }
+            
+            /* Microblog container düzeni */
+            .microblog-container {
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .back-to-home { order: 1; }
+            .section-title { order: 2; }
+            .mobile-widgets { order: 3; }
+            #entries { order: 4; }
+            .loading { order: 5; }
+            .load-more-container { order: 6; }
+            .entry-count { order: 7; }
+        }
+        
+        @media (min-width: 1201px) {
+            .mobile-widgets {
+                display: none;
+            }
         }
         
         @media (max-width: 768px) {
-            .letters-nav {
-                display: none;
+            .microblog-container {
+                padding: 60px 5% 20px;
             }
             
-            .mobile-letters-scroll {
-                display: block;
+            .back-to-home {
+                margin: 25px 0;
             }
             
-            .terms-grid {
-                grid-template-columns: 1fr;
+            .section-title {
+                text-align: center;
+                justify-content: center;
+                filter: drop-shadow(0 0 5px var(--primary-color));
+                color:white;
+            }
+
+            .latest-entry::before,
+            .parent-of-latest::before {
+                right: 50%;
+                transform: translateX(50%);
+                font-size: 10px;
             }
             
-            .letter-link {
-                padding: 8px 12px;
+            .modal-content {
+                max-width: 95%;
+                max-height: 85vh;
+            }
+            
+            .close {
+                top: 10px;
+                right: 20px;
+                font-size: 30px;
+            }
+            
+            .modal-nav-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
+            
+            .interaction-buttons {
+                justify-content: center;
+            }
+            
+            .mobile-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .mobile-stat-item {
+                padding: 8px;
+            }
+            
+            .mobile-stat-value {
                 font-size: 14px;
             }
             
-            .glossary-container {
-                padding: 60px 5% 20px;
+            .mobile-stat-label {
+                font-size: 10px;
+            }
+            
+            .image-slider {
+                aspect-ratio: 4/3;
+            }
+            
+            .slider-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 16px;
+            }
+            
+            /* Mobilde içerik kenar boşlukları */
+            .entries-container {
+                margin: 0 5px;
+                padding: 15px;
+            }
+            
+            .content img {
+                border-radius: 6px;
             }
         }
         
         @media (max-width: 480px) {
-            .term-title {
+            .mobile-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .interaction-buttons {
+                gap: 5px;
+            }
+            
+            .daisy-like, .pine-pin, .share-entry {
+                padding: 5px 8px;
+                font-size: 12px;
+            }
+            
+            .image-slider {
+                aspect-ratio: 1/1;
+                min-height: 250px;
+            }
+            
+            .slider-btn {
+                width: 28px;
+                height: 28px;
+                font-size: 14px;
+            }
+            
+            .dot {
+                width: 8px;
+                height: 8px;
+            }
+            
+            /* Daha küçük ekranlar için ek kenar boşlukları */
+            .page-container {
+                padding: 0 5px;
+            }
+            
+            .entries-container {
+                margin: 0 2px;
+                padding: 10px;
+            }
+            
+            .modal-nav-btn {
+                width: 35px;
+                height: 35px;
                 font-size: 16px;
             }
             
-            .term-short-desc, .term-full-desc {
-                font-size: 13px;
+            .modal-counter {
+                font-size: 14px;
+                padding: 3px 10px;
+                bottom: 15px;
             }
         }
     </style>
@@ -433,6 +1055,17 @@
     
     <!-- Matrix Arka Plan Canvas'ı -->
     <canvas id="matrixCanvas"></canvas>
+
+    <!-- Görsel Modal - GÜNCELLENDİ -->
+    <div id="imageModal" class="modal">
+        <span class="close">&times;</span>
+        <div class="modal-nav">
+            <button class="modal-nav-btn modal-prev-btn"><i class="fas fa-chevron-left"></i></button>
+            <button class="modal-nav-btn modal-next-btn"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <img class="modal-content" id="modalImage">
+        <div class="modal-counter" id="modalCounter"></div>
+    </div>
 
     <header class="header">
         <a href="/" class="logo"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">{adembayazit} </a>
@@ -455,98 +1088,119 @@
     <div class="page-container">
         <aside class="sidebar">
             <div class="sidebar-widget">
-                <h3><i class="fas fa-chart-line"></i> İstatistikler</h3>
+                <h3><i class="fas fa-chart-line"></i> Statistics</h3>
                 <div class="stats-grid">
                     <div class="stat-item">
-                        <div class="stat-value" id="total-terms">0</div>
-                        <div class="stat-label">Toplam Terim</div>
+                        <div class="stat-value" id="total-entries">0</div>
+                        <div class="stat-label">Total Entries</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value" id="total-letters">0</div>
-                        <div class="stat-label">Toplam Harf</div>
+                        <div class="stat-value" id="total-likes">0</div>
+                        <div class="stat-label">Total Daisy</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="total-pins">0</div>
+                        <div class="stat-label">Total Pine</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="this-month">0</div>
+                        <div class="stat-label">This Month</div>
                     </div>
                 </div>
             </div>
             
             <div class="sidebar-widget">
-                <h3><i class="fas fa-search"></i> Arama</h3>
+                <h3><i class="fas fa-search"></i> Search</h3>
                 <div class="search-box">
-                    <input type="text" class="search-input" placeholder="Terim ara..." id="desktop-search-input">
+                    <input type="text" class="search-input" placeholder="Search entries..." id="desktop-search-input">
                     <button class="search-button" id="desktop-search-btn"><i class="fas fa-search"></i></button>
                 </div>
                 <div class="tag-cloud">
-                    <span class="tag">#ağ</span>
-                    <span class="tag">#güvenlik</span>
-                    <span class="tag">#şifreleme</span>
-                    <span class="tag">#saldırı</span>
-                    <span class="tag">#savunma</span>
+                    <span class="tag">#cybersecurity</span>
+                    <span class="tag">#hacking</span>
+                    <span class="tag">#bugbounty</span>
+                    <span class="tag">#pentest</span>
+                    <span class="tag">#privacy</span>
                 </div>
             </div>
             
             <div class="sidebar-widget">
-                <h3><i class="fas fa-fire"></i> Popüler Terimler</h3>
-                <div id="popular-terms">
+                <h3><i class="fas fa-fire"></i> Trending</h3>
+                <div id="trending-entries">
                     <div style="padding: 10px; text-align: center; color: #90ee90;">
-                        Yükleniyor...
+                        Loading trending entries...
                     </div>
                 </div>
             </div>
         </aside>
         
         <main class="main-content">
-            <section class="glossary-container">
-                <a href="/" class="back-to-home"><i class='bx bx-arrow-back'></i> Ana Sayfaya Dön</a>
-                <h2 class="section-title"><i class="fa-solid fa-book"></i> Siber Güvenlik Sözlüğü</h2>
+            <section class="microblog-container">
+                <a href="/" class="back-to-home"><i class='bx bx-arrow-back'></i> Back to Home</a>
+                <h2 class="section-title"><i class="fa-solid fa-pager"></i> All LadyB<span class="fa-solid fa-bug bug-icon"></span>G Entries</h2>
                 
-                <!-- Mobil için arama -->
-                <div class="mobile-search">
-                    <div class="search-box">
-                        <input type="text" class="search-input" placeholder="Terim ara..." id="mobile-search-input">
+                <!-- Mobil için istatistik ve arama - YUKARI TAŞINDI -->
+                <div class="mobile-widgets">
+                    <div class="mobile-stats">
+                        <div class="mobile-stat-item">
+                            <div class="mobile-stat-value" id="mobile-total-entries">0</div>
+                            <div class="mobile-stat-label">Entries</div>
+                        </div>
+                         <div class="mobile-stat-item">
+                            <div class="mobile-stat-value" id="mobile-this-month">0</div>
+                            <div class="mobile-stat-label">This Month</div>
+                        </div>
+                        <div class="mobile-stat-item">
+                            <div class="mobile-stat-value" id="mobile-total-likes">0</div>
+                            <div class="mobile-stat-label">Daisy</div>
+                        </div>
+                        <div class="mobile-stat-item">
+                            <div class="mobile-stat-value" id="mobile-total-pins">0</div>
+                            <div class="mobile-stat-label">Pine</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mobile-search">
+                        <input type="text" class="search-input" placeholder="Search entries..." id="mobile-search-input">
                         <button class="search-button" id="mobile-search-btn"><i class="fas fa-search"></i></button>
                     </div>
                 </div>
                 
-                <!-- Mobil için yatay harf navigasyonu -->
-                <div class="mobile-letters-scroll">
-                    <div class="letters-nav-mobile">
-                        <!-- JavaScript ile doldurulacak -->
-                    </div>
-                </div>
-                
-                <!-- Masaüstü için harf navigasyonu -->
-                <div class="letters-nav">
-                    <!-- JavaScript ile doldurulacak -->
-                </div>
-                
-                <div class="terms-container" id="terms-container">
-                    <!-- Terimler JavaScript ile buraya eklenecek -->
+                <div class="entry-count" id="entryCount">Total 0 Entry</div>
+                <div id="entries" class="entries-container"></div>
+                <div class="loading" id="loading">Loading...</div>
+                <div class="load-more-container">
+                    <button id="loadMoreBtn" class="load-more-btn">More Entry (20) <span class='bx bx-chevron-down'></span></button>
                 </div>
             </section>
         </main>
         
         <aside class="right-sidebar">
             <div class="sidebar-widget">
-                <h3><i class="fas fa-history"></i> Son Eklenenler</h3>
-                <div id="recent-terms">
-                    <div style="padding: 10px; text-align: center; color: #90ee90;">
-                        Yükleniyor...
+                <h3><i class="fas fa-calendar"></i> Recent Activity</h3>
+                <div id="recent-activity">
+                    <div style="padding: 10px; text-align: center; color: white;">
+                        Loading activity...
                     </div>
                 </div>
             </div>
             
             <div class="sidebar-widget">
-                <h3><i class="fas fa-star"></i> Önemli Terimler</h3>
-                <div id="important-terms">
+                <h3><i class="fas fa-star"></i> Popular Entries</h3>
+                <div id="popular-entries">
                     <div style="padding: 10px; text-align: center; color: #90ee90;">
-                        Yükleniyor...
+                        Loading popular entries...
                     </div>
                 </div>
             </div>
             
             <div class="sidebar-widget">
-                <h3><i class="fas fa-info-circle"></i> Bilgi</h3>
+                <h3><i class="fas fa-users"></i> Community</h3>
                 <div style="text-align: center;">
-                    <p style="font-size: 14px; margin-bottom: 15px;">Sözlükte <span id="info-count">0</span> terim bulunmaktadır. Terimleri alfabetik sırayla inceleyebilir veya arama yapabilirsiniz.</p>
+                    <p style="font-size: 14px; margin-bottom: 15px;">Join the cybersecurity community</p>
+                    <button style="background: var(--primary-color); color: black; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                        <i class="fab fa-discord"></i> Discord Server
+                    </button>
                 </div>
             </div>
         </aside>
@@ -653,378 +1307,1480 @@
     </script>
 
     <script>
-        // Matrix efekti için kod
-        const canvas = document.getElementById('matrixCanvas');
-        const ctx = canvas.getContext('2d');
+        // 1. GLOBAL DEĞİŞKENLER
+        const likesCache = {
+          data: {},
+          lastUpdated: 0,
+          isUpdating: false
+        };
 
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        const pinsCache = {
+          data: {},
+          lastUpdated: 0,
+          isUpdating: false
+        };
 
-        const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$#@%&!?*';
-        const fontSize = 12;
-        const columns = canvas.width / fontSize;
+        const viewsCache = {
+          data: {},
+          lastUpdated: 0,
+          isUpdating: false
+        };
 
-        const drops = [];
-        for (let i = 0; i < columns; i++) {
-            drops[i] = 1;
+        let allEntries = [];
+        let groupedEntries = [];
+        let displayedEntries = 0;
+        const entriesPerPage = 20;
+        let latestEntryId = null;
+        let parentOfLatestId = null;
+        let checkInterval;
+        let newestEntryIdFromServer = null;
+        let newEntriesCount = 0;
+        let currentScrollPosition = 0;
+        let lastNotifiedEntryId = 0;
+        let notificationElement = null;
+        let notificationTimeout = null;
+        
+        // Slider durumlarını saklamak için nesne
+        const slidersState = {};
+        
+        // Modal için global değişkenler
+        let currentModalImages = [];
+        let currentModalIndex = 0;
+
+        // 2. PROXY HELPER FONKSİYONU
+        async function fetchViaProxy(path, method = 'GET', body = null) {
+          const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
+          
+          try {
+            const response = await fetch(proxyUrl, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ path, method, body })
+            });
+
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return await response.json();
+          } catch (error) {
+            console.error('Proxy error:', error);
+            throw error;
+          }
         }
 
-        function drawMatrix() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            ctx.fillStyle = '#0F0';
-            ctx.font = `${fontSize}px monospace`;
-            
-            for (let i = 0; i < drops.length; i++) {
-                const text = letters[Math.floor(Math.random() * letters.length)];
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
-                
-                drops[i]++;
-            }
-        }
-
-        setInterval(drawMatrix, 33);
-        
-        // Pencere boyutu değiştiğinde canvas'ı yeniden boyutlandır
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
-        
-        // Sözlük verileri
-        const glossaryData = [
-            // A
-            { term: "Adware", shortDesc: "Kullanıcıya reklam göstermek için tasarlanmış yazılım.", fullDesc: "Adware (Reklam Yazılımı), kullanıcıya reklam göstermek için tasarlanmış, genellikle istenmeyen yazılımlardır. Genellikle ücretsiz yazılımlarla birlikte gelir ve kullanıcının izni olmadan reklam gösterir.", letter: "A" },
-            { term: "APT", shortDesc: "Gelişmiş Kalıcı Tehdit", fullDesc: "APT (Advanced Persistent Threat), belirli bir hedefe yönelik, sofistike ve sürekli siber saldırı türüdür. Saldırganlar hedef sistemde uzun süre kalarak veri toplarlar.", letter: "A" },
-            { term: "Authentication", shortDesc: "Kimlik doğrulama işlemi", fullDesc: "Authentication (Kimlik Doğrulama), bir kullanıcının veya sistemin iddia ettiği kimliği doğrulama sürecidir. Kullanıcı adı/şifre, biyometrik veriler veya token'lar kullanılabilir.", letter: "A" },
-            
-            // B
-            { term: "Backdoor", shortDesc: "Sisteme yetkisiz erişim sağlayan arka kapı.", fullDesc: "Backdoor (Arka Kapı), bir sistemde normal kimlik doğrulama süreçlerini atlayarak erişim sağlayan bir yöntemdir. Genellikle kötü amaçlı yazılımlar tarafından oluşturulur.", letter: "B" },
-            { term: "Botnet", shortDesc: "Zombi bilgisayarlardan oluşan ağ.", fullDesc: "Botnet, bir siber saldırganın kontrolü altındaki birbirine bağlı bilgisayarlardan oluşan ağdır. Bu bilgisayarlar DDoS saldırıları, spam gönderme veya diğer kötü amaçlı faaliyetler için kullanılır.", letter: "B" },
-            { term: "Brute Force Attack", shortDesc: "Şifreleri deneme-yanılma yöntemiyle kırma saldırısı.", fullDesc: "Brute Force Attack (Kaba Kuvvet Saldırısı), şifreleri veya anahtarları sistematik olarak deneyerek bulmaya çalışan bir saldırı yöntemidir. Bu saldırılar otomatize araçlarla yapılır ve uzun zaman alabilir.", letter: "B" },
-            
-            // C
-            { term: "Cryptography", shortDesc: "Şifreleme bilimi.", fullDesc: "Cryptography (Kriptografi), bilgi güvenliği için şifreleme teknikleri geliştiren bilim dalıdır. Gizlilik, bütünlük, kimlik doğrulama ve inkar edememe sağlamak için kullanılır.", letter: "C" },
-            { term: "CVE", shortDesc: "Yaygın Güvenlik Açıkları ve Etkileri", fullDesc: "CVE (Common Vulnerabilities and Exposures), bilinen siber güvenlik açıklarını tanımlamak için kullanılan standart bir referans sistemidir. Her CVE kimliği belirli bir güvenlik açığını ifade eder.", letter: "C" },
-            { term: "Cyber Attack", shortDesc: "Siber uzayda gerçekleştirilen saldırı.", fullDesc: "Cyber Attack (Siber Saldırı), bilgisayar sistemlerine, ağlara veya altyapılara zarar vermek, veri çalmak veya hizmeti engellemek amacıyla yapılan saldırılardır.", letter: "C" },
-            
-            // D
-            { term: "DDoS", shortDesc: "Dağıtılmış Hizmet Reddi Saldırısı", fullDesc: "DDoS (Distributed Denial of Service), bir sunucuyu, hizmeti veya ağı trafikle boğarak meşru kullanıcıların erişimini engelleyen saldırı türüdür. Genellikle botnet'ler kullanılarak yapılır.", letter: "D" },
-            { term: "DNS", shortDesc: "Alan Adı Sistemi", fullDesc: "DNS (Domain Name System), internet alan adlarını IP adreslerine çeviren hiyerarşik bir dağıtılmış adlandırma sistemidir. DNS poisoning gibi saldırılara maruz kalabilir.", letter: "D" },
-            { term: "Data Breach", shortDesc: "Veri ihlali, yetkisiz veri açığa çıkması.", fullDesc: "Data Breach (Veri İhlali), gizli, hassas veya korumalı verilerin yetkisiz kişilerce görüntülendiği, çalındığı veya kullanıldığı bir güvenlik olayıdır.", letter: "D" },
-            
-            // E
-            { term: "Encryption", shortDesc: "Veriyi şifreleme işlemi.", fullDesc: "Encryption (Şifreleme), okunabilir veriyi (plaintext) şifrelenmiş veriye (ciphertext) dönüştürme işlemidir. Sadece doğru şifre çözme anahtarına sahip kişiler orijinal veriyi okuyabilir.", letter: "E" },
-            { term: "Exploit", shortDesc: "Güvenlik açığından yararlanan kod.", fullDesc: "Exploit, bir yazılım veya donanımdaki güvenlik açığından yararlanmak için tasarlanmış kod, komut veya tekniktir. Zero-day exploit'ler henüz yamalanmamış açıkları hedefler.", letter: "E" },
-            
-            // F
-            { term: "Firewall", shortDesc: "Ağ güvenlik duvarı.", fullDesc: "Firewall (Güvenlik Duvarı), ağ trafiğini denetleyen ve yetkisiz erişimi engelleyen bir güvenlik sistemidir. Donanım veya yazılım tabanlı olabilir ve önceden tanımlanmış kurallara göre çalışır.", letter: "F" },
-            { term: "Fuzzing", shortDesc: "Yazılım test tekniği.", fullDesc: "Fuzzing, yazılımlara beklenmedik, rastgele veya hatalı veriler göndererek güvenlik açıklarını ve hataları bulmaya yönelik otomatik bir yazılım test tekniğidir.", letter: "F" },
-            
-            // G
-            { term: "GDPR", shortDesc: "Genel Veri Koruma Tüzüğü", fullDesc: "GDPR (General Data Protection Regulation), Avrupa Birliği'nde veri koruma ve gizlilik ile ilgili düzenlemeleri içeren yasadır. Kişisel verilerin işlenmesi ve hareketi için kurallar belirler.", letter: "G" },
-            
-            // H
-            { term: "Hashing", shortDesc: "Veriyi sabit uzunlukta değere dönüştürme.", fullDesc: "Hashing, herhangi boyuttaki bir veriyi sabit uzunlukta bir değere (hash) dönüştürme işlemidir. Şifre depolama, veri bütünlüğü doğrulama ve dijital imzalarda kullanılır.", letter: "H" },
-            { term: "Honeypot", shortDesc: "Saldırganları çekmek için tuzak sistem.", fullDesc: "Honeypot (Bal Küpü), siber saldırganları tespit etmek, incelemek veya savunmak için tasarlanmış bir güvenlik mekanizmasıdır. Saldırganların dikkatini çekerek gerçek sistemlerden uzaklaştırır.", letter: "H" },
-            
-            // I
-            { term: "IPS", shortDesc: "İzleme ve Önleme Sistemi", fullDesc: "IPS (Intrusion Prevention System), ağ trafiğini gerçek zamanlı olarak izleyen ve kötü amaçlı faaliyetleri tespit edip engelleyen bir güvenlik teknolojisidir. IDS'den farkı saldırıları önleme yeteneğidir.", letter: "I" },
-            
-            // K
-            { term: "Keylogger", shortDesc: "Klavye girdilerini kaydeden yazılım.", fullDesc: "Keylogger, kullanıcının klavyede yazdıklarını gizlice kaydeden bir yazılım veya donanım cihazıdır. Hesap bilgileri, şifreler ve diğer hassas verileri çalmak için kullanılabilir.", letter: "K" },
-            
-            // M
-            { term: "Malware", shortDesc: "Kötü amaçlı yazılım.", fullDesc: "Malware (Malicious Software), bilgisayar sistemlerine zarar vermek, veri çalmak veya yetkisiz erişim sağlamak için tasarlanmış her türlü yazılımdır. Virüs, solucan, truva atı, ransomware gibi türleri vardır.", letter: "M" },
-            { term: "MITM", shortDesc: "Ortadaki Adam Saldırısı", fullDesc: "MITM (Man-in-the-Middle) saldırısı, iki taraf arasındaki iletişimi gizlice dinleyen, değiştiren veya enjekte eden bir siber saldırı türüdür. Genellikle şifrelenmemiş ağlarda gerçekleştirilir.", letter: "M" },
-            
-            // P
-            { term: "Phishing", shortDesc: "Oltalama saldırısı.", fullDesc: "Phishing, saldırganların güvenilir bir kaynak gibi görünerek kişisel bilgileri (şifreler, kredi kartı bilgileri) çalmaya çalıştığı bir sosyal mühendislik saldırısıdır. Genellikle e-posta veya sahte web siteleriyle yapılır.", letter: "P" },
-            { term: "Penetration Test", shortDesc: "Sızma testi.", fullDesc: "Penetration Test (Sızma Testi), bir bilgisayar sisteminin güvenlik açıklarını değerlendirmek için simüle edilmiş siber saldırılardır. Güvenlik açıklarını belirlemek ve düzeltmek için yapılır.", letter: "P" },
-            
-            // R
-            { term: "Ransomware", shortDesc: "Fidye yazılımı.", fullDesc: "Ransomware, bir fidye ödenene kadar bir kurbanın sistemine veya verilerine erişimi engelleyen kötü amaçlı yazılım türüdür. Verileri şifreler ve kurtarma için fidye talep eder.", letter: "R" },
-            
-            // S
-            { term: "SOC", shortDesc: "Güvenlik Operasyon Merkezi", fullDesc: "SOC (Security Operations Center), bir kuruluşun siber güvenlik duruşunu izlemek, tespit etmek, araştırmak ve saldırılara yanıt vermek için oluşturulmuş merkezi bir birimdir.", letter: "S" },
-            { term: "SSH", shortDesc: "Güvenli Kabuk", fullDesc: "SSH (Secure Shell), güvenli olmayan bir ağ üzerinden güvenli bir şekilde iletişim kurmak için kullanılan bir ağ protokolüdür. Özellikle uzak sunucu yönetimi için kullanılır.", letter: "S" },
-            
-            // T
-            { term: "Trojan Horse", shortDesc: "Truva atı yazılımı.", fullDesc: "Trojan Horse (Truva Atı), yararlı gibi görünen ancak arka planda kötü amaçlı işlevler gerçekleştiren bir kötü amaçlı yazılım türüdür. Kendini çoğaltmaz ancak arka kapılar oluşturabilir.", letter: "T" },
-            { term: "Two-Factor Authentication", shortDesc: "İki faktörlü kimlik doğrulama.", fullDesc: "Two-Factor Authentication (2FA), kullanıcının kimliğini doğrulamak için iki farklı yöntem kullanan bir güvenlik sürecidir. Genellikle şifre ve cep telefonuna gelen kod kombinasyonu kullanılır.", letter: "T" },
-            
-            // V
-            { term: "VPN", shortDesc: "Sanal Özel Ağ", fullDesc: "VPN (Virtual Private Network), internet üzerinden şifrelenmiş, güvenli bir bağlantı oluşturan bir teknolojidir. Kullanıcının IP adresini gizler ve verileri şifreleyerek güvenli iletişim sağlar.", letter: "V" },
-            { term: "Vulnerability", shortDesc: "Güvenlik açığı, zafiyet.", fullDesc: "Vulnerability (Güvenlik Açığı), bir sistemdeki saldırganların kötüye kullanabileceği zayıflık veya hatadır. Yazılım hataları, yanlış yapılandırmalar veya tasarım kusurlarından kaynaklanabilir.", letter: "V" },
-            
-            // Z
-            { term: "Zero-Day", shortDesc: "Sıfırıncı gün açığı.", fullDesc: "Zero-Day, yazılım geliştiricisi tarafından henüz fark edilmemiş veya yamanmamış bir güvenlik açığıdır. Saldırganlar bu açıkları hemen kullanabildiği için 'sıfır gün' müdahale süresi vardır.", letter: "Z" }
-        ];
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const lettersNav = document.querySelector('.letters-nav');
-            const lettersNavMobile = document.querySelector('.letters-nav-mobile');
-            const termsContainer = document.getElementById('terms-container');
-            
-            // Harfleri oluştur
-            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            const usedLetters = new Set(glossaryData.map(term => term.letter.toUpperCase()));
-            
-            // Masaüstü harf navigasyonu
-            alphabet.split('').forEach(letter => {
-                const link = document.createElement('a');
-                link.href = `#letter-${letter}`;
-                link.classList.add('letter-link');
-                link.textContent = letter;
-                if (!usedLetters.has(letter)) {
-                    link.style.opacity = '0.3';
-                    link.style.pointerEvents = 'none';
-                }
-                lettersNav.appendChild(link);
-            });
-            
-            // Mobil harf navigasyonu
-            alphabet.split('').forEach(letter => {
-                const link = document.createElement('a');
-                link.href = `#letter-${letter}`;
-                link.classList.add('letter-link');
-                link.textContent = letter;
-                if (!usedLetters.has(letter)) {
-                    link.style.opacity = '0.3';
-                    link.style.pointerEvents = 'none';
-                }
-                lettersNavMobile.appendChild(link);
-            });
-            
-            // Terimleri harflere göre grupla
-            const termsByLetter = {};
-            glossaryData.forEach(term => {
-                const letter = term.letter.toUpperCase();
-                if (!termsByLetter[letter]) {
-                    termsByLetter[letter] = [];
-                }
-                termsByLetter[letter].push(term);
-            });
-            
-            // Terimleri ekrana yerleştir
-            Object.keys(termsByLetter).sort().forEach(letter => {
-                const section = document.createElement('div');
-                section.id = `letter-${letter}`;
-                section.classList.add('letter-section');
-                
-                const heading = document.createElement('h3');
-                heading.innerHTML = `<span>${letter}</span> <span style="font-size: 14px; color: #90ee90;">(${termsByLetter[letter].length} terim)</span>`;
-                section.appendChild(heading);
-                
-                const grid = document.createElement('div');
-                grid.classList.add('terms-grid');
-                
-                termsByLetter[letter].forEach(term => {
-                    const card = document.createElement('div');
-                    card.classList.add('term-card');
-                    
-                    const title = document.createElement('div');
-                    title.classList.add('term-title');
-                    title.textContent = term.term;
-                    
-                    const shortDesc = document.createElement('div');
-                    shortDesc.classList.add('term-short-desc');
-                    shortDesc.textContent = term.shortDesc;
-                    
-                    const fullDesc = document.createElement('div');
-                    fullDesc.classList.add('term-full-desc');
-                    fullDesc.textContent = term.fullDesc;
-                    
-                    const expandBtn = document.createElement('button');
-                    expandBtn.classList.add('term-expand');
-                    expandBtn.textContent = '+';
-                    expandBtn.addEventListener('click', function() {
-                        card.classList.toggle('expanded');
-                        if (card.classList.contains('expanded')) {
-                            fullDesc.style.display = 'block';
-                            expandBtn.textContent = '×';
-                        } else {
-                            fullDesc.style.display = 'none';
-                            expandBtn.textContent = '+';
-                        }
-                    });
-                    
-                    card.appendChild(title);
-                    card.appendChild(shortDesc);
-                    card.appendChild(fullDesc);
-                    card.appendChild(expandBtn);
-                    
-                    grid.appendChild(card);
-                });
-                
-                section.appendChild(grid);
-                termsContainer.appendChild(section);
-            });
+        // 3. TEMEL FONKSİYONLAR
+        async function loadInteractions() {
+          try {
+            const result = await fetchViaProxy('/b/68862fd97b4b8670d8a81945/latest');
+            likesCache.data = result.likes || {};
+            pinsCache.data = result.pins || {};
+            viewsCache.data = result.views || {};
+            likesCache.lastUpdated = pinsCache.lastUpdated = viewsCache.lastUpdated = Date.now();
             
             // İstatistikleri güncelle
-            document.getElementById('total-terms').textContent = glossaryData.length;
-            document.getElementById('total-letters').textContent = Object.keys(termsByLetter).length;
-            document.getElementById('info-count').textContent = glossaryData.length;
+            updateStatistics();
+          } catch (error) {
+            console.error('loadInteractions error:', error);
+            try {
+              const localLikes = localStorage.getItem('entryLikes') || '{}';
+              const localPins = localStorage.getItem('entryPins') || '{}';
+              const localViews = localStorage.getItem('entryViews') || '{}';
+              likesCache.data = JSON.parse(localLikes);
+              pinsCache.data = JSON.parse(localPins);
+              viewsCache.data = JSON.parse(localViews);
+              updateStatistics();
+            } catch (parseError) {
+              console.Error('Local storage parse error:', parseError);
+            }
+          }
+        }
+        // İstatistikleri güncelleme fonksiyonu
+        function updateStatistics() {
+          const totalLikes = Object.values(likesCache.data).reduce((sum, count) => sum + count, 0);
+          const totalPins = Object.values(pinsCache.data).reduce((sum, count) => sum + count, 0);
+          const totalViews = Object.values(viewsCache.data).reduce((sum, count) => sum + count, 0);
+          
+          document.getElementById('total-entries').textContent = allEntries.length;
+          document.getElementById('total-likes').textContent = totalLikes;
+          document.getElementById('total-pins').textContent = totalPins;
+          
+          // Mobil istatistikleri güncelle
+          document.getElementById('mobile-total-entries').textContent = allEntries.length;
+          document.getElementById('mobile-total-likes').textContent = totalLikes;
+          document.getElementById('mobile-total-pins').textContent = totalPins;
+          
+          // Bu ayın entry sayısını hesapla
+          const thisMonth = new Date().getMonth();
+          const thisYear = new Date().getFullYear();
+          const thisMonthEntries = allEntries.filter(entry => {
+            const entryDate = new Date(entry.date);
+            return entryDate.getMonth() === thisMonth && entryDate.getFullYear() === thisYear;
+          }).length;
+          
+          document.getElementById('this-month').textContent = thisMonthEntries;
+          document.getElementById('mobile-this-month').textContent = thisMonthEntries;
+        }
+
+        // HTML içeriğini düzgün işlemek için yardımcı fonksiyon
+        function formatContent(content) {
+          // İlk temizlik: <br> etiketlerini standartlaştır ve boş <p> etiketlerini kaldır
+          content = content.replace(/<br\s*\/?>/gi, '<br>');
+          content = content.replace(/<p>\s*<\/p>/gi, '');
+          
+          // DOM temizliği için geçici bir div oluştur
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = content;
+          
+          // Boş <p> etiketlerini ve gereksiz boşlukları temizle
+          const paragraphs = tempDiv.querySelectorAll('p');
+          paragraphs.forEach(p => {
+            // İçeriği olmayan veya sadece boşluk içeren <p> etiketlerini kaldır
+            if (!p.textContent.trim() && p.children.length === 0) {
+              p.remove();
+            }
+          });
+          
+          // Gereksiz <br> etiketlerini temizle
+          const lineBreaks = tempDiv.querySelectorAll('br');
+          lineBreaks.forEach(br => {
+            // Eğer <br> etiketinden sonra başka bir <br> geliyorsa veya bir önceki kardeş yoksa kaldır
+            if (br.nextElementSibling && br.nextElementSibling.tagName === 'BR') {
+              br.remove();
+            }
+          });
+          
+          // İçeriği temizlenmiş olarak al
+          content = tempDiv.innerHTML.trim();
+          
+          // YouTube embed linklerini tespit et ve iframe'e dönüştür
+          content = content.replace(/(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/g, 
+            '<div class="video-container"><iframe src="https://www.youtube.com/embed/$4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>');
+          
+          // Birden fazla resim için slider oluştur
+          content = content.replace(/(<img[^>]+>\s*){2,}/g, (imgs) => {
+            const images = imgs.match(/<img[^>]+>/g);
+            if (images && images.length > 1) {
+              return createImageSlider(images);
+            }
+            return imgs;
+          });
+          
+          return content;
+        }
+        
+        // Resim slider'ı oluşturma fonksiyonu - GÜNCELLENMİŞ
+        function createImageSlider(images) {
+          const sliderId = 'slider-' + Math.random().toString(36).substr(2, 9);
+          
+          let sliderHtml = `
+            <div class="image-slider" id="${sliderId}">
+              <div class="slider-container">
+          `;
+          
+          images.forEach(img => {
+            // Görüntü yüklendikten sonra slider'ı yeniden başlat
+            const imgWithLoad = img.replace('<img', '<img onload="initSlider(\'' + sliderId + '\')" ');
+            sliderHtml += `<div class="slider-item">${imgWithLoad}</div>`;
+          });
+          
+          sliderHtml += `
+              </div>
+              <div class="slider-nav">
+                <button class="slider-btn prev-btn"><i class="fas fa-chevron-left"></i></button>
+                <button class="slider-btn next-btn"><i class="fas fa-chevron-right"></i></button>
+              </div>
+              <div class="slider-dots">
+          `;
+          
+          for (let i = 0; i < images.length; i++) {
+            sliderHtml += `<div class="dot ${i === 0 ? 'active' : ''}" data-index="${i}"></div>`;
+          }
+          
+          sliderHtml += `
+              </div>
+            </div>
+          `;
+          
+          return sliderHtml;
+        }
+
+        // Slider başlatma fonksiyonu - GÜNCELLENMİŞ
+        function initSlider(sliderId) {
+          const slider = document.getElementById(sliderId);
+          if (!slider) return;
+          
+          // Eğer bu slider zaten başlatıldıysa, önceki olay dinleyicilerini temizle
+          if (slidersState[sliderId]) {
+            const { prevBtn, nextBtn, dots, container, resizeObserver, touchStartHandler, touchEndHandler } = slidersState[sliderId];
             
-            // Popüler terimler (rastgele 5 terim)
-            const popularTermsContainer = document.getElementById('popular-terms');
-            const shuffledTerms = [...glossaryData].sort(() => 0.5 - Math.random()).slice(0, 5);
+            if (prevBtn && prevBtn.cloneNode) prevBtn.replaceWith(prevBtn.cloneNode(true));
+            if (nextBtn && nextBtn.cloneNode) nextBtn.replaceWith(nextBtn.cloneNode(true));
             
-            let popularHTML = '';
-            shuffledTerms.forEach(term => {
-                popularHTML += `
-                    <div style="padding: 10px; border-bottom: 1px solid rgba(0, 255, 0, 0.2);">
-                        <div style="font-size: 14px; font-weight: bold; color: var(--primary-color);">${term.term}</div>
-                        <div style="font-size: 12px; margin: 5px 0;">${term.shortDesc}</div>
-                    </div>
-                `;
+            if (dots && dots.length) {
+              dots.forEach((dot, index) => {
+                if (dot && dot.cloneNode) dot.replaceWith(dot.cloneNode(true));
+              });
+            }
+            
+            if (resizeObserver) {
+              resizeObserver.disconnect();
+            }
+            
+            if (touchStartHandler && touchEndHandler) {
+              slider.removeEventListener('touchstart', touchStartHandler);
+              slider.removeEventListener('touchend', touchEndHandler);
+            }
+          }
+          
+          const container = slider.querySelector('.slider-container');
+          const items = slider.querySelectorAll('.slider-item');
+          const prevBtn = slider.querySelector('.prev-btn');
+          const nextBtn = slider.querySelector('.next-btn');
+          const dots = slider.querySelectorAll('.dot');
+          
+          if (!container || items.length === 0) return;
+          
+          let currentIndex = 0;
+          const totalItems = items.length;
+          
+          // Slider'ı güncelle
+          function updateSlider() {
+            // Konteyner genişliğini yeniden hesapla
+            const slideWidth = slider.offsetWidth;
+            container.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+            
+            // Noktaları güncelle
+            dots.forEach((dot, index) => {
+              dot.classList.toggle('active', index === currentIndex);
             });
-            popularTermsContainer.innerHTML = popularHTML;
             
-            // Son eklenen terimler (son 5 terim)
-            const recentTermsContainer = document.getElementById('recent-terms');
-            const recentTerms = glossaryData.slice(-5);
+            // Durumu güncelle
+            slidersState[sliderId].currentIndex = currentIndex;
+          }
+          
+          // Sonraki slayt
+          function nextSlide() {
+            currentIndex = (currentIndex + 1) % totalItems;
+            updateSlider();
+          }
+          
+          // Önceki slayt
+          function prevSlide() {
+            currentIndex = (currentIndex - 1 + totalItems) % totalItems;
+            updateSlider();
+          }
+          
+          // Olay dinleyicileri ekle
+          if (nextBtn) {
+            nextBtn.addEventListener('click', nextSlide);
+            slidersState[sliderId] = {
+              ...slidersState[sliderId],
+              nextBtn,
+              nextHandler: nextSlide
+            };
+          }
+          
+          if (prevBtn) {
+            prevBtn.addEventListener('click', prevSlide);
+            slidersState[sliderId] = {
+              ...slidersState[sliderId],
+              prevBtn,
+              prevHandler: prevSlide
+            };
+          }
+          
+          // Noktalara tıklama
+          dots.forEach((dot, index) => {
+            const clickHandler = () => {
+              currentIndex = index;
+              updateSlider();
+            };
             
-            let recentHTML = '';
-            recentTerms.forEach(term => {
-                recentHTML += `
-                    <div style="padding: 10px; border-bottom: 1px solid rgba(0, 255, 0, 0.2);">
-                        <div style="font-size: 14px; font-weight: bold; color: var(--primary-color);">${term.term}</div>
-                        <div style="font-size: 12px; margin: 5px 0;">${term.shortDesc}</div>
-                    </div>
-                `;
-            });
-            recentTermsContainer.innerHTML = recentHTML;
+            dot.addEventListener('click', clickHandler);
+            slidersState[sliderId] = {
+              ...slidersState[sliderId],
+              [`dotHandler-${index}`]: clickHandler
+            };
+          });
+          
+          // Mobil dokunma olayları
+          let startX = 0;
+          let endX = 0;
+          
+          const touchStartHandler = (e) => {
+            startX = e.touches[0].clientX;
+          };
+          
+          const touchEndHandler = (e) => {
+            endX = e.changedTouches[0].clientX;
+            handleSwipe();
+          };
+          
+          slider.addEventListener('touchstart', touchStartHandler, { passive: true });
+          slider.addEventListener('touchend', touchEndHandler, { passive: true });
+          
+          slidersState[sliderId] = {
+            ...slidersState[sliderId],
+            touchStartHandler,
+            touchEndHandler
+          };
+          
+          function handleSwipe() {
+            const diffX = startX - endX;
             
-            // Önemli terimler (uzun açıklamalı 5 terim)
-            const importantTermsContainer = document.getElementById('important-terms');
-            const importantTerms = [...glossaryData].sort((a, b) => b.fullDesc.length - a.fullDesc.length).slice(0, 5);
+            // Minimum kayma mesafesi
+            if (Math.abs(diffX) > 50) {
+              if (diffX > 0) {
+                // Sağa kaydırma - sonraki slayt
+                nextSlide();
+              } else {
+                // Sola kaydırma - önceki slayt
+                prevSlide();
+              }
+            }
+          }
+          
+          // İlk slider konumunu ayarla
+          updateSlider();
+          
+          // Yeniden boyutlandırmada slider'ı güncelle
+          const resizeObserver = new ResizeObserver(updateSlider);
+          resizeObserver.observe(slider);
+          
+          slidersState[sliderId] = {
+            ...slidersState[sliderId],
+            container,
+            items,
+            dots,
+            currentIndex,
+            totalItems,
+            resizeObserver
+          };
+        }
+
+        // Tüm slider'ları başlat - GÜNCELLENMİŞ
+        function initAllSliders() {
+          const sliders = document.querySelectorAll('.image-slider');
+          sliders.forEach(slider => {
+            initSlider(slider.id);
+          });
+        }
+
+        // Görsel modal işlevselliği - TAMAMEN YENİLENDİ
+        function setupImageModal() {
+            const modal = document.getElementById("imageModal");
+            const modalImg = document.getElementById("modalImage");
+            const closeBtn = document.getElementsByClassName("close")[0];
+            const prevBtn = document.querySelector(".modal-prev-btn");
+            const nextBtn = document.querySelector(".modal-next-btn");
+            const counter = document.getElementById("modalCounter");
             
-            let importantHTML = '';
-            importantTerms.forEach(term => {
-                importantHTML += `
-                    <div style="padding: 10px; border-bottom: 1px solid rgba(0, 255, 0, 0.2);">
-                        <div style="font-size: 14px; font-weight: bold; color: var(--primary-color);">${term.term}</div>
-                        <div style="font-size: 12px; margin: 5px 0;">${term.shortDesc}</div>
-                    </div>
-                `;
-            });
-            importantTermsContainer.innerHTML = importantHTML;
+            // Modal'ı kapat
+            function closeModal() {
+                modal.style.display = "none";
+                document.body.style.overflow = "auto";
+                // Modal kapatıldığında event listener'ları temizle
+                document.removeEventListener('keydown', handleKeyDown);
+            }
             
-            // Arama işlevselliği
-            const searchInputs = document.querySelectorAll('.search-input');
-            const searchButtons = document.querySelectorAll('.search-button');
+            // Modal'ı aç
+            function openModal(images, index) {
+                currentModalImages = images;
+                currentModalIndex = index;
+                updateModalImage();
+                modal.style.display = "block";
+                document.body.style.overflow = "hidden";
+                // Klavye event listener'ını ekle
+                document.addEventListener('keydown', handleKeyDown);
+            }
             
-            const performSearch = () => {
-                const searchTerm = searchInputs[0].value.toLowerCase().trim();
-                
-                if (searchTerm === '') {
-                    // Arama kutusu boşsa tüm terimleri göster
-                    document.querySelectorAll('.letter-section').forEach(section => {
-                        section.style.display = 'block';
-                    });
-                    document.querySelectorAll('.term-card').forEach(card => {
-                        card.style.display = 'block';
-                    });
-                    return;
+            // Modal resmini güncelle
+            function updateModalImage() {
+                if (currentModalImages.length === 0) return;
+                modalImg.src = currentModalImages[currentModalIndex].src;
+                modalImg.alt = currentModalImages[currentModalIndex].alt;
+                updateCounter();
+            }
+            
+            // Sayacı güncelle
+            function updateCounter() {
+                if (counter) {
+                    counter.textContent = `${currentModalIndex + 1} / ${currentModalImages.length}`;
                 }
-                
-                // Tüm terimleri gizle
-                document.querySelectorAll('.term-card').forEach(card => {
-                    card.style.display = 'none';
-                });
-                
-                // Tüm harf bölümlerini gizle
-                document.querySelectorAll('.letter-section').forEach(section => {
-                    section.style.display = 'none';
-                });
-                
-                // Arama terimiyle eşleşen terimleri göster
-                const matchingTerms = glossaryData.filter(term => 
-                    term.term.toLowerCase().includes(searchTerm) || 
-                    term.shortDesc.toLowerCase().includes(searchTerm) || 
-                    term.fullDesc.toLowerCase().includes(searchTerm)
-                );
-                
-                if (matchingTerms.length === 0) {
-                    // Eşleşme yoksa
-                    termsContainer.innerHTML = `
-                        <div class="no-results">
-                            <i class="fas fa-search" style="font-size: 24px; margin-bottom: 10px;"></i>
-                            <div>"${searchTerm}" ile eşleşen terim bulunamadı.</div>
-                        </div>
-                    `;
-                } else {
-                    // Eşleşen terimleri göster
-                    termsContainer.innerHTML = '';
-                    
-                    matchingTerms.forEach(term => {
-                        const card = document.createElement('div');
-                        card.classList.add('term-card');
-                        
-                        const title = document.createElement('div');
-                        title.classList.add('term-title');
-                        title.textContent = term.term;
-                        
-                        const shortDesc = document.createElement('div');
-                        shortDesc.classList.add('term-short-desc');
-                        shortDesc.textContent = term.shortDesc;
-                        
-                        const fullDesc = document.createElement('div');
-                        fullDesc.classList.add('term-full-desc');
-                        fullDesc.textContent = term.fullDesc;
-                        
-                        const expandBtn = document.createElement('button');
-                        expandBtn.classList.add('term-expand');
-                        expandBtn.textContent = '+';
-                        expandBtn.addEventListener('click', function() {
-                            card.classList.toggle('expanded');
-                            if (card.classList.contains('expanded')) {
-                                fullDesc.style.display = 'block';
-                                expandBtn.textContent = '×';
-                            } else {
-                                fullDesc.style.display = 'none';
-                                expandBtn.textContent = '+';
-                            }
-                        });
-                        
-                        card.appendChild(title);
-                        card.appendChild(shortDesc);
-                        card.appendChild(fullDesc);
-                        card.appendChild(expandBtn);
-                        
-                        termsContainer.appendChild(card);
-                    });
+            }
+            
+            // Sonraki resim
+            function nextImage() {
+                if (currentModalImages.length === 0) return;
+                currentModalIndex = (currentModalIndex + 1) % currentModalImages.length;
+                updateModalImage();
+            }
+            
+            // Önceki resim
+            function prevImage() {
+                if (currentModalImages.length === 0) return;
+                currentModalIndex = (currentModalIndex - 1 + currentModalImages.length) % currentModalImages.length;
+                updateModalImage();
+            }
+            
+            // Klavye olaylarını yönet
+            function handleKeyDown(event) {
+                if (event.key === "ArrowLeft") {
+                    prevImage();
+                } else if (event.key === "ArrowRight") {
+                    nextImage();
+                } else if (event.key === "Escape") {
+                    closeModal();
+                }
+            }
+            
+            // Kapatma butonu
+            closeBtn.onclick = closeModal;
+            
+            // Modal dışına tıklayınca kapat
+            modal.onclick = function(event) {
+                if (event.target === modal) {
+                    closeModal();
                 }
             };
             
-            searchInputs.forEach(input => {
-                input.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') {
-                        performSearch();
+            // Önceki/Sonraki butonları
+            prevBtn.onclick = function(e) {
+                e.stopPropagation();
+                prevImage();
+            };
+            
+            nextBtn.onclick = function(e) {
+                e.stopPropagation();
+                nextImage();
+            };
+            
+            // Tüm entry görsellerine tıklanabilirlik ekle
+            document.addEventListener('click', function(event) {
+                if (event.target.tagName === 'IMG' && event.target.closest('.content')) {
+                    // Tıklanan resmin içinde bulunduğu slider'ı bul
+                    const slider = event.target.closest('.image-slider');
+                    let images = [];
+                    let index = 0;
+                    
+                    if (slider) {
+                        // Slider içindeki tüm resimleri al
+                        const sliderImgs = slider.querySelectorAll('.slider-item img');
+                        images = Array.from(sliderImgs);
+                        // Tıklanan resmin index'ini bul
+                        index = images.findIndex(img => img === event.target);
+                    } else {
+                        // Slider yoksa, sadece tıklanan resmi kullan
+                        images = [event.target];
+                        index = 0;
                     }
-                });
+                    
+                    openModal(images, index);
+                }
             });
             
-            searchButtons.forEach(button => {
-                button.addEventListener('click', performSearch);
-            });
+            // Mobil dokunma olayları (swipe)
+            let touchStartX = 0;
+            let touchEndX = 0;
             
-            // URL'de hash varsa ilgili bölüme git
-            if (window.location.hash) {
-                setTimeout(() => {
-                    const target = document.querySelector(window.location.hash);
-                    if (target) {
-                        target.scrollIntoView();
+            modalImg.addEventListener('touchstart', function(event) {
+                touchStartX = event.changedTouches[0].screenX;
+            }, false);
+            
+            modalImg.addEventListener('touchend', function(event) {
+                touchEndX = event.changedTouches[0].screenX;
+                handleSwipe();
+            }, false);
+            
+            function handleSwipe() {
+                const diffX = touchEndX - touchStartX;
+                
+                if (Math.abs(diffX) > 50) { // Minimum kayma mesafesi
+                    if (diffX > 0) {
+                        // Sağa kaydırma - önceki resim
+                        prevImage();
+                    } else {
+                        // Sola kaydırma - sonraki resim
+                        nextImage();
                     }
-                }, 100);
+                }
             }
-        });
+        }
+
+        // ÇEVİRİ İKONLARINI EKLEME FONKSİYONU
+        async function addTranslationIcons() {
+          const entries = document.querySelectorAll(".entry");
+          if (entries.length === 0) return;
+
+          entries.forEach(entry => {
+            const idDiv = entry.querySelector(".entry-id");
+            const contentDiv = entry.querySelector(".content");
+            const originalContent = contentDiv?.innerHTML?.trim();
+            if (!idDiv || !originalContent) return;
+            
+            if (idDiv.querySelector(".translation-icon")) return;
+
+            const idValue = parseInt(idDiv.textContent.replace(/\D/g, ''));
+            if (isNaN(idValue)) return;
+
+            const translationEntry = allEntries.find(item => item.id === idValue);
+            
+            if (!translationEntry?.content_tr) return;
+
+            const icon = document.createElement("span");
+            icon.classList.add("translation-icon", "fi", "fi-tr");
+            icon.title = "Çeviriyi göster/gizle";
+            
+            const langCode = translationEntry?.lang || 'tr';
+            icon.classList.add(`fi-${langCode}`);
+
+            icon.addEventListener("click", (e) => {
+              e.stopPropagation();
+              icon.classList.toggle("active");
+              
+              if (icon.classList.contains("active")) {
+                if (translationEntry.content_tr) {
+                  contentDiv.innerHTML = formatContent(translationEntry.content_tr);
+                }
+              } else {
+                contentDiv.innerHTML = originalContent;
+              }
+            });
+
+            document.addEventListener("click", (e) => {
+              if (!icon.contains(e.target) && !contentDiv.contains(e.target)) {
+                icon.classList.remove("active");
+                contentDiv.innerHTML = originalContent;
+              }
+            });
+
+            idDiv.appendChild(icon);
+          });
+        }
+
+        function createEntryElement(entry, depth = 0) {
+          const entryDiv = document.createElement("div");
+          entryDiv.className = `entry ${depth > 0 ? 'child-entry' : ''}`;
+          entryDiv.id = `entry-${entry.id}`;
+          
+          if (entry.id === latestEntryId) {
+            entryDiv.classList.add('latest-entry');
+          }
+          
+          if (entry.id === parentOfLatestId) {
+            entryDiv.classList.add('parent-of-latest');
+          }
+          
+          if (depth > 0) {
+            entryDiv.style.marginLeft = (depth * 30) + 'px';
+          }
+
+          const time = new Date(entry.date).toLocaleString("tr-TR", {
+            year: "numeric", 
+            month: "2-digit", 
+            day: "2-digit", 
+            hour: "2-digit", 
+            minute: "2-digit"
+          }).replace(",", "");
+
+          const likeCount = likesCache.data[entry.id] || 0;
+          const pinCount = pinsCache.data[entry.id] || 0;
+          const viewCount = viewsCache.data[entry.id] || 0;
+
+          const formattedContent = formatContent(entry.content);
+
+          entryDiv.innerHTML = `
+            <div class="timestamp">
+              <span class="fa-solid fa-bug bug-iconentry"></span> ${time}
+            </div>
+            <div class="entry-id">#${entry.id}</div>
+            <div class="content">${formattedContent}</div>
+            <div class="interaction-buttons">
+              <div class="view-count">
+                <i class="fas fa-eye"> </i> ${viewCount}
+              </div>
+              <div class="daisy-like" data-entry-id="${entry.id}">
+                <img src="/IMAGES/daisy.svg" class="daisy-icon" alt="Beğen" />
+                <span class="like-count">${likeCount}</span>
+              </div>
+              <div class="pine-pin" data-entry-id="${entry.id}">
+                <img src="/IMAGES/pine.svg" class="pine-icon" alt="Pinle" />
+                <span class="pin-count">${pinCount}</span>
+              </div>
+              <div class="share-entry" data-entry-id="${entry.id}">
+                <i class="fas fa-share-alt share-icon"></i>
+              </div>
+            </div>
+          `;
+
+          const likeIcon = entryDiv.querySelector(".daisy-like");
+          likeIcon?.addEventListener("click", () => handleLikeClick(entry.id, entryDiv));
+
+          const pinIcon = entryDiv.querySelector(".pine-pin");
+          pinIcon?.addEventListener("click", () => handlePinClick(entry.id, entryDiv));
+
+          const shareIcon = entryDiv.querySelector(".share-entry");
+          shareIcon?.addEventListener("click", () => handleShareClick(entry.id));
+
+          const copyLinkIcon = entryDiv.querySelector(".copy-link");
+          copyLinkIcon?.addEventListener("click", () => handleCopyLinkClick(entry.id));
+
+          return entryDiv;
+        }
+
+        // Entry'leri gruplama fonksiyonu
+        function groupEntries(entries) {
+          const parentMap = new Map();
+          const childMap = new Map();
+          const parentEntries = [];
+          
+          // Önce tüm entry'leri parent and child olarak ayır
+          entries.forEach(entry => {
+            if (!entry.references || entry.references.length === 0) {
+              parentEntries.push(entry);
+            } else {
+              const parentId = entry.references[0];
+              if (!childMap.has(parentId)) {
+                childMap.set(parentId, []);
+              }
+              childMap.get(parentId).push(entry);
+            }
+          });
+          
+          // Parent entry'leri tarihe göre sırala (yeniden eskiye)
+          parentEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
+          
+          // Parent entry'leri grupla ve child'larını ekle
+          const groups = [];
+          parentEntries.forEach(parent => {
+            const children = childMap.get(parent.id) || [];
+            
+            // Child'ları tarihe göre sırala (yeniden eskiye)
+            children.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            // Grubun tarihini belirle (en yeni tarih - parent veya child'lardan)
+            const groupDate = children.length > 0 
+              ? new Date(Math.max(new Date(parent.date), ...children.map(c => new Date(c.date))))
+              : new Date(parent.date);
+            
+            groups.push({
+              parent,
+              children,
+              groupDate
+            });
+          });
+          
+          // Grupları grup tarihine göre sırala (yeniden eskiye)
+          groups.sort((a, b) => b.groupDate - a.groupDate);
+          
+          return groups;
+        }
+
+        function displayEntries(startIndex, count, callback) {
+          const container = document.getElementById("entries");
+          const loadingElement = document.getElementById("loading");
+          const loadMoreBtn = document.getElementById("loadMoreBtn");
+          
+          if (startIndex >= groupedEntries.length) {
+            loadMoreBtn.style.display = 'none';
+            if (callback) callback();
+            return;
+          }
+          
+          loadingElement.style.display = 'block';
+          
+          // Yeni grupları ekle
+          const endIndex = Math.min(startIndex + count, groupedEntries.length);
+          for (let i = startIndex; i < endIndex; i++) {
+            const group = groupedEntries[i];
+            
+            // Grup container'ı oluştur
+            const groupDiv = document.createElement("div");
+            groupDiv.className = "entry-group";
+            groupDiv.id = `group-${group.parent.id}`;
+            
+            // Parent entry'yi ekle
+            const parentElement = createEntryElement(group.parent, 0);
+            groupDiv.appendChild(parentElement);
+            
+            // Child entry'leri ekle
+            group.children.forEach(child => {
+              const childElement = createEntryElement(child, 1);
+              groupDiv.appendChild(childElement);
+            });
+            
+            container.appendChild(groupDiv);
+          }
+          
+          displayedEntries = endIndex;
+          document.getElementById('entryCount').textContent = `Total ${allEntries.length} entries loaded`;
+          
+          // İstatistikleri güncelle
+          updateStatistics();
+          
+          // Çeviri ikonlarını ekle
+          addTranslationIcons();
+          
+          // Slider'ları başlat
+          setTimeout(() => {
+            initAllSliders();
+            
+            // Görünür slider'ların boyutlarını güncelle
+            document.querySelectorAll('.image-slider').forEach(slider => {
+              if (slider.offsetParent !== null) {
+                const event = new Event('resize');
+                window.dispatchEvent(event);
+              }
+            });
+          }, 100);
+          
+          // GÖRÜNÜM SAYAÇLARINI GÜNCELLE
+          updateViewCountsForVisibleEntries();
+          
+          loadingElement.style.display = 'none';
+          
+          if (displayedEntries >= groupedEntries.length) {
+            loadMoreBtn.style.display = 'none';
+          }
+          
+          // Daha fazla yükle butonunun metnini güncelle
+          const remaining = groupedEntries.length - displayedEntries;
+          loadMoreBtn.textContent = `More Entry (${Math.min(remaining, entriesPerPage)}) ${remaining > 0 ? '' : ''}`;
+          
+          // Callback'i çağır (hash kontrolü için)
+          if (callback) callback();
+        }
+
+        // 4. INTERACTION FONKSİYONLARI
+        async function handleLikeClick(entryId, entryDiv) {
+          if (likesCache.isUpdating) return;
+
+          likesCache.isUpdating = true;
+          const likeCountSpan = entryDiv.querySelector(".like-count");
+          const likeContainer = entryDiv.querySelector(".daisy-like");
+          const currentCount = parseInt(likeCountSpan.textContent) || 0;
+
+          try {
+            likeCountSpan.textContent = currentCount + 1;
+            likeContainer.classList.add("action-animation");
+            
+            likesCache.data[entryId] = currentCount + 1;
+            localStorage.setItem('entryLikes', JSON.stringify(likesCache.data));
+            
+            await updateInteractionsOnServer(entryId, currentCount + 1, null, null);
+            likesCache.lastUpdated = Date.now();
+            
+            // İstatistikleri güncelle
+            updateStatistics();
+          } catch (error) {
+            console.error('Like update failed:', error);
+            likeCountSpan.textContent = currentCount;
+            likesCache.data[entryId] = currentCount;
+          } finally {
+            likesCache.isUpdating = false;
+            setTimeout(() => {
+              likeContainer.classList.remove("action-animation");
+            }, 500);
+          }
+        }
+
+        async function handlePinClick(entryId, entryDiv) {
+          if (pinsCache.isUpdating) return;
+
+          pinsCache.isUpdating = true;
+          const pinCountSpan = entryDiv.querySelector(".pin-count");
+          const pinContainer = entryDiv.querySelector(".pine-pin");
+          const currentCount = parseInt(pinCountSpan.textContent) || 0;
+
+          try {
+            pinCountSpan.textContent = currentCount + 1;
+            pinContainer.classList.add("action-animation");
+            
+            pinsCache.data[entryId] = currentCount + 1;
+            localStorage.setItem('entryPins', JSON.stringify(pinsCache.data));
+            
+            await updateInteractionsOnServer(entryId, null, currentCount + 1, null);
+            pinsCache.lastUpdated = Date.now();
+            
+            // İstatistikleri güncelle
+            updateStatistics();
+          } catch (error) {
+            console.error('Pin update failed:', error);
+            pinCountSpan.textContent = currentCount;
+            pinsCache.data[entryId] = currentCount;
+          } finally {
+            pinsCache.isUpdating = false;
+            setTimeout(() => {
+              pinContainer.classList.remove("action-animation");
+            }, 500);
+          }
+        }
+
+        // GÖRÜNÜM SAYACI GÜNCELLEME FONKSİYONU
+        async function updateViewCount(entryId) {
+          if (viewsCache.isUpdating) return;
+          
+          // Aynı oturumda aynı entry için birden fazla görüntülenme saymasın
+          const viewedEntries = JSON.parse(sessionStorage.getItem('viewedEntries') || '{}');
+          if (viewedEntries[entryId]) return;
+          
+          viewsCache.isUpdating = true;
+          const currentCount = viewsCache.data[entryId] || 0;
+
+          try {
+            viewsCache.data[entryId] = currentCount + 1;
+            localStorage.setItem('entryViews', JSON.stringify(viewsCache.data));
+            
+            // Oturumda bu entry'nin görüntülendiğini işaretle
+            viewedEntries[entryId] = true;
+            sessionStorage.setItem('viewedEntries', JSON.stringify(viewedEntries));
+            
+            await updateInteractionsOnServer(entryId, null, null, currentCount + 1);
+            viewsCache.lastUpdated = Date.now();
+            
+            // İstatistikleri güncelle
+            updateStatistics();
+            
+            // Görüntülenme sayısını UI'da güncelle
+            const viewCountElement = document.querySelector(`#entry-${entryId} .view-count`);
+            if (viewCountElement) {
+              viewCountElement.innerHTML = `<i class="fas fa-eye"> </i> ${currentCount + 1}`;
+            }
+          } catch (error) {
+            console.error('View count update failed:', error);
+            viewsCache.data[entryId] = currentCount;
+          } finally {
+            viewsCache.isUpdating = false;
+          }
+        }
+
+        // Intersection Observer ile görünür entry'lerin view count'unu güncelle
+        function updateViewCountsForVisibleEntries() {
+          const entries = document.querySelectorAll('.entry');
+          
+          const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                const entryId = entry.target.id.replace('entry-', '');
+                updateViewCount(entryId);
+                // Güncelleme yapıldıktan sonra observe'i durdur
+                observer.unobserve(entry.target);
+              }
+            });
+          }, { threshold: 0.5 });
+          
+          // Tüm entry'leri gözle
+          entries.forEach(entry => {
+            observer.observe(entry);
+          });
+        }
+
+        async function handleShareClick(entryId) {
+          const entryUrl = `${window.location.origin}${window.location.pathname}#entry-${entryId}`;
+          
+          if (navigator.share) {
+            try {
+              await navigator.share({
+                title: 'Adem Bayazıt - LadyBuG Entry',
+                text: 'Bu entry\'i paylaşmak istiyor musunuz?',
+                url: entryUrl,
+              });
+            } catch (error) {
+              console.log('Paylaşım iptal edildi veya hata oluştu:', error);
+            }
+          } else {
+            // Web Share API desteklenmiyorsa, linki kopyala
+            await handleCopyLinkClick(entryId);
+          }
+        }
+
+        async function handleCopyLinkClick(entryId) {
+          const entryUrl = `${window.location.origin}${window.location.pathname}#entry-${entryId}`;
+          
+          try {
+            await navigator.clipboard.writeText(entryUrl);
+            alert('Link panoya kopyalandı!');
+          } catch (error) {
+            console.error('Link kopyalanırken hata oluştu:', error);
+            // Fallback için
+            const textArea = document.createElement('textarea');
+            textArea.value = entryUrl;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            alert('Link panoya kopyalandı!');
+          }
+        }
+
+        async function updateInteractionsOnServer(entryId, newLikeCount, newPinCount, newViewCount) {
+          const updatedLikes = newLikeCount !== null ? { ...likesCache.data, [entryId]: newLikeCount } : likesCache.data;
+          const updatedPins = newPinCount !== null ? { ...pinsCache.data, [entryId]: newPinCount } : pinsCache.data;
+          const updatedViews = newViewCount !== null ? { ...viewsCache.data, [entryId]: newViewCount } : viewsCache.data;
+
+          try {
+            await fetchViaProxy('/b/68862fd97b4b8670d8a81945', 'PUT', {
+              likes: updatedLikes,
+              pins: updatedPins,
+              views: updatedViews
+            });
+          } catch (error) {
+            throw new Error('Failed to update data on server');
+          }
+        }
+
+        // 5. YENİ ENTRY KONTROLÜ ve BİLDİRİM
+        function startPolling() {
+          // 30 saniyede bir yeni entry kontrol et
+          checkInterval = setInterval(() => {
+            checkForNewEntries();
+          }, 30000);
+        }
+
+        async function checkForNewEntries() {
+          try {
+            const entriesData = await fetchViaProxy('/b/68933248ae596e708fc2fbbc/latest');
+            const serverEntries = entriesData.records || entriesData;
+            
+            // Sunucudaki en yeni entry'nin ID'sini bul
+            const newestServerEntry = serverEntries.reduce((newest, entry) => {
+              return (!newest || entry.id > newest.id) ? entry : newest;
+            }, { id: 0 });
+            
+            // İstemcideki en yeni entry ID'si
+            const clientNewestEntryId = allEntries.length > 0 ? Math.max(...allEntries.map(e => e.id)) : 0;
+            
+            // Sunucuda daha yeni bir entry var mı ve daha önce bildirim gösterilmemiş mi?
+            if (newestServerEntry.id > clientNewestEntryId && newestServerEntry.id > lastNotifiedEntryId) {
+              // Yeni entry sayısını hesapla
+              const newEntryCount = serverEntries.filter(entry => entry.id > clientNewestEntryId).length;
+              
+              // Bildirim göster
+              showNewEntriesNotification(newEntryCount);
+              newEntriesCount = newEntryCount;
+              
+              // Son bildirim gösterilen entry ID'sini güncelle
+              lastNotifiedEntryId = newestServerEntry.id;
+            }
+          } catch (error) {
+            console.error('Yeni entry kontrol hatası:', error);
+            // Fallback: polling'i başlat
+            startPolling();
+          }
+        }
+
+        function showNewEntriesNotification(count) {
+          // Önceki bildirim varsa kaldır
+          if (notificationElement) {
+            notificationElement.remove();
+          }
+          
+          if (notificationTimeout) {
+            clearTimeout(notificationTimeout);
+          }
+          
+          // Bildirim oluştur
+          notificationElement = document.createElement('div');
+          notificationElement.className = 'new-entry-notification';
+          notificationElement.innerHTML = `
+            <button class="minimize-btn">−</button>
+            <div class="notification-content">
+              <div style="margin-bottom: 10px; font-weight: bold;">
+                <i class="fa-solid fa-bug bug-icon"></i> ${count} New Entries!
+              </div>
+              <div style="font-size: 14px; margin-bottom: 10px;">
+                Click to refresh and view new entries.
+              </div>
+            </div>
+            <div class="notification-bell">
+              <i class="fa-solid fa-bug bug-icon"></i>
+              <span class="notification-count">${count}</span>
+            </div>
+          `;
+          
+          notificationElement.addEventListener('click', (e) => {
+            // Minimize butonuna tıklanmışsa küçült
+            if (e.target.classList.contains('minimize-btn')) {
+              e.stopPropagation();
+              minimizeNotification(count);
+              return;
+            }
+            
+            // Diğer tıklamalarda sayfayı yenile
+            location.reload();
+          });
+          
+          document.body.appendChild(notificationElement);
+          
+          // 10 saniye sonra bildirimi otomatik küçült
+          notificationTimeout = setTimeout(() => {
+            minimizeNotification(count);
+          }, 10000);
+        }
+        
+        function minimizeNotification(count) {
+          if (notificationElement) {
+            notificationElement.classList.add('minimized');
+            
+            // Sayıyı güncelle
+            const countElement = notificationElement.querySelector('.notification-count');
+            if (countElement) {
+              countElement.textContent = count;
+            }
+            
+            // Küçültülmüş bildirime tıklanınca tekrar büyüt
+            const handleMinimizedClick = () => {
+              notificationElement.classList.remove('minimized');
+              notificationElement.removeEventListener('click', handleMinimizedClick);
+              
+              // 10 saniye sonra tekrar küçült
+              notificationTimeout = setTimeout(() => {
+                minimizeNotification(count);
+              }, 10000);
+            };
+            
+            notificationElement.addEventListener('click', handleMinimizedClick);
+          }
+        }
+
+        // 6. HASH YÖNLENDİRME FONKSİYONU
+        function scrollToEntryFromHash() {
+          const hash = window.location.hash;
+          if (hash.startsWith('#entry-')) {
+            const entryId = hash.substring(7);
+            const entryElement = document.getElementById(`entry-${entryId}`);
+            
+            if (entryElement) {
+              // Header yüksekliğini al ve offset hesapla
+              const header = document.querySelector('.header');
+              const headerHeight = header ? header.offsetHeight : 80;
+              
+              setTimeout(() => {
+                // Elementin pozisyonunu hesapla ve header yüksekliği kadar aşağı kaydır
+                const elementPosition = entryElement.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerHeight;
+                
+                window.scrollTo({
+                  top: offsetPosition,
+                  behavior: 'smooth'
+                });
+                
+                // Entry'yi vurgula
+                entryElement.style.backgroundColor = 'rgba(0, 255, 0, 0.1)';
+                setTimeout(() => {
+                  entryElement.style.backgroundColor = '';
+                }, 3000);
+              }, 500);
+            } else {
+              if (displayedEntries < groupedEntries.length) {
+                currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+                displayEntries(displayedEntries, entriesPerPage, scrollToEntryFromHash);
+              }
+            }
+          }
+        }
+
+        // 7. UYGULAMAYI BAŞLAT
+        async function initializeApp() {
+          try {
+            await loadInteractions();
+            const entriesData = await fetchViaProxy('/b/68933248ae596e708fc2fbbc/latest');
+            allEntries = entriesData.records || entriesData;
+            
+            allEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            if (allEntries.length > 0) {
+              latestEntryId = allEntries[0].id;
+              
+              const latestEntry = allEntries.find(entry => entry.id === latestEntryId);
+              if (latestEntry && latestEntry.references && latestEntry.references.length > 0) {
+                parentOfLatestId = latestEntry.references[0];
+              }
+            }
+            
+            groupedEntries = groupEntries(allEntries);
+            
+            setupImageModal();
+            displayEntries(0, entriesPerPage, scrollToEntryFromHash);
+            
+            document.getElementById('loadMoreBtn').addEventListener('click', () => {
+              // Mevcut scroll pozisyonunu kaydet
+              currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+              displayEntries(displayedEntries, entriesPerPage, () => {
+                // Yeni içerik yüklendikten sonra scroll pozisyonunu koru
+                window.scrollTo(0, currentScrollPosition);
+                
+                // Hash kontrolü yap
+                scrollToEntryFromHash();
+              });
+            });
+            
+            // Popüler ve trend entry'leri yükle
+            loadPopularEntries();
+            loadTrendingEntries();
+            loadRecentActivity();
+            
+            // Arama işlevselliği
+            setupSearch();
+            
+            // Polling'i başlat
+            startPolling();
+            
+            // Sayfa yüklendiğinde slider boyutlarını ayarla
+            window.addEventListener('load', function() {
+              setTimeout(() => {
+                initAllSliders();
+                
+                // Görünür slider'ların boyutlarını güncelle
+                document.querySelectorAll('.image-slider').forEach(slider => {
+                  if (slider.offsetParent !== null) {
+                    const event = new Event('resize');
+                    window.dispatchEvent(event);
+                  }
+                });
+              }, 500);
+            });
+
+            // Pencere boyutu değiştiğinde slider'ları yeniden boyutlandır
+            window.addEventListener('resize', function() {
+              initAllSliders();
+            });
+            
+          } catch (error) {
+            console.error("Initialization error:", error);
+            try {
+              const response = await fetch("entries.json");
+              const entriesData = await response.json();
+              allEntries = entriesData.records || entriesData;
+              
+              allEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
+              
+              if (allEntries.length > 0) {
+                latestEntryId = allEntries[0].id;
+                
+                const latestEntry = allEntries.find(entry => entry.id === latestEntryId);
+                if (latestEntry && latestEntry.references && latestEntry.references.length > 0) {
+                  parentOfLatestId = latestEntry.references[0];
+                }
+              }
+              
+              groupedEntries = groupEntries(allEntries);
+              
+              setupImageModal();
+              
+              displayEntries(0, entriesPerPage, scrollToEntryFromHash);
+              
+              document.getElementById('loadMoreBtn').addEventListener('click', () => {
+                currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+                displayEntries(displayedEntries, entriesPerPage, () => {
+                  window.scrollTo(0, currentScrollPosition);
+                  scrollToEntryFromHash();
+                });
+              });
+
+              // Popüler ve trend entry'leri yükle
+              loadPopularEntries();
+              loadTrendingEntries();
+              loadRecentActivity();
+              
+              // Arama işlevselliği
+              setupSearch();
+
+              // Fallback: polling'i başlat
+              startPolling();
+              
+              // Sayfa yüklendiğinde slider boyutlarını ayarla
+              window.addEventListener('load', function() {
+                setTimeout(() => {
+                  initAllSliders();
+                  
+                  // Görünür slider'ların boyutlarını güncelle
+                  document.querySelectorAll('.image-slider').forEach(slider => {
+                    if (slider.offsetParent !== null) {
+                      const event = new Event('resize');
+                      window.dispatchEvent(event);
+                    }
+                  });
+                }, 500);
+              });
+
+              // Pencere boyutu değiştiğinde slider'ları yeniden boyutlandır
+              window.addEventListener('resize', function() {
+                initAllSliders();
+              });
+              
+            } catch (fallbackError) {
+              console.error("Fallback failed:", fallbackError);
+              document.getElementById("entries").innerHTML = 
+                '<div class="error">Veriler yüklenirken bir hata oluştu</div>';
+            }
+          }
+        }
+        
+        // Popüler entry'leri yükle
+        function loadPopularEntries() {
+          const popularContainer = document.getElementById('popular-entries');
+          if (!popularContainer) return;
+          
+          // Beğeni sayısına göre sırala
+          const popular = [...allEntries].sort((a, b) => {
+            const aLikes = likesCache.data[a.id] || 0;
+            const bLikes = likesCache.data[b.id] || 0;
+            return bLikes - aLikes;
+          }).slice(0, 5);
+          
+          if (popular.length === 0) {
+            popularContainer.innerHTML = '<div style="padding: 10px; text-align: center; color: #90ee90;">No popular entries yet</div>';
+            return;
+          }
+          
+          let html = '';
+          popular.forEach(entry => {
+            const likes = likesCache.data[entry.id] || 0;
+            const contentSnippet = entry.content.replace(/<[^>]*>/g, '').substring(0, 60) + '...';
+            const date = new Date(entry.date).toLocaleDateString('tr-TR');
+            
+            html += `
+              <div style="padding: 10px; border-bottom: 1px solid rgba(0, 255, 0, 0.2);">
+                <div style="font-size: 12px; color: #90ee90;">#${entry.id} • ${date}</div>
+                <div style="font-size: 14px; margin: 5px 0;">${contentSnippet}</div>
+                <div style="display: flex; align-items: center; gap: 10px; font-size: 12px;">
+                  <span><i class="fas fa-heart" style="color: #ff5555;"></i> ${likes}</span>
+                  <a href="#entry-${entry.id}" style="color: var(--primary-color); text-decoration: none;">View →</a>
+                </div>
+              </div>
+            `;
+          });
+          
+          popularContainer.innerHTML = html;
+        }
+        
+        // Trend entry'leri yükle
+        function loadTrendingEntries() {
+          const trendingContainer = document.getElementById('trending-entries');
+          if (!trendingContainer) return;
+          
+          // Son 7 gün içindeki entry'leri al
+          const oneWeekAgo = new Date();
+          oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+          
+          const recentEntries = allEntries.filter(entry => new Date(entry.date) >= oneWeekAgo);
+          
+          // Beğeni sayısına göre sırala
+          const trending = recentEntries.sort((a, b) => {
+            const aLikes = likesCache.data[a.id] || 0;
+            const bLikes = likesCache.data[b.id] || 0;
+            return bLikes - aLikes;
+          }).slice(0, 5);
+          
+          if (trending.length === 0) {
+            Container.innerHTML = '<div style="padding: 10px; text-align: center; color: #90ee90;">No  entries</div>';
+            return;
+          }
+          
+          let html = '';
+          trending.forEach(entry => {
+            const likes = likesCache.data[entry.id] || 0;
+            const contentSnippet = entry.content.replace(/<[^>]*>/g, '').substring(0, 60) + '...';
+            const date = new Date(entry.date).toLocaleDateString('tr-TR');
+            
+            html += `
+              <div style="padding: 10px; border-bottom: 1px solid rgba(0, 255, 0, 0.2);">
+                <div style="font-size: 12px; color: #90ee90;">#${entry.id} • ${date}</div>
+                <div style="font-size: 14px; margin: 5px 0;">${contentSnippet}</div>
+                <div style="display: flex; align-items: center; gap: 10px; font-size: 12px;">
+                  <span><i class="fas fa-fire" style="color: orange;"></i> ${likes}</span>
+                  <a href="#entry-${entry.id}" style="color: var(--primary-color); text-decoration: none;">View →</a>
+                  
+                </div>
+              </div>
+            `;
+          });
+          
+          trendingContainer.innerHTML = html;
+        } 
+        // Son aktiviteleri yükle
+        function loadRecentActivity() {
+          const activityContainer = document.getElementById('recent-activity');
+          if (!activityContainer) return;
+          
+          // Son 10 entry'i al
+          const recent = allEntries.slice(0, 5);
+          
+          if (recent.length === 0) {
+            activityContainer.innerHTML = '<div style="padding: 10px; text-align: center; color: #90ee90;">No recent activity</div>';
+            return;
+          }
+          
+          let html = '';
+          recent.forEach(entry => {
+            const date = new Date(entry.date).toLocaleDateString('tr-TR', {
+              hour: '2-digit',
+              minute: '2-digit'
+            });
+            const contentSnippet = entry.content.replace(/<[^>]*>/g, '').substring(0, 40) + '...';
+            
+            html += `
+              <div style="padding: 10px; border-bottom: 1px solid rgba(0, 255, 0, 0.2);">
+                <div style="font-size: 12px; color: #90ee90;">${date}</div>
+                <div style="font-size: 14px; margin: 5px 0;">${contentSnippet}</div>
+                <a href="#entry-${entry.id}" style="color: var(--primary-color); text-decoration: none; font-size: 12px;">View →</a>
+              </div>
+            `;
+          });
+          
+          activityContainer.innerHTML = html;
+        }
+        
+        // Arama işlevselliği
+        function setupSearch() {
+          const searchInput = document.getElementById('desktop-search-input');
+          const searchButton = document.getElementById('desktop-search-btn');
+          const mobileSearchInput = document.getElementById('mobile-search-input');
+          const mobileSearchButton = document.getElementById('mobile-search-btn');
+          
+          const performSearch = (query) => {
+            if (query.length < 1) {
+              // Arama kutusu boşsa tüm entry'leri göster
+              const container = document.getElementById("entries");
+              container.innerHTML = '';
+              displayEntries(0, entriesPerPage);
+              document.getElementById('loadMoreBtn').style.display = 'block';
+              document.getElementById('entryCount').textContent = `Total ${allEntries.length} entries loaded`;
+              return;
+            }
+            
+            // Sayısal bir değer mi kontrol et (ID araması)
+            const isIdSearch = !isNaN(query) && query.trim() !== '';
+            
+            const results = allEntries.filter(entry => {
+              if (isIdSearch) {
+                // ID araması: tam eşleşme
+                return entry.id.toString() === query;
+              } else {
+                // Metin araması: içerikte ara
+                return entry.content.toLowerCase().includes(query.toLowerCase());
+              }
+            });
+            
+            // Arama sonuçlarını göster
+            displaySearchResults(results, query, isIdSearch);
+          };
+          
+          if (searchInput && searchButton) {
+            searchInput.addEventListener('keypress', (e) => {
+              if (e.key === 'Enter') {
+                performSearch(searchInput.value.trim());
+              }
+            });
+            
+            searchButton.addEventListener('click', () => {
+              performSearch(searchInput.value.trim());
+            });
+          }
+          
+          if (mobileSearchInput && mobileSearchButton) {
+            mobileSearchInput.addEventListener('keypress', (e) => {
+              if (e.key === 'Enter') {
+                performSearch(mobileSearchInput.value.trim());
+              }
+            });
+            
+            mobileSearchButton.addEventListener('click', () => {
+              performSearch(mobileSearchInput.value.trim());
+            });
+          }
+        }
+        
+        // Arama sonuçlarını göster
+        function displaySearchResults(results, query, isIdSearch) {
+          const container = document.getElementById("entries");
+          const loadMoreBtn = document.getElementById("loadMoreBtn");
+          const entryCount = document.getElementById("entryCount");
+          
+          if (results.length === 0) {
+            container.innerHTML = `
+              <div style="text-align: center; padding: 30px; color: #90ee90;">
+                <i class="fas fa-search" style="font-size: 24px; margin-bottom: 10px;"></i>
+                <div>No results found for "${query}"</div>
+                ${isIdSearch ? `<div style="margin-top: 10px; font-size: 14px;">Make sure you entered the correct ID number.</div>` : ''}
+              </div>
+            `;
+            loadMoreBtn.style.display = 'none';
+            entryCount.textContent = `0 results for "${query}"`;
+            return;
+          }
+          
+          // Sonuçları göster
+          container.innerHTML = '';
+          entryCount.textContent = `${results.length} result${results.length !== 1 ? 's' : ''} for "${query}"`;
+          
+          // ID aramasıysa ve sadece 1 sonuç varsa, grubuyla birlikte göster
+          if (isIdSearch && results.length === 1) {
+            const entry = results[0];
+            const parentId = entry.references && entry.references.length > 0 ? entry.references[0] : null;
+            
+            if (parentId) {
+              // Parent entry'yi bul
+              const parentEntry = allEntries.find(e => e.id === parentId);
+              if (parentEntry) {
+                // Parent ve child'ı birlikte göster
+                const groupDiv = document.createElement("div");
+                groupDiv.className = "entry-group";
+                groupDiv.id = `group-${parentEntry.id}`;
+                
+                // Parent entry'yi ekle
+                const parentElement = createEntryElement(parentEntry, 0);
+                groupDiv.appendChild(parentElement);
+                
+                // Child entry'leri ekle (sadece aranan child'ı)
+                const childElement = createEntryElement(entry, 1);
+                groupDiv.appendChild(childElement);
+                
+                container.appendChild(groupDiv);
+              } else {
+                // Parent bulunamadıysa sadece entry'yi göster
+                const entryElement = createEntryElement(entry);
+                container.appendChild(entryElement);
+              }
+            } else {
+              // Parent yoksa sadece entry'yi göster
+                const entryElement = createEntryElement(entry);
+                container.appendChild(entryElement);
+            }
+          } else {
+            // Çoklu sonuçlar veya metin araması
+            results.forEach(entry => {
+              const entryElement = createEntryElement(entry);
+              container.appendChild(entryElement);
+            });
+          }
+          
+          loadMoreBtn.style.display = 'none';
+          
+          // Çeviri ikonlarını ekle
+          addTranslationIcons();
+          
+          // Slider'ları başlat
+          setTimeout(() => {
+            initAllSliders();
+            
+            // Görünür slider'ların boyutlarını güncelle
+            document.querySelectorAll('.image-slider').forEach(slider => {
+              if (slider.offsetParent !== null) {
+                const event = new Event('resize');
+                window.dispatchEvent(event);
+              }
+            });
+          }, 100);
+          
+          // GÖRÜNÜM SAYAÇLARINI GÜNCELLE
+          updateViewCountsForVisibleEntries();
+        }
+
+        // 8. UYGULAMAYI BAŞLAT
+        document.addEventListener("DOMContentLoaded", initializeApp);
     </script>
+    <script src="/JAVASCRIPT/matrix.js"></script>
 </body>
 </html>
