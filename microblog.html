@@ -508,7 +508,7 @@
             object-fit: cover;
         }
 
-        /* YENİ SLIDER STİLLERİ - TAMAMEN DÜZENLENDİ */
+        /* YENİ SLIDER STİLLERİ - BOŞLUK SORUNU ÇÖZÜMLÜ */
         .image-slider {
             position: relative;
             margin: 10px 0;
@@ -1381,9 +1381,7 @@
           `;
           
           images.forEach(img => {
-            // Görüntü yüklendikten sonra slider'ı yeniden başlat
-            const imgWithLoad = img.replace('<img', '<img onload="initSlider(\'' + sliderId + '\')" ');
-            sliderHtml += `<div class="slider-item">${imgWithLoad}</div>`;
+            sliderHtml += `<div class="slider-item">${img}</div>`;
           });
           
           sliderHtml += `
@@ -1835,17 +1833,12 @@
           // Çeviri ikonlarını ekle
           addTranslationIcons();
           
-          // Slider'ları başlat
+          // Slider'ları başlat - GÜNCELLENMİŞ: Tüm resimler yüklendikten sonra
           setTimeout(() => {
             initAllSliders();
             
-            // Görünür slider'ların boyutlarını güncelle
-            document.querySelectorAll('.image-slider').forEach(slider => {
-              if (slider.offsetParent !== null) {
-                const event = new Event('resize');
-                window.dispatchEvent(event);
-              }
-            });
+            // Slider boyutlarını güncelle
+            updateSliderSizes();
           }, 100);
           
           // GÖRÜNÜM SAYAÇLARINI GÜNCELLE
@@ -1863,6 +1856,31 @@
           
           // Callback'i çağır (hash kontrolü için)
           if (callback) callback();
+        }
+
+        // Slider boyutlarını güncelleme fonksiyonu - YENİ EKLENDİ
+        function updateSliderSizes() {
+          document.querySelectorAll('.image-slider').forEach(slider => {
+            const container = slider.querySelector('.slider-container');
+            const items = slider.querySelectorAll('.slider-item');
+            
+            if (container && items.length > 0) {
+              // Slider genişliğini ayarla
+              const sliderWidth = slider.offsetWidth;
+              container.style.width = `${items.length * sliderWidth}px`;
+              
+              // Her bir itemın genişliğini ayarla
+              items.forEach(item => {
+                item.style.width = `${sliderWidth}px`;
+              });
+              
+              // Aktif slaytı güncelle
+              if (slidersState[slider.id]) {
+                const currentIndex = slidersState[slider.id].currentIndex || 0;
+                container.style.transform = `translateX(-${currentIndex * sliderWidth}px)`;
+              }
+            }
+          });
         }
 
         // 4. INTERACTION FONKSİYONLARI
@@ -2242,20 +2260,14 @@
             window.addEventListener('load', function() {
               setTimeout(() => {
                 initAllSliders();
-                
-                // Görünür slider'ların boyutlarını güncelle
-                document.querySelectorAll('.image-slider').forEach(slider => {
-                  if (slider.offsetParent !== null) {
-                    const event = new Event('resize');
-                    window.dispatchEvent(event);
-                  }
-                });
+                updateSliderSizes();
               }, 500);
             });
 
             // Pencere boyutu değiştiğinde slider'ları yeniden boyutlandır
             window.addEventListener('resize', function() {
               initAllSliders();
+              updateSliderSizes();
             });
             
           } catch (error) {
@@ -2305,20 +2317,14 @@
               window.addEventListener('load', function() {
                 setTimeout(() => {
                   initAllSliders();
-                  
-                  // Görünür slider'ların boyutlarını güncelle
-                  document.querySelectorAll('.image-slider').forEach(slider => {
-                    if (slider.offsetParent !== null) {
-                      const event = new Event('resize');
-                      window.dispatchEvent(event);
-                    }
-                  });
+                  updateSliderSizes();
                 }, 500);
               });
 
               // Pencere boyutu değiştiğinde slider'ları yeniden boyutlandır
               window.addEventListener('resize', function() {
                 initAllSliders();
+                updateSliderSizes();
               });
               
             } catch (fallbackError) {
@@ -2576,14 +2582,7 @@
           // Slider'ları başlat
           setTimeout(() => {
             initAllSliders();
-            
-            // Görünür slider'ların boyutlarını güncelle
-            document.querySelectorAll('.image-slider').forEach(slider => {
-              if (slider.offsetParent !== null) {
-                const event = new Event('resize');
-                window.dispatchEvent(event);
-              }
-            });
+            updateSliderSizes();
           }, 100);
           
           // GÖRÜNÜM SAYAÇLARINI GÜNCELLE
