@@ -1282,4 +1282,51 @@ canvas {
   .preview-image {
     height: 140px;
   }
+/* Mobil için Glowwin Cycle Düzenlemeleri */
+@media (max-width: 768px) {
+  .home-img {
+    width: 280px;
+    height: 280px;
+    margin-top: 40px;
+  }
+
+  .glowing-circle::after {
+    width: 250px;
+    height: 250px;
+  }
+
+  .glowing-circle .image {
+    width: 250px;
+    height: 250px;
+  }
+
+  .image img {
+    max-width: 230px;
+  }
+
+  .glowing-circle span {
+    width: 100%;
+    height: 100%;
+    animation: circleRotate 8s linear infinite; /* Daha yavaş dönüş */
+  }
+
+  /* Performans iyileştirmesi */
+  .glowing-circle {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+}
+
+/* Düşük güçlü cihazlar için optimizasyon */
+@media (max-width: 768px) and (prefers-reduced-motion: reduce) {
+  .glowing-circle span {
+    animation: none;
+  }
+  
+  .home-img {
+    animation: zoomIn 1s ease forwards !important;
+  }
+}
+
 }
