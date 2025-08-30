@@ -384,12 +384,21 @@
             box-shadow: 0 0 10px rgba(147, 112, 219, 0.5);
         }
         
-        .like-count, .pin-count, .view-count {
+        .like-count, .pin-count {
             font-size: 14px;
             min-width: 20px;
             text-align: center;
             display: flex; 
             align-items: center
+        }
+        
+        .view-count {
+            font-size: 14px;
+            min-width: 20px;
+            text-align: center;
+            display: flex; 
+            align-items: center;
+        
         }
         
         .action-animation {
@@ -508,6 +517,7 @@
             background: #000;
             width: 100%;
             aspect-ratio: 16/9;
+            min-height: 200px; /* Minimum yükseklik eklendi */
         }
         
         .slider-container {
@@ -1313,7 +1323,6 @@
             }
           }
         }
-        
         // İstatistikleri güncelleme fonksiyonu
         function updateStatistics() {
           const totalLikes = Object.values(likesCache.data).reduce((sum, count) => sum + count, 0);
@@ -1362,7 +1371,7 @@
           return content;
         }
         
-        // Resim slider'ı oluşturma fonksiyonu - TAMAMEN YENİLENDİ
+        // Resim slider'ı oluşturma fonksiyonu - GÜNCELLENMİŞ
         function createImageSlider(images) {
           const sliderId = 'slider-' + Math.random().toString(36).substr(2, 9);
           
@@ -1372,7 +1381,9 @@
           `;
           
           images.forEach(img => {
-            sliderHtml += `<div class="slider-item">${img}</div>`;
+            // Görüntü yüklendikten sonra slider'ı yeniden başlat
+            const imgWithLoad = img.replace('<img', '<img onload="initSlider(\'' + sliderId + '\')" ');
+            sliderHtml += `<div class="slider-item">${imgWithLoad}</div>`;
           });
           
           sliderHtml += `
@@ -1396,14 +1407,14 @@
           return sliderHtml;
         }
 
-        // Slider başlatma fonksiyonu - TAMAMEN YENİLENDİ
+        // Slider başlatma fonksiyonu - GÜNCELLENMİŞ
         function initSlider(sliderId) {
           const slider = document.getElementById(sliderId);
           if (!slider) return;
           
           // Eğer bu slider zaten başlatıldıysa, önceki olay dinleyicilerini temizle
           if (slidersState[sliderId]) {
-            const { prevBtn, nextBtn, dots, container } = slidersState[sliderId];
+            const { prevBtn, nextBtn, dots, container, resizeObserver, touchStartHandler, touchEndHandler } = slidersState[sliderId];
             
             if (prevBtn && prevBtn.cloneNode) prevBtn.replaceWith(prevBtn.cloneNode(true));
             if (nextBtn && nextBtn.cloneNode) nextBtn.replaceWith(nextBtn.cloneNode(true));
@@ -1412,6 +1423,15 @@
               dots.forEach((dot, index) => {
                 if (dot && dot.cloneNode) dot.replaceWith(dot.cloneNode(true));
               });
+            }
+            
+            if (resizeObserver) {
+              resizeObserver.disconnect();
+            }
+            
+            if (touchStartHandler && touchEndHandler) {
+              slider.removeEventListener('touchstart', touchStartHandler);
+              slider.removeEventListener('touchend', touchEndHandler);
             }
           }
           
@@ -1425,17 +1445,6 @@
           
           let currentIndex = 0;
           const totalItems = items.length;
-          
-          // Slider durumunu kaydet
-          slidersState[sliderId] = {
-            container,
-            items,
-            prevBtn,
-            nextBtn,
-            dots,
-            currentIndex,
-            totalItems
-          };
           
           // Slider'ı güncelle
           function updateSlider() {
@@ -1467,12 +1476,20 @@
           // Olay dinleyicileri ekle
           if (nextBtn) {
             nextBtn.addEventListener('click', nextSlide);
-            slidersState[sliderId].nextHandler = nextSlide;
+            slidersState[sliderId] = {
+              ...slidersState[sliderId],
+              nextBtn,
+              nextHandler: nextSlide
+            };
           }
           
           if (prevBtn) {
             prevBtn.addEventListener('click', prevSlide);
-            slidersState[sliderId].prevHandler = prevSlide;
+            slidersState[sliderId] = {
+              ...slidersState[sliderId],
+              prevBtn,
+              prevHandler: prevSlide
+            };
           }
           
           // Noktalara tıklama
@@ -1483,7 +1500,10 @@
             };
             
             dot.addEventListener('click', clickHandler);
-            slidersState[sliderId][`dotHandler-${index}`] = clickHandler;
+            slidersState[sliderId] = {
+              ...slidersState[sliderId],
+              [`dotHandler-${index}`]: clickHandler
+            };
           });
           
           // Mobil dokunma olayları
@@ -1499,11 +1519,14 @@
             handleSwipe();
           };
           
-          container.addEventListener('touchstart', touchStartHandler, { passive: true });
-          container.addEventListener('touchend', touchEndHandler, { passive: true });
+          slider.addEventListener('touchstart', touchStartHandler, { passive: true });
+          slider.addEventListener('touchend', touchEndHandler, { passive: true });
           
-          slidersState[sliderId].touchStartHandler = touchStartHandler;
-          slidersState[sliderId].touchEndHandler = touchEndHandler;
+          slidersState[sliderId] = {
+            ...slidersState[sliderId],
+            touchStartHandler,
+            touchEndHandler
+          };
           
           function handleSwipe() {
             const diffX = startX - endX;
@@ -1526,10 +1549,19 @@
           // Yeniden boyutlandırmada slider'ı güncelle
           const resizeObserver = new ResizeObserver(updateSlider);
           resizeObserver.observe(slider);
-          slidersState[sliderId].resizeObserver = resizeObserver;
+          
+          slidersState[sliderId] = {
+            ...slidersState[sliderId],
+            container,
+            items,
+            dots,
+            currentIndex,
+            totalItems,
+            resizeObserver
+          };
         }
 
-        // Tüm slider'ları başlat
+        // Tüm slider'ları başlat - GÜNCELLENMİŞ
         function initAllSliders() {
           const sliders = document.querySelectorAll('.image-slider');
           sliders.forEach(slider => {
@@ -1537,7 +1569,7 @@
           });
         }
 
-        // Görsel modal işlevselliği - DÜZENLENMİŞ HALİ
+        // Görsel modal işlevselliği - GÜNCELLENMİŞ
         function setupImageModal() {
             const modal = document.getElementById("imageModal");
             const modalImg = document.getElementById("modalImage");
@@ -1547,10 +1579,18 @@
             const closeModal = function() {
                 modal.style.display = "none";
                 document.body.style.overflow = "auto"; // Scroll'u tekrar etkinleştir
-                // Modal kapatıldığında slider'ları yeniden başlat ve boşlukları temizle
+                
+                // Modal kapatıldığında slider'ları yeniden başlat
                 setTimeout(() => {
-                    initAllSliders();
-                    clearSliderGaps();
+                  initAllSliders();
+                  
+                  // Slider konteyner boyutlarını güncelle
+                  document.querySelectorAll('.image-slider').forEach(slider => {
+                    if (slider.offsetParent !== null) { // Görünürse
+                      const event = new Event('resize');
+                      window.dispatchEvent(event);
+                    }
+                  });
                 }, 100);
             };
             
@@ -1579,62 +1619,6 @@
                     document.body.style.overflow = "hidden"; // Scroll'u devre dışı bırak
                 }
             });
-        }
-
-        // Slider boşluklarını temizleme fonksiyonu
-        function clearSliderGaps() {
-            const sliders = document.querySelectorAll('.image-slider');
-            sliders.forEach(slider => {
-                // Slider yüksekliğini içeriğe göre ayarla
-                const container = slider.querySelector('.slider-container');
-                if (container) {
-                    const items = container.querySelectorAll('.slider-item');
-                    if (items.length > 0) {
-                        // İlk öğenin yüksekliğini al
-                        const firstItem = items[0];
-                        const img = firstItem.querySelector('img');
-                        if (img && img.complete) {
-                            slider.style.height = 'auto';
-                            container.style.height = 'auto';
-                        } else if (img) {
-                            // Resim yüklenmemişse yüklenmesini bekle
-                            img.onload = function() {
-                                slider.style.height = 'auto';
-                                container.style.height = 'auto';
-                            };
-                        }
-                    }
-                }
-            });
-            
-            // Tüm içerik alanındaki boşlukları kontrol et
-            const contents = document.querySelectorAll('.content');
-            contents.forEach(content => {
-                // Görsel olmayan boşlukları temizle
-                const children = content.children;
-                if (children.length === 0 && content.textContent.trim() === '') {
-                    content.style.display = 'none';
-                } else {
-                    content.style.display = '';
-                }
-            });
-        }
-
-        // Scroll sonrası slider'ları sıfırlama
-        function resetSlidersOnScroll() {
-            for (const sliderId in slidersState) {
-                const state = slidersState[sliderId];
-                if (state && state.currentIndex !== 0) {
-                    state.currentIndex = 0;
-                    const slideWidth = state.container.offsetWidth;
-                    state.container.style.transform = `translateX(0px)`;
-                    
-                    // Noktaları güncelle
-                    state.dots.forEach((dot, index) => {
-                        dot.classList.toggle('active', index === 0);
-                    });
-                }
-            }
         }
 
         // ÇEVİRİ İKONLARINI EKLEME FONKSİYONU
@@ -1755,8 +1739,6 @@
           const copyLinkIcon = entryDiv.querySelector(".copy-link");
           copyLinkIcon?.addEventListener("click", () => handleCopyLinkClick(entry.id));
 
-          // Görüntülenme sayısını güncelle - SADECE GÖRÜNÜR OLDUĞUNDA
-          // Bu kısmı Intersection Observer ile değiştireceğiz
           return entryDiv;
         }
 
@@ -1856,7 +1838,14 @@
           // Slider'ları başlat
           setTimeout(() => {
             initAllSliders();
-            clearSliderGaps(); // İlk yüklemede boşlukları temizle
+            
+            // Görünür slider'ların boyutlarını güncelle
+            document.querySelectorAll('.image-slider').forEach(slider => {
+              if (slider.offsetParent !== null) {
+                const event = new Event('resize');
+                window.dispatchEvent(event);
+              }
+            });
           }, 100);
           
           // GÖRÜNÜM SAYAÇLARINI GÜNCELLE
@@ -1969,7 +1958,7 @@
             // Görüntülenme sayısını UI'da güncelle
             const viewCountElement = document.querySelector(`#entry-${entryId} .view-count`);
             if (viewCountElement) {
-              viewCountElement.innerHTML = `<i class="fas fa-eye"></i> ${currentCount + 1}`;
+              viewCountElement.innerHTML = `<i class="fas fa-eye"> </i> ${currentCount + 1}`;
             }
           } catch (error) {
             console.error('View count update failed:', error);
@@ -2249,17 +2238,25 @@
             // Polling'i başlat
             startPolling();
             
-            // Scroll event listener ekle
-            let scrollTimeout;
-            window.addEventListener('scroll', function() {
-                clearTimeout(scrollTimeout);
-                scrollTimeout = setTimeout(function() {
-                    resetSlidersOnScroll();
-                }, 150);
+            // Sayfa yüklendiğinde slider boyutlarını ayarla
+            window.addEventListener('load', function() {
+              setTimeout(() => {
+                initAllSliders();
+                
+                // Görünür slider'ların boyutlarını güncelle
+                document.querySelectorAll('.image-slider').forEach(slider => {
+                  if (slider.offsetParent !== null) {
+                    const event = new Event('resize');
+                    window.dispatchEvent(event);
+                  }
+                });
+              }, 500);
             });
-            
-            // İlk yüklemede boşlukları temizle
-            setTimeout(clearSliderGaps, 500);
+
+            // Pencere boyutu değiştiğinde slider'ları yeniden boyutlandır
+            window.addEventListener('resize', function() {
+              initAllSliders();
+            });
             
           } catch (error) {
             console.error("Initialization error:", error);
@@ -2304,17 +2301,25 @@
               // Fallback: polling'i başlat
               startPolling();
               
-              // Scroll event listener ekle
-              let scrollTimeout;
-              window.addEventListener('scroll', function() {
-                  clearTimeout(scrollTimeout);
-                  scrollTimeout = setTimeout(function() {
-                      resetSlidersOnScroll();
-                  }, 150);
+              // Sayfa yüklendiğinde slider boyutlarını ayarla
+              window.addEventListener('load', function() {
+                setTimeout(() => {
+                  initAllSliders();
+                  
+                  // Görünür slider'ların boyutlarını güncelle
+                  document.querySelectorAll('.image-slider').forEach(slider => {
+                    if (slider.offsetParent !== null) {
+                      const event = new Event('resize');
+                      window.dispatchEvent(event);
+                    }
+                  });
+                }, 500);
               });
-              
-              // İlk yüklemede boşlukları temizle
-              setTimeout(clearSliderGaps, 500);
+
+              // Pencere boyutu değiştiğinde slider'ları yeniden boyutlandır
+              window.addEventListener('resize', function() {
+                initAllSliders();
+              });
               
             } catch (fallbackError) {
               console.error("Fallback failed:", fallbackError);
@@ -2569,7 +2574,17 @@
           addTranslationIcons();
           
           // Slider'ları başlat
-          setTimeout(initAllSliders, 100);
+          setTimeout(() => {
+            initAllSliders();
+            
+            // Görünür slider'ların boyutlarını güncelle
+            document.querySelectorAll('.image-slider').forEach(slider => {
+              if (slider.offsetParent !== null) {
+                const event = new Event('resize');
+                window.dispatchEvent(event);
+              }
+            });
+          }, 100);
           
           // GÖRÜNÜM SAYAÇLARINI GÜNCELLE
           updateViewCountsForVisibleEntries();
