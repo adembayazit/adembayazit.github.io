@@ -384,21 +384,12 @@
             box-shadow: 0 0 10px rgba(147, 112, 219, 0.5);
         }
         
-        .like-count, .pin-count {
+        .like-count, .pin-count, .view-count {
             font-size: 14px;
             min-width: 20px;
             text-align: center;
             display: flex; 
             align-items: center
-        }
-        
-        .view-count {
-            font-size: 14px;
-            min-width: 20px;
-            text-align: center;
-            display: flex; 
-            align-items: center;
-        
         }
         
         .action-animation {
@@ -508,7 +499,7 @@
             object-fit: cover;
         }
 
-        /* YENİ SLIDER STİLLERİ - BOŞLUK SORUNU ÇÖZÜMLÜ */
+        /* YENİ SLIDER STİLLERİ - TAMAMEN DÜZENLENDİ */
         .image-slider {
             position: relative;
             margin: 10px 0;
@@ -1323,6 +1314,7 @@
             }
           }
         }
+        
         // İstatistikleri güncelleme fonksiyonu
         function updateStatistics() {
           const totalLikes = Object.values(likesCache.data).reduce((sum, count) => sum + count, 0);
@@ -1381,7 +1373,9 @@
           `;
           
           images.forEach(img => {
-            sliderHtml += `<div class="slider-item">${img}</div>`;
+            // Görüntü yüklendikten sonra slider'ı yeniden başlat
+            const imgWithLoad = img.replace('<img', '<img onload="initSlider(\'' + sliderId + '\')" ');
+            sliderHtml += `<div class="slider-item">${imgWithLoad}</div>`;
           });
           
           sliderHtml += `
@@ -1833,12 +1827,17 @@
           // Çeviri ikonlarını ekle
           addTranslationIcons();
           
-          // Slider'ları başlat - GÜNCELLENMİŞ: Tüm resimler yüklendikten sonra
+          // Slider'ları başlat
           setTimeout(() => {
             initAllSliders();
             
-            // Slider boyutlarını güncelle
-            updateSliderSizes();
+            // Görünür slider'ların boyutlarını güncelle
+            document.querySelectorAll('.image-slider').forEach(slider => {
+              if (slider.offsetParent !== null) {
+                const event = new Event('resize');
+                window.dispatchEvent(event);
+              }
+            });
           }, 100);
           
           // GÖRÜNÜM SAYAÇLARINI GÜNCELLE
@@ -1856,31 +1855,6 @@
           
           // Callback'i çağır (hash kontrolü için)
           if (callback) callback();
-        }
-
-        // Slider boyutlarını güncelleme fonksiyonu - YENİ EKLENDİ
-        function updateSliderSizes() {
-          document.querySelectorAll('.image-slider').forEach(slider => {
-            const container = slider.querySelector('.slider-container');
-            const items = slider.querySelectorAll('.slider-item');
-            
-            if (container && items.length > 0) {
-              // Slider genişliğini ayarla
-              const sliderWidth = slider.offsetWidth;
-              container.style.width = `${items.length * sliderWidth}px`;
-              
-              // Her bir itemın genişliğini ayarla
-              items.forEach(item => {
-                item.style.width = `${sliderWidth}px`;
-              });
-              
-              // Aktif slaytı güncelle
-              if (slidersState[slider.id]) {
-                const currentIndex = slidersState[slider.id].currentIndex || 0;
-                container.style.transform = `translateX(-${currentIndex * sliderWidth}px)`;
-              }
-            }
-          });
         }
 
         // 4. INTERACTION FONKSİYONLARI
@@ -1976,7 +1950,7 @@
             // Görüntülenme sayısını UI'da güncelle
             const viewCountElement = document.querySelector(`#entry-${entryId} .view-count`);
             if (viewCountElement) {
-              viewCountElement.innerHTML = `<i class="fas fa-eye"> </i> ${currentCount + 1}`;
+              viewCountElement.innerHTML = `<i class="fas fa-eye"></i> ${currentCount + 1}`;
             }
           } catch (error) {
             console.error('View count update failed:', error);
@@ -2260,14 +2234,20 @@
             window.addEventListener('load', function() {
               setTimeout(() => {
                 initAllSliders();
-                updateSliderSizes();
+                
+                // Görünür slider'ların boyutlarını güncelle
+                document.querySelectorAll('.image-slider').forEach(slider => {
+                  if (slider.offsetParent !== null) {
+                    const event = new Event('resize');
+                    window.dispatchEvent(event);
+                  }
+                });
               }, 500);
             });
 
             // Pencere boyutu değiştiğinde slider'ları yeniden boyutlandır
             window.addEventListener('resize', function() {
               initAllSliders();
-              updateSliderSizes();
             });
             
           } catch (error) {
@@ -2317,14 +2297,20 @@
               window.addEventListener('load', function() {
                 setTimeout(() => {
                   initAllSliders();
-                  updateSliderSizes();
+                  
+                  // Görünür slider'ların boyutlarını güncelle
+                  document.querySelectorAll('.image-slider').forEach(slider => {
+                    if (slider.offsetParent !== null) {
+                      const event = new Event('resize');
+                      window.dispatchEvent(event);
+                    }
+                  });
                 }, 500);
               });
 
               // Pencere boyutu değiştiğinde slider'ları yeniden boyutlandır
               window.addEventListener('resize', function() {
                 initAllSliders();
-                updateSliderSizes();
               });
               
             } catch (fallbackError) {
@@ -2582,7 +2568,14 @@
           // Slider'ları başlat
           setTimeout(() => {
             initAllSliders();
-            updateSliderSizes();
+            
+            // Görünür slider'ların boyutlarını güncelle
+            document.querySelectorAll('.image-slider').forEach(slider => {
+              if (slider.offsetParent !== null) {
+                const event = new Event('resize');
+                window.dispatchEvent(event);
+              }
+            });
           }, 100);
           
           // GÖRÜNÜM SAYAÇLARINI GÜNCELLE
