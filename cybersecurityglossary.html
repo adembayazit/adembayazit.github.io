@@ -3,569 +3,486 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cybersecurity Dictionary - Adem Bayazıt</title>
+    <title>Cybersecurity Encyclopedia | Adem Bayazıt</title>
+    <link rel="stylesheet" href="/CSS/style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Matrix efekti için stil */
-        #matrixCanvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-        }
-        
-        /* Genel stiller */
-        body {
-            font-family: 'Courier New', monospace;
-            background-color: #0a0a0a;
-            color: #ddd;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
-        
-        .container {
+        /* Telefon Defteri Stilleri */
+        .phonebook-container {
             max-width: 1200px;
-            margin: 0 auto;
+            margin: 40px auto;
             padding: 20px;
-        }
-        
-        /* Header stilleri */
-        header {
-            background: rgba(0, 20, 0, 0.8);
-            border-bottom: 2px solid #00cc00;
-            padding: 15px 0;
-            margin-bottom: 30px;
-        }
-        
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #00cc00;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        /* Telefon defteri stilleri */
-        .phone-book {
-            background: linear-gradient(to right, #1a1a1a, #2a2a2a);
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-            padding: 20px;
-            margin-bottom: 40px;
             position: relative;
-            overflow: hidden;
-            border: 1px solid #444;
         }
-        
-        .phone-book::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 50px;
-            width: 2px;
-            height: 100%;
-            background: rgba(0, 204, 0, 0.2);
-        }
-        
-        /* Alfabe navigasyonu */
-        .alphabet-nav {
+
+        .phonebook {
             display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 5px;
-            margin-bottom: 30px;
-            padding: 15px;
-            background: rgba(0, 30, 0, 0.7);
-            border-radius: 8px;
-            border: 1px solid #00aa00;
+            background: rgba(10, 25, 20, 0.9);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 0 25px rgba(0, 255, 0, 0.2);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            min-height: 600px;
         }
-        
-        .letter-btn {
+
+        .alphabet-tabs {
+            width: 60px;
+            background: rgba(5, 15, 12, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            border-right: 1px solid rgba(0, 255, 0, 0.2);
+        }
+
+        .alphabet-tab {
             width: 40px;
             height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(0, 20, 0, 0.8);
-            color: #00cc00;
-            border: 1px solid #00aa00;
-            border-radius: 5px;
+            margin: 5px 0;
+            border-radius: 50%;
+            background: rgba(10, 25, 20, 0.7);
+            color: #f9d71c;
+            font-weight: bold;
             cursor: pointer;
-            font-weight: bold;
             transition: all 0.3s;
+            border: 1px solid rgba(249, 215, 28, 0.3);
         }
-        
-        .letter-btn:hover, .letter-btn.active {
-            background: #00cc00;
-            color: #000;
-            box-shadow: 0 0 10px #00cc00;
+
+        .alphabet-tab:hover, .alphabet-tab.active {
+            background: rgba(249, 215, 28, 0.2);
+            transform: scale(1.1);
         }
-        
-        /* Sayfa stilleri */
-        .book-page {
-            background: linear-gradient(to right, #f0e6d2, #e6d8b8);
-            color: #222;
-            border-radius: 8px;
-            padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5);
-            position: relative;
-            min-height: 500px;
-            transform-style: preserve-3d;
-            transition: transform 0.6s;
-        }
-        
-        .book-page::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 30px;
-            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), transparent);
-            border-radius: 8px 8px 0 0;
-        }
-        
-        .book-page::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 30px;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.1), transparent);
-            border-radius: 0 0 8px 8px;
-        }
-        
-        .page-header {
-            text-align: center;
-            margin-bottom: 25px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #00cc00;
-            color: #005500;
-            font-size: 28px;
-            text-shadow: 1px 1px 0 #fff;
-        }
-        
-        .page-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 15px;
-        }
-        
-        /* Terim kartları */
-        .term-card {
-            background: rgba(255, 255, 255, 0.9);
-            border-left: 4px solid #00cc00;
-            border-radius: 5px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
-        }
-        
-        .term-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.2);
-        }
-        
-        .term-title {
-            font-weight: bold;
-            font-size: 18px;
-            color: #005500;
-            margin-bottom: 8px;
+
+        .phonebook-content {
+            flex: 1;
             display: flex;
-            align-items: center;
-            gap: 8px;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
         }
-        
-        .term-title::before {
-            content: "#";
-            color: #00aa00;
-            font-weight: bold;
-        }
-        
-        .term-desc {
-            font-size: 14px;
-            color: #333;
-            line-height: 1.5;
-        }
-        
-        /* Sayfa çevirme butonları */
-        .page-controls {
+
+        .page-flipper {
+            position: absolute;
+            top: 50%;
+            width: 100%;
             display: flex;
             justify-content: space-between;
-            margin-top: 20px;
+            padding: 0 20px;
+            z-index: 10;
+            pointer-events: none;
         }
-        
-        .page-btn {
-            background: rgba(0, 30, 0, 0.8);
-            color: #00cc00;
-            border: 1px solid #00aa00;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
+
+        .flip-btn {
+            pointer-events: auto;
+            background: rgba(10, 25, 20, 0.8);
+            color: #f9d71c;
+            border: 1px solid rgba(249, 215, 28, 0.3);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 24px;
         }
-        
-        .page-btn:hover {
-            background: #00cc00;
-            color: #000;
+
+        .flip-btn:hover {
+            background: rgba(249, 215, 28, 0.2);
+            transform: scale(1.1);
         }
-        
-        .page-info {
-            text-align: center;
-            color: #00cc00;
-            font-size: 14px;
-            margin-top: 10px;
+
+        .pages-container {
+            flex: 1;
+            position: relative;
+            perspective: 2000px;
+            padding: 40px 60px;
         }
-        
-        /* Footer stilleri */
-        footer {
-            text-align: center;
-            padding: 20px;
-            margin-top: 40px;
-            border-top: 1px solid #00aa00;
-            color: #00cc00;
-            font-size: 14px;
+
+        .page {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+            padding: 30px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            backface-visibility: hidden;
+            transform-style: preserve-3d;
+            transition: transform 0.8s;
+            display: none;
         }
-        
-        /* Döndürme efekti için sınıf */
-        .flipped {
+
+        .page.active {
+            display: block;
+            transform: rotateY(0deg);
+        }
+
+        .page.next {
+            display: block;
             transform: rotateY(180deg);
         }
-        
-        /* Responsive tasarım */
-        @media (max-width: 768px) {
-            .page-content {
-                grid-template-columns: 1fr;
+
+        .page.prev {
+            display: block;
+            transform: rotateY(-180deg);
+        }
+
+        .page-number {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            color: #f9d71c;
+            font-size: 14px;
+        }
+
+        .page-content {
+            height: 100%;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .page-content::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .page-content::-webkit-scrollbar-thumb {
+            background: rgba(249, 215, 28, 0.3);
+            border-radius: 10px;
+        }
+
+        .page-title {
+            color: #f9d71c;
+            border-bottom: 1px solid rgba(249, 215, 28, 0.3);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .topic-item {
+            margin-bottom: 15px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .topic-item:before {
+            content: "•";
+            color: #00ff00;
+            position: absolute;
+            left: 0;
+        }
+
+        .topic-title {
+            color: white;
+            font-weight: bold;
+            margin-bottom: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .expand-icon {
+            margin-left: 10px;
+            font-size: 14px;
+            transition: transform 0.3s;
+        }
+
+        .topic-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            color: #ccc;
+            font-size: 14px;
+            line-height: 1.6;
+            padding-left: 20px;
+        }
+
+        .topic-item.expanded .topic-details {
+            max-height: 500px;
+        }
+
+        .topic-item.expanded .expand-icon {
+            transform: rotate(45deg);
+        }
+
+        /* Duyarlı Tasarım */
+        @media (max-width: 992px) {
+            .phonebook {
+                flex-direction: column;
             }
             
-            .alphabet-nav {
-                overflow-x: auto;
-                justify-content: flex-start;
+            .alphabet-tabs {
+                width: 100%;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                padding: 10px;
+                border-right: none;
+                border-bottom: 1px solid rgba(0, 255, 0, 0.2);
             }
             
-            .letter-btn {
+            .alphabet-tab {
+                margin: 5px;
                 width: 35px;
                 height: 35px;
-                font-size: 14px;
+            }
+            
+            .pages-container {
+                padding: 20px;
+                min-height: 500px;
+            }
+            
+            .page-flipper {
+                padding: 0 10px;
+            }
+            
+            .flip-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .phonebook-container {
+                margin: 20px auto;
+                padding: 10px;
+            }
+            
+            .alphabet-tab {
+                width: 30px;
+                height: 30px;
+                font-size: 12px;
+                margin: 3px;
+            }
+            
+            .pages-container {
+                padding: 15px;
+            }
+            
+            .page-title {
+                font-size: 20px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Matrix Canvas -->
-    <canvas id="matrixCanvas"></canvas>
-    
-    <header>
-        <div class="container">
-            <a href="/" class="logo">
-                <i class="fas fa-laptop-code"></i>
-                Adem Bayazıt | Cybersecurity Dictionary
-            </a>
-        </div>
+    <!-- Header (Ana sayfadakiyle aynı) -->
+    <header class="header">
+        <a href="index.html" class="logo"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">{adembayazit} </a>
+        <nav class="navbar">
+            <div class="dropdown">
+                <a href="#" class="dropbtn"> <img src="IMAGES/Ata.svg" alt="Ata Icon" class="ata-icon"><span class="fi fi-tr"></span> <span class='bx bx-code-alt'></span> Ethical Hacker <span class='bx bx-chevron-down'></span></a>
+                <div class="dropdown-content">
+                    <a href="index.html#tools"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hacker-icon"> What is an Ethical Hacker?</a>
+                    <a href="index.html#reports"><img src="IMAGES/glossary.svg" alt="Glossary" class="glossary-icon"> Cybersecurity Glossary</a>
+                    <a href="phonebook.html" class="active"><img src="IMAGES/encyclopedia.svg" alt="Encyclopedia" class="encyclopedia-icon"> Cybersecurity Encyclopedia</a>
+                    <a href="index.html#payloads"><img src="IMAGES/soc.svg" alt="Soc" class="soc-icon"> What is a SOC?</a>
+                    <a href="index.html#payloads"><img src="IMAGES/vulnerabilities.svg" alt="Vulnerabilities" class="vulnerabilities-icon"> Vulnerabilities</a>
+                    <a href="index.html#payloads"><img src="IMAGES/steganography.svg" alt="Steganography" class="steganography-icon"> Steganography</a>
+                    <a href="index.html#payloads"><img src="IMAGES/cryptography.svg" alt="Cryptography" class="cryptography-icon"> Cryptography</a>    
+                    <a href="index.html#payloads"><img src="IMAGES/education.svg" alt="Education" class="education-icon"> Cybersecurity Learning Resources</a>
+                </div>
+            </div>
+        </nav>
     </header>
-    
-    <div class="container">
-        <div class="phone-book">
-            <div class="alphabet-nav" id="alphabetNav">
-                <!-- JavaScript ile doldurulacak -->
+
+    <!-- Telefon Defteri İçeriği -->
+    <section class="phonebook-container">
+        <h2 class="section-title"><i class="fa-solid fa-book"></i> Cybersecurity Encyclopedia</h2>
+        
+        <div class="phonebook">
+            <div class="alphabet-tabs">
+                <!-- A-Z Sekmeleri -->
+                <div class="alphabet-tab active" data-letter="A">A</div>
+                <div class="alphabet-tab" data-letter="B">B</div>
+                <div class="alphabet-tab" data-letter="C">C</div>
+                <div class="alphabet-tab" data-letter="D">D</div>
+                <div class="alphabet-tab" data-letter="E">E</div>
+                <div class="alphabet-tab" data-letter="F">F</div>
+                <div class="alphabet-tab" data-letter="G">G</div>
+                <div class="alphabet-tab" data-letter="H">H</div>
+                <div class="alphabet-tab" data-letter="I">I</div>
+                <div class="alphabet-tab" data-letter="J">J</div>
+                <div class="alphabet-tab" data-letter="K">K</div>
+                <div class="alphabet-tab" data-letter="L">L</div>
+                <div class="alphabet-tab" data-letter="M">M</div>
+                <div class="alphabet-tab" data-letter="N">N</div>
+                <div class="alphabet-tab" data-letter="O">O</div>
+                <div class="alphabet-tab" data-letter="P">P</div>
+                <div class="alphabet-tab" data-letter="Q">Q</div>
+                <div class="alphabet-tab" data-letter="R">R</div>
+                <div class="alphabet-tab" data-letter="S">S</div>
+                <div class="alphabet-tab" data-letter="T">T</div>
+                <div class="alphabet-tab" data-letter="U">U</div>
+                <div class="alphabet-tab" data-letter="V">V</div>
+                <div class="alphabet-tab" data-letter="W">W</div>
+                <div class="alphabet-tab" data-letter="X">X</div>
+                <div class="alphabet-tab" data-letter="Y">Y</div>
+                <div class="alphabet-tab" data-letter="Z">Z</div>
             </div>
             
-            <div class="book-page" id="bookPage">
-                <h2 class="page-header" id="pageHeader">A</h2>
-                
-                <div class="page-content" id="pageContent">
-                    <!-- JavaScript ile doldurulacak -->
+            <div class="phonebook-content">
+                <div class="page-flipper">
+                    <div class="flip-btn prev-btn"><i class='bx bx-chevron-left'></i></div>
+                    <div class="flip-btn next-btn"><i class='bx bx-chevron-right'></i></div>
                 </div>
                 
-                <div class="page-controls">
-                    <button class="page-btn" id="prevPage">
-                        <i class="fas fa-chevron-left"></i> Previous
-                    </button>
-                    <button class="page-btn" id="nextPage">
-                        Next <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
-                
-                <div class="page-info">
-                    Page <span id="currentPage">1</span> of <span id="totalPages">26</span>
+                <div class="pages-container">
+                    <!-- A Harfi Sayfası -->
+                    <div class="page active" data-letter="A">
+                        <span class="page-number">1</span>
+                        <div class="page-content">
+                            <h2 class="page-title">A</h2>
+                            
+                            <div class="topic-item">
+                                <div class="topic-title">Advanced Persistent Threat (APT) <span class="expand-icon">+</span></div>
+                                <div class="topic-details">
+                                    A prolonged and targeted cyberattack in which an intruder gains access to a network and remains undetected for an extended period.
+                                </div>
+                            </div>
+                            
+                            <div class="topic-item">
+                                <div class="topic-title">Authentication <span class="expand-icon">+</span></div>
+                                <div class="topic-details">
+                                    The process of verifying the identity of a user, process, or device, often as a prerequisite to allowing access to resources in an information system.
+                                </div>
+                            </div>
+                            
+                            <div class="topic-item">
+                                <div class="topic-title">Adware <span class="expand-icon">+</span></div>
+                                <div class="topic-details">
+                                    Software that automatically displays or downloads advertising material such as banners or pop-ups when a user is online.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- B Harfi Sayfası -->
+                    <div class="page" data-letter="B">
+                        <span class="page-number">2</span>
+                        <div class="page-content">
+                            <h2 class="page-title">B</h2>
+                            
+                            <div class="topic-item">
+                                <div class="topic-title">Backdoor <span class="expand-icon">+</span></div>
+                                <div class="topic-details">
+                                    A method of bypassing normal authentication procedures, usually installed as a hidden method of maintaining access to a compromised system.
+                                </div>
+                            </div>
+                            
+                            <div class="topic-item">
+                                <div class="topic-title">Botnet <span class="expand-icon">+</span></div>
+                                <div class="topic-details">
+                                    A network of private computers infected with malicious software and controlled as a group without the owners' knowledge, e.g., to send spam.
+                                </div>
+                            </div>
+                            
+                            <div class="topic-item">
+                                <div class="topic-title">Brute Force Attack <span class="expand-icon">+</span></div>
+                                <div class="topic-details">
+                                    A trial-and-error method used to obtain information such as a user password or personal identification number (PIN).
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Diğer sayfalar buraya eklenecek -->
+                    <!-- Örnek olarak sadece A ve B sayfalarını gösterdim -->
+                    
                 </div>
             </div>
         </div>
-    </div>
-    
-    <footer>
-        <div class="container">
-            <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.0 | July 2025</p>
-        </div>
+    </section>
+
+    <footer style="text-align: center; padding: 20px; font-size: 14px; color: white;">
+        <hr style="margin-bottom: 10px; border-color: limegreen;" />
+        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.2 | July 2025</p>
     </footer>
 
     <script>
-        // Matrix efekti
-        const canvas = document.getElementById('matrixCanvas');
-        const ctx = canvas.getContext('2d');
-        
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        
-        const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$#@%&!?*';
-        const fontSize = 12;
-        const columns = canvas.width / fontSize;
-        
-        const drops = [];
-        for (let i = 0; i < columns; i++) {
-            drops[i] = 1;
-        }
-        
-        function drawMatrix() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        document.addEventListener('DOMContentLoaded', function() {
+            const alphabetTabs = document.querySelectorAll('.alphabet-tab');
+            const pages = document.querySelectorAll('.page');
+            const prevBtn = document.querySelector('.prev-btn');
+            const nextBtn = document.querySelector('.next-btn');
             
-            ctx.fillStyle = '#0F0';
-            ctx.font = `${fontSize}px monospace`;
+            let currentPageIndex = 0;
             
-            for (let i = 0; i < drops.length; i++) {
-                const text = letters[Math.floor(Math.random() * letters.length)];
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
-                
-                drops[i]++;
-            }
-        }
-        
-        setInterval(drawMatrix, 33);
-        
-        // Pencere boyutu değiştiğinde canvas'ı yeniden boyutlandır
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
-        
-        // Sözlük verileri
-        const glossaryData = {
-            "A": [
-                {term: "Adware", desc: "Software that displays unwanted advertisements, often bundled with free programs."},
-                {term: "APT", desc: "Advanced Persistent Threat - A prolonged targeted cyberattack."},
-                {term: "Authentication", desc: "The process of verifying the identity of a user or system."},
-                {term: "Authorization", desc: "The process of granting access to specific resources or functions."},
-                {term: "Availability", desc: "Ensuring that systems and data are accessible when needed."}
-            ],
-            "B": [
-                {term: "Backdoor", desc: "A hidden method for bypassing security to gain access to a system."},
-                {term: "Botnet", desc: "A network of compromised computers controlled by an attacker."},
-                {term: "Brute Force Attack", desc: "A trial-and-error method to decode encrypted data."},
-                {term: "Buffer Overflow", desc: "An anomaly where a program overruns a buffer's boundary."}
-            ],
-            "C": [
-                {term: "Cryptography", desc: "The practice of secure communication in the presence of adversaries."},
-                {term: "CVE", desc: "Common Vulnerabilities and Exposures - A list of cybersecurity vulnerabilities."},
-                {term: "Cyber Attack", desc: "An attempt to damage or disrupt computer systems or networks."},
-                {term: "Cybersecurity", desc: "The practice of protecting systems from digital attacks."}
-            ],
-            "D": [
-                {term: "DDoS", desc: "Distributed Denial of Service - An attack that overwhelms a system with traffic."},
-                {term: "DNS", desc: "Domain Name System - The internet's phonebook, translating domains to IP addresses."},
-                {term: "Data Breach", desc: "An incident where sensitive data is accessed without authorization."},
-                {term: "Decryption", desc: "The process of converting encrypted data back to its original form."}
-            ],
-            "E": [
-                {term: "Encryption", desc: "The process of converting data into a code to prevent unauthorized access."},
-                {term: "Exploit", desc: "A piece of code that takes advantage of a vulnerability in software."},
-                {term: "Endpoint Security", desc: "Protecting endpoints like computers and mobile devices from threats."}
-            ],
-            "F": [
-                {term: "Firewall", desc: "A network security system that monitors and controls incoming and outgoing traffic."},
-                {term: "Fuzzing", desc: "A software testing technique that involves providing invalid input to programs."}
-            ],
-            "G": [
-                {term: "GDPR", desc: "General Data Protection Regulation - EU data protection law."},
-                {term: "Gateway", desc: "A network node that connects two different networks."}
-            ],
-            "H": [
-                {term: "Hashing", desc: "The process of converting data into a fixed-size string of characters."},
-                {term: "Honeypot", desc: "A decoy system designed to attract and detect cyber attackers."}
-            ],
-            "I": [
-                {term: "IPS", desc: "Intrusion Prevention System - Monitors network traffic for malicious activity."},
-                {term: "IP Address", desc: "A unique identifier assigned to each device connected to a network."}
-            ],
-            "J": [
-                {term: "JavaScript", desc: "A programming language commonly used in web development."},
-                {term: "Jailbreak", desc: "Removing software restrictions on devices like smartphones."}
-            ],
-            "K": [
-                {term: "Keylogger", desc: "Malware that records keystrokes to capture sensitive information."},
-                {term: "Kernel", desc: "The core component of an operating system."}
-            ],
-            "L": [
-                {term: "LAN", desc: "Local Area Network - A network covering a small geographical area."},
-                {term: "Linux", desc: "An open-source operating system based on UNIX."}
-            ],
-            "M": [
-                {term: "Malware", desc: "Malicious software designed to harm or exploit systems."},
-                {term: "MITM", desc: "Man-in-the-Middle - An attack where the attacker secretly relays communication."}
-            ],
-            "N": [
-                {term: "Network", desc: "A group of interconnected computers and devices."},
-                {term: "NIST", desc: "National Institute of Standards and Technology - Develops cybersecurity frameworks."}
-            ],
-            "O": [
-                {term: "OAuth", desc: "An open standard for access delegation."},
-                {term: "OTP", desc: "One-Time Password - A password valid for only one login session."}
-            ],
-            "P": [
-                {term: "Phishing", desc: "A fraudulent attempt to obtain sensitive information by disguising as a trustworthy entity."},
-                {term: "Penetration Test", desc: "An authorized simulated cyberattack on a system."},
-                {term: "Proxy", desc: "An intermediary server between a client and the internet."}
-            ],
-            "Q": [
-                {term: "Quantum Computing", desc: "Advanced computing technology that could break current encryption methods."},
-                {term: "Quarantine", desc: "Isolating infected files to prevent malware spread."}
-            ],
-            "R": [
-                {term: "Ransomware", desc: "Malware that encrypts files and demands payment for decryption."},
-                {term: "Rootkit", desc: "Malware designed to gain unauthorized access while hiding its existence."}
-            ],
-            "S": [
-                {term: "SOC", desc: "Security Operations Center - A centralized unit that deals with security issues."},
-                {term: "SSH", desc: "Secure Shell - A protocol for secure remote access to systems."},
-                {term: "SSL", desc: "Secure Sockets Layer - Encryption protocol for secure internet communication."}
-            ],
-            "T": [
-                {term: "Trojan Horse", desc: "Malware disguised as legitimate software."},
-                {term: "Two-Factor Authentication", desc: "An extra layer of security requiring two authentication methods."}
-            ],
-            "U": [
-                {term: "URL", desc: "Uniform Resource Locator - A web address."},
-                {term: "USB", desc: "Universal Serial Bus - A common interface for connecting devices."}
-            ],
-            "V": [
-                {term: "VPN", desc: "Virtual Private Network - Extends a private network across a public network."},
-                {term: "Vulnerability", desc: "A weakness in a system that can be exploited by threats."},
-                {term: "Virus", desc: "Malicious code that replicates by copying itself to other programs."}
-            ],
-            "W": [
-                {term: "WAF", desc: "Web Application Firewall - Filters and monitors HTTP traffic to web applications."},
-                {term: "Worm", desc: "A self-replicating malware that spreads to other computers."}
-            ],
-            "X": [
-                {term: "XSS", desc: "Cross-Site Scripting - A vulnerability that allows attackers to inject client-side scripts."},
-                {term: "XML", desc: "eXtensible Markup Language - A markup language for encoding documents."}
-            ],
-            "Y": [
-                {term: "YARA", desc: "A tool for identifying and classifying malware."},
-                {term: "YubiKey", desc: "A hardware authentication device."}
-            ],
-            "Z": [
-                {term: "Zero-Day", desc: "A vulnerability that is unknown to the vendor and has no patch available."},
-                {term: "Zombie", desc: "A compromised computer controlled by an attacker without the owner's knowledge."}
-            ]
-        };
-        
-        // Alfabe navigasyonunu oluştur
-        const alphabetNav = document.getElementById('alphabetNav');
-        const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        
-        for (let letter of alphabet) {
-            const button = document.createElement('button');
-            button.className = 'letter-btn';
-            button.textContent = letter;
-            button.addEventListener('click', () => showLetter(letter));
-            alphabetNav.appendChild(button);
-        }
-        
-        // Sayfa içeriğini güncelle
-        const pageHeader = document.getElementById('pageHeader');
-        const pageContent = document.getElementById('pageContent');
-        const currentPageEl = document.getElementById('currentPage');
-        const totalPagesEl = document.getElementById('totalPages');
-        const bookPage = document.getElementById('bookPage');
-        
-        let currentLetter = 'A';
-        
-        // Toplam sayfa sayısını güncelle
-        totalPagesEl.textContent = Object.keys(glossaryData).length;
-        
-        // İlk harfi göster
-        showLetter('A');
-        
-        function showLetter(letter) {
-            // Sayfa çevirme efekti
-            bookPage.classList.add('flipped');
-            
-            setTimeout(() => {
-                // Aktif butonu güncelle
-                document.querySelectorAll('.letter-btn').forEach(btn => {
-                    btn.classList.toggle('active', btn.textContent === letter);
-                });
-                
-                // İçeriği güncelle
-                pageHeader.textContent = letter;
-                pageContent.innerHTML = '';
-                
-                currentLetter = letter;
-                const terms = glossaryData[letter] || [];
-                
-                if (terms.length === 0) {
-                    pageContent.innerHTML = '<div class="term-card"><div class="term-title">No Terms</div><div class="term-desc">No cybersecurity terms found for this letter.</div></div>';
-                } else {
-                    terms.forEach((term, index) => {
-                        const termEl = document.createElement('div');
-                        termEl.className = 'term-card';
-                        termEl.innerHTML = `
-                            <div class="term-title">${term.term}</div>
-                            <div class="term-desc">${term.desc}</div>
-                        `;
-                        pageContent.appendChild(termEl);
+            // Harf sekmelerine tıklama
+            alphabetTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const letter = this.getAttribute('data-letter');
+                    
+                    // Aktif sekme stillerini güncelle
+                    alphabetTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // İlgili sayfayı göster
+                    pages.forEach((page, index) => {
+                        if (page.getAttribute('data-letter') === letter) {
+                            page.classList.add('active');
+                            currentPageIndex = index;
+                        } else {
+                            page.classList.remove('active');
+                        }
                     });
-                }
-                
-                // Sayfa numarasını güncelle
-                currentPageEl.textContent = alphabet.indexOf(letter) + 1;
-                
-                // Sayfa çevirme efekti sonu
-                bookPage.classList.remove('flipped');
-            }, 300);
-        }
-        
-        // Önceki/Sonraki sayfa butonları
-        document.getElementById('prevPage').addEventListener('click', () => {
-            const currentIndex = alphabet.indexOf(currentLetter);
-            if (currentIndex > 0) {
-                showLetter(alphabet[currentIndex - 1]);
-            }
-        });
-        
-        document.getElementById('nextPage').addEventListener('click', () => {
-            const currentIndex = alphabet.indexOf(currentLetter);
-            if (currentIndex < alphabet.length - 1) {
-                showLetter(alphabet[currentIndex + 1]);
-            }
-        });
-        
-        // Klavye ile gezinme
-        document.addEventListener('keydown', (e) => {
-            const currentIndex = alphabet.indexOf(currentLetter);
+                });
+            });
             
-            if (e.key === 'ArrowLeft' && currentIndex > 0) {
-                showLetter(alphabet[currentIndex - 1]);
-            } else if (e.key === 'ArrowRight' && currentIndex < alphabet.length - 1) {
-                showLetter(alphabet[currentIndex + 1]);
-            }
+            // Sayfa geçiş butonları
+            prevBtn.addEventListener('click', function() {
+                if (currentPageIndex > 0) {
+                    currentPageIndex--;
+                    const letter = pages[currentPageIndex].getAttribute('data-letter');
+                    
+                    // Aktif sekme ve sayfayı güncelle
+                    alphabetTabs.forEach(tab => {
+                        if (tab.getAttribute('data-letter') === letter) {
+                            tab.classList.add('active');
+                        } else {
+                            tab.classList.remove('active');
+                        }
+                    });
+                    
+                    pages.forEach(page => page.classList.remove('active'));
+                    pages[currentPageIndex].classList.add('active');
+                }
+            });
+            
+            nextBtn.addEventListener('click', function() {
+                if (currentPageIndex < pages.length - 1) {
+                    currentPageIndex++;
+                    const letter = pages[currentPageIndex].getAttribute('data-letter');
+                    
+                    // Aktif sekme ve sayfayı güncelle
+                    alphabetTabs.forEach(tab => {
+                        if (tab.getAttribute('data-letter') === letter) {
+                            tab.classList.add('active');
+                        } else {
+                            tab.classList.remove('active');
+                        }
+                    });
+                    
+                    pages.forEach(page => page.classList.remove('active'));
+                    pages[currentPageIndex].classList.add('active');
+                }
+            });
+            
+            // Konu genişletme/daraltma
+            const topicItems = document.querySelectorAll('.topic-item');
+            topicItems.forEach(item => {
+                const title = item.querySelector('.topic-title');
+                title.addEventListener('click', function() {
+                    item.classList.toggle('expanded');
+                });
+            });
         });
     </script>
 </body>
