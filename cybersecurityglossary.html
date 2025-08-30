@@ -9,6 +9,26 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Open Graph (Facebook, WhatsApp, LinkedIn vs.) -->   
+    <meta property="og:title" content="Adem Bayazıt | Siber Güvenlik Sözlüğü" />
+    <meta property="og:description" content="A'dan Z'ye kapsamlı siber güvenlik terimleri sözlüğü." />
+    <meta property="og:image" content="https://adembayazit.com/IMAGES/preview_entry.png" />
+    <meta property="og:url" content="https://adembayazit.com/sozluk.html" />
+    <meta property="og:type" content="website" />
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Adem Bayazıt - Siber Güvenlik Sözlüğü">
+    <meta name="twitter:description" content="A'dan Z'ye kapsamlı siber güvenlik terimleri sözlüğü.">
+    <meta name="twitter:image" content="https://adembayazit.com/IMAGES/preview_entry.png">
+    <meta name="twitter:image:alt" content="Adem Bayazıt">
+    
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-TFN7XD9Z');</script>
+    <!-- End Google Tag Manager -->
     <style>
         :root {
             --main-bg-color: #000;
@@ -19,9 +39,11 @@
             --card-bg: rgba(0, 0, 0, 0.7);
             --border-color: limegreen;
             --sidebar-width: 300px;
-            --content-max-width: 1200px;
-            --glossary-dark-bg: rgba(20, 40, 30, 0.8);
-            --glossary-light-bg: rgba(30, 60, 40, 0.8);
+            --content-max-width: 800px;
+        }
+        
+        html {
+          scroll-behavior: smooth;
         }
         
         body {
@@ -33,264 +55,372 @@
             overflow-x: hidden;
         }
         
-        /* Header stilleri */
-        .header {
-            background: rgba(0, 0, 0, 0.9);
-            border-bottom: 1px solid var(--border-color);
-            padding: 15px 5%;
+        /* Layout */
+        .page-container {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            backdrop-filter: blur(5px);
+            max-width: 1200px;
+            margin: 80px auto 0;
+            padding: 0 15px;
+            gap: 20px;
+            position: relative;
+            z-index: 1;
         }
         
-        .logo {
+        .sidebar {
+            width: var(--sidebar-width);
+            flex-shrink: 0;
+            position: sticky;
+            top: 90px;
+            height: calc(100vh - 180px);
+            overflow-y: auto;
             display: flex;
-            align-items: center;
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 24px;
+            flex-direction: column;
+            gap: 20px;
+            background-color: #000;
+            border-radius: 10px;
+            padding: 15px;
         }
         
-        .logo img {
-            height: 30px;
-            margin-right: 10px;
-        }
-        
-        .navbar {
-            display: flex;
-            align-items: center;
-        }
-        
-        /* Ana içerik düzeni */
-        .glossary-container {
+        .main-content {
+            flex: 1;
             max-width: var(--content-max-width);
-            margin: 100px auto 50px;
-            padding: 0 20px;
+            margin: 0 auto;
         }
         
-        .back-to-home {
-            display: inline-block;
-            margin-bottom: 25px;
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 16px;
+        .right-sidebar {
+            width: var(--sidebar-width);
+            flex-shrink: 0;
+            position: sticky;
+            top: 90px;
+            height: calc(100vh - 180px);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            background-color: #000;
+            border-radius: 10px;
+            padding: 15px;
         }
         
-        .back-to-home:hover {
-            text-decoration: underline;
-            color: var(--secondary-color);
+        /* Özel stiller */
+        .glossary-container {
+            width: 100%;
+            background: transparent;
+            position: relative;
         }
         
-        .page-title {
-            text-align: center;
-            margin-bottom: 10px;
-            color: white;
-            font-size: 32px;
-            text-shadow: 0 0 10px var(--primary-color);
-        }
-        
-        .page-subtitle {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #90ee90;
-            font-style: italic;
-        }
-        
-        /* Alfabetik navigasyon */
-        .alpha-navigation {
+        .letters-nav {
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
             gap: 5px;
-            margin-bottom: 30px;
-            padding: 15px;
-            background: var(--card-bg);
-            border-radius: 10px;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: rgba(10, 25, 20, 0.7);
             border: 1px solid var(--border-color);
+            border-radius: 10px;
             position: sticky;
-            top: 80px;
-            z-index: 100;
+            top: 70px;
+            z-index: 10;
             backdrop-filter: blur(5px);
         }
         
-        .alpha-button {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0, 0, 0, 0.5);
-            color: var(--text-color);
+        .letter-link {
+            display: inline-block;
+            padding: 5px 10px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
             border: 1px solid var(--border-color);
             border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
             transition: all 0.3s;
+            min-width: 30px;
+            text-align: center;
         }
         
-        .alpha-button:hover, .alpha-button.active {
+        .letter-link:hover, .letter-link.active {
             background: var(--primary-color);
             color: black;
-            transform: translateY(-3px);
             box-shadow: 0 0 10px var(--primary-color);
         }
         
-        /* Terim matrisi */
-        .terms-matrix {
+        .letter-section {
+            margin-bottom: 30px;
+            scroll-margin-top: 120px;
+        }
+        
+        .letter-section h3 {
+            font-size: 24px;
+            color: var(--primary-color);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .terms-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 50px;
+            gap: 15px;
         }
         
         .term-card {
-            background: var(--glossary-dark-bg);
+            background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 10px;
-            padding: 20px;
-            transition: all 0.3s;
+            padding: 15px;
             position: relative;
-            overflow: hidden;
+            transition: all 0.3s;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.1);
         }
         
         .term-card:nth-child(even) {
-            background: var(--glossary-light-bg);
+            background: rgba(20, 40, 30, 0.7);
         }
         
-        .term-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
-        }
-        
-        .term-name {
+        .term-title {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 10px;
             color: var(--primary-color);
-            margin-top: 0;
-            margin-bottom: 15px;
-            font-size: 20px;
-            border-bottom: 1px solid rgba(0, 255, 0, 0.3);
-            padding-bottom: 10px;
+            padding-right: 30px;
         }
         
-        .short-definition {
+        .term-short-desc {
+            font-size: 14px;
+            margin-bottom: 10px;
             color: #ccc;
-            margin-bottom: 15px;
-            line-height: 1.5;
         }
         
-        .full-definition {
-            color: #aaa;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease;
-            line-height: 1.6;
+        .term-full-desc {
+            font-size: 14px;
+            display: none;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(0, 255, 0, 0.3);
+            color: #eee;
         }
         
-        .expand-button {
-            background: rgba(0, 0, 0, 0.5);
+        .term-expand {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: transparent;
             color: var(--primary-color);
             border: 1px solid var(--primary-color);
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            font-weight: bold;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            margin-top: 10px;
             transition: all 0.3s;
         }
         
-        .expand-button:hover {
+        .term-expand:hover {
             background: var(--primary-color);
             color: black;
+            transform: rotate(90deg);
         }
         
-        .term-card.expanded .full-definition {
-            max-height: 500px;
+        .term-card.expanded .term-expand {
+            transform: rotate(45deg);
         }
         
-        .term-card.expanded .expand-button i::before {
-            content: "\f068"; /* FontAwesome minus icon */
+        .term-card.expanded .term-expand:hover {
+            transform: rotate(0deg);
         }
         
-        /* Harf bölüm başlıkları */
-        .letter-section {
-            margin-top: 40px;
-            margin-bottom: 30px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--primary-color);
+        .search-box {
+            display: flex;
+            margin-bottom: 15px;
+            position: relative;
         }
         
-        .letter-title {
+        .search-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+        }
+        
+        .search-button {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
             color: var(--primary-color);
-            font-size: 28px;
-            margin: 0;
+            cursor: pointer;
+            padding: 5px 10px;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 30px;
+            color: #90ee90;
+            grid-column: 1 / -1;
+        }
+        
+        .mobile-letters-scroll {
+            display: none;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 10px 0;
+            margin-bottom: 15px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        
+        .mobile-letters-scroll::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* Kaydırma çubukları için özel stiller */
+        ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 10px;
+            border: 2px solid var(--main-bg-color);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-color);
+        }
+        
+        /* Matrix Canvas için stiller */
+        #matrixCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        /* Sidebar widget stilleri */
+        .sidebar-widget {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .sidebar-widget h3 {
+            color: white;
+            margin-top: 0;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
+            gap: 8px;
+            font-size: 16px;
         }
         
-        .letter-title::before, .letter-title::after {
-            content: "";
-            flex: 1;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
-            margin: 0 15px;
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
         }
         
-        /* Footer stilleri */
-        footer {
+        .stat-item {
             text-align: center;
-            padding: 30px 20px;
-            font-size: 14px;
-            color: white;
-            margin-top: 50px;
-            border-top: 1px solid var(--border-color);
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            border: 1px solid rgba(0, 255, 0, 0.2);
         }
         
-        /* Responsive tasarım */
+        .stat-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #90ee90;
+        }
+        
+        .tag-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        
+        .tag {
+            padding: 5px 10px;
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            font-size: 12px;
+            color: #90ee90;
+        }
+        
+        /* Mobil için stiller */
+        @media (max-width: 1200px) {
+            .sidebar, .right-sidebar {
+                display: none;
+            }
+            
+            .page-container {
+                flex-direction: column;
+                padding: 0 10px;
+            }
+            
+            .main-content {
+                max-width: 100%;
+                width: 100%;
+            }
+        }
+        
         @media (max-width: 768px) {
-            .alpha-navigation {
-                gap: 3px;
-                padding: 10px;
+            .letters-nav {
+                display: none;
             }
             
-            .alpha-button {
-                width: 35px;
-                height: 35px;
-                font-size: 14px;
+            .mobile-letters-scroll {
+                display: block;
             }
             
-            .terms-matrix {
+            .terms-grid {
                 grid-template-columns: 1fr;
             }
             
-            .glossary-container {
-                margin-top: 80px;
-                padding: 0 15px;
+            .letter-link {
+                padding: 8px 12px;
+                font-size: 14px;
             }
             
-            .page-title {
-                font-size: 26px;
+            .glossary-container {
+                padding: 60px 5% 20px;
             }
         }
         
         @media (max-width: 480px) {
-            .alpha-button {
-                width: 30px;
-                height: 30px;
-                font-size: 12px;
+            .term-title {
+                font-size: 16px;
             }
             
-            .term-name {
-                font-size: 18px;
+            .term-short-desc, .term-full-desc {
+                font-size: 13px;
             }
         }
     </style>
@@ -304,9 +434,8 @@
     <!-- Matrix Arka Plan Canvas'ı -->
     <canvas id="matrixCanvas"></canvas>
 
-    <!-- Header -->
     <header class="header">
-        <a href="/" class="logo"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">{adembayazit}</a>
+        <a href="/" class="logo"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">{adembayazit} </a>
         <nav class="navbar">
             <div class="dropdown">
                 <a href="#" style="--i:5;" class="dropbtn"> <img src="IMAGES/Ata.svg" alt="Ata Icon" class="ata-icon"><span class="fi fi-tr"></span> <span class='bx bx-code-alt'></span> Ethical Hacker <span class='bx bx-chevron-down'></span></a>
@@ -323,188 +452,243 @@
         </nav>
     </header>
 
-    <!-- Ana İçerik -->
-    <main class="glossary-container">
-        <a href="/" class="back-to-home"><i class='bx bx-arrow-back'></i> Ana Sayfaya Dön</a>
-        <h1 class="page-title">Siber Güvenlik Sözlüğü</h1>
-        <p class="page-subtitle">Şirketinizin siber güvenlik temel bilgi kaynağı olun. Aşağıdaki sözlükte en yaygın kullanılan siber güvenlik terimlerinin tanımlarını bulabilirsiniz.</p>
-        
-        <!-- Alfabetik Navigasyon -->
-        <div class="alpha-navigation">
-            <div class="alpha-button" data-letter="A">A</div>
-            <div class="alpha-button" data-letter="B">B</div>
-            <div class="alpha-button" data-letter="C">C</div>
-            <div class="alpha-button" data-letter="D">D</div>
-            <div class="alpha-button" data-letter="E">E</div>
-            <div class="alpha-button" data-letter="F">F</div>
-            <div class="alpha-button" data-letter="G">G</div>
-            <div class="alpha-button" data-letter="H">H</div>
-            <div class="alpha-button" data-letter="I">I</div>
-            <div class="alpha-button" data-letter="J">J</div>
-            <div class="alpha-button" data-letter="K">K</div>
-            <div class="alpha-button" data-letter="L">L</div>
-            <div class="alpha-button" data-letter="M">M</div>
-            <div class="alpha-button" data-letter="N">N</div>
-            <div class="alpha-button" data-letter="O">O</div>
-            <div class="alpha-button" data-letter="P">P</div>
-            <div class="alpha-button" data-letter="Q">Q</div>
-            <div class="alpha-button" data-letter="R">R</div>
-            <div class="alpha-button" data-letter="S">S</div>
-            <div class="alpha-button" data-letter="T">T</div>
-            <div class="alpha-button" data-letter="U">U</div>
-            <div class="alpha-button" data-letter="V">V</div>
-            <div class="alpha-button" data-letter="W">W</div>
-            <div class="alpha-button" data-letter="X">X</div>
-            <div class="alpha-button" data-letter="Y">Y</div>
-            <div class="alpha-button" data-letter="Z">Z</div>
-        </div>
-        
-        <!-- A Harfi -->
-        <div id="letter-A" class="letter-section">
-            <h2 class="letter-title">A</h2>
-            <div class="terms-matrix">
-                <div class="term-card">
-                    <h3 class="term-name">Access Control</h3>
-                    <p class="short-definition">Kaynakların yalnızca bunlara erişim hakkı olan kullanıcılara verilmesini sağlar.</p>
-                    <div class="full-definition">
-                        <p>Erişim Kontrolü, kaynakların yalnızca bunlara erişim hakkı olan kullanıcılara verilmesini sağlar. Bir sistem kaynağına erişimi kısıtlamak için kullanılan bir mekanizmadır.</p>
+    <div class="page-container">
+        <aside class="sidebar">
+            <div class="sidebar-widget">
+                <h3><i class="fas fa-chart-line"></i> İstatistikler</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="total-terms">0</div>
+                        <div class="stat-label">Toplam Terim</div>
                     </div>
-                    <button class="expand-button"><i class="fas fa-plus"></i></button>
-                </div>
-                
-                <div class="term-card">
-                    <h3 class="term-name">Advanced Encryption Standard (AES)</h3>
-                    <p class="short-definition">NIST tarafından geliştirilen bir şifreleme standardı.</p>
-                    <div class="full-definition">
-                        <p>Advanced Encryption Standard (AES), NIST tarafından geliştirilen bir şifreleme standardıdır. Şifrelenmemiş, herkese açık olarak açıklanmış, simetrik bir şifreleme algoritması belirtmeyi amaçlar.</p>
+                    <div class="stat-item">
+                        <div class="stat-value" id="total-letters">0</div>
+                        <div class="stat-label">Toplam Harf</div>
                     </div>
-                    <button class="expand-button"><i class="fas fa-plus"></i></button>
-                </div>
-                
-                <div class="term-card">
-                    <h3 class="term-name">Authentication</h3>
-                    <p class="short-definition">İddia edilen kimliğin doğruluğunu onaylama süreci.</p>
-                    <div class="full-definition">
-                        <p>Kimlik Doğrulama, iddia edilen kimliğin doğruluğunu onaylama sürecidir. Kullanıcıların ve sistemlerin gerçekten iddia ettikleri kişi/sistem olduklarını doğrulamak için kullanılır.</p>
-                    </div>
-                    <button class="expand-button"><i class="fas fa-plus"></i></button>
                 </div>
             </div>
-        </div>
-        
-        <!-- B Harfi -->
-        <div id="letter-B" class="letter-section">
-            <h2 class="letter-title">B</h2>
-            <div class="terms-matrix">
-                <div class="term-card">
-                    <h3 class="term-name">Backdoor</h3>
-                    <p class="short-definition">Bir sisteme yetkisiz erişim sağlayan gizli bir giriş noktası.</p>
-                    <div class="full-definition">
-                        <p>Arka Kapı (Backdoor), bir sisteme yetkisiz erişim sağlayan gizli bir giriş noktasıdır. Genellikle mevcut güvenlik mekanizmalarını atlamak için bir saldırgan tarafından yerleştirilir.</p>
-                    </div>
-                    <button class="expand-button"><i class="fas fa-plus"></i></button>
+            
+            <div class="sidebar-widget">
+                <h3><i class="fas fa-search"></i> Arama</h3>
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="Terim ara..." id="desktop-search-input">
+                    <button class="search-button" id="desktop-search-btn"><i class="fas fa-search"></i></button>
                 </div>
-                
-                <div class="term-card">
-                    <h3 class="term-name">Botnet</h3>
-                    <p class="short-definition">Ele geçirilmiş bilgisayarlardan oluşan ve saldırılar için kullanılan ağ.</p>
-                    <div class="full-definition">
-                        <p>Botnet, ele geçirilmiş bilgisayarlardan oluşan ve spam göndermek, virüs yaymak veya bir ağı mesajlarla doldurarak hizmet reddi saldırısı gerçekleştirmek için kullanılan büyük bir ağdır.</p>
-                    </div>
-                    <button class="expand-button"><i class="fas fa-plus"></i></button>
-                </div>
-                
-                <div class="term-card">
-                    <h3 class="term-name">Brute Force Attack</h3>
-                    <p class="short-definition">Tüm olası kombinasyonları deneyerek şifre kırma yöntemi.</p>
-                    <div class="full-definition">
-                        <p>Brute Force Attack (Kaba Kuvvet Saldırısı), tüm olası kombinasyonları deneyerek bir şifreyi veya anahtarı kırmaya çalışan bir saldırı yöntemidir. Sözlük saldırısından farklı olarak tüm karakter kombinasyonlarını dener.</p>
-                    </div>
-                    <button class="expand-button"><i class="fas fa-plus"></i></button>
+                <div class="tag-cloud">
+                    <span class="tag">#ağ</span>
+                    <span class="tag">#güvenlik</span>
+                    <span class="tag">#şifreleme</span>
+                    <span class="tag">#saldırı</span>
+                    <span class="tag">#savunma</span>
                 </div>
             </div>
-        </div>
-        
-        <!-- C Harfi -->
-        <div id="letter-C" class="letter-section">
-            <h2 class="letter-title">C</h2>
-            <div class="terms-matrix">
-                <div class="term-card">
-                    <h3 class="term-name">Cryptography</h3>
-                    <p class="short-definition">Bilgi güvenliği için şifreleme tekniklerinin kullanımı.</p>
-                    <div class="full-definition">
-                        <p>Kriptografi, bilgi güvenliği için şifreleme tekniklerinin kullanımıdır. Verileri yetkisiz erişimden korumak ve gizliliği, bütünlüğü sağlamak için matematiksel yöntemler kullanır.</p>
+            
+            <div class="sidebar-widget">
+                <h3><i class="fas fa-fire"></i> Popüler Terimler</h3>
+                <div id="popular-terms">
+                    <div style="padding: 10px; text-align: center; color: #90ee90;">
+                        Yükleniyor...
                     </div>
-                    <button class="expand-button"><i class="fas fa-plus"></i></button>
-                </div>
-                
-                <div class="term-card">
-                    <h3 class="term-name">Cybersecurity</h3>
-                    <p class="short-definition">Bilgisayar sistemlerini ve ağları zararlı saldırılardan koruma uygulaması.</p>
-                    <div class="full-definition">
-                        <p>Siber Güvenlik, bilgisayar sistemlerini, ağları ve verileri dijital saldırılardan koruma uygulamasıdır. Yetkisiz erişimi, veri ihlallerini ve diğer siber tehditleri önlemeyi amaçlar.</p>
-                    </div>
-                    <button class="expand-button"><i class="fas fa-plus"></i></button>
-                </div>
-                
-                <div class="term-card">
-                    <h3 class="term-name">Cipher</h3>
-                    <p class="short-definition">Şifreleme ve şifre çözme için kullanılan kriptografik bir algoritma.</p>
-                    <div class="full-definition">
-                        <p>Şifre (Cipher), şifreleme ve şifre çözme için kullanılan kriptografik bir algoritmadır. Düz metni şifreli metne dönüştürür ve geri dönüştürür. Modern şifreler karmaşık matematiksel işlemlere dayanır.</p>
-                    </div>
-                    <button class="expand-button"><i class="fas fa-plus"></i></button>
                 </div>
             </div>
-        </div>
+        </aside>
         
-        <!-- Diğer harfler için benzer yapılar eklenmeli -->
+        <main class="main-content">
+            <section class="glossary-container">
+                <a href="/" class="back-to-home"><i class='bx bx-arrow-back'></i> Ana Sayfaya Dön</a>
+                <h2 class="section-title"><i class="fa-solid fa-book"></i> Siber Güvenlik Sözlüğü</h2>
+                
+                <!-- Mobil için arama -->
+                <div class="mobile-search">
+                    <div class="search-box">
+                        <input type="text" class="search-input" placeholder="Terim ara..." id="mobile-search-input">
+                        <button class="search-button" id="mobile-search-btn"><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+                
+                <!-- Mobil için yatay harf navigasyonu -->
+                <div class="mobile-letters-scroll">
+                    <div class="letters-nav-mobile">
+                        <!-- JavaScript ile doldurulacak -->
+                    </div>
+                </div>
+                
+                <!-- Masaüstü için harf navigasyonu -->
+                <div class="letters-nav">
+                    <!-- JavaScript ile doldurulacak -->
+                </div>
+                
+                <div class="terms-container" id="terms-container">
+                    <!-- Terimler JavaScript ile buraya eklenecek -->
+                </div>
+            </section>
+        </main>
         
-    </main>
+        <aside class="right-sidebar">
+            <div class="sidebar-widget">
+                <h3><i class="fas fa-history"></i> Son Eklenenler</h3>
+                <div id="recent-terms">
+                    <div style="padding: 10px; text-align: center; color: #90ee90;">
+                        Yükleniyor...
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-widget">
+                <h3><i class="fas fa-star"></i> Önemli Terimler</h3>
+                <div id="important-terms">
+                    <div style="padding: 10px; text-align: center; color: #90ee90;">
+                        Yükleniyor...
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-widget">
+                <h3><i class="fas fa-info-circle"></i> Bilgi</h3>
+                <div style="text-align: center;">
+                    <p style="font-size: 14px; margin-bottom: 15px;">Sözlükte <span id="info-count">0</span> terim bulunmaktadır. Terimleri alfabetik sırayla inceleyebilir veya arama yapabilirsiniz.</p>
+                </div>
+            </div>
+        </aside>
+    </div>
 
-    <footer>
-        <hr style="margin-bottom: 20px; border-color: var(--primary-color);">
-        <p>Tasarım ve Kodlama <strong>Adem Bayazıt</strong> | Sürüm 1.0 | Ağustos 2023</p>
+    <footer style="text-align: center; padding: 20px; font-size: 14px; color: white; margin-top: 50px; position: relative; z-index: 1;">
+        <hr style="margin-bottom: 10px; border-color: var(--primary-color);" />
+        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.2 | July 2025</p>
     </footer>
 
+    <!-- Sarı Nokta (IP Göstergesi) -->
     <script>
-        // Matrix efekti için script (mevcut blog sayfanızdan alınabilir)
-        // Bu örnek için basit bir matrix efekti ekliyorum
+        const dot = document.createElement('div');
+        dot.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 18px;
+            height: 18px;
+            background: #f9d71c;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 10px rgba(50, 205, 50, 0.8);
+            cursor: pointer;
+            z-index: 9999;
+            transition: all 0.3s;
+        `;
+
+        const tooltip = document.createElement('div');
+        tooltip.style.cssText = `
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            min-width: 240px;
+            backdrop-filter: blur(5px);
+        `;
+
+        dot.appendChild(tooltip);
+        document.body.appendChild(dot);
+
+        dot.addEventListener('mouseenter', () => tooltip.style.opacity = '1');
+        dot.addEventListener('mouseleave', () => tooltip.style.opacity = '0');
+        fetch('https://ipinfo.io/json?token=68a1229187303a')
+            .then(async res => {
+                if (!res.ok) {
+                    const text = await res.text();
+                    throw new Error(`Hatalı cevap (${res.status}): ${text}`);
+                }
+                return res.json();
+            })
+            .then(data => {
+                const now = new Date();
+                const {
+                    ip, hostname, city, region,
+                    country, loc, org, postal, timezone
+                } = data;
+
+                tooltip.innerHTML = `
+                    <div style="margin-bottom: 3px; font-weight: bold; color: #00ff00;">✓ User IP Detected</div>
+                    <div><strong>IP:</strong> ${ip}</div>
+                    <div><strong>Host:</strong> ${hostname}</div>
+                    <div><strong>City:</strong> ${city}</div>
+                    <div><strong>Country:</strong> ${country}</div>
+                    <div><strong>Location</strong> ${loc}</div>
+                    <div><strong>Postal:</strong> ${postal}</div>
+                    <div><strong>Org:</strong> ${org}</div>
+                    <div><strong>Time:</strong> ${now.toLocaleString('tr-TR')}</div>
+                    <div style="font-size: 9px; margin-top: 4px; color: #ccc;">${navigator.userAgent.split(' ')[0]}</div>
+                `;
+
+                // POST ile Netlify fonksiyonuna gönder
+                fetch('https://adembayazit.netlify.app/.netlify/functions/log-visitor', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ip, hostname, city, region,
+                        country, loc, org, postal,
+                        timezone, timestamp: now.toISOString(),
+                        userAgent: navigator.userAgent
+                    })
+                }).then(res => res.json())
+                    .then(console.log)
+                    .catch(err => console.error("POST hatası:", err));
+            })
+            .catch(error => {
+                const now = new Date();
+                tooltip.innerHTML = `
+                    <div style="margin-bottom: 5px; font-weight: bold; color: #ff5555;">❌ Hata</div>
+                    <div><strong>Zaman:</strong> ${now.toLocaleString('tr-TR')}</div>
+                    <div><strong>Mesaj:</strong> ${error.message}</div>
+                `;
+                dot.style.background = "#ff5555";
+            });
+    </script>
+
+    <script>
+        // Matrix efekti için kod
         const canvas = document.getElementById('matrixCanvas');
         const ctx = canvas.getContext('2d');
-        
+
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-        
+
         const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$#@%&!?*';
         const fontSize = 12;
         const columns = canvas.width / fontSize;
-        
+
         const drops = [];
-        for(let i = 0; i < columns; i++) {
+        for (let i = 0; i < columns; i++) {
             drops[i] = 1;
         }
-        
-        function draw() {
+
+        function drawMatrix() {
             ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
             ctx.fillStyle = '#0F0';
             ctx.font = `${fontSize}px monospace`;
             
-            for(let i = 0; i < drops.length; i++) {
+            for (let i = 0; i < drops.length; i++) {
                 const text = letters[Math.floor(Math.random() * letters.length)];
                 ctx.fillText(text, i * fontSize, drops[i] * fontSize);
                 
-                if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
                     drops[i] = 0;
                 }
                 
                 drops[i]++;
             }
         }
-        
-        setInterval(draw, 33);
+
+        setInterval(drawMatrix, 33);
         
         // Pencere boyutu değiştiğinde canvas'ı yeniden boyutlandır
         window.addEventListener('resize', () => {
@@ -512,59 +696,333 @@
             canvas.height = window.innerHeight;
         });
         
-        // Glossary işlevselliği
-        document.addEventListener('DOMContentLoaded', function() {
-            // Alfabetik navigasyon
-            const alphaButtons = document.querySelectorAll('.alpha-button');
-            const letterSections = document.querySelectorAll('.letter-section');
+        // Sözlük verileri
+        const glossaryData = [
+            // A
+            { term: "Adware", shortDesc: "Kullanıcıya reklam göstermek için tasarlanmış yazılım.", fullDesc: "Adware (Reklam Yazılımı), kullanıcıya reklam göstermek için tasarlanmış, genellikle istenmeyen yazılımlardır. Genellikle ücretsiz yazılımlarla birlikte gelir ve kullanıcının izni olmadan reklam gösterir.", letter: "A" },
+            { term: "APT", shortDesc: "Gelişmiş Kalıcı Tehdit", fullDesc: "APT (Advanced Persistent Threat), belirli bir hedefe yönelik, sofistike ve sürekli siber saldırı türüdür. Saldırganlar hedef sistemde uzun süre kalarak veri toplarlar.", letter: "A" },
+            { term: "Authentication", shortDesc: "Kimlik doğrulama işlemi", fullDesc: "Authentication (Kimlik Doğrulama), bir kullanıcının veya sistemin iddia ettiği kimliği doğrulama sürecidir. Kullanıcı adı/şifre, biyometrik veriler veya token'lar kullanılabilir.", letter: "A" },
             
-            alphaButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const letter = this.getAttribute('data-letter');
-                    const targetSection = document.getElementById(`letter-${letter}`);
+            // B
+            { term: "Backdoor", shortDesc: "Sisteme yetkisiz erişim sağlayan arka kapı.", fullDesc: "Backdoor (Arka Kapı), bir sistemde normal kimlik doğrulama süreçlerini atlayarak erişim sağlayan bir yöntemdir. Genellikle kötü amaçlı yazılımlar tarafından oluşturulur.", letter: "B" },
+            { term: "Botnet", shortDesc: "Zombi bilgisayarlardan oluşan ağ.", fullDesc: "Botnet, bir siber saldırganın kontrolü altındaki birbirine bağlı bilgisayarlardan oluşan ağdır. Bu bilgisayarlar DDoS saldırıları, spam gönderme veya diğer kötü amaçlı faaliyetler için kullanılır.", letter: "B" },
+            { term: "Brute Force Attack", shortDesc: "Şifreleri deneme-yanılma yöntemiyle kırma saldırısı.", fullDesc: "Brute Force Attack (Kaba Kuvvet Saldırısı), şifreleri veya anahtarları sistematik olarak deneyerek bulmaya çalışan bir saldırı yöntemidir. Bu saldırılar otomatize araçlarla yapılır ve uzun zaman alabilir.", letter: "B" },
+            
+            // C
+            { term: "Cryptography", shortDesc: "Şifreleme bilimi.", fullDesc: "Cryptography (Kriptografi), bilgi güvenliği için şifreleme teknikleri geliştiren bilim dalıdır. Gizlilik, bütünlük, kimlik doğrulama ve inkar edememe sağlamak için kullanılır.", letter: "C" },
+            { term: "CVE", shortDesc: "Yaygın Güvenlik Açıkları ve Etkileri", fullDesc: "CVE (Common Vulnerabilities and Exposures), bilinen siber güvenlik açıklarını tanımlamak için kullanılan standart bir referans sistemidir. Her CVE kimliği belirli bir güvenlik açığını ifade eder.", letter: "C" },
+            { term: "Cyber Attack", shortDesc: "Siber uzayda gerçekleştirilen saldırı.", fullDesc: "Cyber Attack (Siber Saldırı), bilgisayar sistemlerine, ağlara veya altyapılara zarar vermek, veri çalmak veya hizmeti engellemek amacıyla yapılan saldırılardır.", letter: "C" },
+            
+            // D
+            { term: "DDoS", shortDesc: "Dağıtılmış Hizmet Reddi Saldırısı", fullDesc: "DDoS (Distributed Denial of Service), bir sunucuyu, hizmeti veya ağı trafikle boğarak meşru kullanıcıların erişimini engelleyen saldırı türüdür. Genellikle botnet'ler kullanılarak yapılır.", letter: "D" },
+            { term: "DNS", shortDesc: "Alan Adı Sistemi", fullDesc: "DNS (Domain Name System), internet alan adlarını IP adreslerine çeviren hiyerarşik bir dağıtılmış adlandırma sistemidir. DNS poisoning gibi saldırılara maruz kalabilir.", letter: "D" },
+            { term: "Data Breach", shortDesc: "Veri ihlali, yetkisiz veri açığa çıkması.", fullDesc: "Data Breach (Veri İhlali), gizli, hassas veya korumalı verilerin yetkisiz kişilerce görüntülendiği, çalındığı veya kullanıldığı bir güvenlik olayıdır.", letter: "D" },
+            
+            // E
+            { term: "Encryption", shortDesc: "Veriyi şifreleme işlemi.", fullDesc: "Encryption (Şifreleme), okunabilir veriyi (plaintext) şifrelenmiş veriye (ciphertext) dönüştürme işlemidir. Sadece doğru şifre çözme anahtarına sahip kişiler orijinal veriyi okuyabilir.", letter: "E" },
+            { term: "Exploit", shortDesc: "Güvenlik açığından yararlanan kod.", fullDesc: "Exploit, bir yazılım veya donanımdaki güvenlik açığından yararlanmak için tasarlanmış kod, komut veya tekniktir. Zero-day exploit'ler henüz yamalanmamış açıkları hedefler.", letter: "E" },
+            
+            // F
+            { term: "Firewall", shortDesc: "Ağ güvenlik duvarı.", fullDesc: "Firewall (Güvenlik Duvarı), ağ trafiğini denetleyen ve yetkisiz erişimi engelleyen bir güvenlik sistemidir. Donanım veya yazılım tabanlı olabilir ve önceden tanımlanmış kurallara göre çalışır.", letter: "F" },
+            { term: "Fuzzing", shortDesc: "Yazılım test tekniği.", fullDesc: "Fuzzing, yazılımlara beklenmedik, rastgele veya hatalı veriler göndererek güvenlik açıklarını ve hataları bulmaya yönelik otomatik bir yazılım test tekniğidir.", letter: "F" },
+            
+            // G
+            { term: "GDPR", shortDesc: "Genel Veri Koruma Tüzüğü", fullDesc: "GDPR (General Data Protection Regulation), Avrupa Birliği'nde veri koruma ve gizlilik ile ilgili düzenlemeleri içeren yasadır. Kişisel verilerin işlenmesi ve hareketi için kurallar belirler.", letter: "G" },
+            
+            // H
+            { term: "Hashing", shortDesc: "Veriyi sabit uzunlukta değere dönüştürme.", fullDesc: "Hashing, herhangi boyuttaki bir veriyi sabit uzunlukta bir değere (hash) dönüştürme işlemidir. Şifre depolama, veri bütünlüğü doğrulama ve dijital imzalarda kullanılır.", letter: "H" },
+            { term: "Honeypot", shortDesc: "Saldırganları çekmek için tuzak sistem.", fullDesc: "Honeypot (Bal Küpü), siber saldırganları tespit etmek, incelemek veya savunmak için tasarlanmış bir güvenlik mekanizmasıdır. Saldırganların dikkatini çekerek gerçek sistemlerden uzaklaştırır.", letter: "H" },
+            
+            // I
+            { term: "IPS", shortDesc: "İzleme ve Önleme Sistemi", fullDesc: "IPS (Intrusion Prevention System), ağ trafiğini gerçek zamanlı olarak izleyen ve kötü amaçlı faaliyetleri tespit edip engelleyen bir güvenlik teknolojisidir. IDS'den farkı saldırıları önleme yeteneğidir.", letter: "I" },
+            
+            // K
+            { term: "Keylogger", shortDesc: "Klavye girdilerini kaydeden yazılım.", fullDesc: "Keylogger, kullanıcının klavyede yazdıklarını gizlice kaydeden bir yazılım veya donanım cihazıdır. Hesap bilgileri, şifreler ve diğer hassas verileri çalmak için kullanılabilir.", letter: "K" },
+            
+            // M
+            { term: "Malware", shortDesc: "Kötü amaçlı yazılım.", fullDesc: "Malware (Malicious Software), bilgisayar sistemlerine zarar vermek, veri çalmak veya yetkisiz erişim sağlamak için tasarlanmış her türlü yazılımdır. Virüs, solucan, truva atı, ransomware gibi türleri vardır.", letter: "M" },
+            { term: "MITM", shortDesc: "Ortadaki Adam Saldırısı", fullDesc: "MITM (Man-in-the-Middle) saldırısı, iki taraf arasındaki iletişimi gizlice dinleyen, değiştiren veya enjekte eden bir siber saldırı türüdür. Genellikle şifrelenmemiş ağlarda gerçekleştirilir.", letter: "M" },
+            
+            // P
+            { term: "Phishing", shortDesc: "Oltalama saldırısı.", fullDesc: "Phishing, saldırganların güvenilir bir kaynak gibi görünerek kişisel bilgileri (şifreler, kredi kartı bilgileri) çalmaya çalıştığı bir sosyal mühendislik saldırısıdır. Genellikle e-posta veya sahte web siteleriyle yapılır.", letter: "P" },
+            { term: "Penetration Test", shortDesc: "Sızma testi.", fullDesc: "Penetration Test (Sızma Testi), bir bilgisayar sisteminin güvenlik açıklarını değerlendirmek için simüle edilmiş siber saldırılardır. Güvenlik açıklarını belirlemek ve düzeltmek için yapılır.", letter: "P" },
+            
+            // R
+            { term: "Ransomware", shortDesc: "Fidye yazılımı.", fullDesc: "Ransomware, bir fidye ödenene kadar bir kurbanın sistemine veya verilerine erişimi engelleyen kötü amaçlı yazılım türüdür. Verileri şifreler ve kurtarma için fidye talep eder.", letter: "R" },
+            
+            // S
+            { term: "SOC", shortDesc: "Güvenlik Operasyon Merkezi", fullDesc: "SOC (Security Operations Center), bir kuruluşun siber güvenlik duruşunu izlemek, tespit etmek, araştırmak ve saldırılara yanıt vermek için oluşturulmuş merkezi bir birimdir.", letter: "S" },
+            { term: "SSH", shortDesc: "Güvenli Kabuk", fullDesc: "SSH (Secure Shell), güvenli olmayan bir ağ üzerinden güvenli bir şekilde iletişim kurmak için kullanılan bir ağ protokolüdür. Özellikle uzak sunucu yönetimi için kullanılır.", letter: "S" },
+            
+            // T
+            { term: "Trojan Horse", shortDesc: "Truva atı yazılımı.", fullDesc: "Trojan Horse (Truva Atı), yararlı gibi görünen ancak arka planda kötü amaçlı işlevler gerçekleştiren bir kötü amaçlı yazılım türüdür. Kendini çoğaltmaz ancak arka kapılar oluşturabilir.", letter: "T" },
+            { term: "Two-Factor Authentication", shortDesc: "İki faktörlü kimlik doğrulama.", fullDesc: "Two-Factor Authentication (2FA), kullanıcının kimliğini doğrulamak için iki farklı yöntem kullanan bir güvenlik sürecidir. Genellikle şifre ve cep telefonuna gelen kod kombinasyonu kullanılır.", letter: "T" },
+            
+            // V
+            { term: "VPN", shortDesc: "Sanal Özel Ağ", fullDesc: "VPN (Virtual Private Network), internet üzerinden şifrelenmiş, güvenli bir bağlantı oluşturan bir teknolojidir. Kullanıcının IP adresini gizler ve verileri şifreleyerek güvenli iletişim sağlar.", letter: "V" },
+            { term: "Vulnerability", shortDesc: "Güvenlik açığı, zafiyet.", fullDesc: "Vulnerability (Güvenlik Açığı), bir sistemdeki saldırganların kötüye kullanabileceği zayıflık veya hatadır. Yazılım hataları, yanlış yapılandırmalar veya tasarım kusurlarından kaynaklanabilir.", letter: "V" },
+            
+            // Z
+            { term: "Zero-Day", shortDesc: "Sıfırıncı gün açığı.", fullDesc: "Zero-Day, yazılım geliştiricisi tarafından henüz fark edilmemiş veya yamanmamış bir güvenlik açığıdır. Saldırganlar bu açıkları hemen kullanabildiği için 'sıfır gün' müdahale süresi vardır.", letter: "Z" }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const lettersNav = document.querySelector('.letters-nav');
+            const lettersNavMobile = document.querySelector('.letters-nav-mobile');
+            const termsContainer = document.getElementById('terms-container');
+            
+            // Harfleri oluştur
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const usedLetters = new Set(glossaryData.map(term => term.letter.toUpperCase()));
+            
+            // Masaüstü harf navigasyonu
+            alphabet.split('').forEach(letter => {
+                const link = document.createElement('a');
+                link.href = `#letter-${letter}`;
+                link.classList.add('letter-link');
+                link.textContent = letter;
+                if (!usedLetters.has(letter)) {
+                    link.style.opacity = '0.3';
+                    link.style.pointerEvents = 'none';
+                }
+                lettersNav.appendChild(link);
+            });
+            
+            // Mobil harf navigasyonu
+            alphabet.split('').forEach(letter => {
+                const link = document.createElement('a');
+                link.href = `#letter-${letter}`;
+                link.classList.add('letter-link');
+                link.textContent = letter;
+                if (!usedLetters.has(letter)) {
+                    link.style.opacity = '0.3';
+                    link.style.pointerEvents = 'none';
+                }
+                lettersNavMobile.appendChild(link);
+            });
+            
+            // Terimleri harflere göre grupla
+            const termsByLetter = {};
+            glossaryData.forEach(term => {
+                const letter = term.letter.toUpperCase();
+                if (!termsByLetter[letter]) {
+                    termsByLetter[letter] = [];
+                }
+                termsByLetter[letter].push(term);
+            });
+            
+            // Terimleri ekrana yerleştir
+            Object.keys(termsByLetter).sort().forEach(letter => {
+                const section = document.createElement('div');
+                section.id = `letter-${letter}`;
+                section.classList.add('letter-section');
+                
+                const heading = document.createElement('h3');
+                heading.innerHTML = `<span>${letter}</span> <span style="font-size: 14px; color: #90ee90;">(${termsByLetter[letter].length} terim)</span>`;
+                section.appendChild(heading);
+                
+                const grid = document.createElement('div');
+                grid.classList.add('terms-grid');
+                
+                termsByLetter[letter].forEach(term => {
+                    const card = document.createElement('div');
+                    card.classList.add('term-card');
                     
-                    if (targetSection) {
-                        window.scrollTo({
-                            top: targetSection.offsetTop - 100,
-                            behavior: 'smooth'
+                    const title = document.createElement('div');
+                    title.classList.add('term-title');
+                    title.textContent = term.term;
+                    
+                    const shortDesc = document.createElement('div');
+                    shortDesc.classList.add('term-short-desc');
+                    shortDesc.textContent = term.shortDesc;
+                    
+                    const fullDesc = document.createElement('div');
+                    fullDesc.classList.add('term-full-desc');
+                    fullDesc.textContent = term.fullDesc;
+                    
+                    const expandBtn = document.createElement('button');
+                    expandBtn.classList.add('term-expand');
+                    expandBtn.textContent = '+';
+                    expandBtn.addEventListener('click', function() {
+                        card.classList.toggle('expanded');
+                        if (card.classList.contains('expanded')) {
+                            fullDesc.style.display = 'block';
+                            expandBtn.textContent = '×';
+                        } else {
+                            fullDesc.style.display = 'none';
+                            expandBtn.textContent = '+';
+                        }
+                    });
+                    
+                    card.appendChild(title);
+                    card.appendChild(shortDesc);
+                    card.appendChild(fullDesc);
+                    card.appendChild(expandBtn);
+                    
+                    grid.appendChild(card);
+                });
+                
+                section.appendChild(grid);
+                termsContainer.appendChild(section);
+            });
+            
+            // İstatistikleri güncelle
+            document.getElementById('total-terms').textContent = glossaryData.length;
+            document.getElementById('total-letters').textContent = Object.keys(termsByLetter).length;
+            document.getElementById('info-count').textContent = glossaryData.length;
+            
+            // Popüler terimler (rastgele 5 terim)
+            const popularTermsContainer = document.getElementById('popular-terms');
+            const shuffledTerms = [...glossaryData].sort(() => 0.5 - Math.random()).slice(0, 5);
+            
+            let popularHTML = '';
+            shuffledTerms.forEach(term => {
+                popularHTML += `
+                    <div style="padding: 10px; border-bottom: 1px solid rgba(0, 255, 0, 0.2);">
+                        <div style="font-size: 14px; font-weight: bold; color: var(--primary-color);">${term.term}</div>
+                        <div style="font-size: 12px; margin: 5px 0;">${term.shortDesc}</div>
+                    </div>
+                `;
+            });
+            popularTermsContainer.innerHTML = popularHTML;
+            
+            // Son eklenen terimler (son 5 terim)
+            const recentTermsContainer = document.getElementById('recent-terms');
+            const recentTerms = glossaryData.slice(-5);
+            
+            let recentHTML = '';
+            recentTerms.forEach(term => {
+                recentHTML += `
+                    <div style="padding: 10px; border-bottom: 1px solid rgba(0, 255, 0, 0.2);">
+                        <div style="font-size: 14px; font-weight: bold; color: var(--primary-color);">${term.term}</div>
+                        <div style="font-size: 12px; margin: 5px 0;">${term.shortDesc}</div>
+                    </div>
+                `;
+            });
+            recentTermsContainer.innerHTML = recentHTML;
+            
+            // Önemli terimler (uzun açıklamalı 5 terim)
+            const importantTermsContainer = document.getElementById('important-terms');
+            const importantTerms = [...glossaryData].sort((a, b) => b.fullDesc.length - a.fullDesc.length).slice(0, 5);
+            
+            let importantHTML = '';
+            importantTerms.forEach(term => {
+                importantHTML += `
+                    <div style="padding: 10px; border-bottom: 1px solid rgba(0, 255, 0, 0.2);">
+                        <div style="font-size: 14px; font-weight: bold; color: var(--primary-color);">${term.term}</div>
+                        <div style="font-size: 12px; margin: 5px 0;">${term.shortDesc}</div>
+                    </div>
+                `;
+            });
+            importantTermsContainer.innerHTML = importantHTML;
+            
+            // Arama işlevselliği
+            const searchInputs = document.querySelectorAll('.search-input');
+            const searchButtons = document.querySelectorAll('.search-button');
+            
+            const performSearch = () => {
+                const searchTerm = searchInputs[0].value.toLowerCase().trim();
+                
+                if (searchTerm === '') {
+                    // Arama kutusu boşsa tüm terimleri göster
+                    document.querySelectorAll('.letter-section').forEach(section => {
+                        section.style.display = 'block';
+                    });
+                    document.querySelectorAll('.term-card').forEach(card => {
+                        card.style.display = 'block';
+                    });
+                    return;
+                }
+                
+                // Tüm terimleri gizle
+                document.querySelectorAll('.term-card').forEach(card => {
+                    card.style.display = 'none';
+                });
+                
+                // Tüm harf bölümlerini gizle
+                document.querySelectorAll('.letter-section').forEach(section => {
+                    section.style.display = 'none';
+                });
+                
+                // Arama terimiyle eşleşen terimleri göster
+                const matchingTerms = glossaryData.filter(term => 
+                    term.term.toLowerCase().includes(searchTerm) || 
+                    term.shortDesc.toLowerCase().includes(searchTerm) || 
+                    term.fullDesc.toLowerCase().includes(searchTerm)
+                );
+                
+                if (matchingTerms.length === 0) {
+                    // Eşleşme yoksa
+                    termsContainer.innerHTML = `
+                        <div class="no-results">
+                            <i class="fas fa-search" style="font-size: 24px; margin-bottom: 10px;"></i>
+                            <div>"${searchTerm}" ile eşleşen terim bulunamadı.</div>
+                        </div>
+                    `;
+                } else {
+                    // Eşleşen terimleri göster
+                    termsContainer.innerHTML = '';
+                    
+                    matchingTerms.forEach(term => {
+                        const card = document.createElement('div');
+                        card.classList.add('term-card');
+                        
+                        const title = document.createElement('div');
+                        title.classList.add('term-title');
+                        title.textContent = term.term;
+                        
+                        const shortDesc = document.createElement('div');
+                        shortDesc.classList.add('term-short-desc');
+                        shortDesc.textContent = term.shortDesc;
+                        
+                        const fullDesc = document.createElement('div');
+                        fullDesc.classList.add('term-full-desc');
+                        fullDesc.textContent = term.fullDesc;
+                        
+                        const expandBtn = document.createElement('button');
+                        expandBtn.classList.add('term-expand');
+                        expandBtn.textContent = '+';
+                        expandBtn.addEventListener('click', function() {
+                            card.classList.toggle('expanded');
+                            if (card.classList.contains('expanded')) {
+                                fullDesc.style.display = 'block';
+                                expandBtn.textContent = '×';
+                            } else {
+                                fullDesc.style.display = 'none';
+                                expandBtn.textContent = '+';
+                            }
                         });
                         
-                        // Aktif buton stilini güncelle
-                        alphaButtons.forEach(btn => btn.classList.remove('active'));
-                        this.classList.add('active');
+                        card.appendChild(title);
+                        card.appendChild(shortDesc);
+                        card.appendChild(fullDesc);
+                        card.appendChild(expandBtn);
+                        
+                        termsContainer.appendChild(card);
+                    });
+                }
+            };
+            
+            searchInputs.forEach(input => {
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        performSearch();
                     }
                 });
             });
             
-            // Genişletme butonları
-            const expandButtons = document.querySelectorAll('.expand-button');
-            expandButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const termCard = this.parentElement;
-                    termCard.classList.toggle('expanded');
-                });
+            searchButtons.forEach(button => {
+                button.addEventListener('click', performSearch);
             });
             
-            // Sayfa yüklendiğinde URL'deki hash'i kontrol et
+            // URL'de hash varsa ilgili bölüme git
             if (window.location.hash) {
-                const hash = window.location.hash.substring(1);
-                const targetSection = document.getElementById(`letter-${hash}`);
-                
-                if (targetSection) {
-                    setTimeout(() => {
-                        window.scrollTo({
-                            top: targetSection.offsetTop - 100,
-                            behavior: 'smooth'
-                        });
-                        
-                        // İlgili butonu aktif yap
-                        const correspondingButton = document.querySelector(`.alpha-button[data-letter="${hash}"]`);
-                        if (correspondingButton) {
-                            alphaButtons.forEach(btn => btn.classList.remove('active'));
-                            correspondingButton.classList.add('active');
-                        }
-                    }, 500);
-                }
+                setTimeout(() => {
+                    const target = document.querySelector(window.location.hash);
+                    if (target) {
+                        target.scrollIntoView();
+                    }
+                }, 100);
             }
         });
     </script>
