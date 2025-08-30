@@ -1283,7 +1283,6 @@ canvas {
     height: 140px;
   }
 }
-/* Mobil için Glowwin Cycle Düzenlemeleri */
 /* Mobil için Glowwin Cycle Animasyonu */
 @media (max-width: 768px) {
   .home-img {
@@ -1297,38 +1296,53 @@ canvas {
     animation-delay: 2.1s, 3.1s;
   }
 
-  .glowing-circle {
+  .home-img .glowing-circle {
     width: 100%;
     height: 100%;
-    transform: translateZ(0); /* Performans iyileştirmesi */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
-  .glowing-circle::after {
+  .home-img .glowing-circle::after {
+    content: '';
+    position: absolute;
     width: 250px;
     height: 250px;
+    background-color: black;
+    border-radius: 50%;
   }
 
-  .glowing-circle .image {
-    width: 250px;
-    height: 250px;
-  }
-
-  .image img {
-    max-width: 230px;
-  }
-
-  /* Yeşil dönen çember için stiller */
   .glowing-circle span {
     position: absolute;
     width: 100%;
     height: 100%;
     background: linear-gradient(black, rgba(0, 128, 0, 0.411));
     border-radius: 50%;
-    animation: circleRotate 8s linear infinite; /* Mobilde daha yavaş dönüş */
+    animation: circleRotate 8s linear infinite;
   }
 
   .glowing-circle span:nth-child(1) {
     filter: blur(10px);
+  }
+
+  .glowing-circle .image {
+    position: relative;
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  .image img {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 230px;
+    object-fit: cover;
   }
 
   /* Düşük güçlü cihazlar için optimizasyon */
@@ -1339,9 +1353,9 @@ canvas {
   }
 }
 
-/* Performans iyileştirmeleri */
+/* Animasyon performans iyileştirmeleri */
 .glowing-circle {
+  transform: translateZ(0);
   backface-visibility: hidden;
   perspective: 1000px;
-  transform-style: preserve-3d;
 }
