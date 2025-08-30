@@ -14,34 +14,56 @@ document.addEventListener("DOMContentLoaded", () => {
   let visibleCount = 8;
   let currentIndex = 0;
 
-  // Örnek veri - gerçek uygulamada photos.json'dan gelecek
-  const samplePhotos = [
-    { src: "/IMAGES/GALLERY/photo1.jpg", location: "Istanbul, Turkey", date: "2023-05-01", time: "14:30" },
-    { src: "/IMAGES/GALLERY/photo2.jpg", location: "Ankara, Turkey", date: "2023-05-02", time: "10:15" },
-    { src: "/IMAGES/GALLERY/photo3.jpg", location: "Cappadocia, Turkey", date: "2023-05-03", time: "18:45" },
-    { src: "/IMAGES/GALLERY/photo4.jpg", location: "Pamukkale, Turkey", date: "2023-05-04", time: "12:20" },
-    { src: "/IMAGES/GALLERY/photo5.jpg", location: "Antalya, Turkey", date: "2023-05-05", time: "09:30" },
-    { src: "/IMAGES/GALLERY/photo6.jpg", location: "Izmir, Turkey", date: "2023-05-06", time: "16:40" },
-    { src: "/IMAGES/GALLERY/photo7.jpg", location: "Bodrum, Turkey", date: "2023-05-07", time: "19:15" },
-    { src: "/IMAGES/GALLERY/photo8.jpg", location: "Trabzon, Turkey", date: "2023-05-08", time: "11:05" },
-    { src: "/IMAGES/GALLERY/photo9.jpg", location: "Nemrut, Turkey", date: "2023-05-09", time: "05:50" },
-    { src: "/IMAGES/GALLERY/photo10.jpg", location: "Ephesus, Turkey", date: "2023-05-10", time: "13:25" }
-  ];
-
-  // Gerçek uygulamada fetch kullanın:
-  // fetch("/photos.json")
-  //   .then(res => res.json())
-  //   .then(data => {
-  //     allPhotos = data;
-  //     renderPhotos();
-  //   })
-  //   .catch(err => {
-  //     console.error("Photo fetch error:", err);
-  //   });
-
-  // Örnek veri ile çalışma
-  allPhotos = samplePhotos;
-  renderPhotos();
+  // photos.json'dan verileri çek
+  fetch("/photos.json")
+    .then(res => res.json())
+    .then(data => {
+      allPhotos = data;
+      renderPhotos();
+    })
+    .catch(err => {
+      console.error("Photo fetch error:", err);
+      // Eğer fetch başarısız olursa, örnek veri kullan
+      allPhotos = [
+        {
+          "src": "PHOTO/photo1.JPG",
+          "date": "2017-05-25",
+          "time": "17:12",
+          "location": "Eymir, Ankara, Türkiye"
+        },
+        {
+          "src": "PHOTO/photo2.JPG",
+          "date": "2017-05-30",
+          "time": "14:57",
+          "location": "Eymir, Ankara, Türkiye"
+        },
+        {
+          "src": "PHOTO/photo3.JPG",
+          "date": "2017-05-11",
+          "time": "14:41",
+          "location": "Eymir, Ankara, Türkiye"
+        },
+        {
+          "src": "PHOTO/photo4.jpeg",
+          "date": "2017-04-01",
+          "time": "10:57",
+          "location": "Kuleli, İstanbul, Türkiye"
+        },
+        {
+          "src": "PHOTO/photo5.jpeg",
+          "date": "2017-04-29",
+          "time": "19:18",
+          "location": "Alıntepe, İstanbul, Türkiye"
+        },
+        {
+          "src": "PHOTO/IMG_0530.jpeg",
+          "date": "2023-06-29",
+          "time": "19:22",
+          "location": "Hacettepe Üniversitesi Cami Önü, Ankara, Türkiye"
+        }
+      ];
+      renderPhotos();
+    });
 
   function renderPhotos() {
     galleryGrid.innerHTML = "";
@@ -67,18 +89,19 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function openModal() {
-    modal.classList.add("show");
+    modal.style.display = "flex";
+    setTimeout(() => {
+      modal.classList.add("show");
+    }, 10);
     document.body.style.overflow = "hidden";
     updateModal();
   }
 
   function closeModal() {
     modal.classList.remove("show");
-    document.body.style.overflow = "auto";
-    
-    // Animasyon bitene kadar bekleyip tamamen gizle
     setTimeout(() => {
       modal.style.display = "none";
+      document.body.style.overflow = "auto";
     }, 300);
   }
 
@@ -139,7 +162,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }, false);
 
   function handleSwipe() {
-    if (touchEndX < touchStartX - 50) { // Minimum kaydırma mesafesi
+    if (touchEndX < touchStartX - 50) {
       nextPhoto();
     }
     if (touchEndX > touchStartX + 50) {
@@ -151,7 +174,4 @@ document.addEventListener("DOMContentLoaded", () => {
     visibleCount += 8;
     renderPhotos();
   });
-
-  // Modal başlangıçta gizli
-  modal.style.display = "none";
 });
