@@ -1,454 +1,571 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyber Security Glossary - Adem Bayazıt</title>
-    <link rel="stylesheet" href="CSS/style.css">
+    <title>Siber Güvenlik Sözlüğü - Adem Bayazıt</title>
+    <link rel="icon" type="image/png" href="/IMAGES/ab.png">
+    <link rel="stylesheet" href="/CSS/style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Glossary specific styles */
-        .glossary-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+        :root {
+            --main-bg-color: #000;
+            --primary-color: limegreen;
+            --secondary-color: #00cc00;
+            --accent-color: #ff0000;
+            --text-color: #fff;
+            --card-bg: rgba(0, 0, 0, 0.7);
+            --border-color: limegreen;
+            --sidebar-width: 300px;
+            --content-max-width: 1200px;
+            --glossary-dark-bg: rgba(20, 40, 30, 0.8);
+            --glossary-light-bg: rgba(30, 60, 40, 0.8);
         }
         
-        .glossary-header {
+        body {
+            background-color: var(--main-bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        
+        /* Header stilleri */
+        .header {
+            background: rgba(0, 0, 0, 0.9);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 24px;
+        }
+        
+        .logo img {
+            height: 30px;
+            margin-right: 10px;
+        }
+        
+        .navbar {
+            display: flex;
+            align-items: center;
+        }
+        
+        /* Ana içerik düzeni */
+        .glossary-container {
+            max-width: var(--content-max-width);
+            margin: 100px auto 50px;
+            padding: 0 20px;
+        }
+        
+        .back-to-home {
+            display: inline-block;
+            margin-bottom: 25px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .back-to-home:hover {
+            text-decoration: underline;
+            color: var(--secondary-color);
+        }
+        
+        .page-title {
+            text-align: center;
+            margin-bottom: 10px;
+            color: white;
+            font-size: 32px;
+            text-shadow: 0 0 10px var(--primary-color);
+        }
+        
+        .page-subtitle {
             text-align: center;
             margin-bottom: 30px;
+            color: #90ee90;
+            font-style: italic;
         }
         
-        .alphabet-filter {
+        /* Alfabetik navigasyon */
+        .alpha-navigation {
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 5px;
             margin-bottom: 30px;
             padding: 15px;
-            background-color: var(--card-bg);
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background: var(--card-bg);
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            position: sticky;
+            top: 80px;
+            z-index: 100;
+            backdrop-filter: blur(5px);
         }
         
-        .alphabet-filter button {
-            padding: 8px 12px;
-            background: var(--nav-bg);
+        .alpha-button {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.5);
             color: var(--text-color);
-            border: none;
-            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            font-weight: bold;
+            transition: all 0.3s;
         }
         
-        .alphabet-filter button:hover,
-        .alphabet-filter button.active {
-            background: var(--accent-color);
-            color: white;
+        .alpha-button:hover, .alpha-button.active {
+            background: var(--primary-color);
+            color: black;
+            transform: translateY(-3px);
+            box-shadow: 0 0 10px var(--primary-color);
         }
         
-        .glossary-grid {
+        /* Terim matrisi */
+        .terms-matrix {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
+            margin-bottom: 50px;
         }
         
         .term-card {
-            background-color: var(--card-bg);
-            border-radius: 8px;
+            background: var(--glossary-dark-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
             padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
             overflow: hidden;
+        }
+        
+        .term-card:nth-child(even) {
+            background: var(--glossary-light-bg);
         }
         
         .term-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
         }
         
-        .term-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
+        .term-name {
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 20px;
+            border-bottom: 1px solid rgba(0, 255, 0, 0.3);
+            padding-bottom: 10px;
         }
         
-        .term-title {
-            margin: 0;
-            font-size: 1.2rem;
-            color: var(--accent-color);
+        .short-definition {
+            color: #ccc;
+            margin-bottom: 15px;
+            line-height: 1.5;
         }
         
-        .expand-button {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--text-color);
-            transition: transform 0.3s ease;
-        }
-        
-        .term-summary {
-            margin-top: 10px;
-            color: var(--text-color);
-            font-size: 0.95rem;
-        }
-        
-        .term-detail {
+        .full-definition {
+            color: #aaa;
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.5s ease;
-            margin-top: 15px;
-            border-top: 1px solid var(--border-color);
-            padding-top: 15px;
+            line-height: 1.6;
         }
         
-        .term-card.expanded .term-detail {
+        .expand-button {
+            background: rgba(0, 0, 0, 0.5);
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+        
+        .expand-button:hover {
+            background: var(--primary-color);
+            color: black;
+        }
+        
+        .term-card.expanded .full-definition {
             max-height: 500px;
         }
         
-        .term-card.expanded .expand-button {
-            transform: rotate(45deg);
+        .term-card.expanded .expand-button i::before {
+            content: "\f068"; /* FontAwesome minus icon */
         }
         
+        /* Harf bölüm başlıkları */
         .letter-section {
-            margin-bottom: 40px;
-        }
-        
-        .letter-heading {
-            font-size: 1.8rem;
-            color: var(--accent-color);
-            border-bottom: 2px solid var(--accent-color);
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .search-box {
-            width: 100%;
-            padding: 12px 20px;
+            margin-top: 40px;
             margin-bottom: 30px;
-            border: 1px solid var(--border-color);
-            border-radius: 30px;
-            font-size: 1rem;
-            background-color: var(--card-bg);
-            color: var(--text-color);
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-color);
         }
         
-        .no-results {
+        .letter-title {
+            color: var(--primary-color);
+            font-size: 28px;
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .letter-title::before, .letter-title::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+            margin: 0 15px;
+        }
+        
+        /* Footer stilleri */
+        footer {
             text-align: center;
-            padding: 40px;
-            font-size: 1.2rem;
-            color: var(--text-light);
+            padding: 30px 20px;
+            font-size: 14px;
+            color: white;
+            margin-top: 50px;
+            border-top: 1px solid var(--border-color);
         }
         
+        /* Responsive tasarım */
         @media (max-width: 768px) {
-            .glossary-grid {
+            .alpha-navigation {
+                gap: 3px;
+                padding: 10px;
+            }
+            
+            .alpha-button {
+                width: 35px;
+                height: 35px;
+                font-size: 14px;
+            }
+            
+            .terms-matrix {
                 grid-template-columns: 1fr;
             }
             
-            .alphabet-filter {
-                overflow-x: auto;
-                justify-content: flex-start;
+            .glossary-container {
+                margin-top: 80px;
+                padding: 0 15px;
+            }
+            
+            .page-title {
+                font-size: 26px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .alpha-button {
+                width: 30px;
+                height: 30px;
+                font-size: 12px;
+            }
+            
+            .term-name {
+                font-size: 18px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Header (same as your main page) -->
-    <header>
-        <div class="container">
-            <div id="branding">
-                <h1>Adem Bayazıt</h1>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TFN7XD9Z"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    
+    <!-- Matrix Arka Plan Canvas'ı -->
+    <canvas id="matrixCanvas"></canvas>
+
+    <!-- Header -->
+    <header class="header">
+        <a href="/" class="logo"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">{adembayazit}</a>
+        <nav class="navbar">
+            <div class="dropdown">
+                <a href="#" style="--i:5;" class="dropbtn"> <img src="IMAGES/Ata.svg" alt="Ata Icon" class="ata-icon"><span class="fi fi-tr"></span> <span class='bx bx-code-alt'></span> Ethical Hacker <span class='bx bx-chevron-down'></span></a>
+                <div class="dropdown-content">
+                    <a href="#tools"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hacker-icon"> What is an Ethical Hacker?</a>
+                    <a href="#reports"><img src="IMAGES/glossary.svg" alt="Glossary" class="glossary-icon"> Cybersecurity Glossary</a>
+                    <a href="#payloads"><img src="IMAGES/soc.svg" alt="Soc" class="soc-icon"> What is a SOC ?</a>
+                    <a href="#payloads"><img src="IMAGES/vulnerabilities.svg" alt="Vulnerabilities" class="vulnerabilities-icon"> Vulnerabilities</a>
+                    <a href="#payloads"><img src="IMAGES/steganography.svg" alt="Steganography" class="steganography-icon"> Steganography</a>
+                    <a href="#payloads"><img src="IMAGES/cryptography.svg" alt="Cryptography" class="cryptography-icon"> Cryptography</a>    
+                    <a href="#payloads"><img src="IMAGES/education.svg" alt="Education" class="education-icon"> Cybersecurity Learning Resources</a>
+                </div>
             </div>
-            <nav>
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="index.html#about">About</a></li>
-                    <li><a href="index.html#projects">Projects</a></li>
-                    <li><a href="index.html#blog">Blog</a></li>
-                    <li><a href="index.html#contact">Contact</a></li>
-                    <li class="current"><a href="glossary.html">Glossary</a></li>
-                </ul>
-            </nav>
-        </div>
+        </nav>
     </header>
 
-    <!-- Glossary Content -->
-    <section class="glossary-container">
-        <div class="glossary-header">
-            <h1>Cyber Security Glossary</h1>
-            <p>Your comprehensive guide to cybersecurity terminology</p>
+    <!-- Ana İçerik -->
+    <main class="glossary-container">
+        <a href="/" class="back-to-home"><i class='bx bx-arrow-back'></i> Ana Sayfaya Dön</a>
+        <h1 class="page-title">Siber Güvenlik Sözlüğü</h1>
+        <p class="page-subtitle">Şirketinizin siber güvenlik temel bilgi kaynağı olun. Aşağıdaki sözlükte en yaygın kullanılan siber güvenlik terimlerinin tanımlarını bulabilirsiniz.</p>
+        
+        <!-- Alfabetik Navigasyon -->
+        <div class="alpha-navigation">
+            <div class="alpha-button" data-letter="A">A</div>
+            <div class="alpha-button" data-letter="B">B</div>
+            <div class="alpha-button" data-letter="C">C</div>
+            <div class="alpha-button" data-letter="D">D</div>
+            <div class="alpha-button" data-letter="E">E</div>
+            <div class="alpha-button" data-letter="F">F</div>
+            <div class="alpha-button" data-letter="G">G</div>
+            <div class="alpha-button" data-letter="H">H</div>
+            <div class="alpha-button" data-letter="I">I</div>
+            <div class="alpha-button" data-letter="J">J</div>
+            <div class="alpha-button" data-letter="K">K</div>
+            <div class="alpha-button" data-letter="L">L</div>
+            <div class="alpha-button" data-letter="M">M</div>
+            <div class="alpha-button" data-letter="N">N</div>
+            <div class="alpha-button" data-letter="O">O</div>
+            <div class="alpha-button" data-letter="P">P</div>
+            <div class="alpha-button" data-letter="Q">Q</div>
+            <div class="alpha-button" data-letter="R">R</div>
+            <div class="alpha-button" data-letter="S">S</div>
+            <div class="alpha-button" data-letter="T">T</div>
+            <div class="alpha-button" data-letter="U">U</div>
+            <div class="alpha-button" data-letter="V">V</div>
+            <div class="alpha-button" data-letter="W">W</div>
+            <div class="alpha-button" data-letter="X">X</div>
+            <div class="alpha-button" data-letter="Y">Y</div>
+            <div class="alpha-button" data-letter="Z">Z</div>
         </div>
         
-        <input type="text" id="searchInput" class="search-box" placeholder="Search for terms...">
-        
-        <div class="alphabet-filter" id="alphabetFilter">
-            <!-- Alphabet buttons will be generated by JavaScript -->
+        <!-- A Harfi -->
+        <div id="letter-A" class="letter-section">
+            <h2 class="letter-title">A</h2>
+            <div class="terms-matrix">
+                <div class="term-card">
+                    <h3 class="term-name">Access Control</h3>
+                    <p class="short-definition">Kaynakların yalnızca bunlara erişim hakkı olan kullanıcılara verilmesini sağlar.</p>
+                    <div class="full-definition">
+                        <p>Erişim Kontrolü, kaynakların yalnızca bunlara erişim hakkı olan kullanıcılara verilmesini sağlar. Bir sistem kaynağına erişimi kısıtlamak için kullanılan bir mekanizmadır.</p>
+                    </div>
+                    <button class="expand-button"><i class="fas fa-plus"></i></button>
+                </div>
+                
+                <div class="term-card">
+                    <h3 class="term-name">Advanced Encryption Standard (AES)</h3>
+                    <p class="short-definition">NIST tarafından geliştirilen bir şifreleme standardı.</p>
+                    <div class="full-definition">
+                        <p>Advanced Encryption Standard (AES), NIST tarafından geliştirilen bir şifreleme standardıdır. Şifrelenmemiş, herkese açık olarak açıklanmış, simetrik bir şifreleme algoritması belirtmeyi amaçlar.</p>
+                    </div>
+                    <button class="expand-button"><i class="fas fa-plus"></i></button>
+                </div>
+                
+                <div class="term-card">
+                    <h3 class="term-name">Authentication</h3>
+                    <p class="short-definition">İddia edilen kimliğin doğruluğunu onaylama süreci.</p>
+                    <div class="full-definition">
+                        <p>Kimlik Doğrulama, iddia edilen kimliğin doğruluğunu onaylama sürecidir. Kullanıcıların ve sistemlerin gerçekten iddia ettikleri kişi/sistem olduklarını doğrulamak için kullanılır.</p>
+                    </div>
+                    <button class="expand-button"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
         </div>
         
-        <div id="glossaryContent">
-            <!-- Glossary terms will be loaded here -->
+        <!-- B Harfi -->
+        <div id="letter-B" class="letter-section">
+            <h2 class="letter-title">B</h2>
+            <div class="terms-matrix">
+                <div class="term-card">
+                    <h3 class="term-name">Backdoor</h3>
+                    <p class="short-definition">Bir sisteme yetkisiz erişim sağlayan gizli bir giriş noktası.</p>
+                    <div class="full-definition">
+                        <p>Arka Kapı (Backdoor), bir sisteme yetkisiz erişim sağlayan gizli bir giriş noktasıdır. Genellikle mevcut güvenlik mekanizmalarını atlamak için bir saldırgan tarafından yerleştirilir.</p>
+                    </div>
+                    <button class="expand-button"><i class="fas fa-plus"></i></button>
+                </div>
+                
+                <div class="term-card">
+                    <h3 class="term-name">Botnet</h3>
+                    <p class="short-definition">Ele geçirilmiş bilgisayarlardan oluşan ve saldırılar için kullanılan ağ.</p>
+                    <div class="full-definition">
+                        <p>Botnet, ele geçirilmiş bilgisayarlardan oluşan ve spam göndermek, virüs yaymak veya bir ağı mesajlarla doldurarak hizmet reddi saldırısı gerçekleştirmek için kullanılan büyük bir ağdır.</p>
+                    </div>
+                    <button class="expand-button"><i class="fas fa-plus"></i></button>
+                </div>
+                
+                <div class="term-card">
+                    <h3 class="term-name">Brute Force Attack</h3>
+                    <p class="short-definition">Tüm olası kombinasyonları deneyerek şifre kırma yöntemi.</p>
+                    <div class="full-definition">
+                        <p>Brute Force Attack (Kaba Kuvvet Saldırısı), tüm olası kombinasyonları deneyerek bir şifreyi veya anahtarı kırmaya çalışan bir saldırı yöntemidir. Sözlük saldırısından farklı olarak tüm karakter kombinasyonlarını dener.</p>
+                    </div>
+                    <button class="expand-button"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
         </div>
-    </section>
+        
+        <!-- C Harfi -->
+        <div id="letter-C" class="letter-section">
+            <h2 class="letter-title">C</h2>
+            <div class="terms-matrix">
+                <div class="term-card">
+                    <h3 class="term-name">Cryptography</h3>
+                    <p class="short-definition">Bilgi güvenliği için şifreleme tekniklerinin kullanımı.</p>
+                    <div class="full-definition">
+                        <p>Kriptografi, bilgi güvenliği için şifreleme tekniklerinin kullanımıdır. Verileri yetkisiz erişimden korumak ve gizliliği, bütünlüğü sağlamak için matematiksel yöntemler kullanır.</p>
+                    </div>
+                    <button class="expand-button"><i class="fas fa-plus"></i></button>
+                </div>
+                
+                <div class="term-card">
+                    <h3 class="term-name">Cybersecurity</h3>
+                    <p class="short-definition">Bilgisayar sistemlerini ve ağları zararlı saldırılardan koruma uygulaması.</p>
+                    <div class="full-definition">
+                        <p>Siber Güvenlik, bilgisayar sistemlerini, ağları ve verileri dijital saldırılardan koruma uygulamasıdır. Yetkisiz erişimi, veri ihlallerini ve diğer siber tehditleri önlemeyi amaçlar.</p>
+                    </div>
+                    <button class="expand-button"><i class="fas fa-plus"></i></button>
+                </div>
+                
+                <div class="term-card">
+                    <h3 class="term-name">Cipher</h3>
+                    <p class="short-definition">Şifreleme ve şifre çözme için kullanılan kriptografik bir algoritma.</p>
+                    <div class="full-definition">
+                        <p>Şifre (Cipher), şifreleme ve şifre çözme için kullanılan kriptografik bir algoritmadır. Düz metni şifreli metne dönüştürür ve geri dönüştürür. Modern şifreler karmaşık matematiksel işlemlere dayanır.</p>
+                    </div>
+                    <button class="expand-button"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Diğer harfler için benzer yapılar eklenmeli -->
+        
+    </main>
 
-    <!-- Footer (same as your main page) -->
     <footer>
-        <p>Adem Bayazıt &copy; 2023</p>
+        <hr style="margin-bottom: 20px; border-color: var(--primary-color);">
+        <p>Tasarım ve Kodlama <strong>Adem Bayazıt</strong> | Sürüm 1.0 | Ağustos 2023</p>
     </footer>
 
     <script>
-        // Glossary data
-        const glossaryTerms = [
-            { term: "Access Control", definition: "Access Control ensures that resources are only granted to those users who are entitled to them.", letter: "A" },
-            { term: "Access Control List (ACL)", definition: "A mechanism that implements access control for a system resource by listing the identities of the system entities that are permitted to access the resource.", letter: "A" },
-            { term: "Access Control Service", definition: "A security service that provides protection of system resources against unauthorized access. The two basic mechanisms for implementing this service are ACLs and tickets.", letter: "A" },
-            { term: "Access Management", definition: "Access Management is the maintenance of access information which consists of four tasks: account administration, maintenance, monitoring, and revocation.", letter: "A" },
-            { term: "Access Matrix", definition: "An Access Matrix uses rows to represent subjects and columns to represent objects with privileges listed in each cell.", letter: "A" },
-            { term: "Account Harvesting", definition: "Account Harvesting is the process of collecting all the legitimate account names on a system.", letter: "A" },
-            { term: "ACK Piggybacking", definition: "ACK piggybacking is the practice of sending an ACK inside another packet going to the same destination.", letter: "A" },
-            { term: "Active Content", definition: "Program code embedded in the contents of a web page. When the page is accessed by a web browser, the embedded code is automatically downloaded and executed on the user's workstation. Ex. Java, ActiveX (MS)", letter: "A" },
-            { term: "Activity Monitors", definition: "Activity monitors aim to prevent virus infection by monitoring for malicious activity on a system, and blocking that activity when possible.", letter: "A" },
-            { term: "Address Resolution Protocol (ARP)", definition: "Address Resolution Protocol (ARP) is a protocol for mapping an Internet Protocol address to a physical machine address that is recognized in the local network.", letter: "A" },
-            { term: "Advanced Encryption Standard (AES)", definition: "An encryption standard being developed by NIST. Intended to specify an unclassified, publicly-disclosed, symmetric encryption algorithm.", letter: "A" },
-            { term: "Algorithm", definition: "A finite set of step-by-step instructions for a problem-solving or computation procedure, especially one that can be implemented by a computer.", letter: "A" },
-            { term: "Applet", definition: "Java programs; an application program that uses the client's web browser to provide a user interface.", letter: "A" },
-            { term: "ARPANET", definition: "Advanced Research Projects Agency Network, a pioneer packet-switched network that was built in the early 1970s under contract to the US Government.", letter: "A" },
-            { term: "Asymmetric Cryptography", definition: "Public-key cryptography; A modern branch of cryptography in which the algorithms employ a pair of keys (a public key and a private key).", letter: "A" },
-            { term: "Asymmetric Warfare", definition: "Asymmetric warfare is the fact that a small investment, properly leveraged, can yield incredible results.", letter: "A" },
-            { term: "Auditing", definition: "Auditing is the information gathering and analysis of assets to ensure such things as policy compliance and security from vulnerabilities.", letter: "A" },
-            { term: "Authentication", definition: "Authentication is the process of confirming the correctness of the claimed identity.", letter: "A" },
-            { term: "Authenticity", definition: "Authenticity is the validity and conformance of the original information.", letter: "A" },
-            { term: "Authorization", definition: "Authorization is the approval, permission, or empowerment for someone or something to do something.", letter: "A" },
-            { term: "Autonomous System", definition: "One network or series of networks that are all under one administrative control.", letter: "A" },
-            { term: "Availability", definition: "Availability is the need to ensure that the business purpose of the system can be met and that it is accessible to those who need to use it.", letter: "A" },
-            { term: "Backdoor", definition: "A backdoor is a tool installed after a compromise to give an attacker easier access to the compromised system around any security mechanisms that are in place.", letter: "B" },
-            { term: "Bandwidth", definition: "Commonly used to mean the capacity of a communication channel to pass data through the channel in a given amount of time.", letter: "B" },
-            { term: "Banner", definition: "A banner is the information that is displayed to a remote user trying to connect to a service.", letter: "B" },
-            { term: "Basic Authentication", definition: "Basic Authentication is the simplest web-based authentication scheme that works by sending the username and password with each request.", letter: "B" },
-            { term: "Bastion Host", definition: "A bastion host has been hardened in anticipation of vulnerabilities that have not been discovered yet.", letter: "B" },
-            { term: "BIND", definition: "BIND stands for Berkeley Internet Name Domain and is an implementation of DNS.", letter: "B" },
-            { term: "Biometrics", definition: "Biometrics use physical characteristics of the users to determine access.", letter: "B" },
-            { term: "Bit", definition: "The smallest unit of information storage; a contraction of the term 'binary digit'.", letter: "B" },
-            { term: "Block Cipher", definition: "A block cipher encrypts one block of data at a time.", letter: "B" },
-            { term: "Blue Team", definition: "The people who perform defensive cybersecurity tasks.", letter: "B" },
-            { term: "Boot Record Infector", definition: "A boot record infector is a piece of malware that inserts malicious code into the boot sector of a disk.", letter: "B" },
-            { term: "Border Gateway Protocol (BGP)", definition: "An inter-autonomous system routing protocol.", letter: "B" },
-            { term: "Botnet", definition: "A botnet is a large number of compromised computers that are used to create and send spam or viruses.", letter: "B" },
-            { term: "Bridge", definition: "A product that connects a local area network (LAN) to another local area network that uses the same protocol.", letter: "B" },
-            { term: "British Standard 7799", definition: "A standard code of practice and provides guidance on how to secure an information system.", letter: "B" },
-            { term: "Broadcast", definition: "To simultaneously send the same message to multiple recipients.", letter: "B" },
-            { term: "Broadcast Address", definition: "An address used to broadcast a datagram to all hosts on a given network using UDP or ICMP protocol.", letter: "B" },
-            { term: "Browser", definition: "A client computer program that can retrieve and display information from servers on the World Wide Web.", letter: "B" },
-            { term: "Brute Force", definition: "A cryptanalysis technique or other kind of attack method involving an exhaustive procedure that tries all possibilities.", letter: "B" },
-            { term: "Buffer Overflow", definition: "A buffer overflow occurs when a program or process tries to store more data in a buffer than it was intended to hold.", letter: "B" },
-            { term: "Business Continuity Plan (BCP)", definition: "A Business Continuity Plan is the plan for emergency response, backup operations, and post-disaster recovery.", letter: "B" },
-            { term: "Business Impact Analysis (BIA)", definition: "A Business Impact Analysis determines what levels of impact to a system are tolerable.", letter: "B" },
-            { term: "Byte", definition: "A fundamental unit of computer storage; the smallest addressable unit in a computer's architecture.", letter: "B" },
-            { term: "Cache", definition: "A special high-speed storage mechanism.", letter: "C" },
-            { term: "Cache Cramming", definition: "Cache Cramming is the technique of tricking a browser to run cached Java code from the local disk.", letter: "C" },
-            { term: "Cache Poisoning", definition: "Malicious or misleading data from a remote name server is saved [cached] by another name server.", letter: "C" },
-            { term: "Call Admission Control (CAC)", definition: "The inspection and control all inbound and outbound voice network activity.", letter: "C" },
-            { term: "Cell", definition: "A cell is a unit of data transmitted over an ATM network.", letter: "C" },
-            { term: "Certificate-Based Authentication", definition: "Certificate-Based Authentication is the use of SSL and certificates to authenticate and encrypt HTTP traffic.", letter: "C" },
-            { term: "CGI", definition: "Common Gateway Interface. This mechanism is used by HTTP servers to pass parameters to executable scripts.", letter: "C" },
-            { term: "Chain of Custody", definition: "Chain of Custody is the important application of the Federal rules of evidence and its handling.", letter: "C" },
-            { term: "Challenge-Handshake Authentication Protocol (CHAP)", definition: "The Challenge-Handshake Authentication Protocol uses a challenge/response authentication mechanism.", letter: "C" },
-            { term: "Checksum", definition: "A value that is computed by a function that is dependent on the contents of a data object.", letter: "C" },
-            { term: "Cipher", definition: "A cryptographic algorithm for encryption and decryption.", letter: "C" },
-            { term: "Ciphertext", definition: "Ciphertext is the encrypted form of the message being sent.", letter: "C" },
-            { term: "Circuit Switched Network", definition: "A circuit switched network is where a single continuous physical circuit connected two endpoints.", letter: "C" },
-            { term: "Client", definition: "A system entity that requests and uses a service provided by another system entity, called a 'server'.", letter: "C" },
-            { term: "Cloud Computing", definition: "Utilization of remote servers in the data-center of a cloud provider to store, manage, and process your data.", letter: "C" },
-            { term: "Cold/Warm/Hot Disaster Recovery Site", definition: "Different levels of disaster recovery sites with varying hardware redundancy and failover times.", letter: "C" },
-            { term: "Collision", definition: "A collision occurs when multiple systems transmit simultaneously on the same wire.", letter: "C" },
-            { term: "Competitive Intelligence", definition: "Competitive Intelligence is espionage using legal, or at least not obviously illegal, means.", letter: "C" },
-            { term: "Computer Emergency Response Team (CERT)", definition: "An organization that studies computer and network INFOSEC.", letter: "C" },
-            { term: "Computer Network", definition: "A collection of host computers together with the sub-network or inter-network.", letter: "C" },
-            { term: "Confidentiality", definition: "Confidentiality is the need to ensure that information is disclosed only to those who are authorized to view it.", letter: "C" },
-            { term: "Configuration Management", definition: "Establish a known baseline condition and manage it.", letter: "C" },
-            { term: "Cookie", definition: "Data exchanged between an HTTP server and a browser to store state information on the client side.", letter: "C" },
-            { term: "Corruption", definition: "A threat action that undesirably alters system operation by adversely modifying system functions or data.", letter: "C" },
-            { term: "Cost Benefit Analysis", definition: "A cost benefit analysis compares the cost of implementing countermeasures with the value of the reduced risk.", letter: "C" },
-            { term: "Countermeasure", definition: "Reactive methods used to prevent an exploit from successfully occurring once a threat has been detected.", letter: "C" },
-            { term: "Covert Channels", definition: "Covert Channels are the means by which information can be communicated between two parties in a covert fashion.", letter: "C" },
-            { term: "Crimeware", definition: "A type of malware used by cyber criminals to make money off of the infected system.", letter: "C" },
-            { term: "Cron", definition: "Cron is a Unix application that runs jobs for users and administrators at scheduled times of the day.", letter: "C" },
-            { term: "Crossover Cable", definition: "A crossover cable reverses the pairs of cables at the other end.", letter: "C" },
-            { term: "Cryptanalysis", definition: "The mathematical science that deals with analysis of a cryptographic system.", letter: "C" },
-            { term: "Cryptographic Algorithm or Hash", definition: "An algorithm that employs the science of cryptography.", letter: "C" },
-            { term: "Cut-Through", definition: "Cut-Through is a method of switching where only the header of a packet is read before it is forwarded.", letter: "C" },
-            { term: "Cyber-Attack", definition: "A cyber- attack is any unauthorized attempt to access, disrupt, steal, or damage computer systems, networks, or data.", letter: "C" },
-            { term: "Cybersecurity Risk Assessment", definition: "The systematic process of identifying, analyzing, and evaluating potential threats.", letter: "C" },
-            { term: "Cyclic Redundancy Check (CRC)", definition: "A type of checksum algorithm that is not a cryptographic hash.", letter: "C" },
-            // Add more terms here following the same pattern
-            { term: "Zero-Day Exploit", definition: "A zero-day exploit refers to a cyberattack that takes advantage of a software, hardware, or firmware vulnerability that is unknown to the vendor or the public.", letter: "Z" },
-            { term: "Zombies", definition: "A zombie computer is a computer connected to the Internet that has been compromised by a hacker.", letter: "Z" }
-        ];
-
-        // Function to generate alphabet filter
-        function generateAlphabetFilter() {
-            const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#";
-            const filterContainer = document.getElementById('alphabetFilter');
-            
-            // Add "All" button
-            const allButton = document.createElement('button');
-            allButton.textContent = 'All';
-            allButton.setAttribute('data-letter', 'all');
-            allButton.classList.add('active');
-            filterContainer.appendChild(allButton);
-            
-            // Add alphabet buttons
-            for (let char of alphabet) {
-                const button = document.createElement('button');
-                button.textContent = char;
-                button.setAttribute('data-letter', char);
-                filterContainer.appendChild(button);
-            }
+        // Matrix efekti için script (mevcut blog sayfanızdan alınabilir)
+        // Bu örnek için basit bir matrix efekti ekliyorum
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$#@%&!?*';
+        const fontSize = 12;
+        const columns = canvas.width / fontSize;
+        
+        const drops = [];
+        for(let i = 0; i < columns; i++) {
+            drops[i] = 1;
         }
-
-        // Function to render glossary terms
-        function renderGlossaryTerms(filter = 'all') {
-            const glossaryContent = document.getElementById('glossaryContent');
-            glossaryContent.innerHTML = '';
+        
+        function draw() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Group terms by letter
-            const groupedTerms = {};
-            glossaryTerms.forEach(term => {
-                if (filter !== 'all' && term.letter !== filter) return;
+            ctx.fillStyle = '#0F0';
+            ctx.font = `${fontSize}px monospace`;
+            
+            for(let i = 0; i < drops.length; i++) {
+                const text = letters[Math.floor(Math.random() * letters.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
                 
-                if (!groupedTerms[term.letter]) {
-                    groupedTerms[term.letter] = [];
+                if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
                 }
-                groupedTerms[term.letter].push(term);
-            });
-            
-            // If no results
-            if (Object.keys(groupedTerms).length === 0) {
-                glossaryContent.innerHTML = '<div class="no-results">No terms found matching your search.</div>';
-                return;
+                
+                drops[i]++;
             }
-            
-            // Sort letters
-            const sortedLetters = Object.keys(groupedTerms).sort();
-            
-            // Render each letter section
-            sortedLetters.forEach(letter => {
-                const letterSection = document.createElement('div');
-                letterSection.className = 'letter-section';
-                letterSection.id = `letter-${letter}`;
-                
-                const letterHeading = document.createElement('h2');
-                letterHeading.className = 'letter-heading';
-                letterHeading.textContent = letter;
-                letterSection.appendChild(letterHeading);
-                
-                const grid = document.createElement('div');
-                grid.className = 'glossary-grid';
-                
-                // Sort terms alphabetically
-                groupedTerms[letter].sort((a, b) => a.term.localeCompare(b.term));
-                
-                // Add terms
-                groupedTerms[letter].forEach(term => {
-                    const termCard = document.createElement('div');
-                    termCard.className = 'term-card';
-                    termCard.innerHTML = `
-                        <div class="term-header">
-                            <h3 class="term-title">${term.term}</h3>
-                            <button class="expand-button">+</button>
-                        </div>
-                        <div class="term-summary">${term.definition.substring(0, 100)}...</div>
-                        <div class="term-detail">${term.definition}</div>
-                    `;
-                    grid.appendChild(termCard);
-                });
-                
-                letterSection.appendChild(grid);
-                glossaryContent.appendChild(letterSection);
-            });
-            
-            // Add event listeners to expand buttons
-            document.querySelectorAll('.term-card').forEach(card => {
-                card.addEventListener('click', function() {
-                    this.classList.toggle('expanded');
-                });
-            });
         }
-
-        // Function to filter terms by search
-        function filterTermsBySearch() {
-            const searchText = document.getElementById('searchInput').value.toLowerCase();
-            
-            if (searchText === '') {
-                renderGlossaryTerms();
-                return;
-            }
-            
-            const filteredTerms = glossaryTerms.filter(term => 
-                term.term.toLowerCase().includes(searchText) || 
-                term.definition.toLowerCase().includes(searchText)
-            );
-            
-            const glossaryContent = document.getElementById('glossaryContent');
-            glossaryContent.innerHTML = '';
-            
-            if (filteredTerms.length === 0) {
-                glossaryContent.innerHTML = '<div class="no-results">No terms found matching your search.</div>';
-                return;
-            }
-            
-            const grid = document.createElement('div');
-            grid.className = 'glossary-grid';
-            
-            filteredTerms.forEach(term => {
-                const termCard = document.createElement('div');
-                termCard.className = 'term-card';
-                termCard.innerHTML = `
-                    <div class="term-header">
-                        <h3 class="term-title">${term.term}</h3>
-                        <button class="expand-button">+</button>
-                    </div>
-                    <div class="term-summary">${term.definition.substring(0, 100)}...</div>
-                    <div class="term-detail">${term.definition}</div>
-                `;
-                grid.appendChild(termCard);
-            });
-            
-            glossaryContent.appendChild(grid);
-            
-            // Add event listeners to expand buttons
-            document.querySelectorAll('.term-card').forEach(card => {
-                card.addEventListener('click', function() {
-                    this.classList.toggle('expanded');
-                });
-            });
-        }
-
-        // Initialize the glossary
+        
+        setInterval(draw, 33);
+        
+        // Pencere boyutu değiştiğinde canvas'ı yeniden boyutlandır
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+        
+        // Glossary işlevselliği
         document.addEventListener('DOMContentLoaded', function() {
-            generateAlphabetFilter();
-            renderGlossaryTerms();
+            // Alfabetik navigasyon
+            const alphaButtons = document.querySelectorAll('.alpha-button');
+            const letterSections = document.querySelectorAll('.letter-section');
             
-            // Add event listeners to alphabet filter buttons
-            document.querySelectorAll('.alphabet-filter button').forEach(button => {
+            alphaButtons.forEach(button => {
                 button.addEventListener('click', function() {
-                    // Update active button
-                    document.querySelectorAll('.alphabet-filter button').forEach(btn => {
-                        btn.classList.remove('active');
-                    });
-                    this.classList.add('active');
-                    
                     const letter = this.getAttribute('data-letter');
-                    if (letter === 'all') {
-                        renderGlossaryTerms();
-                    } else {
-                        renderGlossaryTerms(letter);
+                    const targetSection = document.getElementById(`letter-${letter}`);
+                    
+                    if (targetSection) {
+                        window.scrollTo({
+                            top: targetSection.offsetTop - 100,
+                            behavior: 'smooth'
+                        });
+                        
+                        // Aktif buton stilini güncelle
+                        alphaButtons.forEach(btn => btn.classList.remove('active'));
+                        this.classList.add('active');
                     }
                 });
             });
             
-            // Add event listener to search input
-            document.getElementById('searchInput').addEventListener('input', filterTermsBySearch);
+            // Genişletme butonları
+            const expandButtons = document.querySelectorAll('.expand-button');
+            expandButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const termCard = this.parentElement;
+                    termCard.classList.toggle('expanded');
+                });
+            });
+            
+            // Sayfa yüklendiğinde URL'deki hash'i kontrol et
+            if (window.location.hash) {
+                const hash = window.location.hash.substring(1);
+                const targetSection = document.getElementById(`letter-${hash}`);
+                
+                if (targetSection) {
+                    setTimeout(() => {
+                        window.scrollTo({
+                            top: targetSection.offsetTop - 100,
+                            behavior: 'smooth'
+                        });
+                        
+                        // İlgili butonu aktif yap
+                        const correspondingButton = document.querySelector(`.alpha-button[data-letter="${hash}"]`);
+                        if (correspondingButton) {
+                            alphaButtons.forEach(btn => btn.classList.remove('active'));
+                            correspondingButton.classList.add('active');
+                        }
+                    }, 500);
+                }
+            }
         });
     </script>
 </body>
