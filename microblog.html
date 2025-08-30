@@ -1115,6 +1115,7 @@
                     <div style="padding: 10px; text-align: center; color: white;">
                         Loading activity...
                     </div>
+                </div>
             </div>
             
             <div class="sidebar-widget">
@@ -1684,35 +1685,17 @@
               } else {
                 contentDiv.innerHTML = originalContent;
               }
-              // Slider'ları düzelt
-              setTimeout(fixSliders, 100);
             });
 
             document.addEventListener("click", (e) => {
               if (!icon.contains(e.target) && !contentDiv.contains(e.target)) {
                 icon.classList.remove("active");
                 contentDiv.innerHTML = originalContent;
-                // Slider'ları düzelt
-                setTimeout(fixSliders, 100);
               }
             });
 
             idDiv.appendChild(icon);
           });
-        }
-
-        // Slider'ları düzeltme fonksiyonu
-        function fixSliders() {
-            // Tüm slider'ları yeniden başlat
-            initAllSliders();
-            
-            // Slider konteyner boyutlarını güncelle
-            document.querySelectorAll('.image-slider').forEach(slider => {
-                if (slider.offsetParent !== null) {
-                    const event = new Event('resize');
-                    window.dispatchEvent(event);
-                }
-            });
         }
 
         function createEntryElement(entry, depth = 0) {
@@ -1878,10 +1861,17 @@
           // Çeviri ikonlarını ekle
           addTranslationIcons();
           
-          // Slider'ları başlat ve düzelt
+          // Slider'ları başlat
           setTimeout(() => {
             initAllSliders();
-            fixSliders();
+            
+            // Görünür slider'ların boyutlarını güncelle
+            document.querySelectorAll('.image-slider').forEach(slider => {
+              if (slider.offsetParent !== null) {
+                const event = new Event('resize');
+                window.dispatchEvent(event);
+              }
+            });
           }, 100);
           
           // GÖRÜNÜM SAYAÇLARINI GÜNCELLE
@@ -2216,7 +2206,7 @@
                 });
                 
                 // Entry'yi vurgula
-                entryElement.style.backgroundColor = 'rgba(0, 255, 0, 0.1');
+                entryElement.style.backgroundColor = 'rgba(0, 255, 0, 0.1)';
                 setTimeout(() => {
                   entryElement.style.backgroundColor = '';
                 }, 3000);
@@ -2280,14 +2270,20 @@
             window.addEventListener('load', function() {
               setTimeout(() => {
                 initAllSliders();
-                fixSliders();
+                
+                // Görünür slider'ların boyutlarını güncelle
+                document.querySelectorAll('.image-slider').forEach(slider => {
+                  if (slider.offsetParent !== null) {
+                    const event = new Event('resize');
+                    window.dispatchEvent(event);
+                  }
+                });
               }, 500);
             });
 
             // Pencere boyutu değiştiğinde slider'ları yeniden boyutlandır
             window.addEventListener('resize', function() {
               initAllSliders();
-              fixSliders();
             });
             
           } catch (error) {
@@ -2337,14 +2333,20 @@
               window.addEventListener('load', function() {
                 setTimeout(() => {
                   initAllSliders();
-                  fixSliders();
+                  
+                  // Görünür slider'ların boyutlarını güncelle
+                  document.querySelectorAll('.image-slider').forEach(slider => {
+                    if (slider.offsetParent !== null) {
+                      const event = new Event('resize');
+                      window.dispatchEvent(event);
+                    }
+                  });
                 }, 500);
               });
 
               // Pencere boyutu değiştiğinde slider'ları yeniden boyutlandır
               window.addEventListener('resize', function() {
                 initAllSliders();
-                fixSliders();
               });
               
             } catch (fallbackError) {
@@ -2599,10 +2601,17 @@
           // Çeviri ikonlarını ekle
           addTranslationIcons();
           
-          // Slider'ları başlat ve düzelt
+          // Slider'ları başlat
           setTimeout(() => {
             initAllSliders();
-            fixSliders();
+            
+            // Görünür slider'ların boyutlarını güncelle
+            document.querySelectorAll('.image-slider').forEach(slider => {
+              if (slider.offsetParent !== null) {
+                const event = new Event('resize');
+                window.dispatchEvent(event);
+              }
+            });
           }, 100);
           
           // GÖRÜNÜM SAYAÇLARINI GÜNCELLE
