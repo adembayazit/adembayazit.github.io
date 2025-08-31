@@ -5,7 +5,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ethical Hacker | Adem Bayazıt</title>
-    
     <!-- Open Graph (Facebook, WhatsApp, LinkedIn vs.) -->   
     <meta property="og:title" content="Adem Bayazıt | Ethical Hacker" />
     <meta property="og:description" content="Ethical Hacker, Cyber Security Analyst ve Linux Enthusiast." />
@@ -20,862 +19,607 @@
     <meta name="twitter:image:alt" content="Adem Bayazıt">
     
     <link rel="icon" type="png|image" href="/IMAGES/ab.png">
+    <link rel="stylesheet" href="/CSS/style.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-TFN7XD9Z');</script>
+    <!-- End Google Tag Manager -->
     <style>
-      /* Genel Stiller */
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: 'Poppins', sans-serif;
-        text-decoration: none;
-        scroll-behavior: smooth;
-      }
-      
-      :root {
-        --bg-color: #081b29;
-        --second-bg-color: #112e42;
-        --text-color: #ededed;
-        --main-color: #00abf0;
-        --accent-color: #f9d71c;
-      }
-      
       html {
         scroll-behavior: smooth;
       }
       
-      body {
-        background: var(--bg-color);
-        color: var(--text-color);
-        min-height: 100vh;
-        overflow-x: hidden;
-      }
-      
-      /* Header Stilleri */
-      .header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        padding: 1.5rem 9%;
-        background: rgba(8, 27, 41, 0.9);
-        backdrop-filter: blur(10px);
+      /* Mikroblog için iki sütunlu düzen */
+      .microblog-container {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-        z-index: 100;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-      }
-      
-      .logo {
-        font-size: 2rem;
-        color: var(--text-color);
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-      }
-      
-      .logo img {
-        width: 30px;
-        margin-right: 10px;
-      }
-      
-      .navbar a {
-        font-size: 1.1rem;
-        color: var(--text-color);
-        font-weight: 500;
-        margin-left: 2.5rem;
-        transition: 0.3s;
-        position: relative;
-      }
-      
-      .navbar a:hover,
-      .navbar a.active {
-        color: var(--accent-color);
-      }
-      
-      .dropdown {
-        position: relative;
-        display: inline-block;
-      }
-      
-      .dropdown-content {
-        display: none;
-        position: absolute;
-        background-color: rgba(8, 27, 41, 0.9);
-        min-width: 250px;
-        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-        z-index: 1;
-        border-radius: 5px;
-        overflow: hidden;
-        border: 1px solid rgba(249, 215, 28, 0.3);
-      }
-      
-      .dropdown-content a {
-        color: var(--text-color);
-        padding: 12px 16px;
-        text-decoration: none;
-        display: block;
-        font-size: 0.9rem;
-        margin-left: 0;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      }
-      
-      .dropdown-content a:hover {
-        background-color: rgba(249, 215, 28, 0.1);
-      }
-      
-      .dropdown:hover .dropdown-content {
-        display: block;
-      }
-      
-      .dropdown-content img {
-        width: 20px;
-        margin-right: 10px;
-        vertical-align: middle;
-      }
-      
-      /* Home Section Stilleri */
-      .home {
-        display: flex;
-        align-items: center;
-        min-height: 100vh;
-        padding: 100px 9% 0;
-        justify-content: center;
-      }
-      
-      .section-title {
-        font-size: 2.5rem;
-        margin-bottom: 2rem;
-        text-align: center;
-        color: var(--accent-color);
-      }
-      
-      .section-title i {
-        margin-right: 10px;
-      }
-      
-      /* Telefon Defteri Stilleri */
-      .phonebook-container {
-        max-width: 1200px;
-        width: 100%;
-        margin: 40px auto;
-        padding: 20px;
-        position: relative;
+        gap: 30px;
+        margin-top: 30px;
       }
 
-      .phonebook {
-        display: flex;
-        background: rgba(10, 25, 20, 0.9);
-        border-radius: 15px;
-        overflow: hidden;
-        box-shadow: 0 0 25px rgba(0, 255, 0, 0.2);
-        border: 1px solid rgba(0, 255, 0, 0.3);
-        min-height: 600px;
-        position: relative;
+      .entries-column {
+        flex: 1;
       }
 
-      .alphabet-tabs {
-        width: 60px;
-        background: rgba(5, 15, 12, 0.95);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 20px 0;
-        border-right: 1px solid rgba(0, 255, 0, 0.2);
+      .explanation-column {
+        flex: 1;
       }
 
-      .alphabet-tab {
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 5px 0;
-        border-radius: 50%;
+      .explanation-content {
         background: rgba(10, 25, 20, 0.7);
-        color: var(--accent-color);
-        font-weight: bold;
+        border-radius: 20px;
+        padding: 20px;
+        border: 1px solid rgba(0, 255, 0, 0.3);
+        box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);
+        position: relative;
+        overflow: hidden;
+        font-size: 0.8rem;
+      }
+
+      .explanation-content h3 {
+        color: white;
+        margin-bottom: 15px;
+        font-size: 0.9rem;
+        border-bottom: 1px solid rgba(249, 215, 28, 0.3);
+        padding-bottom: 10px;
+      }
+
+      .explanation-content p {
+        margin-bottom: 15px;
+        line-height: 1.6;
+      }
+
+      .toggle-explanation {
+        display: none;
+        background: rgba(0, 100, 0, 0.5);
+        color: #f9d71c;
+        border: 1px solid rgba(249, 215, 28, 0.3);
+        padding: 8px 15px;
+        border-radius: 5px;
+        margin-top: 15px;
         cursor: pointer;
         transition: all 0.3s;
-        border: 1px solid rgba(249, 215, 28, 0.3);
       }
 
-      .alphabet-tab:hover, .alphabet-tab.active {
-        background: rgba(249, 215, 28, 0.2);
-        transform: scale(1.1);
+      .toggle-explanation:hover {
+        background: rgba(0, 100, 0, 0.7);
       }
 
-      .phonebook-content {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        position: relative;
+      /* Modal için yeni stiller */
+         .modal {
+        display: none;
+        position: fixed;
+        z-index: 10000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.95);
         overflow: hidden;
+        opacity: 0;
+        transition: opacity 0.3s ease;
       }
 
-      .page-flipper {
+      .modal.show {
+        opacity: 1;
+      }
+
+      .modal-content {
         position: absolute;
         top: 50%;
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        padding: 0 20px;
-        z-index: 10;
-        transform: translateY(-50%);
-        pointer-events: none;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.9);
+        max-width: 95%;
+        max-height: 85vh;
+        object-fit: contain;
+        transition: transform 0.3s ease;
+        border-radius: 4px;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
       }
 
-      .flip-btn {
-        pointer-events: auto;
-        background: rgba(10, 25, 20, 0.8);
-        color: var(--accent-color);
-        border: 1px solid rgba(249, 215, 28, 0.3);
+      .modal.show .modal-content {
+        transform: translate(-50%, -50%) scale(1);
+      }
+
+      .close {
+        position: absolute;
+        top: 25px;
+        right: 30px;
+        color: #f1f1f1;
+        font-size: 40px;
+        font-weight: bold;
+        cursor: pointer;
+        z-index: 10010;
+        opacity: 0.8;
+        transition: opacity 0.2s;
+        background: rgba(0, 0, 0, 0.5);
         width: 50px;
         height: 50px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        cursor: pointer;
-        transition: all 0.3s;
-        font-size: 24px;
       }
 
-      .flip-btn:hover {
-        background: rgba(249, 215, 28, 0.2);
-        transform: scale(1.1);
+      .close:hover {
+        opacity: 1;
+        background: rgba(0, 0, 0, 0.7);
       }
 
-      .pages-container {
-        flex: 1;
-        position: relative;
-        perspective: 2000px;
-        padding: 40px 60px;
-      }
-
-      .page {
+      .modal-nav {
         position: absolute;
+        top: 50%;
         width: 100%;
-        height: 100%;
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 5px;
-        padding: 30px;
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-        backface-visibility: hidden;
-        transform-style: preserve-3d;
-        transition: transform 0.8s;
-        display: none;
+        display: flex;
+        justify-content: space-between;
+        transform: translateY(-50%);
+        pointer-events: none;
+        z-index: 10005;
       }
 
-      .page.active {
-        display: block;
-        transform: rotateY(0deg);
-      }
-
-      .page.next {
-        display: block;
-        transform: rotateY(180deg);
-      }
-
-      .page.prev {
-        display: block;
-        transform: rotateY(-180deg);
-      }
-
-      .page-number {
-        position: absolute;
-        top: 10px;
-        right: 20px;
-        color: var(--accent-color);
-        font-size: 14px;
-      }
-
-      .page-content {
-        height: 100%;
-        overflow-y: auto;
-        padding-right: 10px;
-      }
-
-      .page-content::-webkit-scrollbar {
-        width: 5px;
-      }
-
-      .page-content::-webkit-scrollbar-thumb {
-        background: rgba(249, 215, 28, 0.3);
-        border-radius: 10px;
-      }
-
-      .page-title {
-        color: var(--accent-color);
-        border-bottom: 1px solid rgba(249, 215, 28, 0.3);
-        padding-bottom: 10px;
-        margin-bottom: 20px;
-        font-size: 24px;
-      }
-
-      .topic-item {
-        margin-bottom: 15px;
-        padding-left: 20px;
-        position: relative;
-      }
-
-      .topic-item:before {
-        content: "•";
-        color: #00ff00;
-        position: absolute;
-        left: 0;
-      }
-
-      .topic-title {
+      .nav-button {
+        pointer-events: auto;
+        background: rgba(0, 0, 0, 0.5);
         color: white;
-        font-weight: bold;
-        margin-bottom: 5px;
+        border: none;
+        padding: 20px;
+        font-size: 24px;
         cursor: pointer;
+        margin: 0 20px;
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
         display: flex;
         align-items: center;
+        justify-content: center;
+        opacity: 0.7;
+        transition: opacity 0.3s, background 0.3s;
       }
 
-      .expand-icon {
-        margin-left: 10px;
-        font-size: 14px;
-        transition: transform 0.3s;
-      }
-
-      .topic-details {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.5s ease;
-        color: #ccc;
-        font-size: 14px;
-        line-height: 1.6;
-        padding-left: 20px;
-      }
-
-      .topic-item.expanded .topic-details {
-        max-height: 500px;
-      }
-
-      .topic-item.expanded .expand-icon {
-        transform: rotate(45deg);
-      }
-
-      /* Footer Stilleri */
-      footer {
-        text-align: center;
-        padding: 20px;
-        font-size: 14px;
-        color: white;
-        background: var(--second-bg-color);
-        margin-top: 40px;
-      }
-      
-      footer hr {
-        margin-bottom: 10px;
-        border-color: limegreen;
-      }
-
-      /* IP Indicator */
-      .ip-indicator {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        width: 18px;
-        height: 18px;
-        background: #f9d71c;
-        border-radius: 50%;
-        border: 3px solid white;
-        box-shadow: 0 0 10px rgba(50, 205, 50, 0.8);
-        cursor: pointer;
-        z-index: 9999;
-        transition: all 0.3s;
-      }
-      
-      .ip-tooltip {
-        position: absolute;
-        bottom: 100%;
-        right: 0;
-        background: rgba(0,0,0,0.9);
-        color: white;
-        padding: 10px;
-        border-radius: 6px;
-        font-size: 14px;
-        font-family: Arial, sans-serif;
-        white-space: nowrap;
-        opacity: 0;
-        transition: opacity 0.3s;
-        pointer-events: none;
-        min-width: 240px;
-        backdrop-filter: blur(5px);
-      }
-      
-      .ip-indicator:hover .ip-tooltip {
+      .nav-button:hover {
         opacity: 1;
-      }
-      
-      .ip-indicator:hover {
-        transform: scale(1.1);
+        background: rgba(0, 0, 0, 0.8);
       }
 
-      /* Duyarlı Tasarım */
-      @media (max-width: 1200px) {
-        .header {
-          padding: 1.5rem 4%;
-        }
-        
-        .home {
-          padding: 100px 4% 0;
-        }
+      .modal-info {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+        color: white;
+        padding: 20px 10px 10px;
+        text-align: center;
+        z-index: 10006;
       }
-      
+
+      .modal-info-content {
+        max-width: 800px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .modal-info-item {
+        display: flex;
+        align-items: center;
+        margin: 5px 10px;
+        font-size: 10px;
+      }
+
+      .modal-info-item i {
+        margin-right: 10px;
+        color: #f9d71c;
+      }
+
+      .modal-counter {
+        font-size: 10px;
+        color: #f1f1f1;
+        background: rgba(0, 0, 0, 0.5);
+        padding: 8px 15px;
+        border-radius: 20px;
+        margin: 0 10px;
+      }
+
+      /* Mobil için stil */
       @media (max-width: 992px) {
-        .phonebook {
+        .microblog-container {
           flex-direction: column;
         }
         
-        .alphabet-tabs {
-          width: 100%;
-          flex-direction: row;
-          flex-wrap: wrap;
-          justify-content: center;
-          padding: 10px;
-          border-right: none;
-          border-bottom: 1px solid rgba(0, 255, 0, 0.2);
+        .explanation-content {
+          max-height: 225px;
+          overflow: hidden;
+          transition: max-height 0.5s ease;
         }
         
-        .alphabet-tab {
-          margin: 5px;
-          width: 35px;
-          height: 35px;
+        .explanation-content.expanded {
+          max-height: 1200px;
         }
         
-        .pages-container {
-          padding: 20px;
-          min-height: 500px;
+        .toggle-explanation {
+          display: block;
         }
         
-        .page-flipper {
-          padding: 0 10px;
-        }
-        
-        .flip-btn {
-          width: 40px;
-          height: 40px;
-          font-size: 18px;
-        }
-        
-        .navbar a {
-          margin-left: 1.5rem;
-          font-size: 1rem;
-        }
-      }
-
-      @media (max-width: 768px) {
-        .navbar {
-          position: fixed;
-          width: 100%;
-          bottom: 0;
-          left: 0;
-          background: rgba(8, 27, 41, 0.9);
-          padding: 1rem;
-          display: flex;
-          justify-content: space-around;
-        }
-        
-        .header {
+        #modal-info {
           flex-direction: column;
-          padding: 1rem;
+          gap: 5px;
+          font-size: 10px;
+          padding: 8px 15px;
+        }
+        .modal-info-item {
+          margin: 3px 0;
+          font-size: 15px;
         }
         
-        .logo {
-          margin-bottom: 1rem;
-        }
-        
-        .dropdown-content {
-          bottom: 100%;
-          top: auto;
-        }
-      }
-
-      @media (max-width: 576px) {
-        .phonebook-container {
-          margin: 20px auto;
-          padding: 10px;
-        }
-        
-        .alphabet-tab {
-          width: 30px;
-          height: 30px;
-          font-size: 12px;
-          margin: 3px;
-        }
-        
-        .pages-container {
+        .nav-button {
+          width: 50px;
+          height: 50px;
           padding: 15px;
+          margin: 0 10px;
         }
-        
-        .page-title {
-          font-size: 20px;
-        }
-        
-        .section-title {
-          font-size: 2rem;
-        }
-        
-        .logo {
-          font-size: 1.5rem;
+        .close {
+          top: 10px;
+          right: 20px;
+          font-size: 30px;
         }
       }
     </style>
 </head>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TFN7XD9Z"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<script>
+  const dot = document.createElement('div');
+  dot.style.cssText = `
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 18px;
+    height: 18px;
+    background: #f9d71c;
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 0 10px rgba(50, 205, 50, 0.8);
+    cursor: pointer;
+    z-index: 9999;
+    transition: all 0.3s;
+  `;
+
+  const tooltip = document.createElement('div');
+    tooltip.style.cssText = `
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    background: rgba(0,0,0,0.9);
+    color: white;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    min-width: 240px;
+    backdrop-filter: blur(5px);
+  `;
+
+  dot.appendChild(tooltip);
+  document.body.appendChild(dot);
+
+  dot.addEventListener('mouseenter', () => tooltip.style.opacity = '1');
+  dot.addEventListener('mouseleave', () => tooltip.style.opacity = '0');
+  fetch('https://ipinfo.io/json?token=68a1229187303a') // TOKEN doğruysa böyle bırak
+    .then(async res => {
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`Hatalı cevap (${res.status}): ${text}`);
+      }
+      return res.json();
+    })
+    .then(data => {
+      const now = new Date();
+      const {
+        ip, hostname, city, region,
+        country, loc, org, postal, timezone
+      } = data;
+
+      tooltip.innerHTML = `
+        <div style="margin-bottom: 3px; font-weight: bold; color: #00ff00;">✓ User IP Detected</div>
+        <div><strong>IP:</strong> ${ip}</div>
+        <div><strong>Host:</strong> ${hostname}</div>
+        <div><strong>City:</strong> ${city}</div>
+        <div><strong>Country:</strong> ${country}</div>
+        <div><strong>Location</strong> ${loc}</div>
+        <div><strong>Postal:</strong> ${postal}</div>
+        <div><strong>Org:</strong> ${org}</div>
+        <div><strong>Time:</strong> ${now.toLocaleString('tr-TR')}</div>
+        <div style="font-size: 9px; margin-top: 4px; color: #ccc;">${navigator.userAgent.split(' ')[0]}</div>
+      `;
+
+      // POST ile Netlify fonksiyonuna gönder
+      fetch('https://adembayazit.netlify.app/.netlify/functions/log-visitor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ip, hostname, city, region,
+          country, loc, org, postal,
+          timezone, timestamp: now.toISOString(),
+          userAgent: navigator.userAgent
+        })
+      }).then(res => res.json())
+        .then(console.log)
+        .catch(err => console.error("POST hatası:", err));
+    })
+    .catch(error => {
+      const now = new Date();
+      tooltip.innerHTML = `
+        <div style="margin-bottom: 5px; font-weight: bold; color: #ff5555;">❌ Hata</div>
+        <div><strong>Zaman:</strong> ${now.toLocaleString('tr-TR')}</div>
+        <div><strong>Mesaj:</strong> ${error.message}</div>
+      `;
+      dot.style.background = "#ff5555";
+    });
+</script>
+    <script type="module" src="/JAVASCRIPT/load-entries.js"></script>
+    <script src="/JAVASCRIPT/monitor.js"></script>
+    <canvas id="matrixCanvas"></canvas>
+                                                        <!-- Matrix -->
+    <script src="/JAVASCRIPT/matrix.js"></script>
 <body>
     <header class="header">
         <a href="#home" class="logo"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">{adembayazit} </a>
         <nav class="navbar">
+            <!-- <a href="#home" style="--i:1;" class="active">Home</a>
+            <a href="about.html" style="--i:2;">About</a>
+            <a href="skills.html" style="--i:3;">Skills</a>
+            <a href="#project" style="--i:4;">Projects</a>
+            <a href="#contact" style="--i:5;">Contact</a>
+            <a href="ethicalhacker.html" style="--i:5;">Ethical Hacker</a>  -->
             <div class="dropdown">
-                <a href="#" class="dropbtn"> <img src="IMAGES/Ata.svg" alt="Ata Icon" class="ata-icon"><span class="fi fi-tr"></span> <span class='bx bx-code-alt'></span> Ethical Hacker <span class='bx bx-chevron-down'></span></a>
-                <div class="dropdown-content">
-                    <a href="#tools"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hacker-icon"> What is an Ethical Hacker?</a>
-                    <a href="#reports"><img src="IMAGES/glossary.svg" alt="Glossary" class="glossary-icon"> Cybersecurity Glossary</a>
-                    <a href="#payloads"><img src="IMAGES/soc.svg" alt="Soc" class="soc-icon"> What is a SOC ?</a>
-                    <a href="#payloads"><img src="IMAGES/vulnerabilities.svg" alt="Vulnerabilities" class="vulnerabilities-icon"> Vulnerabilities</a>
-                    <a href="#payloads"><img src="IMAGES/steganography.svg" alt="Steganography" class="steganography-icon"> Steganography</a>
-                    <a href="#payloads"><img src="IMAGES/cryptography.svg" alt="Cryptography" class="cryptography-icon"> Cryptography</a>    
-                    <a href="#payloads"><img src="IMAGES/education.svg" alt="Education" class="education-icon"> Cybersecurity Learning Resources</a>
-                </div>
-            </div>
+            <a href="#" style="--i:5; class="dropbtn"> <img src="IMAGES/Ata.svg" alt= "Ata Icon" class="ata-icon"><span class="fi fi-tr"><!-- Türkiye --></span> <span class='bx bx-code-alt'></span> Ethical Hacker <span class='bx bx-chevron-down'></span></a>
+            <div class="dropdown-content">
+            <a href="#tools"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hacker-icon"> What is an Ethical Hacker?</a>
+            <a href="#reports"><img src="IMAGES/glossary.svg" alt="Glossary" class="glossary-icon"> Cybersecurity Glossary</a>
+            <a href="#payloads"><img src="IMAGES/soc.svg" alt="Soc" class="soc-icon"> What is a SOC ?</a>
+            <a href="#payloads"><img src="IMAGES/vulnerabilities.svg" alt="Vulnerabilities" class="vulnerabilities-icon"> Vulnerabilities</a>
+            <a href="#payloads"><img src="IMAGES/steganography.svg" alt="Steganography" class="steganography-icon"> Steganography</a>
+            <a href="#payloads"><img src="IMAGES/cryptography.svg" alt="Cryptography" class="cryptography-icon"> Cryptography</a>    
+            <a href="#payloads"><img src="IMAGES/education.svg" alt="Education" class="education-icon"> Cybersecurity Learning Resources</a>
+    </div>
+  </div>
+            
         </nav>
     </header>
 
-    <!-- Home Section (Phonebook) -->
     <section id="home" class="home">
-        <div class="phonebook-container">
-            <h2 class="section-title"><i class="fa-solid fa-book"></i> Cybersecurity Encyclopedia</h2>
-            
-            <div class="phonebook">
-                <div class="alphabet-tabs">
-                    <!-- A-Z Sekmeleri -->
-                    <div class="alphabet-tab active" data-letter="A">A</div>
-                    <div class="alphabet-tab" data-letter="B">B</div>
-                    <div class="alphabet-tab" data-letter="C">C</div>
-                    <div class="alphabet-tab" data-letter="D">D</div>
-                    <div class="alphabet-tab" data-letter="E">E</div>
-                    <div class="alphabet-tab" data-letter="F">F</div>
-                    <div class="alphabet-tab" data-letter="G">G</div>
-                    <div class="alphabet-tab" data-letter="H">H</div>
-                    <div class="alphabet-tab" data-letter="I">I</div>
-                    <div class="alphabet-tab" data-letter="J">J</div>
-                    <div class="alphabet-tab" data-letter="K">K</div>
-                    <div class="alphabet-tab" data-letter="L">L</div>
-                    <div class="alphabet-tab" data-letter="M">M</div>
-                    <div class="alphabet-tab" data-letter="N">N</div>
-                    <div class="alphabet-tab" data-letter="O">O</div>
-                    <div class="alphabet-tab" data-letter="P">P</div>
-                    <div class="alphabet-tab" data-letter="Q">Q</div>
-                    <div class="alphabet-tab" data-letter="R">R</div>
-                    <div class="alphabet-tab" data-letter="S">S</div>
-                    <div class="alphabet-tab" data-letter="T">T</div>
-                    <div class="alphabet-tab" data-letter="U">U</div>
-                    <div class="alphabet-tab" data-letter="V">V</div>
-                    <div class="alphabet-tab" data-letter="W">W</div>
-                    <div class="alphabet-tab" data-letter="X">X</div>
-                    <div class="alphabet-tab" data-letter="Y">Y</div>
-                    <div class="alphabet-tab" data-letter="Z">Z</div>
-                </div>
-                
-                <div class="phonebook-content">
-                    <div class="page-flipper">
-                        <div class="flip-btn prev-btn"><i class='bx bx-chevron-left'></i></div>
-                        <div class="flip-btn next-btn"><i class='bx bx-chevron-right'></i></div>
-                    </div>
-                    
-                    <div class="pages-container">
-                        <!-- A Harfi Sayfası -->
-                        <div class="page active" data-letter="A">
-                            <span class="page-number">1</span>
-                            <div class="page-content">
-                                <h2 class="page-title">A</h2>
-                                
-                                <div class="topic-item">
-                                    <div class="topic-title">1. Cryptology <span class="expand-icon">+</span></div>
-                                    <div class="topic-details">
-                                        The study of codes, combining both cryptography (creating codes) and cryptanalysis (breaking codes). It is essential for secure communications in cybersecurity.
-                                    </div>
-                                </div>
-                                
-                                <div class="topic-item">
-                                    <div class="topic-title">2. Advanced Persistent Threat (APT) <span class="expand-icon">+</span></div>
-                                    <div class="topic-details">
-                                        A prolonged and targeted cyberattack in which an intruder gains access to a network and remains undetected for an extended period.
-                                    </div>
-                                </div>
-                                
-                                <div class="topic-item">
-                                    <div class="topic-title">3. Authentication <span class="expand-icon">+</span></div>
-                                    <div class="topic-details">
-                                        The process of verifying the identity of a user, process, or device, often as a prerequisite to allowing access to resources in an information system.
-                                    </div>
-                                </div>
-                                
-                                <div class="topic-item">
-                                    <div class="topic-title">4. Adware <span class="expand-icon">+</span></div>
-                                    <div class="topic-details">
-                                        Software that automatically displays or downloads advertising material such as banners or pop-ups when a user is online.
-                                    </div>
-                                </div>
-                                
-                                <div class="topic-item">
-                                    <div class="topic-title">5. Access Control <span class="expand-icon">+</span></div>
-                                    <div class="topic-details">
-                                        A security technique that regulates who or what can view or use resources in a computing environment.
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- B Harfi Sayfası -->
-                        <div class="page" data-letter="B">
-                            <span class="page-number">2</span>
-                            <div class="page-content">
-                                <h2 class="page-title">B</h2>
-                                
-                                <div class="topic-item">
-                                    <div class="topic-title">1. Backdoor <span class="expand-icon">+</span></div>
-                                    <div class="topic-details">
-                                        A method of bypassing normal authentication procedures, usually installed as a hidden method of maintaining access to a compromised system.
-                                    </div>
-                                </div>
-                                
-                                <div class="topic-item">
-                                    <div class="topic-title">2. Botnet <span class="expand-icon">+</span></div>
-                                    <div class="topic-details">
-                                        A network of private computers infected with malicious software and controlled as a group without the owners' knowledge, e.g., to send spam.
-                                    </div>
-                                </div>
-                                
-                                <div class="topic-item">
-                                    <div class="topic-title">3. Brute Force Attack <span class="expand-icon">+</span></div>
-                                    <div class="topic-details">
-                                        A trial-and-error method used to obtain information such as a user password or personal identification number (PIN).
-                                    </div>
-                                </div>
-                                
-                                <div class="topic-item">
-                                    <div class="topic-title">4. Bug Bounty <span class="expand-icon">+</span></div>
-                                    <div class="topic-details">
-                                        A reward offered to individuals who identify and report bugs, especially those pertaining to security exploits and vulnerabilities.
-                                    </div>
-                                </div>
-                                
-                                <div class="topic-item">
-                                    <div class="topic-title">5. Blockchain <span class="expand-icon">+</span></div>
-                                    <div class="topic-details">
-                                        A distributed, decentralized, public ledger that is used to record transactions across many computers securely.
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- C Harfi Sayfası -->
-                        <div class="page" data-letter="C">
-                            <span class="page-number">3</span>
-                            <div class="page-content">
-                                <h2 class="page-title">C</h2>
-                                
-                                <div class="topic-item">
-                                    <div class="topic-title">1. Cryptography <span class="expand-icon">+</span></div>
-                                    <div class="topic-details">
-                                        The practice and study of techniques for secure communication in the presence of third parties called adversaries.
-                                    </div>
-                                </div>
-                                
-                                <div class="topic-item">
-                                    <div class="topic-title">2. Cyber Attack <span class="expand-icon">+</span></div>
-                                    <div class="topic-details">
-                                        Any type of offensive maneuver that targets computer information systems, infrastructures, computer networks, or personal computer devices.
-                                    </div>
-                                </div>
-                                
-                                <div class="topic-item">
-                                    <div class="topic-title">3. CIA Triad <span class="expand-icon">+</span></div>
-                                    <div class="topic-details">
-                                        A model designed to guide policies for information security within an organization. It stands for Confidentiality, Integrity, and Availability.
-                                    </div>
-                                </div>
-                                
-                                <div class="topic-item">
-                                    <div class="topic-title">4. Cross-Site Scripting (XSS) <span class="expand-icon">+</span></div>
-                                    <div class="topic-details">
-                                        A security vulnerability typically found in web applications that allows attackers to inject client-side scripts into web pages viewed by other users.
-                                    </div>
-                                </div>
-                                
-                                <div class="topic-item">
-                                    <div class="topic-title">5. Cybersecurity <span class="expand-icon">+</span></div>
-                                    <div class="topic-details">
-                                        The practice of protecting systems, networks, and programs from digital attacks aimed at accessing, changing, or destroying sensitive information.
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Diğer sayfalar buraya eklenecek -->
-                        <!-- Örnek olarak sadece A, B ve C sayfalarını gösterdim -->
-                        
-                    </div>
-                </div>
-            </div>
-        </div>
+
+        
     </section>
 
-    <footer>
-        <hr>
-        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.2 | July 2025</p>
-    </footer>
+<footer style="text-align: center; padding: 20px; font-size: 14px; color: white;">
+  <hr style="margin-bottom: 10px; border-color: limegreen;" />
+  <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.2 | July 2025</p>
+</footer>
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0WNL3VLY3F"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-0WNL3VLY3F');
+</script>
+<!-- JS Dosyasını Bağla -->
+<script src="/JAVASCRIPT/gallery.js"></script>
+<script src="/JAVASCRIPT/log-download.js"></script>
+<script src="/JAVASCRIPT/translate-entry.js"></script>
+<script src="/JAVASCRIPT/keysound.js"></script>
 
-    <!-- IP Indicator -->
-    <div class="ip-indicator">
-        <div class="ip-tooltip">IP bilgisi yükleniyor...</div>
-    </div>
+<script>
+ document.addEventListener("DOMContentLoaded", () => {
+  const galleryGrid = document.getElementById("gallery-grid");
+  const loadMoreBtn = document.getElementById("load-more");
+  const modal = document.getElementById("modal");
+  const modalImg = document.getElementById("modal-img");
+  const modalLocation = document.getElementById("modal-location");
+  const modalTime = document.getElementById("modal-time");
+  const modalCounter = document.getElementById("modal-counter");
+  const closeBtn = document.querySelector(".close");
+  const prevButton = document.querySelector(".prev-button");
+  const nextButton = document.querySelector(".next-button");
 
-    <script>
-        // IP Bilgisi
-        document.addEventListener('DOMContentLoaded', function() {
-            const ipIndicator = document.querySelector('.ip-indicator');
-            const ipTooltip = document.querySelector('.ip-tooltip');
-            
-            fetch('https://ipinfo.io/json?token=68a1229187303a')
-                .then(async res => {
-                    if (!res.ok) {
-                        const text = await res.text();
-                        throw new Error(`Hatalı cevap (${res.status}): ${text}`);
-                    }
-                    return res.json();
-                })
-                .then(data => {
-                    const now = new Date();
-                    const {
-                        ip, hostname, city, region,
-                        country, loc, org, postal, timezone
-                    } = data;
+  let allPhotos = [];
+  let visibleCount = 8;
+  let currentIndex = 0;
 
-                    ipTooltip.innerHTML = `
-                        <div style="margin-bottom: 3px; font-weight: bold; color: #00ff00;">✓ User IP Detected</div>
-                        <div><strong>IP:</strong> ${ip}</div>
-                        <div><strong>Host:</strong> ${hostname}</div>
-                        <div><strong>City:</strong> ${city}</div>
-                        <div><strong>Country:</strong> ${country}</div>
-                        <div><strong>Location</strong> ${loc}</div>
-                        <div><strong>Postal:</strong> ${postal}</div>
-                        <div><strong>Org:</strong> ${org}</div>
-                        <div><strong>Time:</strong> ${now.toLocaleString('tr-TR')}</div>
-                        <div style="font-size: 9px; margin-top: 4px; color: #ccc;">${navigator.userAgent.split(' ')[0]}</div>
-                    `;
+  // photos.json'dan verileri çek
+  fetch("/photos.json")
+    .then(res => res.json())
+    .then(data => {
+      allPhotos = data;
+      renderPhotos();
+    })
+    .catch(err => {
+      console.error("Photo fetch error:", err);
+      // Eğer fetch başarısız olursa, örnek veri kullan
+      allPhotos = [
+        {
+          "src": "PHOTO/photo1.JPG",
+          "date": "2017-05-25",
+          "time": "17:12",
+          "location": "Eymir, Ankara, Türkiye"
+        },
+        {
+          "src": "PHOTO/photo2.JPG",
+          "date": "2017-05-30",
+          "time": "14:57",
+          "location": "Eymir, Ankara, Türkiye"
+        },
+        {
+          "src": "PHOTO/photo3.JPG",
+          "date": "2017-05-11",
+          "time": "14:41",
+          "location": "Eymir, Ankara, Türkiye"
+        },
+        {
+          "src": "PHOTO/photo4.jpeg",
+          "date": "2017-04-01",
+          "time": "10:57",
+          "location": "Kuleli, İstanbul, Türkiye"
+        },
+        {
+          "src": "PHOTO/photo5.jpeg",
+          "date": "2017-04-29",
+          "time": "19:18",
+          "location": "Alıntepe, İstanbul, Türkiye"
+        },
+        {
+          "src": "PHOTO/IMG_0530.jpeg",
+          "date": "2023-06-29",
+          "time": "19:22",
+          "location": "Hacettepe Üniversitesi Cami Önü, Ankara, Türkiye"
+        }
+      ];
+      renderPhotos();
+    });
 
-                    // POST ile Netlify fonksiyonuna gönder
-                    fetch('https://adembayazit.netlify.app/.netlify/functions/log-visitor', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            ip, hostname, city, region,
-                            country, loc, org, postal,
-                            timezone, timestamp: now.toISOString(),
-                            userAgent: navigator.userAgent
-                        })
-                    }).catch(err => console.error("POST hatası:", err));
-                })
-                .catch(error => {
-                    const now = new Date();
-                    ipTooltip.innerHTML = `
-                        <div style="margin-bottom: 5px; font-weight: bold; color: #ff5555;">❌ Hata</div>
-                        <div><strong>Zaman:</strong> ${now.toLocaleString('tr-TR')}</div>
-                        <div><strong>Mesaj:</strong> ${error.message}</div>
-                    `;
-                    ipIndicator.style.background = "#ff5555";
-                });
-        });
+  function renderPhotos() {
+    galleryGrid.innerHTML = "";
+    allPhotos.slice(0, visibleCount).forEach((photo, index) => {
+      const img = document.createElement("img");
+      img.src = photo.src;
+      img.classList.add("gallery-photo");
+      img.alt = "Gallery Photo";
+      img.dataset.location = photo.location;
+      img.dataset.date = photo.date;
+      img.dataset.time = photo.time;
+      img.dataset.index = index;
+      
+      img.addEventListener("click", () => {
+        currentIndex = index;
+        openModal();
+      });
+      
+      galleryGrid.appendChild(img);
+    });
 
-        // Phonebook Fonksiyonelliği
-        document.addEventListener('DOMContentLoaded', function() {
-            const alphabetTabs = document.querySelectorAll('.alphabet-tab');
-            const pages = document.querySelectorAll('.page');
-            const prevBtn = document.querySelector('.prev-btn');
-            const nextBtn = document.querySelector('.next-btn');
-            
-            let currentPageIndex = 0;
-            
-            // Harf sekmelerine tıklama
-            alphabetTabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    const letter = this.getAttribute('data-letter');
-                    
-                    // Aktif sekme stillerini güncelle
-                    alphabetTabs.forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    // İlgili sayfayı göster
-                    pages.forEach((page, index) => {
-                        if (page.getAttribute('data-letter') === letter) {
-                            page.classList.add('active');
-                            currentPageIndex = index;
-                        } else {
-                            page.classList.remove('active');
-                        }
-                    });
-                });
-            });
-            
-            // Sayfa geçiş butonları
-            prevBtn.addEventListener('click', function() {
-                if (currentPageIndex > 0) {
-                    currentPageIndex--;
-                    const letter = pages[currentPageIndex].getAttribute('data-letter');
-                    
-                    // Aktif sekme ve sayfayı güncelle
-                    alphabetTabs.forEach(tab => {
-                        if (tab.getAttribute('data-letter') === letter) {
-                            tab.classList.add('active');
-                        } else {
-                            tab.classList.remove('active');
-                        }
-                    });
-                    
-                    pages.forEach(page => page.classList.remove('active'));
-                    pages[currentPageIndex].classList.add('active');
-                }
-            });
-            
-            nextBtn.addEventListener('click', function() {
-                if (currentPageIndex < pages.length - 1) {
-                    currentPageIndex++;
-                    const letter = pages[currentPageIndex].getAttribute('data-letter');
-                    
-                    // Aktif sekme ve sayfayı güncelle
-                    alphabetTabs.forEach(tab => {
-                        if (tab.getAttribute('data-letter') === letter) {
-                            tab.classList.add('active');
-                        } else {
-                            tab.classList.remove('active');
-                        }
-                    });
-                    
-                    pages.forEach(page => page.classList.remove('active'));
-                    pages[currentPageIndex].classList.add('active');
-                }
-            });
-            
-            // Konu genişletme/daraltma
-            const topicItems = document.querySelectorAll('.topic-item');
-            topicItems.forEach(item => {
-                const title = item.querySelector('.topic-title');
-                title.addEventListener('click', function() {
-                    item.classList.toggle('expanded');
-                });
-            });
-        });
-    </script>
+    loadMoreBtn.style.display = visibleCount < allPhotos.length ? "block" : "none";
+  }
+
+  function openModal() {
+    modal.style.display = "flex";
+    setTimeout(() => {
+      modal.classList.add("show");
+    }, 10);
+    document.body.style.overflow = "hidden";
+    updateModal();
+  }
+
+  function closeModal() {
+    modal.classList.remove("show");
+    setTimeout(() => {
+      modal.style.display = "none";
+      document.body.style.overflow = "auto";
+    }, 300);
+  }
+
+  function updateModal() {
+    const photo = allPhotos[currentIndex];
+    modalImg.src = photo.src;
+    modalLocation.textContent = photo.location || 'Unknown Location';
+    modalTime.textContent = `${photo.date} ${photo.time}` || 'Unknown Time';
+    modalCounter.textContent = `${currentIndex + 1} / ${allPhotos.length}`;
+  }
+
+  function nextPhoto() {
+    currentIndex = (currentIndex + 1) % allPhotos.length;
+    updateModal();
+  }
+
+  function prevPhoto() {
+    currentIndex = (currentIndex - 1 + allPhotos.length) % allPhotos.length;
+    updateModal();
+  }
+
+  // Olay dinleyicileri
+  closeBtn.addEventListener("click", closeModal);
+
+  window.addEventListener("click", e => {
+    if (e.target === modal) {
+      closeModal();
+    }
+  });
+
+  nextButton.addEventListener("click", nextPhoto);
+  prevButton.addEventListener("click", prevPhoto);
+
+  // Klavye ile gezinme
+  document.addEventListener("keydown", e => {
+    if (modal.classList.contains("show")) {
+      if (e.key === "ArrowRight") {
+        nextPhoto();
+      } else if (e.key === "ArrowLeft") {
+        prevPhoto();
+      } else if (e.key === "Escape") {
+        closeModal();
+      }
+    }
+  });
+
+  // Swipe için touch events
+  let touchStartX = 0;
+  let touchEndX = 0;
+
+  modal.addEventListener('touchstart', e => {
+    touchStartX = e.changedTouches[0].screenX;
+  }, false);
+
+  modal.addEventListener('touchend', e => {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+  }, false);
+
+  function handleSwipe() {
+    if (touchEndX < touchStartX - 50) {
+      nextPhoto();
+    }
+    if (touchEndX > touchStartX + 50) {
+      prevPhoto();
+    }
+  }
+
+  loadMoreBtn.addEventListener("click", () => {
+    visibleCount += 8;
+    renderPhotos();
+  });
+  
+  // Expand More butonu için gerekli JavaScript kodu
+  const toggleButton = document.querySelector('.toggle-explanation');
+  const explanationContent = document.querySelector('.explanation-content');
+  
+  if (toggleButton && explanationContent) {
+    toggleButton.addEventListener('click', function() {
+      explanationContent.classList.toggle('expanded');
+      
+      // Buton metnini değiştir
+      if (explanationContent.classList.contains('expanded')) {
+        toggleButton.textContent = 'Less..';
+      } else {
+        toggleButton.textContent = 'More..';
+      }
+    });
+  }
+});
+</script>
 </body> 
 </html>
