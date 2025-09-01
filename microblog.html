@@ -2452,6 +2452,9 @@
 
         // 7. BİLDİRİM SİSTEMİ FONKSİYONLARI - YENİ EKLENDİ
         // Service Worker kaydı
+        // Bildirim sistemi fonksiyonları - GÜNCELLENDİ
+        
+        // Service Worker kaydı
         function registerServiceWorker() {
           if ('serviceWorker' in navigator && 'PushManager' in window) {
             navigator.serviceWorker.register('/sw.js')
@@ -2459,6 +2462,8 @@
                 console.log('Service Worker registered successfully');
                 swRegistration = registration;
                 initializePush();
+                // Service Worker hazır olduğunda bildirim iznini kontrol et
+                checkNotificationPermission();
               })
               .catch(function(error) {
                 console.log('Service Worker registration failed:', error);
@@ -2469,30 +2474,29 @@
             console.log('Push messaging is not supported');
             document.getElementById('notificationStatus').textContent = 
               'Tarayıcınız bildirimleri desteklemiyor.';
+            document.getElementById('enableNotifications').style.display = 'none';
           }
         }
 
-        // Push bildirimlerini başlat
-        function initializePush() {
-          if (!swRegistration) return;
+        // Bildirim iznini kontrol et
+        function checkNotificationPermission() {
+          if (!('Notification' in window)) return;
           
-          swRegistration.pushManager.getSubscription()
-            .then(function(subscription) {
-              isSubscribed = !(subscription === null);
-              
-              if (isSubscribed) {
-                console.log('User is already subscribed:', subscription);
-                document.getElementById('notificationStatus').textContent = 
-                  'Bildirimler zaten etkin! Yeni entrylerden anında haberdar olacaksınız.';
-                document.getElementById('enableNotifications').style.display = 'none';
-              } else {
-                document.getElementById('notificationStatus').textContent = 
-                  'Bildirimleri etkinleştirmek için butona tıklayın.';
-              }
-            })
-            .catch(function(error) {
-              console.error('Error getting subscription:', error);
-            });
+          if (Notification.permission === 'granted') {
+            document.getElementById('notificationStatus').textContent = 
+              'Bildirimler etkin! Yeni entrylerden anında haberdar olacaksınız.';
+            document.getElementById('enableNotifications').style.display = 'none';
+            // Kullanıcı zaten izin vermişse abone ol
+            subscribeUser();
+          } else if (Notification.permission === 'denied') {
+            document.getElementById('notificationStatus').textContent = 
+              'Bildirimler engellendi. Tarayıcı ayarlarından etkinleştirebilirsiniz.';
+            document.getElementById('enableNotifications').style.display = 'none';
+          } else {
+            document.getElementById('notificationStatus').textContent = 
+              'Yeni entrylerden haberdar olmak için bildirimleri etkinleştirin.';
+            document.getElementById('enableNotifications').style.display = 'block';
+          }
         }
 
         // Kullanıcıyı abone et
@@ -2535,44 +2539,30 @@
           });
         }
 
-        // Base64 to Uint8Array dönüşümü
-        function urlB64ToUint8Array(base64String) {
-          const padding = '='.repeat((4 - base64String.length % 4) % 4);
-          const base64 = (base64String + padding)
-            .replace(/\-/g, '+')
-            .replace(/_/g, '/');
-          const rawData = window.atob(base64);
-          const outputArray = new Uint8Array(rawData.length);
-          for (let i = 0; i < rawData.length; ++i) {
-            outputArray[i] = rawData.charCodeAt(i);
-          }
-          return outputArray;
+        // Bildirim sistemi kurulumu
+        function setupNotificationSystem() {
+          const enableButton = document.getElementById('enableNotifications');
+          
+          enableButton.addEventListener('click', function() {
+            Notification.requestPermission().then(function(permission) {
+              if (permission === 'granted') {
+                registerServiceWorker();
+              } else {
+                document.getElementById('notificationStatus').textContent = 
+                  'Bildirim izni verilmedi.';
+              }
+            });
+          });
+          
+          // Sayfa yüklendiğinde Service Worker'ı kaydet
+          registerServiceWorker();
         }
 
-        // Bildirim gönderme
-        function sendNotification(entry) {
-          if (!("Notification" in window)) {
-            console.log("This browser does not support notifications");
-            return;
-          }
-          
-          if (Notification.permission === "granted") {
-            const options = {
-              body: entry.content.replace(/<[^>]*>/g, '').substring(0, 100) + '...',
-              icon: 'https://adembayazit.com/IMAGES/ab.png',
-              badge: 'https://adembayazit.com/IMAGES/ab.png',
-              vibrate: [200, 100, 200],
-              tag: 'new-entry',
-              data: {
-                url: `https://adembayazit.com/microblog#entry-${entry.id}`
-              }
-            };
-            
-            navigator.serviceWorker.ready.then(function(registration) {
-              registration.showNotification('Yeni LadyBuG Entry!', options);
-            });
-          }
-        }
+        // Uygulamayı başlat
+        document.addEventListener("DOMContentLoaded", function() {
+          initializeApp();
+          setupNotificationSystem();
+        });
 
         // 8. UYGULAMAYI BAŞLAT
         async function initializeApp() {
