@@ -838,10 +838,6 @@
             background: rgba(0, 0, 0, 0.7);
             border: 1px solid var(--border-color);
             border-radius: 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
         }
         
         #enableNotifications {
@@ -854,31 +850,23 @@
             font-weight: bold;
             transition: all 0.3s;
             margin: 10px 0;
-            display: block;
-            width: auto;
-            min-width: 200px;
-            margin-left: auto;
-            margin-right: auto;
         }
+        
         #enableNotifications:hover {
             background: var(--secondary-color);
             box-shadow: 0 0 10px var(--primary-color);
         }
         
-         #notificationStatus {
+        #notificationStatus {
             margin-top: 10px;
             color: #90ee90;
             font-size: 14px;
-            text-align: center;
-            width: 100%;
         }
         
-         .notification-info {
+        .notification-info {
             font-size: 14px;
             color: #90ee90;
             margin-top: 10px;
-            text-align: center;
-            width: 100%;
         }
 
         /* Mobil için stiller */
@@ -953,10 +941,8 @@
             .mobile-widgets { order: 3; }
             #entries { order: 4; }
             .loading { order: 5; }
-            .load-more-container { order: 7; }
-            .entry-count { order: 8; }
-            .notification-permission { order: 9; margin-top: 20px; }
-            
+            .load-more-container { order: 6; }
+            .entry-count { order: 7; }
         }
         
         @media (min-width: 1201px) {
@@ -1191,7 +1177,15 @@
             <section class="microblog-container">
                 <a href="/" class="back-to-home"><i class='bx bx-arrow-back'></i> Back to Home</a>
                 <h2 class="section-title"><i class="fa-solid fa-pager"></i> All LadyB<span class="fa-solid fa-bug bug-icon"></span>G Entries</h2>
-               
+                
+                <!-- Bildirim Sistemi - YENİ EKLENDİ -->
+                <div class="notification-permission">
+                    <h3><i class="fas fa-bell"></i> Get Notified of New Entries</h3>
+                    <p class="notification-info">Enable notifications to be alerted when new entries are posted, even when the page is closed.</p>
+                    <button id="enableNotifications">Enable Notifications</button>
+                    <div id="notificationStatus"></div>
+                </div>
+                
                 <!-- Mobil için istatistik ve arama - YUKARI TAŞINDI -->
                 <div class="mobile-widgets">
                     <div class="mobile-stats">
@@ -1225,15 +1219,6 @@
                 <div class="load-more-container">
                     <button id="loadMoreBtn" class="load-more-btn">More Entry (20) <span class='bx bx-chevron-down'></span></button>
                 </div>
-                 
-                <!-- Bildirim Sistemi - YENİ EKLENDİ -->
-                <div class="notification-permission">
-                    <h3><i class="fas fa-bell"></i> Get Notified of New Entries</h3>
-                    <p class="notification-info">Enable notifications to be alerted when new entries are posted, even when the page is closed.</p>
-                    <button id="enableNotifications">Enable Notifications</button>
-                    <div id="notificationStatus"></div>
-                </div>
-                
             </section>
         </main>
         
@@ -2216,8 +2201,6 @@
           } catch (error) {
             console.error('View count update failed:', error);
             viewsCache.data[entryId] = currentCount;
-            viewedEntries[entryId] = false;
-            sessionStorage.setItem('viewedEntries', JSON.stringify(viewedEntries));
           } finally {
             viewsCache.isUpdating = false;
           }
@@ -2329,13 +2312,15 @@
               newEntriesCount = newEntryCount;
               
               // Push bildirimi gönder
-              sendPushNotification(newestServerEntry);
+              sendNotification(newestServerEntry);
               
               // Son bildirim gösterilen entry ID'sini güncelle
               lastNotifiedEntryId = newestServerEntry.id;
             }
           } catch (error) {
             console.error('Yeni entry kontrol hatası:', error);
+            // Fallback: polling'i başlat
+            startPolling();
           }
         }
 
@@ -2413,21 +2398,6 @@
           }
         }
 
-        // Push bildirimi gönderme fonksiyonu
-        function sendPushNotification(entry) {
-          if (!isSubscribed || !swRegistration) return;
-          
-          // Service Worker'a mesaj gönder
-          swRegistration.active.then(registration => {
-            registration.postMessage({
-              type: 'NEW_ENTRY',
-              entry: entry
-            });
-          }).catch(error => {
-            console.error('Service Worker mesaj gönderme hatası:', error);
-          });
-        }
-
         // 6. HASH YÖNLENDİRME FONKSİYONU
         function scrollToEntryFromHash() {
           const hash = window.location.hash;
@@ -2474,8 +2444,6 @@
                 console.log('Service Worker registered successfully');
                 swRegistration = registration;
                 initializePush();
-                // Service Worker hazır olduğunda bildirim iznini kontrol et
-                checkNotificationPermission();
               })
               .catch(function(error) {
                 console.log('Service Worker registration failed:', error);
@@ -2486,50 +2454,30 @@
             console.log('Push messaging is not supported');
             document.getElementById('notificationStatus').textContent = 
               'Tarayıcınız bildirimleri desteklemiyor.';
-            document.getElementById('enableNotifications').style.display = 'none';
           }
         }
 
-        // Push bildirimi başlatma
+        // Push bildirimlerini başlat
         function initializePush() {
           if (!swRegistration) return;
           
-          // Mevcut aboneliği kontrol et
           swRegistration.pushManager.getSubscription()
-          .then(function(subscription) {
-            isSubscribed = !(subscription === null);
-            
-            if (isSubscribed) {
-              console.log('User is subscribed:', subscription);
-            } else {
-              console.log('User is not subscribed');
-            }
-            
-            // Abonelik durumunu güncelle
-            updateBtn();
-          })
-          .catch(function(error) {
-            console.error('Error during getSubscription():', error);
-          });
-        }
-
-        // Bildirim iznini kontrol et
-        function checkNotificationPermission() {
-          if (!('Notification' in window)) return;
-          
-          if (Notification.permission === 'granted') {
-            document.getElementById('notificationStatus').textContent = 
-              'Bildirimler etkin! Yeni entrylerden anında haberdar olacaksınız.';
-            document.getElementById('enableNotifications').style.display = 'none';
-          } else if (Notification.permission === 'denied') {
-            document.getElementById('notificationStatus').textContent = 
-              'Bildirimler engellendi. Tarayıcı ayarlarından etkinleştirebilirsiniz.';
-            document.getElementById('enableNotifications').style.display = 'none';
-          } else {
-            document.getElementById('notificationStatus').textContent = 
-              'Yeni entrylerden haberdar olmak için bildirimleri etkinleştirin.';
-            document.getElementById('enableNotifications').style.display = 'block';
-          }
+            .then(function(subscription) {
+              isSubscribed = !(subscription === null);
+              
+              if (isSubscribed) {
+                console.log('User is already subscribed:', subscription);
+                document.getElementById('notificationStatus').textContent = 
+                  'Bildirimler zaten etkin! Yeni entrylerden anında haberdar olacaksınız.';
+                document.getElementById('enableNotifications').style.display = 'none';
+              } else {
+                document.getElementById('notificationStatus').textContent = 
+                  'Bildirimleri etkinleştirmek için butona tıklayın.';
+              }
+            })
+            .catch(function(error) {
+              console.error('Error getting subscription:', error);
+            });
         }
 
         // Kullanıcıyı abone et
@@ -2572,67 +2520,43 @@
           });
         }
 
-        // Base64'ü Uint8Array'e dönüştürme
+        // Base64 to Uint8Array dönüşümü
         function urlB64ToUint8Array(base64String) {
           const padding = '='.repeat((4 - base64String.length % 4) % 4);
           const base64 = (base64String + padding)
             .replace(/\-/g, '+')
             .replace(/_/g, '/');
-          
           const rawData = window.atob(base64);
           const outputArray = new Uint8Array(rawData.length);
-          
           for (let i = 0; i < rawData.length; ++i) {
             outputArray[i] = rawData.charCodeAt(i);
           }
           return outputArray;
         }
 
-        // Buton durumunu güncelle
-        function updateBtn() {
-          if (Notification.permission === 'denied') {
-            document.getElementById('enableNotifications').disabled = true;
-            document.getElementById('notificationStatus').textContent = 
-              'Bildirimler engellendi. Tarayıcı ayarlarından etkinleştirebilirsiniz.';
+        // Bildirim gönderme
+        function sendNotification(entry) {
+          if (!("Notification" in window)) {
+            console.log("This browser does not support notifications");
             return;
           }
           
-          if (isSubscribed) {
-            document.getElementById('enableNotifications').disabled = true;
-            document.getElementById('notificationStatus').textContent = 
-              'Bildirimler etkinleştirildi! Yeni entrylerden anında haberdar olacaksınız.';
-          } else {
-            document.getElementById('enableNotifications').disabled = false;
-          }
-        }
-
-        // Bildirim sistemi kurulumu
-        function setupNotificationSystem() {
-          const enableButton = document.getElementById('enableNotifications');
-          
-          enableButton.addEventListener('click', function() {
-            enableButton.disabled = true;
+          if (Notification.permission === "granted") {
+            const options = {
+              body: entry.content.replace(/<[^>]*>/g, '').substring(0, 100) + '...',
+              icon: 'https://adembayazit.com/IMAGES/ab.png',
+              badge: 'https://adembayazit.com/IMAGES/ab.png',
+              vibrate: [200, 100, 200],
+              tag: 'new-entry',
+              data: {
+                url: `https://adembayazit.com/microblog#entry-${entry.id}`
+              }
+            };
             
-            if (isSubscribed) {
-              // Abonelikten çık
-              // Bu kısım isteğe bağlı olarak eklenebilir
-            } else {
-              // İzin iste
-              Notification.requestPermission().then(function(permission) {
-                if (permission === 'granted') {
-                  console.log('Notification permission granted.');
-                  subscribeUser();
-                } else {
-                  document.getElementById('notificationStatus').textContent = 
-                    'Bildirim izni verilmedi.';
-                  enableButton.disabled = false;
-                }
-              });
-            }
-          });
-          
-          // Sayfa yüklendiğinde Service Worker'ı kaydet
-          registerServiceWorker();
+            navigator.serviceWorker.ready.then(function(registration) {
+              registration.showNotification('Yeni LadyBuG Entry!', options);
+            });
+          }
         }
 
         // 8. UYGULAMAYI BAŞLAT
@@ -2776,6 +2700,42 @@
                 '<div class="error">Veriler yüklenirken bir hata oluştu</div>';
             }
           }
+        }
+        
+        // Bildirim sistemi kurulumu
+        function setupNotificationSystem() {
+          const enableButton = document.getElementById('enableNotifications');
+          const statusDiv = document.getElementById('notificationStatus');
+          
+          if (!('Notification' in window)) {
+            statusDiv.textContent = 'Tarayıcınız bildirimleri desteklemiyor.';
+            enableButton.style.display = 'none';
+            return;
+          }
+          
+          if (Notification.permission === 'granted') {
+            statusDiv.textContent = 'Bildirimler etkin! Yeni entrylerden anında haberdar olacaksınız.';
+            enableButton.style.display = 'none';
+            registerServiceWorker();
+          } else if (Notification.permission === 'denied') {
+            statusDiv.textContent = 'Bildirimler engellendi. Tarayıcı ayarlarından etkinleştirebilirsiniz.';
+            enableButton.style.display = 'none';
+          } else {
+            statusDiv.textContent = 'Yeni entrylerden haberdar olmak için bildirimleri etkinleştirin.';
+            enableButton.style.display = 'block';
+          }
+          
+          enableButton.addEventListener('click', function() {
+            Notification.requestPermission().then(function(permission) {
+              if (permission === 'granted') {
+                statusDiv.textContent = 'Bildirimler etkinleştirildi!';
+                enableButton.style.display = 'none';
+                registerServiceWorker();
+              } else {
+                statusDiv.textContent = 'Bildirim izni verilmedi.';
+              }
+            });
+          });
         }
         
         // Popüler entry'leri yükle
