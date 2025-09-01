@@ -2216,6 +2216,8 @@
           } catch (error) {
             console.error('View count update failed:', error);
             viewsCache.data[entryId] = currentCount;
+            viewedEntries[entryId] = false;
+            sessionStorage.setItem('viewedEntries', JSON.stringify(viewedEntries));
           } finally {
             viewsCache.isUpdating = false;
           }
@@ -2327,15 +2329,13 @@
               newEntriesCount = newEntryCount;
               
               // Push bildirimi gönder
-              sendNotification(newestServerEntry);
+              sendPushNotification(newestServerEntry);
               
               // Son bildirim gösterilen entry ID'sini güncelle
               lastNotifiedEntryId = newestServerEntry.id;
             }
           } catch (error) {
             console.error('Yeni entry kontrol hatası:', error);
-            // Fallback: polling'i başlat
-            startPolling();
           }
         }
 
@@ -2413,6 +2413,21 @@
           }
         }
 
+        // Push bildirimi gönderme fonksiyonu
+        function sendPushNotification(entry) {
+          if (!isSubscribed || !swRegistration) return;
+          
+          // Service Worker'a mesaj gönder
+          swRegistration.active.then(registration => {
+            registration.postMessage({
+              type: 'NEW_ENTRY',
+              entry: entry
+            });
+          }).catch(error => {
+            console.error('Service Worker mesaj gönderme hatası:', error);
+          });
+        }
+
         // 6. HASH YÖNLENDİRME FONKSİYONU
         function scrollToEntryFromHash() {
           const hash = window.location.hash;
@@ -2452,9 +2467,6 @@
 
         // 7. BİLDİRİM SİSTEMİ FONKSİYONLARI - YENİ EKLENDİ
         // Service Worker kaydı
-        // Bildirim sistemi fonksiyonları - GÜNCELLENDİ
-        
-        // Service Worker kaydı
         function registerServiceWorker() {
           if ('serviceWorker' in navigator && 'PushManager' in window) {
             navigator.serviceWorker.register('/sw.js')
@@ -2478,6 +2490,29 @@
           }
         }
 
+        // Push bildirimi başlatma
+        function initializePush() {
+          if (!swRegistration) return;
+          
+          // Mevcut aboneliği kontrol et
+          swRegistration.pushManager.getSubscription()
+          .then(function(subscription) {
+            isSubscribed = !(subscription === null);
+            
+            if (isSubscribed) {
+              console.log('User is subscribed:', subscription);
+            } else {
+              console.log('User is not subscribed');
+            }
+            
+            // Abonelik durumunu güncelle
+            updateBtn();
+          })
+          .catch(function(error) {
+            console.error('Error during getSubscription():', error);
+          });
+        }
+
         // Bildirim iznini kontrol et
         function checkNotificationPermission() {
           if (!('Notification' in window)) return;
@@ -2486,8 +2521,6 @@
             document.getElementById('notificationStatus').textContent = 
               'Bildirimler etkin! Yeni entrylerden anında haberdar olacaksınız.';
             document.getElementById('enableNotifications').style.display = 'none';
-            // Kullanıcı zaten izin vermişse abone ol
-            subscribeUser();
           } else if (Notification.permission === 'denied') {
             document.getElementById('notificationStatus').textContent = 
               'Bildirimler engellendi. Tarayıcı ayarlarından etkinleştirebilirsiniz.';
@@ -2539,30 +2572,68 @@
           });
         }
 
+        // Base64'ü Uint8Array'e dönüştürme
+        function urlB64ToUint8Array(base64String) {
+          const padding = '='.repeat((4 - base64String.length % 4) % 4);
+          const base64 = (base64String + padding)
+            .replace(/\-/g, '+')
+            .replace(/_/g, '/');
+          
+          const rawData = window.atob(base64);
+          const outputArray = new Uint8Array(rawData.length);
+          
+          for (let i = 0; i < rawData.length; ++i) {
+            outputArray[i] = rawData.charCodeAt(i);
+          }
+          return outputArray;
+        }
+
+        // Buton durumunu güncelle
+        function updateBtn() {
+          if (Notification.permission === 'denied') {
+            document.getElementById('enableNotifications').disabled = true;
+            document.getElementById('notificationStatus').textContent = 
+              'Bildirimler engellendi. Tarayıcı ayarlarından etkinleştirebilirsiniz.';
+            return;
+          }
+          
+          if (isSubscribed) {
+            document.getElementById('enableNotifications').disabled = true;
+            document.getElementById('notificationStatus').textContent = 
+              'Bildirimler etkinleştirildi! Yeni entrylerden anında haberdar olacaksınız.';
+          } else {
+            document.getElementById('enableNotifications').disabled = false;
+          }
+        }
+
         // Bildirim sistemi kurulumu
         function setupNotificationSystem() {
           const enableButton = document.getElementById('enableNotifications');
           
           enableButton.addEventListener('click', function() {
-            Notification.requestPermission().then(function(permission) {
-              if (permission === 'granted') {
-                registerServiceWorker();
-              } else {
-                document.getElementById('notificationStatus').textContent = 
-                  'Bildirim izni verilmedi.';
-              }
-            });
+            enableButton.disabled = true;
+            
+            if (isSubscribed) {
+              // Abonelikten çık
+              // Bu kısım isteğe bağlı olarak eklenebilir
+            } else {
+              // İzin iste
+              Notification.requestPermission().then(function(permission) {
+                if (permission === 'granted') {
+                  console.log('Notification permission granted.');
+                  subscribeUser();
+                } else {
+                  document.getElementById('notificationStatus').textContent = 
+                    'Bildirim izni verilmedi.';
+                  enableButton.disabled = false;
+                }
+              });
+            }
           });
           
           // Sayfa yüklendiğinde Service Worker'ı kaydet
           registerServiceWorker();
         }
-
-        // Uygulamayı başlat
-        document.addEventListener("DOMContentLoaded", function() {
-          initializeApp();
-          setupNotificationSystem();
-        });
 
         // 8. UYGULAMAYI BAŞLAT
         async function initializeApp() {
@@ -2705,42 +2776,6 @@
                 '<div class="error">Veriler yüklenirken bir hata oluştu</div>';
             }
           }
-        }
-        
-        // Bildirim sistemi kurulumu
-        function setupNotificationSystem() {
-          const enableButton = document.getElementById('enableNotifications');
-          const statusDiv = document.getElementById('notificationStatus');
-          
-          if (!('Notification' in window)) {
-            statusDiv.textContent = 'Tarayıcınız bildirimleri desteklemiyor.';
-            enableButton.style.display = 'none';
-            return;
-          }
-          
-          if (Notification.permission === 'granted') {
-            statusDiv.textContent = 'Bildirimler etkin! Yeni entrylerden anında haberdar olacaksınız.';
-            enableButton.style.display = 'none';
-            registerServiceWorker();
-          } else if (Notification.permission === 'denied') {
-            statusDiv.textContent = 'Bildirimler engellendi. Tarayıcı ayarlarından etkinleştirebilirsiniz.';
-            enableButton.style.display = 'none';
-          } else {
-            statusDiv.textContent = 'Yeni entrylerden haberdar olmak için bildirimleri etkinleştirin.';
-            enableButton.style.display = 'block';
-          }
-          
-          enableButton.addEventListener('click', function() {
-            Notification.requestPermission().then(function(permission) {
-              if (permission === 'granted') {
-                statusDiv.textContent = 'Bildirimler etkinleştirildi!';
-                enableButton.style.display = 'none';
-                registerServiceWorker();
-              } else {
-                statusDiv.textContent = 'Bildirim izni verilmedi.';
-              }
-            });
-          });
         }
         
         // Popüler entry'leri yükle
