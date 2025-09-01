@@ -830,6 +830,45 @@
           gap: 12px;
         }
 
+        /* BİLDİRİM SİSTEMİ STİLLERİ - YENİ EKLENDİ */
+        .notification-permission {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+        }
+        
+        #enableNotifications {
+            background: var(--primary-color);
+            color: black;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin: 10px 0;
+        }
+        
+        #enableNotifications:hover {
+            background: var(--secondary-color);
+            box-shadow: 0 0 10px var(--primary-color);
+        }
+        
+        #notificationStatus {
+            margin-top: 10px;
+            color: #90ee90;
+            font-size: 14px;
+        }
+        
+        .notification-info {
+            font-size: 14px;
+            color: #90ee90;
+            margin-top: 10px;
+        }
+
         /* Mobil için stiller */
         @media (max-width: 1200px) {
             .sidebar, .right-sidebar {
@@ -1139,6 +1178,14 @@
                 <a href="/" class="back-to-home"><i class='bx bx-arrow-back'></i> Back to Home</a>
                 <h2 class="section-title"><i class="fa-solid fa-pager"></i> All LadyB<span class="fa-solid fa-bug bug-icon"></span>G Entries</h2>
                 
+                <!-- Bildirim Sistemi - YENİ EKLENDİ -->
+                <div class="notification-permission">
+                    <h3><i class="fas fa-bell"></i> Get Notified of New Entries</h3>
+                    <p class="notification-info">Enable notifications to be alerted when new entries are posted, even when the page is closed.</p>
+                    <button id="enableNotifications">Enable Notifications</button>
+                    <div id="notificationStatus"></div>
+                </div>
+                
                 <!-- Mobil için istatistik ve arama - YUKARI TAŞINDI -->
                 <div class="mobile-widgets">
                     <div class="mobile-stats">
@@ -1346,6 +1393,11 @@
         // Modal için global değişkenler
         let currentModalImages = [];
         let currentModalIndex = 0;
+
+        // BİLDİRİM SİSTEMİ DEĞİŞKENLERİ - YENİ EKLENDİ
+        let swRegistration = null;
+        let isSubscribed = false;
+        let pushManagerSupported = false;
 
         // 2. PROXY HELPER FONKSİYONU
         async function fetchViaProxy(path, method = 'GET', body = null) {
@@ -2259,6 +2311,9 @@
               showNewEntriesNotification(newEntryCount);
               newEntriesCount = newEntryCount;
               
+              // Push bildirimi gönder
+              sendNotification(newestServerEntry);
+              
               // Son bildirim gösterilen entry ID'sini güncelle
               lastNotifiedEntryId = newestServerEntry.id;
             }
@@ -2380,7 +2435,131 @@
           }
         }
 
-        // 7. UYGULAMAYI BAŞLAT
+        // 7. BİLDİRİM SİSTEMİ FONKSİYONLARI - YENİ EKLENDİ
+        // Service Worker kaydı
+        function registerServiceWorker() {
+          if ('serviceWorker' in navigator && 'PushManager' in window) {
+            navigator.serviceWorker.register('/sw.js')
+              .then(function(registration) {
+                console.log('Service Worker registered successfully');
+                swRegistration = registration;
+                initializePush();
+              })
+              .catch(function(error) {
+                console.log('Service Worker registration failed:', error);
+                document.getElementById('notificationStatus').textContent = 
+                  'Bildirimler etkinleştirilemedi. Lütfen daha sonra tekrar deneyin.';
+              });
+          } else {
+            console.log('Push messaging is not supported');
+            document.getElementById('notificationStatus').textContent = 
+              'Tarayıcınız bildirimleri desteklemiyor.';
+          }
+        }
+
+        // Push bildirimlerini başlat
+        function initializePush() {
+          if (!swRegistration) return;
+          
+          swRegistration.pushManager.getSubscription()
+            .then(function(subscription) {
+              isSubscribed = !(subscription === null);
+              
+              if (isSubscribed) {
+                console.log('User is already subscribed:', subscription);
+                document.getElementById('notificationStatus').textContent = 
+                  'Bildirimler zaten etkin! Yeni entrylerden anında haberdar olacaksınız.';
+                document.getElementById('enableNotifications').style.display = 'none';
+              } else {
+                document.getElementById('notificationStatus').textContent = 
+                  'Bildirimleri etkinleştirmek için butona tıklayın.';
+              }
+            })
+            .catch(function(error) {
+              console.error('Error getting subscription:', error);
+            });
+        }
+
+        // Kullanıcıyı abone et
+        function subscribeUser() {
+          if (!swRegistration) return;
+          
+          const applicationServerKey = urlB64ToUint8Array('BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U');
+          
+          swRegistration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: applicationServerKey
+          })
+          .then(function(subscription) {
+            console.log('User subscribed:', subscription);
+            isSubscribed = true;
+            
+            document.getElementById('notificationStatus').textContent = 
+              'Bildirimler etkinleştirildi! Yeni entrylerden anında haberdar olacaksınız.';
+            document.getElementById('enableNotifications').style.display = 'none';
+            
+            // Abonelik bilgisini sunucuya kaydet
+            return fetch('https://adembayazit.com/api/save-subscription', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(subscription)
+            });
+          })
+          .then(function(response) {
+            if (!response.ok) {
+              throw new Error('Bad status code from server.');
+            }
+            return response.json();
+          })
+          .catch(function(err) {
+            console.log('Failed to subscribe the user: ', err);
+            document.getElementById('notificationStatus').textContent = 
+              'Abonelik işlemi başarısız. Lütfen daha sonra tekrar deneyin.';
+          });
+        }
+
+        // Base64 to Uint8Array dönüşümü
+        function urlB64ToUint8Array(base64String) {
+          const padding = '='.repeat((4 - base64String.length % 4) % 4);
+          const base64 = (base64String + padding)
+            .replace(/\-/g, '+')
+            .replace(/_/g, '/');
+          const rawData = window.atob(base64);
+          const outputArray = new Uint8Array(rawData.length);
+          for (let i = 0; i < rawData.length; ++i) {
+            outputArray[i] = rawData.charCodeAt(i);
+          }
+          return outputArray;
+        }
+
+        // Bildirim gönderme
+        function sendNotification(entry) {
+          if (!("Notification" in window)) {
+            console.log("This browser does not support notifications");
+            return;
+          }
+          
+          if (Notification.permission === "granted") {
+            const options = {
+              body: entry.content.replace(/<[^>]*>/g, '').substring(0, 100) + '...',
+              icon: 'https://adembayazit.com/IMAGES/ab.png',
+              badge: 'https://adembayazit.com/IMAGES/ab.png',
+              vibrate: [200, 100, 200],
+              tag: 'new-entry',
+              data: {
+                url: `https://adembayazit.com/microblog#entry-${entry.id}`
+              }
+            };
+            
+            navigator.serviceWorker.ready.then(function(registration) {
+              registration.showNotification('Yeni LadyBuG Entry!', options);
+            });
+          }
+        }
+
+        // 8. UYGULAMAYI BAŞLAT
         async function initializeApp() {
           try {
             await loadInteractions();
@@ -2425,6 +2604,9 @@
             
             // Polling'i başlat
             startPolling();
+            
+            // Bildirim sistemi başlat
+            setupNotificationSystem();
             
             // Sayfa yüklendiğinde slider boyutlarını ayarla
             window.addEventListener('load', function() {
@@ -2489,6 +2671,9 @@
               // Fallback: polling'i başlat
               startPolling();
               
+              // Bildirim sistemi başlat
+              setupNotificationSystem();
+              
               // Sayfa yüklendiğinde slider boyutlarını ayarla
               window.addEventListener('load', function() {
                 setTimeout(() => {
@@ -2515,6 +2700,42 @@
                 '<div class="error">Veriler yüklenirken bir hata oluştu</div>';
             }
           }
+        }
+        
+        // Bildirim sistemi kurulumu
+        function setupNotificationSystem() {
+          const enableButton = document.getElementById('enableNotifications');
+          const statusDiv = document.getElementById('notificationStatus');
+          
+          if (!('Notification' in window)) {
+            statusDiv.textContent = 'Tarayıcınız bildirimleri desteklemiyor.';
+            enableButton.style.display = 'none';
+            return;
+          }
+          
+          if (Notification.permission === 'granted') {
+            statusDiv.textContent = 'Bildirimler etkin! Yeni entrylerden anında haberdar olacaksınız.';
+            enableButton.style.display = 'none';
+            registerServiceWorker();
+          } else if (Notification.permission === 'denied') {
+            statusDiv.textContent = 'Bildirimler engellendi. Tarayıcı ayarlarından etkinleştirebilirsiniz.';
+            enableButton.style.display = 'none';
+          } else {
+            statusDiv.textContent = 'Yeni entrylerden haberdar olmak için bildirimleri etkinleştirin.';
+            enableButton.style.display = 'block';
+          }
+          
+          enableButton.addEventListener('click', function() {
+            Notification.requestPermission().then(function(permission) {
+              if (permission === 'granted') {
+                statusDiv.textContent = 'Bildirimler etkinleştirildi!';
+                enableButton.style.display = 'none';
+                registerServiceWorker();
+              } else {
+                statusDiv.textContent = 'Bildirim izni verilmedi.';
+              }
+            });
+          });
         }
         
         // Popüler entry'leri yükle
@@ -2778,7 +2999,7 @@
           updateViewCountsForVisibleEntries();
         }
 
-        // 8. UYGULAMAYI BAŞLAT
+        // 9. UYGULAMAYI BAŞLAT
         document.addEventListener("DOMContentLoaded", initializeApp);
     </script>
     <script src="/JAVASCRIPT/matrix.js"></script>
