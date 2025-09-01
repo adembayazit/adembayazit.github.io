@@ -1,5 +1,7 @@
 // sw.js
 self.addEventListener('push', function(event) {
+  if (!event.data) return;
+  
   const data = event.data.json();
   const options = {
     body: data.body,
@@ -10,8 +12,9 @@ self.addEventListener('push', function(event) {
       url: data.url || 'https://adembayazit.com/microblog'
     }
   };
+  
   event.waitUntil(
-    self.registration.showNotification(data.title, options)
+    self.registration.showNotification(data.title || 'Yeni LadyBuG Entry!', options)
   );
 });
 
