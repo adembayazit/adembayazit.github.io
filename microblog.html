@@ -2298,47 +2298,78 @@
 
         // 5. YENİ ENTRY KONTROLÜ ve BİLDİRİM
         function startPolling() {
-          // 30 saniyede bir yeni entry kontrol et
-          checkInterval = setInterval(() => {
-            checkForNewEntries();
-          }, 30000);
-        }
+  // 30 saniyede bir yeni entry kontrol et
+  checkInterval = setInterval(() => {
+    checkForNewEntries();
+  }, 30000);
+}
 
-        async function checkForNewEntries() {
-          try {
-            const entriesData = await fetchViaProxy('/b/68933248ae596e708fc2fbbc/latest');
-            const serverEntries = entriesData.records || entriesData;
-            
-            // Sunucudaki en yeni entry'nin ID'sini bul
-            const newestServerEntry = serverEntries.reduce((newest, entry) => {
-              return (!newest || entry.id > newest.id) ? entry : newest;
-            }, { id: 0 });
-            
-            // İstemcideki en yeni entry ID'si
-            const clientNewestEntryId = allEntries.length > 0 ? Math.max(...allEntries.map(e => e.id)) : 0;
-            
-            // Sunucuda daha yeni bir entry var mı ve daha önce bildirim gösterilmemiş mi?
-            if (newestServerEntry.id > clientNewestEntryId && newestServerEntry.id > lastNotifiedEntryId) {
-              // Yeni entry sayısını hesapla
-              const newEntryCount = serverEntries.filter(entry => entry.id > clientNewestEntryId).length;
-              
-              // Bildirim göster
-              showNewEntriesNotification(newEntryCount);
-              newEntriesCount = newEntryCount;
-              
-              // Push bildirimi gönder
-              sendNotification(newestServerEntry);
-              
-              // Son bildirim gösterilen entry ID'sini güncelle
-              lastNotifiedEntryId = newestServerEntry.id;
-            }
-          } catch (error) {
-            console.error('Yeni entry kontrol hatası:', error);
-            // Fallback: polling'i başlat
-            startPolling();
-          }
-        }
+async function checkForNewEntries() {
+  try {
+    const entriesData = await fetchViaProxy('/b/68933248ae596e708fc2fbbc/latest');
+    const serverEntries = entriesData.records || entriesData;
+    
+    // Sunucudaki en yeni entry'nin ID'sini bul
+    const newestServerEntry = serverEntries.reduce((newest, entry) => {
+      return (!newest || entry.id > newest.id) ? entry : newest;
+    }, { id: 0 });
+    
+    // İstemcideki en yeni entry ID'si
+    const clientNewestEntryId = allEntries.length > 0 ? Math.max(...allEntries.map(e => e.id)) : 0;
+    
+    // Sunucuda daha yeni bir entry var mı ve daha önce bildirim gösterilmemiş mi?
+    if (newestServerEntry.id > clientNewestEntryId && newestServerEntry.id > lastNotifiedEntryId) {
+      // Yeni entry sayısını hesapla
+      const newEntryCount = serverEntries.filter(entry => entry.id > clientNewestEntryId).length;
+      
+      // Bildirim göster
+      showNewEntriesNotification(newEntryCount);
+      newEntriesCount = newEntryCount;
+      
+      // Sadece sayfa görünür durumda değilse (farklı sekme veya kapalı) push bildirimi gönder
+      if (document.visibilityState !== 'visible') {
+        sendNotification(newestServerEntry);
+      }
+      
+      // Son bildirim gösterilen entry ID'sini güncelle
+      lastNotifiedEntryId = newestServerEntry.id;
+    }
+  } catch (error) {
+    console.error('Yeni entry kontrol hatası:', error);
+    // Fallback: polling'i başlat
+    startPolling();
+  }
+}
 
+// Bildirim gönderme - Sadece sayfa görünür değilse çalışacak
+function sendNotification(entry) {
+  // Sayfa görünür durumdaysa bildirim gönderme
+  if (document.visibilityState === 'visible') {
+    return;
+  }
+
+  if (!("Notification" in window)) {
+    console.log("This browser does not support notifications");
+    return;
+  }
+  
+  if (Notification.permission === "granted") {
+    const options = {
+      body: entry.content.replace(/<[^>]*>/g, '').substring(0, 100) + '...',
+      icon: 'https://adembayazit.com/IMAGES/ab.png',
+      badge: 'https://adembayazit.com/IMAGES/ab.png',
+      vibrate: [200, 100, 200],
+      tag: 'new-entry',
+      data: {
+        url: `https://adembayazit.com/microblog#entry-${entry.id}`
+      }
+    };
+    
+    navigator.serviceWorker.ready.then(function(registration) {
+      registration.showNotification('Yeni LadyBuG Entry!', options);
+    });
+  }
+}
         function showNewEntriesNotification(count) {
           // Önceki bildirim varsa kaldır
           if (notificationElement) {
