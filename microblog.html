@@ -1551,7 +1551,7 @@
           // İçeriği temizlenmiş olarak al
           content = tempDiv.innerHTML.trim();
           
-          // YouTube embed linklerini tespit et ve iframe'e dönüştür
+          // YouTube embed linklerini tespit ve ve iframe'e dönüştür
           content = content.replace(/(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/g, 
             '<div class="video-container"><iframe src="https://www.youtube.com/embed/$4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>');
           
@@ -2133,8 +2133,8 @@
             });
           }, 100);
           
-          // GÖRÜNÜM SAYAÇLARINI GÜNCELLE
-          updateViewCountsForVisibleEntries();
+          // GÖRÜNÜM SAYAÇLARINI GÜNCELLE - HER ENTRY İÇİN AYRI OBSERVER
+          setupViewCountObservers();
           
           loadingElement.style.display = 'none';
           
@@ -2239,6 +2239,9 @@
           
           // Bekleyen güncellemelere ekle (anında değil, periyodik olarak gönderilecek)
           pendingViewUpdates[entryId] = (pendingViewUpdates[entryId] || 0) + 1;
+          
+          // IP ve view bilgisini kaydet
+          logViewIp(entryId);
           
           // İstatistikleri güncelle
           updateStatistics();
@@ -2346,9 +2349,15 @@
           }
         }
 
-        // Intersection Observer ile görünür entry'lerin view count'unu güncelle
-        function updateViewCountsForVisibleEntries() {
+        // Intersection Observer ile görünür entry'lerin view count'unu güncelle - YENİ FONKSİYON
+        function setupViewCountObservers() {
           const entries = document.querySelectorAll('.entry');
+          
+          const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.5 // Entry'nin %50'si göründüğünde tetikle
+          };
           
           const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -2359,7 +2368,7 @@
                 observer.unobserve(entry.target);
               }
             });
-          }, { threshold: 0.5 });
+          }, observerOptions);
           
           // Tüm entry'leri gözle
           entries.forEach(entry => {
@@ -3151,7 +3160,7 @@
           }, 100);
           
           // GÖRÜNÜM SAYAÇLARINI GÜNCELLE
-          updateViewCountsForVisibleEntries();
+          setupViewCountObservers();
         }
 
         // 9. UYGULAMAYI BAŞLAT
