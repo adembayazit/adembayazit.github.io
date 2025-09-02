@@ -1369,7 +1369,7 @@
     </script>
 
     <script>
-        // 1. GLOBAL DEĞİŞKENLER
+        // 1. GLOBAL DEĞİŞKENLER - GÜNCELLENDİ
         const likesCache = {
           data: {},
           lastUpdated: 0,
@@ -1388,6 +1388,13 @@
           isUpdating: false
         };
 
+        // Yeni IP izleme için değişkenler
+        const viewIpsBinId = '68b69f77ae596e708fdfe34a'; // View-ip bin ID'si
+        const viewsBinId = '68b69f3fd0ea881f406f17e3'; // View-data bin ID'si
+        
+        // View güncellemelerini toplamak için
+        const pendingViewUpdates = {};
+        let viewUpdateInterval;
         let allEntries = [];
         let groupedEntries = [];
         let displayedEntries = 0;
@@ -1414,9 +1421,12 @@
         let isSubscribed = false;
         let pushManagerSupported = false;
 
-        // 2. PROXY HELPER FONKSİYONU
-        async function fetchViaProxy(path, method = 'GET', body = null) {
+        // 2. PROXY HELPER FONKSİYONU - GÜNCELLENDİ
+        async function fetchViaProxy(path, method = 'GET', body = null, binId = null) {
           const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
+          
+          // Eğer özel bir bin ID verilmişse path'i güncelle
+          const actualPath = binId ? `/b/${binId}${path}` : path;
           
           try {
             const response = await fetch(proxyUrl, {
@@ -1424,7 +1434,7 @@
               headers: {
                 'Content-Type': 'application/json'
               },
-              body: JSON.stringify({ path, method, body })
+              body: JSON.stringify({ path: actualPath, method, body })
             });
 
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -1441,8 +1451,9 @@
             const result = await fetchViaProxy('/b/68862fd97b4b8670d8a81945/latest');
             likesCache.data = result.likes || {};
             pinsCache.data = result.pins || {};
-            viewsCache.data = result.views || {};
-            likesCache.lastUpdated = pinsCache.lastUpdated = viewsCache.lastUpdated = Date.now();
+            
+            // View verilerini ayrı bir bin'den yükle
+            await loadViewCounts();
             
             // İstatistikleri güncelle
             updateStatistics();
@@ -1461,6 +1472,27 @@
             }
           }
         }
+        
+        // View sayacını yükle - YENİ FONKSİYON
+        async function loadViewCounts() {
+          try {
+            const result = await fetchViaProxy('/latest', 'GET', null, viewsBinId);
+            viewsCache.data = result.views || {};
+            viewsCache.lastUpdated = Date.now();
+            
+            // İstatistikleri güncelle
+            updateStatistics();
+          } catch (error) {
+            console.error('loadViewCounts error:', error);
+            try {
+              const localViews = localStorage.getItem('entryViews') || '{}';
+              viewsCache.data = JSON.parse(localViews);
+            } catch (parseError) {
+              console.error('Local storage parse error:', parseError);
+            }
+          }
+        }
+        
         // İstatistikleri güncelleme fonksiyonu
         function updateStatistics() {
           const totalLikes = Object.values(likesCache.data).reduce((sum, count) => sum + count, 0);
@@ -2134,7 +2166,7 @@
             likesCache.data[entryId] = currentCount + 1;
             localStorage.setItem('entryLikes', JSON.stringify(likesCache.data));
             
-            await updateInteractionsOnServer(entryId, currentCount + 1, null, null);
+            await updateInteractionsOnServer(entryId, currentCount + 1, null);
             likesCache.lastUpdated = Date.now();
             
             // İstatistikleri güncelle
@@ -2166,7 +2198,7 @@
             pinsCache.data[entryId] = currentCount + 1;
             localStorage.setItem('entryPins', JSON.stringify(pinsCache.data));
             
-            await updateInteractionsOnServer(entryId, null, currentCount + 1, null);
+            await updateInteractionsOnServer(entryId, null, currentCount + 1);
             pinsCache.lastUpdated = Date.now();
             
             // İstatistikleri güncelle
@@ -2183,7 +2215,7 @@
           }
         }
 
-        // GÖRÜNÜM SAYACI GÜNCELLEME FONKSİYONU
+        // GÖRÜNÜM SAYACI GÜNCELLEME FONKSİYONU - GÜNCELLENDİ
         async function updateViewCount(entryId) {
           if (viewsCache.isUpdating) return;
           
@@ -2191,33 +2223,126 @@
           const viewedEntries = JSON.parse(sessionStorage.getItem('viewedEntries') || '{}');
           if (viewedEntries[entryId]) return;
           
-          viewsCache.isUpdating = true;
+          // Yerel önbellekte view sayısını güncelle
           const currentCount = viewsCache.data[entryId] || 0;
+          viewsCache.data[entryId] = currentCount + 1;
+          
+          // UI'da görüntülenme sayısını güncelle
+          const viewCountElement = document.querySelector(`#entry-${entryId} .view-count`);
+          if (viewCountElement) {
+            viewCountElement.innerHTML = `<i class="fas fa-eye"> </i> ${currentCount + 1}`;
+          }
+          
+          // Oturumda bu entry'nin görüntülendiğini işaretle
+          viewedEntries[entryId] = true;
+          sessionStorage.setItem('viewedEntries', JSON.stringify(viewedEntries));
+          
+          // Bekleyen güncellemelere ekle (anında değil, periyodik olarak gönderilecek)
+          pendingViewUpdates[entryId] = (pendingViewUpdates[entryId] || 0) + 1;
+          
+          // İstatistikleri güncelle
+          updateStatistics();
+        }
 
+        // BEKLEYEN VIEW GÜNCELLEMELERİNİ GÖNDER - YENİ FONKSİYON
+        async function sendPendingViewUpdates() {
+          if (Object.keys(pendingViewUpdates).length === 0 || viewsCache.isUpdating) return;
+          
+          viewsCache.isUpdating = true;
+          
           try {
-            viewsCache.data[entryId] = currentCount + 1;
-            localStorage.setItem('entryViews', JSON.stringify(viewsCache.data));
+            // Mevcut view verilerini al
+            const currentViews = { ...viewsCache.data };
             
-            // Oturumda bu entry'nin görüntülendiğini işaretle
-            viewedEntries[entryId] = true;
-            sessionStorage.setItem('viewedEntries', JSON.stringify(viewedEntries));
+            // Sunucudaki mevcut view verilerini al
+            const serverData = await fetchViaProxy('/latest', 'GET', null, viewsBinId);
+            const serverViews = serverData.views || {};
             
-            await updateInteractionsOnServer(entryId, null, null, currentCount + 1);
-            viewsCache.lastUpdated = Date.now();
+            // Yerel verilerle sunucu verilerini birleştir
+            const mergedViews = { ...serverViews };
+            for (const [entryId, count] of Object.entries(pendingViewUpdates)) {
+              mergedViews[entryId] = (mergedViews[entryId] || 0) + count;
+            }
+            
+            // Sunucuyu güncelle
+            await fetchViaProxy('', 'PUT', { views: mergedViews }, viewsBinId);
+            
+            // Bekleyen güncellemeleri temizle
+            for (const entryId of Object.keys(pendingViewUpdates)) {
+              delete pendingViewUpdates[entryId];
+            }
             
             // İstatistikleri güncelle
             updateStatistics();
             
-            // Görüntülenme sayısını UI'da güncelle
-            const viewCountElement = document.querySelector(`#entry-${entryId} .view-count`);
-            if (viewCountElement) {
-              viewCountElement.innerHTML = `<i class="fas fa-eye"> </i> ${currentCount + 1}`;
-            }
           } catch (error) {
-            console.error('View count update failed:', error);
-            viewsCache.data[entryId] = currentCount;
+            console.error('Pending view updates failed:', error);
           } finally {
             viewsCache.isUpdating = false;
+          }
+        }
+
+        // IP VE İSTATİSTİK KAYDET - YENİ FONKSİYON
+        async function logViewIp(entryId) {
+          try {
+            // IP bilgisini al
+            const ipResponse = await fetch('https://ipinfo.io/json?token=68a1229187303a');
+            const ipData = await ipResponse.json();
+            
+            // Mevcut istatistikleri al
+            const currentStats = await fetchViaProxy('/latest', 'GET', null, viewIpsBinId);
+            
+            // Yeni ziyaretçi kaydı oluştur
+            const newVisitor = {
+              ip: ipData.ip,
+              userAgent: navigator.userAgent,
+              timestamp: new Date().toISOString(),
+              entryId: entryId,
+              country: ipData.country,
+              city: ipData.city,
+              region: ipData.region
+            };
+            
+            // İstatistikleri güncelle
+            const updatedStats = {
+              statistics: {
+                totalViews: (currentStats.statistics?.totalViews || 0) + 1,
+                uniqueVisitors: currentStats.statistics?.uniqueVisitors || 0,
+                viewsToday: currentStats.statistics?.viewsToday || 0,
+                viewsThisMonth: currentStats.statistics?.viewsThisMonth || 0
+              },
+              visitors: [
+                ...(currentStats.visitors || []),
+                newVisitor
+              ]
+            };
+            
+            // Benzersiz ziyaretçi sayısını hesapla
+            const uniqueIps = new Set((currentStats.visitors || []).map(v => v.ip));
+            uniqueIps.add(ipData.ip);
+            updatedStats.statistics.uniqueVisitors = uniqueIps.size;
+            
+            // Günlük ve aylık istatistikleri güncelle
+            const now = new Date();
+            const today = now.toISOString().split('T')[0];
+            const thisMonth = now.toISOString().substring(0, 7);
+            
+            const todayViews = (currentStats.visitors || []).filter(v => {
+              return v.timestamp && v.timestamp.startsWith(today);
+            }).length + 1;
+            
+            const monthViews = (currentStats.visitors || []).filter(v => {
+              return v.timestamp && v.timestamp.startsWith(thisMonth);
+            }).length + 1;
+            
+            updatedStats.statistics.viewsToday = todayViews;
+            updatedStats.statistics.viewsThisMonth = monthViews;
+            
+            // Sunucuyu güncelle
+            await fetchViaProxy('', 'PUT', updatedStats, viewIpsBinId);
+            
+          } catch (error) {
+            console.error('IP logging failed:', error);
           }
         }
 
@@ -2280,16 +2405,14 @@
           }
         }
 
-        async function updateInteractionsOnServer(entryId, newLikeCount, newPinCount, newViewCount) {
+        async function updateInteractionsOnServer(entryId, newLikeCount, newPinCount) {
           const updatedLikes = newLikeCount !== null ? { ...likesCache.data, [entryId]: newLikeCount } : likesCache.data;
           const updatedPins = newPinCount !== null ? { ...pinsCache.data, [entryId]: newPinCount } : pinsCache.data;
-          const updatedViews = newViewCount !== null ? { ...viewsCache.data, [entryId]: newViewCount } : viewsCache.data;
 
           try {
             await fetchViaProxy('/b/68862fd97b4b8670d8a81945', 'PUT', {
               likes: updatedLikes,
-              pins: updatedPins,
-              views: updatedViews
+              pins: updatedPins
             });
           } catch (error) {
             throw new Error('Failed to update data on server');
@@ -2298,78 +2421,77 @@
 
         // 5. YENİ ENTRY KONTROLÜ ve BİLDİRİM
         function startPolling() {
-  // 30 saniyede bir yeni entry kontrol et
-  checkInterval = setInterval(() => {
-    checkForNewEntries();
-  }, 30000);
-}
+          // 30 saniyede bir yeni entry kontrol et
+          checkInterval = setInterval(() => {
+            checkForNewEntries();
+          }, 30000);
+        }
 
-async function checkForNewEntries() {
-  try {
-    const entriesData = await fetchViaProxy('/b/68933248ae596e708fc2fbbc/latest');
-    const serverEntries = entriesData.records || entriesData;
-    
-    // Sunucudaki en yeni entry'nin ID'sini bul
-    const newestServerEntry = serverEntries.reduce((newest, entry) => {
-      return (!newest || entry.id > newest.id) ? entry : newest;
-    }, { id: 0 });
-    
-    // İstemcideki en yeni entry ID'si
-    const clientNewestEntryId = allEntries.length > 0 ? Math.max(...allEntries.map(e => e.id)) : 0;
-    
-    // Sunucuda daha yeni bir entry var mı ve daha önce bildirim gösterilmemiş mi?
-    if (newestServerEntry.id > clientNewestEntryId && newestServerEntry.id > lastNotifiedEntryId) {
-      // Yeni entry sayısını hesapla
-      const newEntryCount = serverEntries.filter(entry => entry.id > clientNewestEntryId).length;
-      
-      // Bildirim göster
-      showNewEntriesNotification(newEntryCount);
-      newEntriesCount = newEntryCount;
-      
-      // Sadece sayfa görünür durumda değilse (farklı sekme veya kapalı) push bildirimi gönder
-      if (document.visibilityState !== 'visible') {
-        sendNotification(newestServerEntry);
-      }
-      
-      // Son bildirim gösterilen entry ID'sini güncelle
-      lastNotifiedEntryId = newestServerEntry.id;
-    }
-  } catch (error) {
-    console.error('Yeni entry kontrol hatası:', error);
-    // Fallback: polling'i başlat
-    startPolling();
-  }
-}
+        async function checkForNewEntries() {
+          try {
+            const entriesData = await fetchViaProxy('/b/68933248ae596e708fc2fbbc/latest');
+            const serverEntries = entriesData.records || entriesData;
+            
+            // Sunucudaki en yeni entry'nin ID'sini bul
+            const newestServerEntry = serverEntries.reduce((newest, entry) => {
+              return (!newest || entry.id > newest.id) ? entry : newest;
+            }, { id: 0 });
+            
+            // İstemcideki en yeni entry ID'si
+            const clientNewestEntryId = allEntries.length > 0 ? Math.max(...allEntries.map(e => e.id)) : 0;
+            
+            // Sunucuda daha yeni bir entry var mı ve daha önce bildirim gösterilmemiş mi?
+            if (newestServerEntry.id > clientNewestEntryId && newestServerEntry.id > lastNotifiedEntryId) {
+              // Yeni entry sayısını hesapla
+              const newEntryCount = serverEntries.filter(entry => entry.id > clientNewestEntryId).length;
+              
+              // Bildirim göster
+              showNewEntriesNotification(newEntryCount);
+              newEntriesCount = newEntryCount;
+              
+              // Sadece sayfa görünür durumda değilse (farklı sekme veya kapalı) push bildirimi gönder
+              if (document.visibilityState !== 'visible') {
+                sendNotification(newestServerEntry);
+              }
+              
+              // Son bildirim gösterilen entry ID'sini güncelle
+              lastNotifiedEntryId = newestServerEntry.id;
+            }
+          } catch (error) {
+            console.error('Yeni entry kontrol hatası:', error);
+          }
+        }
 
-// Bildirim gönderme - Sadece sayfa görünür değilse çalışacak
-function sendNotification(entry) {
-  // Sayfa görünür durumdaysa bildirim gönderme
-  if (document.visibilityState === 'visible') {
-    return;
-  }
+        // Bildirim gönderme - Sadece sayfa görünür değilse çalışacak
+        function sendNotification(entry) {
+          // Sayfa görünür durumdaysa bildirim gönderme
+          if (document.visibilityState === 'visible') {
+            return;
+          }
 
-  if (!("Notification" in window)) {
-    console.log("This browser does not support notifications");
-    return;
-  }
-  
-  if (Notification.permission === "granted") {
-    const options = {
-      body: entry.content.replace(/<[^>]*>/g, '').substring(0, 100) + '...',
-      icon: 'https://adembayazit.com/IMAGES/ab.png',
-      badge: 'https://adembayazit.com/IMAGES/ab.png',
-      vibrate: [200, 100, 200],
-      tag: 'new-entry',
-      data: {
-        url: `https://adembayazit.com/microblog#entry-${entry.id}`
-      }
-    };
-    
-    navigator.serviceWorker.ready.then(function(registration) {
-      registration.showNotification('Yeni LadyBuG Entry!', options);
-    });
-  }
-}
+          if (!("Notification" in window)) {
+            console.log("This browser does not support notifications");
+            return;
+          }
+          
+          if (Notification.permission === "granted") {
+            const options = {
+              body: entry.content.replace(/<[^>]*>/g, '').substring(0, 100) + '...',
+              icon: 'https://adembayazit.com/IMAGES/ab.png',
+              badge: 'https://adembayazit.com/IMAGES/ab.png',
+              vibrate: [200, 100, 200],
+              tag: 'new-entry',
+              data: {
+                url: `https://adembayazit.com/microblog#entry-${entry.id}`
+              }
+            };
+            
+            navigator.serviceWorker.ready.then(function(registration) {
+              registration.showNotification('Yeni LadyBuG Entry!', options);
+            });
+          }
+        }
+        
         function showNewEntriesNotification(count) {
           // Önceki bildirim varsa kaldır
           if (notificationElement) {
@@ -2580,31 +2702,6 @@ function sendNotification(entry) {
           return outputArray;
         }
 
-        // Bildirim gönderme
-        function sendNotification(entry) {
-          if (!("Notification" in window)) {
-            console.log("This browser does not support notifications");
-            return;
-          }
-          
-          if (Notification.permission === "granted") {
-            const options = {
-              body: entry.content.replace(/<[^>]*>/g, '').substring(0, 100) + '...',
-              icon: 'https://adembayazit.com/IMAGES/ab.png',
-              badge: 'https://adembayazit.com/IMAGES/ab.png',
-              vibrate: [200, 100, 200],
-              tag: 'new-entry',
-              data: {
-                url: `https://adembayazit.com/microblog#entry-${entry.id}`
-              }
-            };
-            
-            navigator.serviceWorker.ready.then(function(registration) {
-              registration.showNotification('Yeni LadyBuG Entry!', options);
-            });
-          }
-        }
-
         // 8. UYGULAMAYI BAŞLAT
         async function initializeApp() {
           try {
@@ -2650,6 +2747,12 @@ function sendNotification(entry) {
             
             // Polling'i başlat
             startPolling();
+            
+            // View güncellemelerini periyodik olarak gönder
+            viewUpdateInterval = setInterval(sendPendingViewUpdates, 60000); // 1 dakikada bir
+            
+            // Sayfadan ayrılırken view güncellemelerini gönder
+            window.addEventListener('beforeunload', sendPendingViewUpdates);
             
             // Bildirim sistemi başlat
             setupNotificationSystem();
@@ -2716,6 +2819,12 @@ function sendNotification(entry) {
 
               // Fallback: polling'i başlat
               startPolling();
+              
+              // View güncellemelerini periyodik olarak gönder
+              viewUpdateInterval = setInterval(sendPendingViewUpdates, 60000); // 1 dakikada bir
+              
+              // Sayfadan ayrılırken view güncellemelerini gönder
+              window.addEventListener('beforeunload', sendPendingViewUpdates);
               
               // Bildirim sistemi başlat
               setupNotificationSystem();
@@ -2841,7 +2950,7 @@ function sendNotification(entry) {
           }).slice(0, 5);
           
           if (trending.length === 0) {
-            Container.innerHTML = '<div style="padding: 10px; text-align: center; color: #90ee90;">No  entries</div>';
+            trendingContainer.innerHTML = '<div style="padding: 10px; text-align: center; color: #90ee90;">No trending entries</div>';
             return;
           }
           
