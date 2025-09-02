@@ -575,7 +575,7 @@
         }
         
         .slider-item {
-            flex: 0 0 auto;
+            flex: 0 0 100%;
             width: 100%;
             height: 100%;
             display: flex;
@@ -1577,9 +1577,7 @@
           `;
           
           images.forEach(img => {
-            // Görüntü yüklendikten sonra slider'ı yeniden başlat
-            const imgWithLoad = img.replace('<img', '<img onload="initSlider(\'' + sliderId + '\')" ');
-            sliderHtml += `<div class="slider-item">${imgWithLoad}</div>`;
+            sliderHtml += `<div class="slider-item">${img}</div>`;
           });
           
           sliderHtml += `
@@ -2693,7 +2691,7 @@
           .catch(function(err) {
             console.log('Failed to subscribe the user: ', err);
             document.getElementById('notificationStatus').textContent = 
-              'Abonelik işlemi başarısız. Lütfen daha sonra tekrar deneyin.';
+                  'Abonelik işlemi başarısız. Lütfen daha sonra tekrar deneyin.';
           });
         }
 
