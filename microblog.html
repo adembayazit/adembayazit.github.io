@@ -1530,7 +1530,7 @@
           const tempDiv = document.createElement('div');
           tempDiv.innerHTML = content;
           
-          // Boş <p> etiketlerini ve gereksiz boşlukları temizle
+// Boş <p> etiketlerini ve gereksiz boşlukları temizle
           const paragraphs = tempDiv.querySelectorAll('p');
           paragraphs.forEach(p => {
             // İçeriği olmayan veya sadece boşluk içeren <p> etiketlerini kaldır
@@ -1548,8 +1548,9 @@
             }
           });
           
-          // İçeriği temizlenmiş olarak al
-          content = tempDiv.innerHTML.trim();
+          // İçeriği temizlenmiş olarak döndür
+          return tempDiv.innerHTML.trim();
+        }
           
           // YouTube embed linklerini tespit ve ve iframe'e dönüştür
           content = content.replace(/(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/g, 
