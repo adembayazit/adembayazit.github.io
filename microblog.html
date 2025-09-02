@@ -30,40 +30,1073 @@
     })(window,document,'script','dataLayer','GTM-TFN7XD9Z');</script>
     <!-- End Google Tag Manager -->
     <style>
-        /* Mevcut CSS kodları burada kalacak, sadece eklemeler yapılacak */
-        
-        /* İstatistikler için mobil stil */
-        .mobile-stats-extended {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 5px;
-            margin-bottom: 15px;
-            display: none;
+        :root {
+            --main-bg-color: #000;
+            --primary-color: limegreen;
+            --secondary-color: #00cc00;
+            --accent-color: #ff0000;
+            --text-color: #fff;
+            --card-bg: rgba(0, 0, 0, 0.7);
+            --border-color: limegreen;
+            --sidebar-width: 300px;
+            --content-max-width: 800px;
         }
         
-        @media (max-width: 1200px) {
-            .mobile-stats-extended {
-                display: grid;
-            }
+        html {
+          scroll-behavior: smooth;
         }
         
-        .mobile-stat-item-extended {
-            text-align: center;
-            padding: 8px;
-            background: var(--card-bg);
+        body {
+            background-color: var(--main-bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        
+        /* Layout */
+        .page-container {
+            display: flex;
+            max-width: 1200px;
+            margin: 80px auto 0;
+            padding: 0 15px;
+            gap: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .sidebar {
+            width: var(--sidebar-width);
+            flex-shrink: 0;
+            position: sticky;
+            top: 90px;
+            height: calc(100vh - 180px);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            background-color: #000;
+            border-radius: 10px;
+            padding: 15px;
+        }
+        
+        .main-content {
+            flex: 1;
+            max-width: var(--content-max-width);
+            margin: 0 auto;
+        }
+        
+        .right-sidebar {
+            width: var(--sidebar-width);
+            flex-shrink: 0;
+            position: sticky;
+            top: 90px;
+            height: calc(100vh - 180px);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            background-color: #000;
+            border-radius: 10px;
+            padding: 15px;
+        }
+        
+        /* Özel stiller */
+        .microblog-container {
+            width: 100%;
+            background: transparent;
+            position: relative;
+        }
+        
+        .entries-container {
+            background: rgba(10, 25, 20, 0.7);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: 20px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
+            backdrop-filter: blur(5px);
         }
         
-        .mobile-stat-value-extended {
+        .load-more-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .load-more-btn {
+            background: green;
+            color: black;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
             font-size: 14px;
-            font-weight: bold;
+        }
+        
+        .load-more-btn:hover {
+            background: var(--secondary-color);
+            box-shadow: 0 0 10px var(--primary-color);
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
             color: var(--primary-color);
         }
         
-        .mobile-stat-label-extended {
-            font-size: 10px;
+        .back-to-home {
+            display: inline-block;
+            margin: 30px 0;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .back-to-home:hover {
+            text-decoration: underline;
+            color: var(--secondary-color);
+        }
+        
+        .entry-count {
             color: #90ee90;
+            margin-bottom: 15px;
+            font-style: italic;
+            text-align: center;
+        }
+        
+        /* Dropdown stilleri */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropbtn {
+            font-size: 18px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: green;
+            min-width: 160px;
+            z-index: 100;
+            border: 1px solid white;
+            border-radius: 10px;
+        }
+
+        .dropdown-content a {
+            color: white;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            color: white;
+            background-color: var(--primary-color);
+            text-shadow: 0 0 10px green;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* Matrix Canvas için stiller */
+        #matrixCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        /* Başlık stili */
+        .section-title {
+            text-align: center;
+            margin-bottom: 25px;
+            color: white;
+            display: flex;
+            align-items: center;
+            filter: drop-shadow(0 0 5px white);
+            gap: 10px;
+        }
+
+        /* Son entry için özel stil */
+        .latest-entry {
+            border: 1px solid var(--accent-color) !important;
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.4) !important;
+        }
+
+        .latest-entry::before {
+            content: "LAST ENTRY";
+            position: absolute;
+            top: -12px;
+            right: 80px;
+            background: var(--accent-color);
+            color: black;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 4px;
+            z-index: 10;
+        }
+
+        /* Parent entry için özel stil */
+        .parent-of-latest {
+            border: 2px solid #ffffff !important;
+            box-shadow: 0 0 15px rgba(255, 153, 0, 0.4) !important;
+        }
+
+        .parent-of-latest::before {
+            content: "PARENT ENTRY";
+            position: absolute;
+            top: -12px;
+            right: 80px;
+            background: white;
+            color: black;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 4px;
+            z-index: 10;
+        }
+
+        /* Grup stilleri */
+        .entry-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .group-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #90ee90;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .group-header i {
+            font-size: 16px;
+        }
+
+        /* Tarih ve içerik arasındaki çizgi */
+        .timestamp {
+            color: #90ee90;
+            font-size: 12px;
+            position: relative;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .timestamp::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(to right, rgba(0, 255, 0, 0.5), transparent);
+        }
+        
+        .bug-iconentry {
+            margin-right: 8px;
+            color: var(--accent-color);
+        }
+
+        /* Daisy ve Pine ikonları için yuvarlak animasyonlu tasarım */
+        .interaction-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .daisy-like, .pine-pin, .share-entry {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        
+        .daisy-like:hover {
+            background: rgba(50, 205, 50, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .pine-pin:hover {
+            background: rgba(30, 144, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .share-entry:hover {
+            background: rgba(128, 0, 128, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .daisy-icon, .pine-icon, .share-icon, .link-icon {
+            width: 20px;
+            height: 20px;
+            transition: all 0.3s;
+            border-radius: 50%;
+            padding: 3px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .daisy-like:hover .daisy-icon {
+            transform: rotate(15deg) scale(1.2);
+            color: var(--secondary-color);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+        
+        .pine-pin:hover .pine-icon {
+            transform: rotate(-15deg) scale(1.2);
+            color: #00bfff;
+            box-shadow: 0 0 10px rgba(30, 144, 255, 0.5);
+        }
+        
+        .share-entry:hover .share-icon, .link-icon {
+            transform: scale(1.2);
+            color: #9370db;
+            box-shadow: 0 0 10px rgba(147, 112, 219, 0.5);
+        }
+        
+        .like-count, .pin-count {
+            font-size: 14px;
+            min-width: 20px;
+            text-align: center;
+            display: flex; 
+            align-items: center
+        }
+        
+        .view-count {
+            font-size: 14px;
+            min-width: 20px;
+            text-align: center;
+            display: flex; 
+            align-items: center;
+        
+        }
+        
+        .action-animation {
+            animation: pop 0.5s ease;
+        }
+        
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        /* Görsel modal için stiller - GÜNCELLENDİ */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            display: block;
+            margin: auto;
+            max-width: 90%;
+            max-height: 80vh;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+            animation: zoom 0.3s ease;
+        }
+        
+        @keyframes zoom {
+            from {transform: translate(-50%, -50%) scale(0.9); opacity: 0;}
+            to {transform: translate(-50%, -50%) scale(1); opacity: 1;}
+        }
+        
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+            z-index: 1001;
+            cursor: pointer;
+            text-shadow: 0 0 5px #000;
+        }
+        
+        .close:hover,
+        .close:focus {
+            color: var(--primary-color);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        /* Modal navigasyon butonları */
+        .modal-nav {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+            padding: 0 20px;
+            box-sizing: border-box;
+            z-index: 1001;
+            pointer-events: none;
+        }
+        
+        .modal-nav-btn {
+            background: rgba(0, 0, 0, 0.7);
+            border: none;
+            color: var(--primary-color);
+            font-size: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            pointer-events: auto;
+        }
+        
+        .modal-nav-btn:hover {
+            background: rgba(0, 0, 0, 0.9);
+            transform: scale(1.1);
+        }
+        
+        .modal-counter {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 16px;
+            z-index: 1001;
+        }
+        
+        /* Entry içindeki görseller için stiller */
+        .content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+        }
+        
+        .content img:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+        
+        /* Video container için stiller */
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+        }
+        
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* YENİ SLIDER STİLLERİ - TAMAMEN DÜZENLENDİ */
+        .image-slider {
+            position: relative;
+            margin: 10px 0;
+            overflow: hidden;
+            border-radius: 8px;
+            background: #000;
+            width: 100%;
+            aspect-ratio: 16/9;
+            min-height: 200px;
+        }
+        
+        .slider-container {
+            display: flex;
+            transition: transform 0.4s ease;
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        .slider-item {
+            flex: 0 0 auto;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+        }
+        
+        .slider-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 0;
+            margin: 0;
+            cursor: pointer;
+            display: block;
+        }
+        
+        .slider-nav {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+            pointer-events: none;
+            z-index: 20;
+            padding: 0 10px;
+            box-sizing: border-box;
+        }
+        
+        .slider-btn {
+            background: rgba(0, 0, 0, 0.7);
+            border: none;
+            color: var(--primary-color);
+            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            pointer-events: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+        
+        .slider-btn:hover {
+            background: rgba(0, 0, 0, 0.9);
+            transform: scale(1.1);
+        }
+        
+        .slider-dots {
+            position: absolute;
+            bottom: 15px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            z-index: 10;
+        }
+        
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .dot.active {
+            background: var(--primary-color);
+            transform: scale(1.2);
+            box-shadow: 0 0 5px var(--primary-color);
+        }
+
+        /* Kaydırma çubukları için özel stiller */
+        ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 10px;
+            border: 2px solid var(--main-bg-color);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-color);
+        }
+
+        /* Sidebar widget stilleri */
+        .sidebar-widget {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .sidebar-widget h3 {
+            color: white;
+            margin-top: 0;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            border: 1px solid rgba(0, 255, 0, 0.2);
+        }
+        
+        .stat-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #90ee90;
+        }
+        
+        .search-box {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px 0 0 5px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+        }
+        
+        .search-button {
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-left: none;
+            border-radius: 0 5px 5px 0;
+            background: var(--primary-color);
+            color: black;
+            cursor: pointer;
+        }
+        
+        .tag-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        
+        .tag {
+            padding: 5px 10px;
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            font-size: 12px;
+            color: #90ee90;
+        }
+
+        /* Yeni bildirim stili */
+        .new-entry-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px  white;
+            border-radius: 10px;
+            padding: 15px;
+            z-index: 1000;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+            backdrop-filter: blur(5px);
+            cursor: pointer;
+            transition: all 0.3s;
+            max-width: 300px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .new-entry-notification:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 25px rgba(0, 255, 0, 0.5);
+        }
+        
+        .new-entry-notification.minimized {
+            width: auto;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .new-entry-notification.minimized .notification-content {
+            display: none;
+        }
+        
+        .notification-content {
+            flex: 1;
+        }
+        
+        .notification-bell {
+            color: red;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            position: relative;
+        }
+        
+        .minimize-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: transparent;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .interaction-buttons {
+          position: absolute;
+          bottom: -45px;
+          right: 5px;
+          display: flex;
+          align-items: right;
+          gap: 12px;
+        }
+
+        /* BİLDİRİM SİSTEMİ STİLLERİ - YENİ EKLENDİ */
+        .notification-permission {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #enableNotifications {
+            background: var(--primary-color);
+            color: black;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin: 10px 0;
+            display: block;
+            width: auto;
+            min-width: 200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        #enableNotifications:hover {
+            background: var(--secondary-color);
+            box-shadow: 0 0 10px var(--primary-color);
+        }
+        
+         #notificationStatus {
+            margin-top: 10px;
+            color: #90ee90;
+            font-size: 14px;
+            text-align: center;
+            width: 100%;
+        }
+        
+         .notification-info {
+            font-size: 14px;
+            color: #90ee90;
+            margin-top: 10px;
+            text-align: center;
+            width: 100%;
+        }
+
+        /* Mobil için stiller */
+        @media (max-width: 1200px) {
+            .sidebar, .right-sidebar {
+                display: none;
+            }
+            
+            .page-container {
+                flex-direction: column;
+                padding: 0 10px;
+            }
+            
+            .main-content {
+                max-width: 100%;
+                width: 100%;
+            }
+            
+            /* Mobil için istatistik ve arama bölümü */
+            .mobile-widgets {
+                display: block;
+                margin-top: 0;
+                order: 2;
+            }
+            
+            .mobile-stats {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 5px;
+                margin-bottom: 10px;
+            }
+            
+            .mobile-stat-item {
+                text-align: center;
+                padding: 5px;
+                background: var(--card-bg);
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+            }
+            
+            .mobile-stat-value {
+                font-size: 12px;
+                font-weight: bold;
+                color: var(--primary-color);
+            }
+            
+            .mobile-stat-label {
+                font-size: 12px;
+                color: #90ee90;
+            }
+            
+            .mobile-search {
+                display: flex;
+                margin-bottom: 15px;
+            }
+            
+            /* Entry count'u footer üstüne taşıma */
+            .entry-count {
+                order: 100;
+                margin-top: 20px;
+                margin-bottom: 5px;
+            }
+            
+            /* Microblog container düzeni */
+            .microblog-container {
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .back-to-home { order: 1; }
+            .section-title { order: 2; }
+            .mobile-widgets { order: 3; }
+            #entries { order: 4; }
+            .loading { order: 5; }
+            .load-more-container { order: 7; }
+            .entry-count { order: 8; }
+            .notification-permission { order: 9; margin-top: 20px; }
+            
+        }
+        
+        @media (min-width: 1201px) {
+            .mobile-widgets {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .microblog-container {
+                padding: 60px 5% 20px;
+            }
+            
+            .back-to-home {
+                margin: 25px 0;
+            }
+            
+            .section-title {
+                text-align: center;
+                justify-content: center;
+                filter: drop-shadow(0 0 5px var(--primary-color));
+                color:white;
+            }
+
+            .latest-entry::before,
+            .parent-of-latest::before {
+                right: 50%;
+                transform: translateX(50%);
+                font-size: 10px;
+            }
+            
+            .modal-content {
+                max-width: 95%;
+                max-height: 85vh;
+            }
+            
+            .close {
+                top: 10px;
+                right: 20px;
+                font-size: 30px;
+            }
+            
+            .modal-nav-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
+            
+            .interaction-buttons {
+                justify-content: center;
+            }
+            
+            .mobile-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .mobile-stat-item {
+                padding: 8px;
+            }
+            
+            .mobile-stat-value {
+                font-size: 14px;
+            }
+            
+            .mobile-stat-label {
+                font-size: 10px;
+            }
+            
+            .image-slider {
+                aspect-ratio: 4/3;
+            }
+            
+            .slider-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 16px;
+            }
+            
+            /* Mobilde içerik kenar boşlukları */
+            .entries-container {
+                margin: 0 5px;
+                padding: 15px;
+            }
+            
+            .content img {
+                border-radius: 6px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .mobile-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .interaction-buttons {
+                gap: 5px;
+            }
+            
+            .daisy-like, .pine-pin, .share-entry {
+                padding: 5px 8px;
+                font-size: 12px;
+            }
+            
+            .image-slider {
+                aspect-ratio: 1/1;
+                min-height: 250px;
+            }
+            
+            .slider-btn {
+                width: 28px;
+                height: 28px;
+                font-size: 14px;
+            }
+            
+            .dot {
+                width: 8px;
+                height: 8px;
+            }
+            
+            /* Daha küçük ekranlar için ek kenar boşlukları */
+            .page-container {
+                padding: 0 5px;
+            }
+            
+            .entries-container {
+                margin: 0 2px;
+                padding: 10px;
+            }
+            
+            .modal-nav-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 16px;
+            }
+            
+            .modal-counter {
+                font-size: 14px;
+                padding: 3px 10px;
+                bottom: 15px;
+            }
         }
     </style>
 </head>
@@ -177,26 +1210,6 @@
                         <div class="mobile-stat-item">
                             <div class="mobile-stat-value" id="mobile-total-pins">0</div>
                             <div class="mobile-stat-label">Pine</div>
-                        </div>
-                    </div>
-                    
-                    <!-- Genişletilmiş mobil istatistikler -->
-                    <div class="mobile-stats-extended">
-                        <div class="mobile-stat-item-extended">
-                            <div class="mobile-stat-value-extended" id="mobile-total-views">0</div>
-                            <div class="mobile-stat-label-extended">Total Views</div>
-                        </div>
-                        <div class="mobile-stat-item-extended">
-                            <div class="mobile-stat-value-extended" id="mobile-today-views">0</div>
-                            <div class="mobile-stat-label-extended">Today Views</div>
-                        </div>
-                        <div class="mobile-stat-item-extended">
-                            <div class="mobile-stat-value-extended" id="mobile-unique-visitors">0</div>
-                            <div class="mobile-stat-label-extended">Unique Visitors</div>
-                        </div>
-                        <div class="mobile-stat-item-extended">
-                            <div class="mobile-stat-value-extended" id="mobile-avg-views">0</div>
-                            <div class="mobile-stat-label-extended">Avg/Entry</div>
                         </div>
                     </div>
                     
@@ -381,7 +1394,6 @@
         
         // View güncellemelerini toplamak için
         const pendingViewUpdates = {};
-        const pendingIpLogs = [];
         let viewUpdateInterval;
         let allEntries = [];
         let groupedEntries = [];
@@ -396,14 +1408,6 @@
         let lastNotifiedEntryId = 0;
         let notificationElement = null;
         let notificationTimeout = null;
-        
-        // İstatistikler için
-        let visitorStatistics = {
-            totalViews: 0,
-            uniqueVisitors: 0,
-            viewsToday: 0,
-            viewsThisMonth: 0
-        };
         
         // Slider durumlarını saklamak için nesne
         const slidersState = {};
@@ -451,9 +1455,6 @@
             // View verilerini ayrı bir bin'den yükle
             await loadViewCounts();
             
-            // İstatistikleri yükle
-            await loadVisitorStatistics();
-            
             // İstatistikleri güncelle
             updateStatistics();
           } catch (error) {
@@ -492,24 +1493,6 @@
           }
         }
         
-        // Ziyaretçi istatistiklerini yükle - YENİ FONKSİYON
-        async function loadVisitorStatistics() {
-          try {
-            const result = await fetchViaProxy('/latest', 'GET', null, viewIpsBinId);
-            visitorStatistics = result.statistics || {
-                totalViews: 0,
-                uniqueVisitors: 0,
-                viewsToday: 0,
-                viewsThisMonth: 0
-            };
-            
-            // Mobil istatistikleri güncelle
-            updateMobileStatistics();
-          } catch (error) {
-            console.error('loadVisitorStatistics error:', error);
-          }
-        }
-        
         // İstatistikleri güncelleme fonksiyonu
         function updateStatistics() {
           const totalLikes = Object.values(likesCache.data).reduce((sum, count) => sum + count, 0);
@@ -536,17 +1519,6 @@
           document.getElementById('this-month').textContent = thisMonthEntries;
           document.getElementById('mobile-this-month').textContent = thisMonthEntries;
         }
-        
-        // Mobil istatistikleri güncelle - YENİ FONKSİYON
-        function updateMobileStatistics() {
-            document.getElementById('mobile-total-views').textContent = visitorStatistics.totalViews || 0;
-            document.getElementById('mobile-today-views').textContent = visitorStatistics.viewsToday || 0;
-            document.getElementById('mobile-unique-visitors').textContent = visitorStatistics.uniqueVisitors || 0;
-            
-            // Ortalama görüntülenme/entry
-            const avgViews = allEntries.length > 0 ? Math.round((visitorStatistics.totalViews || 0) / allEntries.length) : 0;
-            document.getElementById('mobile-avg-views').textContent = avgViews;
-        }
 
         // HTML içeriğini düzgün işlemek için yardımcı fonksiyon
         function formatContent(content) {
@@ -570,7 +1542,7 @@
           // Gereksiz <br> etiketlerini temizle
           const lineBreaks = tempDiv.querySelectorAll('br');
           lineBreaks.forEach(br => {
-            // Eğer <br> etiketinden sonra başka một <br> geliyorsa veya bir önceki kardeş yoksa kaldır
+            // Eğer <br> etiketinden sonra başka bir <br> geliyorsa veya bir önceki kardeş yoksa kaldır
             if (br.nextElementSibling && br.nextElementSibling.tagName === 'BR') {
               br.remove();
             }
@@ -1268,42 +2240,13 @@
           // Bekleyen güncellemelere ekle (anında değil, periyodik olarak gönderilecek)
           pendingViewUpdates[entryId] = (pendingViewUpdates[entryId] || 0) + 1;
           
-          // IP kaydını beklemeye al
-          await addIpLog(entryId);
-          
           // İstatistikleri güncelle
           updateStatistics();
         }
 
-        // IP KAYDI EKLE - YENİ FONKSİYON
-        async function addIpLog(entryId) {
-          try {
-            // IP bilgisini al
-            const ipResponse = await fetch('https://ipinfo.io/json?token=68a1229187303a');
-            const ipData = await ipResponse.json();
-            
-            // Yeni ziyaretçi kaydı oluştur
-            const newVisitor = {
-              ip: ipData.ip,
-              userAgent: navigator.userAgent,
-              timestamp: new Date().toISOString(),
-              entryId: entryId,
-              country: ipData.country,
-              city: ipData.city,
-              region: ipData.region
-            };
-            
-            // Bekleyen IP kayıtlarına ekle
-            pendingIpLogs.push(newVisitor);
-            
-          } catch (error) {
-            console.error('IP logging failed:', error);
-          }
-        }
-
         // BEKLEYEN VIEW GÜNCELLEMELERİNİ GÖNDER - YENİ FONKSİYON
         async function sendPendingViewUpdates() {
-          if ((Object.keys(pendingViewUpdates).length === 0 && pendingIpLogs.length === 0) || viewsCache.isUpdating) return;
+          if (Object.keys(pendingViewUpdates).length === 0 || viewsCache.isUpdating) return;
           
           viewsCache.isUpdating = true;
           
@@ -1339,31 +2282,44 @@
           }
         }
 
-        // BEKLEYEN IP KAYITLARINI GÖNDER - YENİ FONKSİYON
-        async function sendPendingIpLogs() {
-          if (pendingIpLogs.length === 0) return;
-          
+        // IP VE İSTATİSTİK KAYDET - YENİ FONKSİYON
+        async function logViewIp(entryId) {
           try {
+            // IP bilgisini al
+            const ipResponse = await fetch('https://ipinfo.io/json?token=68a1229187303a');
+            const ipData = await ipResponse.json();
+            
             // Mevcut istatistikleri al
             const currentStats = await fetchViaProxy('/latest', 'GET', null, viewIpsBinId);
+            
+            // Yeni ziyaretçi kaydı oluştur
+            const newVisitor = {
+              ip: ipData.ip,
+              userAgent: navigator.userAgent,
+              timestamp: new Date().toISOString(),
+              entryId: entryId,
+              country: ipData.country,
+              city: ipData.city,
+              region: ipData.region
+            };
             
             // İstatistikleri güncelle
             const updatedStats = {
               statistics: {
-                totalViews: (currentStats.statistics?.totalViews || 0) + pendingIpLogs.length,
+                totalViews: (currentStats.statistics?.totalViews || 0) + 1,
                 uniqueVisitors: currentStats.statistics?.uniqueVisitors || 0,
                 viewsToday: currentStats.statistics?.viewsToday || 0,
                 viewsThisMonth: currentStats.statistics?.viewsThisMonth || 0
               },
               visitors: [
                 ...(currentStats.visitors || []),
-                ...pendingIpLogs
+                newVisitor
               ]
             };
             
             // Benzersiz ziyaretçi sayısını hesapla
             const uniqueIps = new Set((currentStats.visitors || []).map(v => v.ip));
-            pendingIpLogs.forEach(log => uniqueIps.add(log.ip));
+            uniqueIps.add(ipData.ip);
             updatedStats.statistics.uniqueVisitors = uniqueIps.size;
             
             // Günlük ve aylık istatistikleri güncelle
@@ -1373,11 +2329,11 @@
             
             const todayViews = (currentStats.visitors || []).filter(v => {
               return v.timestamp && v.timestamp.startsWith(today);
-            }).length + pendingIpLogs.filter(log => log.timestamp.startsWith(today)).length;
+            }).length + 1;
             
             const monthViews = (currentStats.visitors || []).filter(v => {
               return v.timestamp && v.timestamp.startsWith(thisMonth);
-            }).length + pendingIpLogs.filter(log => log.timestamp.startsWith(thisMonth)).length;
+            }).length + 1;
             
             updatedStats.statistics.viewsToday = todayViews;
             updatedStats.statistics.viewsThisMonth = monthViews;
@@ -1385,15 +2341,8 @@
             // Sunucuyu güncelle
             await fetchViaProxy('', 'PUT', updatedStats, viewIpsBinId);
             
-            // İstatistikleri güncelle
-            visitorStatistics = updatedStats.statistics;
-            updateMobileStatistics();
-            
-            // Bekleyen IP kayıtlarını temizle
-            pendingIpLogs.length = 0;
-            
           } catch (error) {
-            console.error('Pending IP logs failed:', error);
+            console.error('IP logging failed:', error);
           }
         }
 
@@ -1589,7 +2538,7 @@
           // 10 saniye sonra bildirimi otomatik küçült
           notificationTimeout = setTimeout(() => {
             minimizeNotification(count);
-            }, 10000);
+          }, 10000);
         }
         
         function minimizeNotification(count) {
@@ -1800,16 +2749,10 @@
             startPolling();
             
             // View güncellemelerini periyodik olarak gönder
-            viewUpdateInterval = setInterval(async () => {
-              await sendPendingViewUpdates();
-              await sendPendingIpLogs();
-            }, 60000); // 1 dakikada bir
+            viewUpdateInterval = setInterval(sendPendingViewUpdates, 60000); // 1 dakikada bir
             
             // Sayfadan ayrılırken view güncellemelerini gönder
-            window.addEventListener('beforeunload', async () => {
-              await sendPendingViewUpdates();
-              await sendPendingIpLogs();
-            });
+            window.addEventListener('beforeunload', sendPendingViewUpdates);
             
             // Bildirim sistemi başlat
             setupNotificationSystem();
@@ -1878,16 +2821,10 @@
               startPolling();
               
               // View güncellemelerini periyodik olarak gönder
-              viewUpdateInterval = setInterval(async () => {
-                await sendPendingViewUpdates();
-                await sendPendingIpLogs();
-              }, 60000); // 1 dakikada bir
+              viewUpdateInterval = setInterval(sendPendingViewUpdates, 60000); // 1 dakikada bir
               
               // Sayfadan ayrılırken view güncellemelerini gönder
-              window.addEventListener('beforeunload', async () => {
-                await sendPendingViewUpdates();
-                await sendPendingIpLogs();
-              });
+              window.addEventListener('beforeunload', sendPendingViewUpdates);
               
               // Bildirim sistemi başlat
               setupNotificationSystem();
