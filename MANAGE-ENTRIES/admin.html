@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Paneli - adembayazit.com</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Cropper.js CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     <style>
         :root {
             --primary-color: limegreen;
@@ -583,6 +585,108 @@
             text-decoration: underline;
         }
 
+        /* Crop Modal Stilleri */
+        .crop-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .crop-modal-content {
+            background: var(--secondary-color);
+            border: 2px solid var(--primary-color);
+            border-radius: 5px;
+            padding: 20px;
+            max-width: 90%;
+            max-height: 90%;
+            width: 800px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+
+        .crop-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--primary-color);
+            padding-bottom: 10px;
+        }
+
+        .crop-modal-header h3 {
+            margin: 0;
+            color: var(--primary-color);
+        }
+
+        .close-crop {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .crop-container {
+            width: 100%;
+            height: 400px;
+            margin-bottom: 15px;
+            background: #000;
+            overflow: hidden;
+        }
+
+        .crop-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .aspect-ratio-btn {
+            background: #111;
+            border: 1px solid var(--primary-color);
+            color: var(--text-color);
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 3px;
+            font-size: 0.8rem;
+        }
+
+        .aspect-ratio-btn.active {
+            background: var(--primary-color);
+            color: black;
+        }
+
+        .crop-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .crop-actions button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+        }
+
+        .cancel-crop {
+            background: #333;
+            color: white;
+        }
+
+        .confirm-crop {
+            background: var(--primary-color);
+            color: black;
+        }
+
         @media (min-width: 768px) {
             .admin-container {
                 display: grid;
@@ -622,6 +726,15 @@
             .entry-meta {
                 flex-direction: column;
                 gap: 3px;
+            }
+
+            .crop-container {
+                height: 300px;
+            }
+
+            .crop-modal-content {
+                width: 95%;
+                padding: 15px;
             }
         }
     </style>
@@ -735,7 +848,35 @@
         </div>
     </div>
 
-    <input type="file" id="media-file-input" style="display: none;" accept="image/*,video/*" onchange="handleMediaUpload(event)">
+    <!-- Media Upload Input -->
+    <input type="file" id="media-file-input" style="display: none;" accept="image/*,video/*" onchange="handleMediaSelection(event)">
+
+    <!-- Crop Modal -->
+    <div class="crop-modal" id="cropModal">
+        <div class="crop-modal-content">
+            <div class="crop-modal-header">
+                <h3><i class="fas fa-crop-alt"></i> Resmi Düzenle</h3>
+                <button class="close-crop" onclick="closeCropModal()">&times;</button>
+            </div>
+            <div class="crop-container">
+                <img id="cropImage" src="" alt="Crop preview">
+            </div>
+            <div class="crop-controls">
+                <button class="aspect-ratio-btn active" data-ratio="16/9">16:9</button>
+                <button class="aspect-ratio-btn" data-ratio="1/1">1:1</button>
+                <button class="aspect-ratio-btn" data-ratio="4/3">4:3</button>
+                <button class="aspect-ratio-btn" data-ratio="9/16">9:16</button>
+                <button class="aspect-ratio-btn" data-ratio="free">Serbest</button>
+            </div>
+            <div class="crop-actions">
+                <button class="cancel-crop" onclick="closeCropModal()">İptal</button>
+                <button class="confirm-crop" onclick="cropAndUpload()">Kırp ve Yükle</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cropper.js Script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
     <script>
         const ENTRIES_BIN_ID = '68933248ae596e708fc2fbbc';
@@ -743,6 +884,8 @@
         const PROXY_URL = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
         
         let activeTextareaId = null;
+        let cropper = null;
+        let selectedFile = null;
 
         window.addEventListener('DOMContentLoaded', () => {
             if (!localStorage.getItem('adminAuth') || localStorage.getItem('adminAuth') !== 'true') {
@@ -809,12 +952,13 @@
                 return;
             }
             
-            const spotifyEmbed = `<iframe class="spotify-embed"
-                    src="https://open.spotify.com/embed/track/${trackId}?utm_source=generator&theme=0" 
+            const spotifyEmbed = `<div class="spotify-embed">
+                <iframe src="https://open.spotify.com/embed/track/${trackId}?utm_source=generator&theme=0" 
                     frameborder="0"
                     allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
                     loading="lazy">
-                </iframe>`;
+                </iframe>
+            </div>`;
             
             insertAtCursor(textareaId, spotifyEmbed);
             updatePreview(textareaId);
@@ -844,14 +988,15 @@
                 return;
             }
             
-            const youtubeEmbed = `<iframe class="youtube-embed"
-                    width="100%" 
+            const youtubeEmbed = `<div class="youtube-embed">
+                <iframe width="100%" 
                     height="315" 
                     src="https://www.youtube.com/embed/${videoId}" 
                     frameborder="0" 
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                     allowfullscreen>
-                </iframe>`;
+                </iframe>
+            </div>`;
             
             insertAtCursor(textareaId, youtubeEmbed);
             updatePreview(textareaId);
@@ -897,7 +1042,7 @@
             document.getElementById('media-file-input').click();
         }
 
-        async function handleMediaUpload(event) {
+        function handleMediaSelection(event) {
             const file = event.target.files[0];
             if (!file) return;
             
@@ -906,6 +1051,109 @@
                 return;
             }
             
+            selectedFile = file;
+            
+            // Eğer video ise doğrudan yükle, resim ise crop modalını aç
+            if (file.type.startsWith('video/')) {
+                handleMediaUpload(file);
+            } else {
+                openCropModal(file);
+            }
+        }
+
+        function openCropModal(file) {
+            const cropModal = document.getElementById('cropModal');
+            const cropImage = document.getElementById('cropImage');
+            
+            // Önceki cropper'ı temizle
+            if (cropper) {
+                cropper.destroy();
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                cropImage.src = e.target.result;
+                cropModal.style.display = 'flex';
+                
+                // Cropper'ı başlat
+                setTimeout(() => {
+                    cropper = new Cropper(cropImage, {
+                        aspectRatio: 16/9,
+                        viewMode: 1,
+                        guides: true,
+                        background: false,
+                        autoCropArea: 0.8,
+                        responsive: true,
+                        checkCrossOrigin: false
+                    });
+                    
+                    // Aspect ratio butonlarına tıklama olayları ekle
+                    document.querySelectorAll('.aspect-ratio-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            document.querySelectorAll('.aspect-ratio-btn').forEach(b => b.classList.remove('active'));
+                            this.classList.add('active');
+                            
+                            const ratio = this.getAttribute('data-ratio');
+                            if (ratio === 'free') {
+                                cropper.setAspectRatio(NaN);
+                            } else {
+                                const parts = ratio.split('/');
+                                cropper.setAspectRatio(parts[0] / parts[1]);
+                            }
+                        });
+                    });
+                }, 100);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function closeCropModal() {
+            document.getElementById('cropModal').style.display = 'none';
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+            // Input'u sıfırla
+            document.getElementById('media-file-input').value = '';
+        }
+
+        async function cropAndUpload() {
+            if (!cropper) return;
+            
+            try {
+                showMessage('Resim kırpılıyor ve yükleniyor...', 'warning');
+                
+                // Canvas üzerinden kırpılmış resmi al
+                const canvas = cropper.getCroppedCanvas({
+                    imageSmoothingEnabled: true,
+                    imageSmoothingQuality: 'high'
+                });
+                
+                // Canvas'ı blob'a dönüştür
+                canvas.toBlob(async function(blob) {
+                    try {
+                        // Blob'u File nesnesine dönüştür
+                        const croppedFile = new File([blob], selectedFile.name, {
+                            type: 'image/jpeg',
+                            lastModified: Date.now()
+                        });
+                        
+                        // Yükleme işlemini başlat
+                        await handleMediaUpload(croppedFile);
+                        closeCropModal();
+                    } catch (error) {
+                        console.error('Kırpma hatası:', error);
+                        showMessage(`Kırpma hatası: ${error.message}`, 'error');
+                    }
+                }, 'image/jpeg', 0.9);
+                
+            } catch (error) {
+                console.error('Kırpma hatası:', error);
+                showMessage(`Kırpma hatası: ${error.message}`, 'error');
+            }
+        }
+
+        async function handleMediaUpload(file) {
             try {
                 showMessage('Dosya yükleniyor...', 'warning');
                 showDebugInfo('Authentication parametreleri alınıyor...');
