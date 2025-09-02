@@ -1414,10 +1414,6 @@
         let isSubscribed = false;
         let pushManagerSupported = false;
 
-        // YENİ: View verileri için ayrı JSONBin ID'si
-        const VIEWS_BIN_ID = '68933248ae596e708fc2fbbc'; // Bu ID'yi kendi JSONBin ID'nizle değiştirin
-        const IP_STATS_BIN_ID = '68933248ae596e708fc2fbbd'; // Bu ID'yi kendi JSONBin ID'nizle değiştirin
-
         // 2. PROXY HELPER FONKSİYONU
         async function fetchViaProxy(path, method = 'GET', body = null) {
           const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
@@ -1442,14 +1438,10 @@
         // 3. TEMEL FONKSİYONLAR
         async function loadInteractions() {
           try {
-            const [interactionsResult, viewsResult] = await Promise.all([
-              fetchViaProxy('/b/68862fd97b4b8670d8a81945/latest'),
-              fetchViaProxy(`/b/${VIEWS_BIN_ID}/latest`)
-            ]);
-            
-            likesCache.data = interactionsResult.likes || {};
-            pinsCache.data = interactionsResult.pins || {};
-            viewsCache.data = viewsResult.views || {};
+            const result = await fetchViaProxy('/b/68862fd97b4b8670d8a81945/latest');
+            likesCache.data = result.likes || {};
+            pinsCache.data = result.pins || {};
+            viewsCache.data = result.views || {};
             likesCache.lastUpdated = pinsCache.lastUpdated = viewsCache.lastUpdated = Date.now();
             
             // İstatistikleri güncelle
@@ -1469,7 +1461,6 @@
             }
           }
         }
-        
         // İstatistikleri güncelleme fonksiyonu
         function updateStatistics() {
           const totalLikes = Object.values(likesCache.data).reduce((sum, count) => sum + count, 0);
@@ -2143,7 +2134,7 @@
             likesCache.data[entryId] = currentCount + 1;
             localStorage.setItem('entryLikes', JSON.stringify(likesCache.data));
             
-            await updateInteractionsOnServer(entryId, currentCount + 1, null);
+            await updateInteractionsOnServer(entryId, currentCount + 1, null, null);
             likesCache.lastUpdated = Date.now();
             
             // İstatistikleri güncelle
@@ -2175,7 +2166,7 @@
             pinsCache.data[entryId] = currentCount + 1;
             localStorage.setItem('entryPins', JSON.stringify(pinsCache.data));
             
-            await updateInteractionsOnServer(entryId, null, currentCount + 1);
+            await updateInteractionsOnServer(entryId, null, currentCount + 1, null);
             pinsCache.lastUpdated = Date.now();
             
             // İstatistikleri güncelle
@@ -2211,7 +2202,7 @@
             viewedEntries[entryId] = true;
             sessionStorage.setItem('viewedEntries', JSON.stringify(viewedEntries));
             
-            await updateViewsOnServer(viewsCache.data);
+            await updateInteractionsOnServer(entryId, null, null, currentCount + 1);
             viewsCache.lastUpdated = Date.now();
             
             // İstatistikleri güncelle
@@ -2289,50 +2280,19 @@
           }
         }
 
-        async function updateInteractionsOnServer(entryId, newLikeCount, newPinCount) {
+        async function updateInteractionsOnServer(entryId, newLikeCount, newPinCount, newViewCount) {
           const updatedLikes = newLikeCount !== null ? { ...likesCache.data, [entryId]: newLikeCount } : likesCache.data;
           const updatedPins = newPinCount !== null ? { ...pinsCache.data, [entryId]: newPinCount } : pinsCache.data;
+          const updatedViews = newViewCount !== null ? { ...viewsCache.data, [entryId]: newViewCount } : viewsCache.data;
 
           try {
             await fetchViaProxy('/b/68862fd97b4b8670d8a81945', 'PUT', {
               likes: updatedLikes,
-              pins: updatedPins
+              pins: updatedPins,
+              views: updatedViews
             });
           } catch (error) {
             throw new Error('Failed to update data on server');
-          }
-        }
-
-        // YENİ: View verilerini güncellemek için ayrı fonksiyon
-        async function updateViewsOnServer(viewsData) {
-          try {
-            await fetchViaProxy(`/b/${VIEWS_BIN_ID}`, 'PUT', {
-              views: viewsData
-            });
-          } catch (error) {
-            throw new Error('Failed to update views on server');
-          }
-        }
-
-        // YENİ: IP ve istatistik verilerini kaydetmek için fonksiyon
-        async function saveIpStats(ipData) {
-          try {
-            // Mevcut istatistikleri al
-            const currentStats = await fetchViaProxy(`/b/${IP_STATS_BIN_ID}/latest`);
-            const stats = currentStats.stats || [];
-            
-            // Yeni veriyi ekle
-            stats.push(ipData);
-            
-            // Sadece son 1000 kaydı tut (sınırlama için)
-            const limitedStats = stats.slice(-1000);
-            
-            // JSONBin'e kaydet
-            await fetchViaProxy(`/b/${IP_STATS_BIN_ID}`, 'PUT', {
-              stats: limitedStats
-            });
-          } catch (error) {
-            console.error('IP stats save error:', error);
           }
         }
 
@@ -2965,7 +2925,7 @@ function sendNotification(entry) {
                 // ID araması: tam eşleşme
                 return entry.id.toString() === query;
               } else {
-                // Metin araması: içerikde ara
+                // Metin araması: içerikte ara
                 return entry.content.toLowerCase().includes(query.toLowerCase());
               }
             });
