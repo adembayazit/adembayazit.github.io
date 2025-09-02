@@ -558,6 +558,7 @@
         
         .recent-ips {
             margin-top: 20px;
+            padding: 0 1rem 1rem 1rem;
         }
         
         .recent-ips h4 {
@@ -1474,8 +1475,9 @@
                     mediaTag = `<video src="${url}" controls style="max-width: 100%; height: auto;"></video>`;
                 }
                 
-                insertAtCursor(textareaId, `\n${mediaTag}\n`);
-                updatePreview(textareaId);
+                // DÜZELTME: Burada textareaId yerine activeTextareaId kullan
+                insertAtCursor(activeTextareaId, `\n${mediaTag}\n`);
+                updatePreview(activeTextareaId);
                 
                 showMessage('Dosya başarıyla yüklendi!', 'success');
                 showDebugInfo('');
