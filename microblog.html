@@ -1524,34 +1524,35 @@
 
         // HTML içeriğini düzgün işlemek için yardımcı fonksiyon
         function formatContent(content) {
-          // İlk temizlik: <br> etiketlerini standartlaştır ve boş <p> etiketlerini kaldır
-          content = content.replace(/<br\s*\/?>/gi, '<br>');
-          content = content.replace(/<p>\s*<\/p>/gi, '');
-          
-          // DOM temizliği için geçici bir div oluştur
-          const tempDiv = document.createElement('div');
-          tempDiv.innerHTML = content;
-          
-          // Boş <p> etiketlerini ve gereksiz boşlukları temizle
-          const paragraphs = tempDiv.querySelectorAll('p');
-          paragraphs.forEach(p => {
-            // İçeriği olmayan veya sadece boşluk içeren <p> etiketlerini kaldır
-            if (!p.textContent.trim() && p.children.length === 0) {
-              p.remove();
-            }
-          });
-          
-          // Gereksiz <br> etiketlerini temizle
-          const lineBreaks = tempDiv.querySelectorAll('br');
-          lineBreaks.forEach(br => {
-            // Eğer <br> etiketinden sonra başka bir <br> geliyorsa veya bir önceki kardeş yoksa kaldır
-            if (br.nextElementSibling && br.nextElementSibling.tagName === 'BR') {
-              br.remove();
-            }
-          });
-          
-          // İçeriği temizlenmiş olarak al
-          content = tempDiv.innerHTML.trim();
+  // İlk temizlik: <br> etiketlerini standartlaştır ve boş <p> etiketlerini kaldır
+  content = content.replace(/<br\s*\/?>/gi, '<br>');
+  content = content.replace(/<p>\s*<\/p>/gi, '');
+
+  // DOM temizliği için geçici bir div oluştur
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = content;
+
+  // Boş <p> etiketlerini ve gereksiz boşlukları temizle
+  const paragraphs = tempDiv.querySelectorAll('p');
+  paragraphs.forEach(p => {
+    // İçeriği olmayan veya sadece boşluk içeren <p> etiketlerini kaldır
+    if (!p.textContent.trim() && p.children.length === 0) {
+      p.remove();
+    }
+  });
+
+  // Gereksiz <br> etiketlerini temizle (ÇALIŞAN KODDAKİ MANTIK)
+  const lineBreaks = tempDiv.querySelectorAll('br');
+  lineBreaks.forEach(br => {
+    // Eğer <br> etiketinden sonra başka bir <br> geliyorsa kaldır
+    if (br.nextElementSibling?.tagName === 'BR') {
+      br.remove();
+    }
+  });
+
+  // İçeriği temizlenmiş olarak döndür (ÇALIŞAN KODDAKİ GİBİ doğrudan innerHTML dönüşü)
+  return tempDiv.innerHTML.trim();
+}
           
           // YouTube embed linklerini tespit ve ve iframe'e dönüştür
           content = content.replace(/(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/g, 
