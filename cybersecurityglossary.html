@@ -30,6 +30,8 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Courier New', monospace;
+            text-decoration: none;
+            list-style: none;
         }
         
         body {
@@ -69,19 +71,66 @@
             );
         }
         
-        /* Header Stili */
-        .header {
-            background-color: #2a2a2a;
-            padding: 15px 20px;
-            position: sticky;
+        /* Header Stili - Ana Sayfa ile Aynı */
+        header {
+            position: fixed;
+            width: 100%;
             top: 0;
-            z-index: 100;
+            right: 0;
+            z-index: 1000;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
+            background: transparent;
+            padding: 28px 12%;
+            transition: all .50s ease;
+            background-color: #2a2a2a;
             border-bottom: 1px solid #00ff00;
         }
-        
+
+        .navbar {
+            display: flex;
+        }
+
+        .navbar a {
+            color: #00ff00;
+            font-size: 1.1rem;
+            font-weight: 500;
+            padding: 5px 0;
+            margin: 0px 30px;
+            transition: all .50s ease;
+        }
+
+        .navbar a:hover {
+            color: #00aa00;
+        }
+
+        .main {
+            display: flex;
+            align-items: center;
+        }
+
+        .main a {
+            margin-right: 25px;
+            margin-left: 10px;
+            color: #00ff00;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: all .50s ease;
+        }
+
+        .main a:hover {
+            color: #00aa00;
+        }
+
+        #menu-icon {
+            font-size: 35px;
+            color: #00ff00;
+            cursor: pointer;
+            z-index: 10001;
+            display: none;
+        }
+
         .logo {
             display: flex;
             align-items: center;
@@ -122,6 +171,7 @@
         .main-container {
             display: flex;
             min-height: calc(100vh - 120px);
+            margin-top: 80px; /* Header yüksekliği için boşluk */
         }
         
         /* Alfabetik Sekmeler */
@@ -227,7 +277,7 @@
             margin-top: 5px;
         }
         
-        /* Footer */
+        /* Footer - Ana Sayfa ile Aynı */
         footer {
             text-align: center;
             padding: 20px;
@@ -235,17 +285,86 @@
             color: white;
             background-color: #2a2a2a;
             border-top: 1px solid #00ff00;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         
         footer hr {
             margin-bottom: 10px;
             border-color: limegreen;
+            width: 80%;
+        }
+        
+        .social a {
+            display: inline-block;
+            font-size: 20px;
+            color: #00ff00;
+            margin: 0 10px;
+            transition: all .50s ease;
+        }
+        
+        .social a:hover {
+            transform: translateY(-5px);
+            color: #00aa00;
+        }
+        
+        .copyright {
+            margin-top: 10px;
         }
         
         /* Responsive Tasarım */
+        @media (max-width: 1280px) {
+            header {
+                padding: 14px 2%;
+                transition: .2s;
+            }
+            .navbar a {
+                padding: 5px 0;
+                margin: 0px 20px;
+            }
+        }
+        
+        @media (max-width: 1090px) {
+            #menu-icon {
+                display: block;
+            }
+            .navbar {
+                position: absolute;
+                top: 100%;
+                right: -100%;
+                width: 270px;
+                height: 100vh;
+                background: #2a2a2a;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                border-radius: 10px;
+                transition: all .50s ease;
+            }
+            .navbar a {
+                display: block;
+                margin: 12px 0;
+                padding: 0px 25px;
+                transition: all .50s ease;
+            }
+            .navbar a:hover {
+                color: #00aa00;
+                transform: translateY(5px);
+            }
+            .navbar.open {
+                right: 2%;
+            }
+            
+            .search-container {
+                width: 200px;
+            }
+        }
+        
         @media (max-width: 768px) {
             .main-container {
                 flex-direction: column;
+                margin-top: 60px;
             }
             
             .alphabet-tabs {
@@ -262,22 +381,26 @@
             }
             
             .search-container {
-                width: 200px;
+                width: 150px;
             }
         }
         
         @media (max-width: 480px) {
-            .header {
-                flex-direction: column;
-                padding: 10px;
+            header {
+                padding: 10px 2%;
             }
             
             .logo {
-                margin-bottom: 10px;
+                font-size: 1rem;
             }
             
             .search-container {
-                width: 100%;
+                width: 120px;
+            }
+            
+            .main a {
+                margin-right: 15px;
+                font-size: 1rem;
             }
         }
         
@@ -300,6 +423,7 @@
             padding: 10px;
             cursor: pointer;
             border-bottom: 1px solid #333;
+            color: #00ff00;
         }
         
         .search-result-item:hover {
@@ -313,11 +437,25 @@
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
 
-    <header class="header">
-        <a href="#home" class="logo">
+    <!-- Header - Ana Sayfa ile Aynı -->
+    <header>
+        <a href="https://adembayazit.com" class="logo">
             <img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">
             {adembayazit} 
         </a>
+        
+        <div class="navbar">
+            <a href="https://adembayazit.com">Ana Sayfa</a>
+            <a href="https://adembayazit.com/about">Hakkımda</a>
+            <a href="https://adembayazit.com/projects">Projeler</a>
+            <a href="https://adembayazit.com/blog">Blog</a>
+            <a href="https://adembayazit.com/contact">İletişim</a>
+        </div>
+        
+        <div class="main">
+            <a href="https://adembayazit.com/login" class="user"><i class='bx bxs-user'></i> Giriş Yap</a>
+            <div class="bx bx-menu" id="menu-icon"></div>
+        </div>
         
         <div class="search-container">
             <input type="text" class="search-input" placeholder="Terim ara...">
@@ -340,13 +478,30 @@
         </div>
     </div>
 
+    <!-- Footer - Ana Sayfa ile Aynı -->
     <footer>
+        <div class="social">
+            <a href="https://github.com/adembayazit"><i class='bx bxl-github'></i></a>
+            <a href="https://linkedin.com/in/adembayazit"><i class='bx bxl-linkedin'></i></a>
+            <a href="https://twitter.com/adembayazit"><i class='bx bxl-twitter'></i></a>
+            <a href="https://instagram.com/adembayazit"><i class='bx bxl-instagram'></i></a>
+        </div>
         <hr>
-        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.2 | July 2025</p>
+        <div class="copyright">
+            <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.2 | July 2025</p>
+        </div>
     </footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Mobil menü işlevselliği
+            const menuIcon = document.querySelector('#menu-icon');
+            const navbar = document.querySelector('.navbar');
+            
+            menuIcon.onclick = () => {
+                navbar.classList.toggle('open');
+            };
+            
             // Alfabetik sekmeleri oluştur
             const alphabetTabs = document.querySelector('.alphabet-tabs');
             const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
