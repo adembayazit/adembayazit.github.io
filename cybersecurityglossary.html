@@ -19,10 +19,18 @@
     <meta name="twitter:image:alt" content="Adem Bayazıt">
     
     <link rel="icon" type="png|image" href="/IMAGES/ab.png">
+    <link rel="stylesheet" href="/CSS/style.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-TFN7XD9Z');</script>
+    <!-- End Google Tag Manager -->
     <style>
         /* Genel Stil */
         * {
@@ -30,8 +38,6 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Courier New', monospace;
-            text-decoration: none;
-            list-style: none;
         }
         
         body {
@@ -71,107 +77,10 @@
             );
         }
         
-        /* Header Stili - Ana Sayfa ile Aynı */
-        header {
-            position: fixed;
-            width: 100%;
-            top: 0;
-            right: 0;
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: transparent;
-            padding: 28px 12%;
-            transition: all .50s ease;
-            background-color: #2a2a2a;
-            border-bottom: 1px solid #00ff00;
-        }
-
-        .navbar {
-            display: flex;
-        }
-
-        .navbar a {
-            color: #00ff00;
-            font-size: 1.1rem;
-            font-weight: 500;
-            padding: 5px 0;
-            margin: 0px 30px;
-            transition: all .50s ease;
-        }
-
-        .navbar a:hover {
-            color: #00aa00;
-        }
-
-        .main {
-            display: flex;
-            align-items: center;
-        }
-
-        .main a {
-            margin-right: 25px;
-            margin-left: 10px;
-            color: #00ff00;
-            font-size: 1.1rem;
-            font-weight: 500;
-            transition: all .50s ease;
-        }
-
-        .main a:hover {
-            color: #00aa00;
-        }
-
-        #menu-icon {
-            font-size: 35px;
-            color: #00ff00;
-            cursor: pointer;
-            z-index: 10001;
-            display: none;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            color: #00ff00;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-        
-        .hackerwhite-icon {
-            width: 24px;
-            height: 24px;
-            margin-right: 10px;
-            filter: invert(1);
-        }
-        
-        /* Arama Çubuğu */
-        .search-container {
-            position: relative;
-            width: 300px;
-        }
-        
-        .search-input {
-            width: 100%;
-            padding: 10px 15px;
-            background-color: #1a1a1a;
-            border: 1px solid #00ff00;
-            border-radius: 4px;
-            color: #00ff00;
-            font-family: 'Courier New', monospace;
-        }
-        
-        .search-input::placeholder {
-            color: #00aa00;
-        }
-        
         /* Ana İçerik Düzeni */
         .main-container {
             display: flex;
             min-height: calc(100vh - 120px);
-            margin-top: 80px; /* Header yüksekliği için boşluk */
         }
         
         /* Alfabetik Sekmeler */
@@ -277,133 +186,6 @@
             margin-top: 5px;
         }
         
-        /* Footer - Ana Sayfa ile Aynı */
-        footer {
-            text-align: center;
-            padding: 20px;
-            font-size: 14px;
-            color: white;
-            background-color: #2a2a2a;
-            border-top: 1px solid #00ff00;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        footer hr {
-            margin-bottom: 10px;
-            border-color: limegreen;
-            width: 80%;
-        }
-        
-        .social a {
-            display: inline-block;
-            font-size: 20px;
-            color: #00ff00;
-            margin: 0 10px;
-            transition: all .50s ease;
-        }
-        
-        .social a:hover {
-            transform: translateY(-5px);
-            color: #00aa00;
-        }
-        
-        .copyright {
-            margin-top: 10px;
-        }
-        
-        /* Responsive Tasarım */
-        @media (max-width: 1280px) {
-            header {
-                padding: 14px 2%;
-                transition: .2s;
-            }
-            .navbar a {
-                padding: 5px 0;
-                margin: 0px 20px;
-            }
-        }
-        
-        @media (max-width: 1090px) {
-            #menu-icon {
-                display: block;
-            }
-            .navbar {
-                position: absolute;
-                top: 100%;
-                right: -100%;
-                width: 270px;
-                height: 100vh;
-                background: #2a2a2a;
-                display: flex;
-                flex-direction: column;
-                justify-content: flex-start;
-                border-radius: 10px;
-                transition: all .50s ease;
-            }
-            .navbar a {
-                display: block;
-                margin: 12px 0;
-                padding: 0px 25px;
-                transition: all .50s ease;
-            }
-            .navbar a:hover {
-                color: #00aa00;
-                transform: translateY(5px);
-            }
-            .navbar.open {
-                right: 2%;
-            }
-            
-            .search-container {
-                width: 200px;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .main-container {
-                flex-direction: column;
-                margin-top: 60px;
-            }
-            
-            .alphabet-tabs {
-                width: 100%;
-                flex-direction: row;
-                overflow-x: auto;
-                padding: 10px 5px;
-                justify-content: flex-start;
-            }
-            
-            .alphabet-tab {
-                margin: 0 5px;
-                flex-shrink: 0;
-            }
-            
-            .search-container {
-                width: 150px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            header {
-                padding: 10px 2%;
-            }
-            
-            .logo {
-                font-size: 1rem;
-            }
-            
-            .search-container {
-                width: 120px;
-            }
-            
-            .main a {
-                margin-right: 15px;
-                font-size: 1rem;
-            }
-        }
-        
         /* Arama Sonuçları */
         .search-results {
             position: absolute;
@@ -423,39 +205,97 @@
             padding: 10px;
             cursor: pointer;
             border-bottom: 1px solid #333;
-            color: #00ff00;
         }
         
         .search-result-item:hover {
             background-color: #2a2a2a;
         }
+        
+        /* Header için özel stil */
+        .header .search-container {
+            position: relative;
+            width: 300px;
+        }
+        
+        .header .search-input {
+            width: 100%;
+            padding: 10px 15px;
+            background-color: #1a1a1a;
+            border: 1px solid #00ff00;
+            border-radius: 4px;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .header .search-input::placeholder {
+            color: #00aa00;
+        }
+        
+        /* Responsive Tasarım */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
+            .alphabet-tabs {
+                width: 100%;
+                flex-direction: row;
+                overflow-x: auto;
+                padding: 10px 5px;
+                justify-content: flex-start;
+            }
+            
+            .alphabet-tab {
+                margin: 0 5px;
+                flex-shrink: 0;
+            }
+            
+            .header .search-container {
+                width: 200px;
+            }
+            
+            .navbar {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header {
+                flex-direction: column;
+                padding: 10px;
+            }
+            
+            .logo {
+                margin-bottom: 10px;
+            }
+            
+            .header .search-container {
+                width: 100%;
+            }
+        }
     </style>
 </head>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TFN7XD9Z"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
 <body>
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TFN7XD9Z"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
-
-    <!-- Header - Ana Sayfa ile Aynı -->
-    <header>
-        <a href="https://adembayazit.com" class="logo">
-            <img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">
-            {adembayazit} 
-        </a>
-        
-        <div class="navbar">
-            <a href="https://adembayazit.com">Ana Sayfa</a>
-            <a href="https://adembayazit.com/about">Hakkımda</a>
-            <a href="https://adembayazit.com/projects">Projeler</a>
-            <a href="https://adembayazit.com/blog">Blog</a>
-            <a href="https://adembayazit.com/contact">İletişim</a>
-        </div>
-        
-        <div class="main">
-            <a href="https://adembayazit.com/login" class="user"><i class='bx bxs-user'></i> Giriş Yap</a>
-            <div class="bx bx-menu" id="menu-icon"></div>
-        </div>
+    <header class="header">
+        <a href="index.html" class="logo"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">{adembayazit} </a>
+        <nav class="navbar">
+            <div class="dropdown">
+                <a href="#" style="--i:5;" class="dropbtn"> <img src="IMAGES/Ata.svg" alt="Ata Icon" class="ata-icon"><span class="fi fi-tr"></span> <span class='bx bx-code-alt'></span> Ethical Hacker <span class='bx bx-chevron-down'></span></a>
+                <div class="dropdown-content">
+                    <a href="#tools"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hacker-icon"> What is an Ethical Hacker?</a>
+                    <a href="#reports"><img src="IMAGES/glossary.svg" alt="Glossary" class="glossary-icon"> Cybersecurity Glossary</a>
+                    <a href="#payloads"><img src="IMAGES/soc.svg" alt="Soc" class="soc-icon"> What is a SOC ?</a>
+                    <a href="#payloads"><img src="IMAGES/vulnerabilities.svg" alt="Vulnerabilities" class="vulnerabilities-icon"> Vulnerabilities</a>
+                    <a href="#payloads"><img src="IMAGES/steganography.svg" alt="Steganography" class="steganography-icon"> Steganography</a>
+                    <a href="#payloads"><img src="IMAGES/cryptography.svg" alt="Cryptography" class="cryptography-icon"> Cryptography</a>    
+                    <a href="#payloads"><img src="IMAGES/education.svg" alt="Education" class="education-icon"> Cybersecurity Learning Resources</a>
+                </div>
+            </div>
+        </nav>
         
         <div class="search-container">
             <input type="text" class="search-input" placeholder="Terim ara...">
@@ -478,30 +318,13 @@
         </div>
     </div>
 
-    <!-- Footer - Ana Sayfa ile Aynı -->
-    <footer>
-        <div class="social">
-            <a href="https://github.com/adembayazit"><i class='bx bxl-github'></i></a>
-            <a href="https://linkedin.com/in/adembayazit"><i class='bx bxl-linkedin'></i></a>
-            <a href="https://twitter.com/adembayazit"><i class='bx bxl-twitter'></i></a>
-            <a href="https://instagram.com/adembayazit"><i class='bx bxl-instagram'></i></a>
-        </div>
-        <hr>
-        <div class="copyright">
-            <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.2 | July 2025</p>
-        </div>
+    <footer style="text-align: center; padding: 20px; font-size: 14px; color: white;">
+        <hr style="margin-bottom: 10px; border-color: limegreen;" />
+        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.2 | July 2025</p>
     </footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Mobil menü işlevselliği
-            const menuIcon = document.querySelector('#menu-icon');
-            const navbar = document.querySelector('.navbar');
-            
-            menuIcon.onclick = () => {
-                navbar.classList.toggle('open');
-            };
-            
             // Alfabetik sekmeleri oluştur
             const alphabetTabs = document.querySelector('.alphabet-tabs');
             const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
