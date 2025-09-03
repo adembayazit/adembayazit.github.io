@@ -19,18 +19,10 @@
     <meta name="twitter:image:alt" content="Adem Bayazıt">
     
     <link rel="icon" type="png|image" href="/IMAGES/ab.png">
-    <link rel="stylesheet" href="/CSS/style.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-TFN7XD9Z');</script>
-    <!-- End Google Tag Manager -->
     <style>
         /* Genel Stil */
         * {
@@ -47,6 +39,74 @@
             position: relative;
         }
         
+        /* Header Stili */
+        .header {
+            background-color: #2a2a2a;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 1px solid #00ff00;
+        }
+        
+        .header-container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #00ff00;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .hackerwhite-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+            filter: invert(1);
+        }
+        
+        /* Arama Çubuğu */
+        .search-top-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px 20px;
+            background-color: #2a2a2a;
+            border-bottom: 1px solid #00ff00;
+        }
+        
+        .search-container {
+            position: relative;
+            width: 100%;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: #1a1a1a;
+            border: 1px solid #00ff00;
+            border-radius: 4px;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+        }
+        
+        .search-input::placeholder {
+            color: #00aa00;
+        }
+        
         /* Notebook Kağıdı Efekti */
         .notebook-page {
             background-color: #f0f0d0;
@@ -58,7 +118,9 @@
             border-left: 2px solid #ccc;
             border-right: 2px solid #ccc;
             position: relative;
-            min-height: 100vh;
+            min-height: calc(100vh - 180px);
+            max-width: 1200px;
+            margin: 0 auto;
         }
         
         .notebook-page::before {
@@ -80,7 +142,8 @@
         /* Ana İçerik Düzeni */
         .main-container {
             display: flex;
-            min-height: calc(100vh - 120px);
+            max-width: 1200px;
+            margin: 0 auto;
         }
         
         /* Alfabetik Sekmeler */
@@ -186,6 +249,21 @@
             margin-top: 5px;
         }
         
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+            color: white;
+            background-color: #2a2a2a;
+            border-top: 1px solid #00ff00;
+        }
+        
+        footer hr {
+            margin-bottom: 10px;
+            border-color: limegreen;
+        }
+        
         /* Arama Sonuçları */
         .search-results {
             position: absolute;
@@ -211,24 +289,63 @@
             background-color: #2a2a2a;
         }
         
-        /* Header için özel stil */
-        .header .search-container {
-            position: relative;
-            width: 300px;
+        /* Navigasyon Menüsü */
+        .navbar {
+            display: flex;
+            align-items: center;
         }
         
-        .header .search-input {
-            width: 100%;
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .dropbtn {
+            background-color: transparent;
+            color: #00ff00;
             padding: 10px 15px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .dropdown-content {
+            display: none;
+            position: absolute;
             background-color: #1a1a1a;
+            min-width: 250px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
             border: 1px solid #00ff00;
             border-radius: 4px;
-            color: #00ff00;
-            font-family: 'Courier New', monospace;
         }
         
-        .header .search-input::placeholder {
-            color: #00aa00;
+        .dropdown-content a {
+            color: #00ff00;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .dropdown-content a:hover {
+            background-color: #2a2a2a;
+        }
+        
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        
+        .ata-icon, .hacker-icon, .glossary-icon, .soc-icon, 
+        .vulnerabilities-icon, .steganography-icon, 
+        .cryptography-icon, .education-icon {
+            width: 20px;
+            height: 20px;
+            filter: invert(1);
         }
         
         /* Responsive Tasarım */
@@ -250,58 +367,82 @@
                 flex-shrink: 0;
             }
             
-            .header .search-container {
-                width: 200px;
+            .header-container {
+                flex-direction: column;
+                gap: 10px;
             }
             
             .navbar {
-                display: none;
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .search-top-container {
+                padding: 10px;
             }
         }
         
         @media (max-width: 480px) {
             .header {
-                flex-direction: column;
-                padding: 10px;
+                padding: 10px 0;
             }
             
             .logo {
                 margin-bottom: 10px;
             }
             
-            .header .search-container {
-                width: 100%;
+            .dropbtn {
+                font-size: 14px;
+                padding: 8px 10px;
+            }
+            
+            .dropdown-content {
+                min-width: 200px;
             }
         }
     </style>
 </head>
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TFN7XD9Z"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
 <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TFN7XD9Z"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
     <header class="header">
-        <a href="index.html" class="logo"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">{adembayazit} </a>
-        <nav class="navbar">
-            <div class="dropdown">
-                <a href="#" style="--i:5;" class="dropbtn"> <img src="IMAGES/Ata.svg" alt="Ata Icon" class="ata-icon"><span class="fi fi-tr"></span> <span class='bx bx-code-alt'></span> Ethical Hacker <span class='bx bx-chevron-down'></span></a>
-                <div class="dropdown-content">
-                    <a href="#tools"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hacker-icon"> What is an Ethical Hacker?</a>
-                    <a href="#reports"><img src="IMAGES/glossary.svg" alt="Glossary" class="glossary-icon"> Cybersecurity Glossary</a>
-                    <a href="#payloads"><img src="IMAGES/soc.svg" alt="Soc" class="soc-icon"> What is a SOC ?</a>
-                    <a href="#payloads"><img src="IMAGES/vulnerabilities.svg" alt="Vulnerabilities" class="vulnerabilities-icon"> Vulnerabilities</a>
-                    <a href="#payloads"><img src="IMAGES/steganography.svg" alt="Steganography" class="steganography-icon"> Steganography</a>
-                    <a href="#payloads"><img src="IMAGES/cryptography.svg" alt="Cryptography" class="cryptography-icon"> Cryptography</a>    
-                    <a href="#payloads"><img src="IMAGES/education.svg" alt="Education" class="education-icon"> Cybersecurity Learning Resources</a>
+        <div class="header-container">
+            <a href="index.html" class="logo">
+                <img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">
+                {adembayazit} 
+            </a>
+            
+            <nav class="navbar">
+                <div class="dropdown">
+                    <a href="#" class="dropbtn">
+                        <img src="IMAGES/Ata.svg" alt="Ata Icon" class="ata-icon">
+                        <span class="fi fi-tr"></span>
+                        <span class='bx bx-code-alt'></span> Ethical Hacker
+                        <span class='bx bx-chevron-down'></span>
+                    </a>
+                    <div class="dropdown-content">
+                        <a href="#tools"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hacker-icon"> What is an Ethical Hacker?</a>
+                        <a href="#reports"><img src="IMAGES/glossary.svg" alt="Glossary" class="glossary-icon"> Cybersecurity Glossary</a>
+                        <a href="#payloads"><img src="IMAGES/soc.svg" alt="Soc" class="soc-icon"> What is a SOC ?</a>
+                        <a href="#payloads"><img src="IMAGES/vulnerabilities.svg" alt="Vulnerabilities" class="vulnerabilities-icon"> Vulnerabilities</a>
+                        <a href="#payloads"><img src="IMAGES/steganography.svg" alt="Steganography" class="steganography-icon"> Steganography</a>
+                        <a href="#payloads"><img src="IMAGES/cryptography.svg" alt="Cryptography" class="cryptography-icon"> Cryptography</a>    
+                        <a href="#payloads"><img src="IMAGES/education.svg" alt="Education" class="education-icon"> Cybersecurity Learning Resources</a>
+                    </div>
                 </div>
-            </div>
-        </nav>
-        
+            </nav>
+        </div>
+    </header>
+
+    <div class="search-top-container">
         <div class="search-container">
             <input type="text" class="search-input" placeholder="Terim ara...">
             <div class="search-results"></div>
         </div>
-    </header>
+    </div>
 
     <div class="main-container">
         <div class="alphabet-tabs">
@@ -318,8 +459,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
     </div>
 
-    <footer style="text-align: center; padding: 20px; font-size: 14px; color: white;">
-        <hr style="margin-bottom: 10px; border-color: limegreen;" />
+    <footer>
+        <hr>
         <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.2 | July 2025</p>
     </footer>
 
