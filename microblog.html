@@ -1557,7 +1557,7 @@
           content = content.replace(/(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/g, 
             '<div class="video-container"><iframe src="https://www.youtube.com/embed/$4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>');
           
-          // Birden fazla resim için slider oluştur
+          // Birden fazla resim için slider oluştur ve orijinal img etiketlerini kaldır
           content = content.replace(/(<img[^>]+>\s*){2,}/g, (imgs) => {
             const images = imgs.match(/<img[^>]+>/g);
             if (images && images.length > 1) {
@@ -1565,6 +1565,10 @@
             }
             return imgs;
           });
+          
+          // Slider oluşturulduktan sonra kalan boşlukları temizle
+          content = content.replace(/<p>\s*<\/p>/gi, '');
+          content = content.replace(/(<br\s*\/?>\s*){2,}/gi, '<br>');
           
           return content;
         }
