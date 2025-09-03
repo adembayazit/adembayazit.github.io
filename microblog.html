@@ -423,6 +423,7 @@
             overflow: auto;
             background-color: rgba(0, 0, 0, 0.95);
             backdrop-filter: blur(5px);
+            touch-action: none; /* Mobil dokunma olayları için önemli */
         }
         
         .modal-content {
@@ -563,6 +564,7 @@
             width: 100%;
             aspect-ratio: 16/9;
             min-height: 200px;
+            -webkit-overflow-scrolling: touch; /* Mobil kaydırma için önemli */
         }
         
         .slider-container {
@@ -1882,15 +1884,17 @@
                 }
             });
             
-            // Mobil dokunma olayları (swipe)
+            // Mobil dokunma olayları (swipe) - MODAL ELEMENTİNE TAŞINDI
             let touchStartX = 0;
             let touchEndX = 0;
             
-            modalImg.addEventListener('touchstart', function(event) {
+            modal.addEventListener('touchstart', function(event) {
+                event.stopPropagation(); // Yayılmayı engelle - ÖNEMLİ
                 touchStartX = event.changedTouches[0].screenX;
             }, false);
             
-            modalImg.addEventListener('touchend', function(event) {
+            modal.addEventListener('touchend', function(event) {
+                event.stopPropagation(); // Yayılmayı engelle - ÖNEMLİ
                 touchEndX = event.changedTouches[0].screenX;
                 handleSwipe();
             }, false);
@@ -2602,7 +2606,7 @@
                 });
                 
                 // Entry'yi vurgula
-                entryElement.style.backgroundColor = 'rgba(0, 255, 0, 0.1)';
+                entryElement.style.backgroundColor = 'rgba(0, 255, 0, 0.1';
                 setTimeout(() => {
                   entryElement.style.backgroundColor = '';
                 }, 3000);
@@ -3043,7 +3047,7 @@
             const isIdSearch = !isNaN(query) && query.trim() !== '';
             
             const results = allEntries.filter(entry => {
-              if (isIdSearch) {
+            if (isIdSearch) {
                 // ID araması: tam eşleşme
                 return entry.id.toString() === query;
               } else {
