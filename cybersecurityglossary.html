@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -19,6 +19,7 @@
     <meta name="twitter:image:alt" content="Adem Bayazıt">
     
     <link rel="icon" type="png|image" href="/IMAGES/ab.png">
+    <link rel="stylesheet" href="/CSS/style.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -32,354 +33,243 @@
     <!-- End Google Tag Manager -->
     
     <style>
-        /* Base Styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Courier New', monospace;
-        }
-        
-        body {
-            background-color: #0a0a1a;
-            color: #00ff00;
-            line-height: 1.6;
-            overflow-x: hidden;
-            position: relative;
-        }
-        
-        #matrixCanvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-        }
-        
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 20px 10%;
-            background: rgba(10, 10, 26, 0.8);
-            backdrop-filter: blur(10px);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 100;
-            border-bottom: 1px solid #00ff00;
-        }
-        
-        .logo {
-            font-size: 25px;
-            color: #00ff00;
-            text-decoration: none;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-        }
-        
-        .logo img {
-            width: 30px;
-            margin-right: 10px;
-        }
-        
-        .navbar a {
-            font-size: 18px;
-            color: #00ff00;
-            text-decoration: none;
-            font-weight: 500;
-            margin-left: 35px;
-            transition: .3s;
-        }
-        
-        .navbar a:hover,
-        .navbar a.active {
-            color: #00cc00;
-            text-shadow: 0 0 5px #00ff00;
-        }
-        
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-        
-        .dropbtn {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            background-color: rgba(10, 10, 26, 0.9);
-            min-width: 250px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
-            z-index: 1;
-            border: 1px solid #00ff00;
-            border-radius: 5px;
+        /* Notebook Stilleri */
+        .notebook-container {
+            max-width: 1200px;
+            max-height: 1200px;
+            margin: 20px auto;
             overflow: hidden;
-        }
-        
-        .dropdown-content a {
-            color: #00ff00;
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-            margin: 0;
-            border-bottom: 1px solid #003300;
-        }
-        
-        .dropdown-content a:hover {
-            background-color: #001a00;
-        }
-        
-        .dropdown-content a img {
-            width: 20px;
-            margin-right: 10px;
-            vertical-align: middle;
-        }
-        
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
-        
-        .home {
-            padding: 120px 10% 80px;
-            min-height: 100vh;
-        }
-        
-        /* Notebook Styles */
-        .glossary-section {
-            margin-top: 40px;
-            padding: 20px;
-            background: rgba(5, 5, 15, 0.7);
-            border: 1px solid #00ff00;
-            border-radius: 10px;
+            border-radius: 8px;
             box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
         }
         
-        .glossary-title {
-            text-align: center;
-            font-size: 32px;
-            margin-bottom: 30px;
-            color: #00ff00;
-            text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
-            position: relative;
-        }
-        
-        .glossary-title:after {
-            content: '';
-            display: block;
-            width: 100px;
-            height: 3px;
-            background: #00ff00;
-            margin: 10px auto;
-            border-radius: 3px;
-        }
-        
-        .search-container {
-            margin-bottom: 30px;
-            position: relative;
-        }
-        
-        .search-box {
-            width: 100%;
-            padding: 15px 20px;
-            background: rgba(0, 20, 0, 0.6);
-            border: 2px solid #00ff00;
-            border-radius: 50px;
-            color: #00ff00;
-            font-size: 18px;
-            outline: none;
-        }
-        
-        .search-box::placeholder {
-            color: #008800;
-        }
-        
-        .search-icon {
-            position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #00ff00;
-            font-size: 20px;
-        }
-        
-        .notebook {
-            background: rgba(10, 20, 10, 0.8);
-            border: 1px solid #00ff00;
-            border-radius: 10px;
+        .notebook-page {
+            background-color: #f0f0d0;
+            background-image: linear-gradient(#e6e6cc 1px, transparent 1px), 
+                              linear-gradient(90deg, #e6e6cc 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: #000;
             padding: 20px;
+            border-left: 2px solid #ccc;
+            border-right: 2px solid #ccc;
             position: relative;
-            min-height: 500px;
+            min-height: 600px;
+            max-height: 1200px;
+            overflow-y: auto;
         }
         
-        .notebook:before {
-            content: '';
+        .notebook-page::before {
+            content: "";
             position: absolute;
-            left: 40px;
             top: 0;
-            height: 100%;
+            left: 40px;
             width: 2px;
-            background: rgba(0, 255, 0, 0.2);
+            height: 100%;
+            background: repeating-linear-gradient(
+                to bottom,
+                transparent,
+                transparent 19px,
+                #ff9999 19px,
+                #ff9999 20px
+            );
         }
         
-        .alphabet-index {
+        /* Ana İçerik Düzeni */
+        .main-container {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            padding: 10px;
-            background: rgba(0, 20, 0, 0.4);
-            border-radius: 5px;
-            overflow-x: auto;
+            height: 100%;
         }
         
-        .alphabet-index::-webkit-scrollbar {
-            height: 5px;
+        /* Alfabetik Sekmeler */
+        .alphabet-tabs {
+            width: 60px;
+            background-color: #2a2a2a;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-right: 1px solid #00ff00;
         }
         
-        .alphabet-index::-webkit-scrollbar-thumb {
-            background: #00ff00;
-            border-radius: 5px;
-        }
-        
-        .alphabet-index a {
-            color: #00cc00;
-            text-decoration: none;
+        .alphabet-tab {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 5px 0;
+            cursor: pointer;
+            border-radius: 50%;
+            background-color: #1a1a1a;
+            color: #00ff00;
+            border: 1px solid #00ff00;
             font-weight: bold;
-            padding: 5px 8px;
-            border-radius: 3px;
             transition: all 0.3s;
         }
         
-        .alphabet-index a:hover,
-        .alphabet-index a.active {
-            background: #00ff00;
-            color: #001a00;
+        .alphabet-tab:hover, .alphabet-tab.active {
+            background-color: #00ff00;
+            color: #1a1a1a;
         }
         
+        /* İçerik Alanı */
+        .content-area {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Matrix Canvas */
+        #matrixCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0.3;
+        }
+        
+        /* Terimler Listesi */
         .terms-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            max-height: 600px;
+            position: relative;
+            z-index: 2;
+            padding: 20px;
+            max-height: 100%;
             overflow-y: auto;
-            padding-right: 10px;
         }
         
-        .terms-container::-webkit-scrollbar {
-            width: 8px;
+        .term-item {
+            margin-bottom: 15px;
+            padding-left: 30px;
+            position: relative;
         }
         
-        .terms-container::-webkit-scrollbar-thumb {
-            background: #00ff00;
-            border-radius: 4px;
-        }
-        
-        .term-card {
-            background: rgba(5, 15, 5, 0.7);
-            border-left: 3px solid #00ff00;
-            padding: 15px;
-            border-radius: 5px;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        
-        .term-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 255, 0, 0.3);
+        .term-number {
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-weight: bold;
         }
         
         .term-title {
-            color: #00ff00;
+            font-weight: bold;
+            margin-bottom: 5px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .expand-btn {
+            background: none;
+            border: none;
+            color: #000;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0 5px;
+        }
+        
+        .short-description {
             margin-bottom: 10px;
-            font-size: 20px;
-            border-bottom: 1px solid #004400;
-            padding-bottom: 5px;
-        }
-        
-        .term-desc {
-            color: #99ff99;
-            font-size: 16px;
-        }
-        
-        .no-results {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 30px;
-            color: #008800;
             font-style: italic;
         }
         
-        /* Responsive Design */
+        .long-description {
+            display: none;
+            padding: 10px;
+            background-color: rgba(0, 255, 0, 0.1);
+            border-left: 3px solid #00ff00;
+            margin-top: 5px;
+        }
+        
+        /* Arama Çubuğu */
+        .search-container {
+            position: relative;
+            width: 300px;
+            margin-left: 20px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 10px 15px;
+            background-color: #1a1a1a;
+            border: 1px solid #00ff00;
+            border-radius: 4px;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .search-input::placeholder {
+            color: #00aa00;
+        }
+        
+        /* Arama Sonuçları */
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: #1a1a1a;
+            border: 1px solid #00ff00;
+            border-top: none;
+            z-index: 101;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+        }
+        
+        .search-result-item {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #333;
+        }
+        
+        .search-result-item:hover {
+            background-color: #2a2a2a;
+        }
+
+        /* Responsive Tasarım */
+        @media (max-width: 1200px) {
+            .notebook-container {
+                width: 95%;
+                height: auto;
+            }
+        }
+        
         @media (max-width: 768px) {
-            .terms-container {
-                grid-template-columns: 1fr;
+            .main-container {
+                flex-direction: column;
             }
             
-            .alphabet-index {
-                padding: 5px;
+            .alphabet-tabs {
+                width: 100%;
+                flex-direction: row;
+                overflow-x: auto;
+                padding: 10px 5px;
+                justify-content: flex-start;
             }
             
-            .alphabet-index a {
-                padding: 3px 5px;
-                font-size: 14px;
+            .alphabet-tab {
+                margin: 0 5px;
+                flex-shrink: 0;
             }
             
-            .header {
-                padding: 15px 5%;
-            }
-            
-            .navbar a {
-                margin-left: 15px;
-                font-size: 16px;
-            }
-            
-            .home {
-                padding: 100px 5% 60px;
-            }
-            
-            .glossary-title {
-                font-size: 28px;
+            .search-container {
+                width: 200px;
             }
         }
         
         @media (max-width: 480px) {
-            .alphabet-index {
-                flex-wrap: nowrap;
-                justify-content: flex-start;
+            .header {
+                flex-wrap: wrap;
             }
             
-            .alphabet-index a {
-                margin-right: 5px;
+            .search-container {
+                width: 100%;
+                margin: 10px 0 0 0;
+                order: 3;
             }
-            
-            .logo {
-                font-size: 20px;
-            }
-            
-            .navbar a {
-                margin-left: 10px;
-                font-size: 14px;
-            }
-        }
-        
-        footer {
-            text-align: center;
-            padding: 20px;
-            font-size: 14px;
-            color: white;
-            background: rgba(10, 10, 26, 0.8);
-            border-top: 1px solid #00ff00;
-        }
-        
-        footer hr {
-            margin-bottom: 10px;
-            border-color: limegreen;
         }
     </style>
 </head>
@@ -387,224 +277,339 @@
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TFN7XD9Z"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
-
+    <script src="/JAVASCRIPT/monitor.js"></script>
 <body>
-    <canvas id="matrixCanvas"></canvas>
-    
     <header class="header">
+         <canvas id="matrixCanvas"></canvas>
         <a href="#home" class="logo"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">{adembayazit} </a>
         <nav class="navbar">
             <div class="dropdown">
-                <a href="#" style="--i:5;" class="dropbtn"> <img src="IMAGES/Ata.svg" alt="Ata Icon" class="ata-icon"><span class="fi fi-tr"></span> <span class='bx bx-code-alt'></span> Ethical Hacker <span class='bx bx-chevron-down'></span></a>
-                <div class="dropdown-content">
-                    <a href="#tools"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hacker-icon"> What is an Ethical Hacker?</a>
-                    <a href="#reports"><img src="IMAGES/glossary.svg" alt="Glossary" class="glossary-icon"> Cybersecurity Glossary</a>
-                    <a href="#payloads"><img src="IMAGES/soc.svg" alt="Soc" class="soc-icon"> What is a SOC ?</a>
-                    <a href="#payloads"><img src="IMAGES/vulnerabilities.svg" alt="Vulnerabilities" class="vulnerabilities-icon"> Vulnerabilities</a>
-                    <a href="#payloads"><img src="IMAGES/steganography.svg" alt="Steganography" class="steganography-icon"> Steganography</a>
-                    <a href="#payloads"><img src="IMAGES/cryptography.svg" alt="Cryptography" class="cryptography-icon"> Cryptography</a>    
-                    <a href="#payloads"><img src="IMAGES/education.svg" alt="Education" class="education-icon"> Cybersecurity Learning Resources</a>
-                </div>
+            <a href="#" style="--i:5;" class="dropbtn"> <img src="IMAGES/Ata.svg" alt= "Ata Icon" class="ata-icon"><span class="fi fi-tr"></span> <span class='bx bx-code-alt'></span> Ethical Hacker <span class='bx bx-chevron-down'></span></a>
+            <div class="dropdown-content">
+            <a href="#tools"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hacker-icon"> What is an Ethical Hacker?</a>
+            <a href="#reports"><img src="IMAGES/glossary.svg" alt="Glossary" class="glossary-icon"> Cybersecurity Glossary</a>
+            <a href="#payloads"><img src="IMAGES/soc.svg" alt="Soc" class="soc-icon"> What is a SOC?</a>
+            <a href="#payloads"><img src="IMAGES/vulnerabilities.svg" alt="Vulnerabilities" class="vulnerabilities-icon"> Vulnerabilities</a>
+            <a href="#payloads"><img src="IMAGES/steganography.svg" alt="Steganography" class="steganography-icon"> Steganography</a>
+            <a href="#payloads"><img src="IMAGES/cryptography.svg" alt="Cryptography" class="cryptography-icon"> Cryptography</a>    
+            <a href="#payloads"><img src="IMAGES/education.svg" alt="Education" class="education-icon"> Cybersecurity Learning Resources</a>
             </div>
+          </div>
         </nav>
+        
     </header>
-
-    <section id="home" class="home">
-        <div class="glossary-section">
-            <h2 class="glossary-title">Cyber Security Glossary</h2>
-            
-            <div class="search-container">
-                <input type="text" id="searchInput" class="search-box" placeholder="Search for cybersecurity terms...">
-                <i class='bx bx-search search-icon'></i>
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search term...">
+            <div class="search-results"></div>
+        </div>
+    <div class="notebook-container">
+        <div class="main-container">
+            <div class="alphabet-tabs">
+                <!-- Alfabetik sekmeler JavaScript ile eklenecek -->
             </div>
             
-            <div class="alphabet-index">
-                <a href="#" data-letter="all" class="active">ALL</a>
-                <a href="#" data-letter="a">A</a>
-                <a href="#" data-letter="b">B</a>
-                <a href="#" data-letter="c">C</a>
-                <a href="#" data-letter="d">D</a>
-                <a href="#" data-letter="e">E</a>
-                <a href="#" data-letter="f">F</a>
-                <a href="#" data-letter="g">G</a>
-                <a href="#" data-letter="h">H</a>
-                <a href="#" data-letter="i">I</a>
-                <a href="#" data-letter="j">J</a>
-                <a href="#" data-letter="k">K</a>
-                <a href="#" data-letter="l">L</a>
-                <a href="#" data-letter="m">M</a>
-                <a href="#" data-letter="n">N</a>
-                <a href="#" data-letter="o">O</a>
-                <a href="#" data-letter="p">P</a>
-                <a href="#" data-letter="q">Q</a>
-                <a href="#" data-letter="r">R</a>
-                <a href="#" data-letter="s">S</a>
-                <a href="#" data-letter="t">T</a>
-                <a href="#" data-letter="u">U</a>
-                <a href="#" data-letter="v">V</a>
-                <a href="#" data-letter="w">W</a>
-                <a href="#" data-letter="x">X</a>
-                <a href="#" data-letter="y">Y</a>
-                <a href="#" data-letter="z">Z</a>
-            </div>
-            
-            <div class="notebook">
-                <div class="terms-container" id="termsContainer">
-                    <!-- Terms will be populated by JavaScript -->
+            <div class="content-area">
+                <div class="notebook-page">
+                    <div class="terms-container">
+                        <!-- Terimler JavaScript ile eklenecek -->
+                    </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 
-    <footer>
-        <hr>
-        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.2 | July 2025</p>
-    </footer>
-
+<footer style="text-align: center; padding: 20px; font-size: 14px; color: white;">
+  <hr style="margin-bottom: 10px; border-color: limegreen;" />
+  <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.2 | July 2025</p>
+</footer>
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0WNL3VLY3F"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-0WNL3VLY3F');
-    </script>
-    
-    <!-- Matrix Background -->
-    <script>
-        const canvas = document.getElementById('matrixCanvas');
-        const ctx = canvas.getContext('2d');
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0WNL3VLY3F"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-0WNL3VLY3F');
+</script>
+<!-- JS Dosyasını Bağla -->
+<script src="/JAVASCRIPT/log-download.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Alfabetik sekmeleri oluştur
+        const alphabetTabs = document.querySelector('.alphabet-tabs');
+        const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
         
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        
-        const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$#@%&!?*';
-        const fontSize = 14;
-        const columns = canvas.width / fontSize;
-        
-        const drops = [];
-        for(let i = 0; i < columns; i++) {
-            drops[i] = 1;
-        }
-        
-        function draw() {
-            ctx.fillStyle = 'rgba(10, 10, 26, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            ctx.fillStyle = '#00ff00';
-            ctx.font = `${fontSize}px monospace`;
-            
-            for(let i = 0; i < drops.length; i++) {
-                const text = letters[Math.floor(Math.random() * letters.length)];
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                
-                if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
-                
-                drops[i]++;
-            }
-            
-            requestAnimationFrame(draw);
-        }
-        
-        draw();
-        
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+        letters.forEach(letter => {
+            const tab = document.createElement('div');
+            tab.className = 'alphabet-tab';
+            tab.textContent = letter;
+            tab.setAttribute('data-letter', letter);
+            alphabetTabs.appendChild(tab);
         });
-    </script>
-    
-    <!-- Glossary Functionality -->
-    <script>
-        // Sample cybersecurity terms data
-        const cybersecurityTerms = [
-            { term: "Adware", description: "Software that automatically displays or downloads advertising material when a user is online." },
-            { term: "Botnet", description: "A network of private computers infected with malicious software and controlled as a group without the owners' knowledge." },
-            { term: "Cryptography", description: "The practice and study of techniques for secure communication in the presence of third parties." },
-            { term: "DDoS", description: "Distributed Denial of Service - An attack that floods a server with internet traffic to prevent users from accessing connected online services." },
-            { term: "Encryption", description: "The process of converting information or data into a code to prevent unauthorized access." },
-            { term: "Firewall", description: "A network security system that monitors and controls incoming and outgoing network traffic based on predetermined security rules." },
-            { term: "GDPR", description: "General Data Protection Regulation - A legal framework that sets guidelines for the collection and processing of personal information of individuals within the European Union." },
-            { term: "Honeypot", description: "A security mechanism set to detect, deflect, or counteract attempts at unauthorized use of information systems." },
-            { term: "IP Address", description: "A unique string of numbers separated by periods that identifies each computer using the Internet Protocol to communicate over a network." },
-            { term: "Keylogger", description: "A type of surveillance technology used to monitor and record each keystroke typed on a specific computer's keyboard." },
-            { term: "Malware", description: "Software that is specifically designed to disrupt, damage, or gain unauthorized access to a computer system." },
-            { term: "Phishing", description: "The fraudulent practice of sending emails purporting to be from reputable companies to induce individuals to reveal personal information." },
-            { term: "Ransomware", description: "A type of malicious software designed to block access to a computer system until a sum of money is paid." },
-            { term: "SOC", description: "Security Operations Center - A centralized unit that deals with security issues on an organizational and technical level." },
-            { term: "Trojan Horse", description: "A type of malware that is often disguised as legitimate software that can be used to create a backdoor to your system." },
-            { term: "VPN", description: "Virtual Private Network - Extends a private network across a public network, enabling users to send and receive data across shared or public networks." },
-            { term: "Zero-day", description: "A vulnerability in software that is unknown to the vendor and for which no patch is available." },
-            { term: "Biometrics", description: "Authentication techniques that rely on measurable physical characteristics that can be automatically checked." },
-            { term: "Cloud Security", description: "A broad set of policies, technologies, and controls deployed to protect data, applications, and infrastructure in cloud computing." },
-            { term: "Dark Web", description: "The part of the World Wide Web that is only accessible by means of special software, allowing users and website operators to remain anonymous." }
-        ];
         
-        // Populate terms
-        const termsContainer = document.getElementById('termsContainer');
+        // Terimler veritabanı (örnek içerik)
+        const termsData = {
+            'A': [
+                {
+                    title: 'Adware',
+                    shortDescription: 'Software designed to show advertisements to the user.',
+                    longDescription: 'Adware is typically installed as part of a software package and displays ads to the user. Some types of adware can be malicious and collect personal information without user consent.'
+                },
+                {
+                    title: 'APT (Advanced Persistent Threat)',
+                    shortDescription: 'Targeted and continuous cyber attack type.',
+                    longDescription: 'APT is a sophisticated, long-term cyber attack campaign targeting a specific entity. Attackers aim to remain in the system for as long as possible to collect as much data as possible.'
+                },
+                {
+                    title: 'Authentication',
+                    shortDescription: 'The process of verifying user identity.',
+                    longDescription: 'Authentication is the process of verifying the identity of a user or system. Passwords, biometric data, tokens, or multi-factor authentication methods can be used.'
+                }
+            ],
+            'B': [
+                {
+                    title: 'Backdoor',
+                    shortDescription: 'A hidden entry point that provides unauthorized access to a system.',
+                    longDescription: 'A backdoor is a hidden access point created in a system to bypass normal authentication procedures. Often created by malware or by system administrators for emergency access.'
+                },
+                {
+                    title: 'Botnet',
+                    shortDescription: 'A network of zombie computers.',
+                    longDescription: 'A botnet is a network of computers infected with malware and controlled by a central server. These networks are used for DDoS attacks, sending spam, or data theft.'
+                },
+                {
+                    title: 'Brute Force Attack',
+                    shortDescription: 'A password cracking attack using trial and error method.',
+                    longDescription: 'A Brute Force attack is a method of trying all possible password combinations to gain access to a system or encrypted data. These attacks are usually automated with tools.'
+                }
+            ],
+            'C': [
+                {
+                    title: 'Cryptography',
+                    shortDescription: 'The science of encryption for information security.',
+                    longDescription: 'Cryptography is the science of encrypting information to provide confidentiality, integrity, authentication, and non-repudiation. Modern cryptography includes symmetric and asymmetric encryption techniques.'
+                },
+                {
+                    title: 'CVE (Common Vulnerabilities and Exposures)',
+                    shortDescription: 'A list of publicly known information security vulnerabilities.',
+                    longDescription: 'CVE is a standardized list of publicly known software security vulnerabilities. Each CVE ID identifies a specific security vulnerability and facilitates communication among security professionals.'
+                },
+                {
+                    title: 'Cybersecurity',
+                    shortDescription: 'Protecting computer systems against cyber threats.',
+                    longDescription: 'Cybersecurity is the practice of protecting computer systems, networks, programs, and data from digital attacks, damage, or unauthorized access. It includes defense strategies and security protocols.'
+                }
+            ],
+            'D': [
+                {
+                    title: 'DDoS (Distributed Denial of Service)',
+                    shortDescription: 'Distributed Denial of Service attack.',
+                    longDescription: 'A DDoS attack is a type of cyber attack that targets a server, service, or network, flooding it with traffic from multiple sources to disrupt normal traffic. Botnets are often used to carry out these attacks.'
+                },
+                {
+                    title: 'DNS (Domain Name System)',
+                    shortDescription: 'The system that translates domain names into IP addresses.',
+                    longDescription: 'DNS is a hierarchical and decentralized naming system that translates internet domain names into IP addresses. DNS poisoning or spoofing are types of attacks that exploit vulnerabilities in the DNS system.'
+                },
+                {
+                    title: 'Data Breach',
+                    shortDescription: 'Unauthorized disclosure of confidential, sensitive, or protected data.',
+                    longDescription: 'A data breach is the unauthorized disclosure, viewing, or theft of confidential, sensitive, or protected data. Data breaches are often carried out by cybercriminals for financial gain or espionage.'
+                }
+            ]
+            // Diğer harfler için de benzer şekilde içerik eklenebilir
+        };
         
-        function populateTerms(terms) {
-            termsContainer.innerHTML = '';
+        // Varsayılan olarak A harfini göster
+        showTermsForLetter('A');
+        setActiveTab('A');
+        
+        // Sekme tıklama olayları
+        document.querySelectorAll('.alphabet-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const letter = this.getAttribute('data-letter');
+                showTermsForLetter(letter);
+                setActiveTab(letter);
+            });
+        });
+        
+        // Arama işlevselliği
+        const searchInput = document.querySelector('.search-input');
+        const searchResults = document.querySelector('.search-results');
+        
+        searchInput.addEventListener('input', function() {
+            const query = this.value.toLowerCase();
             
-            if (terms.length === 0) {
-                termsContainer.innerHTML = '<div class="no-results">No terms found matching your search.</div>';
+            if (query.length < 2) {
+                searchResults.style.display = 'none';
                 return;
             }
             
-            terms.forEach(item => {
-                const termCard = document.createElement('div');
-                termCard.className = 'term-card';
-                termCard.innerHTML = `
-                    <h3 class="term-title">${item.term}</h3>
-                    <p class="term-desc">${item.description}</p>
-                `;
-                termsContainer.appendChild(termCard);
-            });
+            // Arama sonuçlarını bul
+            const results = [];
+            
+            for (const letter in termsData) {
+                termsData[letter].forEach(term => {
+                    if (term.title.toLowerCase().includes(query) || 
+                        term.shortDescription.toLowerCase().includes(query)) {
+                        results.push({
+                            letter: letter,
+                            term: term
+                        });
+                    }
+                });
+            }
+            
+            // Arama sonuçlarını göster
+            displaySearchResults(results);
+        });
+        
+        // Dışarı tıklandığında arama sonuçlarını gizle
+        document.addEventListener('click', function(e) {
+            if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                searchResults.style.display = 'none';
+            }
+        });
+        
+        // Matrix animasyonu
+        initMatrixAnimation();
+        
+        // Yardımcı fonksiyonlar
+        function showTermsForLetter(letter) {
+            const termsContainer = document.querySelector('.terms-container');
+            termsContainer.innerHTML = '';
+            
+            if (termsData[letter]) {
+                termsData[letter].forEach((term, index) => {
+                    const termElement = document.createElement('div');
+                    termElement.className = 'term-item';
+                    
+                    termElement.innerHTML = `
+                        <span class="term-number">${index + 1}.</span>
+                        <div class="term-title">
+                            ${term.title}
+                            <button class="expand-btn">+</button>
+                        </div>
+                        <div class="short-description">${term.shortDescription}</div>
+                        <div class="long-description">${term.longDescription}</div>
+                    `;
+                    
+                    termsContainer.appendChild(termElement);
+                });
+                
+                // Genişletme/daraltma işlevselliği
+                document.querySelectorAll('.term-title').forEach(title => {
+                    title.addEventListener('click', function() {
+                        const longDesc = this.nextElementSibling.nextElementSibling;
+                        const expandBtn = this.querySelector('.expand-btn');
+                        
+                        if (longDesc.style.display === 'block') {
+                            longDesc.style.display = 'none';
+                            expandBtn.textContent = '+';
+                        } else {
+                            longDesc.style.display = 'block';
+                            expandBtn.textContent = '-';
+                        }
+                    });
+                });
+            } else {
+                termsContainer.innerHTML = '<p>No terms added for this letter yet.</p>';
+            }
         }
         
-        // Initialize with all terms
-        populateTerms(cybersecurityTerms);
-        
-        // Search functionality
-        const searchInput = document.getElementById('searchInput');
-        
-        searchInput.addEventListener('input', () => {
-            const searchText = searchInput.value.toLowerCase();
-            const filteredTerms = cybersecurityTerms.filter(item => 
-                item.term.toLowerCase().includes(searchText) || 
-                item.description.toLowerCase().includes(searchText)
-            );
-            
-            populateTerms(filteredTerms);
-        });
-        
-        // Alphabet filter
-        const alphabetLinks = document.querySelectorAll('.alphabet-index a');
-        
-        alphabetLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                
-                // Update active class
-                alphabetLinks.forEach(l => l.classList.remove('active'));
-                link.classList.add('active');
-                
-                const letter = link.getAttribute('data-letter');
-                
-                if (letter === 'all') {
-                    populateTerms(cybersecurityTerms);
-                    return;
-                }
-                
-                const filteredTerms = cybersecurityTerms.filter(item => 
-                    item.term.toLowerCase().startsWith(letter)
-                );
-                
-                populateTerms(filteredTerms);
+        function setActiveTab(letter) {
+            document.querySelectorAll('.alphabet-tab').forEach(tab => {
+                tab.classList.remove('active');
             });
-        });
-    </script>
-</body>
+            
+            document.querySelector(`.alphabet-tab[data-letter="${letter}"]`).classList.add('active');
+        }
+        
+        function displaySearchResults(results) {
+            searchResults.innerHTML = '';
+            
+            if (results.length === 0) {
+                searchResults.innerHTML = '<div class="search-result-item">No results found</div>';
+            } else {
+                results.forEach(result => {
+                    const resultItem = document.createElement('div');
+                    resultItem.className = 'search-result-item';
+                    resultItem.textContent = `${result.term.title} (${result.letter}) - ${result.term.shortDescription}`;
+                    
+                    resultItem.addEventListener('click', function() {
+                        showTermsForLetter(result.letter);
+                        setActiveTab(result.letter);
+                        searchInput.value = '';
+                        searchResults.style.display = 'none';
+                        
+                        // Bulunan terime scroll
+                        setTimeout(() => {
+                            const termTitles = document.querySelectorAll('.term-title');
+                            termTitles.forEach(title => {
+                                if (title.textContent.includes(result.term.title)) {
+                                    title.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                    title.style.backgroundColor = 'rgba(0, 255, 0, 0.2)';
+                                    setTimeout(() => {
+                                        title.style.backgroundColor = '';
+                                    }, 2000);
+                                }
+                            });
+                        }, 100);
+                    });
+                    
+                    searchResults.appendChild(resultItem);
+                });
+            }
+            
+            searchResults.style.display = 'block';
+        }
+        
+        function initMatrixAnimation() {
+            const canvas = document.getElementById('matrixCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            function resizeCanvas() {
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+            }
+            
+            resizeCanvas();
+            
+            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$#@%&!?*';
+            const fontSize = 12;
+            const columns = canvas.width / fontSize;
+            
+            const drops = [];
+            for (let i = 0; i < columns; i++) {
+                drops[i] = 1;
+            }
+            
+            function draw() {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.fillStyle = '#00ff00';
+                ctx.font = `${fontSize}px monospace`;
+                
+                for (let i = 0; i < drops.length; i++) {
+                    const text = letters[Math.floor(Math.random() * letters.length)];
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    
+                    drops[i]++;
+                }
+            }
+            
+            setInterval(draw, 33);
+            
+            window.addEventListener('resize', function() {
+                resizeCanvas();
+            });
+        }
+    });
+</script>
+</body> 
 </html>
