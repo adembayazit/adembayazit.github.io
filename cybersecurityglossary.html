@@ -7,14 +7,14 @@
     <title>Ethical Hacker | Adem Bayazıt</title>
     <!-- Open Graph (Facebook, WhatsApp, LinkedIn vs.) -->   
     <meta property="og:title" content="Adem Bayazıt | Ethical Hacker" />
-    <meta property="og:description" content="Ethical Hacker, Cyber Security Analyst and Linux Enthusiast." />
+    <meta property="og:description" content="Ethical Hacker, Cyber Security Analyst ve Linux Enthusiast." />
     <meta property="og:image" content="https://adembayazit.com/IMAGES/preview.png" />
     <meta property="og:url" content="https://adembayazit.com/" />
     <meta property="og:type" content="website" />
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Adem Bayazıt - Ethical Hacker">
-    <meta name="twitter:description" content="Ethical Hacker, Cyber Security Analyst and Linux Enthusiast.">
+    <meta name="twitter:description" content="Ethical Hacker, Cyber Security Analyst ve Linux Enthusiast.">
     <meta name="twitter:image" content="https://adembayazit.com/IMAGES/preview.png">
     <meta name="twitter:image:alt" content="Adem Bayazıt">
     
@@ -33,14 +33,16 @@
     <!-- End Google Tag Manager -->
     
     <style>
-        /* Glossary Specific Styles */
-        .glossary-section {
-            padding: 40px 20px;
+        /* Notebook Stilleri */
+        .notebook-container {
             max-width: 1200px;
-            margin: 0 auto;
+            max-height: 1200px;
+            margin: 20px auto;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
         }
         
-        /* Notebook Page Effect */
         .notebook-page {
             background-color: #f0f0d0;
             background-image: linear-gradient(#e6e6cc 1px, transparent 1px), 
@@ -52,9 +54,8 @@
             border-right: 2px solid #ccc;
             position: relative;
             min-height: 600px;
-            max-width: 1200px;
-            margin: 0 auto;
-            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            max-height: 1200px;
+            overflow-y: auto;
         }
         
         .notebook-page::before {
@@ -73,53 +74,30 @@
             );
         }
         
-        /* Search Container */
-        .search-container {
-            position: relative;
-            width: 100%;
-            max-width: 500px;
-            margin: 20px auto;
-        }
-        
-        .search-input {
-            width: 100%;
-            padding: 12px 15px;
-            background-color: #1a1a1a;
-            border: 1px solid #00ff00;
-            border-radius: 4px;
-            color: #00ff00;
-            font-family: 'Courier New', monospace;
-        }
-        
-        .search-input::placeholder {
-            color: #00aa00;
-        }
-        
-        /* Main Container */
+        /* Ana İçerik Düzeni */
         .main-container {
             display: flex;
-            flex-direction: column;
+            height: 100%;
         }
         
-        /* Alphabet Tabs */
+        /* Alfabetik Sekmeler */
         .alphabet-tabs {
-            width: 100%;
+            width: 60px;
             background-color: #2a2a2a;
-            padding: 10px 0;
+            padding: 20px 0;
             display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            border-bottom: 1px solid #00ff00;
-            margin-bottom: 20px;
+            flex-direction: column;
+            align-items: center;
+            border-right: 1px solid #00ff00;
         }
         
         .alphabet-tab {
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 5px;
+            margin: 5px 0;
             cursor: pointer;
             border-radius: 50%;
             background-color: #1a1a1a;
@@ -127,7 +105,6 @@
             border: 1px solid #00ff00;
             font-weight: bold;
             transition: all 0.3s;
-            font-size: 14px;
         }
         
         .alphabet-tab:hover, .alphabet-tab.active {
@@ -135,14 +112,15 @@
             color: #1a1a1a;
         }
         
-        /* Content Area */
+        /* İçerik Alanı */
         .content-area {
+            flex: 1;
             position: relative;
             overflow: hidden;
         }
         
         /* Matrix Canvas */
-        #glossaryMatrixCanvas {
+        #matrixCanvas {
             position: absolute;
             top: 0;
             left: 0;
@@ -152,12 +130,12 @@
             opacity: 0.3;
         }
         
-        /* Terms Container */
+        /* Terimler Listesi */
         .terms-container {
             position: relative;
             z-index: 2;
             padding: 20px;
-            max-height: 600px;
+            max-height: 100%;
             overflow-y: auto;
         }
         
@@ -205,7 +183,28 @@
             margin-top: 5px;
         }
         
-        /* Search Results */
+        /* Arama Çubuğu */
+        .search-container {
+            position: relative;
+            width: 300px;
+            margin-left: 20px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 10px 15px;
+            background-color: #1a1a1a;
+            border: 1px solid #00ff00;
+            border-radius: 4px;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .search-input::placeholder {
+            color: #00aa00;
+        }
+        
+        /* Arama Sonuçları */
         .search-results {
             position: absolute;
             top: 100%;
@@ -224,57 +223,52 @@
             padding: 10px;
             cursor: pointer;
             border-bottom: 1px solid #333;
-            color: #00ff00;
         }
         
         .search-result-item:hover {
             background-color: #2a2a2a;
         }
+
+        /* Responsive Tasarım */
+        @media (max-width: 1200px) {
+            .notebook-container {
+                width: 95%;
+                height: auto;
+            }
+        }
         
-        /* Responsive Design */
         @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
             .alphabet-tabs {
+                width: 100%;
+                flex-direction: row;
+                overflow-x: auto;
                 padding: 10px 5px;
                 justify-content: flex-start;
-                overflow-x: auto;
             }
             
             .alphabet-tab {
-                margin: 0 3px 5px;
+                margin: 0 5px;
                 flex-shrink: 0;
             }
             
-            .notebook-page {
-                padding: 15px 10px 15px 30px;
-            }
-            
-            .notebook-page::before {
-                left: 25px;
-            }
-            
-            .terms-container {
-                padding: 10px;
-                max-height: 500px;
-            }
-            
-            .term-item {
-                padding-left: 25px;
+            .search-container {
+                width: 200px;
             }
         }
         
         @media (max-width: 480px) {
-            .glossary-section {
-                padding: 20px 10px;
-            }
-            
-            .alphabet-tab {
-                width: 32px;
-                height: 32px;
-                font-size: 12px;
+            .header {
+                flex-wrap: wrap;
             }
             
             .search-container {
-                margin: 10px auto;
+                width: 100%;
+                margin: 10px 0 0 0;
+                order: 3;
             }
         }
     </style>
@@ -285,57 +279,50 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 
     <script src="/JAVASCRIPT/monitor.js"></script>
-    <canvas id="matrixCanvas"></canvas>
-                                                        <!-- Matrix -->
-    <script src="/JAVASCRIPT/matrix.js"></script>
 <body>
     <header class="header">
         <a href="#home" class="logo"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">{adembayazit} </a>
         <nav class="navbar">
             <div class="dropdown">
-            <a href="#" style="--i:5;" class="dropbtn"> <img src="IMAGES/Ata.svg" alt= "Ata Icon" class="ata-icon"><span class="fi fi-tr"><!-- TR --></span> <span class='bx bx-code-alt'></span> Ethical Hacker <span class='bx bx-chevron-down'></span></a>
+            <a href="#" style="--i:5;" class="dropbtn"> <img src="IMAGES/Ata.svg" alt= "Ata Icon" class="ata-icon"><span class="fi fi-tr"></span> <span class='bx bx-code-alt'></span> Ethical Hacker <span class='bx bx-chevron-down'></span></a>
             <div class="dropdown-content">
             <a href="#tools"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hacker-icon"> What is an Ethical Hacker?</a>
-            <a href="#glossary"><img src="IMAGES/glossary.svg" alt="Glossary" class="glossary-icon"> Cybersecurity Glossary</a>
-            <a href="#soc"><img src="IMAGES/soc.svg" alt="Soc" class="soc-icon"> What is a SOC ?</a>
-            <a href="#vulnerabilities"><img src="IMAGES/vulnerabilities.svg" alt="Vulnerabilities" class="vulnerabilities-icon"> Vulnerabilities</a>
-            <a href="#steganography"><img src="IMAGES/steganography.svg" alt="Steganography" class="steganography-icon"> Steganography</a>
-            <a href="#cryptography"><img src="IMAGES/cryptography.svg" alt="Cryptography" class="cryptography-icon"> Cryptography</a>    
-            <a href="#education"><img src="IMAGES/education.svg" alt="Education" class="education-icon"> Cybersecurity Learning Resources</a>
-    </div>
-  </div>
-            
+            <a href="#reports"><img src="IMAGES/glossary.svg" alt="Glossary" class="glossary-icon"> Cybersecurity Glossary</a>
+            <a href="#payloads"><img src="IMAGES/soc.svg" alt="Soc" class="soc-icon"> What is a SOC?</a>
+            <a href="#payloads"><img src="IMAGES/vulnerabilities.svg" alt="Vulnerabilities" class="vulnerabilities-icon"> Vulnerabilities</a>
+            <a href="#payloads"><img src="IMAGES/steganography.svg" alt="Steganography" class="steganography-icon"> Steganography</a>
+            <a href="#payloads"><img src="IMAGES/cryptography.svg" alt="Cryptography" class="cryptography-icon"> Cryptography</a>    
+            <a href="#payloads"><img src="IMAGES/education.svg" alt="Education" class="education-icon"> Cybersecurity Learning Resources</a>
+            </div>
+          </div>
         </nav>
-    </header>
-    <section id="glossary" class="glossary-section">
-        <h2 style="text-align: center; color: #00ff00; margin-bottom: 20px;">Cybersecurity Glossary</h2>
-        
         <div class="search-container">
-            <input type="text" class="search-input" placeholder="Search for a term...">
+            <input type="text" class="search-input" placeholder="Search term...">
             <div class="search-results"></div>
         </div>
-        
+    </header>
+
+    <div class="notebook-container">
         <div class="main-container">
             <div class="alphabet-tabs">
-                <!-- Alphabetical tabs will be added by JavaScript -->
+                <!-- Alfabetik sekmeler JavaScript ile eklenecek -->
             </div>
             
             <div class="content-area">
-                <canvas id="glossaryMatrixCanvas"></canvas>
+                <canvas id="matrixCanvas"></canvas>
                 <div class="notebook-page">
                     <div class="terms-container">
-                        <!-- Terms will be added by JavaScript -->
+                        <!-- Terimler JavaScript ile eklenecek -->
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 
 <footer style="text-align: center; padding: 20px; font-size: 14px; color: white;">
   <hr style="margin-bottom: 10px; border-color: limegreen;" />
   <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.2 | July 2025</p>
 </footer>
-
     <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-0WNL3VLY3F"></script>
 <script>
@@ -349,7 +336,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Create alphabetical tabs
+        // Alfabetik sekmeleri oluştur
         const alphabetTabs = document.querySelector('.alphabet-tabs');
         const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
         
@@ -361,56 +348,56 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             alphabetTabs.appendChild(tab);
         });
         
-        // Terms database (example content in English)
+        // Terimler veritabanı (örnek içerik)
         const termsData = {
             'A': [
                 {
                     title: 'Adware',
-                    shortDescription: 'Software designed to display advertisements to the user.',
-                    longDescription: 'Adware is typically installed as part of a software package and displays ads to users. Some adware can be malicious and collect personal information without user consent.'
+                    shortDescription: 'Software designed to show advertisements to the user.',
+                    longDescription: 'Adware is typically installed as part of a software package and displays ads to the user. Some types of adware can be malicious and collect personal information without user consent.'
                 },
                 {
                     title: 'APT (Advanced Persistent Threat)',
-                    shortDescription: 'A targeted and persistent type of cyber attack.',
-                    longDescription: 'APT is a sophisticated, long-term cyber attack campaign targeting specific entities. Attackers aim to remain in systems for extended periods to gather as much data as possible.'
+                    shortDescription: 'Targeted and continuous cyber attack type.',
+                    longDescription: 'APT is a sophisticated, long-term cyber attack campaign targeting a specific entity. Attackers aim to remain in the system for as long as possible to collect as much data as possible.'
                 },
                 {
                     title: 'Authentication',
                     shortDescription: 'The process of verifying user identity.',
-                    longDescription: 'Authentication is the process of verifying the identity of a user or system. This can involve passwords, biometrics, tokens, or multi-factor authentication methods.'
+                    longDescription: 'Authentication is the process of verifying the identity of a user or system. Passwords, biometric data, tokens, or multi-factor authentication methods can be used.'
                 }
             ],
             'B': [
                 {
                     title: 'Backdoor',
-                    shortDescription: 'A hidden entry point that provides unauthorized system access.',
-                    longDescription: 'A backdoor is a hidden access point created in a system to bypass normal authentication procedures. Often created by malware or sometimes by system administrators for emergency access.'
+                    shortDescription: 'A hidden entry point that provides unauthorized access to a system.',
+                    longDescription: 'A backdoor is a hidden access point created in a system to bypass normal authentication procedures. Often created by malware or by system administrators for emergency access.'
                 },
                 {
                     title: 'Botnet',
-                    shortDescription: 'A network of compromised computers (zombies).',
-                    longDescription: 'A botnet is a network of computers infected with malware and controlled by a central server. These networks are used for DDoS attacks, spam distribution, or data theft.'
+                    shortDescription: 'A network of zombie computers.',
+                    longDescription: 'A botnet is a network of computers infected with malware and controlled by a central server. These networks are used for DDoS attacks, sending spam, or data theft.'
                 },
                 {
                     title: 'Brute Force Attack',
-                    shortDescription: 'An attack that attempts to crack passwords through trial and error.',
-                    longDescription: 'A brute force attack attempts to gain access to systems or encrypted data by trying all possible password combinations. These attacks are typically automated with specialized tools.'
+                    shortDescription: 'A password cracking attack using trial and error method.',
+                    longDescription: 'A Brute Force attack is a method of trying all possible password combinations to gain access to a system or encrypted data. These attacks are usually automated with tools.'
                 }
             ],
             'C': [
                 {
                     title: 'Cryptography',
                     shortDescription: 'The science of encryption for information security.',
-                    longDescription: 'Cryptography is the science of securing information through encryption to provide confidentiality, integrity, authentication, and non-repudiation. Modern cryptography includes symmetric and asymmetric encryption techniques.'
+                    longDescription: 'Cryptography is the science of encrypting information to provide confidentiality, integrity, authentication, and non-repudiation. Modern cryptography includes symmetric and asymmetric encryption techniques.'
                 },
                 {
                     title: 'CVE (Common Vulnerabilities and Exposures)',
                     shortDescription: 'A list of publicly known information security vulnerabilities.',
-                    longDescription: 'CVE is a standardized list of publicly known cybersecurity vulnerabilities. Each CVE ID identifies a specific security vulnerability and facilitates communication among security professionals.'
+                    longDescription: 'CVE is a standardized list of publicly known software security vulnerabilities. Each CVE ID identifies a specific security vulnerability and facilitates communication among security professionals.'
                 },
                 {
                     title: 'Cybersecurity',
-                    shortDescription: 'Protection of computer systems against cyber threats.',
+                    shortDescription: 'Protecting computer systems against cyber threats.',
                     longDescription: 'Cybersecurity is the practice of protecting computer systems, networks, programs, and data from digital attacks, damage, or unauthorized access. It includes defense strategies and security protocols.'
                 }
             ],
@@ -418,51 +405,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 {
                     title: 'DDoS (Distributed Denial of Service)',
                     shortDescription: 'Distributed Denial of Service attack.',
-                    longDescription: 'A DDoS attack targets a server, service, or network by flooding it with traffic from multiple sources, disrupting normal traffic. Botnets are commonly used to execute these attacks.'
+                    longDescription: 'A DDoS attack is a type of cyber attack that targets a server, service, or network, flooding it with traffic from multiple sources to disrupt normal traffic. Botnets are often used to carry out these attacks.'
                 },
                 {
                     title: 'DNS (Domain Name System)',
-                    shortDescription: 'The system that translates domain names to IP addresses.',
-                    longDescription: 'DNS is a hierarchical and decentralized naming system that translates domain names to IP addresses. DNS poisoning or spoofing are attack types that exploit vulnerabilities in the DNS system.'
+                    shortDescription: 'The system that translates domain names into IP addresses.',
+                    longDescription: 'DNS is a hierarchical and decentralized naming system that translates internet domain names into IP addresses. DNS poisoning or spoofing are types of attacks that exploit vulnerabilities in the DNS system.'
                 },
                 {
                     title: 'Data Breach',
                     shortDescription: 'Unauthorized disclosure of confidential, sensitive, or protected data.',
-                    longDescription: 'A data breach involves the unauthorized access, viewing, or theft of confidential, sensitive, or protected data. Data breaches are often perpetrated by cybercriminals for financial gain or espionage.'
-                }
-            ],
-            'E': [
-                {
-                    title: 'Encryption',
-                    shortDescription: 'The process of converting data into a secure format.',
-                    longDescription: 'Encryption transforms readable data (plaintext) into an encoded version (ciphertext) that can only be decoded with a specific key. It is a fundamental component of data security.'
-                },
-                {
-                    title: 'Exploit',
-                    shortDescription: 'Code that takes advantage of a software vulnerability.',
-                    longDescription: 'An exploit is a piece of software, a command, or a methodology that attacks a particular security vulnerability. Exploits are used to carry out attacks against vulnerable systems.'
-                }
-            ],
-            'F': [
-                {
-                    title: 'Firewall',
-                    shortDescription: 'A network security system that monitors and controls traffic.',
-                    longDescription: 'A firewall is a network security device that monitors incoming and outgoing network traffic and decides whether to allow or block specific traffic based on a defined set of security rules.'
-                },
-                {
-                    title: 'Phishing',
-                    shortDescription: 'Fraudulent attempt to obtain sensitive information.',
-                    longDescription: 'Phishing is a cyber attack that uses disguised email as a weapon. The goal is to trick the email recipient into believing that the message is something they want or need and to click a link or download an attachment.'
+                    longDescription: 'A data breach is the unauthorized disclosure, viewing, or theft of confidential, sensitive, or protected data. Data breaches are often carried out by cybercriminals for financial gain or espionage.'
                 }
             ]
-            // More letters can be added similarly
+            // Diğer harfler için de benzer şekilde içerik eklenebilir
         };
         
-        // Show terms for letter A by default
+        // Varsayılan olarak A harfini göster
         showTermsForLetter('A');
         setActiveTab('A');
         
-        // Tab click events
+        // Sekme tıklama olayları
         document.querySelectorAll('.alphabet-tab').forEach(tab => {
             tab.addEventListener('click', function() {
                 const letter = this.getAttribute('data-letter');
@@ -471,7 +434,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             });
         });
         
-        // Search functionality
+        // Arama işlevselliği
         const searchInput = document.querySelector('.search-input');
         const searchResults = document.querySelector('.search-results');
         
@@ -483,7 +446,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 return;
             }
             
-            // Find search results
+            // Arama sonuçlarını bul
             const results = [];
             
             for (const letter in termsData) {
@@ -498,21 +461,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 });
             }
             
-            // Display search results
+            // Arama sonuçlarını göster
             displaySearchResults(results);
         });
         
-        // Hide search results when clicking outside
+        // Dışarı tıklandığında arama sonuçlarını gizle
         document.addEventListener('click', function(e) {
             if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
                 searchResults.style.display = 'none';
             }
         });
         
-        // Initialize matrix animation for glossary
-        initGlossaryMatrixAnimation();
+        // Matrix animasyonu
+        initMatrixAnimation();
         
-        // Helper functions
+        // Yardımcı fonksiyonlar
         function showTermsForLetter(letter) {
             const termsContainer = document.querySelector('.terms-container');
             termsContainer.innerHTML = '';
@@ -535,7 +498,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     termsContainer.appendChild(termElement);
                 });
                 
-                // Expand/collapse functionality
+                // Genişletme/daraltma işlevselliği
                 document.querySelectorAll('.term-title').forEach(title => {
                     title.addEventListener('click', function() {
                         const longDesc = this.nextElementSibling.nextElementSibling;
@@ -551,7 +514,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     });
                 });
             } else {
-                termsContainer.innerHTML = '<p>No terms have been added for this letter yet.</p>';
+                termsContainer.innerHTML = '<p>No terms added for this letter yet.</p>';
             }
         }
         
@@ -580,7 +543,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         searchInput.value = '';
                         searchResults.style.display = 'none';
                         
-                        // Scroll to found term
+                        // Bulunan terime scroll
                         setTimeout(() => {
                             const termTitles = document.querySelectorAll('.term-title');
                             termTitles.forEach(title => {
@@ -602,14 +565,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             searchResults.style.display = 'block';
         }
         
-        function initGlossaryMatrixAnimation() {
-            const canvas = document.getElementById('glossaryMatrixCanvas');
+        function initMatrixAnimation() {
+            const canvas = document.getElementById('matrixCanvas');
             const ctx = canvas.getContext('2d');
             
-            // Set canvas size to match notebook page
-            const notebookPage = document.querySelector('.notebook-page');
-            canvas.width = notebookPage.offsetWidth;
-            canvas.height = notebookPage.offsetHeight;
+            function resizeCanvas() {
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+            }
+            
+            resizeCanvas();
             
             const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$#@%&!?*';
             const fontSize = 12;
@@ -641,10 +606,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             
             setInterval(draw, 33);
             
-            // Adjust canvas size on window resize
             window.addEventListener('resize', function() {
-                canvas.width = notebookPage.offsetWidth;
-                canvas.height = notebookPage.offsetHeight;
+                resizeCanvas();
             });
         }
     });
