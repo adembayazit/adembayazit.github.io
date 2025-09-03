@@ -119,6 +119,17 @@
             overflow: hidden;
         }
         
+        /* Matrix Canvas */
+        #matrixCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0.3;
+        }
+        
         /* Terimler Listesi */
         .terms-container {
             position: relative;
@@ -175,19 +186,18 @@
         /* Arama Çubuğu */
         .search-container {
             position: relative;
-            width: 500px;
-            margin: 0 auto 20px auto;
+            width: 300px;
+            margin-left: 20px;
         }
         
         .search-input {
             width: 100%;
-            padding: 12px 15px;
+            padding: 10px 15px;
             background-color: #1a1a1a;
             border: 1px solid #00ff00;
             border-radius: 4px;
             color: #00ff00;
             font-family: 'Courier New', monospace;
-            font-size: 16px;
         }
         
         .search-input::placeholder {
@@ -213,26 +223,10 @@
             padding: 10px;
             cursor: pointer;
             border-bottom: 1px solid #333;
-            color: #00ff00;
         }
         
         .search-result-item:hover {
             background-color: #2a2a2a;
-        }
-
-        /* Başlık Stili */
-        .glossary-title {
-            text-align: center;
-            color: #00ff00;
-            font-family: 'Courier New', monospace;
-            font-size: 2.5rem;
-            margin: 20px 0;
-            text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
-        }
-
-        /* Header'daki arama çubuğunu gizle */
-        .header .search-container {
-            display: none;
         }
 
         /* Responsive Tasarım */
@@ -262,11 +256,7 @@
             }
             
             .search-container {
-                width: 90%;
-            }
-
-            .glossary-title {
-                font-size: 2rem;
+                width: 200px;
             }
         }
         
@@ -275,9 +265,10 @@
                 flex-wrap: wrap;
             }
             
-            .glossary-title {
-                font-size: 1.8rem;
-                margin: 15px 0;
+            .search-container {
+                width: 100%;
+                margin: 10px 0 0 0;
+                order: 3;
             }
         }
     </style>
@@ -305,20 +296,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
           </div>
         </nav>
-        <!-- Header'daki arama çubuğunu gizleyeceğiz -->
-        <div class="search-container" style="display: none;">
+        
+    </header>
+        <div class="search-container">
             <input type="text" class="search-input" placeholder="Search term...">
             <div class="search-results"></div>
         </div>
-    </header>
-
-    <!-- Başlık ve arama çubuğu -->
-    <h1 class="glossary-title">Cyber Security Glossary</h1>
-    <div class="search-container">
-        <input type="text" class="search-input" placeholder="Search for cybersecurity terms...">
-        <div class="search-results"></div>
-    </div>
-
     <div class="notebook-container">
         <div class="main-container">
             <div class="alphabet-tabs">
@@ -326,6 +309,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
             
             <div class="content-area">
+                <canvas id="matrixCanvas"></canvas>
                 <div class="notebook-page">
                     <div class="terms-container">
                         <!-- Terimler JavaScript ile eklenecek -->
@@ -488,6 +472,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             }
         });
         
+        // Matrix animasyonu
+        initMatrixAnimation();
+        
         // Yardımcı fonksiyonlar
         function showTermsForLetter(letter) {
             const termsContainer = document.querySelector('.terms-container');
@@ -576,6 +563,52 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             }
             
             searchResults.style.display = 'block';
+        }
+        
+        function initMatrixAnimation() {
+            const canvas = document.getElementById('matrixCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            function resizeCanvas() {
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+            }
+            
+            resizeCanvas();
+            
+            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$#@%&!?*';
+            const fontSize = 12;
+            const columns = canvas.width / fontSize;
+            
+            const drops = [];
+            for (let i = 0; i < columns; i++) {
+                drops[i] = 1;
+            }
+            
+            function draw() {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.fillStyle = '#00ff00';
+                ctx.font = `${fontSize}px monospace`;
+                
+                for (let i = 0; i < drops.length; i++) {
+                    const text = letters[Math.floor(Math.random() * letters.length)];
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    
+                    drops[i]++;
+                }
+            }
+            
+            setInterval(draw, 33);
+            
+            window.addEventListener('resize', function() {
+                resizeCanvas();
+            });
         }
     });
 </script>
