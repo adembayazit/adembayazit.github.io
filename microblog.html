@@ -550,6 +550,7 @@
             width: 100%;
             height: 100%;
             border: none;
+            aspect-ratio: 16/9;
         }
 
         /* YENİ SLIDER STİLLERİ - TAMAMEN DÜZENLENDİ */
@@ -572,10 +573,11 @@
             position: absolute;
             top: 0;
             left: 0;
+            aspect-ratio: 16/9;
         }
         
         .slider-item {
-            flex: 0 0 auto;
+            flex: 0 0 100%;
             width: 100%;
             height: 100%;
             display: flex;
@@ -1061,8 +1063,8 @@
             }
             
             .image-slider {
-                aspect-ratio: 1/1;
-                min-height: 250px;
+                aspect-ratio: 16/9;
+                min-height: 100px;
             }
             
             .slider-btn {
@@ -1551,11 +1553,11 @@
           // İçeriği temizlenmiş olarak al
           content = tempDiv.innerHTML.trim();
           
-          // YouTube embed linklerini tespit et ve iframe'e dönüştür
+          // YouTube embed linklerini tespit ve ve iframe'e dönüştür
           content = content.replace(/(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/g, 
             '<div class="video-container"><iframe src="https://www.youtube.com/embed/$4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>');
           
-          // Birden fazla resim için slider oluştur
+          // Birden fazla resim için slider oluştur ve orijinal img etiketlerini kaldır
           content = content.replace(/(<img[^>]+>\s*){2,}/g, (imgs) => {
             const images = imgs.match(/<img[^>]+>/g);
             if (images && images.length > 1) {
@@ -1563,6 +1565,10 @@
             }
             return imgs;
           });
+          
+          // Slider oluşturulduktan sonra kalan boşlukları temizle
+          content = content.replace(/<p>\s*<\/p>/gi, '');
+          content = content.replace(/(<br\s*\/?>\s*){2,}/gi, '<br>');
           
           return content;
         }
@@ -1577,9 +1583,7 @@
           `;
           
           images.forEach(img => {
-            // Görüntü yüklendikten sonra slider'ı yeniden başlat
-            const imgWithLoad = img.replace('<img', '<img onload="initSlider(\'' + sliderId + '\')" ');
-            sliderHtml += `<div class="slider-item">${imgWithLoad}</div>`;
+            sliderHtml += `<div class="slider-item">${img}</div>`;
           });
           
           sliderHtml += `
@@ -2133,8 +2137,8 @@
             });
           }, 100);
           
-          // GÖRÜNÜM SAYAÇLARINI GÜNCELLE
-          updateViewCountsForVisibleEntries();
+          // GÖRÜNÜM SAYAÇLARINI GÜNCELLE - HER ENTRY İÇİN AYRI OBSERVER
+          setupViewCountObservers();
           
           loadingElement.style.display = 'none';
           
@@ -2239,6 +2243,9 @@
           
           // Bekleyen güncellemelere ekle (anında değil, periyodik olarak gönderilecek)
           pendingViewUpdates[entryId] = (pendingViewUpdates[entryId] || 0) + 1;
+          
+          // IP ve view bilgisini kaydet
+          logViewIp(entryId);
           
           // İstatistikleri güncelle
           updateStatistics();
@@ -2346,9 +2353,15 @@
           }
         }
 
-        // Intersection Observer ile görünür entry'lerin view count'unu güncelle
-        function updateViewCountsForVisibleEntries() {
+        // Intersection Observer ile görünür entry'lerin view count'unu güncelle - YENİ FONKSİYON
+        function setupViewCountObservers() {
           const entries = document.querySelectorAll('.entry');
+          
+          const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.5 // Entry'nin %50'si göründüğünde tetikle
+          };
           
           const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -2359,7 +2372,7 @@
                 observer.unobserve(entry.target);
               }
             });
-          }, { threshold: 0.5 });
+          }, observerOptions);
           
           // Tüm entry'leri gözle
           entries.forEach(entry => {
@@ -2684,7 +2697,7 @@
           .catch(function(err) {
             console.log('Failed to subscribe the user: ', err);
             document.getElementById('notificationStatus').textContent = 
-              'Abonelik işlemi başarısız. Lütfen daha sonra tekrar deneyin.';
+                  'Abonelik işlemi başarısız. Lütfen daha sonra tekrar deneyin.';
           });
         }
 
@@ -3151,7 +3164,7 @@
           }, 100);
           
           // GÖRÜNÜM SAYAÇLARINI GÜNCELLE
-          updateViewCountsForVisibleEntries();
+          setupViewCountObservers();
         }
 
         // 9. UYGULAMAYI BAŞLAT
