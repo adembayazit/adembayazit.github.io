@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -33,14 +33,198 @@
     <!-- End Google Tag Manager -->
     
     <style>
+        /* Genel Stiller */
+        body {
+            background-color: #0a0a0a;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        
+        /* Header Stilleri */
+        .header {
+            position: relative;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 10%;
+            background: rgba(10, 10, 10, 0.9);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+            border-bottom: 1px solid #00ff00;
+        }
+        
+        .logo {
+            font-size: 25px;
+            color: #00ff00;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo img {
+            width: 30px;
+            margin-right: 10px;
+        }
+        
+        .navbar {
+            display: flex;
+        }
+        
+        .navbar a {
+            font-size: 18px;
+            color: #00ff00;
+            text-decoration: none;
+            font-weight: 500;
+            margin-left: 35px;
+            transition: .3s;
+            display: flex;
+            align-items: center;
+        }
+        
+        .navbar a:hover,
+        .navbar a.active {
+            color: #00cc00;
+            text-shadow: 0 0 5px #00ff00;
+        }
+        
+        .navbar a img {
+            width: 20px;
+            margin-right: 5px;
+        }
+        
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .dropbtn {
+            background-color: transparent;
+            color: #00ff00;
+            padding: 10px 15px;
+            font-size: 16px;
+            border: 1px solid #00ff00;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #1a1a1a;
+            min-width: 250px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
+            z-index: 1;
+            border: 1px solid #00ff00;
+            border-top: none;
+        }
+        
+        .dropdown-content a {
+            color: #00ff00;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            margin: 0;
+            border-bottom: 1px solid #333;
+        }
+        
+        .dropdown-content a:hover {
+            background-color: #2a2a2a;
+        }
+        
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        
+        /* Arama Çubuğu - Microblog benzeri */
+        .search-container {
+            position: relative;
+            width: 300px;
+            margin-left: 20px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 10px 15px;
+            background-color: #1a1a1a;
+            border: 1px solid #00ff00;
+            border-radius: 4px;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .search-input::placeholder {
+            color: #00aa00;
+        }
+        
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: #1a1a1a;
+            border: 1px solid #00ff00;
+            border-top: none;
+            z-index: 101;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+        }
+        
+        .search-result-item {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #333;
+        }
+        
+        .search-result-item:hover {
+            background-color: #2a2a2a;
+        }
+        
+        /* Ana İçerik Alanı */
+        .main-content {
+            padding: 20px 5%;
+            margin-top: 100px;
+        }
+        
+        .page-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #00ff00;
+            font-size: 2.5rem;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+            position: relative;
+        }
+        
+        .page-title::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: #00ff00;
+            box-shadow: 0 0 10px #00ff00;
+        }
+        
         /* Notebook Stilleri */
         .notebook-container {
             max-width: 1200px;
-            max-height: 1200px;
             margin: 20px auto;
             overflow: hidden;
             border-radius: 8px;
             box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+            position: relative;
         }
         
         .notebook-page {
@@ -54,7 +238,6 @@
             border-right: 2px solid #ccc;
             position: relative;
             min-height: 600px;
-            max-height: 1200px;
             overflow-y: auto;
         }
         
@@ -183,57 +366,87 @@
             margin-top: 5px;
         }
         
-        /* Arama Çubuğu */
-        .search-container {
-            position: relative;
-            width: 300px;
-            margin-left: 20px;
+        /* Kenar Anahtar Kelimeler - Masaüstü için */
+        .keyword-sidebar {
+            position: fixed;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            background: rgba(26, 26, 26, 0.8);
+            border: 1px solid #00ff00;
+            border-radius: 5px;
+            padding: 15px 10px;
+            width: 150px;
+            z-index: 90;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
         }
         
-        .search-input {
-            width: 100%;
-            padding: 10px 15px;
-            background-color: #1a1a1a;
-            border: 1px solid #00ff00;
-            border-radius: 4px;
+        .keyword-title {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 10px;
             color: #00ff00;
-            font-family: 'Courier New', monospace;
+            border-bottom: 1px solid #00ff00;
+            padding-bottom: 5px;
         }
         
-        .search-input::placeholder {
-            color: #00aa00;
-        }
-        
-        /* Arama Sonuçları */
-        .search-results {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            background-color: #1a1a1a;
-            border: 1px solid #00ff00;
-            border-top: none;
-            z-index: 101;
-            max-height: 300px;
-            overflow-y: auto;
-            display: none;
-        }
-        
-        .search-result-item {
-            padding: 10px;
+        .keyword-item {
+            padding: 8px 5px;
+            margin: 5px 0;
+            background: rgba(0, 255, 0, 0.1);
+            border-radius: 3px;
+            text-align: center;
             cursor: pointer;
-            border-bottom: 1px solid #333;
+            transition: all 0.3s;
+            font-size: 0.9rem;
         }
         
-        .search-result-item:hover {
-            background-color: #2a2a2a;
+        .keyword-item:hover {
+            background: rgba(0, 255, 0, 0.3);
+            transform: translateX(-5px);
         }
-
+        
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+            color: white;
+            margin-top: 50px;
+            border-top: 1px solid #00ff00;
+        }
+        
+        footer hr {
+            margin-bottom: 10px;
+            border-color: limegreen;
+        }
+        
         /* Responsive Tasarım */
         @media (max-width: 1200px) {
             .notebook-container {
                 width: 95%;
-                height: auto;
+            }
+            
+            .keyword-sidebar {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .header {
+                flex-wrap: wrap;
+                padding: 15px 5%;
+            }
+            
+            .search-container {
+                width: 100%;
+                margin: 10px 0 0 0;
+                order: 3;
+            }
+            
+            .navbar {
+                order: 2;
+                margin-top: 10px;
             }
         }
         
@@ -255,20 +468,43 @@
                 flex-shrink: 0;
             }
             
-            .search-container {
-                width: 200px;
+            .page-title {
+                font-size: 2rem;
+                margin-top: 20px;
+            }
+            
+            .navbar a {
+                margin-left: 15px;
+                font-size: 16px;
             }
         }
         
-        @media (max-width: 480px) {
-            .header {
-                flex-wrap: wrap;
+        @media (max-width: 576px) {
+            .logo {
+                font-size: 20px;
             }
             
-            .search-container {
+            .dropdown {
                 width: 100%;
-                margin: 10px 0 0 0;
-                order: 3;
+                text-align: center;
+            }
+            
+            .dropbtn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .navbar {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .page-title {
+                font-size: 1.8rem;
+            }
+            
+            .notebook-page {
+                padding: 15px 10px 15px 30px;
             }
         }
     </style>
@@ -280,7 +516,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <script src="/JAVASCRIPT/monitor.js"></script>
 <body>
     <header class="header">
-         <canvas id="matrixCanvas"></canvas>
+        <canvas id="matrixCanvas"></canvas>
         <a href="#home" class="logo"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">{adembayazit} </a>
         <nav class="navbar">
             <div class="dropdown">
@@ -297,29 +533,46 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </div>
         </nav>
         
-    </header>
         <div class="search-container">
             <input type="text" class="search-input" placeholder="Search term...">
             <div class="search-results"></div>
         </div>
-    <div class="notebook-container">
-        <div class="main-container">
-            <div class="alphabet-tabs">
-                <!-- Alfabetik sekmeler JavaScript ile eklenecek -->
-            </div>
-            
-            <div class="content-area">
-                <div class="notebook-page">
-                    <div class="terms-container">
-                        <!-- Terimler JavaScript ile eklenecek -->
+    </header>
+    
+    <div class="main-content">
+        <h1 class="page-title">Siber Güvenlik Sözlüğü</h1>
+        
+        <div class="notebook-container">
+            <div class="main-container">
+                <div class="alphabet-tabs">
+                    <!-- Alfabetik sekmeler JavaScript ile eklenecek -->
+                </div>
+                
+                <div class="content-area">
+                    <div class="notebook-page">
+                        <div class="terms-container">
+                            <!-- Terimler JavaScript ile eklenecek -->
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    
+    <!-- Kenar Anahtar Kelimeler - Masaüstü için -->
+    <div class="keyword-sidebar">
+        <div class="keyword-title">Popüler Terimler</div>
+        <div class="keyword-item">Firewall</div>
+        <div class="keyword-item">Encryption</div>
+        <div class="keyword-item">Phishing</div>
+        <div class="keyword-item">Malware</div>
+        <div class="keyword-item">Ransomware</div>
+        <div class="keyword-item">VPN</div>
+        <div class="keyword-item">Zero-Day</div>
+    </div>
 
-<footer style="text-align: center; padding: 20px; font-size: 14px; color: white;">
-  <hr style="margin-bottom: 10px; border-color: limegreen;" />
+<footer>
+  <hr />
   <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.2 | July 2025</p>
 </footer>
     <!-- Google tag (gtag.js) -->
@@ -416,6 +669,25 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     shortDescription: 'Unauthorized disclosure of confidential, sensitive, or protected data.',
                     longDescription: 'A data breach is the unauthorized disclosure, viewing, or theft of confidential, sensitive, or protected data. Data breaches are often carried out by cybercriminals for financial gain or espionage.'
                 }
+            ],
+            'E': [
+                {
+                    title: 'Encryption',
+                    shortDescription: 'Process of converting data into a secure format.',
+                    longDescription: 'Encryption is the process of converting plaintext into ciphertext to protect data from unauthorized access. Only authorized parties with the decryption key can access the original data.'
+                },
+                {
+                    title: 'Exploit',
+                    shortDescription: 'Code that takes advantage of a software vulnerability.',
+                    longDescription: 'An exploit is a piece of software, a chunk of data, or a sequence of commands that takes advantage of a bug or vulnerability to cause unintended or unanticipated behavior to occur on computer software, hardware, or something electronic.'
+                }
+            ],
+            'F': [
+                {
+                    title: 'Firewall',
+                    shortDescription: 'Network security system that monitors and controls traffic.',
+                    longDescription: 'A firewall is a network security system that monitors and controls incoming and outgoing network traffic based on predetermined security rules. It establishes a barrier between a trusted internal network and untrusted external network.'
+                }
             ]
             // Diğer harfler için de benzer şekilde içerik eklenebilir
         };
@@ -473,6 +745,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         
         // Matrix animasyonu
         initMatrixAnimation();
+        
+        // Kenar anahtar kelimeleri tıklanabilir yap
+        document.querySelectorAll('.keyword-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const term = this.textContent;
+                searchInput.value = term;
+                searchInput.dispatchEvent(new Event('input'));
+            });
+        });
         
         // Yardımcı fonksiyonlar
         function showTermsForLetter(letter) {
