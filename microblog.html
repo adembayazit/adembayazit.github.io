@@ -1617,181 +1617,167 @@
           return sliderHtml;
         }
 
-// Slider başlatma fonksiyonu - TAMAMEN YENİLENDİ
-function initSlider(sliderId) {
-  const slider = document.getElementById(sliderId);
-  if (!slider) return;
-  
-  // Eğer bu slider zaten başlatıldıysa, önceki olay dinleyicilerini temizle
-  if (slidersState[sliderId]) {
-    const { prevBtn, nextBtn, dots, resizeObserver, touchStartHandler, touchEndHandler } = slidersState[sliderId];
-    
-    // Önceki olay dinleyicilerini kaldır
-    if (prevBtn && prevBtn.cloneNode) {
-      prevBtn.replaceWith(prevBtn.cloneNode(true));
-    }
-    if (nextBtn && nextBtn.cloneNode) {
-      nextBtn.replaceWith(nextBtn.cloneNode(true));
-    }
-    
-    if (dots && dots.length) {
-      dots.forEach((dot, index) => {
-        if (dot && dot.cloneNode) dot.replaceWith(dot.cloneNode(true));
-      });
-    }
-    
-    if (resizeObserver) {
-      resizeObserver.disconnect();
-    }
-    
-    if (touchStartHandler && touchEndHandler) {
-      slider.removeEventListener('touchstart', touchStartHandler);
-      slider.removeEventListener('touchend', touchEndHandler);
-    }
-    
-    // State'i temizle
-    delete slidersState[sliderId];
-  }
-  
-  const container = slider.querySelector('.slider-container');
-  const items = slider.querySelectorAll('.slider-item');
-  const prevBtn = slider.querySelector('.prev-btn');
-  const nextBtn = slider.querySelector('.next-btn');
-  const dots = slider.querySelectorAll('.dot');
-  
-  if (!container || items.length === 0) return;
-  
-  let currentIndex = 0;
-  const totalItems = items.length;
-  const slideWidth = slider.offsetWidth;
-  
-  // Slider'ı güncelle
-  function updateSlider() {
-    container.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
-    
-    // Noktaları güncelle
-    dots.forEach((dot, index) => {
-      dot.classList.toggle('active', index === currentIndex);
-    });
-  }
-  
-  // Sonraki slayt
-  function nextSlide() {
-    currentIndex = (currentIndex + 1) % totalItems;
-    updateSlider();
-  }
-  
-  // Önceki slayt
-  function prevSlide() {
-    currentIndex = (currentIndex - 1 + totalItems) % totalItems;
-    updateSlider();
-  }
-  
-  // Olay dinleyicileri ekle
-  if (nextBtn) {
-    const nextHandler = () => nextSlide();
-    nextBtn.addEventListener('click', nextHandler);
-    slidersState[sliderId] = {
-      ...slidersState[sliderId],
-      nextBtn,
-      nextHandler
-    };
-  }
-  
-  if (prevBtn) {
-    const prevHandler = () => prevSlide();
-    prevBtn.addEventListener('click', prevHandler);
-    slidersState[sliderId] = {
-      ...slidersState[sliderId],
-      prevBtn,
-      prevHandler
-    };
-  }
-  
-  // Noktalara tıklama
-  dots.forEach((dot, index) => {
-    const clickHandler = () => {
-      currentIndex = index;
-      updateSlider();
-    };
-    
-    dot.addEventListener('click', clickHandler);
-    slidersState[sliderId] = {
-      ...slidersState[sliderId],
-      [`dotHandler-${index}`]: clickHandler
-    };
-  });
-  
-  // Mobil dokunma olayları
-  let startX = 0;
-  let endX = 0;
-  
-  const touchStartHandler = (e) => {
-    startX = e.touches[0].clientX;
-  };
-  
-  const touchEndHandler = (e) => {
-    endX = e.changedTouches[0].clientX;
-    handleSwipe();
-  };
-  
-  slider.addEventListener('touchstart', touchStartHandler, { passive: true });
-  slider.addEventListener('touchend', touchEndHandler, { passive: true });
-  
-  function handleSwipe() {
-    const diffX = startX - endX;
-    
-    // Minimum kayma mesafesi
-    if (Math.abs(diffX) > 50) {
-      if (diffX > 0) {
-        // Sağa kaydırma - sonraki slayt
-        nextSlide();
-      } else {
-        // Sola kaydırma - önceki slayt
-        prevSlide();
-      }
-    }
-  }
-  
-  // İlk slider konumunu ayarla
-  updateSlider();
-  
-  // Yeniden boyutlandırmada slider'ı güncelle
-  const resizeObserver = new ResizeObserver(() => {
-    // Slider genişliğini yeniden hesapla
-    const newSlideWidth = slider.offsetWidth;
-    if (newSlideWidth !== slideWidth) {
-      updateSlider();
-    }
-  });
-  
-  resizeObserver.observe(slider);
-  
-  // State'i kaydet
-  slidersState[sliderId] = {
-    ...slidersState[sliderId],
-    container,
-    items,
-    dots,
-    currentIndex,
-    totalItems,
-    resizeObserver,
-    touchStartHandler,
-    touchEndHandler
-  };
-}
+        // Slider başlatma fonksiyonu - GÜNCELLENMİŞ
+        function initSlider(sliderId) {
+          const slider = document.getElementById(sliderId);
+          if (!slider) return;
+          
+          // Eğer bu slider zaten başlatıldıysa, önceki olay dinleyicilerini temizle
+          if (slidersState[sliderId]) {
+            const { prevBtn, nextBtn, dots, container, resizeObserver, touchStartHandler, touchEndHandler } = slidersState[sliderId];
+            
+            if (prevBtn && prevBtn.cloneNode) prevBtn.replaceWith(prevBtn.cloneNode(true));
+            if (nextBtn && nextBtn.cloneNode) nextBtn.replaceWith(nextBtn.cloneNode(true));
+            
+            if (dots && dots.length) {
+              dots.forEach((dot, index) => {
+                if (dot && dot.cloneNode) dot.replaceWith(dot.cloneNode(true));
+              });
+            }
+            
+            if (resizeObserver) {
+              resizeObserver.disconnect();
+            }
+            
+            if (touchStartHandler && touchEndHandler) {
+              slider.removeEventListener('touchstart', touchStartHandler);
+              slider.removeEventListener('touchend', touchEndHandler);
+            }
+          }
+          
+          const container = slider.querySelector('.slider-container');
+          const items = slider.querySelectorAll('.slider-item');
+          const prevBtn = slider.querySelector('.prev-btn');
+          const nextBtn = slider.querySelector('.next-btn');
+          const dots = slider.querySelectorAll('.dot');
+          
+          if (!container || items.length === 0) return;
+          
+          let currentIndex = 0;
+          const totalItems = items.length;
+          
+          // Slider'ı güncelle
+          function updateSlider() {
+            // Konteyner genişliğini yeniden hesapla
+            const slideWidth = slider.offsetWidth;
+            container.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+            
+            // Noktaları güncelle
+            dots.forEach((dot, index) => {
+              dot.classList.toggle('active', index === currentIndex);
+            });
+            
+            // Durumu güncelle
+            slidersState[sliderId].currentIndex = currentIndex;
+          }
+          
+          // Sonraki slayt
+          function nextSlide() {
+            currentIndex = (currentIndex + 1) % totalItems;
+            updateSlider();
+          }
+          
+          // Önceki slayt
+          function prevSlide() {
+            currentIndex = (currentIndex - 1 + totalItems) % totalItems;
+            updateSlider();
+          }
+          
+          // Olay dinleyicileri ekle
+          if (nextBtn) {
+            nextBtn.addEventListener('click', nextSlide);
+            slidersState[sliderId] = {
+              ...slidersState[sliderId],
+              nextBtn,
+              nextHandler: nextSlide
+            };
+          }
+          
+          if (prevBtn) {
+            prevBtn.addEventListener('click', prevSlide);
+            slidersState[sliderId] = {
+              ...slidersState[sliderId],
+              prevBtn,
+              prevHandler: prevSlide
+            };
+          }
+          
+          // Noktalara tıklama
+          dots.forEach((dot, index) => {
+            const clickHandler = () => {
+              currentIndex = index;
+              updateSlider();
+            };
+            
+            dot.addEventListener('click', clickHandler);
+            slidersState[sliderId] = {
+              ...slidersState[sliderId],
+              [`dotHandler-${index}`]: clickHandler
+            };
+          });
+          
+          // Mobil dokunma olayları
+          let startX = 0;
+          let endX = 0;
+          
+          const touchStartHandler = (e) => {
+            startX = e.touches[0].clientX;
+          };
+          
+          const touchEndHandler = (e) => {
+            endX = e.changedTouches[0].clientX;
+            handleSwipe();
+          };
+          
+          slider.addEventListener('touchstart', touchStartHandler, { passive: true });
+          slider.addEventListener('touchend', touchEndHandler, { passive: true });
+          
+          slidersState[sliderId] = {
+            ...slidersState[sliderId],
+            touchStartHandler,
+            touchEndHandler
+          };
+          
+          function handleSwipe() {
+            const diffX = startX - endX;
+            
+            // Minimum kayma mesafesi
+            if (Math.abs(diffX) > 50) {
+              if (diffX > 0) {
+                // Sağa kaydırma - sonraki slayt
+                nextSlide();
+              } else {
+                // Sola kaydırma - önceki slayt
+                prevSlide();
+              }
+            }
+          }
+          
+          // İlk slider konumunu ayarla
+          updateSlider();
+          
+          // Yeniden boyutlandırmada slider'ı güncelle
+          const resizeObserver = new ResizeObserver(updateSlider);
+          resizeObserver.observe(slider);
+          
+          slidersState[sliderId] = {
+            ...slidersState[sliderId],
+            container,
+            items,
+            dots,
+            currentIndex,
+            totalItems,
+            resizeObserver
+          };
+        }
 
-// Tüm slider'ları başlat - GÜNCELLENDİ
-function initAllSliders() {
-  const sliders = document.querySelectorAll('.image-slider');
-  sliders.forEach(slider => {
-    // Slider zaten bir ID'ye sahip değilse, bir ID ata
-    if (!slider.id) {
-      slider.id = 'slider-' + Math.random().toString(36).substr(2, 9);
-    }
-    initSlider(slider.id);
-  });
-}
+        // Tüm slider'ları başlat - GÜNCELLENMİŞ
+        function initAllSliders() {
+          const sliders = document.querySelectorAll('.image-slider');
+          sliders.forEach(slider => {
+            initSlider(slider.id);
+          });
+        }
 
         // Görsel modal işlevselliği - TAMAMEN YENİLENDİ
         function setupImageModal() {
