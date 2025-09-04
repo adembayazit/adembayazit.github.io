@@ -411,7 +411,7 @@
             100% { transform: scale(1); }
         }
 
-        /* Görsel modal için stiller - TAMAMEN YENİLENDİ */
+        /* Görsel modal için stiller - GÜNCELLENDİ */
         .modal {
             display: none;
             position: fixed;
@@ -423,15 +423,6 @@
             overflow: auto;
             background-color: rgba(0, 0, 0, 0.95);
             backdrop-filter: blur(5px);
-            touch-action: none; /* Mobil dokunma olayları için önemli */
-        }
-        
-        .modal-content-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            height: 100%;
         }
         
         .modal-content {
@@ -439,16 +430,19 @@
             margin: auto;
             max-width: 90%;
             max-height: 80vh;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             border: 2px solid var(--primary-color);
             border-radius: 8px;
             box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
             animation: zoom 0.3s ease;
-            object-fit: contain;
         }
         
         @keyframes zoom {
-            from {transform: scale(0.9); opacity: 0;}
-            to {transform: scale(1); opacity: 1;}
+            from {transform: translate(-50%, -50%) scale(0.9); opacity: 0;}
+            to {transform: translate(-50%, -50%) scale(1); opacity: 1;}
         }
         
         .close {
@@ -556,10 +550,9 @@
             width: 100%;
             height: 100%;
             border: none;
-            aspect-ratio: 16/9;
         }
 
-        /* YENİ SLIDER STİLLERİ - TAMAMEN DÜZENLENDİ */
+        /* YENİ SLIDER STİLLERİ - TAMAMEN DÜZENLENDİ (İLK KODDAN ALINDI) */
         .image-slider {
             position: relative;
             margin: 10px 0;
@@ -569,7 +562,6 @@
             width: 100%;
             aspect-ratio: 16/9;
             min-height: 200px;
-            -webkit-overflow-scrolling: touch; /* Mobil kaydırma için önemli */
         }
         
         .slider-container {
@@ -580,11 +572,10 @@
             position: absolute;
             top: 0;
             left: 0;
-            aspect-ratio: 16/9;
         }
         
         .slider-item {
-            flex: 0 0 100%;
+            flex: 0 0 auto;
             width: 100%;
             height: 100%;
             display: flex;
@@ -1118,16 +1109,14 @@
     <!-- Matrix Arka Plan Canvas'ı -->
     <canvas id="matrixCanvas"></canvas>
 
-    <!-- Görsel Modal - TAMAMEN YENİLENDİ -->
+    <!-- Görsel Modal - GÜNCELLENDİ -->
     <div id="imageModal" class="modal">
         <span class="close">&times;</span>
         <div class="modal-nav">
             <button class="modal-nav-btn modal-prev-btn"><i class="fas fa-chevron-left"></i></button>
             <button class="modal-nav-btn modal-next-btn"><i class="fas fa-chevron-right"></i></button>
         </div>
-        <div class="modal-content-container">
-            <img class="modal-content" id="modalImage">
-        </div>
+        <img class="modal-content" id="modalImage">
         <div class="modal-counter" id="modalCounter"></div>
     </div>
 
@@ -1138,7 +1127,7 @@
                 <a href="#" style="--i:5;" class="dropbtn"> <img src="IMAGES/Ata.svg" alt="Ata Icon" class="ata-icon"><span class="fi fi-tr"></span> <span class='bx bx-code-alt'></span> Ethical Hacker <span class='bx bx-chevron-down'></span></a>
                 <div class="dropdown-content">
                     <a href="#tools"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hacker-icon"> What is an Ethical Hacker?</a>
-                    <a href="#reports"><img src="IMAGES/glossary.svg" alt="Glossary" class="glossary-icon"> Cybersecurity Glossary</a>
+                    <a href="https://adembayazit.com/cybersecurityglossary.html#"><img src="IMAGES/glossary.svg" alt="Glossary" class="glossary-icon"> Cybersecurity Glossary</a>
                     <a href="#payloads"><img src="IMAGES/soc.svg" alt="Soc" class="soc-icon"> What is a SOC ?</a>
                     <a href="#payloads"><img src="IMAGES/vulnerabilities.svg" alt="Vulnerabilities" class="vulnerabilities-icon"> Vulnerabilities</a>
                     <a href="#payloads"><img src="IMAGES/steganography.svg" alt="Steganography" class="steganography-icon"> Steganography</a>
@@ -1426,7 +1415,6 @@
         // Modal için global değişkenler
         let currentModalImages = [];
         let currentModalIndex = 0;
-        let isModalOpen = false;
 
         // BİLDİRİM SİSTEMİ DEĞİŞKENLERİ - YENİ EKLENDİ
         let swRegistration = null;
@@ -1567,7 +1555,7 @@
           content = content.replace(/(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/g, 
             '<div class="video-container"><iframe src="https://www.youtube.com/embed/$4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>');
           
-          // Birden fazla resim için slider oluştur ve orijinal img etiketlerini kaldır
+          // Birden fazla resim için slider oluştur
           content = content.replace(/(<img[^>]+>\s*){2,}/g, (imgs) => {
             const images = imgs.match(/<img[^>]+>/g);
             if (images && images.length > 1) {
@@ -1576,14 +1564,10 @@
             return imgs;
           });
           
-          // Slider oluşturulduktan sonra kalan boşlukları temizle
-          content = content.replace(/<p>\s*<\/p>/gi, '');
-          content = content.replace(/(<br\s*\/?>\s*){2,}/gi, '<br>');
-          
           return content;
         }
         
-        // Resim slider'ı oluşturma fonksiyonu - GÜNCELLENMİŞ
+        // Resim slider'ı oluşturma fonksiyonu - İLK KODDAN ALINDI
         function createImageSlider(images) {
           const sliderId = 'slider-' + Math.random().toString(36).substr(2, 9);
           
@@ -1593,7 +1577,9 @@
           `;
           
           images.forEach(img => {
-            sliderHtml += `<div class="slider-item">${img}</div>`;
+            // Görüntü yüklendikten sonra slider'ı yeniden başlat
+            const imgWithLoad = img.replace('<img', '<img onload="initSlider(\'' + sliderId + '\')" ');
+            sliderHtml += `<div class="slider-item">${imgWithLoad}</div>`;
           });
           
           sliderHtml += `
@@ -1617,7 +1603,7 @@
           return sliderHtml;
         }
 
-        // Slider başlatma fonksiyonu - GÜNCELLENMİŞ
+        // Slider başlatma fonksiyonu - İLK KODDAN ALINDI
         function initSlider(sliderId) {
           const slider = document.getElementById(sliderId);
           if (!slider) return;
@@ -1792,7 +1778,6 @@
             function closeModal() {
                 modal.style.display = "none";
                 document.body.style.overflow = "auto";
-                isModalOpen = false;
                 // Modal kapatıldığında event listener'ları temizle
                 document.removeEventListener('keydown', handleKeyDown);
             }
@@ -1804,7 +1789,6 @@
                 updateModalImage();
                 modal.style.display = "block";
                 document.body.style.overflow = "hidden";
-                isModalOpen = true;
                 // Klavye event listener'ını ekle
                 document.addEventListener('keydown', handleKeyDown);
             }
@@ -1872,7 +1856,7 @@
             
             // Tüm entry görsellerine tıklanabilirlik ekle
             document.addEventListener('click', function(event) {
-                if (event.target.tagName === 'IMG' && event.target.closest('.content') && !isModalOpen) {
+                if (event.target.tagName === 'IMG' && event.target.closest('.content')) {
                     // Tıklanan resmin içinde bulunduğu slider'ı bul
                     const slider = event.target.closest('.image-slider');
                     let images = [];
@@ -1894,23 +1878,17 @@
                 }
             });
             
-            // Mobil dokunma olayları (swipe) - MODAL ELEMENTİNE TAŞINDI
+            // Mobil dokunma olayları (swipe)
             let touchStartX = 0;
             let touchEndX = 0;
             
-            modal.addEventListener('touchstart', function(event) {
-                if (event.target.tagName === 'IMG') {
-                    event.stopPropagation(); // Yayılmayı engelle - ÖNEMLİ
-                    touchStartX = event.changedTouches[0].screenX;
-                }
+            modalImg.addEventListener('touchstart', function(event) {
+                touchStartX = event.changedTouches[0].screenX;
             }, false);
             
-            modal.addEventListener('touchend', function(event) {
-                if (event.target.tagName === 'IMG') {
-                    event.stopPropagation(); // Yayılmayı engelle - ÖNEMLİ
-                    touchEndX = event.changedTouches[0].screenX;
-                    handleSwipe();
-                }
+            modalImg.addEventListener('touchend', function(event) {
+                touchEndX = event.changedTouches[0].screenX;
+                handleSwipe();
             }, false);
             
             function handleSwipe() {
@@ -2715,7 +2693,7 @@
           .catch(function(err) {
             console.log('Failed to subscribe the user: ', err);
             document.getElementById('notificationStatus').textContent = 
-                  'Abonelik işlemi başarısız. Lütfen daha sonra tekrar deneyin.';
+              'Abonelik işlemi başarısız. Lütfen daha sonra tekrar deneyin.';
           });
         }
 
@@ -3065,7 +3043,7 @@
                 // ID araması: tam eşleşme
                 return entry.id.toString() === query;
               } else {
-                // Metin araması: içerikette ara
+                // Metin araması: içerikte ara
                 return entry.content.toLowerCase().includes(query.toLowerCase());
               }
             });
@@ -3181,7 +3159,7 @@
             });
           }, 100);
           
-          // GÖRÜNÜM SAYAÇLARINI GÜNCELLE
+          // GÖRÜNÜM SAYAçLARINI GÜNCELLE
           setupViewCountObservers();
         }
 
