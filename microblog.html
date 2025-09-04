@@ -411,7 +411,7 @@
             100% { transform: scale(1); }
         }
 
-        /* Görsel modal için stiller - GÜNCELLENDİ */
+        /* Görsel modal için stiller - TAMAMEN YENİLENDİ */
         .modal {
             display: none;
             position: fixed;
@@ -423,6 +423,15 @@
             overflow: auto;
             background-color: rgba(0, 0, 0, 0.95);
             backdrop-filter: blur(5px);
+            touch-action: none; /* Mobil dokunma olayları için önemli */
+        }
+        
+        .modal-content-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
         }
         
         .modal-content {
@@ -430,19 +439,16 @@
             margin: auto;
             max-width: 90%;
             max-height: 80vh;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
             border: 2px solid var(--primary-color);
             border-radius: 8px;
             box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
             animation: zoom 0.3s ease;
+            object-fit: contain;
         }
         
         @keyframes zoom {
-            from {transform: translate(-50%, -50%) scale(0.9); opacity: 0;}
-            to {transform: translate(-50%, -50%) scale(1); opacity: 1;}
+            from {transform: scale(0.9); opacity: 0;}
+            to {transform: scale(1); opacity: 1;}
         }
         
         .close {
@@ -550,9 +556,10 @@
             width: 100%;
             height: 100%;
             border: none;
+            aspect-ratio: 16/9;
         }
 
-        /* YENİ SLIDER STİLLERİ - TAMAMEN DÜZENLENDİ (İLK KODDAN ALINDI) */
+        /* YENİ SLIDER STİLLERİ - TAMAMEN DÜZENLENDİ */
         .image-slider {
             position: relative;
             margin: 10px 0;
@@ -562,6 +569,7 @@
             width: 100%;
             aspect-ratio: 16/9;
             min-height: 200px;
+            -webkit-overflow-scrolling: touch; /* Mobil kaydırma için önemli */
         }
         
         .slider-container {
@@ -572,10 +580,11 @@
             position: absolute;
             top: 0;
             left: 0;
+            aspect-ratio: 16/9;
         }
         
         .slider-item {
-            flex: 0 0 auto;
+            flex: 0 0 100%;
             width: 100%;
             height: 100%;
             display: flex;
@@ -1109,14 +1118,16 @@
     <!-- Matrix Arka Plan Canvas'ı -->
     <canvas id="matrixCanvas"></canvas>
 
-    <!-- Görsel Modal - GÜNCELLENDİ -->
+    <!-- Görsel Modal - TAMAMEN YENİLENDİ -->
     <div id="imageModal" class="modal">
         <span class="close">&times;</span>
         <div class="modal-nav">
             <button class="modal-nav-btn modal-prev-btn"><i class="fas fa-chevron-left"></i></button>
             <button class="modal-nav-btn modal-next-btn"><i class="fas fa-chevron-right"></i></button>
         </div>
-        <img class="modal-content" id="modalImage">
+        <div class="modal-content-container">
+            <img class="modal-content" id="modalImage">
+        </div>
         <div class="modal-counter" id="modalCounter"></div>
     </div>
 
@@ -1127,7 +1138,7 @@
                 <a href="#" style="--i:5;" class="dropbtn"> <img src="IMAGES/Ata.svg" alt="Ata Icon" class="ata-icon"><span class="fi fi-tr"></span> <span class='bx bx-code-alt'></span> Ethical Hacker <span class='bx bx-chevron-down'></span></a>
                 <div class="dropdown-content">
                     <a href="#tools"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hacker-icon"> What is an Ethical Hacker?</a>
-                    <a href="#https://adembayazit.com/cybersecurityglossary.html#"><img src="IMAGES/glossary.svg" alt="Glossary" class="glossary-icon"> Cybersecurity Glossary</a>
+                    <a href="#reports"><img src="IMAGES/glossary.svg" alt="Glossary" class="glossary-icon"> Cybersecurity Glossary</a>
                     <a href="#payloads"><img src="IMAGES/soc.svg" alt="Soc" class="soc-icon"> What is a SOC ?</a>
                     <a href="#payloads"><img src="IMAGES/vulnerabilities.svg" alt="Vulnerabilities" class="vulnerabilities-icon"> Vulnerabilities</a>
                     <a href="#payloads"><img src="IMAGES/steganography.svg" alt="Steganography" class="steganography-icon"> Steganography</a>
@@ -1415,6 +1426,7 @@
         // Modal için global değişkenler
         let currentModalImages = [];
         let currentModalIndex = 0;
+        let isModalOpen = false;
 
         // BİLDİRİM SİSTEMİ DEĞİŞKENLERİ - YENİ EKLENDİ
         let swRegistration = null;
@@ -1555,7 +1567,7 @@
           content = content.replace(/(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/g, 
             '<div class="video-container"><iframe src="https://www.youtube.com/embed/$4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>');
           
-          // Birden fazla resim için slider oluştur
+          // Birden fazla resim için slider oluştur ve orijinal img etiketlerini kaldır
           content = content.replace(/(<img[^>]+>\s*){2,}/g, (imgs) => {
             const images = imgs.match(/<img[^>]+>/g);
             if (images && images.length > 1) {
@@ -1564,10 +1576,14 @@
             return imgs;
           });
           
+          // Slider oluşturulduktan sonra kalan boşlukları temizle
+          content = content.replace(/<p>\s*<\/p>/gi, '');
+          content = content.replace(/(<br\s*\/?>\s*){2,}/gi, '<br>');
+          
           return content;
         }
         
-        // Resim slider'ı oluşturma fonksiyonu - İLK KODDAN ALINDI
+        // Resim slider'ı oluşturma fonksiyonu - GÜNCELLENMİŞ
         function createImageSlider(images) {
           const sliderId = 'slider-' + Math.random().toString(36).substr(2, 9);
           
@@ -1577,9 +1593,7 @@
           `;
           
           images.forEach(img => {
-            // Görüntü yüklendikten sonra slider'ı yeniden başlat
-            const imgWithLoad = img.replace('<img', '<img onload="initSlider(\'' + sliderId + '\')" ');
-            sliderHtml += `<div class="slider-item">${imgWithLoad}</div>`;
+            sliderHtml += `<div class="slider-item">${img}</div>`;
           });
           
           sliderHtml += `
@@ -1603,167 +1617,181 @@
           return sliderHtml;
         }
 
-        // Slider başlatma fonksiyonu - İLK KODDAN ALINDI
-        function initSlider(sliderId) {
-          const slider = document.getElementById(sliderId);
-          if (!slider) return;
-          
-          // Eğer bu slider zaten başlatıldıysa, önceki olay dinleyicilerini temizle
-          if (slidersState[sliderId]) {
-            const { prevBtn, nextBtn, dots, container, resizeObserver, touchStartHandler, touchEndHandler } = slidersState[sliderId];
-            
-            if (prevBtn && prevBtn.cloneNode) prevBtn.replaceWith(prevBtn.cloneNode(true));
-            if (nextBtn && nextBtn.cloneNode) nextBtn.replaceWith(nextBtn.cloneNode(true));
-            
-            if (dots && dots.length) {
-              dots.forEach((dot, index) => {
-                if (dot && dot.cloneNode) dot.replaceWith(dot.cloneNode(true));
-              });
-            }
-            
-            if (resizeObserver) {
-              resizeObserver.disconnect();
-            }
-            
-            if (touchStartHandler && touchEndHandler) {
-              slider.removeEventListener('touchstart', touchStartHandler);
-              slider.removeEventListener('touchend', touchEndHandler);
-            }
-          }
-          
-          const container = slider.querySelector('.slider-container');
-          const items = slider.querySelectorAll('.slider-item');
-          const prevBtn = slider.querySelector('.prev-btn');
-          const nextBtn = slider.querySelector('.next-btn');
-          const dots = slider.querySelectorAll('.dot');
-          
-          if (!container || items.length === 0) return;
-          
-          let currentIndex = 0;
-          const totalItems = items.length;
-          
-          // Slider'ı güncelle
-          function updateSlider() {
-            // Konteyner genişliğini yeniden hesapla
-            const slideWidth = slider.offsetWidth;
-            container.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
-            
-            // Noktaları güncelle
-            dots.forEach((dot, index) => {
-              dot.classList.toggle('active', index === currentIndex);
-            });
-            
-            // Durumu güncelle
-            slidersState[sliderId].currentIndex = currentIndex;
-          }
-          
-          // Sonraki slayt
-          function nextSlide() {
-            currentIndex = (currentIndex + 1) % totalItems;
-            updateSlider();
-          }
-          
-          // Önceki slayt
-          function prevSlide() {
-            currentIndex = (currentIndex - 1 + totalItems) % totalItems;
-            updateSlider();
-          }
-          
-          // Olay dinleyicileri ekle
-          if (nextBtn) {
-            nextBtn.addEventListener('click', nextSlide);
-            slidersState[sliderId] = {
-              ...slidersState[sliderId],
-              nextBtn,
-              nextHandler: nextSlide
-            };
-          }
-          
-          if (prevBtn) {
-            prevBtn.addEventListener('click', prevSlide);
-            slidersState[sliderId] = {
-              ...slidersState[sliderId],
-              prevBtn,
-              prevHandler: prevSlide
-            };
-          }
-          
-          // Noktalara tıklama
-          dots.forEach((dot, index) => {
-            const clickHandler = () => {
-              currentIndex = index;
-              updateSlider();
-            };
-            
-            dot.addEventListener('click', clickHandler);
-            slidersState[sliderId] = {
-              ...slidersState[sliderId],
-              [`dotHandler-${index}`]: clickHandler
-            };
-          });
-          
-          // Mobil dokunma olayları
-          let startX = 0;
-          let endX = 0;
-          
-          const touchStartHandler = (e) => {
-            startX = e.touches[0].clientX;
-          };
-          
-          const touchEndHandler = (e) => {
-            endX = e.changedTouches[0].clientX;
-            handleSwipe();
-          };
-          
-          slider.addEventListener('touchstart', touchStartHandler, { passive: true });
-          slider.addEventListener('touchend', touchEndHandler, { passive: true });
-          
-          slidersState[sliderId] = {
-            ...slidersState[sliderId],
-            touchStartHandler,
-            touchEndHandler
-          };
-          
-          function handleSwipe() {
-            const diffX = startX - endX;
-            
-            // Minimum kayma mesafesi
-            if (Math.abs(diffX) > 50) {
-              if (diffX > 0) {
-                // Sağa kaydırma - sonraki slayt
-                nextSlide();
-              } else {
-                // Sola kaydırma - önceki slayt
-                prevSlide();
-              }
-            }
-          }
-          
-          // İlk slider konumunu ayarla
-          updateSlider();
-          
-          // Yeniden boyutlandırmada slider'ı güncelle
-          const resizeObserver = new ResizeObserver(updateSlider);
-          resizeObserver.observe(slider);
-          
-          slidersState[sliderId] = {
-            ...slidersState[sliderId],
-            container,
-            items,
-            dots,
-            currentIndex,
-            totalItems,
-            resizeObserver
-          };
-        }
+// Slider başlatma fonksiyonu - TAMAMEN YENİLENDİ
+function initSlider(sliderId) {
+  const slider = document.getElementById(sliderId);
+  if (!slider) return;
+  
+  // Eğer bu slider zaten başlatıldıysa, önceki olay dinleyicilerini temizle
+  if (slidersState[sliderId]) {
+    const { prevBtn, nextBtn, dots, resizeObserver, touchStartHandler, touchEndHandler } = slidersState[sliderId];
+    
+    // Önceki olay dinleyicilerini kaldır
+    if (prevBtn && prevBtn.cloneNode) {
+      prevBtn.replaceWith(prevBtn.cloneNode(true));
+    }
+    if (nextBtn && nextBtn.cloneNode) {
+      nextBtn.replaceWith(nextBtn.cloneNode(true));
+    }
+    
+    if (dots && dots.length) {
+      dots.forEach((dot, index) => {
+        if (dot && dot.cloneNode) dot.replaceWith(dot.cloneNode(true));
+      });
+    }
+    
+    if (resizeObserver) {
+      resizeObserver.disconnect();
+    }
+    
+    if (touchStartHandler && touchEndHandler) {
+      slider.removeEventListener('touchstart', touchStartHandler);
+      slider.removeEventListener('touchend', touchEndHandler);
+    }
+    
+    // State'i temizle
+    delete slidersState[sliderId];
+  }
+  
+  const container = slider.querySelector('.slider-container');
+  const items = slider.querySelectorAll('.slider-item');
+  const prevBtn = slider.querySelector('.prev-btn');
+  const nextBtn = slider.querySelector('.next-btn');
+  const dots = slider.querySelectorAll('.dot');
+  
+  if (!container || items.length === 0) return;
+  
+  let currentIndex = 0;
+  const totalItems = items.length;
+  const slideWidth = slider.offsetWidth;
+  
+  // Slider'ı güncelle
+  function updateSlider() {
+    container.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+    
+    // Noktaları güncelle
+    dots.forEach((dot, index) => {
+      dot.classList.toggle('active', index === currentIndex);
+    });
+  }
+  
+  // Sonraki slayt
+  function nextSlide() {
+    currentIndex = (currentIndex + 1) % totalItems;
+    updateSlider();
+  }
+  
+  // Önceki slayt
+  function prevSlide() {
+    currentIndex = (currentIndex - 1 + totalItems) % totalItems;
+    updateSlider();
+  }
+  
+  // Olay dinleyicileri ekle
+  if (nextBtn) {
+    const nextHandler = () => nextSlide();
+    nextBtn.addEventListener('click', nextHandler);
+    slidersState[sliderId] = {
+      ...slidersState[sliderId],
+      nextBtn,
+      nextHandler
+    };
+  }
+  
+  if (prevBtn) {
+    const prevHandler = () => prevSlide();
+    prevBtn.addEventListener('click', prevHandler);
+    slidersState[sliderId] = {
+      ...slidersState[sliderId],
+      prevBtn,
+      prevHandler
+    };
+  }
+  
+  // Noktalara tıklama
+  dots.forEach((dot, index) => {
+    const clickHandler = () => {
+      currentIndex = index;
+      updateSlider();
+    };
+    
+    dot.addEventListener('click', clickHandler);
+    slidersState[sliderId] = {
+      ...slidersState[sliderId],
+      [`dotHandler-${index}`]: clickHandler
+    };
+  });
+  
+  // Mobil dokunma olayları
+  let startX = 0;
+  let endX = 0;
+  
+  const touchStartHandler = (e) => {
+    startX = e.touches[0].clientX;
+  };
+  
+  const touchEndHandler = (e) => {
+    endX = e.changedTouches[0].clientX;
+    handleSwipe();
+  };
+  
+  slider.addEventListener('touchstart', touchStartHandler, { passive: true });
+  slider.addEventListener('touchend', touchEndHandler, { passive: true });
+  
+  function handleSwipe() {
+    const diffX = startX - endX;
+    
+    // Minimum kayma mesafesi
+    if (Math.abs(diffX) > 50) {
+      if (diffX > 0) {
+        // Sağa kaydırma - sonraki slayt
+        nextSlide();
+      } else {
+        // Sola kaydırma - önceki slayt
+        prevSlide();
+      }
+    }
+  }
+  
+  // İlk slider konumunu ayarla
+  updateSlider();
+  
+  // Yeniden boyutlandırmada slider'ı güncelle
+  const resizeObserver = new ResizeObserver(() => {
+    // Slider genişliğini yeniden hesapla
+    const newSlideWidth = slider.offsetWidth;
+    if (newSlideWidth !== slideWidth) {
+      updateSlider();
+    }
+  });
+  
+  resizeObserver.observe(slider);
+  
+  // State'i kaydet
+  slidersState[sliderId] = {
+    ...slidersState[sliderId],
+    container,
+    items,
+    dots,
+    currentIndex,
+    totalItems,
+    resizeObserver,
+    touchStartHandler,
+    touchEndHandler
+  };
+}
 
-        // Tüm slider'ları başlat - GÜNCELLENMİŞ
-        function initAllSliders() {
-          const sliders = document.querySelectorAll('.image-slider');
-          sliders.forEach(slider => {
-            initSlider(slider.id);
-          });
-        }
+// Tüm slider'ları başlat - GÜNCELLENDİ
+function initAllSliders() {
+  const sliders = document.querySelectorAll('.image-slider');
+  sliders.forEach(slider => {
+    // Slider zaten bir ID'ye sahip değilse, bir ID ata
+    if (!slider.id) {
+      slider.id = 'slider-' + Math.random().toString(36).substr(2, 9);
+    }
+    initSlider(slider.id);
+  });
+}
 
         // Görsel modal işlevselliği - TAMAMEN YENİLENDİ
         function setupImageModal() {
@@ -1778,6 +1806,7 @@
             function closeModal() {
                 modal.style.display = "none";
                 document.body.style.overflow = "auto";
+                isModalOpen = false;
                 // Modal kapatıldığında event listener'ları temizle
                 document.removeEventListener('keydown', handleKeyDown);
             }
@@ -1789,6 +1818,7 @@
                 updateModalImage();
                 modal.style.display = "block";
                 document.body.style.overflow = "hidden";
+                isModalOpen = true;
                 // Klavye event listener'ını ekle
                 document.addEventListener('keydown', handleKeyDown);
             }
@@ -1856,7 +1886,7 @@
             
             // Tüm entry görsellerine tıklanabilirlik ekle
             document.addEventListener('click', function(event) {
-                if (event.target.tagName === 'IMG' && event.target.closest('.content')) {
+                if (event.target.tagName === 'IMG' && event.target.closest('.content') && !isModalOpen) {
                     // Tıklanan resmin içinde bulunduğu slider'ı bul
                     const slider = event.target.closest('.image-slider');
                     let images = [];
@@ -1878,17 +1908,23 @@
                 }
             });
             
-            // Mobil dokunma olayları (swipe)
+            // Mobil dokunma olayları (swipe) - MODAL ELEMENTİNE TAŞINDI
             let touchStartX = 0;
             let touchEndX = 0;
             
-            modalImg.addEventListener('touchstart', function(event) {
-                touchStartX = event.changedTouches[0].screenX;
+            modal.addEventListener('touchstart', function(event) {
+                if (event.target.tagName === 'IMG') {
+                    event.stopPropagation(); // Yayılmayı engelle - ÖNEMLİ
+                    touchStartX = event.changedTouches[0].screenX;
+                }
             }, false);
             
-            modalImg.addEventListener('touchend', function(event) {
-                touchEndX = event.changedTouches[0].screenX;
-                handleSwipe();
+            modal.addEventListener('touchend', function(event) {
+                if (event.target.tagName === 'IMG') {
+                    event.stopPropagation(); // Yayılmayı engelle - ÖNEMLİ
+                    touchEndX = event.changedTouches[0].screenX;
+                    handleSwipe();
+                }
             }, false);
             
             function handleSwipe() {
@@ -2150,6 +2186,9 @@
           if (callback) callback();
         }
 
+        // 4. INTERACTION FONKSİYONLARI
+        async function handleLikeClick(entryId, entryDiv) {
+          if (likesCache.isUpdating) return;
 
           likesCache.isUpdating = true;
           const likeCountSpan = entryDiv.querySelector(".like-count");
@@ -2315,115 +2354,6 @@
                 ...(currentStats.visitors || []),
                 newVisitor
               ]
-            };
-            
-            // Benzersiz ziyaretçi sayısını hesapla
-            const uniqueIps = new Set((currentStats.visitors || []).map(v => v.ip));
-            uniqueIps.add(ipData.ip);
-            updatedStats.statistics.uniqueVisitors = uniqueIps.size;
-            
-            // Günlük ve aylık istatistikleri güncelle
-            const now = new Date();
-            const today = now.toISOString().split('T')[0];
-            const thisMonth = now.toISOString().substring(0, 7);
-            
-            const todayViews = (currentStats.visitors || []).filter(v => {
-              return v.timestamp && v.timestamp.startsWith(today);
-            }).length + 1;
-            
-            const monthViews = (currentStats.visitors || []).filter(v => {
-              return v.timestamp && v.timestamp.startsWith(thisMonth);
-            }).length + 1;
-            
-            updatedStats.statistics.viewsToday = todayViews;
-            updatedStats.statistics.viewsThisMonth = monthViews;
-            
-            // Sunucuyu güncelle
-            await fetchViaProxy('', 'PUT', updatedStats, viewIpsBinId);
-            
-          } catch (error) {
-            console.error('IP logging failed:', error);
-          }
-        }
-
-        // Intersection Observer ile görünür entry'lerin view count'unu güncelle - YENİ FONKSİYON
-        function setupViewCountObservers() {
-          const entries = document.querySelectorAll('.entry');
-          
-          const observerOptions = {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.5 // Entry'nin %50'si göründüğünde tetikle
-          };
-          
-          const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-              if (entry.isIntersecting) {
-                const entryId = entry.target.id.replace('entry-', '');
-                updateViewCount(entryId);
-                // Güncelleme yapıldıktan sonra observe'i durdur
-                observer.unobserve(entry.target);
-              }
-            });
-          }, observerOptions);
-          
-          // Tüm entry'leri gözle
-          entries.forEach(entry => {
-            observer.observe(entry);
-          });
-        }
-
-        async function handleShareClick(entryId) {
-          const entryUrl = `${window.location.origin}${window.location.pathname}#entry-${entryId}`;
-          
-          if (navigator.share) {
-            try {
-              await navigator.share({
-                title: 'Adem Bayazıt - LadyBuG Entry',
-                text: 'Bu entry\'i paylaşmak istiyor musunuz?',
-                url: entryUrl,
-              });
-            } catch (error) {
-              console.log('Paylaşım iptal edildi veya hata oluştu:', error);
-            }
-          } else {
-            // Web Share API desteklenmiyorsa, linki kopyala
-            await handleCopyLinkClick(entryId);
-          }
-        }
-
-        async function handleCopyLinkClick(entryId) {
-          const entryUrl = `${window.location.origin}${window.location.pathname}#entry-${entryId}`;
-          
-          try {
-            await navigator.clipboard.writeText(entryUrl);
-            alert('Link panoya kopyalandı!');
-          } catch (error) {
-            console.error('Link kopyalanırken hata oluştu:', error);
-            // Fallback için
-            const textArea = document.createElement('textarea');
-            textArea.value = entryUrl;
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-            alert('Link panoya kopyalandı!');
-          }
-        }
-
-        async function updateInteractionsOnServer(entryId, newLikeCount, newPinCount) {
-          const updatedLikes = newLikeCount !== null ? { ...likesCache.data, [entryId]: newLikeCount } : likesCache.data;
-          const updatedPins = newPinCount !== null ? { ...pinsCache.data, [entryId]: newPinCount } : pinsCache.data;
-
-          try {
-            await fetchViaProxy('/b/68862fd97b4b8670d8a81945', 'PUT', {
-              likes: updatedLikes,
-              pins: updatedPins
-            });
-          } catch (error) {
-            throw new Error('Failed to update data on server');
-          }
-        }     ]
             };
             
             // Benzersiz ziyaretçi sayısını hesapla
@@ -2799,7 +2729,7 @@
           .catch(function(err) {
             console.log('Failed to subscribe the user: ', err);
             document.getElementById('notificationStatus').textContent = 
-              'Abonelik işlemi başarısız. Lütfen daha sonra tekrar deneyin.';
+                  'Abonelik işlemi başarısız. Lütfen daha sonra tekrar deneyin.';
           });
         }
 
@@ -3149,7 +3079,7 @@
                 // ID araması: tam eşleşme
                 return entry.id.toString() === query;
               } else {
-                // Metin araması: içerikte ara
+                // Metin araması: içerikette ara
                 return entry.content.toLowerCase().includes(query.toLowerCase());
               }
             });
@@ -3265,7 +3195,7 @@
             });
           }, 100);
           
-          // GÖRÜNÜM SAYAçLARINI GÜNCELLE
+          // GÖRÜNÜM SAYAÇLARINI GÜNCELLE
           setupViewCountObservers();
         }
 
