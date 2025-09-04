@@ -34,14 +34,13 @@
             --text-muted: #cccccc;
             --border-color: #00aa00;
             --highlight-color: #99ff99;
-            --navbar-bg: rgba(10, 25, 20, 0.95);
         }
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Courier New', monospace;
         }
         
         body {
@@ -51,20 +50,18 @@
             position: relative;
         }
         
-        /* Header Styles */
+        /* Header Styles - İlk tasarıma uygun */
         .header {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             padding: 20px 10%;
-            background: var(--navbar-bg);
+            background: transparent;
             display: flex;
             justify-content: space-between;
             align-items: center;
             z-index: 100;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px);
         }
         
         .logo {
@@ -72,14 +69,9 @@
             color: var(--primary-color);
             text-decoration: none;
             font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .logo img {
-            width: 30px;
-            height: 30px;
+            cursor: default;
+            opacity: 0;
+            animation: slideRight 1s ease forwards;
         }
         
         .navbar {
@@ -87,7 +79,7 @@
             align-items: center;
         }
         
-        /* Dropdown stilleri */
+        /* Dropdown stilleri - İlk tasarıma uygun */
         .dropdown {
             position: relative;
             display: inline-block;
@@ -100,44 +92,29 @@
             font-weight: 500;
             margin-left: 10px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            padding: 10px 15px;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-        }
-
-        .dropbtn:hover {
-            background: rgba(0, 255, 0, 0.1);
         }
 
         .dropdown-content {
             display: none;
             position: absolute;
-            background-color: rgba(0, 80, 0, 0.9);
-            min-width: 200px;
+            background-color: green;
+            min-width: 160px;
             z-index: 100;
-            border: 1px solid var(--primary-color);
+            border: 1px solid white;
             border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px);
         }
 
         .dropdown-content a {
             color: white;
             padding: 12px 16px;
             text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: all 0.3s ease;
+            display: block;
         }
 
         .dropdown-content a:hover {
             color: white;
-            background-color: var(--primary-dark);
+            background-color: var(--primary-color);
+            text-shadow: 0 0 10px green;
         }
 
         .dropdown:hover .dropdown-content {
@@ -154,7 +131,7 @@
         /* Page Title */
         .page-title {
             text-align: center;
-            margin-top: 100px;
+            margin-top: 120px;
             padding: 20px;
         }
         
@@ -437,7 +414,7 @@
             z-index: -1;
         }
         
-        /* Footer */
+        /* Footer - Son koddaki gibi */
         footer {
             text-align: center;
             padding: 30px 20px;
@@ -451,6 +428,27 @@
             margin-bottom: 10px;
             border-color: var(--primary-color);
             opacity: 0.5;
+        }
+        
+        /* Animasyonlar */
+        @keyframes slideRight {
+            0% {
+                transform: translateX(-100px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .term-item {
+            animation: fadeIn 0.4s ease forwards;
         }
         
         /* Responsive Tasarım */
@@ -480,7 +478,7 @@
             }
             
             .page-title {
-                margin-top: 80px;
+                margin-top: 100px;
             }
             
             .page-title h1 {
@@ -511,52 +509,10 @@
             
             .dropbtn {
                 font-size: 16px;
-                padding: 8px 12px;
             }
             
             .logo {
                 font-size: 20px;
-            }
-        }
-        
-        /* Animasyonlar */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .term-item {
-            animation: fadeIn 0.4s ease forwards;
-        }
-        
-        /* Yükleniyor efekti */
-        .loading {
-            position: relative;
-            color: transparent;
-            overflow: hidden;
-        }
-        
-        .loading::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            transform: translateX(-100%);
-            background: linear-gradient(
-                90deg,
-                rgba(0, 255, 0, 0) 0,
-                rgba(0, 255, 0, 0.2) 20%,
-                rgba(0, 255, 0, 0.5) 60%,
-                rgba(0, 255, 0, 0)
-            );
-            animation: shimmer 2s infinite;
-        }
-        
-        @keyframes shimmer {
-            100% {
-                transform: translateX(100%);
             }
         }
     </style>
@@ -618,7 +574,9 @@
         <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.2 | July 2025</p>
     </footer>
 
+    <!-- Matrix arka planı için ana sayfa bağımlılıkları -->
     <canvas id="matrixCanvas"></canvas>
+    <script src="/JAVASCRIPT/matrix.js"></script>
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -775,49 +733,42 @@
                 const termsContainer = document.querySelector('.terms-container');
                 termsContainer.innerHTML = '';
                 
-                // Yükleniyor efekti göster
-                termsContainer.innerHTML = '<div class="loading" style="height: 200px; border-radius: 8px;"></div>';
-                
-                setTimeout(() => {
-                    if (termsData[letter]) {
-                        termsContainer.innerHTML = '';
+                if (termsData[letter]) {
+                    termsData[letter].forEach((term, index) => {
+                        const termElement = document.createElement('div');
+                        termElement.className = 'term-item';
                         
-                        termsData[letter].forEach((term, index) => {
-                            const termElement = document.createElement('div');
-                            termElement.className = 'term-item';
-                            
-                            termElement.innerHTML = `
-                                <span class="term-number">${index + 1}.</span>
-                                <div class="term-title">
-                                    ${term.title}
-                                    <button class="expand-btn">+</button>
-                                </div>
-                                <div class="short-description">${term.shortDescription}</div>
-                                <div class="long-description">${term.longDescription}</div>
-                            `;
-                            
-                            termsContainer.appendChild(termElement);
-                        });
+                        termElement.innerHTML = `
+                            <span class="term-number">${index + 1}.</span>
+                            <div class="term-title">
+                                ${term.title}
+                                <button class="expand-btn">+</button>
+                            </div>
+                            <div class="short-description">${term.shortDescription}</div>
+                            <div class="long-description">${term.longDescription}</div>
+                        `;
                         
-                        // Genişletme/daraltma işlevselliği
-                        document.querySelectorAll('.term-title').forEach(title => {
-                            title.addEventListener('click', function() {
-                                const longDesc = this.nextElementSibling.nextElementSibling;
-                                const expandBtn = this.querySelector('.expand-btn');
-                                
-                                if (longDesc.style.display === 'block') {
-                                    longDesc.style.display = 'none';
-                                    expandBtn.textContent = '+';
-                                } else {
-                                    longDesc.style.display = 'block';
-                                    expandBtn.textContent = '-';
-                                }
-                            });
+                        termsContainer.appendChild(termElement);
+                    });
+                    
+                    // Genişletme/daraltma işlevselliği
+                    document.querySelectorAll('.term-title').forEach(title => {
+                        title.addEventListener('click', function() {
+                            const longDesc = this.nextElementSibling.nextElementSibling;
+                            const expandBtn = this.querySelector('.expand-btn');
+                            
+                            if (longDesc.style.display === 'block') {
+                                longDesc.style.display = 'none';
+                                expandBtn.textContent = '+';
+                            } else {
+                                longDesc.style.display = 'block';
+                                expandBtn.textContent = '-';
+                            }
                         });
-                    } else {
-                        termsContainer.innerHTML = '<p style="text-align: center; padding: 30px; color: #aaa;">No terms added for this letter yet.</p>';
-                    }
-                }, 300); // Kısa bir gecikme ile yükleme efekti göster
+                    });
+                } else {
+                    termsContainer.innerHTML = '<p style="text-align: center; padding: 30px; color: #aaa;">No terms added for this letter yet.</p>';
+                }
             }
             
             function setActiveTab(letter) {
@@ -866,52 +817,6 @@
                 
                 searchResults.style.display = 'block';
             }
-            
-            // Matrix efekti için basit bir implementasyon
-            function initMatrixAnimation() {
-                const canvas = document.getElementById('matrixCanvas');
-                const ctx = canvas.getContext('2d');
-                
-                function resizeCanvas() {
-                    canvas.width = window.innerWidth;
-                    canvas.height = window.innerHeight;
-                }
-                
-                resizeCanvas();
-                window.addEventListener('resize', resizeCanvas);
-                
-                const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$#@%&!?*';
-                const fontSize = 12;
-                const columns = Math.floor(canvas.width / fontSize);
-                
-                const drops = [];
-                for (let i = 0; i < columns; i++) {
-                    drops[i] = Math.floor(Math.random() * canvas.height / fontSize);
-                }
-                
-                function draw() {
-                    ctx.fillStyle = 'rgba(10, 25, 20, 0.1)';
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
-                    
-                    ctx.fillStyle = '#00ff00';
-                    ctx.font = `${fontSize}px monospace`;
-                    
-                    for (let i = 0; i < drops.length; i++) {
-                        const text = letters[Math.floor(Math.random() * letters.length)];
-                        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                        
-                        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                            drops[i] = 0;
-                        }
-                        
-                        drops[i]++;
-                    }
-                }
-                
-                setInterval(draw, 50);
-            }
-            
-            initMatrixAnimation();
         });
     </script>
 </body>
