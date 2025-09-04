@@ -411,7 +411,7 @@
             100% { transform: scale(1); }
         }
 
-        /* Görsel modal için stiller - GÜNCELLENDİ */
+        /* Görsel modal için stiller - TAMAMEN YENİLENDİ */
         .modal {
             display: none;
             position: fixed;
@@ -426,24 +426,29 @@
             touch-action: none; /* Mobil dokunma olayları için önemli */
         }
         
+        .modal-content-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+        
         .modal-content {
             display: block;
             margin: auto;
             max-width: 90%;
             max-height: 80vh;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
             border: 2px solid var(--primary-color);
             border-radius: 8px;
             box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
             animation: zoom 0.3s ease;
+            object-fit: contain;
         }
         
         @keyframes zoom {
-            from {transform: translate(-50%, -50%) scale(0.9); opacity: 0;}
-            to {transform: translate(-50%, -50%) scale(1); opacity: 1;}
+            from {transform: scale(0.9); opacity: 0;}
+            to {transform: scale(1); opacity: 1;}
         }
         
         .close {
@@ -1113,14 +1118,16 @@
     <!-- Matrix Arka Plan Canvas'ı -->
     <canvas id="matrixCanvas"></canvas>
 
-    <!-- Görsel Modal - GÜNCELLENDİ -->
+    <!-- Görsel Modal - TAMAMEN YENİLENDİ -->
     <div id="imageModal" class="modal">
         <span class="close">&times;</span>
         <div class="modal-nav">
             <button class="modal-nav-btn modal-prev-btn"><i class="fas fa-chevron-left"></i></button>
             <button class="modal-nav-btn modal-next-btn"><i class="fas fa-chevron-right"></i></button>
         </div>
-        <img class="modal-content" id="modalImage">
+        <div class="modal-content-container">
+            <img class="modal-content" id="modalImage">
+        </div>
         <div class="modal-counter" id="modalCounter"></div>
     </div>
 
@@ -1419,6 +1426,7 @@
         // Modal için global değişkenler
         let currentModalImages = [];
         let currentModalIndex = 0;
+        let isModalOpen = false;
 
         // BİLDİRİM SİSTEMİ DEĞİŞKENLERİ - YENİ EKLENDİ
         let swRegistration = null;
@@ -1784,6 +1792,7 @@
             function closeModal() {
                 modal.style.display = "none";
                 document.body.style.overflow = "auto";
+                isModalOpen = false;
                 // Modal kapatıldığında event listener'ları temizle
                 document.removeEventListener('keydown', handleKeyDown);
             }
@@ -1795,6 +1804,7 @@
                 updateModalImage();
                 modal.style.display = "block";
                 document.body.style.overflow = "hidden";
+                isModalOpen = true;
                 // Klavye event listener'ını ekle
                 document.addEventListener('keydown', handleKeyDown);
             }
@@ -1862,7 +1872,7 @@
             
             // Tüm entry görsellerine tıklanabilirlik ekle
             document.addEventListener('click', function(event) {
-                if (event.target.tagName === 'IMG' && event.target.closest('.content')) {
+                if (event.target.tagName === 'IMG' && event.target.closest('.content') && !isModalOpen) {
                     // Tıklanan resmin içinde bulunduğu slider'ı bul
                     const slider = event.target.closest('.image-slider');
                     let images = [];
@@ -1889,14 +1899,18 @@
             let touchEndX = 0;
             
             modal.addEventListener('touchstart', function(event) {
-                event.stopPropagation(); // Yayılmayı engelle - ÖNEMLİ
-                touchStartX = event.changedTouches[0].screenX;
+                if (event.target.tagName === 'IMG') {
+                    event.stopPropagation(); // Yayılmayı engelle - ÖNEMLİ
+                    touchStartX = event.changedTouches[0].screenX;
+                }
             }, false);
             
             modal.addEventListener('touchend', function(event) {
-                event.stopPropagation(); // Yayılmayı engelle - ÖNEMLİ
-                touchEndX = event.changedTouches[0].screenX;
-                handleSwipe();
+                if (event.target.tagName === 'IMG') {
+                    event.stopPropagation(); // Yayılmayı engelle - ÖNEMLİ
+                    touchEndX = event.changedTouches[0].screenX;
+                    handleSwipe();
+                }
             }, false);
             
             function handleSwipe() {
@@ -2606,7 +2620,7 @@
                 });
                 
                 // Entry'yi vurgula
-                entryElement.style.backgroundColor = 'rgba(0, 255, 0, 0.1';
+                entryElement.style.backgroundColor = 'rgba(0, 255, 0, 0.1)';
                 setTimeout(() => {
                   entryElement.style.backgroundColor = '';
                 }, 3000);
@@ -3047,11 +3061,11 @@
             const isIdSearch = !isNaN(query) && query.trim() !== '';
             
             const results = allEntries.filter(entry => {
-            if (isIdSearch) {
+              if (isIdSearch) {
                 // ID araması: tam eşleşme
                 return entry.id.toString() === query;
               } else {
-                // Metin araması: içerikte ara
+                // Metin araması: içerikette ara
                 return entry.content.toLowerCase().includes(query.toLowerCase());
               }
             });
