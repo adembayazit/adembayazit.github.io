@@ -25,53 +25,152 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
     <style>
-    
-         .content-wrapper {
-            margin-top: 150px; /* Navbar yüksekliği + biraz boşluk */
+        :root {
+            --primary-color: #00ff00;
+            --primary-dark: #00cc00;
+            --primary-light: #33ff33;
+            --bg-color: #0a1916;
+            --card-bg: rgba(15, 35, 30, 0.85);
+            --text-color: #ffffff;
+            --text-muted: #cccccc;
+            --border-color: #00aa00;
+            --highlight-color: #99ff99;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        .content-wrapper {
+            margin-top: 120px;
             position: relative;
             z-index: 2;
         }
+        
         /* Arama Çubuğu */
         .search-top-container {
             width: 100%;
             max-width: 1200px;
-            margin: 0 auto;
-            padding: 15px 20px;
-            background-color: transparent;
-            border-bottom: 6px solid #00ff00;
+            margin: 0 auto 30px;
+            padding: 0 20px;
         }
         
         .search-container {
             position: relative;
             width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
         }
         
         .search-input {
             width: 100%;
-            padding: 12px 15px;
-            background-color: #000;
-            border: 1px solid #00ff00;
-            border-radius: 4px;
-            color: #fff;
+            padding: 14px 20px;
+            background-color: rgba(0, 0, 0, 0.6);
+            border: 2px solid var(--primary-color);
+            border-radius: 30px;
+            color: var(--text-color);
+            font-size: 16px;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.4);
+            background-color: rgba(0, 0, 0, 0.8);
         }
         
         .search-input::placeholder {
-            color: #00aa00;
+            color: var(--primary-dark);
+        }
+        
+        /* Ana İçerik Düzeni */
+        .main-container {
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            gap: 20px;
+        }
+        
+        /* Alfabetik Sekmeler */
+        .alphabet-tabs {
+            width: 70px;
+            background-color: rgba(0, 44, 0, 0.8);
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            height: fit-content;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: sticky;
+            top: 130px;
+        }
+        
+        .alphabet-tabs::-webkit-scrollbar {
+            width: 5px;
+        }
+        
+        .alphabet-tabs::-webkit-scrollbar-thumb {
+            background-color: var(--primary-color);
+            border-radius: 10px;
+        }
+        
+        .alphabet-tab {
+            width: 45px;
+            height: 45px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 5px 0;
+            cursor: pointer;
+            border-radius: 50%;
+            background-color: rgba(26, 26, 26, 0.8);
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .alphabet-tab:hover, .alphabet-tab.active {
+            background-color: var(--primary-color);
+            color: #1a1a1a;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 255, 0, 0.4);
+        }
+        
+        /* İçerik Alanı */
+        .content-area {
+            flex: 1;
+            position: relative;
         }
         
         /* Notebook Kağıdı Efekti */
         .notebook-page {
-            background: rgba(10, 25, 20, 0.7);
-            /*background-image: linear-gradient(rgba(0, 255, 0, 0.3) 1px, transparent 1px), linear-gradient(90deg, #00b300 1px, transparent 1px);*/
-            background-size: 20px 20px;
-            color: #ffffff;
-            padding: 20px;
-            border-left: 2px solid #ccc;
-            border-right: 2px solid #ccc;
+            background: var(--card-bg);
+            color: var(--text-color);
+            padding: 30px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            min-height: 70vh;
             position: relative;
-            min-height: calc(210vh - 100px);
-            max-width: 1200px;
-            margin: 0 auto;
+            overflow: hidden;
         }
         
         .notebook-page::before {
@@ -85,16 +184,127 @@
                 to bottom,
                 transparent,
                 transparent 19px,
-                #ff9999 19px,
-                #ff9999 20px
+                rgba(255, 153, 153, 0.3) 19px,
+                rgba(255, 153, 153, 0.3) 20px
             );
         }
         
-        /* Ana İçerik Düzeni */
-        .main-container {
+        /* Terimler Listesi */
+        .terms-container {
+            position: relative;
+            z-index: 2;
+            padding: 10px 0;
+        }
+        
+        .term-item {
+            margin-bottom: 20px;
+            padding: 15px 20px 15px 50px;
+            position: relative;
+            background: rgba(10, 30, 20, 0.5);
+            border-radius: 8px;
+            border-left: 3px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        
+        .term-item:hover {
+            background: rgba(15, 40, 25, 0.7);
+            transform: translateX(5px);
+        }
+        
+        .term-number {
+            position: absolute;
+            left: 20px;
+            top: 15px;
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 18px;
+        }
+        
+        .term-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            cursor: pointer;
             display: flex;
-            max-width: 1200px;
-            margin: 0 auto;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--primary-color);
+            font-size: 20px;
+        }
+        
+        .expand-btn {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .expand-btn:hover {
+            color: var(--highlight-color);
+            transform: scale(1.2);
+        }
+        
+        .short-description {
+            margin-bottom: 10px;
+            color: var(--text-muted);
+            font-style: italic;
+            font-size: 16px;
+        }
+        
+        .long-description {
+            display: none;
+            padding: 15px;
+            background-color: rgba(0, 50, 0, 0.2);
+            border-radius: 5px;
+            margin-top: 10px;
+            border-left: 2px solid var(--primary-dark);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        /* Arama Sonuçları */
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: rgba(30, 30, 30, 0.95);
+            border: 1px solid var(--primary-color);
+            border-top: none;
+            border-radius: 0 0 10px 10px;
+            z-index: 101;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        .search-results::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .search-results::-webkit-scrollbar-thumb {
+            background-color: var(--primary-color);
+            border-radius: 10px;
+        }
+        
+        .search-result-item {
+            padding: 12px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(0, 255, 0, 0.2);
+            transition: all 0.2s ease;
+        }
+        
+        .search-result-item:hover {
+            background-color: rgba(0, 100, 0, 0.3);
+            padding-left: 20px;
+        }
+        
+        .search-result-item:last-child {
+            border-bottom: none;
         }
         
         /* Matrix Canvas için stiller */
@@ -106,187 +316,9 @@
             height: 100%;
             z-index: -1;
         }
-
-        /* Başlık stili */
-        /* Alfabetik Sekmeler */
-        .alphabet-tabs {
-            width: 60px;
-            background-color: rgb(0 44 0);
-            padding: 20px 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            border-right: 1px solid #00ff00;
-        }
-        
-        .alphabet-tab {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 5px 0;
-            cursor: pointer;
-            border-radius: 50%;
-            background-color: #1a1a1a;
-            color: #00ff00;
-            border: 1px solid #00ff00;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-        
-        .alphabet-tab:hover, .alphabet-tab.active {
-            background-color: #00ff00;
-            color: #1a1a1a;
-        }
-        
-        /* İçerik Alanı */
-        .content-area {
-            flex: 1;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        
-        /* Terimler Listesi */
-        .terms-container {
-            position: relative;
-            z-index: 2;
-            padding: 20px;
-            max-height: 100%;
-            overflow-y: auto;
-        }
-        
-        .term-item {
-            margin-bottom: 15px;
-            padding-left: 30px;
-            position: relative;
-        }
-        
-        .term-number {
-            position: absolute;
-            left: 0;
-            top: 0;
-            font-weight: bold;
-             color: #00ff00;
-        }
-        
-        .term-title {
-            font-weight: bold;
-            margin-bottom: 5px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color:#00ff00;
-        }
-        
-        .expand-btn {
-            background: none;
-            border: none;
-            color: #00ff00;
-            font-size: 1.2rem;
-            cursor: pointer;
-            padding: 0 5px;
-        }
-        
-        .short-description {
-            margin-bottom: 10px;
-            font-style: italic;
-            color: #ffffff;
-        }
-        
-        .long-description {
-            display: none;
-            padding: 10px;
-            background-color: rgba(0, 255, 0, 0.1);
-            border-left: 3px solid #000;
-            margin-top: 5px;
-        }
-          
-        /* Arama Sonuçları */
-        .search-results {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            background-color: #1a1a1a;
-            border: 1px solid #00ff00;
-            border-top: none;
-            z-index: 101;
-            max-height: 300px;
-            overflow-y: auto;
-            display: none;
-        }
-        
-        .search-result-item {
-            padding: 10px;
-            cursor: pointer;
-            border-bottom: 1px solid #333;
-        }
-        
-        .search-result-item:hover {
-            background-color: #2a2a2a;
-        }
-        
-        /* Navigasyon Menüsü */
-        .navbar {
-            display: flex;
-            align-items: center;
-        }
-        
-        /* Dropdown stilleri */
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .dropbtn {
-            font-size: 18px;
-            color: #fff;
-            text-decoration: none;
-            font-weight: 500;
-            margin-left: 10px;
-            cursor: pointer;
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            background-color: green;
-            min-width: 160px;
-            z-index: 100;
-            border: 1px solid white;
-            border-radius: 10px;
-        }
-
-        .dropdown-content a {
-            color: white;
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-        }
-
-        .dropdown-content a:hover {
-            color: white;
-            background-color: var(--primary-color);
-            text-shadow: 0 0 10px green;
-        }
-
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
-
-        
-        .ata-icon, .hacker-icon, .glossary-icon, .soc-icon, 
-        .vulnerabilities-icon, .steganography-icon, 
-        .cryptography-icon, .education-icon {
-            width: 20px;
-            height: 20px;
-        }
         
         /* Responsive Tasarım */
-        @media (max-width: 768px) {
+        @media (max-width: 968px) {
             .main-container {
                 flex-direction: column;
             }
@@ -295,8 +327,11 @@
                 width: 100%;
                 flex-direction: row;
                 overflow-x: auto;
-                padding: 10px 5px;
+                padding: 15px 10px;
                 justify-content: flex-start;
+                position: relative;
+                top: 0;
+                max-height: none;
             }
             
             .alphabet-tab {
@@ -304,44 +339,75 @@
                 flex-shrink: 0;
             }
             
-            .header-container {
-                flex-direction: column;
-                gap: 10px;
-            }
-            
-            .navbar {
-                width: 100%;
-                justify-content: center;
-            }
-            
-            .search-top-container {
-                padding: 10px;
+            .content-wrapper {
+                margin-top: 100px;
             }
         }
         
         @media (max-width: 480px) {
-            .header {
-                padding: 10px 0;
+            .notebook-page {
+                padding: 20px 15px 20px 30px;
             }
             
-            .logo {
-                margin-bottom: 10px;
+            .notebook-page::before {
+                left: 25px;
             }
             
-            .dropbtn {
-                font-size: 14px;
-                padding: 8px 10px;
+            .term-item {
+                padding: 15px 15px 15px 40px;
             }
             
-            .dropdown-content {
-                min-width: 200px;
+            .term-number {
+                left: 15px;
+            }
+            
+            .search-top-container {
+                padding: 0 15px;
+            }
+        }
+        
+        /* Animasyonlar */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .term-item {
+            animation: fadeIn 0.4s ease forwards;
+        }
+        
+        /* Yükleniyor efekti */
+        .loading {
+            position: relative;
+            color: transparent;
+            overflow: hidden;
+        }
+        
+        .loading::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            transform: translateX(-100%);
+            background: linear-gradient(
+                90deg,
+                rgba(0, 255, 0, 0) 0,
+                rgba(0, 255, 0, 0.2) 20%,
+                rgba(0, 255, 0, 0.5) 60%,
+                rgba(0, 255, 0, 0)
+            );
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            100% {
+                transform: translateX(100%);
             }
         }
     </style>
 </head>
-    <script src="/JAVASCRIPT/monitor.js"></script>
-    <canvas id="matrixCanvas"></canvas>                      <!-- Matrix -->
-    <script src="/JAVASCRIPT/matrix.js"></script>
 <body>
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TFN7XD9Z"
@@ -365,14 +431,16 @@
             </div>
         </nav>
     </header>
-     <div class="content-wrapper">
-    <div class="search-top-container">
-        <div class="search-container">
-            <input type="text" class="search-input" placeholder="Search Term...">
-            <div class="search-results"></div>
+    
+    <div class="content-wrapper">
+        <div class="search-top-container">
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Aramak için bir terim yazın...">
+                <div class="search-results"></div>
+            </div>
         </div>
     </div>
-</div>
+    
     <div class="main-container">
         <div class="alphabet-tabs">
             <!-- Alfabetik sekmeler JavaScript ile eklenecek -->
@@ -388,10 +456,14 @@
     </div>
 
     <footer style="text-align: center; padding: 20px; font-size: 14px; color: white;">
-  <hr style="margin-bottom: 10px; border-color: limegreen;" />
-  <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.2 | July 2025</p>
+        <hr style="margin-bottom: 10px; border-color: limegreen;" />
+        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.2 | July 2025</p>
     </footer>
 
+    <script src="/JAVASCRIPT/monitor.js"></script>
+    <canvas id="matrixCanvas"></canvas>
+    <script src="/JAVASCRIPT/matrix.js"></script>
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Alfabetik sekmeleri oluştur
@@ -535,42 +607,49 @@
                 const termsContainer = document.querySelector('.terms-container');
                 termsContainer.innerHTML = '';
                 
-                if (termsData[letter]) {
-                    termsData[letter].forEach((term, index) => {
-                        const termElement = document.createElement('div');
-                        termElement.className = 'term-item';
+                // Yükleniyor efekti göster
+                termsContainer.innerHTML = '<div class="loading" style="height: 200px; border-radius: 8px;"></div>';
+                
+                setTimeout(() => {
+                    if (termsData[letter]) {
+                        termsContainer.innerHTML = '';
                         
-                        termElement.innerHTML = `
-                            <span class="term-number">${index + 1}.</span>
-                            <div class="term-title">
-                                ${term.title}
-                                <button class="expand-btn">+</button>
-                            </div>
-                            <div class="short-description">${term.shortDescription}</div>
-                            <div class="long-description">${term.longDescription}</div>
-                        `;
-                        
-                        termsContainer.appendChild(termElement);
-                    });
-                    
-                    // Genişletme/daraltma işlevselliği
-                    document.querySelectorAll('.term-title').forEach(title => {
-                        title.addEventListener('click', function() {
-                            const longDesc = this.nextElementSibling.nextElementSibling;
-                            const expandBtn = this.querySelector('.expand-btn');
+                        termsData[letter].forEach((term, index) => {
+                            const termElement = document.createElement('div');
+                            termElement.className = 'term-item';
                             
-                            if (longDesc.style.display === 'block') {
-                                longDesc.style.display = 'none';
-                                expandBtn.textContent = '+';
-                            } else {
-                                longDesc.style.display = 'block';
-                                expandBtn.textContent = '-';
-                            }
+                            termElement.innerHTML = `
+                                <span class="term-number">${index + 1}.</span>
+                                <div class="term-title">
+                                    ${term.title}
+                                    <button class="expand-btn">+</button>
+                                </div>
+                                <div class="short-description">${term.shortDescription}</div>
+                                <div class="long-description">${term.longDescription}</div>
+                            `;
+                            
+                            termsContainer.appendChild(termElement);
                         });
-                    });
-                } else {
-                    termsContainer.innerHTML = '<p>Bu harf için henüz terim eklenmemiş.</p>';
-                }
+                        
+                        // Genişletme/daraltma işlevselliği
+                        document.querySelectorAll('.term-title').forEach(title => {
+                            title.addEventListener('click', function() {
+                                const longDesc = this.nextElementSibling.nextElementSibling;
+                                const expandBtn = this.querySelector('.expand-btn');
+                                
+                                if (longDesc.style.display === 'block') {
+                                    longDesc.style.display = 'none';
+                                    expandBtn.textContent = '+';
+                                } else {
+                                    longDesc.style.display = 'block';
+                                    expandBtn.textContent = '-';
+                                }
+                            });
+                        });
+                    } else {
+                        termsContainer.innerHTML = '<p style="text-align: center; padding: 30px; color: #aaa;">Bu harf için henüz terim eklenmemiş.</p>';
+                    }
+                }, 300); // Kısa bir gecikme ile yükleme efekti göster
             }
             
             function setActiveTab(letter) {
@@ -590,7 +669,7 @@
                     results.forEach(result => {
                         const resultItem = document.createElement('div');
                         resultItem.className = 'search-result-item';
-                        resultItem.textContent = `${result.term.title} (${result.letter}) - ${result.term.shortDescription}`;
+                        resultItem.innerHTML = `<strong>${result.term.title}</strong> (${result.letter})<br><span style="font-size: 0.9em; color: #ccc;">${result.term.shortDescription}</span>`;
                         
                         resultItem.addEventListener('click', function() {
                             showTermsForLetter(result.letter);
@@ -604,9 +683,9 @@
                                 termTitles.forEach(title => {
                                     if (title.textContent.includes(result.term.title)) {
                                         title.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                        title.style.backgroundColor = 'rgba(0, 255, 0, 0.2)';
+                                        title.parentElement.style.backgroundColor = 'rgba(0, 100, 0, 0.3)';
                                         setTimeout(() => {
-                                            title.style.backgroundColor = '';
+                                            title.parentElement.style.backgroundColor = '';
                                         }, 2000);
                                     }
                                 });
@@ -618,49 +697,6 @@
                 }
                 
                 searchResults.style.display = 'block';
-            }
-            
-            function initMatrixAnimation() {
-                const canvas = document.getElementById('matrixCanvas');
-                const ctx = canvas.getContext('2d');
-                
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-                
-                const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$#@%&!?*';
-                const fontSize = 12;
-                const columns = canvas.width / fontSize;
-                
-                const drops = [];
-                for (let i = 0; i < columns; i++) {
-                    drops[i] = 1;
-                }
-                
-                function draw() {
-                    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
-                    
-                    ctx.fillStyle = '#00ff00';
-                    ctx.font = `${fontSize}px monospace`;
-                    
-                    for (let i = 0; i < drops.length; i++) {
-                        const text = letters[Math.floor(Math.random() * letters.length)];
-                        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                        
-                        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                            drops[i] = 0;
-                        }
-                        
-                        drops[i]++;
-                    }
-                }
-                
-                setInterval(draw, 33);
-                
-                window.addEventListener('resize', function() {
-                    canvas.width = window.innerWidth;
-                    canvas.height = window.innerHeight;
-                });
             }
         });
     </script>
