@@ -2150,9 +2150,6 @@
           if (callback) callback();
         }
 
-        // 4. INTERACTION FONKSİYONLARI
-        async function handleLikeClick(entryId, entryDiv) {
-          if (likesCache.isUpdating) return;
 
           likesCache.isUpdating = true;
           const likeCountSpan = entryDiv.querySelector(".like-count");
@@ -2318,6 +2315,115 @@
                 ...(currentStats.visitors || []),
                 newVisitor
               ]
+            };
+            
+            // Benzersiz ziyaretçi sayısını hesapla
+            const uniqueIps = new Set((currentStats.visitors || []).map(v => v.ip));
+            uniqueIps.add(ipData.ip);
+            updatedStats.statistics.uniqueVisitors = uniqueIps.size;
+            
+            // Günlük ve aylık istatistikleri güncelle
+            const now = new Date();
+            const today = now.toISOString().split('T')[0];
+            const thisMonth = now.toISOString().substring(0, 7);
+            
+            const todayViews = (currentStats.visitors || []).filter(v => {
+              return v.timestamp && v.timestamp.startsWith(today);
+            }).length + 1;
+            
+            const monthViews = (currentStats.visitors || []).filter(v => {
+              return v.timestamp && v.timestamp.startsWith(thisMonth);
+            }).length + 1;
+            
+            updatedStats.statistics.viewsToday = todayViews;
+            updatedStats.statistics.viewsThisMonth = monthViews;
+            
+            // Sunucuyu güncelle
+            await fetchViaProxy('', 'PUT', updatedStats, viewIpsBinId);
+            
+          } catch (error) {
+            console.error('IP logging failed:', error);
+          }
+        }
+
+        // Intersection Observer ile görünür entry'lerin view count'unu güncelle - YENİ FONKSİYON
+        function setupViewCountObservers() {
+          const entries = document.querySelectorAll('.entry');
+          
+          const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.5 // Entry'nin %50'si göründüğünde tetikle
+          };
+          
+          const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                const entryId = entry.target.id.replace('entry-', '');
+                updateViewCount(entryId);
+                // Güncelleme yapıldıktan sonra observe'i durdur
+                observer.unobserve(entry.target);
+              }
+            });
+          }, observerOptions);
+          
+          // Tüm entry'leri gözle
+          entries.forEach(entry => {
+            observer.observe(entry);
+          });
+        }
+
+        async function handleShareClick(entryId) {
+          const entryUrl = `${window.location.origin}${window.location.pathname}#entry-${entryId}`;
+          
+          if (navigator.share) {
+            try {
+              await navigator.share({
+                title: 'Adem Bayazıt - LadyBuG Entry',
+                text: 'Bu entry\'i paylaşmak istiyor musunuz?',
+                url: entryUrl,
+              });
+            } catch (error) {
+              console.log('Paylaşım iptal edildi veya hata oluştu:', error);
+            }
+          } else {
+            // Web Share API desteklenmiyorsa, linki kopyala
+            await handleCopyLinkClick(entryId);
+          }
+        }
+
+        async function handleCopyLinkClick(entryId) {
+          const entryUrl = `${window.location.origin}${window.location.pathname}#entry-${entryId}`;
+          
+          try {
+            await navigator.clipboard.writeText(entryUrl);
+            alert('Link panoya kopyalandı!');
+          } catch (error) {
+            console.error('Link kopyalanırken hata oluştu:', error);
+            // Fallback için
+            const textArea = document.createElement('textarea');
+            textArea.value = entryUrl;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            alert('Link panoya kopyalandı!');
+          }
+        }
+
+        async function updateInteractionsOnServer(entryId, newLikeCount, newPinCount) {
+          const updatedLikes = newLikeCount !== null ? { ...likesCache.data, [entryId]: newLikeCount } : likesCache.data;
+          const updatedPins = newPinCount !== null ? { ...pinsCache.data, [entryId]: newPinCount } : pinsCache.data;
+
+          try {
+            await fetchViaProxy('/b/68862fd97b4b8670d8a81945', 'PUT', {
+              likes: updatedLikes,
+              pins: updatedPins
+            });
+          } catch (error) {
+            throw new Error('Failed to update data on server');
+          }
+        }     ]
             };
             
             // Benzersiz ziyaretçi sayısını hesapla
