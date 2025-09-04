@@ -411,7 +411,7 @@
             100% { transform: scale(1); }
         }
 
-        /* Görsel modal için stiller - GÜNCELLENDİ */
+        /* Görsel modal için stiller - TAMAMEN YENİLENDİ */
         .modal {
             display: none;
             position: fixed;
@@ -423,6 +423,15 @@
             overflow: auto;
             background-color: rgba(0, 0, 0, 0.95);
             backdrop-filter: blur(5px);
+            touch-action: none; /* Mobil dokunma olayları için önemli */
+        }
+        
+        .modal-content-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
         }
         
         .modal-content {
@@ -430,19 +439,16 @@
             margin: auto;
             max-width: 90%;
             max-height: 80vh;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
             border: 2px solid var(--primary-color);
             border-radius: 8px;
             box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
             animation: zoom 0.3s ease;
+            object-fit: contain;
         }
         
         @keyframes zoom {
-            from {transform: translate(-50%, -50%) scale(0.9); opacity: 0;}
-            to {transform: translate(-50%, -50%) scale(1); opacity: 1;}
+            from {transform: scale(0.9); opacity: 0;}
+            to {transform: scale(1); opacity: 1;}
         }
         
         .close {
@@ -550,18 +556,20 @@
             width: 100%;
             height: 100%;
             border: none;
+            aspect-ratio: 16/9;
         }
 
         /* YENİ SLIDER STİLLERİ - TAMAMEN DÜZENLENDİ */
         .image-slider {
             position: relative;
-            margin: 0px 0;
+            margin: 10px 0;
             overflow: hidden;
             border-radius: 8px;
             background: #000;
             width: 100%;
             aspect-ratio: 16/9;
-            min-height: 100px;
+            min-height: 200px;
+            -webkit-overflow-scrolling: touch; /* Mobil kaydırma için önemli */
         }
         
         .slider-container {
@@ -572,6 +580,7 @@
             position: absolute;
             top: 0;
             left: 0;
+            aspect-ratio: 16/9;
         }
         
         .slider-item {
@@ -1061,8 +1070,8 @@
             }
             
             .image-slider {
-                aspect-ratio: 1/1;
-                min-height: 250px;
+                aspect-ratio: 16/9;
+                min-height: 100px;
             }
             
             .slider-btn {
@@ -1109,14 +1118,16 @@
     <!-- Matrix Arka Plan Canvas'ı -->
     <canvas id="matrixCanvas"></canvas>
 
-    <!-- Görsel Modal - GÜNCELLENDİ -->
+    <!-- Görsel Modal - TAMAMEN YENİLENDİ -->
     <div id="imageModal" class="modal">
         <span class="close">&times;</span>
         <div class="modal-nav">
             <button class="modal-nav-btn modal-prev-btn"><i class="fas fa-chevron-left"></i></button>
             <button class="modal-nav-btn modal-next-btn"><i class="fas fa-chevron-right"></i></button>
         </div>
-        <img class="modal-content" id="modalImage">
+        <div class="modal-content-container">
+            <img class="modal-content" id="modalImage">
+        </div>
         <div class="modal-counter" id="modalCounter"></div>
     </div>
 
@@ -1415,6 +1426,7 @@
         // Modal için global değişkenler
         let currentModalImages = [];
         let currentModalIndex = 0;
+        let isModalOpen = false;
 
         // BİLDİRİM SİSTEMİ DEĞİŞKENLERİ - YENİ EKLENDİ
         let swRegistration = null;
@@ -1555,7 +1567,7 @@
           content = content.replace(/(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/g, 
             '<div class="video-container"><iframe src="https://www.youtube.com/embed/$4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>');
           
-          // Birden fazla resim için slider oluştur
+          // Birden fazla resim için slider oluştur ve orijinal img etiketlerini kaldır
           content = content.replace(/(<img[^>]+>\s*){2,}/g, (imgs) => {
             const images = imgs.match(/<img[^>]+>/g);
             if (images && images.length > 1) {
@@ -1563,6 +1575,10 @@
             }
             return imgs;
           });
+          
+          // Slider oluşturulduktan sonra kalan boşlukları temizle
+          content = content.replace(/<p>\s*<\/p>/gi, '');
+          content = content.replace(/(<br\s*\/?>\s*){2,}/gi, '<br>');
           
           return content;
         }
@@ -1776,6 +1792,7 @@
             function closeModal() {
                 modal.style.display = "none";
                 document.body.style.overflow = "auto";
+                isModalOpen = false;
                 // Modal kapatıldığında event listener'ları temizle
                 document.removeEventListener('keydown', handleKeyDown);
             }
@@ -1787,6 +1804,7 @@
                 updateModalImage();
                 modal.style.display = "block";
                 document.body.style.overflow = "hidden";
+                isModalOpen = true;
                 // Klavye event listener'ını ekle
                 document.addEventListener('keydown', handleKeyDown);
             }
@@ -1854,7 +1872,7 @@
             
             // Tüm entry görsellerine tıklanabilirlik ekle
             document.addEventListener('click', function(event) {
-                if (event.target.tagName === 'IMG' && event.target.closest('.content')) {
+                if (event.target.tagName === 'IMG' && event.target.closest('.content') && !isModalOpen) {
                     // Tıklanan resmin içinde bulunduğu slider'ı bul
                     const slider = event.target.closest('.image-slider');
                     let images = [];
@@ -1876,17 +1894,23 @@
                 }
             });
             
-            // Mobil dokunma olayları (swipe)
+            // Mobil dokunma olayları (swipe) - MODAL ELEMENTİNE TAŞINDI
             let touchStartX = 0;
             let touchEndX = 0;
             
-            modalImg.addEventListener('touchstart', function(event) {
-                touchStartX = event.changedTouches[0].screenX;
+            modal.addEventListener('touchstart', function(event) {
+                if (event.target.tagName === 'IMG') {
+                    event.stopPropagation(); // Yayılmayı engelle - ÖNEMLİ
+                    touchStartX = event.changedTouches[0].screenX;
+                }
             }, false);
             
-            modalImg.addEventListener('touchend', function(event) {
-                touchEndX = event.changedTouches[0].screenX;
-                handleSwipe();
+            modal.addEventListener('touchend', function(event) {
+                if (event.target.tagName === 'IMG') {
+                    event.stopPropagation(); // Yayılmayı engelle - ÖNEMLİ
+                    touchEndX = event.changedTouches[0].screenX;
+                    handleSwipe();
+                }
             }, false);
             
             function handleSwipe() {
@@ -3041,7 +3065,7 @@
                 // ID araması: tam eşleşme
                 return entry.id.toString() === query;
               } else {
-                // Metin araması: içerikte ara
+                // Metin araması: içerikette ara
                 return entry.content.toLowerCase().includes(query.toLowerCase());
               }
             });
