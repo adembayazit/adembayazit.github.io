@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ethical Hacker | Siber Güvenlik Terimler Sözlüğü</title>
+    <title>Ethical Hacker | Cybersecurity Glossary</title>
     <!-- Open Graph (Facebook, WhatsApp, LinkedIn vs.) -->   
     <meta property="og:title" content="Adem Bayazıt | Ethical Hacker" />
     <meta property="og:description" content="Ethical Hacker, Cyber Security Analyst ve Linux Enthusiast." />
@@ -19,7 +19,6 @@
     <meta name="twitter:image:alt" content="Adem Bayazıt">
     
     <link rel="icon" type="png|image" href="/IMAGES/ab.png">
-    <link rel="stylesheet" href="/CSS/style.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -35,13 +34,14 @@
             --text-muted: #cccccc;
             --border-color: #00aa00;
             --highlight-color: #99ff99;
+            --navbar-bg: rgba(10, 25, 20, 0.95);
         }
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Courier New', monospace;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
@@ -51,8 +51,128 @@
             position: relative;
         }
         
+        /* Header Styles */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 10%;
+            background: var(--navbar-bg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+        
+        .logo {
+            font-size: 25px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo img {
+            width: 30px;
+            height: 30px;
+        }
+        
+        .navbar {
+            display: flex;
+            align-items: center;
+        }
+        
+        /* Dropdown stilleri */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropbtn {
+            font-size: 18px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            margin-left: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .dropbtn:hover {
+            background: rgba(0, 255, 0, 0.1);
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: rgba(0, 80, 0, 0.9);
+            min-width: 200px;
+            z-index: 100;
+            border: 1px solid var(--primary-color);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .dropdown-content a {
+            color: white;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-content a:hover {
+            color: white;
+            background-color: var(--primary-dark);
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        
+        .ata-icon, .hacker-icon, .glossary-icon, .soc-icon, 
+        .vulnerabilities-icon, .steganography-icon, 
+        .cryptography-icon, .education-icon {
+            width: 20px;
+            height: 20px;
+        }
+        
+        /* Page Title */
+        .page-title {
+            text-align: center;
+            margin-top: 100px;
+            padding: 20px;
+        }
+        
+        .page-title h1 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+            margin-bottom: 10px;
+        }
+        
+        .page-title p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+        
+        /* Content Wrapper */
         .content-wrapper {
-            margin-top: 120px;
+            margin-top: 30px;
             position: relative;
             z-index: 2;
         }
@@ -118,7 +238,7 @@
             max-height: 80vh;
             overflow-y: auto;
             position: sticky;
-            top: 130px;
+            top: 150px;
         }
         
         .alphabet-tabs::-webkit-scrollbar {
@@ -317,6 +437,22 @@
             z-index: -1;
         }
         
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 50px;
+            font-size: 14px;
+            color: var(--text-color);
+            border-top: 1px solid var(--border-color);
+        }
+        
+        footer hr {
+            margin-bottom: 10px;
+            border-color: var(--primary-color);
+            opacity: 0.5;
+        }
+        
         /* Responsive Tasarım */
         @media (max-width: 968px) {
             .main-container {
@@ -339,8 +475,16 @@
                 flex-shrink: 0;
             }
             
-            .content-wrapper {
-                margin-top: 100px;
+            .header {
+                padding: 15px 5%;
+            }
+            
+            .page-title {
+                margin-top: 80px;
+            }
+            
+            .page-title h1 {
+                font-size: 2rem;
             }
         }
         
@@ -363,6 +507,15 @@
             
             .search-top-container {
                 padding: 0 15px;
+            }
+            
+            .dropbtn {
+                font-size: 16px;
+                padding: 8px 12px;
+            }
+            
+            .logo {
+                font-size: 20px;
             }
         }
         
@@ -432,10 +585,15 @@
         </nav>
     </header>
     
+    <div class="page-title">
+        <h1>Cyber Security Glossary</h1>
+        <p>Comprehensive dictionary of cybersecurity terms and concepts</p>
+    </div>
+    
     <div class="content-wrapper">
         <div class="search-top-container">
             <div class="search-container">
-                <input type="text" class="search-input" placeholder="Aramak için bir terim yazın...">
+                <input type="text" class="search-input" placeholder="Search for a term...">
                 <div class="search-results"></div>
             </div>
         </div>
@@ -455,14 +613,12 @@
         </div>
     </div>
 
-    <footer style="text-align: center; padding: 20px; font-size: 14px; color: white;">
-        <hr style="margin-bottom: 10px; border-color: limegreen;" />
+    <footer>
+        <hr />
         <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.2 | July 2025</p>
     </footer>
 
-    <script src="/JAVASCRIPT/monitor.js"></script>
     <canvas id="matrixCanvas"></canvas>
-    <script src="/JAVASCRIPT/matrix.js"></script>
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -478,74 +634,86 @@
                 alphabetTabs.appendChild(tab);
             });
             
-            // Terimler veritabanı (örnek içerik)
+            // Terimler veritabanı (İngilizce içerik)
             const termsData = {
                 'A': [
                     {
                         title: 'Adware',
-                        shortDescription: 'Kullanıcıya reklam göstermek için tasarlanmış yazılım.',
-                        longDescription: 'Adware, genellikle bir yazılım paketinin parçası olarak yüklenen ve kullanıcıya reklam gösteren programlardır. Bazı adware türleri kötü amaçlı olabilir ve kullanıcının izni olmadan kişisel bilgileri toplayabilir.'
+                        shortDescription: 'Software designed to display advertisements to the user.',
+                        longDescription: 'Adware is typically included with software packages and displays ads to users. Some types of adware can be malicious and collect personal information without user consent.'
                     },
                     {
                         title: 'APT (Advanced Persistent Threat)',
-                        shortDescription: 'Hedefli ve sürekli siber saldırı türü.',
-                        longDescription: 'APT, belirli bir hedefe yönelik, sofistike ve uzun süreli siber saldırı kampanyasıdır. Saldırganlar sistemde uzun süre kalarak mümkün olduğunca çok veri toplamayı amaçlar.'
+                        shortDescription: 'A targeted and continuous cyber attack type.',
+                        longDescription: 'APT is a sophisticated, long-term cyber attack campaign targeting specific entities. Attackers aim to remain in systems for extended periods to collect as much data as possible.'
                     },
                     {
                         title: 'Authentication',
-                        shortDescription: 'Kullanıcı kimliğini doğrulama süreci.',
-                        longDescription: 'Authentication, bir kullanıcının veya sistemin iddia ettiği kimliği doğrulama sürecidir. Parolalar, biyometrik veriler, token\'lar veya çok faktörlü kimlik doğrulama yöntemleri kullanılabilir.'
+                        shortDescription: 'The process of verifying user identity.',
+                        longDescription: 'Authentication is the process of verifying the identity of a user or system. Methods include passwords, biometrics, tokens, or multi-factor authentication.'
                     }
                 ],
                 'B': [
                     {
                         title: 'Backdoor',
-                        shortDescription: 'Sisteme yetkisiz erişim sağlayan gizli giriş noktası.',
-                        longDescription: 'Backdoor, bir sistemde normal kimlik doğrulama prosedürlerini atlatmak için oluşturulmuş gizli bir erişim noktasıdır. Genellikle kötü amaçlı yazılımlar tarafından veya sistem yöneticileri tarafından acil erişim için oluşturulur.'
+                        shortDescription: 'A hidden entry point providing unauthorized system access.',
+                        longDescription: 'A backdoor is a secret access point created in a system to bypass normal authentication procedures. Often created by malware or system administrators for emergency access.'
                     },
                     {
                         title: 'Botnet',
-                        shortDescription: 'Zombi bilgisayarlardan oluşan ağ.',
-                        longDescription: 'Botnet, kötü amaçlı yazılım bulaşmış ve bir merkezi sunucu tarafından kontrol edilen bilgisayarlardan oluşan ağdır. Bu ağlar DDoS saldırıları, spam gönderme veya veri hırsızlığı için kullanılır.'
+                        shortDescription: 'A network of compromised computers.',
+                        longDescription: 'A botnet is a network of computers infected with malware and controlled by a central server. These networks are used for DDoS attacks, spam distribution, or data theft.'
                     },
                     {
                         title: 'Brute Force Attack',
-                        shortDescription: 'Şifreleri deneme-yanılma yöntemiyle kırma saldırısı.',
-                        longDescription: 'Brute Force saldırısı, bir sisteme veya şifreli veriye erişim sağlamak için olası tüm şifre kombinasyonlarını deneme yöntemidir. Bu saldırılar genellikle otomatize edilmiş araçlarla gerçekleştirilir.'
+                        shortDescription: 'An attack method trying all possible password combinations.',
+                        longDescription: 'A brute force attack attempts to gain access to systems or encrypted data by trying all possible password combinations. These attacks are typically automated with specialized tools.'
                     }
                 ],
                 'C': [
                     {
                         title: 'Cryptography',
-                        shortDescription: 'Bilgi güvenliği için şifreleme bilimi.',
-                        longDescription: 'Cryptography, bilgileri şifreleyerek gizlilik, bütünlük, kimlik doğrulama ve inkar edememe sağlamak için kullanılan bilim dalıdır. Modern kriptografi simetrik ve asimetrik şifreleme tekniklerini içerir.'
+                        shortDescription: 'The science of encryption for information security.',
+                        longDescription: 'Cryptography is the science of securing information through encryption to provide confidentiality, integrity, authentication, and non-repudiation. Modern cryptography includes symmetric and asymmetric encryption techniques.'
                     },
                     {
                         title: 'CVE (Common Vulnerabilities and Exposures)',
-                        shortDescription: 'Kamuya açık bilgi güvenliği zafiyetleri listesi.',
-                        longDescription: 'CVE, kamuya açık bilinen yazılım güvenlik açıklarının standartlaştırılmış bir listesidir. Her CVE kimliği belirli bir güvenlik açığını tanımlar ve security profesyonelleri arasında iletişimi kolaylaştırır.'
+                        shortDescription: 'A list of publicly known information security vulnerabilities.',
+                        longDescription: 'CVE is a standardized list of publicly known cybersecurity vulnerabilities. Each CVE ID identifies a specific security vulnerability and facilitates communication among security professionals.'
                     },
                     {
                         title: 'Cybersecurity',
-                        shortDescription: 'Bilgisayar sistemlerini siber tehditlere karşı koruma.',
-                        longDescription: 'Cybersecurity, bilgisayar sistemlerini, ağları, programları ve verileri dijital saldırılara, hasara veya yetkisiz erişime karşı koruma uygulamasıdır. Savunma stratejileri ve güvenlik protokolleri içerir.'
+                        shortDescription: 'Protection of computer systems against cyber threats.',
+                        longDescription: 'Cybersecurity is the practice of protecting computer systems, networks, programs, and data from digital attacks, damage, or unauthorized access. It includes defense strategies and security protocols.'
                     }
                 ],
                 'D': [
                     {
                         title: 'DDoS (Distributed Denial of Service)',
-                        shortDescription: 'Dağıtık hizmet reddi saldırısı.',
-                        longDescription: 'DDoS saldırısı, bir sunucu, hizmet veya ağı hedef alan, trafiği birden fazla kaynaktan gelerek normal trafiği engelleyen bir siber saldırı türüdür. Botnetler genellikle bu saldırıları gerçekleştirmek için kullanılır.'
+                        shortDescription: 'Distributed denial of service attack.',
+                        longDescription: 'A DDoS attack targets servers, services, or networks by flooding them with traffic from multiple sources, disrupting normal traffic. Botnets are commonly used to execute these attacks.'
                     },
                     {
                         title: 'DNS (Domain Name System)',
-                        shortDescription: 'Alan adlarını IP adreslerine çeviren sistem.',
-                        longDescription: 'DNS, internet alan adlarını IP adreslerine çeviren hiyerarşik ve merkezi olmayan bir adlandırma sistemidir. DNS poisoning veya spoofing, DNS sistemindeki güvenlik açıklarından yararlanan saldırı türleridir.'
+                        shortDescription: 'The system that translates domain names to IP addresses.',
+                        longDescription: 'DNS is a hierarchical and decentralized naming system that translates domain names to IP addresses. DNS poisoning or spoofing are attack types that exploit vulnerabilities in the DNS system.'
                     },
                     {
                         title: 'Data Breach',
-                        shortDescription: 'Gizli, hassas veya korumalı verilerin yetkisiz ifşası.',
-                        longDescription: 'Data breach, gizli, hassas veya korumalı verilerin yetkisiz bir kişiye ifşa edilmesi, görüntülenmesi veya çalınmasıdır. Veri ihlalleri genellikle siber suçlular tarafından finansal kazanç veya casusluk için gerçekleştirilir.'
+                        shortDescription: 'Unauthorized disclosure of confidential, sensitive, or protected data.',
+                        longDescription: 'A data breach involves the unauthorized access, viewing, or theft of confidential, sensitive, or protected data. Data breaches are typically executed by cybercriminals for financial gain or espionage.'
+                    }
+                ],
+                'E': [
+                    {
+                        title: 'Encryption',
+                        shortDescription: 'The process of converting data into coded form.',
+                        longDescription: 'Encryption transforms readable data (plaintext) into an encoded version (ciphertext) that can only be decoded with a specific key. It is a fundamental method for protecting data confidentiality.'
+                    },
+                    {
+                        title: 'Exploit',
+                        shortDescription: 'A piece of code that takes advantage of a software vulnerability.',
+                        longDescription: 'An exploit is code that takes advantage of a bug or vulnerability in software, allowing attackers to cause unintended behavior or gain unauthorized access to systems.'
                     }
                 ]
                 // Diğer harfler için de benzer şekilde içerik eklenebilir
@@ -647,7 +815,7 @@
                             });
                         });
                     } else {
-                        termsContainer.innerHTML = '<p style="text-align: center; padding: 30px; color: #aaa;">Bu harf için henüz terim eklenmemiş.</p>';
+                        termsContainer.innerHTML = '<p style="text-align: center; padding: 30px; color: #aaa;">No terms added for this letter yet.</p>';
                     }
                 }, 300); // Kısa bir gecikme ile yükleme efekti göster
             }
@@ -664,7 +832,7 @@
                 searchResults.innerHTML = '';
                 
                 if (results.length === 0) {
-                    searchResults.innerHTML = '<div class="search-result-item">Sonuç bulunamadı</div>';
+                    searchResults.innerHTML = '<div class="search-result-item">No results found</div>';
                 } else {
                     results.forEach(result => {
                         const resultItem = document.createElement('div');
@@ -698,6 +866,52 @@
                 
                 searchResults.style.display = 'block';
             }
+            
+            // Matrix efekti için basit bir implementasyon
+            function initMatrixAnimation() {
+                const canvas = document.getElementById('matrixCanvas');
+                const ctx = canvas.getContext('2d');
+                
+                function resizeCanvas() {
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                }
+                
+                resizeCanvas();
+                window.addEventListener('resize', resizeCanvas);
+                
+                const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$#@%&!?*';
+                const fontSize = 12;
+                const columns = Math.floor(canvas.width / fontSize);
+                
+                const drops = [];
+                for (let i = 0; i < columns; i++) {
+                    drops[i] = Math.floor(Math.random() * canvas.height / fontSize);
+                }
+                
+                function draw() {
+                    ctx.fillStyle = 'rgba(10, 25, 20, 0.1)';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    
+                    ctx.fillStyle = '#00ff00';
+                    ctx.font = `${fontSize}px monospace`;
+                    
+                    for (let i = 0; i < drops.length; i++) {
+                        const text = letters[Math.floor(Math.random() * letters.length)];
+                        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                        
+                        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                            drops[i] = 0;
+                        }
+                        
+                        drops[i]++;
+                    }
+                }
+                
+                setInterval(draw, 50);
+            }
+            
+            initMatrixAnimation();
         });
     </script>
 </body>
