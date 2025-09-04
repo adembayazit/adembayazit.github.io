@@ -2621,12 +2621,12 @@
               .catch(function(error) {
                 console.log('Service Worker registration failed:', error);
                 document.getElementById('notificationStatus').textContent = 
-                  'Bildirimler etkinleştirilemedi. Lütfen daha sonra tekrar deneyin.';
+                  'Notifications could not be enabled. Please try again later.';
               });
           } else {
             console.log('Push messaging is not supported');
             document.getElementById('notificationStatus').textContent = 
-              'Tarayıcınız bildirimleri desteklemiyor.';
+              'Your browser does not support notifications.';
           }
         }
 
@@ -2641,11 +2641,11 @@
               if (isSubscribed) {
                 console.log('User is already subscribed:', subscription);
                 document.getElementById('notificationStatus').textContent = 
-                  'Bildirimler zaten etkin! Yeni entrylerden anında haberdar olacaksınız.';
+                  'Notifications are already enabled! You'll be instantly notified of new listings..';
                 document.getElementById('enableNotifications').style.display = 'none';
               } else {
                 document.getElementById('notificationStatus').textContent = 
-                  'Bildirimleri etkinleştirmek için butona tıklayın.';
+                  'Click the button to enable notifications.';
               }
             })
             .catch(function(error) {
