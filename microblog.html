@@ -1550,7 +1550,11 @@
           
           // İçeriği temizlenmiş olarak al
           content = tempDiv.innerHTML.trim();
-            
+          
+          // YouTube embed linklerini tespit ve ve iframe'e dönüştür
+          content = content.replace(/(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/g, 
+            '<div class="video-container"><iframe src="https://www.youtube.com/embed/$4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>');
+          
           // Birden fazla resim için slider oluştur
           content = content.replace(/(<img[^>]+>\s*){2,}/g, (imgs) => {
             const images = imgs.match(/<img[^>]+>/g);
@@ -2621,12 +2625,12 @@
               .catch(function(error) {
                 console.log('Service Worker registration failed:', error);
                 document.getElementById('notificationStatus').textContent = 
-                  'Notifications could not be enabled. Please try again later.';
+                  'Bildirimler etkinleştirilemedi. Lütfen daha sonra tekrar deneyin.';
               });
           } else {
             console.log('Push messaging is not supported');
             document.getElementById('notificationStatus').textContent = 
-              'Your browser does not support notifications.';
+              'Tarayıcınız bildirimleri desteklemiyor.';
           }
         }
 
@@ -2641,11 +2645,11 @@
               if (isSubscribed) {
                 console.log('User is already subscribed:', subscription);
                 document.getElementById('notificationStatus').textContent = 
-                  'Notifications are already enabled! You'll be instantly notified of new listings..';
+                  'Bildirimler zaten etkin! Yeni entrylerden anında haberdar olacaksınız.';
                 document.getElementById('enableNotifications').style.display = 'none';
               } else {
                 document.getElementById('notificationStatus').textContent = 
-                  'Click the button to enable notifications.';
+                  'Bildirimleri etkinleştirmek için butona tıklayın.';
               }
             })
             .catch(function(error) {
