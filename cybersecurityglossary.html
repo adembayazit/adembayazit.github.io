@@ -250,6 +250,26 @@
             color: var(--text-muted);
             font-style: italic;
             font-size: 14px;
+            position: relative;
+            padding: 0 15px;
+        }
+        
+        .short-description::before {
+            content: "{";
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .short-description::after {
+            content: "}";
+            position: absolute;
+            right: 0;
+            top: 0;
+            color: var(--primary-color);
+            font-weight: bold;
         }
         
         .long-description {
@@ -1068,7 +1088,7 @@
                     results.forEach(result => {
                         const resultItem = document.createElement('div');
                         resultItem.className = 'search-result-item';
-                        resultItem.innerHTML = `<strong>${result.term.title}</strong> (${result.letter})<br><span style="font-size: 0.8em; color: #ccc;">${result.term.shortDescription}</span>`;
+                        resultItem.innerHTML = `<strong>${result.term.title}</strong> (${result.letter})<br><span style="font-size: 0.8em; color: #ccc;">{${result.term.shortDescription}}</span>`;
                         
                         resultItem.addEventListener('click', function() {
                             showTermsForLetter(result.letter);
