@@ -1079,44 +1079,55 @@
                 }
             }
             
-            function displaySearchResults(results) {
-                searchResults.innerHTML = '';
-                
-                if (results.length === 0) {
-                    searchResults.innerHTML = '<div class="search-result-item">No results found</div>';
-                } else {
-                    results.forEach(result => {
-                        const resultItem = document.createElement('div');
-                        resultItem.className = 'search-result-item';
-                        resultItem.innerHTML = `<strong>${result.term.title}</strong> (${result.letter})<br><span style="font-size: 0.8em; color: #ccc;">{${result.term.shortDescription}}</span>`;
-                        
-                        resultItem.addEventListener('click', function() {
-                            showTermsForLetter(result.letter);
-                            setActiveTab(result.letter);
-                            searchInput.value = '';
-                            searchResults.style.display = 'none';
-                            
-                            // Scroll to the found term
-                            setTimeout(() => {
-                                const termTitles = document.querySelectorAll('.term-title');
-                                termTitles.forEach(title => {
-                                    if (title.textContent.includes(result.term.title)) {
-                                        title.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                        title.parentElement.style.backgroundColor = 'rgba(0, 100, 0, 0.3)';
-                                        setTimeout(() => {
-                                            title.parentElement.style.backgroundColor = '';
-                                        }, 2000);
-                                    }
-                                });
-                            }, 100);
-                        });
-                        
-                        searchResults.appendChild(resultItem);
-                    });
-                }
-                
-                searchResults.style.display = 'block';
+            // displaySearchResults fonksiyonunu bulun ve aşağıdaki gibi değiştirin:
+
+function displaySearchResults(results) {
+    searchResults.innerHTML = '';
+    
+    if (results.length === 0) {
+        searchResults.innerHTML = '<div class="search-result-item">No results found</div>';
+    } else {
+        results.forEach(result => {
+            const resultItem = document.createElement('div');
+            resultItem.className = 'search-result-item';
+            
+            // Nokta ekleme kontrolü
+            let shortDesc = result.term.shortDescription.trim();
+            if (!shortDesc.endsWith('.')) {
+                shortDesc += '.';
             }
+            // Parantez içine alma
+            shortDesc = `{${shortDesc}}`;
+            
+            resultItem.innerHTML = `<strong>${result.term.title}</strong> (${result.letter})<br><span style="font-size: 0.8em; color: #ccc;">${shortDesc}</span>`;
+            
+            resultItem.addEventListener('click', function() {
+                showTermsForLetter(result.letter);
+                setActiveTab(result.letter);
+                searchInput.value = '';
+                searchResults.style.display = 'none';
+                
+                // Scroll to the found term
+                setTimeout(() => {
+                    const termTitles = document.querySelectorAll('.term-title');
+                    termTitles.forEach(title => {
+                        if (title.textContent.includes(result.term.title)) {
+                            title.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            title.parentElement.style.backgroundColor = 'rgba(0, 100, 0, 0.3)';
+                            setTimeout(() => {
+                                title.parentElement.style.backgroundColor = '';
+                            }, 2000);
+                        }
+                    });
+                }, 100);
+            });
+            
+            searchResults.appendChild(resultItem);
+        });
+    }
+    
+    searchResults.style.display = 'block';
+}
         });
     </script>
 </body>
