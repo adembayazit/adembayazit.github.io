@@ -201,8 +201,33 @@
             position: relative;
             background: rgba(10, 30, 20, 0.5);
             border-radius: 8px;
-            border-left: 3px solid var(--primary-color);
             transition: all 0.3s ease;
+            /* Kaldırılan border-left yerine özel curly brace efekti */
+            border-left: none;
+        }
+        
+        .term-item::before {
+            content: "{";
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-color);
+            font-size: 24px;
+            font-weight: bold;
+            opacity: 0.7;
+        }
+        
+        .term-item::after {
+            content: "}";
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-color);
+            font-size: 24px;
+            font-weight: bold;
+            opacity: 0.7;
         }
         
         .term-item:hover {
@@ -258,9 +283,33 @@
             background-color: rgba(0, 50, 0, 0.2);
             border-radius: 5px;
             margin-top: 10px;
-            border-right: 3px solid var(--primary-dark);
+            /* Kaldırılan border-right yerine özel curly brace efekti */
+            border-right: none;
             color: var(--text-color);
             line-height: 1.6;
+            position: relative;
+        }
+        
+        .long-description::before {
+            content: "{";
+            position: absolute;
+            left: 5px;
+            top: 5px;
+            color: var(--primary-dark);
+            font-size: 18px;
+            font-weight: bold;
+            opacity: 0.7;
+        }
+        
+        .long-description::after {
+            content: "}";
+            position: absolute;
+            right: 5px;
+            bottom: 5px;
+            color: var(--primary-dark);
+            font-size: 18px;
+            font-weight: bold;
+            opacity: 0.7;
         }
         
         /* Search Results */
@@ -359,12 +408,32 @@
                 padding: 15px 15px 15px 40px;
             }
             
+            .term-item::before {
+                left: 10px;
+                font-size: 20px;
+            }
+            
+            .term-item::after {
+                right: 10px;
+                font-size: 20px;
+            }
+            
             .term-number {
                 left: 15px;
             }
             
             .search-top-container {
                 padding: 0 15px;
+            }
+            
+            .long-description::before {
+                left: 3px;
+                font-size: 16px;
+            }
+            
+            .long-description::after {
+                right: 3px;
+                font-size: 16px;
             }
         }
         
@@ -633,7 +702,7 @@
                     {
                         title: 'GDPR (General Data Protection Regulation)',
                         shortDescription: 'An EU regulation on data protection and privacy.',
-                        longDescription: 'GDPR is a strict data privacy and security law in the European Union. It imposes rules on organizations that process personal data and gives individuals greater control over their information.'
+                        longDescription: 'GDPR is a strict data privacy and security law in the European Union. It imposes rules on organizations that processing personal data and gives individuals greater control over their information.'
                     },
                     {
                         title: 'Gateway',
