@@ -1270,7 +1270,7 @@
 
     <footer style="text-align: center; padding: 20px; font-size: 14px; color: white; margin-top: 50px; position: relative; z-index: 1;">
         <hr style="margin-bottom: 10px; border-color: var(--primary-color);" />
-        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.2 | July 2025</p>
+        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.3 | July 2025</p>
     </footer>
 
     <!-- Sarı Nokta (IP Göstergesi) -->
@@ -1315,57 +1315,95 @@
 
         dot.addEventListener('mouseenter', () => tooltip.style.opacity = '1');
         dot.addEventListener('mouseleave', () => tooltip.style.opacity = '0');
-        fetch('https://ipinfo.io/json?token=68a1229187303a')
-            .then(async res => {
-                if (!res.ok) {
-                    const text = await res.text();
-                    throw new Error(`Hatalı cevap (${res.status}): ${text}`);
-                }
-                return res.json();
-            })
-            .then(data => {
-                const now = new Date();
-                const {
-                    ip, hostname, city, region,
-                    country, loc, org, postal, timezone
-                } = data;
+        
+        // IP bilgisi almak için yeni fonksiyon
+        async function getIPInfo() {
+            try {
+                const response = await fetch('https://ipinfo.io/json?token=68a1229187303a');
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                console.error('IP info error:', error);
+                return {
+                    ip: 'Unknown',
+                    hostname: 'Unknown',
+                    city: 'Unknown',
+                    region: 'Unknown',
+                    country: 'Unknown',
+                    loc: 'Unknown',
+                    org: 'Unknown',
+                    postal: 'Unknown',
+                    timezone: 'Unknown'
+                };
+            }
+        }
 
-                tooltip.innerHTML = `
-                    <div style="margin-bottom: 3px; font-weight: bold; color: #00ff00;">✓ User IP Detected</div>
-                    <div><strong>IP:</strong> ${ip}</div>
-                    <div><strong>Host:</strong> ${hostname}</div>
-                    <div><strong>City:</strong> ${city}</div>
-                    <div><strong>Country:</strong> ${country}</div>
-                    <div><strong>Location</strong> ${loc}</div>
-                    <div><strong>Postal:</strong> ${postal}</div>
-                    <div><strong>Org:</strong> ${org}</div>
-                    <div><strong>Time:</strong> ${now.toLocaleString('tr-TR')}</div>
-                    <div style="font-size: 9px; margin-top: 4px; color: #ccc;">${navigator.userAgent.split(' ')[0]}</div>
-                `;
+        // Fingerprint oluşturma fonksiyonu
+        function generateFingerprint() {
+            const userAgent = navigator.userAgent;
+            const language = navigator.language;
+            const colorDepth = screen.colorDepth;
+            const pixelRatio = window.devicePixelRatio || 1;
+            const screenResolution = `${screen.width}x${screen.height}`;
+            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            
+            // Basit bir hash oluştur
+            let hash = 0;
+            const str = `${userAgent}-${language}-${colorDepth}-${pixelRatio}-${screenResolution}-${timezone}`;
+            
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash; // 32-bit integer
+            }
+            
+            return hash.toString();
+        }
 
-                // POST ile Netlify fonksiyonuna gönder
-                fetch('https://adembayazit.netlify.app/.netlify/functions/log-visitor', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        ip, hostname, city, region,
-                        country, loc, org, postal,
-                        timezone, timestamp: now.toISOString(),
-                        userAgent: navigator.userAgent
-                    })
-                }).then(res => res.json())
-                    .then(console.log)
-                    .catch(err => console.error("POST hatası:", err));
-            })
-            .catch(error => {
-                const now = new Date();
-                tooltip.innerHTML = `
-                    <div style="margin-bottom: 5px; font-weight: bold; color: #ff5555;">❌ Hata</div>
-                    <div><strong>Zaman:</strong> ${now.toLocaleString('tr-TR')}</div>
-                    <div><strong>Mesaj:</strong> ${error.message}</div>
-                `;
-                dot.style.background = "#ff5555";
-            });
+        // IP ve fingerprint bilgisini göster
+        async function showIPInfo() {
+            const now = new Date();
+            const ipData = await getIPInfo();
+            const fingerprint = generateFingerprint();
+            
+            tooltip.innerHTML = `
+                <div style="margin-bottom: 3px; font-weight: bold; color: #00ff00;">✓ User IP Detected</div>
+                <div><strong>IP:</strong> ${ipData.ip}</div>
+                <div><strong>Fingerprint:</strong> ${fingerprint}</div>
+                <div><strong>Host:</strong> ${ipData.hostname}</div>
+                <div><strong>City:</strong> ${ipData.city}</div>
+                <div><strong>Country:</strong> ${ipData.country}</div>
+                <div><strong>Location:</strong> ${ipData.loc}</div>
+                <div><strong>Postal:</strong> ${ipData.postal}</div>
+                <div><strong>Org:</strong> ${ipData.org}</div>
+                <div><strong>Time:</strong> ${now.toLocaleString('tr-TR')}</div>
+                <div style="font-size: 9px; margin-top: 4px; color: #ccc;">${navigator.userAgent.split(' ')[0]}</div>
+            `;
+
+            // POST ile Netlify fonksiyonuna gönder
+            fetch('https://adembayazit.netlify.app/.netlify/functions/log-visitor', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    ...ipData,
+                    fingerprint: fingerprint,
+                    timestamp: now.toISOString(),
+                    userAgent: navigator.userAgent
+                })
+            }).then(res => res.json())
+                .then(console.log)
+                .catch(err => console.error("POST error:", err));
+        }
+
+        showIPInfo().catch(error => {
+            const now = new Date();
+            tooltip.innerHTML = `
+                <div style="margin-bottom: 5px; font-weight: bold; color: #ff5555;">❌ Error</div>
+                <div><strong>Time:</strong> ${now.toLocaleString('tr-TR')}</div>
+                <div><strong>Message:</strong> ${error.message}</div>
+            `;
+            dot.style.background = "#ff5555";
+        });
     </script>
 
     <script>
@@ -2215,13 +2253,16 @@
           }
         }
 
-        // GÖRÜNÜM SAYACI GÜNCELLEME FONKSİYONU - GÜNCELLENDİ
+        // GÖRÜNÜM SAYACI GÜNCELLEME FONKSİYONU - TAMAMEN YENİLENDİ
         async function updateViewCount(entryId) {
           if (viewsCache.isUpdating) return;
           
-          // Aynı oturumda aynı entry için birden fazla görüntülenme saymasın
+          // Benzersiz bir kullanıcı fingerprint'i oluştur
+          const fingerprint = await generateFingerprint();
+          
+          // Aynı fingerprint ile aynı entry için birden fazla görüntülenme saymasın
           const viewedEntries = JSON.parse(sessionStorage.getItem('viewedEntries') || '{}');
-          if (viewedEntries[entryId]) return;
+          if (viewedEntries[`${entryId}-${fingerprint}`]) return;
           
           // Yerel önbellekte view sayısını güncelle
           const currentCount = viewsCache.data[entryId] || 0;
@@ -2233,18 +2274,48 @@
             viewCountElement.innerHTML = `<i class="fas fa-eye"> </i> ${currentCount + 1}`;
           }
           
-          // Oturumda bu entry'nin görüntülendiğini işaretle
-          viewedEntries[entryId] = true;
+          // Oturumda bu entry'nin bu fingerprint ile görüntülendiğini işaretle
+          viewedEntries[`${entryId}-${fingerprint}`] = true;
           sessionStorage.setItem('viewedEntries', JSON.stringify(viewedEntries));
           
           // Bekleyen güncellemelere ekle (anında değil, periyodik olarak gönderilecek)
           pendingViewUpdates[entryId] = (pendingViewUpdates[entryId] || 0) + 1;
           
           // IP ve view bilgisini kaydet
-          logViewIp(entryId);
+          logViewIp(entryId, fingerprint);
           
           // İstatistikleri güncelle
           updateStatistics();
+        }
+
+        // Fingerprint oluşturma fonksiyonu
+        async function generateFingerprint() {
+          // IP bilgisini al
+          let ip = 'unknown';
+          try {
+            const ipResponse = await fetch('https://ipinfo.io/json?token=68a1229187303a');
+            const ipData = await ipResponse.json();
+            ip = ipData.ip;
+          } catch (error) {
+            console.error('IP alınamadı:', error);
+          }
+          
+          // Diğer kullanıcı bilgilerini topla
+          const userAgent = navigator.userAgent;
+          const language = navigator.language;
+          const screenResolution = `${screen.width}x${screen.height}`;
+          const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+          
+          // Bu bilgileri birleştir ve hash'le (basit bir hash)
+          const dataString = `${ip}-${userAgent}-${language}-${screenResolution}-${timezone}`;
+          let hash = 0;
+          for (let i = 0; i < dataString.length; i++) {
+            const char = dataString.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash; // 32-bit integer'a dönüştür
+          }
+          
+          return hash.toString();
         }
 
         // BEKLEYEN VIEW GÜNCELLEMELERİNİ GÖNDER - YENİ FONKSİYON
@@ -2285,8 +2356,8 @@
           }
         }
 
-        // IP VE İSTATİSTİK KAYDET - YENİ FONKSİYON
-        async function logViewIp(entryId) {
+        // IP VE İSTATİSTİK KAYDET - GÜNCELLENDİ (fingerprint eklendi)
+        async function logViewIp(entryId, fingerprint) {
           try {
             // IP bilgisini al
             const ipResponse = await fetch('https://ipinfo.io/json?token=68a1229187303a');
@@ -2303,7 +2374,8 @@
               entryId: entryId,
               country: ipData.country,
               city: ipData.city,
-              region: ipData.region
+              region: ipData.region,
+              fingerprint: fingerprint // fingerprint'i de kaydet
             };
             
             // İstatistikleri güncelle
@@ -2320,10 +2392,10 @@
               ]
             };
             
-            // Benzersiz ziyaretçi sayısını hesapla
-            const uniqueIps = new Set((currentStats.visitors || []).map(v => v.ip));
-            uniqueIps.add(ipData.ip);
-            updatedStats.statistics.uniqueVisitors = uniqueIps.size;
+            // Benzersiz ziyaretçi sayısını hesapla (fingerprint'e göre)
+            const uniqueFingerprints = new Set((currentStats.visitors || []).map(v => v.fingerprint));
+            uniqueFingerprints.add(fingerprint);
+            updatedStats.statistics.uniqueVisitors = uniqueFingerprints.size;
             
             // Günlük ve aylık istatistikleri güncelle
             const now = new Date();
@@ -2349,14 +2421,14 @@
           }
         }
 
-        // Intersection Observer ile görünür entry'lerin view count'unu güncelle - YENİ FONKSİYON
+        // Intersection Observer ile görünür entry'lerin view count'unu güncelle - İYİLEŞTİRİLDİ
         function setupViewCountObservers() {
           const entries = document.querySelectorAll('.entry');
           
           const observerOptions = {
             root: null,
-            rootMargin: '0px',
-            threshold: 0.5 // Entry'nin %50'si göründüğünde tetikle
+            rootMargin: '100px', // Daha erken tetikleme için margin ekle
+            threshold: 0.3 // %30'u göründüğünde tetikle (uzun entry'ler için)
           };
           
           const observer = new IntersectionObserver((entries) => {
@@ -3142,14 +3214,11 @@
           }
           
           loadMoreBtn.style.display = 'none';
-          
           // Çeviri ikonlarını ekle
           addTranslationIcons();
-          
           // Slider'ları başlat
           setTimeout(() => {
             initAllSliders();
-            
             // Görünür slider'ların boyutlarını güncelle
             document.querySelectorAll('.image-slider').forEach(slider => {
               if (slider.offsetParent !== null) {
@@ -3158,11 +3227,9 @@
               }
             });
           }, 100);
-          
           // GÖRÜNÜM SAYAçLARINI GÜNCELLE
           setupViewCountObservers();
         }
-
         // 9. UYGULAMAYI BAŞLAT
         document.addEventListener("DOMContentLoaded", initializeApp);
     </script>
