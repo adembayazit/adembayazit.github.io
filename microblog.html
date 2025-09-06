@@ -2974,437 +2974,198 @@
                 <div style="font-size: 12px; color: #90ee90;">#${entry.id} • ${date}</div>
                 <div style="font-size: 14px; margin: 5px 0;">${contentSnippet}</div>
                 <div style="display: flex; align-items: center; gap: 10px; font-size: 12px;">
-                <span><i class="fas fa-fire" style="color: orange;"></i> ${likes}</span>
-                <a href="#entry-${entry.id}" style="color: var(--primary-color); text-decoration: none;">View →</a>
-            </div>
-        </div>
-    `;
-}
-
-trendingContainer.innerHTML = html;
-}
-
-// Son aktiviteleri yükle
-function loadRecentActivity() {
-const activityContainer = document.getElementById('recent-activity');
-if (!activityContainer) return;
-
-// Son 10 entry'i al
-const recent = allEntries.slice(0, 5);
-
-if (recent.length === 0) {
-    activityContainer.innerHTML = '<div style="padding: 10px; text-align: center; color: #90ee90;">No recent activity</div>';
-    return;
-}
-
-let html = '';
-recent.forEach(entry => {
-    const date = new Date(entry.date).toLocaleDateString('tr-TR', {
-    hour: '2-digit',
-    minute: '2-digit'
-    });
-    const contentSnippet = entry.content.replace(/<[^>]*>/g, '').substring(0, 40) + '...';
-    
-    html += `
-    <div style="padding: 10px; border-bottom: 1px solid rgba(0, 255, 0, 0.2);">
-        <div style="font-size: 12px; color: #90ee90;">${date}</div>
-        <div style="font-size: 14px; margin: 5px 0;">${contentSnippet}</div>
-        <a href="#entry-${entry.id}" style="color: var(--primary-color); text-decoration: none; font-size: 12px;">View →</a>
-    </div>
-    `;
-});
-
-activityContainer.innerHTML = html;
-}
-
-// Arama işlevselliği
-function setupSearch() {
-const searchInput = document.getElementById('desktop-search-input');
-const searchButton = document.getElementById('desktop-search-btn');
-const mobileSearchInput = document.getElementById('mobile-search-input');
-const mobileSearchButton = document.getElementById('mobile-search-btn');
-
-const performSearch = (query) => {
-    if (query.length < 1) {
-    // Arama kutusu boşsa tüm entry'leri göster
-    const container = document.getElementById("entries");
-    container.innerHTML = '';
-    displayEntries(0, entriesPerPage);
-    document.getElementById('loadMoreBtn').style.display = 'block';
-    document.getElementById('entryCount').textContent = `Total ${allEntries.length} entries loaded`;
-    return;
-    }
-    
-    // Sayısal bir değer mi kontrol et (ID araması)
-    const isIdSearch = !isNaN(query) && query.trim() !== '';
-    
-    const results = allEntries.filter(entry => {
-    if (isIdSearch) {
-        // ID araması: tam eşleşme
-        return entry.id.toString() === query;
-    } else {
-        // Metin araması: içerikte ara
-        return entry.content.toLowerCase().includes(query.toLowerCase());
-    }
-    });
-    
-    // Arama sonuçlarını göster
-    displaySearchResults(results, query, isIdSearch);
-};
-
-if (searchInput && searchButton) {
-    searchInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        performSearch(searchInput.value.trim());
-    }
-    });
-    
-    searchButton.addEventListener('click', () => {
-    performSearch(searchInput.value.trim());
-    });
-}
-
-if (mobileSearchInput && mobileSearchButton) {
-    mobileSearchInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        performSearch(mobileSearchInput.value.trim());
-    }
-    });
-    
-    mobileSearchButton.addEventListener('click', () => {
-    performSearch(mobileSearchInput.value.trim());
-    });
-}
-}
-
-// Arama sonuçlarını göster
-function displaySearchResults(results, query, isIdSearch) {
-const container = document.getElementById("entries");
-const loadMoreBtn = document.getElementById("loadMoreBtn");
-const entryCount = document.getElementById("entryCount");
-
-if (results.length === 0) {
-    container.innerHTML = `
-    <div style="text-align: center; padding: 30px; color: #90ee90;">
-        <i class="fas fa-search" style="font-size: 24px; margin-bottom: 10px;"></i>
-        <div>No results found for "${query}"</div>
-        ${isIdSearch ? `<div style="margin-top: 10px; font-size: 14px;">Make sure you entered the correct ID number.</div>` : ''}
-    </div>
-    `;
-    loadMoreBtn.style.display = 'none';
-    entryCount.textContent = `0 results for "${query}"`;
-    return;
-}
-
-// Sonuçları göster
-container.innerHTML = '';
-entryCount.textContent = `${results.length} result${results.length !== 1 ? 's' : ''} for "${query}"`;
-
-// ID aramasıysa ve sadece 1 sonuç varsa, grubuyla birlikte göster
-if (isIdSearch && results.length === 1) {
-    const entry = results[0];
-    const parentId = entry.references && entry.references.length > 0 ? entry.references[0] : null;
-    
-    if (parentId) {
-    // Parent entry'yi bul
-    const parentEntry = allEntries.find(e => e.id === parentId);
-    if (parentEntry) {
-        // Parent ve child'ı birlikte göster
-        const groupDiv = document.createElement("div");
-        groupDiv.className = "entry-group";
-        groupDiv.id = `group-${parentEntry.id}`;
-        
-        // Parent entry'yi ekle
-        const parentElement = createEntryElement(parentEntry, 0);
-        groupDiv.appendChild(parentElement);
-        
-        // Child entry'leri ekle (sadece aranan child'ı)
-        const childElement = createEntryElement(entry, 1);
-        groupDiv.appendChild(childElement);
-        
-        container.appendChild(groupDiv);
-    } else {
-        // Parent bulunamadıysa sadece entry'yi göster
-        const entryElement = createEntryElement(entry);
-        container.appendChild(entryElement);
-    }
-    } else {
-    // Parent yoksa sadece entry'yi göster
-        const entryElement = createEntryElement(entry);
-        container.appendChild(entryElement);
-    }
-} else {
-    // Çoklu sonuçlar veya metin araması
-    results.forEach(entry => {
-    const entryElement = createEntryElement(entry);
-    container.appendChild(entryElement);
-    });
-}
-
-loadMoreBtn.style.display = 'none';
-// Çeviri ikonlarını ekle
-addTranslationIcons();
-// Slider'ları başlat
-setTimeout(() => {
-    initAllSliders();
-    // Görünür slider'ların boyutlarını güncelle
-    document.querySelectorAll('.image-slider').forEach(slider => {
-    if (slider.offsetParent !== null) {
-        const event = new Event('resize');
-        window.dispatchEvent(event);
-    }
-    });
-}, 100);
-// GÖRÜNÜM SAYAÇLARINI GÜNCELLE
-setupViewCountObservers();
-}
-
-// 9. UYGULAMAYI BAŞLAT
-document.addEventListener("DOMContentLoaded", initializeApp);
-
-// 10. PERFORMANS İYİLEŞTİRMELERİ - YENİ EKLENDİ
-// Görüntüleme sayacı optimizasyonları
-function optimizeViewCountSystem() {
-// Intersection Observer ile daha verimli görünüm takibi
-const observerOptions = {
-    root: null,
-    rootMargin: '0px',
-    threshold: 0.3 // Görünürlük eşiğini düşürdük
-};
-
-// Tüm entry'ler için tek bir observer kullan
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-    if (entry.isIntersecting) {
-        const entryId = entry.target.id.replace('entry-', '');
-        updateViewCount(entryId);
-        // Güncelleme yapıldıktan sonra observe'i durdur
-        observer.unobserve(entry.target);
-    }
-    });
-}, observerOptions);
-
-// Sayfa yüklendiğinde tüm entry'leri gözle
-document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => {
-    document.querySelectorAll('.entry').forEach(entry => {
-        observer.observe(entry);
-    });
-    }, 1000);
-});
-
-// Sayfaya yeni entry'ler eklendiğinde onları da gözle
-const originalDisplayEntries = displayEntries;
-displayEntries = function(startIndex, count, callback) {
-    originalDisplayEntries(startIndex, count, () => {
-    if (callback) callback();
-    
-    // Yeni eklenen entry'leri gözle
-    setTimeout(() => {
-        document.querySelectorAll('.entry').forEach(entry => {
-        if (!entry.hasAttribute('data-observed')) {
-            observer.observe(entry);
-            entry.setAttribute('data-observed', 'true');
+                  <span><i class="fas fa-fire" style="color: orange;"></i> ${likes}</span>
+                  <a href="#entry-${entry.id}" style="color: var(--primary-color); text-decoration: none;">View →</a>
+                  
+                </div>
+              </div>
+            `;
+          });
+          
+          trendingContainer.innerHTML = html;
+        } 
+        // Son aktiviteleri yükle
+        function loadRecentActivity() {
+          const activityContainer = document.getElementById('recent-activity');
+          if (!activityContainer) return;
+          
+          // Son 10 entry'i al
+          const recent = allEntries.slice(0, 5);
+          
+          if (recent.length === 0) {
+            activityContainer.innerHTML = '<div style="padding: 10px; text-align: center; color: #90ee90;">No recent activity</div>';
+            return;
+          }
+          
+          let html = '';
+          recent.forEach(entry => {
+            const date = new Date(entry.date).toLocaleDateString('tr-TR', {
+              hour: '2-digit',
+              minute: '2-digit'
+            });
+            const contentSnippet = entry.content.replace(/<[^>]*>/g, '').substring(0, 40) + '...';
+            
+            html += `
+              <div style="padding: 10px; border-bottom: 1px solid rgba(0, 255, 0, 0.2);">
+                <div style="font-size: 12px; color: #90ee90;">${date}</div>
+                <div style="font-size: 14px; margin: 5px 0;">${contentSnippet}</div>
+                <a href="#entry-${entry.id}" style="color: var(--primary-color); text-decoration: none; font-size: 12px;">View →</a>
+              </div>
+            `;
+          });
+          
+          activityContainer.innerHTML = html;
         }
-        });
-    }, 500);
-    });
-};
-}
-
-// Uzun entry'ler için performans iyileştirmeleri
-function optimizeLongEntries() {
-// Resimleri lazy loading ile yükle
-document.addEventListener('DOMContentLoaded', () => {
-    const images = document.querySelectorAll('.content img');
-    
-    images.forEach(img => {
-    if (!img.hasAttribute('loading')) {
-        img.setAttribute('loading', 'lazy');
-    }
-    });
-});
-
-// İçerik kısaltma için yardımcı fonksiyon
-function truncateLongContent() {
-    const contents = document.querySelectorAll('.content');
-    const maxLength = 1000; // Maksimum karakter uzunluğu
-    
-    contents.forEach(content => {
-    const text = content.textContent;
-    if (text.length > maxLength) {
-        const truncated = text.substring(0, maxLength) + '...';
-        const readMore = document.createElement('a');
-        readMore.href = '#';
-        readMore.textContent = ' Devamını oku';
-        readMore.style.color = 'var(--primary-color)';
-        readMore.style.cursor = 'pointer';
         
-        readMore.addEventListener('click', (e) => {
-        e.preventDefault();
-        content.textContent = text;
-        content.appendChild(readMore);
-        readMore.textContent = ' Daha az göster';
-        });
-        
-        content.textContent = truncated;
-        content.appendChild(readMore);
-    }
-    });
-}
-
-// Sayfa yüklendiğinde uzun içerikleri kısalt
-document.addEventListener('DOMContentLoaded', truncateLongContent);
-}
-
-// JSONBin.io bağlantı hatası yönetimi
-function handleConnectionErrors() {
-// Orijinal fetchViaProxy fonksiyonunu sakla
-const originalFetchViaProxy = fetchViaProxy;
-
-// Yeniden deneme mekanizması ile fetchViaProxy'yi güncelle
-window.fetchViaProxy = async function(path, method = 'GET', body = null, binId = null) {
-    let retries = 3;
-    let lastError;
-    
-    while (retries > 0) {
-    try {
-        return await originalFetchViaProxy(path, method, body, binId);
-    } catch (error) {
-        lastError = error;
-        retries--;
-        
-        if (retries === 0) {
-        console.error(`JSONBin.io bağlantı hatası: ${error.message}`);
-        
-        // Yerel depolamaya fallback
-        if (method === 'GET') {
-            const cacheKey = `cache_${binId || 'default'}_${path}`;
-            const cached = localStorage.getItem(cacheKey);
-            if (cached) {
-            return JSON.parse(cached);
+        // Arama işlevselliği
+        function setupSearch() {
+          const searchInput = document.getElementById('desktop-search-input');
+          const searchButton = document.getElementById('desktop-search-btn');
+          const mobileSearchInput = document.getElementById('mobile-search-input');
+          const mobileSearchButton = document.getElementById('mobile-search-btn');
+          
+          const performSearch = (query) => {
+            if (query.length < 1) {
+              // Arama kutusu boşsa tüm entry'leri göster
+              const container = document.getElementById("entries");
+              container.innerHTML = '';
+              displayEntries(0, entriesPerPage);
+              document.getElementById('loadMoreBtn').style.display = 'block';
+              document.getElementById('entryCount').textContent = `Total ${allEntries.length} entries loaded`;
+              return;
             }
+            
+            // Sayısal bir değer mi kontrol et (ID araması)
+            const isIdSearch = !isNaN(query) && query.trim() !== '';
+            
+            const results = allEntries.filter(entry => {
+              if (isIdSearch) {
+                // ID araması: tam eşleşme
+                return entry.id.toString() === query;
+              } else {
+                // Metin araması: içerikte ara
+                return entry.content.toLowerCase().includes(query.toLowerCase());
+              }
+            });
+            
+            // Arama sonuçlarını göster
+            displaySearchResults(results, query, isIdSearch);
+          };
+          
+          if (searchInput && searchButton) {
+            searchInput.addEventListener('keypress', (e) => {
+              if (e.key === 'Enter') {
+                performSearch(searchInput.value.trim());
+              }
+            });
+            
+            searchButton.addEventListener('click', () => {
+              performSearch(searchInput.value.trim());
+            });
+          }
+          
+          if (mobileSearchInput && mobileSearchButton) {
+            mobileSearchInput.addEventListener('keypress', (e) => {
+              if (e.key === 'Enter') {
+                performSearch(mobileSearchInput.value.trim());
+              }
+            });
+            
+            mobileSearchButton.addEventListener('click', () => {
+              performSearch(mobileSearchInput.value.trim());
+            });
+          }
         }
         
-        throw error;
+        // Arama sonuçlarını göster
+        function displaySearchResults(results, query, isIdSearch) {
+          const container = document.getElementById("entries");
+          const loadMoreBtn = document.getElementById("loadMoreBtn");
+          const entryCount = document.getElementById("entryCount");
+          
+          if (results.length === 0) {
+            container.innerHTML = `
+              <div style="text-align: center; padding: 30px; color: #90ee90;">
+                <i class="fas fa-search" style="font-size: 24px; margin-bottom: 10px;"></i>
+                <div>No results found for "${query}"</div>
+                ${isIdSearch ? `<div style="margin-top: 10px; font-size: 14px;">Make sure you entered the correct ID number.</div>` : ''}
+              </div>
+            `;
+            loadMoreBtn.style.display = 'none';
+            entryCount.textContent = `0 results for "${query}"`;
+            return;
+          }
+          
+          // Sonuçları göster
+          container.innerHTML = '';
+          entryCount.textContent = `${results.length} result${results.length !== 1 ? 's' : ''} for "${query}"`;
+          
+          // ID aramasıysa ve sadece 1 sonuç varsa, grubuyla birlikte göster
+          if (isIdSearch && results.length === 1) {
+            const entry = results[0];
+            const parentId = entry.references && entry.references.length > 0 ? entry.references[0] : null;
+            
+            if (parentId) {
+              // Parent entry'yi bul
+              const parentEntry = allEntries.find(e => e.id === parentId);
+              if (parentEntry) {
+                // Parent ve child'ı birlikte göster
+                const groupDiv = document.createElement("div");
+                groupDiv.className = "entry-group";
+                groupDiv.id = `group-${parentEntry.id}`;
+                
+                // Parent entry'yi ekle
+                const parentElement = createEntryElement(parentEntry, 0);
+                groupDiv.appendChild(parentElement);
+                
+                // Child entry'leri ekle (sadece aranan child'ı)
+                const childElement = createEntryElement(entry, 1);
+                groupDiv.appendChild(childElement);
+                
+                container.appendChild(groupDiv);
+              } else {
+                // Parent bulunamadıysa sadece entry'yi göster
+                const entryElement = createEntryElement(entry);
+                container.appendChild(entryElement);
+              }
+            } else {
+              // Parent yoksa sadece entry'yi göster
+                const entryElement = createEntryElement(entry);
+                container.appendChild(entryElement);
+            }
+          } else {
+            // Çoklu sonuçlar veya metin araması
+            results.forEach(entry => {
+              const entryElement = createEntryElement(entry);
+              container.appendChild(entryElement);
+            });
+          }
+          
+          loadMoreBtn.style.display = 'none';
+          
+          // Çeviri ikonlarını ekle
+          addTranslationIcons();
+          
+          // Slider'ları başlat
+          setTimeout(() => {
+            initAllSliders();
+            
+            // Görünür slider'ların boyutlarını güncelle
+            document.querySelectorAll('.image-slider').forEach(slider => {
+              if (slider.offsetParent !== null) {
+                const event = new Event('resize');
+                window.dispatchEvent(event);
+              }
+            });
+          }, 100);
+          
+          // GÖRÜNÜM SAYAçLARINI GÜNCELLE
+          setupViewCountObservers();
         }
-        
-        // Üssel geri çekilme ile yeniden dene
-        await new Promise(resolve => setTimeout(resolve, 1000 * (4 - retries)));
-    }
-    }
-};
-}
 
-// Sayfa performansını izle
-function monitorPerformance() {
-// Uzun süren görevları izle
-const observer = new PerformanceObserver((list) => {
-    list.getEntries().forEach((entry) => {
-    if (entry.duration > 100) { // 100ms'den uzun süren görevler
-        console.warn(`Uzun süren görev: ${entry.name}, Süre: ${entry.duration}ms`);
-    }
-    });
-});
-
-observer.observe({ entryTypes: ['longtask'] });
-
-// Bellek kullanımını izle
-if (performance.memory) {
-    setInterval(() => {
-    const memory = performance.memory;
-    const usedMB = memory.usedJSHeapSize / 1048576;
-    const totalMB = memory.totalJSHeapSize / 1048576;
-    
-    if (usedMB > 100) { // 100MB'den fazla bellek kullanımı
-        console.warn(`Yüksek bellek kullanımı: ${usedMB.toFixed(2)}MB / ${totalMB.toFixed(2)}MB`);
-        
-        // Gereksiz önbellekleri temizle
-        if (window.gc) {
-        window.gc(); // Chrome'da manuel çöp toplama
-        }
-      }
-    }, 30000);
-}
-}
-
-// 11. SAYFA YÜKLENDİĞİNDE OPTİMİZASYONLARI BAŞLAT
-document.addEventListener('DOMContentLoaded', () => {
-// Performans iyileştirmelerini başlat
-optimizeViewCountSystem();
-optimizeLongEntries();
-handleConnectionErrors();
-monitorPerformance();
-
-// Sayfa boyutunu izle ve gerektiğinde içerikleri optimize et
-let resizeTimeout;
-window.addEventListener('resize', () => {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(() => {
-    // Ekran boyutu değiştiğinde slider'ları yeniden başlat
-    initAllSliders();
-    }, 250);
-});
-});
-
-// 12. GÖRÜNTÜLEME SAYACI İÇİN EK GÜVENLİK ÖNLEMLERİ
-// IP çakışmalarını önlemek için daha güvenli bir hash fonksiyonu
-async function generateViewerHash(entryId) {
-try {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(entryId + navigator.userAgent + new Date().toDateString());
-    const hash = await crypto.subtle.digest('SHA-256', data);
-    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
-} catch (error) {
-    // Fallback: basit bir hash
-    return entryId + navigator.userAgent.slice(0, 10) + new Date().toDateString();
-}
-}
-
-// Görüntüleme sayacını daha güvenli hale getir
-async function secureViewCount(entryId) {
-const viewerHash = await generateViewerHash(entryId);
-const viewedEntries = JSON.parse(sessionStorage.getItem('viewedEntries') || '{}');
-
-// Aynı gün içinde aynı entry için aynı kullanıcıdan birden fazla görüntüleme saymasın
-const today = new Date().toDateString();
-if (viewedEntries[entryId] === viewerHash + today) {
-    return false; // Zaten bugün görüntülenmiş
-}
-
-viewedEntries[entryId] = viewerHash + today;
-sessionStorage.setItem('viewedEntries', JSON.stringify(viewedEntries));
-return true;
-}
-
-// Güncellenmiş updateViewCount fonksiyonu
-async function updateViewCount(entryId) {
-if (viewsCache.isUpdating) return;
-
-// Güvenlik kontrolü
-const canCountView = await secureViewCount(entryId);
-if (!canCountView) return;
-
-// Yerel önbellekte view sayısını güncelle
-const currentCount = viewsCache.data[entryId] || 0;
-viewsCache.data[entryId] = currentCount + 1;
-
-// UI'da görüntülenme sayısını güncelle
-const viewCountElement = document.querySelector(`#entry-${entryId} .view-count`);
-if (viewCountElement) {
-    viewCountElement.innerHTML = `<i class="fas fa-eye"> </i> ${currentCount + 1}`;
-}
-
-// Bekleyen güncellemelere ekle
-pendingViewUpdates[entryId] = (pendingViewUpdates[entryId] || 0) + 1;
-
-// IP ve view bilgisini kaydet
-logViewIp(entryId);
-
-// İstatistikleri güncelle
-updateStatistics();
-}
-</script>
-<script src="/JAVASCRIPT/matrix.js"></script>
+        // 9. UYGULAMAYI BAŞLAT
+        document.addEventListener("DOMContentLoaded", initializeApp);
+    </script>
+    <script src="/JAVASCRIPT/matrix.js"></script>
 </body>
 </html>
