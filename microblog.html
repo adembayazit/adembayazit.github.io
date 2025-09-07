@@ -2302,6 +2302,11 @@
         // More butonları için event listener - YENİ EKLENDİ
         function setupSeeMoreButtons() {
           document.querySelectorAll('.see-more-btn').forEach(btn => {
+            // Eğer bu buton zaten işlenmişse atla
+            if (btn.getAttribute('data-processed') === 'true') return;
+            
+            btn.setAttribute('data-processed', 'true');
+            
             btn.addEventListener('click', function(e) {
               e.preventDefault();
               const contentWrapper = this.closest('.content-wrapper');
@@ -2314,18 +2319,20 @@
                 contentDiv.innerHTML = fullContent;
                 contentDiv.classList.remove('collapsed');
                 this.textContent = 'less';
+                
+                // Sadece bu entry içindeki slider'ları başlat
+                const sliders = contentDiv.querySelectorAll('.image-slider');
+                sliders.forEach(slider => {
+                  initSlider(slider.id);
+                });
               } else {
                 // İçeriği daralt
+                const textContent = contentDiv.textContent || contentDiv.innerText;
                 const shortContent = truncateHTML(contentDiv.innerHTML, 632);
                 contentDiv.innerHTML = shortContent;
                 contentDiv.classList.add('collapsed');
                 this.textContent = 'more';
               }
-              
-              // Slider'ları tekrar başlat
-              setTimeout(() => {
-                initAllSliders();
-              }, 0);
             });
           });
         }
