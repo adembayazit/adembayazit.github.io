@@ -1098,6 +1098,68 @@
                 bottom: 15px;
             }
         }
+
+        /* UZUN ENTRY DÜZENLEMELERİ - YENİ EKLENDİ */
+        .content-wrapper {
+            position: relative;
+        }
+        
+        .content-short {
+            max-height: 300px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .content-short::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(to bottom, transparent, var(--card-bg));
+            pointer-events: none;
+        }
+        
+        .content-full {
+            display: none;
+        }
+        
+        .show-more-btn {
+            background: var(--primary-color);
+            color: black;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-weight: bold;
+            display: block;
+            width: 100%;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .show-more-btn:hover {
+            background: var(--secondary-color);
+            box-shadow: 0 0 10px var(--primary-color);
+        }
+        
+        .entry.expanded .content-short {
+            max-height: none;
+        }
+        
+        .entry.expanded .content-short::after {
+            display: none;
+        }
+        
+        .entry.expanded .content-full {
+            display: block;
+        }
+        
+        .entry.expanded .show-more-btn {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -2024,31 +2086,72 @@
           const pinCount = pinsCache.data[entry.id] || 0;
           const viewCount = viewsCache.data[entry.id] || 0;
 
+          // Uzun içerik kontrolü
+          const textContent = entry.content.replace(/<[^>]*>/g, '');
+          const isLongContent = textContent.length > 500;
+          
           const formattedContent = formatContent(entry.content);
 
-          entryDiv.innerHTML = `
-            <div class="timestamp">
-              <span class="fa-solid fa-bug bug-iconentry"></span> ${time}
-            </div>
-            <div class="entry-id">#${entry.id}</div>
-            <div class="content">${formattedContent}</div>
-            <div class="interaction-buttons">
-              <div class="view-count">
-                <i class="fas fa-eye"> </i> ${viewCount}
+          // Uzun içerikler için "more" butonu ekle
+          if (isLongContent) {
+            entryDiv.innerHTML = `
+              <div class="timestamp">
+                <span class="fa-solid fa-bug bug-iconentry"></span> ${time}
               </div>
-              <div class="daisy-like" data-entry-id="${entry.id}">
-                <img src="/IMAGES/daisy.svg" class="daisy-icon" alt="Beğen" />
-                <span class="like-count">${likeCount}</span>
+              <div class="entry-id">#${entry.id}</div>
+              <div class="content-wrapper">
+                <div class="content-short">${formattedContent}</div>
+                <div class="content-full" style="display: none;">${formattedContent}</div>
+                <button class="show-more-btn">More</button>
               </div>
-              <div class="pine-pin" data-entry-id="${entry.id}">
-                <img src="/IMAGES/pine.svg" class="pine-icon" alt="Pinle" />
-                <span class="pin-count">${pinCount}</span>
+              <div class="interaction-buttons">
+                <div class="view-count">
+                  <i class="fas fa-eye"> </i> ${viewCount}
+                </div>
+                <div class="daisy-like" data-entry-id="${entry.id}">
+                  <img src="/IMAGES/daisy.svg" class="daisy-icon" alt="Beğen" />
+                  <span class="like-count">${likeCount}</span>
+                </div>
+                <div class="pine-pin" data-entry-id="${entry.id}">
+                  <img src="/IMAGES/pine.svg" class="pine-icon" alt="Pinle" />
+                  <span class="pin-count">${pinCount}</span>
+                </div>
+                <div class="share-entry" data-entry-id="${entry.id}">
+                  <i class="fas fa-share-alt share-icon"></i>
+                </div>
               </div>
-              <div class="share-entry" data-entry-id="${entry.id}">
-                <i class="fas fa-share-alt share-icon"></i>
+            `;
+            
+            // More butonu için event listener ekle
+            const moreBtn = entryDiv.querySelector('.show-more-btn');
+            moreBtn.addEventListener('click', () => {
+              entryDiv.classList.add('expanded');
+            });
+          } else {
+            entryDiv.innerHTML = `
+              <div class="timestamp">
+                <span class="fa-solid fa-bug bug-iconentry"></span> ${time}
               </div>
-            </div>
-          `;
+              <div class="entry-id">#${entry.id}</div>
+              <div class="content">${formattedContent}</div>
+              <div class="interaction-buttons">
+                <div class="view-count">
+                  <i class="fas fa-eye"> </i> ${viewCount}
+                </div>
+                <div class="daisy-like" data-entry-id="${entry.id}">
+                  <img src="/IMAGES/daisy.svg" class="daisy-icon" alt="Beğen" />
+                  <span class="like-count">${likeCount}</span>
+                </div>
+                <div class="pine-pin" data-entry-id="${entry.id}">
+                  <img src="/IMAGES/pine.svg" class="pine-icon" alt="Pinle" />
+                  <span class="pin-count">${pinCount}</span>
+                </div>
+                <div class="share-entry" data-entry-id="${entry.id}">
+                  <i class="fas fa-share-alt share-icon"></i>
+                </div>
+              </div>
+            `;
+          }
 
           const likeIcon = entryDiv.querySelector(".daisy-like");
           likeIcon?.addEventListener("click", () => handleLikeClick(entry.id, entryDiv));
@@ -2428,7 +2531,7 @@
           const observerOptions = {
             root: null,
             rootMargin: '100px', // Daha erken tetikleme için margin ekle
-            threshold: 0.3 // %30'u göründüğünde tetikle (uzun entry'ler için)
+            threshold: 0.25 // %25'i göründüğünde tetikle (daha düşük threshold)
           };
           
           const observer = new IntersectionObserver((entries) => {
@@ -3230,7 +3333,7 @@
           // GÖRÜNÜM SAYAçLARINI GÜNCELLE
           setupViewCountObservers();
         }
-        // 9. UYGULAMAYI BAŞLAT
+        // 9. UYGULAMAYI BAşLAT
         document.addEventListener("DOMContentLoaded", initializeApp);
     </script>
     <script src="/JAVASCRIPT/matrix.js"></script>
