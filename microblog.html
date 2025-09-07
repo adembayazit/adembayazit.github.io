@@ -2086,9 +2086,9 @@
           const pinCount = pinsCache.data[entry.id] || 0;
           const viewCount = viewsCache.data[entry.id] || 0;
 
-          // Uzun içerik kontrolü
+          // Uzun içerik kontrolü - 750 karakter sınırı
           const textContent = entry.content.replace(/<[^>]*>/g, '');
-          const isLongContent = textContent.length > 500;
+          const isLongContent = textContent.length > 750;
           
           const formattedContent = formatContent(entry.content);
 
@@ -2126,6 +2126,13 @@
             const moreBtn = entryDiv.querySelector('.show-more-btn');
             moreBtn.addEventListener('click', () => {
               entryDiv.classList.add('expanded');
+              // Entry expanded olduktan sonra içindeki slider'ları yeniden başlat
+              setTimeout(() => {
+                const slidersInEntry = entryDiv.querySelectorAll('.image-slider');
+                slidersInEntry.forEach(slider => {
+                  initSlider(slider.id);
+                });
+              }, 100);
             });
           } else {
             entryDiv.innerHTML = `
@@ -2736,7 +2743,7 @@
             }
             
             // Küçültülmüş bildirime tıklanınca tekrar büyüt
-            const handleMinimizedClick = () => {
+            const handleMinimizedClick = () {
               notificationElement.classList.remove('minimized');
               notificationElement.removeEventListener('click', handleMinimizedClick);
               
@@ -2763,7 +2770,7 @@
               const headerHeight = header ? header.offsetHeight : 80;
               
               setTimeout(() => {
-                // Elementin pozisyonunu hesapla ve header yüksekliği kadar aşağı kaydır
+                // Element'in pozisyonunu hesapla ve header yüksekliği kadar aşağı kaydır
                 const elementPosition = entryElement.getBoundingClientRect().top;
                 const offsetPosition = elementPosition + window.pageYOffset - headerHeight;
                 
