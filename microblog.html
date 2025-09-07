@@ -1098,6 +1098,49 @@
                 bottom: 15px;
             }
         }
+
+        /* More butonu için yeni stiller */
+        .see-more-btn {
+            color: var(--primary-color) !important;
+            cursor: pointer;
+            font-weight: bold;
+            display: inline-block;
+            margin-left: 5px;
+            padding: 2px 6px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+            border: 1px solid var(--primary-color);
+        }
+        
+        .see-more-btn:hover {
+            background: rgba(0, 255, 0, 0.2);
+        }
+        
+        .content.collapsed {
+            max-height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .content.collapsed::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background: linear-gradient(to bottom, transparent, var(--main-bg-color));
+        }
+
+        /* YENİ: More butonu için düzenlemeler */
+        .content-wrapper {
+            position: relative;
+        }
+        
+        .see-more-container {
+            text-align: center;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -1559,7 +1602,7 @@
         }
 
         // HTML içeriğini düzgün işlemek için yardımcı fonksiyon
-        function formatContent(content) {
+        function formatContent(content, shouldTruncate = false) {
           // İlk temizlik: <br> etiketlerini standartlaştır ve boş <p> etiketlerini kaldır
           content = content.replace(/<br\s*\/?>/gi, '<br>');
           content = content.replace(/<p>\s*<\/p>/gi, '');
@@ -1603,6 +1646,44 @@
           });
           
           return content;
+        }
+        
+        // HTML etiketlerini koruyarak kısaltma fonksiyonu - YENİ EKLENDİ
+        function truncateHTML(html, maxLength) {
+          // HTML etiketlerini koruyarak kısaltma
+          let length = 0;
+          let result = '';
+          let inTag = false;
+          let tagBuffer = '';
+          
+          for (let i = 0; i < html.length; i++) {
+            const char = html[i];
+            
+            if (char === '<') {
+              inTag = true;
+              tagBuffer = char;
+            } else if (char === '>') {
+              inTag = false;
+              result += tagBuffer + char;
+              tagBuffer = '';
+            } else if (inTag) {
+              tagBuffer += char;
+            } else {
+              if (length < maxLength) {
+                result += char;
+                length++;
+              } else {
+                break;
+              }
+            }
+          }
+          
+          // Kapanmamış etiketleri kapat
+          if (inTag && tagBuffer) {
+            result += tagBuffer + '>';
+          }
+          
+          return result;
         }
         
         // Resim slider'ı oluşturma fonksiyonu - İLK KODDAN ALINDI
@@ -2024,14 +2105,27 @@
           const pinCount = pinsCache.data[entry.id] || 0;
           const viewCount = viewsCache.data[entry.id] || 0;
 
-          const formattedContent = formatContent(entry.content);
+          // Metin uzunluğunu kontrol et (HTML etiketleri olmadan)
+          const textContent = entry.content.replace(/<[^>]*>/g, '');
+          const shouldTruncate = textContent.length > 632;
+
+          // İçeriği formatla (more butonu eklemeden)
+          const formattedContent = formatContent(entry.content, false);
+          let shortContent = '';
+          
+          if (shouldTruncate) {
+            // Kısa içerik için HTML'i kısalt
+            shortContent = truncateHTML(formattedContent, 5000);
+          }
 
           entryDiv.innerHTML = `
             <div class="timestamp">
               <span class="fa-solid fa-bug bug-iconentry"></span> ${time}
             </div>
             <div class="entry-id">#${entry.id}</div>
-            <div class="content">${formattedContent}</div>
+            <div class="content-wrapper">
+                <div class="content ${shouldTruncate ? 'collapsed' : ''}">${shouldTruncate ? shortContent : formattedContent}</div>
+            </div>
             <div class="interaction-buttons">
               <div class="view-count">
                 <i class="fas fa-eye"> </i> ${viewCount}
@@ -2050,6 +2144,19 @@
             </div>
           `;
 
+          // Eğer kısaltma yapıldıysa, more butonu ekle ve tam içeriği sakla
+          if (shouldTruncate) {
+            const contentWrapper = entryDiv.querySelector('.content-wrapper');
+            const seeMoreContainer = document.createElement('div');
+            seeMoreContainer.className = 'see-more-container';
+            seeMoreContainer.innerHTML = `<span class="see-more-btn">more</span>`;
+            contentWrapper.appendChild(seeMoreContainer);
+            
+            // Tam içeriği sakla
+            const contentDiv = entryDiv.querySelector('.content');
+            contentDiv.setAttribute('data-full-content', formattedContent);
+          }
+
           const likeIcon = entryDiv.querySelector(".daisy-like");
           likeIcon?.addEventListener("click", () => handleLikeClick(entry.id, entryDiv));
 
@@ -2058,9 +2165,6 @@
 
           const shareIcon = entryDiv.querySelector(".share-entry");
           shareIcon?.addEventListener("click", () => handleShareClick(entry.id));
-
-          const copyLinkIcon = entryDiv.querySelector(".copy-link");
-          copyLinkIcon?.addEventListener("click", () => handleCopyLinkClick(entry.id));
 
           return entryDiv;
         }
@@ -2158,6 +2262,9 @@
           // Çeviri ikonlarını ekle
           addTranslationIcons();
           
+          // More butonları için event listener ekle
+          setupSeeMoreButtons();
+          
           // Slider'ları başlat
           setTimeout(() => {
             initAllSliders();
@@ -2186,6 +2293,37 @@
           
           // Callback'i çağır (hash kontrolü için)
           if (callback) callback();
+        }
+
+        // More butonları için event listener - YENİ EKLENDİ
+        function setupSeeMoreButtons() {
+          document.querySelectorAll('.see-more-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+              e.preventDefault();
+              const contentWrapper = this.closest('.content-wrapper');
+              const contentDiv = contentWrapper.querySelector('.content');
+              const isCollapsed = contentDiv.classList.contains('collapsed');
+              
+              if (isCollapsed) {
+                // İçeriği genişlet
+                const fullContent = contentDiv.getAttribute('data-full-content');
+                contentDiv.innerHTML = fullContent;
+                contentDiv.classList.remove('collapsed');
+                this.textContent = 'less';
+              } else {
+                // İçeriği daralt
+                const shortContent = truncateHTML(contentDiv.innerHTML, 632);
+                contentDiv.innerHTML = shortContent;
+                contentDiv.classList.add('collapsed');
+                this.textContent = 'more';
+              }
+              
+              // Slider'ları tekrar başlat
+              setTimeout(() => {
+                initAllSliders();
+              }, 0);
+            });
+          });
         }
 
         // 4. INTERACTION FONKSİYONLARI
@@ -2421,7 +2559,7 @@
           }
         }
 
-        // Intersection Observer ile görünür entry'lerin view count'unu güncelle - İYİLEŞTİRİLDİ
+       // Intersection Observer ile görünür entry'lerın view count'unu güncelle - İYİLEŞTİRİLDİ
         function setupViewCountObservers() {
           const entries = document.querySelectorAll('.entry');
           
@@ -2660,7 +2798,7 @@
               const headerHeight = header ? header.offsetHeight : 80;
               
               setTimeout(() => {
-                // Elementin pozisyonunu hesapla ve header yüksekliği kadar aşağı kaydır
+                // Elementın pozisyonunu hesapla ve header yüksekliği kadar aşağı kaydır
                 const elementPosition = entryElement.getBoundingClientRect().top;
                 const offsetPosition = elementPosition + window.pageYOffset - headerHeight;
                 
@@ -2723,10 +2861,11 @@
                 document.getElementById('notificationStatus').textContent = 
                   'Bildirimleri etkinleştirmek için butona tıklayın.';
               }
-            })
-            .catch(function(error) {
-              console.error('Error getting subscription:', error);
-            });
+            }
+          )
+          .catch(function(error) {
+            console.error('Error getting subscription:', error);
+          });
         }
 
         // Kullanıcıyı abone et
@@ -3216,6 +3355,8 @@
           loadMoreBtn.style.display = 'none';
           // Çeviri ikonlarını ekle
           addTranslationIcons();
+          // More butonları için event listener ekle
+          setupSeeMoreButtons();
           // Slider'ları başlat
           setTimeout(() => {
             initAllSliders();
@@ -3227,7 +3368,7 @@
               }
             });
           }, 100);
-          // GÖRÜNÜM SAYAçLARINI GÜNCELLE
+          // GÖRÜNÜM SAYAÇLARINI GÜNCELLE
           setupViewCountObservers();
         }
         // 9. UYGULAMAYI BAŞLAT
