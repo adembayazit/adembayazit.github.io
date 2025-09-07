@@ -2283,8 +2283,11 @@
           
           loadingElement.style.display = 'none';
           
+          // Eğer tüm entry'ler yüklendiyse "More Entry" butonunu gizle
           if (displayedEntries >= groupedEntries.length) {
             loadMoreBtn.style.display = 'none';
+          } else {
+            loadMoreBtn.style.display = 'block';
           }
           
           // Daha fazla yükle butonunun metnini güncelle
@@ -2943,19 +2946,26 @@
             groupedEntries = groupEntries(allEntries);
             
             setupImageModal();
-            displayEntries(0, entriesPerPage, scrollToEntryFromHash);
             
-            document.getElementById('loadMoreBtn').addEventListener('click', () => {
-              // Mevcut scroll pozisyonunu kaydet
-              currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
-              displayEntries(displayedEntries, entriesPerPage, () => {
-                // Yeni içerik yüklendikten sonra scroll pozisyonunu koru
-                window.scrollTo(0, currentScrollPosition);
-                
-                // Hash kontrolü yap
-                scrollToEntryFromHash();
+            // Tüm entry'leri yükle (sadece 22 entry olduğu için hepsini bir seferde yükle)
+            displayEntries(0, allEntries.length, scrollToEntryFromHash);
+            
+            // Eğer 20'den az entry varsa "More Entry" butonunu gizle
+            if (allEntries.length <= 20) {
+              document.getElementById('loadMoreBtn').style.display = 'none';
+            } else {
+              document.getElementById('loadMoreBtn').addEventListener('click', () => {
+                // Mevcut scroll pozisyonunu kaydet
+                currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+                displayEntries(displayedEntries, entriesPerPage, () => {
+                  // Yeni içerik yüklendikten sonra scroll pozisyonunu koru
+                  window.scrollTo(0, currentScrollPosition);
+                  
+                  // Hash kontrolü yap
+                  scrollToEntryFromHash();
+                });
               });
-            });
+            }
             
             // Popüler ve trend entry'leri yükle
             loadPopularEntries();
@@ -3019,15 +3029,21 @@
               
               setupImageModal();
               
-              displayEntries(0, entriesPerPage, scrollToEntryFromHash);
+              // Tüm entry'leri yükle (sadece 22 entry olduğu için hepsini bir seferde yükle)
+              displayEntries(0, allEntries.length, scrollToEntryFromHash);
               
-              document.getElementById('loadMoreBtn').addEventListener('click', () => {
-                currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
-                displayEntries(displayedEntries, entriesPerPage, () => {
-                  window.scrollTo(0, currentScrollPosition);
-                  scrollToEntryFromHash();
+              // Eğer 20'den az entry varsa "More Entry" butonunu gizle
+              if (allEntries.length <= 20) {
+                document.getElementById('loadMoreBtn').style.display = 'none';
+              } else {
+                document.getElementById('loadMoreBtn').addEventListener('click', () => {
+                  currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+                  displayEntries(displayedEntries, entriesPerPage, () => {
+                    window.scrollTo(0, currentScrollPosition);
+                    scrollToEntryFromHash();
+                  });
                 });
-              });
+              }
 
               // Popüler ve trend entry'leri yükle
               loadPopularEntries();
@@ -3240,8 +3256,8 @@
               // Arama kutusu boşsa tüm entry'leri göster
               const container = document.getElementById("entries");
               container.innerHTML = '';
-              displayEntries(0, entriesPerPage);
-              document.getElementById('loadMoreBtn').style.display = 'block';
+              displayEntries(0, allEntries.length);
+              document.getElementById('loadMoreBtn').style.display = allEntries.length > 20 ? 'block' : 'none';
               document.getElementById('entryCount').textContent = `Total ${allEntries.length} entries loaded`;
               return;
             }
@@ -3254,7 +3270,7 @@
                 // ID araması: tam eşleşme
                 return entry.id.toString() === query;
               } else {
-                // Metin araması: içerikte ara
+                // Metin araması: içerikde ara
                 return entry.content.toLowerCase().includes(query.toLowerCase());
               }
             });
