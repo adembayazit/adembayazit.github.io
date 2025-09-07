@@ -1479,7 +1479,7 @@
         let allEntries = [];
         let groupedEntries = [];
         let displayedEntries = 0;
-        const entriesPerPage = 20;
+        const entriesPerPage = 5; // Grup sayısı olarak değiştirildi
         let latestEntryId = null;
         let parentOfLatestId = null;
         let checkInterval;
@@ -2947,25 +2947,21 @@
             
             setupImageModal();
             
-            // Tüm entry'leri yükle (sadece 22 entry olduğu için hepsini bir seferde yükle)
-            displayEntries(0, allEntries.length, scrollToEntryFromHash);
+            // Sadece ilk 5 grubu yükle (sayfa başına 5 grup)
+            displayEntries(0, entriesPerPage, scrollToEntryFromHash);
             
-            // Eğer 20'den az entry varsa "More Entry" butonunu gizle
-            if (allEntries.length <= 20) {
-              document.getElementById('loadMoreBtn').style.display = 'none';
-            } else {
-              document.getElementById('loadMoreBtn').addEventListener('click', () => {
-                // Mevcut scroll pozisyonunu kaydet
-                currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
-                displayEntries(displayedEntries, entriesPerPage, () => {
-                  // Yeni içerik yüklendikten sonra scroll pozisyonunu koru
-                  window.scrollTo(0, currentScrollPosition);
-                  
-                  // Hash kontrolü yap
-                  scrollToEntryFromHash();
-                });
+            // "More Entry" butonuna event listener ekle
+            document.getElementById('loadMoreBtn').addEventListener('click', () => {
+              // Mevcut scroll pozisyonunu kaydet
+              currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+              displayEntries(displayedEntries, entriesPerPage, () => {
+                // Yeni içerik yüklendikten sonra scroll pozisyonunu koru
+                window.scrollTo(0, currentScrollPosition);
+                
+                // Hash kontrolü yap
+                scrollToEntryFromHash();
               });
-            }
+            });
             
             // Popüler ve trend entry'leri yükle
             loadPopularEntries();
@@ -3029,21 +3025,17 @@
               
               setupImageModal();
               
-              // Tüm entry'leri yükle (sadece 22 entry olduğu için hepsini bir seferde yükle)
-              displayEntries(0, allEntries.length, scrollToEntryFromHash);
+              // Sadece ilk 5 grubu yükle (sayfa başına 5 grup)
+              displayEntries(0, entriesPerPage, scrollToEntryFromHash);
               
-              // Eğer 20'den az entry varsa "More Entry" butonunu gizle
-              if (allEntries.length <= 20) {
-                document.getElementById('loadMoreBtn').style.display = 'none';
-              } else {
-                document.getElementById('loadMoreBtn').addEventListener('click', () => {
-                  currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
-                  displayEntries(displayedEntries, entriesPerPage, () => {
-                    window.scrollTo(0, currentScrollPosition);
-                    scrollToEntryFromHash();
-                  });
+              // "More Entry" butonuna event listener ekle
+              document.getElementById('loadMoreBtn').addEventListener('click', () => {
+                currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+                displayEntries(displayedEntries, entriesPerPage, () => {
+                  window.scrollTo(0, currentScrollPosition);
+                  scrollToEntryFromHash();
                 });
-              }
+              });
 
               // Popüler ve trend entry'leri yükle
               loadPopularEntries();
@@ -3327,7 +3319,7 @@
           container.innerHTML = '';
           entryCount.textContent = `${results.length} result${results.length !== 1 ? 's' : ''} for "${query}"`;
           
-          // ID aramasıysa ve sadece 1 sonuç varsa, grubuyla birlikte göster
+          // ID aramasıysa ve sadece 1 sonuç varsa, grubuyla birlickte göster
           if (isIdSearch && results.length === 1) {
             const entry = results[0];
             const parentId = entry.references && entry.references.length > 0 ? entry.references[0] : null;
