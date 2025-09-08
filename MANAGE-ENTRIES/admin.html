@@ -1523,34 +1523,46 @@
             return null;
         }
         
+        // Youtube eklemek için fonksiyon
         function addYoutubeEmbed(textareaId) {
+            // Kullanıcıdan Youtube URL'sini al
             const youtubeUrl = prompt("Youtube URL veya Video ID girin:");
             if (!youtubeUrl) return;
             
+            // Video ID'yi URL'den çıkart
             let videoId = extractYoutubeId(youtubeUrl);
             if (!videoId) {
                 alert("Geçersiz Youtube URL veya Video ID!");
                 return;
             }
             
-            const youtubeEmbed = `<iframe class="youtube-embed"
+            // Youtube embed kodu oluştur
+            const youtubeEmbed = `<div class="youtube-embed">
+                <iframe 
                     width="100%" 
                     height="315" 
                     src="https://www.youtube.com/embed/${videoId}" 
                     frameborder="0" 
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                     allowfullscreen>
-                </iframe>`;
+                </iframe>
+            </div>`;
             
+            // İlgili textarea'ya ekle
             insertAtCursor(textareaId, youtubeEmbed);
+            
+            // Ön izlemeyi güncelle
             updatePreview(textareaId);
         }
 
+        // Youtube URL'sinden Video ID çıkartma
         function extractYoutubeId(url) {
+            // Eğer zaten bir ID gibi görünüyorsa (11 karakter) doğrudan dön
             if (/^[a-zA-Z0-9_-]{11}$/.test(url)) {
                 return url;
             }
             
+            // Çeşitli Youtube URL formatları için regex'ler
             const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
             const match = url.match(regExp);
             
@@ -1558,6 +1570,7 @@
                 return match[2];
             }
             
+            // Shorts URL'si için
             const shortsRegExp = /youtube\.com\/shorts\/([^\/\?]+)/;
             const shortsMatch = url.match(shortsRegExp);
             
