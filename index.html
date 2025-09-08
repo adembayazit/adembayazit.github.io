@@ -36,6 +36,33 @@
         scroll-behavior: smooth;
       }
       
+      /* Logo ve slogan için stil */
+      .logo-container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .logo-slogan {
+        font-size: 10px;
+        color: #f9d71c;
+        margin-top: 2px;
+        font-style: italic;
+        letter-spacing: 0.5px;
+        max-width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      
+      /* Navbar için responsive ayarlar */
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 5%;
+      }
+      
       /* Mikroblog için iki sütunlu düzen */
       .microblog-container {
         display: flex;
@@ -231,6 +258,11 @@
 
       /* Mobil için stil */
       @media (max-width: 992px) {
+        .logo-slogan {
+          font-size: 8px;
+          max-width: 150px;
+        }
+        
         .microblog-container {
           flex-direction: column;
         }
@@ -378,8 +410,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <script src="/JAVASCRIPT/matrix.js"></script>
 <body>
     <header class="header">
-        <a href="#home" class="logo"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">{adembayazit} </a>
-        <span class="slogan"> One step further every day… </span>
+        <div class="logo-container">
+            <a href="#home" class="logo"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">{adembayazit} </a>
+            <span class="logo-slogan">One step further every day…</span>
+        </div>
         <nav class="navbar">
             <!-- <a href="#home" style="--i:1;" class="active">Home</a>
             <a href="about.html" style="--i:2;">About</a>
