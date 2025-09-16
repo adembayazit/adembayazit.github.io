@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .then(() => {
         // Log başarılıysa aynı sekmede yönlendir
         setTimeout(() => {
-          window.location.href = "https://drive.google.com/file/d/17FloLfdbiQPpb1UmK-rQB5kl9S9qlYkq/view";
+          window.location.href = "https://www.jobseeker.com/d/6lC0jFnRrJm6mZliwFGSBx/view";
         }, 50); // Hafif gecikme
       })
       .catch(err => {
