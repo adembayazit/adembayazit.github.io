@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Özgeçmiş - [Adınız Soyadınız]</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Genel Stiller */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .cv-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        /* Başlık Bölümü */
+        .header {
+            display: flex;
+            background: linear-gradient(135deg, #2c3e50, #1a2530);
+            color: white;
+            padding: 30px;
+        }
+        
+        .profile-img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            object-fit: cover;
+        }
+        
+        .header-text {
+            margin-left: 30px;
+            flex: 1;
+        }
+        
+        .header-text h1 {
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .header-text h2 {
+            font-size: 1.3rem;
+            font-weight: 400;
+            margin-bottom: 15px;
+            color: #ecf0f1;
+        }
+        
+        .contact-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+        }
+        
+        .contact-item i {
+            margin-right: 8px;
+            color: #3498db;
+        }
+        
+        /* İçerik Bölümü */
+        .main-content {
+            display: flex;
+            padding: 0;
+        }
+        
+        .left-column {
+            flex: 1;
+            background: #f9f9f9;
+            padding: 30px;
+        }
+        
+        .right-column {
+            flex: 2;
+            padding: 30px;
+            border-left: 1px solid #eee;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            color: #2c3e50;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #3498db;
+            display: inline-block;
+        }
+        
+        /* Beceri Barları */
+        .skill-item {
+            margin-bottom: 15px;
+        }
+        
+        .skill-name {
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .skill-bar {
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .skill-level {
+            height: 100%;
+            background: #3498db;
+        }
+        
+        /* Zaman Çizelgesi */
+        .timeline-item {
+            margin-bottom: 20px;
+            position: relative;
+            padding-left: 20px;
+        }
+        
+        .timeline-item:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 8px;
+            width: 10px;
+            height: 10px;
+            border: 2px solid #3498db;
+            border-radius: 50%;
+        }
+        
+        .timeline-item:after {
+            content: '';
+            position: absolute;
+            left: 4px;
+            top: 22px;
+            width: 2px;
+            height: calc(100% - 10px);
+            background: #3498db;
+        }
+        
+        .timeline-item:last-child:after {
+            display: none;
+        }
+        
+        .timeline-date {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+        
+        .timeline-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .timeline-subtitle {
+            color: #3498db;
+            margin-bottom: 8px;
+            font-style: italic;
+        }
+        
+        /* Dil ve İlgi Alanları */
+        .language-item, .interest-item {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .language-item i, .interest-item i {
+            color: #3498db;
+            margin-right: 10px;
+        }
+        
+        /* PDF İndirme Butonu */
+        .pdf-download {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn i {
+            margin-right: 8px;
+        }
+        
+        /* Responsive Tasarım */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .profile-img {
+                margin: 0 auto 20px;
+            }
+            
+            .header-text {
+                margin-left: 0;
+            }
+            
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .right-column {
+                border-left: none;
+                border-top: 1px solid #eee;
+            }
+            
+            .contact-info {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cv-container">
+        <div class="header">
+            <img src="https://placehold.co/150x150/2c3e50/FFFFFF?text=[İS]" alt="Profil Fotoğrafı" class="profile-img">
+            <div class="header-text">
+                <h1>Adınız Soyadınız</h1>
+                <h2>Pozisyonunuz</h2>
+                <p>Kısa bir profesyonel özetiniz. Kariyer hedefleriniz, uzmanlık alanlarınız ve öne çıkan özellikleriniz hakkında 2-3 cümle.</p>
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>email@example.com</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <span>+90 (5XX) XXX XX XX</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Şehir, Türkiye</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-link"></i>
+                        <span>linkedin.com/in/adiniz</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="left-column">
+                <div class="section">
+                    <h3 class="section-title">Yetenekler</h3>
+                    <div class="skill-item">
+                        <div class="skill-name">
+                            <span>Yetenek 1</span>
+                            <span>90%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-level" style="width: 90%;"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-name">
+                            <span>Yetenek 2</span>
+                            <span>85%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-level" style="width: 85%;"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-name">
+                            <span>Yetenek 3</span>
+                            <span>80%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-level" style="width: 80%;"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-name">
+                            <span>Yetenek 4</span>
+                            <span>75%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-level" style="width: 75%;"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-name">
+                            <span>Yetenek 5</span>
+                            <span>70%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-level" style="width: 70%;"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3 class="section-title">Diller</h3>
+                    <div class="language-item">
+                        <i class="fas fa-language"></i>
+                        <span>Türkçe - Ana Dil</span>
+                    </div>
+                    <div class="language-item">
+                        <i class="fas fa-language"></i>
+                        <span>İngilizce - İleri Seviye</span>
+                    </div>
+                    <div class="language-item">
+                        <i class="fas fa-language"></i>
+                        <span>İkinci Yabancı Dil - Orta Seviye</span>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3 class="section-title">İlgi Alanları</h3>
+                    <div class="interest-item">
+                        <i class="fas fa-book"></i>
+                        <span>Kitap Okuma</span>
+                    </div>
+                    <div class="interest-item">
+                        <i class="fas fa-music"></i>
+                        <span>Müzik</span>
+                    </div>
+                    <div class="interest-item">
+                        <i class="fas fa-plane"></i>
+                        <span>Seyahat</span>
+                    </div>
+                    <div class="interest-item">
+                        <i class="fas fa-gamepad"></i>
+                        <span>Oyunlar</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="right-column">
+                <div class="section">
+                    <h3 class="section-title">İş Deneyimi</h3>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2020 - Günümüz</div>
+                        <div class="timeline-title">İş Unvanı</div>
+                        <div class="timeline-subtitle">Şirket Adı, Konum</div>
+                        <p>İş tanımınız ve sorumluluklarınız. Başarılarınız ve katkılarınız hakkında bilgi.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2018 - 2020</div>
+                        <div class="timeline-title">İş Unvanı</div>
+                        <div class="timeline-subtitle">Şirket Adı, Konum</div>
+                        <p>İş tanımınız ve sorumluluklarınız. Başarılarınız ve katkılarınız hakkında bilgi.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2016 - 2018</div>
+                        <div class="timeline-title">İş Unvanı</div>
+                        <div class="timeline-subtitle">Şirket Adı, Konum</div>
+                        <p>İş tanımınız ve sorumluluklarınız. Başarılarınız ve katkılarınız hakkında bilgi.</p>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3 class="section-title">Eğitim</h3>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2012 - 2016</div>
+                        <div class="timeline-title">Lisans Derecesi</div>
+                        <div class="timeline-subtitle">Üniversite Adı</div>
+                        <p>Bölümünüz, not ortalamanız ve varsa aldığınız ödüller veya başarılar.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2016</div>
+                        <div class="timeline-title">Sertifika Programı</div>
+                        <div class="timeline-subtitle">Kurum Adı</div>
+                        <p>Sertifika ve eğitimleriniz hakkında bilgi.</p>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3 class="section-title">Sertifikalar</h3>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2021</div>
+                        <div class="timeline-title">Sertifika Adı</div>
+                        <div class="timeline-subtitle">Veren Kuruluş</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2019</div>
+                        <div class="timeline-title">Sertifika Adı</div>
+                        <div class="timeline-subtitle">Veren Kuruluş</div>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3 class="section-title">Projeler</h3>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2022</div>
+                        <div class="timeline-title">Proje Adı</div>
+                        <div class="timeline-subtitle">Kullanılan Teknolojiler</div>
+                        <p>Proje açıklaması ve sizin katkınız.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="pdf-download">
+            <button class="btn" id="download-pdf">
+                <i class="fas fa-download"></i> PDF Olarak İndir
+            </button>
+        </div>
+    </div>
+
+    <!-- PDF oluşturmak için gerekli kütüphaneler -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+        document.getElementById('download-pdf').addEventListener('click', function() {
+            const cvElement = document.querySelector('.cv-container');
+            
+            const options = {
+                margin: 10,
+                filename: 'Benim_CV.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            
+            html2pdf().set(options).from(cvElement).save();
+        });
+    </script>
+</body>
+</html>
