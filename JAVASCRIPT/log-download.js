@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .catch(err => {
         console.error("Log gönderimi başarısız:", err);
         // Hata olsa bile yönlendir
-        window.location.href = "https://drive.google.com/file/d/17FloLfdbiQPpb1UmK-rQB5kl9S9qlYkq/view";
+        window.location.href = "https://www.jobseeker.com/d/6lC0jFnRrJm6mZliwFGSBx/view";
       });
   });
 });
