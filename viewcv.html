@@ -95,17 +95,18 @@
         }
         .main-content {
             display: flex;
+            flex-direction: column;
             padding: 0;
         }
         
         .left-column {
-            flex: 1;
+            order: 2;
             background: #f9f9f9;
             padding: 30px;
         }
         
         .right-column {
-            flex: 2;
+            order: 1;
             padding: 30px;
         }
         
@@ -254,26 +255,59 @@
             font-weight: 600;
         }
         
-        @media (max-width: 480px) {
+        @media (min-width: 769px) {
+            .main-content {
+                flex-direction: row;
+            }
+            
+            .left-column {
+                flex: 1;
+                order: 1;
+            }
+            
+            .right-column {
+                flex: 2;
+                order: 2;
+            }
+        }
+        
+        @media (max-width: 768px) {
             .header {
                 flex-direction: column;
                 text-align: center;
+                padding: 20px;
             }
             
             .profile-img {
                 margin: 0 auto 20px;
+                width: 120px;
+                height: 120px;
             }
             
             .header-text {
                 margin-left: 0;
             }
             
-            .main-content {
-                flex-direction: column;
+            .header-text h1 {
+                font-size: 1.5rem;
             }
             
             .contact-info {
                 justify-content: center;
+                gap: 10px;
+            }
+            
+            .contact-item {
+                margin-right: 10px;
+                margin-bottom: 5px;
+            }
+            
+            .left-column, .right-column {
+                padding: 20px;
+            }
+            
+            .section-title {
+                font-size: 1.1rem;
             }
         }
     </style>
@@ -522,6 +556,48 @@
                 <div class="divider"></div>
                 
                 <div class="section">
+                    <h3 class="section-title">Education</h3>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2007 - 2011</div>
+                        <div class="timeline-title">Bachelor's Degree in Computer and Control Education</div>
+                        <div class="timeline-subtitle">Marmara University, Istanbul</div>
+                        <p>GPA: 65.31/100</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2002 - 2005</div>
+                        <div class="timeline-title">High School in Computer Software</div>
+                        <div class="timeline-subtitle">Yenimahalle Industrial Vocational High School, Ankara</div>
+                        <p>GPA: 4.08/5</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2014 - Dropout</div>
+                        <div class="timeline-title">Master's in Business Administration (MBA)</div>
+                        <div class="timeline-subtitle">Hacettepe University, Ankara</div>
+                        <p>Dropped</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2014 - Dropout</div>
+                        <div class="timeline-title">Bachelor's Degree in Physics Engineering</div>
+                        <div class="timeline-subtitle">Hacettepe University, Ankara</div>
+                        <p>Dropped</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2018 - Dropout</div>
+                        <div class="timeline-title">Bachelor's Degree in Computer Engineering</div>
+                        <div class="timeline-subtitle">Konya Technical University, Konya</div>
+                        <p>Dropped</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2021 - Dropout</div>
+                        <div class="timeline-title">Bachelor's Degree in Computer Engineering</div>
+                        <div class="timeline-subtitle">Kırıkkale University, Kırıkkale</div>
+                        <p>Dropped - Engineering degrees could not be completed due to the intense pace of business life.</p>
+                    </div>
+                </div>
+                
+                <div class="divider"></div>
+                
+                <div class="section">
                     <h3 class="section-title">Work Experience</h3>
                     <div class="timeline-item">
                         <div class="timeline-date">2023 - Present</div>
@@ -677,48 +753,6 @@
                         <div class="timeline-title">Technical Support Intern</div>
                         <div class="timeline-subtitle">Escom Computer, Ankara</div>
                         <p>Supporting computer consumables installation.</p>
-                    </div>
-                </div>
-                
-                <div class="divider"></div>
-                
-                <div class="section">
-                    <h3 class="section-title">Education</h3>
-                    <div class="timeline-item">
-                        <div class="timeline-date">2007 - 2011</div>
-                        <div class="timeline-title">Bachelor's Degree in Computer and Control Education</div>
-                        <div class="timeline-subtitle">Marmara University, Istanbul</div>
-                        <p>GPA: 65.31/100</p>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-date">2002 - 2005</div>
-                        <div class="timeline-title">High School in Computer Software</div>
-                        <div class="timeline-subtitle">Yenimahalle Industrial Vocational High School, Ankara</div>
-                        <p>GPA: 4.08/5</p>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-date">2014 - Dropout</div>
-                        <div class="timeline-title">Master's in Business Administration (MBA)</div>
-                        <div class="timeline-subtitle">Hacettepe University, Ankara</div>
-                        <p>Dropped</p>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-date">2014 - Dropout</div>
-                        <div class="timeline-title">Bachelor's Degree in Physics Engineering</div>
-                        <div class="timeline-subtitle">Hacettepe University, Ankara</div>
-                        <p>Dropped</p>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-date">2018 - Dropout</div>
-                        <div class="timeline-title">Bachelor's Degree in Computer Engineering</div>
-                        <div class="timeline-subtitle">Konya Technical University, Konya</div>
-                        <p>Dropped</p>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-date">2021 - Dropout</div>
-                        <div class="timeline-title">Bachelor's Degree in Computer Engineering</div>
-                        <div class="timeline-subtitle">Kırıkkale University, Kırıkkale</div>
-                        <p>Dropped - Engineering degrees could not be completed due to the intense pace of business life.</p>
                     </div>
                 </div>
                 
