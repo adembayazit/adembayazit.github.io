@@ -268,6 +268,20 @@
             font-weight: 600;
         }
         
+        /* Mobile Personal Details Container */
+        .personal-details-mobile {
+            display: none;
+            background: #f9f9f9;
+            padding: 20px;
+        }
+        
+        /* Mobile References Container */
+        .references-mobile {
+            display: none;
+            background: #f9f9f9;
+            padding: 20px;
+        }
+        
         @media (min-width: 769px) {
             .main-content {
                 flex-direction: row;
@@ -281,6 +295,12 @@
             .right-column {
                 flex: 2;
                 order: 2;
+            }
+            
+            /* Hide mobile-only sections on desktop */
+            .personal-details-mobile,
+            .references-mobile {
+                display: none !important;
             }
         }
         
@@ -322,6 +342,33 @@
             .section-title {
                 font-size: 1.1rem;
             }
+            
+            /* Show mobile personal details after header */
+            .personal-details-mobile {
+                display: block;
+                order: 1;
+            }
+            
+            /* Hide personal details in left column on mobile */
+            .left-column .section:first-child {
+                display: none;
+            }
+            
+            /* Move main content down */
+            .main-content {
+                order: 2;
+            }
+            
+            /* Show mobile references at the end */
+            .references-mobile {
+                display: block;
+                order: 3;
+            }
+            
+            /* Hide references in right column on mobile */
+            .right-column .section:last-child {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -352,6 +399,43 @@
                         <span>adembayazit.com</span>
                     </div>
                 </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Personal Details Section (visible only on mobile) -->
+        <div class="personal-details-mobile">
+            <h3 class="section-title">Personal Details</h3>
+            <div class="contact-item">
+                <i class="fas fa-birthday-cake"></i>
+                <span>July 13, 1988</span>
+            </div>
+            <div class="contact-item">
+                <i class="fas fa-map-pin"></i>
+                <span>Ankara</span>
+            </div>
+            <div class="contact-item">
+                <i class="fas fa-id-card"></i>
+                <span>Driver's License (E)</span>
+            </div>
+            <div class="contact-item">
+                <i class="fas fa-user"></i>
+                <span>Male</span>
+            </div>
+            <div class="contact-item">
+                <span class="fi fi-tr"></span>
+                <span>&nbspTurkiye Republic</span>
+            </div>
+            <div class="contact-item">
+                <i class="fas fa-heart"></i>
+                <span>Single</span>
+            </div>
+            <div class="contact-item">
+                <i class="fas fa-shield-alt"></i>
+                <span>Military Service: Completed (2012)</span>
+            </div>
+            <div class="contact-item">
+                <i class="fab fa-linkedin"></i>
+                <span>linkedin.com/in/adembayazit</span>
             </div>
         </div>
         
@@ -797,6 +881,12 @@
                     <p>References will be provided upon request.</p>
                 </div>
             </div>
+        </div>
+        
+        <!-- Mobile References Section (visible only on mobile) -->
+        <div class="references-mobile">
+            <h3 class="section-title">References</h3>
+            <p>References will be provided upon request.</p>
         </div>
         
         <div class="pdf-download">
