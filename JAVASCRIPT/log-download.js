@@ -39,13 +39,13 @@ document.addEventListener("DOMContentLoaded", () => {
       .then(() => {
         // Log başarılıysa aynı sekmede yönlendir
         setTimeout(() => {
-          window.location.href = "https://www.jobseeker.com/d/6lC0jFnRrJm6mZliwFGSBx/view";
+          window.location.href = "https://adembayazit.com/viewcv";
         }, 50); // Hafif gecikme
       })
       .catch(err => {
         console.error("Log gönderimi başarısız:", err);
         // Hata olsa bile yönlendir
-        window.location.href = "https://www.jobseeker.com/d/6lC0jFnRrJm6mZliwFGSBx/view";
+        window.location.href = "https://adembayazit.com/viewcv";
       });
   });
 });
