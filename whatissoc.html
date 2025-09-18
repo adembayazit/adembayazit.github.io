@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOC Analysis | Adem Bayazıt</title>
+    <meta property="og:title" content="Adem Bayazıt | SOC Analysis" />
+    <meta property="og:description" content="Understanding Security Operations Center and SOC Analyst responsibilities." />
+    <meta property="og:image" content="https://adembayazit.com/IMAGES/preview.png" />
+    <meta property="og:url" content="https://adembayazit.com/soc" />
+    <meta property="og:type" content="website" />
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Adem Bayazıt - SOC Analysis">
+    <meta name="twitter:description" content="Understanding Security Operations Center and SOC Analyst responsibilities.">
+    <meta name="twitter:image" content="https://adembayazit.com/IMAGES/preview.png">
+    <meta name="twitter:image:alt" content="Adem Bayazıt">
+    
+    <link rel="icon" type="png|image" href="/IMAGES/ab.png">
+    <link rel="stylesheet" href="/CSS/style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href='https://cdn.boxicons.com/fonts/basic/boxicons.min.css' rel='stylesheet'>
+    <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
+    <style>
+        :root {
+            --primary-color: #00ff00;
+            --primary-dark: #00cc00;
+            --primary-light: #33ff33;
+            --bg-color: #0a1916;
+            --card-bg: rgba(10, 25, 20, 0.7);
+            --text-color: #ffffff;
+            --text-muted: #cccccc;
+            --border-color: #00aa00;
+            --highlight-color: #99ff99;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Logo ve slogan için stil */
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        
+        .logo-slogan {
+            font-size: 10px;
+            color: white;
+            margin-top: 2px;
+            font-style: italic;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            text-align: right;
+            width: 100%;
+            padding-right: 5px;
+        }
+        
+        /* Navbar için responsive ayarlar */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 5%;
+        }
+        
+        .content-wrapper {
+            margin-top: 160px;
+            position: relative;
+            z-index: 2;
+            padding: 0 20px;
+        }
+        .backto {
+            text-align: center;
+        }
+        
+        .back-to-home {
+            display: inline-block;
+            margin: 0 0 30px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-to-home:hover {
+            text-decoration: underline;
+            color: var(--highlight-color);
+        }
+        
+        .page-title {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 1.7rem;
+            color: white;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+            position: relative;
+            filter: drop-shadow(0 0 5px limegreen);
+        }
+        
+        .page-title::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 3px;
+        }
+        
+        .section {
+            margin-bottom: 60px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            filter: drop-shadow(0 0 5px limegreen);
+        }
+        
+        .section-title i {
+            margin-right: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .section p {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 25px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 255, 0, 0.2);
+            border-color: var(--primary-color);
+        }
+        
+        .card-title {
+            font-size: 0.9rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-title i {
+            margin-right: 10px;
+            font-size: 0.8rem;
+        }
+        
+        .card-content {
+            color: var(--text-color);
+            line-height: 1.6;
+            flex-grow: 1;
+        }
+        
+        .term-highlight {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .checklist {
+            list-style-type: none;
+            margin-top: 15px;
+        }
+        
+        .checklist li {
+            margin-bottom: 10px;
+            padding-left: 30px;
+            position: relative;
+        }
+        
+        .checklist li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .image-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .content-image {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .image-caption {
+            margin-top: 10px;
+            font-style: italic;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        .quote {
+            border-left: 4px solid var(--primary-color);
+            padding: 15px 20px;
+            margin: 25px 0;
+            background: rgba(0, 100, 0, 0.1);
+            font-style: italic;
+        }
+        
+        .quote-author {
+            display: block;
+            margin-top: 10px;
+            text-align: right;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        /* Two-column layout */
+        .types-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        /* WhatsApp message bubble styles */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 12px 18px;
+            border-radius: 18px;
+            position: relative;
+            line-height: 1.4;
+        }
+        
+        .message-incoming {
+            align-self: flex-start;
+            background: rgba(50, 50, 50, 0.7);
+            border-bottom-left-radius: 4px;
+        }
+        
+        .message-outgoing {
+            align-self: flex-end;
+            background: rgba(0, 100, 0, 0.3);
+            border-bottom-right-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .message-time {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-align: right;
+            margin-top: 5px;
+        }
+        
+        /* Timeline styles */
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 30px auto;
+        }
+        
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            background-color: var(--primary-color);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -2px;
+        }
+        
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            width: 50%;
+            box-sizing: border-box;
+        }
+        
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: var(--bg-color);
+            border: 4px solid var(--primary-color);
+            border-radius: 50%;
+            top: 15px;
+            right: -12px;
+            z-index: 1;
+        }
+        
+        .timeline-item:nth-child(even) {
+            left: 50%;
+        }
+        
+        .timeline-item:nth-child(odd) {
+            left: 0;
+        }
+        
+        .timeline-item:nth-child(even)::after {
+            left: -12px;
+        }
+        
+        .timeline-content {
+            padding: 15px;
+            background-color: var(--card-bg);
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .timeline-date {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+        
+        /* Video container styles */
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            margin: 25px 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+        }
+        
+        .video-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #0a1916, #0a2920);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .play-button {
+            width: 70px;
+            height: 70px;
+            background-color: rgba(0, 255, 0, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .play-button i {
+            color: var(--primary-color);
+            font-size: 2rem;
+        }
+        
+        .video-placeholder:hover .play-button {
+            transform: scale(1.1);
+            background-color: rgba(0, 255, 0, 0.3);
+        }
+        
+        .video-caption {
+            text-align: center;
+            margin-top: 10px;
+            font-style: italic;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        /* Animation container */
+        .animation-container {
+            width: 100%;
+            height: 300px;
+            margin: 30px 0;
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .soc-animation {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #0a1916, #0a2920);
+            position: relative;
+        }
+        
+        /* Animated elements */
+        .server {
+            position: absolute;
+            width: 80px;
+            height: 120px;
+            background: #222;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .server::before {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 5px;
+            background: #333;
+            top: -10px;
+            border-radius: 3px;
+        }
+        
+        .server-light {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            margin: 5px;
+            box-shadow: 0 0 10px var(--primary-color);
+            animation: blink 2s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        .data-packet {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            bottom: 160px;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+        }
+        
+        .packet1 {
+            animation: movePacket 5s infinite;
+        }
+        
+        .packet2 {
+            animation: movePacket 5s infinite 1s;
+        }
+        
+        .packet3 {
+            animation: movePacket 5s infinite 2s;
+        }
+        
+        @keyframes movePacket {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, 0) scale(1);
+            }
+            25% {
+                transform: translate(-150%, -100px) scale(0.8);
+            }
+            50% {
+                transform: translate(-50%, -200px) scale(0.6);
+                opacity: 0.8;
+            }
+            75% {
+                transform: translate(50%, -100px) scale(0.8);
+            }
+            100% {
+                transform: translate(-50%, 0) scale(1);
+                opacity: 0;
+            }
+        }
+        
+        .analyst-desk {
+            position: absolute;
+            width: 200px;
+            height: 20px;
+            background: #444;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .monitor {
+            position: absolute;
+            width: 80px;
+            height: 60px;
+            background: #111;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            overflow: hidden;
+        }
+        
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: #000;
+            position: relative;
+        }
+        
+        .screen::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(transparent 50%, rgba(0, 255, 0, 0.1) 50%);
+            background-size: 100% 4px;
+            animation: scan 3s linear infinite;
+        }
+        
+        @keyframes scan {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 100%; }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .content-wrapper {
+                margin-top: 160px;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+            }
+            
+            .section-title {
+                font-size: 1rem;
+            }
+            
+            .card-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .types-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .timeline::after {
+                left: 31px;
+            }
+            
+            .timeline-item {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 25px;
+            }
+            
+            .timeline-item::after {
+                left: 20px;
+            }
+            
+            .timeline-item:nth-child(even) {
+                left: 0;
+            }
+        }
+        
+        /* Matrix Canvas Styles */
+        #matrixCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TFN7XD9Z"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header class="header">
+        <div class="logo-container">
+            <a href="https://adembayazit.com" class="logo"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">{adembayazit} </a>
+            <span class="logo-slogan">One step further every day…</span>
+        </div>
+        <nav class="navbar">
+            <div class="dropdown">
+                <a href="#" style="--i:5;" class="dropbtn"> <img src="IMAGES/Ata.svg" alt="Ata Icon" class="ata-icon"><span class="fi fi-tr"></span> <span class='bx bx-code-alt'></span> Ethical Hacker <span class='bx bx-chevron-down'></span></a>
+                <div class="dropdown-content">
+                    <a href="#tools"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hacker-icon"> What is an Ethical Hacker?</a>
+                    <a href="/cybersecurityglossary"><img src="IMAGES/glossary.svg" alt="Glossary" class="glossary-icon"> Cybersecurity Glossary</a>
+                    <a href="#payloads"><img src="IMAGES/soc.svg" alt="Soc" class="soc-icon"> What is a SOC ?</a>
+                    <a href="#payloads"><img src="IMAGES/vulnerabilities.svg" alt="Vulnerabilities" class="vulnerabilities-icon"> Vulnerabilities</a>
+                    <a href="#payloads"><img src="IMAGES/steganography.svg" alt="Steganography" class="steganography-icon"> Steganography</a>
+                    <a href="#payloads"><img src="IMAGES/cryptography.svg" alt="Cryptography" class="cryptography-icon"> Cryptography</a>    
+                    <a href="#payloads"><img src="IMAGES/education.svg" alt="Education" class="education-icon"> Cybersecurity Learning Resources</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+    
+    <div class="content-wrapper">
+        <div class="backto"><a href="/" class="back-to-home"><i class="bx bx-arrow-back"></i> Back to Home</a></div>
+        
+        <h2 class="page-title"><img src="IMAGES/soc.svg" alt="SOC Icon" class="soc-icon"> Security Operations Center (SOC)</h2>
+        
+        <section class="section" id="soc-intro">
+            <h2 class="section-title"><img src="IMAGES/soc.svg" alt="SOC Icon" class="soc-icon"> What is a Security Operations Center (SOC)?</h2>
+            
+            <div class="card">
+                <div class="card-content">
+                    <p>A <span class="term-highlight">Security Operations Center (SOC)</span> is a centralized unit that deals with security issues on an organizational and technical level. It comprises the three building blocks of people, processes, and technology for managing and enhancing an organization's security posture.</p>
+                    
+                    <div class="image-container">
+                        <img src="https://adembayazit.com/IMAGES/soc-room.jpg" alt="SOC Operations Room" class="content-image">
+                        <div class="image-caption">A typical SOC environment with multiple monitoring stations</div>
+                    </div>
+                    
+                    <p>The primary purpose of a SOC is to monitor, detect, investigate, and respond to cyber threats around the clock. SOC teams are responsible for ensuring that potential security incidents are correctly identified, analyzed, defended, investigated, and reported.</p>
+                    
+                    <div class="quote">
+                        "A SOC acts as the central nervous system for an organization's cybersecurity efforts, constantly monitoring for threats and coordinating responses."
+                        <span class="quote-author">- Adem Bayazıt</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section" id="soc-analyst">
+            <h2 class="section-title"><i class='bx bx-user'></i> What Does a SOC Analyst Do?</h2>
+            
+            <div class="card">
+                <div class="card-content">
+                    <p>A <span class="term-highlight">SOC Analyst</span> is a cybersecurity professional who works within a Security Operations Center. They are the first line of defense against cyber threats, responsible for monitoring and analyzing an organization's security posture on an ongoing basis.</p>
+                    
+                    <h3 style="color: var(--primary-color); margin: 20px 0 10px;">Key Responsibilities:</h3>
+                    
+                    <ul class="checklist">
+                        <li>Real-time security monitoring and analysis</li>
+                        <li>Incident investigation and response</li>
+                        <li>Threat hunting and vulnerability assessment</li>
+                        <li>Security tool management (SIEM, IDS/IPS, firewalls)</li>
+                        <li>Documentation and reporting of security incidents</li>
+                        <li>Collaboration with other IT teams for remediation</li>
+                    </ul>
+                    
+                    <div class="chat-container">
+                        <div class="message message-incoming">
+                            <p>🚨 Alert: Multiple failed login attempts detected on server SRV-02 from unusual geographic location</p>
+                            <div class="message-time">10:24 AM</div>
+                        </div>
+                        
+                        <div class="message message-outgoing">
+                            <p>Investigating... Checking authentication logs and correlating with threat intelligence feeds</p>
+                            <div class="message-time">10:25 AM</div>
+                        </div>
+                        
+                        <div class="message message-outgoing">
+                            <p>Confirmed brute force attack attempt. Blocking source IP and escalating to Tier 2 for deeper analysis</p>
+                            <div class="message-time">10:28 AM</div>
+                        </div>
+                    </div>
+                    
+                    <div class="video-container">
+                        <div class="video-placeholder">
+                            <div class="play-button">
+                                <i class='bx bx-play'></i>
+                            </div>
+                        </div>
+                        <div class="video-caption">SOC Analyst Day in the Life (35 seconds)</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section" id="soc-process">
+            <h2 class="section-title"><i class='bx bx-time-five'></i> SOC Incident Response Timeline</h2>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-date">Step 1: Detection</div>
+                        <p>Security tools identify potential threats through alerts, logs, or anomalies in system behavior.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-date">Step 2: Triage</div>
+                        <p>SOC analysts prioritize incidents based on severity, potential impact, and affected assets.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-date">Step 3: Investigation</div>
+                        <p>Detailed analysis to understand the scope, origin, and methodology of the attack.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-date">Step 4: Containment</div>
+                        <p>Immediate actions to limit the damage and prevent further spread of the threat.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-date">Step 5: Eradication</div>
+                        <p>Complete removal of the threat from the environment, including malware and attacker access points.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-date">Step 6: Recovery</div>
+                        <p>Restoring systems and services to normal operation while verifying they are no longer compromised.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-date">Step 7: Post-Incident Analysis</div>
+                        <p>Documenting lessons learned and improving security controls to prevent future similar incidents.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="video-container">
+                <div class="video-placeholder">
+                    <div class="play-button">
+                        <i class='bx bx-play'></i>
+                    </div>
+                </div>
+                <div class="video-caption">Incident Response Process (40 seconds)</div>
+            </div>
+        </section>
+        
+        <section class="section" id="soc-tools">
+            <h2 class="section-title"><i class='bx bx-wrench'></i> Essential SOC Tools & Technologies</h2>
+            
+            <div class="card-container">
+                <div class="card">
+                    <h3 class="card-title"><i class='bx bx-grid-alt'></i> SIEM Systems</h3>
+                    <div class="card-content">
+                        <p>Security Information and Event Management (SIEM) solutions collect, analyze, and correlate log data from various sources to identify potential security threats.</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title"><i class='bx bx-radar'></i> IDS/IPS</h3>
+                    <div class="card-content">
+                        <p>Intrusion Detection Systems (IDS) and Intrusion Prevention Systems (IPS) monitor network traffic for suspicious activity and take action to prevent attacks.</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title"><i class='bx bx-bug'></i> Threat Intelligence</h3>
+                    <div class="card-content">
+                        <p>Platforms that provide real-time information about emerging threats, vulnerabilities, and attacker tactics, techniques, and procedures (TTPs).</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title"><i class='bx bx-data'></i> EDR Solutions</h3>
+                    <div class="card-content">
+                        <p>Endpoint Detection and Response (EDR) tools monitor endpoint devices to detect and investigate suspicious activities and provide response capabilities.</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title"><i class='bx bx-network-chart'></i> Network Analysis</h3>
+                    <div class="card-content">
+                        <p>Tools like Wireshark and network flow analyzers that help SOC teams examine network traffic for anomalies and potential threats.</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title"><i class='bx bx-check-shield'></i> Vulnerability Scanners</h3>
+                    <div class="card-content">
+                        <p>Automated tools that identify, classify, and prioritize vulnerabilities in computer systems, applications, and networks.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section" id="soc-animation">
+            <h2 class="section-title"><i class='bx bx-run'></i> SOC in Action: Animated Overview</h2>
+            
+            <div class="animation-container">
+                <div class="soc-animation">
+                    <div class="server">
+                        <div class="server-light"></div>
+                        <div class="server-light"></div>
+                        <div class="server-light"></div>
+                    </div>
+                    
+                    <div class="data-packet packet1"></div>
+                    <div class="data-packet packet2"></div>
+                    <div class="data-packet packet3"></div>
+                    
+                    <div class="analyst-desk"></div>
+                    <div class="monitor">
+                        <div class="screen"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-content">
+                    <p>This animation demonstrates how a SOC operates:</p>
+                    <ul class="checklist">
+                        <li>Data flows from servers and network devices to monitoring systems</li>
+                        <li>SOC analysts review alerts and investigate potential threats</li>
+                        <li>Incident response procedures are initiated when threats are confirmed</li>
+                        <li>Continuous monitoring provides 24/7 protection for the organization</li>
+                    </ul>
+                    
+                    <div class="video-container">
+                        <div class="video-placeholder">
+                            <div class="play-button">
+                                <i class='bx bx-play'></i>
+                            </div>
+                        </div>
+                        <div class="video-caption">SOC Team Collaboration (30 seconds)</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section" id="soc-benefits">
+            <h2 class="section-title"><i class='bx bx-trending-up'></i> Benefits of a SOC</h2>
+            
+            <div class="card">
+                <div class="card-content">
+                    <p>Implementing a Security Operations Center provides numerous advantages for organizations:</p>
+                    
+                    <ul class="checklist">
+                        <li><span class="term-highlight">Continuous Monitoring:</span> 24/7 surveillance of systems and networks</li>
+                        <li><span class="term-highlight">Faster Incident Response:</span> Reduced time to detect and mitigate threats</li>
+                        <li><span class="term-highlight">Improved Compliance:</span> Meeting regulatory requirements for security monitoring</li>
+                        <li><span class="term-highlight">Centralized Visibility:</span> Unified view of security across the entire organization</li>
+                        <li><span class="term-highlight">Threat Intelligence Integration:</span> Leveraging global threat data for better protection</li>
+                        <li><span class="term-highlight">Cost Efficiency:</span> Reducing potential financial impact of security breaches</li>
+                    </ul>
+                    
+                    <div class="quote">
+                        "A well-functioning SOC doesn't just protect against threats—it becomes a strategic asset that enables business growth with confidence."
+                        <span class="quote-author">- Adem Bayazıt</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer style="text-align: center; padding: 20px; font-size: 14px; color: white; margin-top: 50px;">
+        <hr style="margin-bottom: 10px; border-color: limegreen;" />
+        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.2 | July 2025</p>
+    </footer>
+
+    <script src="/JAVASCRIPT/monitor.js"></script>
+    <canvas id="matrixCanvas"></canvas>
+    <script src="/JAVASCRIPT/matrix.js"></script>
+</body>
+</html>
