@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cryptology | Adem Bayazıt</title>
+    <meta property="og:title" content="Adem Bayazıt | Cryptology" />
+    <meta property="og:description" content="Understanding Cryptology, Algorithms and Security Protocols." />
+    <meta property="og:image" content="https://adembayazit.com/IMAGES/preview.png" />
+    <meta property="og:url" content="https://adembayazit.com/" />
+    <meta property="og:type" content="website" />
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Adem Bayazıt - Cryptology">
+    <meta name="twitter:description" content="Understanding Cryptology, Algorithms and Security Protocols.">
+    <meta name="twitter:image" content="https://adembayazit.com/IMAGES/preview.png">
+    <meta name="twitter:image:alt" content="Adem Bayazıt">
+    
+    <link rel="icon" type="png|image" href="/IMAGES/ab.png">
+    <link rel="stylesheet" href="/CSS/style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href='https://cdn.boxicons.com/fonts/basic/boxicons.min.css' rel='stylesheet'>
+    <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
+    <style>
+        :root {
+            --primary-color: #00ff00;
+            --primary-dark: #00cc00;
+            --primary-light: #33ff33;
+            --bg-color: #0a1916;
+            --card-bg: rgba(10, 25, 20, 0.7);
+            --text-color: #ffffff;
+            --text-muted: #cccccc;
+            --border-color: #00aa00;
+            --highlight-color: #99ff99;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Logo ve slogan için stil */
+      .logo-container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+      }
+      
+      .logo-slogan {
+        font-size: 10px;
+        color: white;
+        margin-top: 2px;
+        font-style: italic;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+        text-align: right;
+        width: 100%;
+        padding-right: 5px;
+      }
+      
+      /* Navbar için responsive ayarlar */
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 5%;
+      }
+        
+        .content-wrapper {
+            margin-top: 160px;
+            position: relative;
+            z-index: 2;
+            padding: 0 20px;
+        }
+        .backto {
+            text-align: center;
+        }
+        
+        .back-to-home {
+            display: inline-block;
+            margin: 0 0 30px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-to-home:hover {
+            text-decoration: underline;
+            color: var(--highlight-color);
+        }
+        
+        .page-title {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 1.7rem;
+            color: white;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+            position: relative;
+            filter: drop-shadow(0 0 5px limegreen);
+        }
+        
+        .page-title::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 3px;
+        }
+        
+        .section {
+            margin-bottom: 60px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            filter: drop-shadow(0 0 5px limegreen);
+        }
+        
+        .section-title i {
+            margin-right: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .section p {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 25px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 255, 0, 0.2);
+            border-color: var(--primary-color);
+        }
+        
+        .card-title {
+            font-size: 0.9rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-title i {
+            margin-right: 10px;
+            font-size: 0.8rem;
+        }
+        
+        .card-content {
+            color: var(--text-color);
+            line-height: 1.6;
+            flex-grow: 1;
+        }
+        
+        .term-highlight {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .checklist {
+            list-style-type: none;
+            margin-top: 15px;
+        }
+        
+        .checklist li {
+            margin-bottom: 10px;
+            padding-left: 30px;
+            position: relative;
+        }
+        
+        .checklist li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .image-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .content-image {
+            max-width: 40%;
+            border-radius: 8px;
+            /*border: 1px solid var(--border-color); */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .image-caption {
+            margin-top: 10px;
+            font-style: italic;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        .quote {
+            border-left: 4px solid var(--primary-color);
+            padding: 15px 20px;
+            margin: 25px 0;
+            background: rgba(0, 100, 0, 0.1);
+            font-style: italic;
+        }
+        
+        .quote-author {
+            display: block;
+            margin-top: 10px;
+            text-align: right;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        /* WhatsApp message bubbles */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        .message {
+            max-width: 70%;
+            padding: 12px 15px;
+            border-radius: 18px;
+            position: relative;
+            line-height: 1.4;
+        }
+        
+        .received {
+            align-self: flex-start;
+            background: #333;
+            border-bottom-left-radius: 5px;
+        }
+        
+        .sent {
+            align-self: flex-end;
+            background: var(--primary-dark);
+            border-bottom-right-radius: 5px;
+        }
+        
+        .message-time {
+            font-size: 0.7rem;
+            text-align: right;
+            margin-top: 5px;
+            opacity: 0.7;
+        }
+        
+        /* Timeline */
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 40px auto;
+        }
+        
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            background-color: var(--primary-color);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -3px;
+        }
+        
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            width: 50%;
+            box-sizing: border-box;
+        }
+        
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: var(--bg-color);
+            border: 4px solid var(--primary-color);
+            top: 15px;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        
+        .left {
+            left: 0;
+        }
+        
+        .right {
+            left: 50%;
+        }
+        
+        .left::after {
+            right: -10px;
+        }
+        
+        .right::after {
+            left: -10px;
+        }
+        
+        .timeline-content {
+            padding: 20px;
+            background-color: var(--card-bg);
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .timeline-content h3 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        /* Video container */
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            margin: 20px 0;
+        }
+        
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        
+        /* Animation container */
+        .animation-container {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: var(--card-bg);
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .animation-container img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+        
+        /* Two-column layout */
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 25px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+            
+            .timeline::after {
+                left: 31px;
+            }
+            
+            .timeline-item {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 25px;
+            }
+            
+            .timeline-item::after {
+                left: 21px;
+            }
+            
+            .right {
+                left: 0%;
+            }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .content-wrapper {
+                margin-top: 160px;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+            }
+            
+            .section-title {
+                font-size: 1rem;
+            }
+            
+            .card-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .message {
+                max-width: 85%;
+            }
+        }
+        
+        /* Matrix Canvas Styles */
+        #matrixCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TFN7XD9Z"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header class="header">
+        <div class="logo-container">
+            <a href="https://adembayazit.com" class="logo"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">{adembayazit} </a>
+            <span class="logo-slogan">One step further every day…</span>
+        </div>
+        <nav class="navbar">
+            <div class="dropdown">
+                <a href="#" style="--i:5;" class="dropbtn"> <img src="IMAGES/Ata.svg" alt="Ata Icon" class="ata-icon"><span class="fi fi-tr"></span> <span class='bx bx-code-alt'></span> Ethical Hacker <span class='bx bx-chevron-down'></span></a>
+                <div class="dropdown-content">
+                    <a href="#tools"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hacker-icon"> What is an Ethical Hacker?</a>
+                    <a href="/cybersecurityglossary"><img src="IMAGES/glossary.svg" alt="Glossary" class="glossary-icon"> Cybersecurity Glossary</a>
+                    <a href="#payloads"><img src="IMAGES/soc.svg" alt="Soc" class="soc-icon"> What is a SOC ?</a>
+                    <a href="#payloads"><img src="IMAGES/vulnerabilities.svg" alt="Vulnerabilities" class="vulnerabilities-icon"> Vulnerabilities</a>
+                    <a href="#payloads"><img src="IMAGES/steganography.svg" alt="Steganography" class="steganography-icon"> Steganography</a>
+                    <a href="#payloads"><img src="IMAGES/cryptography.svg" alt="Cryptography" class="cryptography-icon"> Cryptography</a>    
+                    <a href="#payloads"><img src="IMAGES/education.svg" alt="Education" class="education-icon"> Cybersecurity Learning Resources</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+    
+    <div class="content-wrapper">
+        <div class="backto"><a href="/" class="back-to-home"><i class="bx bx-arrow-back"></i> Back to Home</a></div>
+        
+        <h2 class="page-title"><img src="IMAGES/cryptography.svg" alt="Cryptology Icon" class="hacker-icon">Cryptology & Encryption Algorithms</h2>
+        
+        <section class="section" id="introduction">
+            <h2 class="section-title"><img src="IMAGES/cryptography.svg" alt="Cryptology Icon" class="hacker-icon"> What is Cryptology?</h2>
+            <div class="card">
+                <div class="card-content">
+                    <p><span class="term-highlight">Cryptology</span> is the science of secure communication, combining both <span class="term-highlight">cryptography</span> (the art of creating codes) and <span class="term-highlight">cryptanalysis</span> (the art of breaking codes). It ensures that information is kept confidential, authentic, and intact during transmission or storage.</p>
+                    
+                    <div class="image-container">
+                        <img src="https://miro.medium.com/v2/resize:fit:1400/1*_Xq3y8fzJ8fY5RcKjP4pFQ.png" alt="Cryptology Process" class="content-image">
+                        <div class="image-caption">Cryptology involves encryption and decryption processes</div>
+                    </div>
+                    
+                    <p>In today's digital world, cryptology plays a crucial role in protecting sensitive information from unauthorized access, ensuring privacy in communications, and verifying the authenticity of digital documents and transactions.</p>
+                    
+                    <div class="chat-container">
+                        <div class="message received">
+                            <p>Hey, I need to send you some confidential information. How can I make sure it's secure?</p>
+                            <div class="message-time">10:15 AM</div>
+                        </div>
+                        <div class="message sent">
+                            <p>We should use encryption. I'll use AES-256 to encrypt the file before sending it to you.</p>
+                            <div class="message-time">10:16 AM</div>
+                        </div>
+                        <div class="message received">
+                            <p>Great! And how will I decrypt it?</p>
+                            <div class="message-time">10:17 AM</div>
+                        </div>
+                        <div class="message sent">
+                            <p>I'll share the decryption key through a secure channel. That way, only you can read it.</p>
+                            <div class="message-time">10:18 AM</div>
+                        </div>
+                    </div>
+                    
+                    <div class="quote">
+                        "Cryptography is the foundation of modern cybersecurity. Without it, our digital world would be completely insecure."
+                        <span class="quote-author">- Adem Bayazıt</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section" id="algorithms">
+            <h2 class="section-title"><i class='bx bx-lock-alt'></i> Cryptology Algorithms</h2>
+            
+            <div class="card-container">
+                <div class="card">
+                    <h3 class="card-title"><i class='bx bx-key'></i> 3DES (Triple DES)</h3>
+                    <div class="card-content">
+                        <p>Triple DES applies the DES algorithm three times to each data block. While more secure than original DES, it's being phased out in favor of AES due to performance concerns.</p>
+                        <ul class="checklist">
+                            <li>Key length: 168 bits (effective 112 bits)</li>
+                            <li>Block size: 64 bits</li>
+                            <li>Used in: Financial transactions, legacy systems</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title"><i class='bx bx-shield-quarter'></i> AES (Advanced Encryption Standard)</h3>
+                    <div class="card-content">
+                        <p>The current gold standard for symmetric encryption, adopted by the U.S. government and used worldwide for securing sensitive data.</p>
+                        <ul class="checklist">
+                            <li>Key lengths: 128, 192, or 256 bits</li>
+                            <li>Block size: 128 bits</li>
+                            <li>Used in: WiFi security, file encryption, VPNs</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title"><i class='bx bx-network-chart'></i> IPSec</h3>
+                    <div class="card-content">
+                        <p>A protocol suite for securing Internet Protocol communications by authenticating and encrypting each IP packet in a communication session.</p>
+                        <ul class="checklist">
+                            <li>Provides: Confidentiality, integrity, authentication</li>
+                            <li>Modes: Transport and Tunnel</li>
+                            <li>Used in: VPNs, secure site-to-site connections</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title"><i class='bx bx-globe'></i> VPN (Virtual Private Network)</h3>
+                    <div class="card-content">
+                        <p>Extends a private network across a public network, enabling users to send and receive data as if their devices were directly connected to the private network.</p>
+                        <ul class="checklist">
+                            <li>Protocols: OpenVPN, WireGuard, IKEv2</li>
+                            <li>Encryption: Typically uses AES-256</li>
+                            <li>Used for: Privacy, bypassing geo-restrictions</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title"><i class='bx bx-certification'></i> TLS/SSL Certificates</h3>
+                    <div class="card-content">
+                        <p>Digital certificates that authenticate a website's identity and enable an encrypted connection using the Transport Layer Security protocol.</p>
+                        <ul class="checklist">
+                            <li>Provides: Authentication, encryption, integrity</li>
+                            <li>Key exchange: RSA, ECDHE, DHE</li>
+                            <li>Used in: HTTPS, secure email, online banking</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title"><i class='bx bx-chip'></i> 256-bit Encryption</h3>
+                    <div class="card-content">
+                        <p>Refers to the size of the encryption key. A 256-bit key has 2^256 possible combinations, making brute-force attacks practically impossible with current technology.</p>
+                        <ul class="checklist">
+                            <li>Security level: Extremely high</li>
+                            <li>Brute-force time: Billions of years with current tech</li>
+                            <li>Used in: Military, financial, sensitive data</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/7sX4Dq2XoHk" title="Encryption Explained" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </section>
+        
+        <section class="section" id="why-secure">
+            <h2 class="section-title"><i class='bx bx-question-mark'></i> Why 256-bit Encryption is Practically Unbreakable</h2>
+            
+            <div class="card">
+                <div class="card-content">
+                    <p>The security of 256-bit encryption lies in the astronomical number of possible keys. With 2^256 possible combinations:</p>
+                    
+                    <div class="two-column">
+                        <div>
+                            <h3>Mathematical Perspective</h3>
+                            <ul class="checklist">
+                                <li>2^256 is approximately 1.16 x 10^77</li>
+                                <li>That's more than the number of atoms in the visible universe</li>
+                                <li>Even with a supercomputer trying 1 trillion keys per second, it would take billions of years to try all combinations</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>Real-World Implications</h3>
+                            <ul class="checklist">
+                                <li>Quantum computers may eventually threaten current encryption, but post-quantum cryptography is being developed</li>
+                                <li>Implementation flaws are more likely attack vectors than breaking the encryption itself</li>
+                                <li>Proper key management is essential for maintaining security</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="image-container">
+                        <img src="https://www.ssl2buy.com/wiki/wp-content/uploads/2015/12/128-bit-vs-256-bit-ssl.png" alt="128-bit vs 256-bit Encryption" class="content-image">
+                        <div class="image-caption">Comparison of 128-bit and 256-bit encryption security levels</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section" id="timeline">
+            <h2 class="section-title"><i class='bx bx-time-five'></i> Evolution of Cryptology</h2>
+            
+            <div class="timeline">
+                <div class="timeline-item left">
+                    <div class="timeline-content">
+                        <h3>Ancient Times</h3>
+                        <p>Simple substitution ciphers like Caesar cipher used by Julius Caesar to protect military communications.</p>
+                    </div>
+                </div>
+                <div class="timeline-item right">
+                    <div class="timeline-content">
+                        <h3>World War II</h3>
+                        <p>Enigma machine used by Germans, broken by Allied cryptanalysts including Alan Turing, significantly shortening the war.</p>
+                    </div>
+                </div>
+                <div class="timeline-item left">
+                    <div class="timeline-content">
+                        <h3>1970s</h3>
+                        <p>Development of DES (Data Encryption Standard) by IBM, adopted as a federal standard in the United States.</p>
+                    </div>
+                </div>
+                <div class="timeline-item right">
+                    <div class="timeline-content">
+                        <h3>1976</h3>
+                        <p>Diffie-Hellman key exchange published, enabling secure key exchange over insecure channels.</p>
+                    </div>
+                </div>
+                <div class="timeline-item left">
+                    <div class="timeline-content">
+                        <h3>1977</h3>
+                        <p>RSA algorithm invented, becoming the foundation of modern public-key cryptography.</p>
+                    </div>
+                </div>
+                <div class="timeline-item right">
+                    <div class="timeline-content">
+                        <h3>2001</h3>
+                        <p>AES (Advanced Encryption Standard) selected to replace DES, becoming the new encryption standard.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section" id="steganography">
+            <h2 class="section-title"><i class='bx bx-hide'></i> Steganography: Hiding in Plain Sight</h2>
+            
+            <div class="card">
+                <div class="card-content">
+                    <p><span class="term-highlight">Steganography</span> is the practice of concealing a message, image, or file within another message, image, or file. Unlike cryptography, which focuses on making content unreadable, steganography focuses on making content invisible.</p>
+                    
+                    <div class="animation-container">
+                        <img src="https://media.tenor.com/3n9a8yGd-6kAAAAC/steganography-hide-data.gif" alt="Steganography Animation">
+                        <div class="image-caption">Animation showing how data can be hidden within an image</div>
+                    </div>
+                    
+                    <div class="two-column">
+                        <div>
+                            <h3>Common Techniques</h3>
+                            <ul class="checklist">
+                                <li>LSB (Least Significant Bit) insertion in images</li>
+                                <li>Hidden text in whitespace or formatting</li>
+                                <li>Audio steganography using inaudible frequencies</li>
+                                <li>Video steganography hiding data in frames</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>Applications</h3>
+                            <ul class="checklist">
+                                <li>Digital watermarking for copyright protection</li>
+                                <li>Covert communication channels</li>
+                                <li>Data integrity verification</li>
+                                <li>Anti-piracy measures</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/TWEXCYQKyDc" title="Steganography Explained" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section" id="applications">
+            <h2 class="section-title"><i class='bx bx-cog'></i> Real-World Applications</h2>
+            
+            <div class="card-container">
+                <div class="card">
+                    <h3 class="card-title"><i class='bx bx-credit-card'></i> Financial Transactions</h3>
+                    <div class="card-content">
+                        <p>Encryption protects credit card information, bank transfers, and cryptocurrency transactions from interception and fraud.</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title"><i class='bx bx-message-rounded'></i> Secure Communications</h3>
+                    <div class="card-content">
+                        <p>End-to-end encryption in messaging apps like WhatsApp and Signal ensures only intended recipients can read messages.</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title"><i class='bx bx-cloud'></i> Data Storage</h3>
+                    <div class="card-content">
+                        <p>Cloud storage services use encryption to protect user data both in transit and at rest on their servers.</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title"><i class='bx bx-lock'></i> Authentication</h3>
+                    <div class="card-content">
+                        <p>Digital signatures and certificates verify the authenticity of software, websites, and digital documents.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/7UR6egf9ksQ" title="How Encryption Works - Practical Examples" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </section>
+    </div>
+
+    <footer style="text-align: center; padding: 20px; font-size: 14px; color: white; margin-top: 50px;">
+        <hr style="margin-bottom: 10px; border-color: limegreen;" />
+        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.2 | July 2025</p>
+    </footer>
+
+    <script src="/JAVASCRIPT/monitor.js"></script>
+    <canvas id="matrixCanvas"></canvas>
+    <script src="/JAVASCRIPT/matrix.js"></script>
+</body>
+</html>
