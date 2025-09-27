@@ -27,14 +27,26 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    const { emailData, apiKey, secretKey } = JSON.parse(event.body);
+    const { emailData } = JSON.parse(event.body);
     
     // Validate required fields
-    if (!apiKey || !secretKey || !emailData) {
+    if (!emailData) {
       return {
         statusCode: 400,
         headers,
-        body: JSON.stringify({ error: 'Missing required parameters' })
+        body: JSON.stringify({ error: 'Missing emailData parameter' })
+      };
+    }
+
+    // Use environment variables for Mailjet credentials
+    const apiKey = process.env.MAILJET_API_KEY;
+    const secretKey = process.env.MAILJET_SECRET_KEY;
+
+    if (!apiKey || !secretKey) {
+      return {
+        statusCode: 500,
+        headers,
+        body: JSON.stringify({ error: 'Email service configuration error' })
       };
     }
 
@@ -49,8 +61,7 @@ exports.handler = async (event, context) => {
       headers,
       body: JSON.stringify({ 
         success: true, 
-        message: `Email sent successfully to ${emailData.Messages[0].To.length} recipients`,
-        result: result.body 
+        message: `Email sent successfully to ${emailData.Messages[0].To.length} recipients`
       })
     };
   } catch (error) {
