@@ -2,36 +2,602 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Paneli - adembayazit.com</title>
+    <title>Vulnerabilities Research | Adem Bayazıt</title>
+    <meta property="og:title" content="Adem Bayazıt | Vulnerabilities Research" />
+    <meta property="og:description" content="Cybersecurity vulnerabilities research and analysis by Adem Bayazıt" />
+    <meta property="og:image" content="https://adembayazit.com/IMAGES/preview.png" />
+    <meta property="og:url" content="https://adembayazit.com/vulnerabilities" />
+    <meta property="og:type" content="website" />
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Adem Bayazıt - Vulnerabilities Research">
+    <meta name="twitter:description" content="Cybersecurity vulnerabilities research and analysis by Adem Bayazıt">
+    <meta name="twitter:image" content="https://adembayazit.com/IMAGES/preview.png">
+    <meta name="twitter:image:alt" content="Adem Bayazıt">
+    
+    <link rel="icon" type="png|image" href="/IMAGES/ab.png">
+    <link rel="stylesheet" href="/CSS/style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href='https://cdn.boxicons.com/fonts/basic/boxicons.min.css' rel='stylesheet'>
+    <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
     <!-- Cropper.js CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     <style>
         :root {
-            --primary-color: limegreen;
-            --secondary-color: #001e00;
-            --text-color: limegreen;
-            --bg-color: #000;
-            --error-color: #ff3333;
-            --success-color: #00ff00;
-            --warning-color: #ffcc00;
-            --spotify-color: #1DB954;
-            --youtube-color: #FF0000;
+            --primary-color: #00ff00;
+            --primary-dark: #00cc00;
+            --primary-light: #33ff33;
+            --bg-color: #0a1916;
+            --card-bg: rgba(10, 25, 20, 0.7);
+            --text-color: #ffffff;
+            --text-muted: #cccccc;
+            --border-color: #00aa00;
+            --highlight-color: #99ff99;
+            --sidebar-width: 320px;
+            --admin-primary: limegreen;
+            --admin-secondary: #001e00;
+            --admin-text: limegreen;
+            --admin-bg: #000;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
         }
         
         body {
-            background: var(--bg-color);
+            background-color: var(--bg-color);
             color: var(--text-color);
-            font-family: 'Courier New', monospace;
-            margin: 0;
-            padding: 0;
             overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Logo ve slogan için stil */
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        
+        .logo-slogan {
+            font-size: 10px;
+            color: white;
+            margin-top: 2px;
+            font-style: italic;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            text-align: right;
+            width: 100%;
+            padding-right: 5px;
+        }
+        
+        /* Navbar için responsive ayarlar */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 5%;
+        }
+        
+        .content-wrapper {
+            margin-top: 160px;
+            position: relative;
+            z-index: 2;
+            padding: 0 20px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .backto {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .back-to-home {
+            display: inline-block;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            padding: 10px 20px;
+        }
+        
+        .back-to-home:hover {
+            text-decoration: underline;
+            color: var(--highlight-color);
+            background: rgba(0, 255, 0, 0.1);
+        }
+        
+        .page-title {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 1.7rem;
+            color: white;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+            position: relative;
+            filter: drop-shadow(0 0 5px limegreen);
+        }
+        
+        .page-title::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 3px;
+        }
+        
+        /* Main layout */
+        .vulnerabilities-container {
+            display: flex;
+            gap: 30px;
+            min-height: 600px;
+        }
+        
+        .vulnerabilities-container h3 {
+            color: white;
+        }
+        .vulnerabilities-container i {
+            color: red;
+        }
+        /* Sidebar styles */
+        .research-sidebar {
+            width: var(--sidebar-width);
+            flex-shrink: 0;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+        
+        .sidebar-title {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .research-list {
+            list-style: none;
+        }
+        
+        .research-item {
+            padding: 15px;
+            border-bottom: 1px solid rgba(0, 255, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            position: relative;
+        }
+        
+        .research-item:hover {
+            background: rgba(0, 255, 0, 0.1);
+        }
+        
+        .research-item.active {
+            background: rgba(0, 255, 0, 0.2);
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        .research-title {
+            font-weight: bold;
+            color: var(--text-color);
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            line-height: 1.3;
+        }
+        
+        .research-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+        
+        .research-date {
+            flex: 1;
+        }
+        
+        .research-author {
+            background: rgba(0, 255, 0, 0.2);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.6rem;
+            margin-left: 5px;
+        }
+        
+        .author-adem {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        
+        /* Share button in sidebar */
+        .research-share {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 3px;
+            padding: 3px 6px;
+            cursor: pointer;
+            font-size: 0.6rem;
+        }
+        
+        .research-item:hover .research-share {
+            opacity: 1;
+        }
+        
+        /* Content area styles */
+        .research-content {
+            flex: 1;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 30px;
+            min-height: 600px;
+            position: relative;
+            color:white;
+        }
+        
+        .content-placeholder {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+        
+        .content-placeholder i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--border-color);
+        }
+        
+        .content-placeholder p {
+            font-size: 1.1rem;
+        }
+        
+        /* Content styles when loaded */
+        .research-detail {
+            display: none;
+        }
+        
+        .research-detail.active {
+            display: block;
+        }
+        
+        .detail-header {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .detail-title {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .detail-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            flex-wrap: wrap;
+        }
+        
+        .detail-date, .detail-category, .detail-author {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .detail-body {
+            line-height: 1.6;
+        }
+        
+        .detail-body img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px solid var(--border-color);
+        }
+        
+        .detail-body pre {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 15px 0;
+            border: 1px solid var(--border-color);
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .detail-body code {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .detail-body h2, .detail-body h3 {
+            color: var(--primary-color);
+            margin: 20px 0 10px;
+        }
+        
+        .detail-body p {
+            margin-bottom: 15px;
+        }
+        
+        .detail-body ul, .detail-body ol {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .detail-body li {
+            margin-bottom: 5px;
+        }
+        
+        .cvss-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        
+        .cvss-critical {
+            background: #ff0000;
+            color: white;
+        }
+        
+        .cvss-high {
+            background: #ff6b00;
+            color: white;
+        }
+        
+        .cvss-medium {
+            background: #ffcc00;
+            color: black;
+        }
+        
+        .cvss-low {
+            background: #00cc00;
+            color: white;
+        }
+        
+        /* Share button in detail */
+        .detail-share {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+            color:white;
+        }
+        
+        .detail-share:hover {
+            background: rgba(0, 255, 0, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        /* Loading animation */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--primary-color);
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 255, 0, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary-color);
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 5px;
+            border: 1px solid var(--primary-color);
+            z-index: 1000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        /* Subscription Section */
+        .subscription-section {
+            margin-top: 50px;
+            padding: 30px;
+            background: var(--card-bg);
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+        
+        .subscription-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .subscription-form {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .subscription-input {
+            flex: 1;
+            min-width: 250px;
+            padding: 12px;
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+        }
+        
+        .subscription-btn {
+            padding: 12px 24px;
+            background: var(--primary-color);
+            color: black;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .subscription-btn:hover {
+            background: var(--primary-dark);
+        }
+        
+        .subscription-btn:disabled {
+            background: var(--text-muted);
+            cursor: not-allowed;
+        }
+        
+        .subscription-message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .subscription-success {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .subscription-error {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid #ff5555;
+            color: #ff5555;
+        }
+        
+        /* Matrix Canvas Styles */
+        #matrixCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        /* Admin Panel Styles */
+        .admin-toggle-btn {
+            position: fixed;
+            top: 120px;
+            right: 20px;
+            background: var(--admin-primary);
+            color: black;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1000;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+            transition: all 0.3s;
+        }
+        
+        .admin-toggle-btn:hover {
+            background: #00cc00;
+            transform: translateY(-2px);
+        }
+        
+        .admin-panel {
+            position: fixed;
+            top: 160px;
+            right: 20px;
+            width: 90%;
+            max-width: 1200px;
+            height: 80vh;
+            background: var(--admin-bg);
+            border: 2px solid var(--admin-primary);
+            border-radius: 10px;
+            z-index: 999;
+            display: none;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        .admin-panel.active {
+            display: flex;
         }
         
         .admin-header {
             background: rgba(0, 30, 0, 0.9);
-            border-bottom: 1px solid var(--primary-color);
+            border-bottom: 1px solid var(--admin-primary);
             padding: 1rem;
             display: flex;
             justify-content: space-between;
@@ -39,19 +605,20 @@
             box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
         }
         
-        .logo {
+        .admin-logo {
             display: flex;
             align-items: center;
             gap: 10px;
             font-size: 0.9rem;
+            color: var(--admin-text);
         }
         
-        .logo img {
+        .admin-logo img {
             height: 30px;
-            filter: drop-shadow(0 0 5px var(--primary-color));
+            filter: drop-shadow(0 0 5px var(--admin-primary));
         }
         
-        .logo h2 {
+        .admin-logo h2 {
             margin: 0;
             display: flex;
             align-items: center;
@@ -64,8 +631,8 @@
             animation: bugPulse 1.5s infinite;
         }
         
-        .logout-btn {
-            background: var(--primary-color);
+        .admin-close-btn {
+            background: var(--admin-primary);
             color: black;
             border: none;
             padding: 6px 10px;
@@ -80,36 +647,84 @@
             font-size: 0.8rem;
         }
         
-        .logout-btn:hover {
-            box-shadow: 0 0 10px var(--primary-color);
+        .admin-close-btn:hover {
+            box-shadow: 0 0 10px var(--admin-primary);
             transform: translateY(-2px);
         }
         
         .admin-container {
             display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            padding: 1rem;
+            flex: 1;
+            overflow: hidden;
         }
         
-        .editor-container, .stats-container, .entries-container {
+        .admin-sidebar {
+            width: 250px;
             background: rgba(0, 30, 0, 0.7);
-            border: 1px solid var(--primary-color);
+            border-right: 1px solid var(--admin-primary);
+            padding: 1rem;
+            overflow-y: auto;
+        }
+        
+        .admin-nav {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .admin-nav-item {
+            margin-bottom: 5px;
+        }
+        
+        .admin-nav-link {
+            display: block;
+            padding: 10px;
+            background: rgba(0, 30, 0, 0.5);
+            border: 1px solid var(--admin-primary);
+            color: var(--admin-text);
+            text-decoration: none;
+            border-radius: 3px;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        
+        .admin-nav-link:hover, .admin-nav-link.active {
+            background: var(--admin-primary);
+            color: black;
+        }
+        
+        .admin-content {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .admin-section {
+            background: rgba(0, 30, 0, 0.7);
+            border: 1px solid var(--admin-primary);
             border-radius: 5px;
             padding: 1rem;
             box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);
             position: relative;
             overflow: hidden;
+            display: none;
         }
         
-        .editor-container::after, .stats-container::after, .entries-container::after {
+        .admin-section.active {
+            display: block;
+        }
+        
+        .admin-section::after {
             content: "";
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             height: 2px;
-            background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+            background: linear-gradient(90deg, transparent, var(--admin-primary), transparent);
             animation: scanline 3s linear infinite;
         }
         
@@ -117,25 +732,26 @@
             margin-bottom: 1rem;
         }
         
-        label {
+        .admin-label {
             display: block;
             margin-bottom: 0.3rem;
             font-weight: bold;
             font-size: 0.9rem;
+            color: var(--admin-text);
         }
         
-        input[type="number"], textarea, input[type="text"] {
+        .admin-input, .admin-textarea {
             width: 100%;
             padding: 8px;
             background: #111;
-            border: 1px solid var(--primary-color);
-            color: var(--text-color);
+            border: 1px solid var(--admin-primary);
+            color: var(--admin-text);
             font-family: 'Courier New', monospace;
             border-radius: 3px;
             font-size: 0.9rem;
         }
         
-        textarea {
+        .admin-textarea {
             min-height: 100px;
             resize: vertical;
         }
@@ -149,8 +765,8 @@
         
         .editor-toolbar button {
             background: #111;
-            border: 1px solid var(--primary-color);
-            color: var(--text-color);
+            border: 1px solid var(--admin-primary);
+            color: var(--admin-text);
             padding: 4px 8px;
             cursor: pointer;
             border-radius: 3px;
@@ -159,34 +775,34 @@
         }
         
         .editor-toolbar button:hover {
-            background: var(--primary-color);
+            background: var(--admin-primary);
             color: black;
         }
         
         .editor-toolbar .spotify-btn {
             background: #111;
-            border: 1px solid var(--spotify-color);
-            color: var(--spotify-color);
+            border: 1px solid #1DB954;
+            color: #1DB954;
         }
         
         .editor-toolbar .spotify-btn:hover {
-            background: var(--spotify-color);
+            background: #1DB954;
             color: black;
         }
         
         .editor-toolbar .youtube-btn {
             background: #111;
-            border: 1px solid var(--youtube-color);
-            color: var(--youtube-color);
+            border: 1px solid #FF0000;
+            color: #FF0000;
         }
         
         .editor-toolbar .youtube-btn:hover {
-            background: var(--youtube-color);
+            background: #FF0000;
             color: white;
         }
         
-        .submit-btn {
-            background: var(--primary-color);
+        .admin-submit-btn {
+            background: var(--admin-primary);
             color: black;
             border: none;
             padding: 8px 15px;
@@ -203,8 +819,8 @@
             font-size: 0.9rem;
         }
         
-        .submit-btn:hover {
-            box-shadow: 0 0 15px var(--primary-color);
+        .admin-submit-btn:hover {
+            box-shadow: 0 0 15px var(--admin-primary);
             transform: translateY(-2px);
         }
         
@@ -217,7 +833,7 @@
         
         .stat-box {
             background: rgba(0, 30, 0, 0.5);
-            border: 1px solid var(--primary-color);
+            border: 1px solid var(--admin-primary);
             padding: 0.5rem;
             text-align: center;
             border-radius: 3px;
@@ -227,7 +843,7 @@
         .stat-box i {
             font-size: 1rem;
             margin-bottom: 0.3rem;
-            color: var(--primary-color);
+            color: var(--admin-primary);
         }
         
         .stat-box span {
@@ -236,7 +852,7 @@
             font-weight: bold;
         }
         
-        #response-message {
+        .admin-response-message {
             padding: 8px;
             margin-top: 10px;
             border-radius: 3px;
@@ -245,22 +861,22 @@
             font-size: 0.9rem;
         }
         
-        .success {
+        .admin-success {
             background: rgba(0, 255, 0, 0.1);
-            border: 1px solid var(--success-color);
-            color: var(--success-color);
+            border: 1px solid #00ff00;
+            color: #00ff00;
         }
         
-        .error {
+        .admin-error {
             background: rgba(255, 0, 0, 0.1);
-            border: 1px solid var(--error-color);
-            color: var(--error-color);
+            border: 1px solid #ff3333;
+            color: #ff3333;
         }
         
-        .warning {
+        .admin-warning {
             background: rgba(255, 204, 0, 0.1);
-            border: 1px solid var(--warning-color);
-            color: var(--warning-color);
+            border: 1px solid #ffcc00;
+            color: #ffcc00;
         }
         
         .entries-list {
@@ -271,7 +887,7 @@
         
         .entry-item {
             background: rgba(0, 30, 0, 0.5);
-            border: 1px solid var(--primary-color);
+            border: 1px solid var(--admin-primary);
             padding: 0.8rem;
             margin-bottom: 0.8rem;
             border-radius: 3px;
@@ -321,8 +937,8 @@
         
         .entry-actions button {
             background: rgba(0, 0, 0, 0.7);
-            border: 1px solid var(--primary-color);
-            color: var(--text-color);
+            border: 1px solid var(--admin-primary);
+            color: var(--admin-text);
             width: 20px;
             height: 20px;
             border-radius: 3px;
@@ -334,60 +950,15 @@
         }
         
         .entry-actions button:hover {
-            background: var(--primary-color);
+            background: var(--admin-primary);
             color: black;
-        }
-        
-        .edit-form {
-            display: none;
-            margin-top: 0.5rem;
-            padding: 0.8rem;
-            background: rgba(0, 60, 0, 0.5);
-            border: 1px solid var(--primary-color);
-            border-radius: 3px;
-            font-size: 0.9rem;
-        }
-        
-        .edit-form textarea {
-            min-height: 80px;
-        }
-        
-        .edit-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 8px;
-        }
-        
-        .edit-actions button {
-            flex: 1;
-            padding: 4px;
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 3px;
-        }
-        
-        .save-btn {
-            background: var(--primary-color);
-            color: black;
-        }
-        
-        .cancel-btn {
-            background: #333;
-            color: white;
-        }
-        
-        .delete-btn {
-            background: var(--error-color);
-            color: white;
         }
         
         .preview-container {
             margin-top: 5px;
             padding: 8px;
             background: rgba(0, 30, 0, 0.3);
-            border: 1px dashed var(--primary-color);
+            border: 1px dashed var(--admin-primary);
             border-radius: 3px;
             font-size: 0.8rem;
         }
@@ -404,309 +975,12 @@
             color: #aaa;
         }
         
-        .search-container {
-            margin-bottom: 1rem;
-        }
-        
-        .search-input {
-            display: flex;
-            gap: 5px;
-        }
-        
-        .search-input input {
-            flex: 1;
-        }
-        
-        .search-input button {
-            background: var(--primary-color);
-            color: black;
-            border: none;
-            padding: 0 10px;
-            cursor: pointer;
-            border-radius: 3px;
-        }
-        
-        #trContent-preview, #enContent-preview,
-        [id$="-preview"] {
-            font-family: 'Courier New', monospace;
-            line-height: 1.5;
-            overflow: hidden;
-        }
-        
-        #trContent-preview strong, #enContent-preview strong,
-        [id$="-preview"] strong {
-            color: var(--primary-color);
-            font-weight: bold;
-        }
-        
-        #trContent-preview em, #enContent-preview em,
-        [id$="-preview"] em {
-            font-style: italic;
-        }
-        
-        #trContent-preview u, #enContent-preview u,
-        [id$="-preview"] u {
-            text-decoration: underline;
-        }
-        
-        #trContent-preview blockquote, #enContent-preview blockquote,
-        [id$="-preview"] blockquote {
-            border-left: 3px solid var(--primary-color);
-            padding-left: 10px;
-            margin: 5px 0;
-            color: #aaa;
-        }
-        
-        /* Medya içerikleri için responsive stiller */
-        #trContent-preview img, #enContent-preview img,
-        #trContent-preview video, #enContent-preview video,
-        [id$="-preview"] img, [id$="-preview"] video {
-            max-width: 100%;
-            height: auto;
-            display: block;
-            margin: 5px 0;
-            border: 1px solid var(--primary-color);
-        }
-        
-        .spotify-embed {
-            width: 100%;
-            height: 152px;
-            border-radius: 12px;
-            margin: 10px 0;
-            border: 1px solid var(--spotify-color);
-            overflow: hidden;
-        }
-        
-        .spotify-embed iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-          
-        .youtube-embed {
-            width: 100%;
-            margin: 10px 0;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid var(--youtube-color);
-            border-radius: 8px;
-        }
-
-        .youtube-embed iframe {
-            width: 100%;
-            height: 315px;
-            display: block;
-            border: none;
-        }
-        
-        /* IP İstatistikleri için stiller */
-        .ip-stats-container {
-            background: rgba(0, 30, 0, 0.7);
-            border: 1px solid var(--primary-color);
-            border-radius: 5px;
-            padding: 1rem;
-            margin: 1rem;
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .ip-stats-container::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
-            animation: scanline 3s linear infinite;
-        }
-        
-        .ip-stats-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-            color: var(--primary-color);
-        }
-        
-        .ip-stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        
-        .ip-stat-box {
-            background: rgba(0, 30, 0, 0.5);
-            border: 1px solid var(--primary-color);
-            padding: 10px;
-            border-radius: 3px;
-            text-align: center;
-        }
-        
-        .ip-stat-box h4 {
-            margin: 0 0 8px 0;
-            font-size: 0.9rem;
-            color: var(--primary-color);
-        }
-        
-        .ip-stat-box span {
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-        
-        .recent-ips {
-            margin-top: 20px;
-            padding: 0 1rem 1rem 1rem;
-        }
-        
-        .recent-ips h4 {
-            margin-bottom: 10px;
-            color: var(--primary-color);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .ip-item {
-            background: rgba(0, 30, 0, 0.5);
-            border: 1px solid var(--primary-color);
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 3px;
-            font-size: 0.85rem;
-        }
-        
-        .ip-item-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            padding-bottom: 5px;
-            border-bottom: 1px dashed var(--primary-color);
-        }
-        
-        .ip-address {
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-        
-        .ip-date {
-            color: #aaa;
-            font-size: 0.8rem;
-        }
-        
-        .ip-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 8px;
-        }
-        
-        .ip-detail-item {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .ip-detail-label {
-            font-size: 0.75rem;
-            color: #aaa;
-        }
-        
-        .ip-detail-value {
-            font-size: 0.85rem;
-        }
-        
-        .loading-spinner {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        
-        .loading-spinner i {
-            font-size: 1.5rem;
-            color: var(--primary-color);
-            animation: spin 1s linear infinite;
-        }
-        
-        .filter-container {
-            margin: 15px 0;
-            padding: 10px;
-            background: rgba(0, 30, 0, 0.3);
-            border: 1px solid var(--primary-color);
-            border-radius: 3px;
-        }
-        
-        .filter-controls {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 10px;
-        }
-        
-        .filter-controls input, .filter-controls select {
-            background: #111;
-            border: 1px solid var(--primary-color);
-            color: var(--text-color);
-            padding: 5px 10px;
-            border-radius: 3px;
-            font-family: 'Courier New', monospace;
-        }
-        
-        .filter-controls button {
-            background: var(--primary-color);
-            color: black;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-            border-radius: 3px;
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
-        }
-        
-        .entry-stats {
-            margin-top: 20px;
-            padding: 15px;
-            background: rgba(0, 30, 0, 0.5);
-            border: 1px solid var(--primary-color);
-            border-radius: 3px;
-        }
-        
-        .entry-stats h4 {
-            margin-bottom: 15px;
-            color: var(--primary-color);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .entry-stat-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(0, 255, 0, 0.2);
-        }
-        
-        .entry-stat-item:last-child {
-            border-bottom: none;
-        }
-        
-        .entry-id {
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-        
-        .entry-count {
-            background: rgba(0, 255, 0, 0.2);
-            padding: 2px 8px;
-            border-radius: 3px;
-        }
-        
+        /* Media Upload Styles */
         .media-upload-container {
             margin-top: 10px;
             padding: 10px;
             background: rgba(0, 30, 0, 0.3);
-            border: 1px dashed var(--primary-color);
+            border: 1px dashed var(--admin-primary);
             border-radius: 3px;
         }
 
@@ -732,15 +1006,15 @@
 
         .progress {
             height: 100%;
-            background: var(--primary-color);
+            background: var(--admin-primary);
             width: 0%;
             transition: width 0.3s;
         }
 
         .media-btn {
             background: #111;
-            border: 1px solid var(--primary-color);
-            color: var(--text-color);
+            border: 1px solid var(--admin-primary);
+            color: var(--admin-text);
             padding: 4px 8px;
             cursor: pointer;
             border-radius: 3px;
@@ -749,32 +1023,8 @@
         }
 
         .media-btn:hover {
-            background: var(--primary-color);
+            background: var(--admin-primary);
             color: black;
-        }
-
-        .debug-info {
-            font-size: 0.7rem;
-            color: #888;
-            margin-top: 5px;
-            padding: 5px;
-            background: rgba(0, 30, 0, 0.2);
-            border-radius: 3px;
-            display: none;
-        }
-        
-        .alternative-upload {
-            margin-top: 10px;
-            padding: 10px;
-            background: rgba(0, 30, 0, 0.3);
-            border: 1px dashed var(--primary-color);
-            border-radius: 3px;
-            font-size: 0.8rem;
-        }
-        
-        .alternative-upload a {
-            color: var(--primary-color);
-            text-decoration: underline;
         }
 
         /* Crop Modal Stilleri */
@@ -792,8 +1042,8 @@
         }
 
         .crop-modal-content {
-            background: var(--secondary-color);
-            border: 2px solid var(--primary-color);
+            background: var(--admin-secondary);
+            border: 2px solid var(--admin-primary);
             border-radius: 5px;
             padding: 20px;
             max-width: 90%;
@@ -807,19 +1057,19 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 15px;
-            border-bottom: 1px solid var(--primary-color);
+            border-bottom: 1px solid var(--admin-primary);
             padding-bottom: 10px;
         }
 
         .crop-modal-header h3 {
             margin: 0;
-            color: var(--primary-color);
+            color: var(--admin-primary);
         }
 
         .close-crop {
             background: none;
             border: none;
-            color: var(--primary-color);
+            color: var(--admin-primary);
             font-size: 1.5rem;
             cursor: pointer;
         }
@@ -841,8 +1091,8 @@
 
         .aspect-ratio-btn {
             background: #111;
-            border: 1px solid var(--primary-color);
-            color: var(--text-color);
+            border: 1px solid var(--admin-primary);
+            color: var(--admin-text);
             padding: 5px 10px;
             cursor: pointer;
             border-radius: 3px;
@@ -850,7 +1100,7 @@
         }
 
         .aspect-ratio-btn.active {
-            background: var(--primary-color);
+            background: var(--admin-primary);
             color: black;
         }
 
@@ -875,13 +1125,8 @@
         }
 
         .confirm-crop {
-            background: var(--primary-color);
+            background: var(--admin-primary);
             color: black;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
         
         @keyframes scanline {
@@ -895,47 +1140,112 @@
             100% { transform: scale(1); }
         }
         
-        @media (min-width: 768px) {
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .vulnerabilities-container {
+                flex-direction: column;
+            }
+            
+            .research-sidebar {
+                width: 100%;
+                position: static;
+            }
+            
+            .research-content {
+                min-height: auto;
+            }
+            
+            .admin-panel {
+                width: 95%;
+                right: 10px;
+            }
+            
             .admin-container {
-                display: grid;
-                grid-template-columns: 2fr 1fr;
-                gap: 1.5rem;
-                padding: 1.5rem;
+                flex-direction: column;
             }
             
-            .stats-grid {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 1rem;
+            .admin-sidebar {
+                width: 100%;
+                max-height: 150px;
+                overflow-x: auto;
             }
             
-            .logo {
-                font-size: 1rem;
+            .admin-nav {
+                display: flex;
+                overflow-x: auto;
             }
             
-            .logo h2 {
-                font-size: 1.2rem;
-            }
-            
-            .logout-btn {
-                padding: 8px 15px;
-                font-size: 0.9rem;
+            .admin-nav-item {
+                flex-shrink: 0;
+                margin-right: 5px;
+                margin-bottom: 0;
             }
         }
         
-        @media (max-width: 767px) {
-            .spotify-embed {
-                height: 80px;
+        @media (max-width: 768px) {
+            .content-wrapper {
+                margin-top: 160px;
+                padding: 0 10px;
             }
             
-            .youtube-embed iframe {
-                height: 200px;
+            .page-title {
+                font-size: 1.5rem;
             }
             
-            .entry-meta {
+            .research-content {
+                padding: 20px;
+            }
+            
+            .detail-title {
+                font-size: 1.3rem;
+            }
+            
+            .detail-meta {
                 flex-direction: column;
-                gap: 3px;
+                gap: 5px;
             }
-
+            
+            .detail-share {
+                position: static;
+                margin-bottom: 15px;
+                display: inline-flex;
+            }
+            
+            .research-share {
+                opacity: 1; /* Always show on mobile */
+            }
+            
+            .subscription-form {
+                flex-direction: column;
+            }
+            
+            .subscription-input {
+                min-width: auto;
+            }
+            
+            .admin-toggle-btn {
+                top: 100px;
+                right: 10px;
+                font-size: 0.8rem;
+                padding: 8px 12px;
+            }
+            
+            .admin-panel {
+                top: 140px;
+                right: 10px;
+                height: 70vh;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
             .crop-container {
                 height: 300px;
             }
@@ -944,191 +1254,261 @@
                 width: 95%;
                 padding: 15px;
             }
-            
-            .ip-stats-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .ip-details {
-                grid-template-columns: 1fr;
-            }
-            
-            .filter-controls {
-                flex-direction: column;
-            }
         }
     </style>
 </head>
 <body>
-    <header class="admin-header">
-        <div class="logo">
-            <img src="../IMAGES/hackerwhite.svg" alt="adembayazit.com" class="hacker-icon">
-            <h2>LadyB<span class="fa-solid fa-bug bug-icon"></span>G Admin</h2>
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TFN7XD9Z"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header class="header">
+        <div class="logo-container">
+            <a href="https://adembayazit.com" class="logo"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">{adembayazit} </a>
+            <span class="logo-slogan">One step further every day…</span>
         </div>
-        <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Çıkış</button>
+        <nav class="navbar">
+            <div class="dropdown">
+                <a href="#" style="--i:5;" class="dropbtn"> <img src="IMAGES/Ata.svg" alt="Ata Icon" class="ata-icon"><span class="fi fi-tr"></span> <span class='bx bx-code-alt'></span> Ethical Hacker <span class='bx bx-chevron-down'></span></a>
+                <div class="dropdown-content">
+                    <a href="/whatishacker"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hacker-icon"> What is an Ethical Hacker?</a>
+                    <a href="/cybersecurityglossary.html"><img src="IMAGES/glossary.svg" alt="Glossary" class="glossary-icon"> Cybersecurity Glossary</a>
+                    <a href="/whatissoc"><img src="IMAGES/soc.svg" alt="Soc" class="soc-icon"> What is a SOC ?</a>
+                    <a href="/vulnerabilities"><img src="IMAGES/vulnerabilities.svg" alt="Vulnerabilities" class="vulnerabilities-icon"> Vulnerabilities </a>
+                    <a href="/steganography"><img src="IMAGES/steganography.svg" alt="Steganography" class="steganography-icon"> Steganography</a>
+                    <a href="/cryptography"><img src="IMAGES/cryptography.svg" alt="Cryptography" class="cryptography-icon"> Cryptography</a>    
+                    <a href="#payloads"><img src="IMAGES/education.svg" alt="Education" class="education-icon"> Cybersecurity Learning Resources</a>
+                </div>
+            </div>
+        </nav>
     </header>
-
-    <div class="admin-container">
-        <div class="editor-container">
-            <h3><i class="fas fa-plus-circle"></i> Yeni Entry Ekle</h3>
-            
-            <div class="form-group">
-                <label for="entryId"><i class="fas fa-hashtag"></i> Entry ID:</label>
-                <input type="number" id="entryId" placeholder="Otomatik ID için boş bırakın">
+    
+    <!-- Admin Panel Toggle Button -->
+    <button class="admin-toggle-btn" id="adminToggleBtn">
+        <i class="fas fa-cogs"></i> Admin Panel
+    </button>
+    
+    <!-- Admin Panel -->
+    <div class="admin-panel" id="adminPanel">
+        <div class="admin-header">
+            <div class="admin-logo">
+                <img src="../IMAGES/hackerwhite.svg" alt="adembayazit.com" class="hacker-icon">
+                <h2>LadyB<span class="fa-solid fa-bug bug-icon"></span>G Admin</h2>
             </div>
-            
-            <div class="form-group">
-                <label for="referenceId"><i class="fas fa-link"></i> Referans ID (opsiyonel):</label>
-                <input type="number" id="referenceId" placeholder="Referans ID">
-            </div>
-            
-            <div class="form-group">
-                <label for="trContent"><i class="fas fa-language"></i> Türkçe İçerik:</label>
-                <div class="editor-toolbar">
-                    <button onclick="formatText('trContent', 'bold')" title="Kalın"><i class="fas fa-bold"></i></button>
-                    <button onclick="formatText('trContent', 'italic')" title="İtalik"><i class="fas fa-italic"></i></button>
-                    <button onclick="formatText('trContent', 'underline')" title="Altı Çizili"><i class="fas fa-underline"></i></button>
-                    <button onclick="formatText('trContent', 'quote')" title="Tırnak İşareti"><i class="fas fa-quote-right"></i></button>
-                    <button onclick="formatText('trContent', 'paragraph')" title="Paragraf"><i class="fas fa-paragraph"></i></button>
-                    <button onclick="clearFormatting('trContent')" title="Temizle"><i class="fas fa-eraser"></i></button>
-                    <button class="spotify-btn" onclick="addSpotifyEmbed('trContent')" title="Spotify Ekle"><i class="fab fa-spotify"></i></button>
-                    <button class="youtube-btn" onclick="addYoutubeEmbed('trContent')" title="Youtube Ekle"><i class="fab fa-youtube"></i></button>
-                    <button class="media-btn" onclick="openMediaUpload('trContent')" title="Fotoğraf/Video Ekle"><i class="fas fa-camera"></i></button>
-                </div>
-                <textarea id="trContent" placeholder="Türkçe içerik..." oninput="updatePreview('trContent')"></textarea>
-                <div class="preview-container">
-                    <div class="preview-title">
-                        <span>Ön İzleme:</span>
-                        <span class="char-count"><span id="trContent-count">0</span> karakter</span>
-                    </div>
-                    <div id="trContent-preview"></div>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="enContent"><i class="fas fa-globe"></i> İngilizce İçerik:</label>
-                <div class="editor-toolbar">
-                    <button onclick="formatText('enContent', 'bold')" title="Bold"><i class="fas fa-bold"></i></button>
-                    <button onclick="formatText('enContent', 'italic')" title="Italic"><i class="fas fa-italic"></i></button>
-                    <button onclick="formatText('enContent', 'underline')" title="Underline"><i class="fas fa-underline"></i></button>
-                    <button onclick="formatText('enContent', 'quote')" title="Quote"><i class="fas fa-quote-right"></i></button>
-                    <button onclick="formatText('enContent', 'paragraph')" title="Paragraph"><i class="fas fa-paragraph"></i></button>
-                    <button onclick="clearFormatting('enContent')" title="Clear"><i class="fas fa-eraser"></i></button>
-                    <button class="spotify-btn" onclick="addSpotifyEmbed('enContent')" title="Add Spotify"><i class="fab fa-spotify"></i></button>
-                    <button class="youtube-btn" onclick="addYoutubeEmbed('enContent')" title="Add Youtube"><i class="fab fa-youtube"></i></button>
-                    <button class="media-btn" onclick="openMediaUpload('enContent')" title="Add Photo/Video"><i class="fas fa-camera"></i></button>
-                </div>
-                <textarea id="enContent" placeholder="English content..." oninput="updatePreview('enContent')"></textarea>
-                <div class="preview-container">
-                    <div class="preview-title">
-                        <span>Preview:</span>
-                        <span class="char-count"><span id="enContent-count">0</span> characters</span>
-                    </div>
-                    <div id="enContent-preview"></div>
-                </div>
-            </div>
-            
-            <button class="submit-btn" onclick="submitEntry()"><i class="fas fa-paper-plane"></i> Entry Ekle</button>
-            <div id="response-message"></div>
-            <div id="debug-info" class="debug-info"></div>
+            <button class="admin-close-btn" id="adminCloseBtn"><i class="fas fa-times"></i> Close</button>
         </div>
         
-        <div class="stats-container">
-            <h3><i class="fas fa-chart-bar"></i> İstatistikler</h3>
-            <div class="stats-grid">
-                <div class="stat-box">
-                    <i class="fas fa-heart"></i>
-                    <span id="total-likes">0</span>
-                    <small>Toplam Beğeni</small>
-                </div>
-                <div class="stat-box">
-                    <i class="fas fa-thumbtack"></i>
-                    <span id="total-pins">0</span>
-                    <small>Toplam Pin</small>
-                </div>
-                <div class="stat-box">
-                    <i class="fas fa-file-alt"></i>
-                    <span id="total-entries">0</span>
-                    <small>Toplam Entry</small>
-                </div>
+        <div class="admin-container">
+            <div class="admin-sidebar">
+                <ul class="admin-nav">
+                    <li class="admin-nav-item">
+                        <a href="#entry-management" class="admin-nav-link active" data-section="entry-management">
+                            <i class="fas fa-plus-circle"></i> Entry Management
+                        </a>
+                    </li>
+                    <li class="admin-nav-item">
+                        <a href="#statistics" class="admin-nav-link" data-section="statistics">
+                            <i class="fas fa-chart-bar"></i> Statistics
+                        </a>
+                    </li>
+                    <li class="admin-nav-item">
+                        <a href="#email-management" class="admin-nav-link" data-section="email-management">
+                            <i class="fas fa-envelope"></i> Email Management
+                        </a>
+                    </li>
+                    <li class="admin-nav-item">
+                        <a href="#ip-statistics" class="admin-nav-link" data-section="ip-statistics">
+                            <i class="fas fa-network-wired"></i> IP Statistics
+                        </a>
+                    </li>
+                </ul>
             </div>
             
-            <div class="search-container">
-                <h3><i class="fas fa-search"></i> Entry Ara</h3>
-                <div class="search-input">
-                    <input type="number" id="searchId" placeholder="Entry ID girin">
-                    <button onclick="searchEntry()"><i class="fas fa-search"></i></button>
-                </div>
-            </div>
-            
-            <h3><i class="fas fa-history"></i> Son Entryler</h3>
-            <div class="entries-list" id="recent-entries">
-                <!-- Son entryler buraya eklenecek -->
+            <div class="admin-content">
+                <!-- Entry Management Section -->
+                <section id="entry-management" class="admin-section active">
+                    <h3><i class="fas fa-plus-circle"></i> Yeni Entry Ekle</h3>
+                    
+                    <div class="form-group">
+                        <label for="entryId" class="admin-label"><i class="fas fa-hashtag"></i> Entry ID:</label>
+                        <input type="number" id="entryId" class="admin-input" placeholder="Otomatik ID için boş bırakın">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="referenceId" class="admin-label"><i class="fas fa-link"></i> Referans ID (opsiyonel):</label>
+                        <input type="number" id="referenceId" class="admin-input" placeholder="Referans ID">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="trContent" class="admin-label"><i class="fas fa-language"></i> Türkçe İçerik:</label>
+                        <div class="editor-toolbar">
+                            <button onclick="formatText('trContent', 'bold')" title="Kalın"><i class="fas fa-bold"></i></button>
+                            <button onclick="formatText('trContent', 'italic')" title="İtalik"><i class="fas fa-italic"></i></button>
+                            <button onclick="formatText('trContent', 'underline')" title="Altı Çizili"><i class="fas fa-underline"></i></button>
+                            <button onclick="formatText('trContent', 'quote')" title="Tırnak İşareti"><i class="fas fa-quote-right"></i></button>
+                            <button onclick="formatText('trContent', 'paragraph')" title="Paragraf"><i class="fas fa-paragraph"></i></button>
+                            <button onclick="clearFormatting('trContent')" title="Temizle"><i class="fas fa-eraser"></i></button>
+                            <button class="spotify-btn" onclick="addSpotifyEmbed('trContent')" title="Spotify Ekle"><i class="fab fa-spotify"></i></button>
+                            <button class="youtube-btn" onclick="addYoutubeEmbed('trContent')" title="Youtube Ekle"><i class="fab fa-youtube"></i></button>
+                            <button class="media-btn" onclick="openMediaUpload('trContent')" title="Fotoğraf/Video Ekle"><i class="fas fa-camera"></i></button>
+                        </div>
+                        <textarea id="trContent" class="admin-textarea" placeholder="Türkçe içerik..." oninput="updatePreview('trContent')"></textarea>
+                        <div class="preview-container">
+                            <div class="preview-title">
+                                <span>Ön İzleme:</span>
+                                <span class="char-count"><span id="trContent-count">0</span> karakter</span>
+                            </div>
+                            <div id="trContent-preview"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="enContent" class="admin-label"><i class="fas fa-globe"></i> İngilizce İçerik:</label>
+                        <div class="editor-toolbar">
+                            <button onclick="formatText('enContent', 'bold')" title="Bold"><i class="fas fa-bold"></i></button>
+                            <button onclick="formatText('enContent', 'italic')" title="Italic"><i class="fas fa-italic"></i></button>
+                            <button onclick="formatText('enContent', 'underline')" title="Underline"><i class="fas fa-underline"></i></button>
+                            <button onclick="formatText('enContent', 'quote')" title="Quote"><i class="fas fa-quote-right"></i></button>
+                            <button onclick="formatText('enContent', 'paragraph')" title="Paragraph"><i class="fas fa-paragraph"></i></button>
+                            <button onclick="clearFormatting('enContent')" title="Clear"><i class="fas fa-eraser"></i></button>
+                            <button class="spotify-btn" onclick="addSpotifyEmbed('enContent')" title="Add Spotify"><i class="fab fa-spotify"></i></button>
+                            <button class="youtube-btn" onclick="addYoutubeEmbed('enContent')" title="Add Youtube"><i class="fab fa-youtube"></i></button>
+                            <button class="media-btn" onclick="openMediaUpload('enContent')" title="Add Photo/Video"><i class="fas fa-camera"></i></button>
+                        </div>
+                        <textarea id="enContent" class="admin-textarea" placeholder="English content..." oninput="updatePreview('enContent')"></textarea>
+                        <div class="preview-container">
+                            <div class="preview-title">
+                                <span>Preview:</span>
+                                <span class="char-count"><span id="enContent-count">0</span> characters</span>
+                            </div>
+                            <div id="enContent-preview"></div>
+                        </div>
+                    </div>
+                    
+                    <button class="admin-submit-btn" onclick="submitEntry()"><i class="fas fa-paper-plane"></i> Entry Ekle</button>
+                    <div id="admin-response-message" class="admin-response-message"></div>
+                </section>
+                
+                <!-- Statistics Section -->
+                <section id="statistics" class="admin-section">
+                    <h3><i class="fas fa-chart-bar"></i> İstatistikler</h3>
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <i class="fas fa-heart"></i>
+                            <span id="total-likes">0</span>
+                            <small>Toplam Beğeni</small>
+                        </div>
+                        <div class="stat-box">
+                            <i class="fas fa-thumbtack"></i>
+                            <span id="total-pins">0</span>
+                            <small>Toplam Pin</small>
+                        </div>
+                        <div class="stat-box">
+                            <i class="fas fa-file-alt"></i>
+                            <span id="total-entries">0</span>
+                            <small>Toplam Entry</small>
+                        </div>
+                    </div>
+                    
+                    <h3><i class="fas fa-history"></i> Son Entryler</h3>
+                    <div class="entries-list" id="recent-entries">
+                        <!-- Son entryler buraya eklenecek -->
+                    </div>
+                </section>
+                
+                <!-- Email Management Section -->
+                <section id="email-management" class="admin-section">
+                    <h3><i class="fas fa-envelope"></i> Abonelere Mail Gönder</h3>
+                    
+                    <div class="form-group">
+                        <label for="emailSubject" class="admin-label"><i class="fas fa-tag"></i> Mail Konusu:</label>
+                        <input type="text" id="emailSubject" class="admin-input" placeholder="Mail konusunu girin">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="emailContent" class="admin-label"><i class="fas fa-envelope-open-text"></i> Mail İçeriği:</label>
+                        <textarea id="emailContent" class="admin-textarea" placeholder="Mail içeriğini girin" rows="8"></textarea>
+                    </div>
+                    
+                    <button class="admin-submit-btn" onclick="sendEmailToSubscribers()"><i class="fas fa-paper-plane"></i> Abonelere Gönder</button>
+                    <div id="email-response-message" class="admin-response-message"></div>
+                </section>
+                
+                <!-- IP Statistics Section -->
+                <section id="ip-statistics" class="admin-section">
+                    <h3><i class="fas fa-network-wired"></i> IP İstatistikleri</h3>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <i class="fas fa-users"></i>
+                            <span id="total-visitors">0</span>
+                            <small>Toplam Ziyaretçi</small>
+                        </div>
+                        <div class="stat-box">
+                            <i class="fas fa-desktop"></i>
+                            <span id="unique-ips">0</span>
+                            <small>Benzersiz IP</small>
+                        </div>
+                        <div class="stat-box">
+                            <i class="fas fa-fingerprint"></i>
+                            <span id="unique-fingerprints">0</span>
+                            <small>Benzersiz Fingerprint</small>
+                        </div>
+                    </div>
+                    
+                    <h3><i class="fas fa-list"></i> Son IP Girişleri</h3>
+                    <div class="entries-list" id="recent-ips">
+                        <!-- Son IP girişleri buraya eklenecek -->
+                    </div>
+                </section>
             </div>
         </div>
     </div>
+    
+    <div class="content-wrapper">
+        <div class="backto"><a href="/" class="back-to-home"><i class="bx bx-arrow-back"></i> Back to Home</a></div>
+        
+        <h2 class="page-title"><img src="IMAGES/vulnerabilities.svg" alt="Vulnerabilities Icon" class="vulnerabilities-icon"> Vulnerabilities Research</h2>
+        
+        <div class="vulnerabilities-container">
+            <!-- Left Sidebar - Research Titles -->
+            <aside class="research-sidebar">
+                <h3 class="sidebar-title"><i class="fas fa-bug"></i> Research Topics</h3>
+                <ul class="research-list" id="researchList">
+                    <li class="research-item loading-item">
+                        <div class="spinner"></div>
+                        <div>Loading research topics...</div>
+                    </li>
+                </ul>
+            </aside>
+            
+            <!-- Main Content Area -->
+            <main class="research-content">
+                <div class="content-placeholder" id="contentPlaceholder">
+                    <i class="fas fa-search"></i>
+                    <p>Select a research topic from the sidebar to view details</p>
+                </div>
+                
+                <div class="research-detail" id="researchDetail">
+                    <!-- Content will be loaded here dynamically -->
+                </div>
+            </main>
+        </div>
 
-    <!-- IP İstatistikleri Bölümü -->
-    <div class="ip-stats-container">
-        <div class="ip-stats-title">
-            <i class="fas fa-network-wired"></i>
-            <h3>IP İstatistikleri ve Son Girişler</h3>
-        </div>
-        
-        <div class="filter-container">
-            <div class="filter-controls">
-                <input type="text" id="filter-ip" placeholder="IP adresi">
-                <input type="text" id="filter-fingerprint" placeholder="Fingerprint">
-                <input type="number" id="filter-entry" placeholder="Entry ID">
-                <select id="filter-country">
-                    <option value="">Ülke seçin</option>
-                </select>
-                <button onclick="applyFilters()"><i class="fas fa-filter"></i> Filtrele</button>
-                <button onclick="clearFilters()"><i class="fas fa-times"></i> Temizle</button>
-            </div>
-            <div class="filter-controls">
-                <button onclick="exportData('ip')"><i class="fas fa-download"></i> IP Verilerini İndir</button>
-                <button onclick="exportData('stats')"><i class="fas fa-download"></i> İstatistikleri İndir</button>
-            </div>
-        </div>
-        
-        <div class="ip-stats-grid">
-            <div class="ip-stat-box">
-                <h4>Toplam Ziyaretçi</h4>
-                <span id="total-visitors">0</span>
-            </div>
-            <div class="ip-stat-box">
-                <h4>Benzersiz IP</h4>
-                <span id="unique-ips">0</span>
-            </div>
-            <div class="ip-stat-box">
-                <h4>Benzersiz Fingerprint</h4>
-                <span id="unique-fingerprints">0</span>
-            </div>
-            <div class="ip-stat-box">
-                <h4>Son Giriş</h4>
-                <span id="last-visit">-</span>
-            </div>
-        </div>
-        
-        <div class="entry-stats">
-            <h4><i class="fas fa-chart-pie"></i> En Çok Görüntülenen Entry'ler</h4>
-            <div id="top-entries">
-                <div class="loading-spinner">
-                    <i class="fas fa-spinner fa-spin"></i>
-                </div>
-            </div>
-        </div>
-        
-        <div class="recent-ips">
-            <h4><i class="fas fa-list"></i> Son IP Girişleri</h4>
-            <div id="recent-ips-list">
-                <div class="loading-spinner">
-                    <i class="fas fa-spinner fa-spin"></i>
-                </div>
-            </div>
-        </div>
+        <!-- Subscription Section -->
+        <section class="subscription-section">
+            <h3><i class="fas fa-bell"></i> Get Notified of New Vulnerabilities</h3>
+            <p>Subscribe to receive email notifications when new vulnerability research is published.</p>
+            
+            <form class="subscription-form" id="subscriptionForm">
+                <input type="email" class="subscription-input" id="emailInput" placeholder="Enter your email address" required>
+                <button type="submit" class="subscription-btn" id="subscribeBtn">Subscribe</button>
+            </form>
+            
+            <div class="subscription-message" id="subscriptionMessage"></div>
+        </section>
     </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
 
     <!-- Media Upload Input -->
     <input type="file" id="media-file-input" style="display: none;" accept="image/*,video/*" onchange="handleMediaSelection(event)">
@@ -1157,643 +1537,657 @@
         </div>
     </div>
 
+    <footer style="text-align: center; padding: 20px; font-size: 14px; color: white; margin-top: 50px;">
+        <hr style="margin-bottom: 10px; border-color: limegreen;" />
+        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.3 | July 2025</p>
+    </footer>
+
+    <script src="/JAVASCRIPT/monitor.js"></script>
+    <canvas id="matrixCanvas"></canvas>
+    <script src="/JAVASCRIPT/matrix.js"></script>
     <!-- Cropper.js Script -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
-
+    
     <script>
+        // Admin Panel Toggle Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const adminToggleBtn = document.getElementById('adminToggleBtn');
+            const adminCloseBtn = document.getElementById('adminCloseBtn');
+            const adminPanel = document.getElementById('adminPanel');
+            const adminNavLinks = document.querySelectorAll('.admin-nav-link');
+            const adminSections = document.querySelectorAll('.admin-section');
+            
+            // Toggle admin panel
+            adminToggleBtn.addEventListener('click', function() {
+                adminPanel.classList.toggle('active');
+            });
+            
+            // Close admin panel
+            adminCloseBtn.addEventListener('click', function() {
+                adminPanel.classList.remove('active');
+            });
+            
+            // Admin navigation
+            adminNavLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Remove active class from all links and sections
+                    adminNavLinks.forEach(l => l.classList.remove('active'));
+                    adminSections.forEach(s => s.classList.remove('active'));
+                    
+                    // Add active class to clicked link
+                    this.classList.add('active');
+                    
+                    // Show corresponding section
+                    const sectionId = this.getAttribute('data-section');
+                    document.getElementById(sectionId).classList.add('active');
+                });
+            });
+            
+            // Load vulnerabilities data
+            loadVulnerabilitiesData();
+            
+            // Load admin statistics
+            loadAdminStats();
+        });
+        
+        // Admin Panel Functions
         const ENTRIES_BIN_ID = '68933248ae596e708fc2fbbc';
         const INTERACTIONS_BIN_ID = '68862fd97b4b8670d8a81945';
-        const IP_STATS_BIN_ID = '68ba0ba543b1c97be93705fb'; // IP istatistikleri için bin ID
+        const IP_STATS_BIN_ID = '68ba0ba543b1c97be93705fb';
+        const SUBSCRIBERS_BIN_ID = '68d7fc3bae596e708ffdcc6e';
+        const VULNERABILITIES_BIN_ID = '68d78989d0ea881f408cad3f';
         const PROXY_URL = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
         
         let activeTextareaId = null;
         let cropper = null;
         let selectedFile = null;
-        let allVisitors = [];
-        let filteredVisitors = [];
-
-        window.addEventListener('DOMContentLoaded', () => {
-            if (!localStorage.getItem('adminAuth') || localStorage.getItem('adminAuth') !== 'true') {
-                window.location.href = 'index.html';
-            } else {
-                loadStats();
-                loadRecentEntries();
-                updatePreview('trContent');
-                updatePreview('enContent');
-                loadIpStats(); // IP istatistiklerini yükle
+        
+        // JSON configuration
+        const CONFIG = {
+            MAILJET_CONFIG: {
+                apiKey: '4eab53d0383497317f9d58afd0176d9f',
+                secretKey: 'e46dc21f710c911ba855e1eca0675971',
+                senderEmail: 'noreply@adembayazit.com',
+                senderName: 'Adem Bayazıt - Vulnerabilities Research'
             }
-        });
-
-        // IP İstatistiklerini Yükleme Fonksiyonu
-        async function loadIpStats() {
+        };
+        
+        // Global variables
+        let vulnerabilitiesData = [];
+        let currentResearchId = null;
+        
+        // Proxy helper function
+        async function fetchViaProxy(path, method = 'GET', body = null, binId = null) {
+            const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
+            
+            const actualPath = binId ? `/b/${binId}${path}` : path;
+            
             try {
-                const response = await fetchFromJsonBin(IP_STATS_BIN_ID);
-                allVisitors = response.visitors || [];
-                filteredVisitors = [...allVisitors];
-                
-                // İstatistikleri hesapla
-                updateIpStats(allVisitors);
-                
-                // En çok görüntülenen entry'leri göster
-                displayTopEntries(allVisitors);
-                
-                // Son IP girişlerini listele
-                displayRecentIps(allVisitors);
-                
-                // Ülke filtreleme seçeneklerini doldur
-                populateCountryFilter(allVisitors);
+                const response = await fetch(proxyUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ path: actualPath, method, body })
+                });
+
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return await response.json();
             } catch (error) {
-                console.error('IP istatistikleri yüklenirken hata oluştu:', error);
-                document.getElementById('recent-ips-list').innerHTML = 
-                    '<div class="ip-item">IP istatistikleri yüklenirken hata oluştu.</div>';
+                console.error('Proxy error:', error);
+                throw error;
             }
         }
         
-        // IP İstatistiklerini güncelleme fonksiyonu
-        function updateIpStats(visitors) {
-            const totalVisitors = visitors.length;
-            const uniqueIps = new Set(visitors.map(v => v.ip)).size;
-            const uniqueFingerprints = new Set(visitors.map(v => v.fingerprint)).size;
+        // Show toast notification
+        function showToast(message, duration = 3000) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
             
-            // En son ziyareti bul
-            let lastVisit = '-';
-            if (visitors.length > 0) {
-                const sortedVisits = [...visitors].sort((a, b) => 
-                    new Date(b.timestamp) - new Date(a.timestamp)
-                );
-                lastVisit = formatDate(sortedVisits[0].timestamp);
-            }
-            
-            // İstatistikleri göster
-            document.getElementById('total-visitors').textContent = totalVisitors;
-            document.getElementById('unique-ips').textContent = uniqueIps;
-            document.getElementById('unique-fingerprints').textContent = uniqueFingerprints;
-            document.getElementById('last-visit').textContent = lastVisit;
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
         }
         
-        // En çok görüntülenen entry'leri göster
-        function displayTopEntries(visitors) {
-            const topEntriesContainer = document.getElementById('top-entries');
-            
-            // Entry ID'lerine göre grupla ve say
-            const entryCounts = {};
-            visitors.forEach(visit => {
-                if (visit.entryId) {
-                    if (!entryCounts[visit.entryId]) {
-                        entryCounts[visit.entryId] = 0;
-                    }
-                    entryCounts[visit.entryId]++;
+        // Copy to clipboard function
+        async function copyToClipboard(text) {
+            try {
+                await navigator.clipboard.writeText(text);
+                return true;
+            } catch (err) {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    return true;
+                } catch (err) {
+                    return false;
+                } finally {
+                    document.body.removeChild(textArea);
                 }
-            });
+            }
+        }
+        
+        // Share research function
+        function shareResearch(researchId) {
+            const research = vulnerabilitiesData.find(item => item.id == researchId);
+            if (!research) return;
             
-            // Sıralama yap
-            const sortedEntries = Object.entries(entryCounts)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 10); // En çok görüntülenen 10 entry
+            const shareUrl = `${window.location.origin}${window.location.pathname}#${researchId}`;
             
-            if (sortedEntries.length === 0) {
-                topEntriesContainer.innerHTML = '<div class="ip-item">Henüz entry görüntüleme verisi bulunmamaktadır.</div>';
+            if (navigator.share) {
+                navigator.share({
+                    title: research.title,
+                    text: research.content.substring(0, 100) + '...',
+                    url: shareUrl
+                }).catch(() => {
+                    copyShareUrl(shareUrl, research.title);
+                });
+            } else {
+                copyShareUrl(shareUrl, research.title);
+            }
+        }
+        
+        // Copy share URL to clipboard
+        async function copyShareUrl(url, title) {
+            const success = await copyToClipboard(url);
+            if (success) {
+                showToast('Link copied to clipboard!');
+            } else {
+                showToast('Failed to copy link');
+            }
+        }
+        
+        // Load vulnerabilities data from JSON Bin
+        async function loadVulnerabilitiesData() {
+            try {
+                const result = await fetchViaProxy('/latest', 'GET', null, VULNERABILITIES_BIN_ID);
+                vulnerabilitiesData = result.records || result;
+                
+                // Sort by date (newest first)
+                vulnerabilitiesData.sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                // Render the research list
+                renderResearchList();
+                
+                // If there's a hash in URL, load that research
+                if (window.location.hash) {
+                    const researchId = window.location.hash.substring(1);
+                    loadResearchDetail(researchId);
+                } else {
+                    // If no hash, automatically load the latest research
+                    if (vulnerabilitiesData.length > 0) {
+                        const latestResearch = vulnerabilitiesData[0];
+                        loadResearchDetail(latestResearch.id);
+                        
+                        // Update URL hash without page scroll
+                        history.replaceState(null, null, `#${latestResearch.id}`);
+                        
+                        // Set the active class on the list item
+                        setTimeout(() => {
+                            document.querySelectorAll('.research-item').forEach(item => {
+                                item.classList.remove('active');
+                                if (item.dataset.id == latestResearch.id) {
+                                    item.classList.add('active');
+                                }
+                            });
+                        }, 100);
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading vulnerabilities data:', error);
+                document.getElementById('researchList').innerHTML = 
+                    '<li class="research-item">Error loading research topics. Please try again later.</li>';
+            }
+        }
+        
+        // Render the list of research topics
+        function renderResearchList() {
+            const researchList = document.getElementById('researchList');
+            researchList.innerHTML = '';
+            
+            if (vulnerabilitiesData.length === 0) {
+                researchList.innerHTML = '<li class="research-item">No research topics available.</li>';
                 return;
             }
             
-            let html = '';
-            sortedEntries.forEach(([entryId, count]) => {
-                html += `
-                    <div class="entry-stat-item">
-                        <span class="entry-id">Entry #${entryId}</span>
-                        <span class="entry-count">${count} görüntülenme</span>
+            vulnerabilitiesData.forEach(research => {
+                const listItem = document.createElement('li');
+                listItem.className = 'research-item';
+                listItem.dataset.id = research.id;
+                
+                // Format date
+                const researchDate = new Date(research.date).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+                
+                // Create CVSS badge if available
+                let cvssBadge = '';
+                if (research.cvss_score) {
+                    let cvssClass = 'cvss-medium';
+                    if (research.cvss_score >= 9.0) cvssClass = 'cvss-critical';
+                    else if (research.cvss_score >= 7.0) cvssClass = 'cvss-high';
+                    else if (research.cvss_score >= 4.0) cvssClass = 'cvss-medium';
+                    else cvssClass = 'cvss-low';
+                    
+                    cvssBadge = `<span class="cvss-badge ${cvssClass}">CVSS: ${research.cvss_score}</span>`;
+                }
+                
+                // Determine author badge class
+                const authorClass = research.author === 'Adem Bayazıt' ? 'author-adem' : '';
+                
+                listItem.innerHTML = `
+                    <div class="research-title">${research.title} ${cvssBadge}</div>
+                    <div class="research-meta">
+                        <span class="research-date">${researchDate}</span>
+                        ${research.author ? `<span class="research-author ${authorClass}">${research.author}</span>` : ''}
                     </div>
+                    <button class="research-share" onclick="event.stopPropagation(); shareResearch(${research.id})">
+                        <i class="fas fa-share-alt"></i>
+                    </button>
                 `;
+                
+                listItem.addEventListener('click', () => {
+                    // Update URL hash
+                    window.location.hash = research.id;
+                    
+                    // Load research detail
+                    loadResearchDetail(research.id);
+                    
+                    // Update active state
+                    document.querySelectorAll('.research-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    listItem.classList.add('active');
+                });
+                
+                researchList.appendChild(listItem);
             });
-            
-            topEntriesContainer.innerHTML = html;
         }
         
-        // Son IP girişlerini görüntüleme fonksiyonu
-        function displayRecentIps(visitors) {
-            const recentIpsList = document.getElementById('recent-ips-list');
+        // Load and display research detail
+        function loadResearchDetail(researchId) {
+            const research = vulnerabilitiesData.find(item => item.id == researchId);
+            
+            if (!research) {
+                document.getElementById('contentPlaceholder').style.display = 'block';
+                document.getElementById('researchDetail').classList.remove('active');
+                return;
+            }
+            
+            // Hide placeholder
+            document.getElementById('contentPlaceholder').style.display = 'none';
+            
+            // Format date
+            const researchDate = new Date(research.date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            // Create CVSS badge if available
+            let cvssBadge = '';
+            if (research.cvss_score) {
+                let cvssClass = 'cvss-medium';
+                if (research.cvss_score >= 9.0) cvssClass = 'cvss-critical';
+                else if (research.cvss_score >= 7.0) cvssClass = 'cvss-high';
+                else if (research.cvss_score >= 4.0) cvssClass = 'cvss-medium';
+                else cvssClass = 'cvss-low';
+                
+                cvssBadge = `<span class="cvss-badge ${cvssClass}">CVSS: ${research.cvss_score}</span>`;
+            }
+            
+            // Build tags if available
+            let tagsHtml = '';
+            if (research.tags && research.tags.length > 0) {
+                tagsHtml = `<div class="detail-tags" style="margin-top: 10px;">
+                    <strong>Tags:</strong> ${research.tags.map(tag => `<span style="background: rgba(0,255,0,0.2); padding: 2px 8px; border-radius: 12px; margin: 0 5px; font-size: 0.8em;">${tag}</span>`).join('')}
+                </div>`;
+            }
+            
+            // Determine author badge class
+            const authorClass = research.author === 'Adem Bayazıt' ? 'author-adem' : '';
+            
+            // Set the research detail content
+            document.getElementById('researchDetail').innerHTML = `
+                <button class="detail-share" onclick="shareResearch(${research.id})">
+                    <i class="fas fa-share-alt"></i> Share This Research
+                </button>
+                <div class="detail-header">
+                    <h1 class="detail-title">${research.title} ${cvssBadge}</h1>
+                    <div class="detail-meta">
+                        <span class="detail-date"><i class="far fa-calendar"></i> ${researchDate}</span>
+                        <span class="detail-category"><i class="fas fa-tag"></i> ${research.category || 'Vulnerability Research'}</span>
+                        ${research.author ? `<span class="detail-author ${authorClass}"><i class="fas fa-user"></i> ${research.author}</span>` : ''}
+                    </div>
+                    ${tagsHtml}
+                </div>
+                <div class="detail-body">
+                    ${formatResearchContent(research.content)}
+                </div>
+            `;
+            
+            // Show the detail section
+            document.getElementById('researchDetail').classList.add('active');
+            
+            // Set the corresponding list item as active
+            document.querySelectorAll('.research-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.id == researchId) {
+                    item.classList.add('active');
+                }
+            });
+            
+            // Scroll to top of content
+            document.querySelector('.research-content').scrollTop = 0;
+        }
+        
+        // Format research content with proper HTML rendering
+        function formatResearchContent(content) {
+            if (!content) return '<p>No content available for this research.</p>';
+            
+            // Convert line breaks to paragraphs
+            let formattedContent = content
+                .split('\n')
+                .filter(paragraph => paragraph.trim() !== '')
+                .map(paragraph => {
+                    // Check if it's a code block
+                    if (paragraph.trim().startsWith('```') && paragraph.trim().endsWith('```')) {
+                        const code = paragraph.trim().substring(3, paragraph.length - 3);
+                        return `<pre><code>${code}</code></pre>`;
+                    }
+                    
+                    // Check if it's a heading
+                    if (paragraph.startsWith('## ')) {
+                        return `<h3>${paragraph.substring(3)}</h3>`;
+                    }
+                    
+                    if (paragraph.startsWith('# ')) {
+                        return `<h2>${paragraph.substring(2)}</h2>`;
+                    }
+                    
+                    // Regular paragraph
+                    return `<p>${paragraph}</p>`;
+                })
+                .join('');
+            
+            return formattedContent;
+        }
+        
+        // Send email notification via Mailjet
+        async function sendNewVulnerabilityEmail(vulnerability) {
+            try {
+                // Get subscribers list
+                const subscribersData = await fetchViaProxy('/latest', 'GET', null, SUBSCRIBERS_BIN_ID);
+                const subscribers = subscribersData.subscribers || [];
+                
+                if (subscribers.length === 0) {
+                    console.log('No subscribers to notify');
+                    return { success: true, message: 'No subscribers to notify' };
+                }
+                
+                // Prepare email content
+                const emailData = {
+                    Messages: [
+                        {
+                            From: {
+                                Email: CONFIG.MAILJET_CONFIG.senderEmail,
+                                Name: CONFIG.MAILJET_CONFIG.senderName
+                            },
+                            To: subscribers.map(email => ({ Email: email })),
+                            Subject: `New Vulnerability: ${vulnerability.title}`,
+                            HTMLPart: `
+                                <h2>New Vulnerability Published</h2>
+                                <div style="background: #f5f5f5; padding: 20px; border-radius: 10px; color: #333;">
+                                    <h3 style="color: #d9534f;">${vulnerability.title}</h3>
+                                    <p><strong>Date:</strong> ${new Date(vulnerability.date).toLocaleDateString()}</p>
+                                    ${vulnerability.cvss_score ? `<p><strong>CVSS Score:</strong> ${vulnerability.cvss_score}</p>` : ''}
+                                    ${vulnerability.category ? `<p><strong>Category:</strong> ${vulnerability.category}</p>` : ''}
+                                    <p>${vulnerability.content.substring(0, 200)}...</p>
+                                    <a href="https://adembayazit.com/vulnerabilities#${vulnerability.id}" 
+                                       style="background: #00cc00; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 15px;">
+                                        Read Full Research
+                                    </a>
+                                </div>
+                                <p style="margin-top: 20px; color: #666; font-size: 12px;">
+                                    You received this email because you subscribed to vulnerability notifications from Adem Bayazıt.
+                                    <br><a href="https://adembayazit.com/unsubscribe" style="color: #666;">Unsubscribe</a>
+                                </p>
+                            `
+                        }
+                    ]
+                };
+                
+                // Send email via Netlify function (to keep API keys secure)
+                const response = await fetch('/.netlify/functions/send-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        emailData: emailData,
+                        apiKey: CONFIG.MAILJET_CONFIG.apiKey,
+                        secretKey: CONFIG.MAILJET_CONFIG.secretKey
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to send email notification');
+                }
+                
+                return { success: true, message: `Notification sent to ${subscribers.length} subscribers` };
+            } catch (error) {
+                console.error('Error sending email notification:', error);
+                return { success: false, message: 'Failed to send notification email' };
+            }
+        }
+        
+        // Subscription functionality
+        async function handleSubscription(email) {
+            const messageElement = document.getElementById('subscriptionMessage');
+            const subscribeBtn = document.getElementById('subscribeBtn');
+            
+            // Simple email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showSubscriptionMessage('Please enter a valid email address.', 'error');
+                return false;
+            }
+            
+            // Disable button and show loading
+            subscribeBtn.disabled = true;
+            subscribeBtn.textContent = 'Subscribing...';
+            
+            try {
+                // Save subscriber to JSON Bin
+                const result = await saveSubscriber(email);
+                
+                if (result.success) {
+                    showSubscriptionMessage('Successfully subscribed! You will receive notifications for new vulnerabilities.', 'success');
+                    document.getElementById('emailInput').value = '';
+                    return true;
+                } else {
+                    showSubscriptionMessage(result.message || 'Subscription failed. Please try again.', 'error');
+                    return false;
+                }
+            } catch (error) {
+                console.error('Subscription error:', error);
+                showSubscriptionMessage('An error occurred. Please try again.', 'error');
+                return false;
+            } finally {
+                subscribeBtn.disabled = false;
+                subscribeBtn.textContent = 'Subscribe';
+            }
+        }
+        
+        // Save subscriber to JSON Bin
+        async function saveSubscriber(email) {
+            try {
+                // Get current subscribers
+                const currentData = await fetchViaProxy('/latest', 'GET', null, SUBSCRIBERS_BIN_ID);
+                const subscribers = currentData.subscribers || [];
+                
+                // Check if email already exists
+                if (subscribers.includes(email)) {
+                    return { success: false, message: 'This email is already subscribed.' };
+                }
+                
+                // Add new subscriber
+                subscribers.push(email);
+                const timestamp = new Date().toISOString();
+                
+                // Update JSON Bin
+                await fetchViaProxy('', 'PUT', { 
+                    subscribers: subscribers,
+                    lastUpdated: timestamp
+                }, SUBSCRIBERS_BIN_ID);
+                
+                return { success: true, message: 'Subscription successful' };
+            } catch (error) {
+                console.error('Error saving subscriber:', error);
+                return { success: false, message: 'Failed to save subscription.' };
+            }
+        }
+        
+        // Show subscription message
+        function showSubscriptionMessage(message, type) {
+            const messageElement = document.getElementById('subscriptionMessage');
+            messageElement.textContent = message;
+            messageElement.className = `subscription-message subscription-${type}`;
+            messageElement.style.display = 'block';
+            
+            // Hide message after 5 seconds
+            setTimeout(() => {
+                messageElement.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Admin Functions
+        async function loadAdminStats() {
+            try {
+                const entriesData = await fetchViaProxy('/latest', 'GET', null, ENTRIES_BIN_ID);
+                const interactions = await fetchViaProxy('/latest', 'GET', null, INTERACTIONS_BIN_ID);
+                const ipStats = await fetchViaProxy('/latest', 'GET', null, IP_STATS_BIN_ID);
+                
+                // Update entry statistics
+                const totalEntries = Array.isArray(entriesData) ? 
+                    entriesData.length : 
+                    (entriesData.records ? entriesData.records.length : 0);
+                
+                const totalLikes = interactions.likes ? 
+                    Object.values(interactions.likes).reduce((a, b) => a + b, 0) : 0;
+                
+                const totalPins = interactions.pins ? 
+                    Object.values(interactions.pins).reduce((a, b) => a + b, 0) : 0;
+                
+                document.getElementById('total-entries').textContent = totalEntries;
+                document.getElementById('total-likes').textContent = totalLikes;
+                document.getElementById('total-pins').textContent = totalPins;
+                
+                // Update IP statistics
+                const visitors = ipStats.visitors || [];
+                const totalVisitors = visitors.length;
+                const uniqueIps = new Set(visitors.map(v => v.ip)).size;
+                const uniqueFingerprints = new Set(visitors.map(v => v.fingerprint)).size;
+                
+                document.getElementById('total-visitors').textContent = totalVisitors;
+                document.getElementById('unique-ips').textContent = uniqueIps;
+                document.getElementById('unique-fingerprints').textContent = uniqueFingerprints;
+                
+                // Load recent entries
+                loadRecentEntries();
+                
+                // Load recent IPs
+                loadRecentIPs(visitors);
+            } catch (error) {
+                console.error('Error loading admin stats:', error);
+                showAdminMessage('Error loading statistics', 'error');
+            }
+        }
+        
+        async function loadRecentEntries() {
+            try {
+                const entries = await fetchViaProxy('/latest', 'GET', null, ENTRIES_BIN_ID);
+                const recentEntriesContainer = document.getElementById('recent-entries');
+                recentEntriesContainer.innerHTML = '';
+                
+                const recentEntries = Array.isArray(entries) ? 
+                    entries.slice(0, 5) : 
+                    (entries.records ? entries.records.slice(0, 5) : []);
+                
+                if (recentEntries.length === 0) {
+                    recentEntriesContainer.innerHTML = '<p>Henüz entry bulunmamaktadır.</p>';
+                    return;
+                }
+                
+                recentEntries.forEach(entry => {
+                    const entryEl = document.createElement('div');
+                    entryEl.className = 'entry-item';
+                    
+                    let displayContent = entry.content_tr || entry.content;
+                    if (displayContent.length > 100) {
+                        displayContent = displayContent.substring(0, 100) + '...';
+                    }
+                    
+                    entryEl.innerHTML = `
+                        <div class="entry-content">${displayContent}</div>
+                        <div class="entry-meta">
+                            <span>ID: ${entry.id}</span>
+                            <span>${formatDate(entry.date)}</span>
+                        </div>
+                    `;
+                    
+                    recentEntriesContainer.appendChild(entryEl);
+                });
+            } catch (error) {
+                console.error('Error loading recent entries:', error);
+            }
+        }
+        
+        function loadRecentIPs(visitors) {
+            const recentIPsContainer = document.getElementById('recent-ips');
             
             if (visitors.length === 0) {
-                recentIpsList.innerHTML = '<div class="ip-item">Henüz IP kaydı bulunmamaktadır.</div>';
+                recentIPsContainer.innerHTML = '<p>Henüz IP kaydı bulunmamaktadır.</p>';
                 return;
             }
             
             // Tarihe göre sırala (en yeni en üstte)
             const sortedVisits = [...visitors].sort((a, b) => 
                 new Date(b.timestamp) - new Date(a.timestamp)
-            ).slice(0, 10); // En son 10 kaydı al
+            ).slice(0, 5); // En son 5 kaydı al
             
             let html = '';
             sortedVisits.forEach(visit => {
                 html += `
-                    <div class="ip-item">
-                        <div class="ip-item-header">
-                            <span class="ip-address">${visit.ip}</span>
-                            <span class="ip-date">${formatDate(visit.timestamp)}</span>
+                    <div class="entry-item">
+                        <div class="entry-content">
+                            <strong>IP:</strong> ${visit.ip}<br>
+                            <strong>Entry ID:</strong> ${visit.entryId || 'Bilinmiyor'}<br>
+                            <strong>Ülke:</strong> ${visit.country || 'Bilinmiyor'}
                         </div>
-                        <div class="ip-details">
-                            <div class="ip-detail-item">
-                                <span class="ip-detail-label">Entry ID</span>
-                                <span class="ip-detail-value">${visit.entryId || 'Bilinmiyor'}</span>
-                            </div>
-                            <div class="ip-detail-item">
-                                <span class="ip-detail-label">Ülke/Şehir</span>
-                                <span class="ip-detail-value">${visit.country || 'Bilinmiyor'}${visit.city ? '/' + visit.city : ''}</span>
-                            </div>
-                            <div class="ip-detail-item">
-                                <span class="ip-detail-label">Cihaz</span>
-                                <span class="ip-detail-value">${extractBrowserInfo(visit.userAgent)}</span>
-                            </div>
-                            <div class="ip-detail-item">
-                                <span class="ip-detail-label">Fingerprint</span>
-                                <span class="ip-detail-value">${visit.fingerprint || 'Bilinmiyor'}</span>
-                            </div>
+                        <div class="entry-meta">
+                            <span>${formatDate(visit.timestamp)}</span>
                         </div>
                     </div>
                 `;
             });
             
-            recentIpsList.innerHTML = html;
+            recentIPsContainer.innerHTML = html;
         }
         
-        // Ülke filtreleme seçeneklerini doldur
-        function populateCountryFilter(visitors) {
-            const countryFilter = document.getElementById('filter-country');
-            const countries = new Set(visitors.map(v => v.country).filter(c => c));
-            
-            countries.forEach(country => {
-                const option = document.createElement('option');
-                option.value = country;
-                option.textContent = country;
-                countryFilter.appendChild(option);
-            });
-        }
-        
-        // Filtreleme uygula
-        function applyFilters() {
-            const ipFilter = document.getElementById('filter-ip').value.toLowerCase();
-            const fingerprintFilter = document.getElementById('filter-fingerprint').value.toLowerCase();
-            const entryFilter = document.getElementById('filter-entry').value;
-            const countryFilter = document.getElementById('filter-country').value;
-            
-            filteredVisitors = allVisitors.filter(visitor => {
-                let matches = true;
-                
-                if (ipFilter && !visitor.ip.toLowerCase().includes(ipFilter)) {
-                    matches = false;
-                }
-                
-                if (fingerprintFilter && (!visitor.fingerprint || !visitor.fingerprint.toLowerCase().includes(fingerprintFilter))) {
-                    matches = false;
-                }
-                
-                if (entryFilter && visitor.entryId !== entryFilter) {
-                    matches = false;
-                }
-                
-                if (countryFilter && visitor.country !== countryFilter) {
-                    matches = false;
-                }
-                
-                return matches;
-            });
-            
-            // Filtrelenmiş verileri göster
-            updateIpStats(filteredVisitors);
-            displayRecentIps(filteredVisitors);
-            displayTopEntries(filteredVisitors);
-        }
-        
-        // Filtreleri temizle
-        function clearFilters() {
-            document.getElementById('filter-ip').value = '';
-            document.getElementById('filter-fingerprint').value = '';
-            document.getElementById('filter-entry').value = '';
-            document.getElementById('filter-country').value = '';
-            
-            filteredVisitors = [...allVisitors];
-            updateIpStats(filteredVisitors);
-            displayRecentIps(filteredVisitors);
-            displayTopEntries(filteredVisitors);
-        }
-        
-        // Veri indirme fonksiyonu
-        function exportData(type) {
-            let data, filename, contentType;
-            
-            if (type === 'ip') {
-                data = JSON.stringify(filteredVisitors, null, 2);
-                filename = 'ip-istatistikleri.json';
-                contentType = 'application/json';
-            } else if (type === 'stats') {
-                const stats = {
-                    totalVisitors: filteredVisitors.length,
-                    uniqueIps: new Set(filteredVisitors.map(v => v.ip)).size,
-                    uniqueFingerprints: new Set(filteredVisitors.map(v => v.fingerprint)).size,
-                    topEntries: getTopEntries(filteredVisitors, 10),
-                    generatedAt: new Date().toISOString()
-                };
-                data = JSON.stringify(stats, null, 2);
-                filename = 'istatistik-ozeti.json';
-                contentType = 'application/json';
-            }
-            
-            const blob = new Blob([data], { type: contentType });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-        
-        // En çok görüntülenen entry'leri al
-        function getTopEntries(visitors, limit) {
-            const entryCounts = {};
-            visitors.forEach(visit => {
-                if (visit.entryId) {
-                    if (!entryCounts[visit.entryId]) {
-                        entryCounts[visit.entryId] = 0;
-                    }
-                    entryCounts[visit.entryId]++;
-                }
-            });
-            
-            return Object.entries(entryCounts)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, limit)
-                .map(([id, count]) => ({ entryId: id, viewCount: count }));
-        }
-        
-        // UserAgent'dan tarayıcı bilgisini çıkarma
-        function extractBrowserInfo(userAgent) {
-            if (!userAgent) return 'Bilinmiyor';
-            
-            if (userAgent.includes('Chrome')) return 'Chrome';
-            if (userAgent.includes('Firefox')) return 'Firefox';
-            if (userAgent.includes('Safari')) return 'Safari';
-            if (userAgent.includes('Edge')) return 'Edge';
-            if (userAgent.includes('Opera')) return 'Opera';
-            
-            return 'Diğer';
-        }
-        
-        // Tarih formatlama
         function formatDate(dateString) {
             const date = new Date(dateString);
             return date.toLocaleDateString('tr-TR') + ' ' + date.toLocaleTimeString('tr-TR');
-        }
-        
-        function showDebugInfo(message) {
-            const debugEl = document.getElementById('debug-info');
-            debugEl.textContent = message;
-            debugEl.style.display = 'block';
-            console.log('DEBUG:', message);
-        }
-        
-        async function fetchFromJsonBin(binId, method = 'GET', data = null) {
-            try {
-                const response = await fetch(PROXY_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        path: `/b/${binId}${method === 'GET' ? '/latest' : ''}`,
-                        method,
-                        body: data
-                    })
-                });
-                
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                return await response.json();
-            } catch (error) {
-                console.error('JSONBin fetch error:', error);
-                throw error;
-            }
-        }
-        
-        async function getNextId() {
-            try {
-                const currentData = await fetchFromJsonBin(ENTRIES_BIN_ID);
-                let entries = Array.isArray(currentData) ? currentData : (currentData.records || []);
-                
-                if (entries.length === 0) return 1;
-                
-                const maxId = Math.max(...entries.map(e => e.id));
-                return maxId + 1;
-            } catch (error) {
-                console.error('ID alınırken hata:', error);
-                return Math.floor(Math.random() * 900000) + 100000;
-            }
-        }
-        
-        function addSpotifyEmbed(textareaId) {
-            const spotifyUrl = prompt("Spotify URL veya Track ID girin:");
-            if (!spotifyUrl) return;
-            
-            let trackId = extractTrackId(spotifyUrl);
-            if (!trackId) {
-                alert("Geçersiz Spotify URL veya Track ID!");
-                return;
-            }
-            
-            const spotifyEmbed = `<iframe class="spotify-embed"
-                    src="https://open.spotify.com/embed/track/${trackId}?utm_source=generator&theme=0" 
-                    frameborder="0"
-                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
-                    loading="lazy">
-                </iframe>`;
-            
-            insertAtCursor(textareaId, spotifyEmbed);
-            updatePreview(textareaId);
-        }
-        
-        function extractTrackId(url) {
-            if (/^[a-zA-Z0-9]{22}$/.test(url)) {
-                return url;
-            }
-            
-            const regex = /open\.spotify\.com\/track\/([a-zA-Z0-9]{22})/;
-            const match = url.match(regex);
-            if (match && match[1]) {
-                return match[1];
-            }
-            
-            return null;
-        }
-        
-        // Youtube eklemek için fonksiyon
-        function addYoutubeEmbed(textareaId) {
-            // Kullanıcıdan Youtube URL'sini al
-            const youtubeUrl = prompt("Youtube URL veya Video ID girin:");
-            if (!youtubeUrl) return;
-            
-            // Video ID'yi URL'den çıkart
-            let videoId = extractYoutubeId(youtubeUrl);
-            if (!videoId) {
-                alert("Geçersiz Youtube URL veya Video ID!");
-                return;
-            }
-            
-            // Youtube embed kodu oluştur
-            const youtubeEmbed = `<div class="youtube-embed">
-                <iframe 
-                    width="100%" 
-                    height="315" 
-                    src="https://www.youtube.com/embed/${videoId}" 
-                    frameborder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    allowfullscreen>
-                </iframe>
-            </div>`;
-            
-            // İlgili textarea'ya ekle
-            insertAtCursor(textareaId, youtubeEmbed);
-            
-            // Ön izlemeyi güncelle
-            updatePreview(textareaId);
-        }
-
-        // Youtube URL'sinden Video ID çıkartma
-        function extractYoutubeId(url) {
-            // Eğer zaten bir ID gibi görünüyorsa (11 karakter) doğrudan dön
-            if (/^[a-zA-Z0-9_-]{11}$/.test(url)) {
-                return url;
-            }
-            
-            // Çeşitli Youtube URL formatları için regex'ler
-            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-            const match = url.match(regExp);
-            
-            if (match && match[2].length === 11) {
-                return match[2];
-            }
-            
-            // Shorts URL'si için
-            const shortsRegExp = /youtube\.com\/shorts\/([^\/\?]+)/;
-            const shortsMatch = url.match(shortsRegExp);
-            
-            if (shortsMatch && shortsMatch[1]) {
-                return shortsMatch[1];
-            }
-            
-            return null;
-        }
-        
-        function insertAtCursor(textareaId, text) {
-            const textarea = document.getElementById(textareaId);
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            
-            textarea.value = textarea.value.substring(0, start) + text + textarea.value.substring(end);
-            
-            const newCursorPos = start + text.length;
-            textarea.selectionStart = newCursorPos;
-            textarea.selectionEnd = newCursorPos;
-            textarea.focus();
-        }
-        
-        function openMediaUpload(textareaId) {
-            activeTextareaId = textareaId;
-            document.getElementById('media-file-input').click();
-        }
-
-        function handleMediaSelection(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
-                showMessage('Sadece fotoğraf veya video yükleyebilirsiniz!', 'error');
-                return;
-            }
-            
-            selectedFile = file;
-            
-            // Eğer video ise doğrudan yükle, resim ise crop modalını aç
-            if (file.type.startsWith('video/')) {
-                handleMediaUpload(file);
-            } else {
-                openCropModal(file);
-            }
-        }
-
-        function openCropModal(file) {
-            const cropModal = document.getElementById('cropModal');
-            const cropImage = document.getElementById('cropImage');
-            
-            // Önceki cropper'ı temizle
-            if (cropper) {
-                cropper.destroy();
-            }
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                cropImage.src = e.target.result;
-                cropModal.style.display = 'flex';
-                
-                // Cropper'ı başlat
-                setTimeout(() => {
-                    cropper = new Cropper(cropImage, {
-                        aspectRatio: 16/9,
-                        viewMode: 1,
-                        guides: true,
-                        background: false,
-                        autoCropArea: 0.8,
-                        responsive: true,
-                        checkCrossOrigin: false
-                    });
-                    
-                    // Aspect ratio butonlarına tıklama olayları ekle
-                    document.querySelectorAll('.aspect-ratio-btn').forEach(btn => {
-                        btn.addEventListener('click', function() {
-                            document.querySelectorAll('.aspect-ratio-btn').forEach(b => b.classList.remove('active'));
-                            this.classList.add('active');
-                            
-                            const ratio = this.getAttribute('data-ratio');
-                            if (ratio === 'free') {
-                                cropper.setAspectRatio(NaN);
-                            } else {
-                                const parts = ratio.split('/');
-                                cropper.setAspectRatio(parts[0] / parts[1]);
-                            }
-                        });
-                    });
-                }, 100);
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function closeCropModal() {
-            document.getElementById('cropModal').style.display = 'none';
-            if (cropper) {
-                cropper.destroy();
-                cropper = null;
-            }
-            // Input'u sıfırla
-            document.getElementById('media-file-input').value = '';
-        }
-
-        async function cropAndUpload() {
-            if (!cropper) return;
-            
-            try {
-                showMessage('Resim kırpılıyor ve yükleniyor...', 'warning');
-                
-                // Canvas üzerinden kırpılmış resmi al
-                const canvas = cropper.getCroppedCanvas({
-                    imageSmoothingEnabled: true,
-                    imageSmoothingQuality: 'high'
-                });
-                
-                // Canvas'ı blob'a dönüştür
-                canvas.toBlob(async function(blob) {
-                    try {
-                        // Blob'u File nesnesine dönüştür
-                        const croppedFile = new File([blob], selectedFile.name, {
-                            type: 'image/jpeg',
-                            lastModified: Date.now()
-                        });
-                        
-                        // Yükleme işlemini başlat
-                        await handleMediaUpload(croppedFile);
-                        closeCropModal();
-                    } catch (error) {
-                        console.error('Kırpma hatası:', error);
-                        showMessage(`Kırpma hatası: ${error.message}`, 'error');
-                    }
-                }, 'image/jpeg', 0.9);
-                
-            } catch (error) {
-                console.error('Kırpma hatası:', error);
-                showMessage(`Kırpma hatası: ${error.message}`, 'error');
-            }
-        }
-
-        async function handleMediaUpload(file) {
-            try {
-                showMessage('Dosya yükleniyor...', 'warning');
-                showDebugInfo('Authentication parametreleri alınıyor...');
-                
-                const authResponse = await fetch('https://adembayazit.netlify.app/.netlify/functions/imagekit-auth');
-                
-                if (!authResponse.ok) {
-                    throw new Error(`Auth endpoint hatası: ${authResponse.status}`);
-                }
-                
-                const authData = await authResponse.json();
-                showDebugInfo('Auth data alındı');
-                
-                const formData = new FormData();
-                formData.append('file', file);
-                formData.append('fileName', file.name);
-                formData.append('signature', authData.signature);
-                formData.append('token', authData.token);
-                formData.append('expire', authData.expire);
-                formData.append('publicKey', authData.publicKey);
-                
-                showDebugInfo('ImageKit upload çağrılıyor...');
-                
-                const uploadResponse = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                showDebugInfo('Upload response: ' + uploadResponse.status);
-                
-                if (!uploadResponse.ok) {
-                    const errorText = await uploadResponse.text();
-                    showDebugInfo('Upload error: ' + errorText);
-                    throw new Error(`Upload hatası: ${uploadResponse.status}`);
-                }
-                
-                const uploadData = await uploadResponse.json();
-                showDebugInfo('Upload başarılı: ' + uploadData.url);
-                
-                const textarea = document.getElementById(activeTextareaId);
-                const url = uploadData.url;
-                
-                let mediaTag;
-                if (file.type.startsWith('image/')) {
-                    mediaTag = `<img src="${url}" alt="Yüklenen resim" style="max-width: 100%; height: auto;">`;
-                } else if (file.type.startsWith('video/')) {
-                    mediaTag = `<video src="${url}" controls style="max-width: 100%; height: auto;"></video>`;
-                }
-                
-                // DÜZELTME: Burada textareaId yerine activeTextareaId kullan
-                insertAtCursor(activeTextareaId, `\n${mediaTag}\n`);
-                updatePreview(activeTextareaId);
-                
-                showMessage('Dosya başarıyla yüklendi!', 'success');
-                showDebugInfo('');
-                
-            } catch (error) {
-                console.error('Yükleme hatası:', error);
-                let errorMessage = error.message;
-                
-                if (errorMessage.includes('Failed to fetch')) {
-                    errorMessage = 'Sunucuya bağlanılamadı. İnternet bağlantınızı kontrol edin.';
-                }
-                
-                showMessage(`Yükleme hatası: ${errorMessage}`, 'error');
-                showDebugInfo('Hata detayı: ' + errorMessage);
-                
-                showAlternativeUploadOption();
-            }
-        }
-        
-        function showAlternativeUploadOption() {
-            const responseEl = document.getElementById('response-message');
-            const alternativeHtml = `
-                <div class="alternative-upload">
-                    <p>Alternatif olarak, dosyayı manuel olarak yükleyip URL'sini ekleyebilirsiniz:</p>
-                    <p><a href="https://imagekit.io/dashboard/media-library" target="_blank">ImageKit Media Library</a></p>
-                </div>
-            `;
-            
-            if (!responseEl.nextElementSibling || !responseEl.nextElementSibling.classList.contains('alternative-upload')) {
-                responseEl.insertAdjacentHTML('afterend', alternativeHtml);
-            }
         }
         
         async function submitEntry() {
@@ -1801,27 +2195,27 @@
             const referenceId = document.getElementById('referenceId').value;
             const trContent = document.getElementById('trContent').value;
             const enContent = document.getElementById('enContent').value;
-            const responseEl = document.getElementById('response-message');
+            const responseEl = document.getElementById('admin-response-message');
             
             responseEl.style.display = 'none';
             
             if (!trContent && !enContent) {
-                showMessage('Lütfen en az bir dilde içerik girin!', 'error');
+                showAdminMessage('Lütfen en az bir dilde içerik girin!', 'error');
                 return;
             }
             
             try {
-                const submitBtn = document.querySelector('.submit-btn');
+                const submitBtn = document.querySelector('#entry-management .admin-submit-btn');
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...';
                 
-                const currentData = await fetchFromJsonBin(ENTRIES_BIN_ID);
+                const currentData = await fetchViaProxy('/latest', 'GET', null, ENTRIES_BIN_ID);
                 let entries = Array.isArray(currentData) ? currentData : (currentData.records || []);
                 
                 let entryId = entryIdInput.value ? parseInt(entryIdInput.value) : await getNextId();
                 
                 if (entryIdInput.value && entries.some(e => e.id === entryId)) {
-                    showMessage('Bu ID zaten kullanılıyor!', 'error');
+                    showAdminMessage('Bu ID zaten kullanılıyor!', 'error');
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Entry Ekle';
                     return;
@@ -1836,10 +2230,11 @@
                 };
                 
                 const updatedEntries = [newEntry, ...entries];
-                await fetchFromJsonBin(ENTRIES_BIN_ID, 'PUT', updatedEntries);
+                await fetchViaProxy('', 'PUT', updatedEntries, ENTRIES_BIN_ID);
                 
-                showMessage('Entry başarıyla eklendi!', 'success');
+                showAdminMessage('Entry başarıyla eklendi!', 'success');
                 
+                // Clear form
                 entryIdInput.value = '';
                 document.getElementById('referenceId').value = '';
                 document.getElementById('trContent').value = '';
@@ -1848,272 +2243,37 @@
                 updatePreview('trContent');
                 updatePreview('enContent');
                 
-                await updateStats();
-                await loadRecentEntries();
+                // Reload statistics
+                await loadAdminStats();
             } catch (error) {
-                showMessage(`Hata: ${error.message}`, 'error');
+                showAdminMessage(`Hata: ${error.message}`, 'error');
                 console.error('Entry ekleme hatası:', error);
             } finally {
-                const submitBtn = document.querySelector('.submit-btn');
+                const submitBtn = document.querySelector('#entry-management .admin-submit-btn');
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Entry Ekle';
             }
         }
         
-        async function loadRecentEntries() {
+        async function getNextId() {
             try {
-                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
-                const recentEntriesContainer = document.getElementById('recent-entries');
-                recentEntriesContainer.innerHTML = '';
+                const currentData = await fetchViaProxy('/latest', 'GET', null, ENTRIES_BIN_ID);
+                let entries = Array.isArray(currentData) ? currentData : (currentData.records || []);
                 
-                const recentEntries = Array.isArray(entries) ? 
-                    entries.slice(0, 7) :  // 5 yerine 7 entry göster
-                    (entries.records ? entries.records.slice(0, 7) : []);
+                if (entries.length === 0) return 1;
                 
-                if (recentEntries.length === 0) {
-                    recentEntriesContainer.innerHTML = '<p>Henüz entry bulunmamaktadır.</p>';
-                    return;
-                }
-                
-                recentEntries.forEach(entry => {
-                    const entryEl = document.createElement('div');
-                    entryEl.className = 'entry-item';
-                    
-                    let displayContent = entry.content_tr || entry.content;
-                    
-                    entryEl.innerHTML = `
-                        <div class="entry-content">${displayContent}</div>
-                        <div class="entry-meta">
-                            <span>ID: ${entry.id}</span>
-                            <span>Referans ID: ${entry.references}</span>
-                            <span>${formatDate(entry.date)}</span>
-                        </div>
-                        <div class="entry-actions">
-                            <button onclick="editEntry(${entry.id})" title="Düzenle"><i class="fas fa-edit"></i></button>
-                            <button onclick="confirmDelete(${entry.id})" title="Sil"><i class="fas fa-trash"></i></button>
-                        </div>
-                    `;
-                    
-                    recentEntriesContainer.appendChild(entryEl);
-                });
+                const maxId = Math.max(...entries.map(e => e.id));
+                return maxId + 1;
             } catch (error) {
-                console.error('Son entryleri yükleme hatası:', error);
+                console.error('ID alınırken hata:', error);
+                return Math.floor(Math.random() * 900000) + 100000;
             }
         }
         
-        async function searchEntry() {
-            const searchId = document.getElementById('searchId').value;
-            if (!searchId) {
-                loadRecentEntries();
-                return;
-            }
-            
-            try {
-                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
-                const recentEntriesContainer = document.getElementById('recent-entries');
-                recentEntriesContainer.innerHTML = '';
-                
-                let entriesArray = Array.isArray(entries) ? entries : (entries.records || []);
-                const entry = entriesArray.find(e => e.id === parseInt(searchId));
-                
-                if (!entry) {
-                    recentEntriesContainer.innerHTML = '<p>Entry bulunamadı.</p>';
-                    return;
-                }
-                
-                const entryEl = document.createElement('div');
-                entryEl.className = 'entry-item';
-                
-                let displayContent = entry.content_tr || entry.content;
-                
-                entryEl.innerHTML = `
-                    <div class="entry-content">${displayContent}</div>
-                    <div class="entry-meta">
-                        <span>ID: ${entry.id}</span>
-                        <span>Referans ID: ${entry.references}</span>
-                        <span>${formatDate(entry.date)}</span>
-                    </div>
-                    <div class="entry-actions">
-                        <button onclick="editEntry(${entry.id})" title="Düzenle"><i class="fas fa-edit"></i></button>
-                        <button onclick="confirmDelete(${entry.id})" title="Sil"><i class="fas fa-trash"></i></button>
-                    </div>
-                `;
-                
-                recentEntriesContainer.appendChild(entryEl);
-            } catch (error) {
-                console.error('Entry arama hatası:', error);
-                showMessage(`Arama hatası: ${error.message}`, 'error');
-            }
-        }
-        
-        async function editEntry(entryId) {
-            try {
-                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
-                const entry = Array.isArray(entries) ? 
-                    entries.find(e => e.id === entryId) : 
-                    (entries.records ? entries.records.find(e => e.id === entryId) : null);
-                
-                if (!entry) {
-                    showMessage('Entry bulunamadı!', 'error');
-                    return;
-                }
-                
-                const entryItems = document.querySelectorAll('.entry-item');
-                const targetItem = Array.from(entryItems).find(item => 
-                    item.querySelector('.entry-meta span').textContent.includes(`ID: ${entryId}`));
-                
-                if (!targetItem) return;
-                
-                let editForm = targetItem.querySelector('.edit-form');
-                
-                if (!editForm) {
-                    editForm = document.createElement('div');
-                    editForm.className = 'edit-form';
-                    editForm.innerHTML = `
-                        <div class="form-group">
-                            <label for="edit-tr-${entryId}">Türkçe İçerik:</label>
-                            <textarea id="edit-tr-${entryId}" oninput="updateEditPreview(${entryId}, 'tr')">${entry.content_tr || ''}</textarea>
-                            <div class="preview-container">
-                                <div class="preview-title">
-                                    <span>Ön İzleme:</span>
-                                    <span class="char-count"><span id="edit-tr-${entryId}-count">0</span> karakter</span>
-                                </div>
-                                <div id="edit-tr-${entryId}-preview"></div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="edit-en-${entryId}">İngilizce İçerik:</label>
-                            <textarea id="edit-en-${entryId}" oninput="updateEditPreview(${entryId}, 'en')">${entry.content || ''}</textarea>
-                            <div class="preview-container">
-                                <div class="preview-title">
-                                    <span>Preview:</span>
-                                    <span class="char-count"><span id="edit-en-${entryId}-count">0</span> characters</span>
-                                </div>
-                                <div id="edit-en-${entryId}-preview"></div>
-                            </div>
-                        </div>
-                        <div class="edit-actions">
-                            <button class="save-btn" onclick="saveEntry(${entryId})"><i class="fas fa-save"></i> Kaydet</button>
-                            <button class="cancel-btn" onclick="cancelEdit(${entryId})"><i class="fas fa-times"></i> İptal</button>
-                        </div>
-                    `;
-                    targetItem.appendChild(editForm);
-                    
-                    updateEditPreview(entryId, 'tr');
-                    updateEditPreview(entryId, 'en');
-                }
-                
-                editForm.style.display = 'block';
-            } catch (error) {
-                console.error('Entry düzenleme hatası:', error);
-                showMessage(`Düzenleme hatası: ${error.message}`, 'error');
-            }
-        }
-        
-        async function saveEntry(entryId) {
-            try {
-                const trContent = document.getElementById(`edit-tr-${entryId}`).value;
-                const enContent = document.getElementById(`edit-en-${entryId}`).value;
-                
-                if (!trContent && !enContent) {
-                    showMessage('En az bir dilde içerik girin!', 'error');
-                    return;
-                }
-                
-                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
-                let entriesArray = Array.isArray(entries) ? entries : (entries.records || []);
-                
-                const entryIndex = entriesArray.findIndex(e => e.id === entryId);
-                if (entryIndex === -1) {
-                    showMessage('Entry bulunamadı!', 'error');
-                    return;
-                }
-                
-                entriesArray[entryIndex] = {
-                    ...entriesArray[entryIndex],
-                    content_tr: trContent || null,
-                    content: enContent || '',
-                    date: new Date().toISOString()
-                };
-                
-                await fetchFromJsonBin(ENTRIES_BIN_ID, 'PUT', entriesArray);
-                
-                showMessage('Entry başarıyla güncellendi!', 'success');
-                await loadRecentEntries();
-            } catch (error) {
-                console.error('Entry kaydetme hatası:', error);
-                showMessage(`Kaydetme hatası: ${error.message}`, 'error');
-            }
-        }
-        
-        function cancelEdit(entryId) {
-            const entryItems = document.querySelectorAll('.entry-item');
-            const targetItem = Array.from(entryItems).find(item => 
-                item.querySelector('.entry-meta span').textContent.includes(`ID: ${entryId}`));
-            
-            if (targetItem) {
-                const editForm = targetItem.querySelector('.edit-form');
-                if (editForm) {
-                    editForm.style.display = 'none';
-                }
-            }
-        }
-        
-        function confirmDelete(entryId) {
-            if (confirm('Bu entryi silmek istediğinize emin misiniz?')) {
-                deleteEntry(entryId);
-            }
-        }
-        
-        async function deleteEntry(entryId) {
-            try {
-                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
-                let entriesArray = Array.isArray(entries) ? entries : (entries.records || []);
-                
-                const updatedEntries = entriesArray.filter(e => e.id !== entryId);
-                
-                await fetchFromJsonBin(ENTRIES_BIN_ID, 'PUT', updatedEntries);
-                
-                showMessage('Entry başarıyla silindi!', 'success');
-                await loadRecentEntries();
-                await updateStats();
-            } catch (error) {
-                console.error('Entry silme hatası:', error);
-                showMessage(`Silme hatası: ${error.message}`, 'error');
-            }
-        }
-        
-        async function updateStats() {
-            try {
-                const entriesData = await fetchFromJsonBin(ENTRIES_BIN_ID);
-                const interactions = await fetchFromJsonBin(INTERACTIONS_BIN_ID);
-                
-                const totalEntries = Array.isArray(entriesData) ? 
-                    entriesData.length : 
-                    (entriesData.records ? entriesData.records.length : 0);
-                
-                const totalLikes = interactions.likes ? 
-                    Object.values(interactions.likes).reduce((a, b) => a + b, 0) : 0;
-                
-                const totalPins = interactions.pins ? 
-                    Object.values(interactions.pins).reduce((a, b) => a + b, 0) : 0;
-                
-                document.getElementById('total-entries').textContent = totalEntries;
-                document.getElementById('total-likes').textContent = totalLikes;
-                document.getElementById('total-pins').textContent = totalPins;
-            } catch (error) {
-                console.error('İstatistik güncelleme hatası:', error);
-            }
-        }
-        
-        async function loadStats() {
-            await updateStats();
-        }
-        
-        function showMessage(message, type) {
-            const responseEl = document.getElementById('response-message');
+        function showAdminMessage(message, type) {
+            const responseEl = document.getElementById('admin-response-message');
             responseEl.textContent = message;
-            responseEl.className = type;
+            responseEl.className = `admin-response-message admin-${type}`;
             responseEl.style.display = 'block';
             
             setTimeout(() => {
@@ -2121,39 +2281,10 @@
             }, 5000);
         }
         
-        function logout() {
-            localStorage.removeItem('adminAuth');
-            window.location.href = 'index.html';
-        }
-        
         function updatePreview(textareaId) {
             const textarea = document.getElementById(textareaId);
             const preview = document.getElementById(`${textareaId}-preview`);
             const charCount = document.getElementById(`${textareaId}-count`);
-            
-            if (textarea && preview && charCount) {
-                // Özel medya içerikleri için işleme
-                let content = textarea.value;
-                
-                // Video etiketlerini işle
-                content = content.replace(/<video([^>]*)>/g, '<video$1 style="max-width: 100%; height: auto;">');
-                
-                // Resim etiketlerini işle
-                content = content.replace(/<img([^>]*)>/g, '<img$1 style="max-width: 100%; height: auto;">');
-                
-                // Spotify ve YouTube embed'leri için işleme
-                content = content.replace(/<iframe class="spotify-embed">([\s\S]*?)<\/iframe>/g, '<iframe class="spotify-embed" style="max-width: 100%;">$1</iframe>');
-                content = content.replace(/<iframe class="youtube-embed">([\s\S]*?)<\/iframe>/g, '<iframe class="youtube-embed" style="max-width: 100%;">$1</iframe>');
-                
-                preview.innerHTML = content.replace(/\n/g, '<br>');
-                charCount.textContent = textarea.value.length;
-            }
-        }
-        
-        function updateEditPreview(entryId, lang) {
-            const textarea = document.getElementById(`edit-${lang}-${entryId}`);
-            const preview = document.getElementById(`edit-${lang}-${entryId}-preview`);
-            const charCount = document.getElementById(`edit-${lang}-${entryId}-count`);
             
             if (textarea && preview && charCount) {
                 let content = textarea.value;
@@ -2224,6 +2355,380 @@
             
             updatePreview(textareaId);
         }
+        
+        function addSpotifyEmbed(textareaId) {
+            const spotifyUrl = prompt("Spotify URL veya Track ID girin:");
+            if (!spotifyUrl) return;
+            
+            let trackId = extractTrackId(spotifyUrl);
+            if (!trackId) {
+                alert("Geçersiz Spotify URL veya Track ID!");
+                return;
+            }
+            
+            const spotifyEmbed = `<iframe class="spotify-embed"
+                    src="https://open.spotify.com/embed/track/${trackId}?utm_source=generator&theme=0" 
+                    frameborder="0"
+                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+                    loading="lazy">
+                </iframe>`;
+            
+            insertAtCursor(textareaId, spotifyEmbed);
+            updatePreview(textareaId);
+        }
+        
+        function extractTrackId(url) {
+            if (/^[a-zA-Z0-9]{22}$/.test(url)) {
+                return url;
+            }
+            
+            const regex = /open\.spotify\.com\/track\/([a-zA-Z0-9]{22})/;
+            const match = url.match(regex);
+            if (match && match[1]) {
+                return match[1];
+            }
+            
+            return null;
+        }
+        
+        function addYoutubeEmbed(textareaId) {
+            const youtubeUrl = prompt("Youtube URL veya Video ID girin:");
+            if (!youtubeUrl) return;
+            
+            let videoId = extractYoutubeId(youtubeUrl);
+            if (!videoId) {
+                alert("Geçersiz Youtube URL veya Video ID!");
+                return;
+            }
+            
+            const youtubeEmbed = `<div class="youtube-embed">
+                <iframe 
+                    width="100%" 
+                    height="315" 
+                    src="https://www.youtube.com/embed/${videoId}" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            </div>`;
+            
+            insertAtCursor(textareaId, youtubeEmbed);
+            updatePreview(textareaId);
+        }
+
+        function extractYoutubeId(url) {
+            if (/^[a-zA-Z0-9_-]{11}$/.test(url)) {
+                return url;
+            }
+            
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+            const match = url.match(regExp);
+            
+            if (match && match[2].length === 11) {
+                return match[2];
+            }
+            
+            const shortsRegExp = /youtube\.com\/shorts\/([^\/\?]+)/;
+            const shortsMatch = url.match(shortsRegExp);
+            
+            if (shortsMatch && shortsMatch[1]) {
+                return shortsMatch[1];
+            }
+            
+            return null;
+        }
+        
+        function insertAtCursor(textareaId, text) {
+            const textarea = document.getElementById(textareaId);
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            
+            textarea.value = textarea.value.substring(0, start) + text + textarea.value.substring(end);
+            
+            const newCursorPos = start + text.length;
+            textarea.selectionStart = newCursorPos;
+            textarea.selectionEnd = newCursorPos;
+            textarea.focus();
+        }
+        
+        function openMediaUpload(textareaId) {
+            activeTextareaId = textareaId;
+            document.getElementById('media-file-input').click();
+        }
+
+        function handleMediaSelection(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
+                showAdminMessage('Sadece fotoğraf veya video yükleyebilirsiniz!', 'error');
+                return;
+            }
+            
+            selectedFile = file;
+            
+            if (file.type.startsWith('video/')) {
+                handleMediaUpload(file);
+            } else {
+                openCropModal(file);
+            }
+        }
+
+        function openCropModal(file) {
+            const cropModal = document.getElementById('cropModal');
+            const cropImage = document.getElementById('cropImage');
+            
+            if (cropper) {
+                cropper.destroy();
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                cropImage.src = e.target.result;
+                cropModal.style.display = 'flex';
+                
+                setTimeout(() => {
+                    cropper = new Cropper(cropImage, {
+                        aspectRatio: 16/9,
+                        viewMode: 1,
+                        guides: true,
+                        background: false,
+                        autoCropArea: 0.8,
+                        responsive: true,
+                        checkCrossOrigin: false
+                    });
+                    
+                    document.querySelectorAll('.aspect-ratio-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            document.querySelectorAll('.aspect-ratio-btn').forEach(b => b.classList.remove('active'));
+                            this.classList.add('active');
+                            
+                            const ratio = this.getAttribute('data-ratio');
+                            if (ratio === 'free') {
+                                cropper.setAspectRatio(NaN);
+                            } else {
+                                const parts = ratio.split('/');
+                                cropper.setAspectRatio(parts[0] / parts[1]);
+                            }
+                        });
+                    });
+                }, 100);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function closeCropModal() {
+            document.getElementById('cropModal').style.display = 'none';
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+            document.getElementById('media-file-input').value = '';
+        }
+
+        async function cropAndUpload() {
+            if (!cropper) return;
+            
+            try {
+                showAdminMessage('Resim kırpılıyor ve yükleniyor...', 'warning');
+                
+                const canvas = cropper.getCroppedCanvas({
+                    imageSmoothingEnabled: true,
+                    imageSmoothingQuality: 'high'
+                });
+                
+                canvas.toBlob(async function(blob) {
+                    try {
+                        const croppedFile = new File([blob], selectedFile.name, {
+                            type: 'image/jpeg',
+                            lastModified: Date.now()
+                        });
+                        
+                        await handleMediaUpload(croppedFile);
+                        closeCropModal();
+                    } catch (error) {
+                        console.error('Kırpma hatası:', error);
+                        showAdminMessage(`Kırpma hatası: ${error.message}`, 'error');
+                    }
+                }, 'image/jpeg', 0.9);
+                
+            } catch (error) {
+                console.error('Kırpma hatası:', error);
+                showAdminMessage(`Kırpma hatası: ${error.message}`, 'error');
+            }
+        }
+
+        async function handleMediaUpload(file) {
+            try {
+                showAdminMessage('Dosya yükleniyor...', 'warning');
+                
+                const authResponse = await fetch('https://adembayazit.netlify.app/.netlify/functions/imagekit-auth');
+                
+                if (!authResponse.ok) {
+                    throw new Error(`Auth endpoint hatası: ${authResponse.status}`);
+                }
+                
+                const authData = await authResponse.json();
+                
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('fileName', file.name);
+                formData.append('signature', authData.signature);
+                formData.append('token', authData.token);
+                formData.append('expire', authData.expire);
+                formData.append('publicKey', authData.publicKey);
+                
+                const uploadResponse = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!uploadResponse.ok) {
+                    throw new Error(`Upload hatası: ${uploadResponse.status}`);
+                }
+                
+                const uploadData = await uploadResponse.json();
+                
+                const textarea = document.getElementById(activeTextareaId);
+                const url = uploadData.url;
+                
+                let mediaTag;
+                if (file.type.startsWith('image/')) {
+                    mediaTag = `<img src="${url}" alt="Yüklenen resim" style="max-width: 100%; height: auto;">`;
+                } else if (file.type.startsWith('video/')) {
+                    mediaTag = `<video src="${url}" controls style="max-width: 100%; height: auto;"></video>`;
+                }
+                
+                insertAtCursor(activeTextareaId, `\n${mediaTag}\n`);
+                updatePreview(activeTextareaId);
+                
+                showAdminMessage('Dosya başarıyla yüklendi!', 'success');
+                
+            } catch (error) {
+                console.error('Yükleme hatası:', error);
+                let errorMessage = error.message;
+                
+                if (errorMessage.includes('Failed to fetch')) {
+                    errorMessage = 'Sunucuya bağlanılamadı. İnternet bağlantınızı kontrol edin.';
+                }
+                
+                showAdminMessage(`Yükleme hatası: ${errorMessage}`, 'error');
+            }
+        }
+        
+        async function sendEmailToSubscribers() {
+            const subject = document.getElementById('emailSubject').value;
+            const content = document.getElementById('emailContent').value;
+            const responseEl = document.getElementById('email-response-message');
+            
+            if (!subject || !content) {
+                showEmailMessage('Lütfen konu ve içerik girin!', 'error');
+                return;
+            }
+            
+            try {
+                const sendBtn = document.querySelector('#email-management .admin-submit-btn');
+                sendBtn.disabled = true;
+                sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...';
+                
+                // Get subscribers
+                const subscribersData = await fetchViaProxy('/latest', 'GET', null, SUBSCRIBERS_BIN_ID);
+                const subscribers = subscribersData.subscribers || [];
+                
+                if (subscribers.length === 0) {
+                    showEmailMessage('Gönderilecek abone bulunamadı!', 'error');
+                    sendBtn.disabled = false;
+                    sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Abonelere Gönder';
+                    return;
+                }
+                
+                // Prepare email
+                const emailData = {
+                    Messages: [
+                        {
+                            From: {
+                                Email: CONFIG.MAILJET_CONFIG.senderEmail,
+                                Name: CONFIG.MAILJET_CONFIG.senderName
+                            },
+                            To: subscribers.map(email => ({ Email: email })),
+                            Subject: subject,
+                            HTMLPart: `
+                                <div style="background: #f5f5f5; padding: 20px; border-radius: 10px; color: #333;">
+                                    <h2 style="color: #00cc00;">${subject}</h2>
+                                    <div style="margin-top: 15px;">
+                                        ${content.replace(/\n/g, '<br>')}
+                                    </div>
+                                </div>
+                                <p style="margin-top: 20px; color: #666; font-size: 12px;">
+                                    Bu maili Adem Bayazıt - Vulnerabilities Research aboneliğiniz nedeniyle aldınız.
+                                    <br><a href="https://adembayazit.com/unsubscribe" style="color: #666;">Abonelikten çık</a>
+                                </p>
+                            `
+                        }
+                    ]
+                };
+                
+                // Send email
+                const response = await fetch('/.netlify/functions/send-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        emailData: emailData,
+                        apiKey: CONFIG.MAILJET_CONFIG.apiKey,
+                        secretKey: CONFIG.MAILJET_CONFIG.secretKey
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to send email');
+                }
+                
+                showEmailMessage(`Mail başarıyla ${subscribers.length} aboneye gönderildi!`, 'success');
+                
+                // Clear form
+                document.getElementById('emailSubject').value = '';
+                document.getElementById('emailContent').value = '';
+                
+            } catch (error) {
+                console.error('Mail gönderme hatası:', error);
+                showEmailMessage(`Mail gönderme hatası: ${error.message}`, 'error');
+            } finally {
+                const sendBtn = document.querySelector('#email-management .admin-submit-btn');
+                sendBtn.disabled = false;
+                sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Abonelere Gönder';
+            }
+        }
+        
+        function showEmailMessage(message, type) {
+            const responseEl = document.getElementById('email-response-message');
+            responseEl.textContent = message;
+            responseEl.className = `admin-response-message admin-${type}`;
+            responseEl.style.display = 'block';
+            
+            setTimeout(() => {
+                responseEl.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Handle subscription form
+        const subscriptionForm = document.getElementById('subscriptionForm');
+        if (subscriptionForm) {
+            subscriptionForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = document.getElementById('emailInput').value.trim();
+                handleSubscription(email);
+            });
+        }
+        
+        // Handle hash changes
+        window.addEventListener('hashchange', function() {
+            if (window.location.hash) {
+                const researchId = window.location.hash.substring(1);
+                loadResearchDetail(researchId);
+            }
+        });
     </script>
 </body>
 </html>
