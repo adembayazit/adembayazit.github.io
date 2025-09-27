@@ -568,32 +568,6 @@
             background: #00cc00;
             color: white;
         }
-        
-        /* Custom icons for /MANAGE-ENTRIES/ */
-        .custom-icon {
-            width: 16px;
-            height: 16px;
-            display: inline-block;
-            margin-right: 8px;
-            vertical-align: middle;
-        }
-        
-        .hacker-icon {
-            background: var(--primary-color);
-            border-radius: 50%;
-            position: relative;
-        }
-        
-        .hacker-icon::after {
-            content: ">";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 10px;
-            color: black;
-            font-weight: bold;
-        }
     </style>
 </head>
 <body>
@@ -808,6 +782,9 @@
                 <section id="email" class="admin-section">
                     <div class="section-title">
                         <h2><i class="fas fa-envelope"></i> E-posta Bildirimi</h2>
+                        <button class="btn btn-view" id="test-function-btn">
+                            <i class="fas fa-vial"></i> Fonksiyon Testi
+                        </button>
                     </div>
                     
                     <div class="email-form">
@@ -890,7 +867,7 @@
 
     <footer style="text-align: center; padding: 20px; font-size: 14px; color: white; margin-top: 50px;">
         <hr style="margin-bottom: 10px; border-color: limegreen;" />
-        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 2.0.0 | Temmuz 2025</p>
+        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 2.0.1 | Temmuz 2025</p>
     </footer>
 
     <script src="/JAVASCRIPT/monitor.js"></script>
@@ -1523,6 +1500,52 @@
             }
         }
         
+        // Test email function
+        async function testEmailFunction() {
+            try {
+                showToast('Fonksiyon test ediliyor...', 3000);
+                
+                const testData = {
+                    emailData: {
+                        Messages: [{
+                            From: { 
+                                Email: 'fyi@adembayazit.com', 
+                                Name: 'Test Gönderen' 
+                            },
+                            To: [{ 
+                                Email: 'test@example.com' 
+                            }],
+                            Subject: 'Test E-posta - ' + new Date().toLocaleString('tr-TR'),
+                            TextPart: 'Bu bir test e-postasıdır.',
+                            HTMLPart: '<p>Bu bir <strong>test e-postasıdır</strong>.</p>'
+                        }]
+                    }
+                };
+                
+                const response = await fetch('https://adembayazit.netlify.app/.netlify/functions/send-email', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json' 
+                    },
+                    body: JSON.stringify(testData)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showToast('Fonksiyon testi başarılı: ' + result.message);
+                } else {
+                    showToast('Fonksiyon hatası: ' + (result.error || result.details));
+                }
+                
+                return result;
+            } catch (error) {
+                console.error('Test hatası:', error);
+                showToast('Test sırasında hata: ' + error.message);
+                throw error;
+            }
+        }
+        
         // Send test email
         async function sendTestEmail() {
             const testEmail = document.getElementById('test-email').value.trim();
@@ -1538,140 +1561,155 @@
                 return;
             }
             
-            // Similar to sendEmail but to single test address
-            showToast('Test e-postası gönderiliyor...', 3000);
-            // Implement test email functionality here
-        }
-        
-       // Send email to subscribers
-async function sendEmail() {
-    const vulnerabilityId = document.getElementById('email-vulnerability').value;
-    const subject = document.getElementById('email-subject').value.trim();
-    const customMessage = document.getElementById('email-message').value.trim();
-    
-    if (!vulnerabilityId) {
-        showToast('Duyurulacak güvenlik açığını seçin', 5000);
-        return;
-    }
-    
-    if (!subject) {
-        showToast('E-posta konusu zorunludur', 5000);
-        return;
-    }
-    
-    const vulnerability = vulnerabilitiesData.find(v => v.id == vulnerabilityId);
-    if (!vulnerability) {
-        showToast('Güvenlik açığı bulunamadı', 5000);
-        return;
-    }
-    
-    if (subscribersData.length === 0) {
-        showToast('Gönderilecek abone yok', 5000);
-        return;
-    }
-    
-    const sendBtn = document.getElementById('send-email-btn');
-    const originalText = sendBtn.innerHTML;
-    sendBtn.disabled = true;
-    sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...';
-    
-    try {
-        // Prepare email data - SIMPLIFIED VERSION FOR TESTING
-        const emailData = {
-            Messages: [
-                {
-                    From: {
-                        Email: 'fyi@adembayazit.com',
-                        Name: 'Adem Bayazıt - Güvenlik Açığı Araştırmaları'
+            const vulnerability = vulnerabilitiesData.find(v => v.id == vulnerabilityId);
+            if (!vulnerability) {
+                showToast('Güvenlik açığı bulunamadı', 5000);
+                return;
+            }
+            
+            const sendBtn = document.getElementById('test-email-btn');
+            const originalText = sendBtn.innerHTML;
+            sendBtn.disabled = true;
+            sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Test Gönderiliyor...';
+            
+            try {
+                const emailData = {
+                    Messages: [
+                        {
+                            From: {
+                                Email: 'fyi@adembayazit.com',
+                                Name: 'Adem Bayazıt - Güvenlik Açığı Araştırmaları'
+                            },
+                            To: [{ Email: testEmail }],
+                            Subject: 'TEST: ' + document.getElementById('email-subject').value.trim(),
+                            TextPart: `Test: Yeni güvenlik açığı - ${vulnerability.title}`,
+                            HTMLPart: `
+                                <h3>TEST: Yeni Güvenlik Açığı - ${vulnerability.title}</h3>
+                                <p><strong>Tarih:</strong> ${new Date(vulnerability.date).toLocaleDateString('tr-TR')}</p>
+                                ${vulnerability.cvss_score ? `<p><strong>CVSS Skoru:</strong> ${vulnerability.cvss_score}</p>` : ''}
+                                <p>Bu bir test e-postasıdır.</p>
+                            `
+                        }
+                    ]
+                };
+                
+                const response = await fetch('https://adembayazit.netlify.app/.netlify/functions/send-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
                     },
-                    To: subscribersData.slice(0, 1).map(email => ({ Email: email })), // TEST: Sadece ilk aboneye gönder
-                    Subject: subject + ' [TEST]',
-                    TextPart: `Yeni güvenlik açığı: ${vulnerability.title}`,
-                    HTMLPart: `
-                        <h3>Yeni Güvenlik Açığı: ${vulnerability.title}</h3>
-                        <p><strong>Tarih:</strong> ${new Date(vulnerability.date).toLocaleDateString('tr-TR')}</p>
-                        ${vulnerability.cvss_score ? `<p><strong>CVSS Skoru:</strong> ${vulnerability.cvss_score}</p>` : ''}
-                        ${vulnerability.category ? `<p><strong>Kategori:</strong> ${vulnerability.category}</p>` : ''}
-                        ${customMessage ? `<p><strong>Mesaj:</strong> ${customMessage}</p>` : ''}
-                        <p>${vulnerability.content.substring(0, 150)}...</p>
-                        <a href="https://adembayazit.com/vulnerabilities">Detayları Görüntüle</a>
-                    `
+                    body: JSON.stringify({ emailData })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showToast('Test e-postası gönderildi: ' + result.message);
+                } else {
+                    throw new Error(result.error || result.details || 'Test e-postası gönderilemedi');
                 }
-            ]
-        };
-        
-        console.log('Gönderilecek e-posta verisi:', emailData);
-        
-        // Send email via Netlify function
-        const response = await fetch('https://adembayazit.netlify.app/.netlify/functions/send-email', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                emailData: emailData
-            })
-        });
-        
-        console.log('Response status:', response.status);
-        
-        let result;
-        try {
-            result = await response.json();
-            console.log('Response data:', result);
-        } catch (jsonError) {
-            console.error('JSON parse error:', jsonError);
-            throw new Error(`Invalid response from server: ${response.status}`);
+            } catch (error) {
+                console.error('Test e-posta hatası:', error);
+                showToast('Test e-postası gönderilemedi: ' + error.message, 7000);
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.innerHTML = originalText;
+            }
         }
         
-        if (!response.ok) {
-            throw new Error(result.error || result.details || `HTTP error! status: ${response.status}`);
+        // Send email to subscribers
+        async function sendEmail() {
+            const vulnerabilityId = document.getElementById('email-vulnerability').value;
+            const subject = document.getElementById('email-subject').value.trim();
+            const customMessage = document.getElementById('email-message').value.trim();
+            
+            if (!vulnerabilityId) {
+                showToast('Duyurulacak güvenlik açığını seçin', 5000);
+                return;
+            }
+            
+            if (!subject) {
+                showToast('E-posta konusu zorunludur', 5000);
+                return;
+            }
+            
+            const vulnerability = vulnerabilitiesData.find(v => v.id == vulnerabilityId);
+            if (!vulnerability) {
+                showToast('Güvenlik açığı bulunamadı', 5000);
+                return;
+            }
+            
+            if (subscribersData.length === 0) {
+                showToast('Gönderilecek abone yok', 5000);
+                return;
+            }
+            
+            const sendBtn = document.getElementById('send-email-btn');
+            const originalText = sendBtn.innerHTML;
+            sendBtn.disabled = true;
+            sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...';
+            
+            try {
+                const emailData = {
+                    Messages: [
+                        {
+                            From: {
+                                Email: 'fyi@adembayazit.com',
+                                Name: 'Adem Bayazıt - Güvenlik Açığı Araştırmaları'
+                            },
+                            To: subscribersData.map(email => ({ Email: email })),
+                            Subject: subject,
+                            TextPart: `Yeni güvenlik açığı: ${vulnerability.title}`,
+                            HTMLPart: `
+                                <h2>Yeni Güvenlik Açığı Yayınlandı</h2>
+                                <div style="background: #f5f5f5; padding: 20px; border-radius: 10px; color: #333;">
+                                    <h3 style="color: #d9534f;">${vulnerability.title}</h3>
+                                    <p><strong>Tarih:</strong> ${new Date(vulnerability.date).toLocaleDateString('tr-TR')}</p>
+                                    ${vulnerability.cvss_score ? `<p><strong>CVSS Skoru:</strong> ${vulnerability.cvss_score}</p>` : ''}
+                                    ${vulnerability.category ? `<p><strong>Kategori:</strong> ${vulnerability.category}</p>` : ''}
+                                    ${customMessage ? `<p><strong>Mesaj:</strong> ${customMessage}</p>` : ''}
+                                    <p>${vulnerability.content.substring(0, 200)}...</p>
+                                    <a href="https://adembayazit.com/vulnerabilities#${vulnerability.id}" 
+                                       style="background: #00cc00; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 15px;">
+                                        Tam Araştırmayı Oku
+                                    </a>
+                                </div>
+                                <p style="margin-top: 20px; color: #666; font-size: 12px;">
+                                    Bu e-postayı Adem Bayazıt'ın güvenlik açığı bildirimlerine abone olduğunuz için aldınız.
+                                    <br><a href="https://adembayazit.com/unsubscribe" style="color: #666;">Aboneliği sonlandır</a>
+                                </p>
+                            `
+                        }
+                    ]
+                };
+                
+                const response = await fetch('https://adembayazit.netlify.app/.netlify/functions/send-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ emailData })
+                });
+                
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(result.error || result.details || `HTTP error! status: ${response.status}`);
+                }
+                
+                // Update email stats
+                document.getElementById('stats-last-sent').textContent = new Date().toLocaleString('tr-TR');
+                
+                showToast(result.message || `${subscribersData.length} aboneye e-posta gönderildi`);
+            } catch (error) {
+                console.error('E-posta gönderim hatası:', error);
+                showToast('E-posta gönderilemedi: ' + error.message, 7000);
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.innerHTML = originalText;
+            }
         }
         
-        // Update email stats
-        document.getElementById('stats-last-sent').textContent = new Date().toLocaleString('tr-TR');
-        
-        showToast(result.message || 'E-posta başarıyla gönderildi');
-    } catch (error) {
-        console.error('E-posta gönderim hatası:', error);
-        showToast('E-posta gönderilemedi: ' + error.message, 7000);
-    } finally {
-        sendBtn.disabled = false;
-        sendBtn.innerHTML = originalText;
-    }
-}
-        
-        // Send email via Netlify function - ONLY send emailData
-        const response = await fetch('https://adembayazit.netlify.app/.netlify/functions/send-email', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                emailData: emailData
-                // Remove apiKey and secretKey from here - they should be in environment variables
-            })
-        });
-        
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
-        }
-        
-        const result = await response.json();
-        
-        // Update email stats
-        document.getElementById('stats-last-sent').textContent = new Date().toLocaleString('tr-TR');
-        
-        showToast(result.message || `${subscribersData.length} aboneye e-posta gönderildi`);
-    } catch (error) {
-        console.error('Error sending email:', error);
-        showToast('E-posta gönderilirken hata oluştu: ' + error.message, 5000);
-    } finally {
-        sendBtn.disabled = false;
-        sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Tüm Abonelere Gönder';
-    }
-}
         // Initialize the admin panel
         document.addEventListener('DOMContentLoaded', function() {
             // Load data
@@ -1707,6 +1745,8 @@ async function sendEmail() {
             // Email functionality
             document.getElementById('send-email-btn').addEventListener('click', sendEmail);
             document.getElementById('test-email-btn').addEventListener('click', sendTestEmail);
+            document.getElementById('test-function-btn').addEventListener('click', testEmailFunction);
+            
             document.getElementById('email-message').addEventListener('input', function() {
                 const vulnerabilityId = document.getElementById('email-vulnerability').value;
                 if (vulnerabilityId) {
