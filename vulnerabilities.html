@@ -684,6 +684,7 @@
     <script>
         // JSON configuration
         const CONFIG = {
+            CONFIG.SUBSCRIBERS_BIN_ID: '68d7fc3bae596e708ffdcc6e',
             VULNERABILITIES_BIN_ID: '68d78989d0ea881f408cad3f',
             SUBSCRIBERS_BIN_ID: '68d78989d0ea881f408cad3f_subscribers',
             MAILJET_CONFIG: {
@@ -1007,7 +1008,7 @@
         async function sendNewVulnerabilityEmail(vulnerability) {
             try {
                 // Get subscribers list
-                const subscribersData = await fetchViaProxy('/latest', 'GET', null, 68d7fc3bae596e708ffdcc6e);
+                const subscribersData = await fetchViaProxy('/latest', 'GET', null, CONFIG.SUBSCRIBERS_BIN_ID);
                 const subscribers = subscribersData.subscribers || [];
                 
                 if (subscribers.length === 0) {
@@ -1113,7 +1114,7 @@
         async function saveSubscriber(email) {
             try {
                 // Get current subscribers
-                const currentData = await fetchViaProxy('/latest', 'GET', null, 68d7fc3bae596e708ffdcc6e);
+                const currentData = await fetchViaProxy('/latest', 'GET', null, CONFIG.SUBSCRIBERS_BIN_ID);
                 const subscribers = currentData.subscribers || [];
                 
                 // Check if email already exists
@@ -1129,7 +1130,7 @@
                 await fetchViaProxy('', 'PUT', { 
                     subscribers: subscribers,
                     lastUpdated: timestamp
-                }, 68d7fc3bae596e708ffdcc6e);
+                }, CONFIG.SUBSCRIBERS_BIN_ID);
                 
                 return { success: true, message: 'Subscription successful' };
             } catch (error) {
