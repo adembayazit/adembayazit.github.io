@@ -176,6 +176,7 @@
             transition: all 0.3s ease;
             border-radius: 5px;
             margin-bottom: 5px;
+            position: relative;
         }
         
         .research-item:hover {
@@ -192,11 +193,51 @@
             color: var(--text-color);
             margin-bottom: 5px;
             font-size: 0.9rem;
+            line-height: 1.3;
+        }
+        
+        .research-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.7rem;
+            color: var(--text-muted);
         }
         
         .research-date {
-            font-size: 0.7rem;
-            color: var(--text-muted);
+            flex: 1;
+        }
+        
+        .research-author {
+            background: rgba(0, 255, 0, 0.2);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.6rem;
+            margin-left: 5px;
+        }
+        
+        .author-adem {
+            background: rgba(255, 215, 0, 0.3);
+            color: #ffd700;
+        }
+        
+        /* Share button in sidebar */
+        .research-share {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 3px;
+            padding: 3px 6px;
+            cursor: pointer;
+            font-size: 0.6rem;
+        }
+        
+        .research-item:hover .research-share {
+            opacity: 1;
         }
         
         /* Content area styles */
@@ -207,6 +248,7 @@
             border-radius: 10px;
             padding: 30px;
             min-height: 600px;
+            position: relative;
         }
         
         .content-placeholder {
@@ -244,6 +286,10 @@
             font-size: 1.5rem;
             color: var(--primary-color);
             margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         
         .detail-meta {
@@ -251,9 +297,10 @@
             gap: 20px;
             font-size: 0.8rem;
             color: var(--text-muted);
+            flex-wrap: wrap;
         }
         
-        .detail-date, .detail-category {
+        .detail-date, .detail-category, .detail-author {
             display: flex;
             align-items: center;
             gap: 5px;
@@ -313,7 +360,6 @@
             border-radius: 4px;
             font-weight: bold;
             font-size: 0.8rem;
-            margin-left: 10px;
         }
         
         .cvss-critical {
@@ -336,6 +382,28 @@
             color: white;
         }
         
+        /* Share button in detail */
+        .detail-share {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .detail-share:hover {
+            background: rgba(0, 255, 0, 0.2);
+            transform: translateY(-2px);
+        }
+        
         /* Loading animation */
         .loading {
             text-align: center;
@@ -356,6 +424,27 @@
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+        
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 5px;
+            border: 1px solid var(--primary-color);
+            z-index: 1000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
         }
         
         /* Matrix Canvas Styles */
@@ -405,6 +494,16 @@
             .detail-meta {
                 flex-direction: column;
                 gap: 5px;
+            }
+            
+            .detail-share {
+                position: static;
+                margin-bottom: 15px;
+                display: inline-flex;
+            }
+            
+            .research-share {
+                opacity: 1; /* Always show on mobile */
             }
         }
     </style>
@@ -464,6 +563,9 @@
         </div>
     </div>
 
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
     <footer style="text-align: center; padding: 20px; font-size: 14px; color: white; margin-top: 50px;">
         <hr style="margin-bottom: 10px; border-color: limegreen;" />
         <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.2 | July 2025</p>
@@ -502,6 +604,72 @@
             } catch (error) {
                 console.error('Proxy error:', error);
                 throw error;
+            }
+        }
+        
+        // Show toast notification
+        function showToast(message, duration = 3000) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
+        }
+        
+        // Copy to clipboard function
+        async function copyToClipboard(text) {
+            try {
+                await navigator.clipboard.writeText(text);
+                return true;
+            } catch (err) {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    return true;
+                } catch (err) {
+                    return false;
+                } finally {
+                    document.body.removeChild(textArea);
+                }
+            }
+        }
+        
+        // Share research function
+        function shareResearch(researchId) {
+            const research = vulnerabilitiesData.find(item => item.id == researchId);
+            if (!research) return;
+            
+            const shareUrl = `${window.location.origin}${window.location.pathname}#${researchId}`;
+            
+            // Try to use Web Share API first
+            if (navigator.share) {
+                navigator.share({
+                    title: research.title,
+                    text: research.content.substring(0, 100) + '...',
+                    url: shareUrl
+                }).catch(() => {
+                    // Fallback to clipboard
+                    copyShareUrl(shareUrl, research.title);
+                });
+            } else {
+                // Fallback to clipboard
+                copyShareUrl(shareUrl, research.title);
+            }
+        }
+        
+        // Copy share URL to clipboard
+        async function copyShareUrl(url, title) {
+            const success = await copyToClipboard(url);
+            if (success) {
+                showToast('Link copied to clipboard!');
+            } else {
+                showToast('Failed to copy link');
             }
         }
         
@@ -563,9 +731,18 @@
                     cvssBadge = `<span class="cvss-badge ${cvssClass}">CVSS: ${research.cvss_score}</span>`;
                 }
                 
+                // Determine author badge class
+                const authorClass = research.author === 'Adem Bayazıt' ? 'author-adem' : '';
+                
                 listItem.innerHTML = `
                     <div class="research-title">${research.title} ${cvssBadge}</div>
-                    <div class="research-date">${researchDate}</div>
+                    <div class="research-meta">
+                        <span class="research-date">${researchDate}</span>
+                        ${research.author ? `<span class="research-author ${authorClass}">${research.author}</span>` : ''}
+                    </div>
+                    <button class="research-share" onclick="event.stopPropagation(); shareResearch(${research.id})">
+                        <i class="fas fa-share-alt"></i> Share
+                    </button>
                 `;
                 
                 listItem.addEventListener('click', () => {
@@ -628,13 +805,20 @@
                 </div>`;
             }
             
+            // Determine author badge class
+            const authorClass = research.author === 'Adem Bayazıt' ? 'author-adem' : '';
+            
             // Set the research detail content
             document.getElementById('researchDetail').innerHTML = `
+                <button class="detail-share" onclick="shareResearch(${research.id})">
+                    <i class="fas fa-share-alt"></i> Share This Research
+                </button>
                 <div class="detail-header">
                     <h1 class="detail-title">${research.title} ${cvssBadge}</h1>
                     <div class="detail-meta">
                         <span class="detail-date"><i class="far fa-calendar"></i> ${researchDate}</span>
                         <span class="detail-category"><i class="fas fa-tag"></i> ${research.category || 'Vulnerability Research'}</span>
+                        ${research.author ? `<span class="detail-author ${authorClass}"><i class="fas fa-user"></i> ${research.author}</span>` : ''}
                     </div>
                     ${tagsHtml}
                 </div>
