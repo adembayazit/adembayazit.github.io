@@ -1,533 +1,362 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Paneli - adembayazit.com</title>
+    <title>Vulnerabilities Research | Adem Bayazıt</title>
+    <meta property="og:title" content="Adem Bayazıt | Vulnerabilities Research" />
+    <meta property="og:description" content="Cybersecurity vulnerabilities research and analysis by Adem Bayazıt" />
+    <meta property="og:image" content="https://adembayazit.com/IMAGES/preview.png" />
+    <meta property="og:url" content="https://adembayazit.com/vulnerabilities" />
+    <meta property="og:type" content="website" />
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Adem Bayazıt - Vulnerabilities Research">
+    <meta name="twitter:description" content="Cybersecurity vulnerabilities research and analysis by Adem Bayazıt">
+    <meta name="twitter:image" content="https://adembayazit.com/IMAGES/preview.png">
+    <meta name="twitter:image:alt" content="Adem Bayazıt">
+    
+    <link rel="icon" type="png|image" href="/IMAGES/ab.png">
+    <link rel="stylesheet" href="/CSS/style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Cropper.js CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <link href='https://cdn.boxicons.com/fonts/basic/boxicons.min.css' rel='stylesheet'>
+    <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
     <style>
         :root {
-            --primary-color: limegreen;
-            --secondary-color: #001e00;
-            --text-color: limegreen;
-            --bg-color: #000;
-            --error-color: #ff3333;
-            --success-color: #00ff00;
-            --warning-color: #ffcc00;
-            --spotify-color: #1DB954;
-            --youtube-color: #FF0000;
-            --vulnerabilities-color: #ff6b00;
+            --primary-color: #00ff00;
+            --primary-dark: #00cc00;
+            --primary-light: #33ff33;
+            --bg-color: #0a1916;
+            --card-bg: rgba(10, 25, 20, 0.7);
+            --text-color: #ffffff;
+            --text-muted: #cccccc;
+            --border-color: #00aa00;
+            --highlight-color: #99ff99;
+            --sidebar-width: 320px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
         }
         
         body {
-            background: var(--bg-color);
+            background-color: var(--bg-color);
             color: var(--text-color);
-            font-family: 'Courier New', monospace;
-            margin: 0;
-            padding: 0;
             overflow-x: hidden;
+            position: relative;
         }
         
-        .admin-header {
-            background: rgba(0, 30, 0, 0.9);
-            border-bottom: 1px solid var(--primary-color);
-            padding: 1rem;
+        /* Logo ve slogan için stil */
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        
+        .logo-slogan {
+            font-size: 10px;
+            color: white;
+            margin-top: 2px;
+            font-style: italic;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            text-align: right;
+            width: 100%;
+            padding-right: 5px;
+        }
+        
+        /* Navbar için responsive ayarlar */
+        .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+            padding: 10px 5%;
         }
         
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.9rem;
-        }
-        
-        .logo img {
-            height: 30px;
-            filter: drop-shadow(0 0 5px var(--primary-color));
-        }
-        
-        .logo h2 {
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 1rem;
-        }
-        
-        .bug-icon {
-            color: red;
-            animation: bugPulse 1.5s infinite;
-        }
-        
-        .logout-btn {
-            background: var(--primary-color);
-            color: black;
-            border: none;
-            padding: 6px 10px;
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            border-radius: 3px;
-            transition: all 0.3s;
-            font-size: 0.8rem;
-        }
-        
-        .logout-btn:hover {
-            box-shadow: 0 0 10px var(--primary-color);
-            transform: translateY(-2px);
-        }
-        
-        /* Admin Navigation */
-        .admin-nav {
-            background: rgba(0, 30, 0, 0.7);
-            border-bottom: 1px solid var(--primary-color);
-            padding: 0.5rem 1rem;
-            display: flex;
-            gap: 10px;
-        }
-        
-        .nav-btn {
-            background: rgba(0, 30, 0, 0.5);
-            border: 1px solid var(--primary-color);
-            color: var(--text-color);
-            padding: 8px 15px;
-            cursor: pointer;
-            border-radius: 3px;
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .nav-btn.active {
-            background: var(--primary-color);
-            color: black;
-        }
-        
-        .nav-btn:hover {
-            box-shadow: 0 0 10px var(--primary-color);
-        }
-        
-        .admin-container {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            padding: 1rem;
-        }
-        
-        .editor-container, .stats-container, .entries-container, 
-        .vulnerabilities-container, .email-container {
-            background: rgba(0, 30, 0, 0.7);
-            border: 1px solid var(--primary-color);
-            border-radius: 5px;
-            padding: 1rem;
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);
+        .content-wrapper {
+            margin-top: 160px;
             position: relative;
-            overflow: hidden;
+            z-index: 2;
+            padding: 0 20px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .backto {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .back-to-home {
+            display: inline-block;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            padding: 10px 20px;
+        }
+        
+        .back-to-home:hover {
+            text-decoration: underline;
+            color: var(--highlight-color);
+            background: rgba(0, 255, 0, 0.1);
+        }
+        
+        .page-title {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 1.7rem;
+            color: white;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+            position: relative;
+            filter: drop-shadow(0 0 5px limegreen);
+        }
+        
+        .page-title::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 3px;
+        }
+        
+        /* Main layout */
+        .vulnerabilities-container {
+            display: flex;
+            gap: 30px;
+            min-height: 600px;
+        }
+        
+        .vulnerabilities-container h3 {
+            color: white;
+        }
+        .vulnerabilities-container i {
+            color: red;
+        }
+        /* Sidebar styles */
+        .research-sidebar {
+            width: var(--sidebar-width);
+            flex-shrink: 0;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+        
+        .sidebar-title {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .research-list {
+            list-style: none;
+        }
+        
+        .research-item {
+            padding: 15px;
+            border-bottom: 1px solid rgba(0, 255, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            position: relative;
+        }
+        
+        .research-item:hover {
+            background: rgba(0, 255, 0, 0.1);
+        }
+        
+        .research-item.active {
+            background: rgba(0, 255, 0, 0.2);
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        .research-title {
+            font-weight: bold;
+            color: var(--text-color);
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            line-height: 1.3;
+        }
+        
+        .research-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+        
+        .research-date {
+            flex: 1;
+        }
+        
+        .research-author {
+            background: rgba(0, 255, 0, 0.2);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.6rem;
+            margin-left: 5px;
+        }
+        
+        .author-adem {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        
+        /* Share button in sidebar */
+        .research-share {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 3px;
+            padding: 3px 6px;
+            cursor: pointer;
+            font-size: 0.6rem;
+        }
+        
+        .research-item:hover .research-share {
+            opacity: 1;
+        }
+        
+        /* Content area styles */
+        .research-content {
+            flex: 1;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 30px;
+            min-height: 600px;
+            position: relative;
+            color:white;
+        }
+        
+        .content-placeholder {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+        
+        .content-placeholder i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--border-color);
+        }
+        
+        .content-placeholder p {
+            font-size: 1.1rem;
+        }
+        
+        /* Content styles when loaded */
+        .research-detail {
             display: none;
         }
         
-        .editor-container.active, .stats-container.active, .entries-container.active,
-        .vulnerabilities-container.active, .email-container.active {
+        .research-detail.active {
             display: block;
         }
         
-        .editor-container::after, .stats-container::after, .entries-container::after,
-        .vulnerabilities-container::after, .email-container::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
-            animation: scanline 3s linear infinite;
+        .detail-header {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
         }
         
-        .vulnerabilities-container::after {
-            background: linear-gradient(90deg, transparent, var(--vulnerabilities-color), transparent);
-        }
-        
-        .form-group {
-            margin-bottom: 1rem;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 0.3rem;
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-        
-        input[type="number"], textarea, input[type="text"], input[type="email"], select {
-            width: 100%;
-            padding: 8px;
-            background: #111;
-            border: 1px solid var(--primary-color);
-            color: var(--text-color);
-            font-family: 'Courier New', monospace;
-            border-radius: 3px;
-            font-size: 0.9rem;
-        }
-        
-        textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-        
-        .editor-toolbar {
+        .detail-title {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
             display: flex;
-            gap: 5px;
-            margin-bottom: 5px;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .detail-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
             flex-wrap: wrap;
         }
         
-        .editor-toolbar button {
-            background: #111;
-            border: 1px solid var(--primary-color);
-            color: var(--text-color);
-            padding: 4px 8px;
-            cursor: pointer;
-            border-radius: 3px;
-            font-size: 0.8rem;
-            transition: all 0.2s;
-        }
-        
-        .editor-toolbar button:hover {
-            background: var(--primary-color);
-            color: black;
-        }
-        
-        .editor-toolbar .spotify-btn {
-            background: #111;
-            border: 1px solid var(--spotify-color);
-            color: var(--spotify-color);
-        }
-        
-        .editor-toolbar .spotify-btn:hover {
-            background: var(--spotify-color);
-            color: black;
-        }
-        
-        .editor-toolbar .youtube-btn {
-            background: #111;
-            border: 1px solid var(--youtube-color);
-            color: var(--youtube-color);
-        }
-        
-        .editor-toolbar .youtube-btn:hover {
-            background: var(--youtube-color);
-            color: white;
-        }
-        
-        .submit-btn {
-            background: var(--primary-color);
-            color: black;
-            border: none;
-            padding: 8px 15px;
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
-            cursor: pointer;
+        .detail-date, .detail-category, .detail-author {
             display: flex;
             align-items: center;
             gap: 5px;
-            border-radius: 3px;
-            transition: all 0.3s;
-            width: 100%;
-            justify-content: center;
-            font-size: 0.9rem;
         }
         
-        .submit-btn:hover {
-            box-shadow: 0 0 15px var(--primary-color);
-            transform: translateY(-2px);
+        .detail-body {
+            line-height: 1.6;
         }
         
-        .vuln-submit-btn {
-            background: var(--vulnerabilities-color);
+        .detail-body img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px solid var(--border-color);
         }
         
-        .vuln-submit-btn:hover {
-            box-shadow: 0 0 15px var(--vulnerabilities-color);
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .stat-box {
-            background: rgba(0, 30, 0, 0.5);
-            border: 1px solid var(--primary-color);
-            padding: 0.5rem;
-            text-align: center;
-            border-radius: 3px;
-            font-size: 0.8rem;
-        }
-        
-        .stat-box i {
-            font-size: 1rem;
-            margin-bottom: 0.3rem;
-            color: var(--primary-color);
-        }
-        
-        .stat-box span {
-            display: block;
-            font-size: 1rem;
-            font-weight: bold;
-        }
-        
-        #response-message {
-            padding: 8px;
-            margin-top: 10px;
-            border-radius: 3px;
-            text-align: center;
-            display: none;
-            font-size: 0.9rem;
-        }
-        
-        .success {
-            background: rgba(0, 255, 0, 0.1);
-            border: 1px solid var(--success-color);
-            color: var(--success-color);
-        }
-        
-        .error {
-            background: rgba(255, 0, 0, 0.1);
-            border: 1px solid var(--error-color);
-            color: var(--error-color);
-        }
-        
-        .warning {
-            background: rgba(255, 204, 0, 0.1);
-            border: 1px solid var(--warning-color);
-            color: var(--warning-color);
-        }
-        
-        .entries-list, .vuln-list {
-            max-height: 400px;
-            overflow-y: auto;
-            margin-top: 0.5rem;
-        }
-        
-        .entry-item, .vuln-item {
-            background: rgba(0, 30, 0, 0.5);
-            border: 1px solid var(--primary-color);
-            padding: 0.8rem;
-            margin-bottom: 0.8rem;
-            border-radius: 3px;
-            position: relative;
-            font-size: 0.9rem;
-        }
-        
-        .vuln-item {
-            border-color: var(--vulnerabilities-color);
-        }
-        
-        .entry-item:hover, .vuln-item:hover {
-            background: rgba(0, 60, 0, 0.5);
-        }
-        
-        .entry-content, .vuln-content {
-            margin-bottom: 0.3rem;
-            max-height: 150px;
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .entry-content:after, .vuln-content:after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 30px;
-            background: linear-gradient(transparent, rgba(0, 30, 0, 0.8));
-        }
-        
-        .entry-meta, .vuln-meta {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.7rem;
-            color: #aaa;
-        }
-        
-        .entry-actions, .vuln-actions {
-            position: absolute;
-            top: 3px;
-            right: 3px;
-            display: none;
-        }
-        
-        .entry-item:hover .entry-actions, .vuln-item:hover .vuln-actions {
-            display: flex;
-            gap: 3px;
-        }
-        
-        .entry-actions button, .vuln-actions button {
-            background: rgba(0, 0, 0, 0.7);
-            border: 1px solid var(--primary-color);
-            color: var(--text-color);
-            width: 20px;
-            height: 20px;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 0.7rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .vuln-actions button {
-            border-color: var(--vulnerabilities-color);
-        }
-        
-        .entry-actions button:hover, .vuln-actions button:hover {
-            background: var(--primary-color);
-            color: black;
-        }
-        
-        .vuln-actions button:hover {
-            background: var(--vulnerabilities-color);
-        }
-        
-        .edit-form {
-            display: none;
-            margin-top: 0.5rem;
-            padding: 0.8rem;
-            background: rgba(0, 60, 0, 0.5);
-            border: 1px solid var(--primary-color);
-            border-radius: 3px;
-            font-size: 0.9rem;
-        }
-        
-        .vuln-edit-form {
-            border-color: var(--vulnerabilities-color);
-        }
-        
-        .edit-form textarea {
-            min-height: 80px;
-        }
-        
-        .edit-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 8px;
-        }
-        
-        .edit-actions button {
-            flex: 1;
-            padding: 4px;
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 3px;
-        }
-        
-        .save-btn {
-            background: var(--primary-color);
-            color: black;
-        }
-        
-        .vuln-save-btn {
-            background: var(--vulnerabilities-color);
-        }
-        
-        .cancel-btn {
-            background: #333;
-            color: white;
-        }
-        
-        .delete-btn {
-            background: var(--error-color);
-            color: white;
-        }
-        
-        .preview-container {
-            margin-top: 5px;
-            padding: 8px;
-            background: rgba(0, 30, 0, 0.3);
-            border: 1px dashed var(--primary-color);
-            border-radius: 3px;
-            font-size: 0.8rem;
-        }
-        
-        .preview-title {
-            font-weight: bold;
-            margin-bottom: 5px;
-            display: flex;
-            justify-content: space-between;
-        }
-        
-        .char-count {
-            font-size: 0.7rem;
-            color: #aaa;
-        }
-        
-        .search-container {
-            margin-bottom: 1rem;
-        }
-        
-        .search-input {
-            display: flex;
-            gap: 5px;
-        }
-        
-        .search-input input {
-            flex: 1;
-        }
-        
-        .search-input button {
-            background: var(--primary-color);
-            color: black;
-            border: none;
-            padding: 0 10px;
-            cursor: pointer;
-            border-radius: 3px;
-        }
-        
-        /* IP İstatistikleri için stiller */
-        .ip-stats-container {
-            background: rgba(0, 30, 0, 0.7);
-            border: 1px solid var(--primary-color);
+        .detail-body pre {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
             border-radius: 5px;
-            padding: 1rem;
-            margin: 1rem;
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);
-            position: relative;
-            overflow: hidden;
+            overflow-x: auto;
+            margin: 15px 0;
+            border: 1px solid var(--border-color);
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
         }
         
-        .ip-stats-container::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
-            animation: scanline 3s linear infinite;
+        .detail-body code {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
         }
         
-        /* Vulnerabilities Admin için stiller */
-        .vuln-form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
+        .detail-body h2, .detail-body h3 {
+            color: var(--primary-color);
+            margin: 20px 0 10px;
+        }
+        
+        .detail-body p {
+            margin-bottom: 15px;
+        }
+        
+        .detail-body ul, .detail-body ol {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .detail-body li {
+            margin-bottom: 5px;
         }
         
         .cvss-badge {
@@ -536,7 +365,6 @@
             border-radius: 4px;
             font-weight: bold;
             font-size: 0.8rem;
-            margin-left: 10px;
         }
         
         .cvss-critical {
@@ -559,899 +387,793 @@
             color: white;
         }
         
-        .email-form {
-            margin-top: 20px;
-            padding: 15px;
-            background: rgba(0, 30, 0, 0.3);
-            border: 1px solid var(--primary-color);
+        /* Share button in detail */
+        .detail-share {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid var(--border-color);
             border-radius: 5px;
-        }
-        
-        .email-form h4 {
-            margin-bottom: 15px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 0.8rem;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 5px;
+            transition: all 0.3s ease;
+            color:white;
         }
         
-        .subscribers-count {
-            background: var(--primary-color);
-            color: black;
-            padding: 2px 8px;
-            border-radius: 3px;
-            font-size: 0.8rem;
-            font-weight: bold;
+        .detail-share:hover {
+            background: rgba(0, 255, 0, 0.2);
+            transform: translateY(-2px);
         }
         
-        /* Medya yükleme stilleri */
-        .media-upload-container {
-            margin-top: 10px;
-            padding: 10px;
-            background: rgba(0, 30, 0, 0.3);
-            border: 1px dashed var(--primary-color);
-            border-radius: 3px;
-        }
-
-        .upload-preview {
-            max-width: 100%;
-            max-height: 200px;
-            margin-top: 10px;
-            display: none;
-        }
-
-        .upload-status {
-            margin-top: 5px;
-            font-size: 0.8rem;
-        }
-
-        .progress-bar {
-            height: 5px;
-            background: #001e00;
-            border-radius: 3px;
-            margin-top: 5px;
-            overflow: hidden;
-        }
-
-        .progress {
-            height: 100%;
-            background: var(--primary-color);
-            width: 0%;
-            transition: width 0.3s;
-        }
-
-        .media-btn {
-            background: #111;
-            border: 1px solid var(--primary-color);
-            color: var(--text-color);
-            padding: 4px 8px;
-            cursor: pointer;
-            border-radius: 3px;
-            font-size: 0.8rem;
-            transition: all 0.2s;
-        }
-
-        .media-btn:hover {
-            background: var(--primary-color);
-            color: black;
-        }
-
-        .debug-info {
-            font-size: 0.7rem;
-            color: #888;
-            margin-top: 5px;
-            padding: 5px;
-            background: rgba(0, 30, 0, 0.2);
-            border-radius: 3px;
-            display: none;
-        }
-        
-        .alternative-upload {
-            margin-top: 10px;
-            padding: 10px;
-            background: rgba(0, 30, 0, 0.3);
-            border: 1px dashed var(--primary-color);
-            border-radius: 3px;
-            font-size: 0.8rem;
-        }
-        
-        .alternative-upload a {
-            color: var(--primary-color);
-            text-decoration: underline;
-        }
-
-        /* Crop Modal Stilleri */
-        .crop-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 10000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .crop-modal-content {
-            background: var(--secondary-color);
-            border: 2px solid var(--primary-color);
-            border-radius: 5px;
-            padding: 20px;
-            max-width: 90%;
-            max-height: 90%;
-            width: 800px;
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
-        }
-
-        .crop-modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            border-bottom: 1px solid var(--primary-color);
-            padding-bottom: 10px;
-        }
-
-        .crop-modal-header h3 {
-            margin: 0;
+        /* Loading animation */
+        .loading {
+            text-align: center;
+            padding: 40px;
             color: var(--primary-color);
         }
-
-        .close-crop {
-            background: none;
-            border: none;
-            color: var(--primary-color);
-            font-size: 1.5rem;
-            cursor: pointer;
+        
+        .spinner {
+            border: 4px solid rgba(0, 255, 0, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary-color);
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
         }
-
-        .crop-container {
-            width: 100%;
-            height: 400px;
-            margin-bottom: 15px;
-            background: #000;
-            overflow: hidden;
-        }
-
-        .crop-controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .aspect-ratio-btn {
-            background: #111;
-            border: 1px solid var(--primary-color);
-            color: var(--text-color);
-            padding: 5px 10px;
-            cursor: pointer;
-            border-radius: 3px;
-            font-size: 0.8rem;
-        }
-
-        .aspect-ratio-btn.active {
-            background: var(--primary-color);
-            color: black;
-        }
-
-        .crop-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-
-        .crop-actions button {
-            padding: 8px 15px;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
-        }
-
-        .cancel-crop {
-            background: #333;
-            color: white;
-        }
-
-        .confirm-crop {
-            background: var(--primary-color);
-            color: black;
-        }
-
+        
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
         
-        @keyframes scanline {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 5px;
+            border: 1px solid var(--primary-color);
+            z-index: 1000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
         }
         
-        @keyframes bugPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
         }
         
-        @media (min-width: 768px) {
-            .admin-container {
-                display: grid;
-                grid-template-columns: 2fr 1fr;
-                gap: 1.5rem;
-                padding: 1.5rem;
-            }
-            
-            .stats-grid {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 1rem;
-            }
-            
-            .logo {
-                font-size: 1rem;
-            }
-            
-            .logo h2 {
-                font-size: 1.2rem;
-            }
-            
-            .logout-btn {
-                padding: 8px 15px;
-                font-size: 0.9rem;
-            }
+        /* Subscription Section */
+        .subscription-section {
+            margin-top: 50px;
+            padding: 30px;
+            background: var(--card-bg);
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
         }
         
-        @media (max-width: 767px) {
-            .spotify-embed {
-                height: 80px;
-            }
-            
-            .youtube-embed iframe {
-                height: 200px;
-            }
-            
-            .entry-meta, .vuln-meta {
+        .subscription-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .subscription-form {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .subscription-input {
+            flex: 1;
+            min-width: 250px;
+            padding: 12px;
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+        }
+        
+        .subscription-btn {
+            padding: 12px 24px;
+            background: var(--primary-color);
+            color: black;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .subscription-btn:hover {
+            background: var(--primary-dark);
+        }
+        
+        .subscription-btn:disabled {
+            background: var(--text-muted);
+            cursor: not-allowed;
+        }
+        
+        .subscription-message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .subscription-success {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .subscription-error {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid #ff5555;
+            color: #ff5555;
+        }
+        
+        /* Matrix Canvas Styles */
+        #matrixCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .vulnerabilities-container {
                 flex-direction: column;
-                gap: 3px;
-            }
-
-            .crop-container {
-                height: 300px;
-            }
-
-            .crop-modal-content {
-                width: 95%;
-                padding: 15px;
             }
             
-            .vuln-form-grid {
-                grid-template-columns: 1fr;
+            .research-sidebar {
+                width: 100%;
+                position: static;
+            }
+            
+            .research-content {
+                min-height: auto;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .content-wrapper {
+                margin-top: 160px;
+                padding: 0 10px;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+            }
+            
+            .research-content {
+                padding: 20px;
+            }
+            
+            .detail-title {
+                font-size: 1.3rem;
+            }
+            
+            .detail-meta {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .detail-share {
+                position: static;
+                margin-bottom: 15px;
+                display: inline-flex;
+            }
+            
+            .research-share {
+                opacity: 1; /* Always show on mobile */
+            }
+            
+            .subscription-form {
+                flex-direction: column;
+            }
+            
+            .subscription-input {
+                min-width: auto;
             }
         }
     </style>
 </head>
 <body>
-    <header class="admin-header">
-        <div class="logo">
-            <img src="../IMAGES/hackerwhite.svg" alt="adembayazit.com" class="hacker-icon">
-            <h2>LadyB<span class="fa-solid fa-bug bug-icon"></span>G Admin</h2>
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TFN7XD9Z"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header class="header">
+        <div class="logo-container">
+            <a href="https://adembayazit.com" class="logo"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">{adembayazit} </a>
+            <span class="logo-slogan">One step further every day…</span>
         </div>
-        <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Çıkış</button>
+        <nav class="navbar">
+            <div class="dropdown">
+                <a href="#" style="--i:5;" class="dropbtn"> <img src="IMAGES/Ata.svg" alt="Ata Icon" class="ata-icon"><span class="fi fi-tr"></span> <span class='bx bx-code-alt'></span> Ethical Hacker <span class='bx bx-chevron-down'></span></a>
+                <div class="dropdown-content">
+                    <a href="/whatishacker"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hacker-icon"> What is an Ethical Hacker?</a>
+                    <a href="/cybersecurityglossary.html"><img src="IMAGES/glossary.svg" alt="Glossary" class="glossary-icon"> Cybersecurity Glossary</a>
+                    <a href="/whatissoc"><img src="IMAGES/soc.svg" alt="Soc" class="soc-icon"> What is a SOC ?</a>
+                    <a href="/vulnerabilities"><img src="IMAGES/vulnerabilities.svg" alt="Vulnerabilities" class="vulnerabilities-icon"> Vulnerabilities </a>
+                    <a href="/steganography"><img src="IMAGES/steganography.svg" alt="Steganography" class="steganography-icon"> Steganography</a>
+                    <a href="/cryptography"><img src="IMAGES/cryptography.svg" alt="Cryptography" class="cryptography-icon"> Cryptography</a>    
+                    <a href="#payloads"><img src="IMAGES/education.svg" alt="Education" class="education-icon"> Cybersecurity Learning Resources</a>
+                </div>
+            </div>
+        </nav>
     </header>
-
-    <nav class="admin-nav">
-        <button class="nav-btn active" data-section="microblog"><i class="fas fa-blog"></i> Microblog Admin</button>
-        <button class="nav-btn" data-section="vulnerabilities"><i class="fas fa-bug"></i> Vulnerabilities Admin</button>
-        <button class="nav-btn" data-section="email"><i class="fas fa-envelope"></i> E-posta Gönder</button>
-    </nav>
-
-    <div class="admin-container">
-        <!-- Microblog Admin Section -->
-        <div class="editor-container active" id="microblog-section">
-            <h3><i class="fas fa-plus-circle"></i> Yeni Entry Ekle</h3>
-            
-            <div class="form-group">
-                <label for="entryId"><i class="fas fa-hashtag"></i> Entry ID:</label>
-                <input type="number" id="entryId" placeholder="Otomatik ID için boş bırakın">
-            </div>
-            
-            <div class="form-group">
-                <label for="referenceId"><i class="fas fa-link"></i> Referans ID (opsiyonel):</label>
-                <input type="number" id="referenceId" placeholder="Referans ID">
-            </div>
-            
-            <div class="form-group">
-                <label for="trContent"><i class="fas fa-language"></i> Türkçe İçerik:</label>
-                <div class="editor-toolbar">
-                    <button onclick="formatText('trContent', 'bold')" title="Kalın"><i class="fas fa-bold"></i></button>
-                    <button onclick="formatText('trContent', 'italic')" title="İtalik"><i class="fas fa-italic"></i></button>
-                    <button onclick="formatText('trContent', 'underline')" title="Altı Çizili"><i class="fas fa-underline"></i></button>
-                    <button onclick="formatText('trContent', 'quote')" title="Tırnak İşareti"><i class="fas fa-quote-right"></i></button>
-                    <button onclick="formatText('trContent', 'paragraph')" title="Paragraf"><i class="fas fa-paragraph"></i></button>
-                    <button onclick="clearFormatting('trContent')" title="Temizle"><i class="fas fa-eraser"></i></button>
-                    <button class="spotify-btn" onclick="addSpotifyEmbed('trContent')" title="Spotify Ekle"><i class="fab fa-spotify"></i></button>
-                    <button class="youtube-btn" onclick="addYoutubeEmbed('trContent')" title="Youtube Ekle"><i class="fab fa-youtube"></i></button>
-                    <button class="media-btn" onclick="openMediaUpload('trContent')" title="Fotoğraf/Video Ekle"><i class="fas fa-camera"></i></button>
-                </div>
-                <textarea id="trContent" placeholder="Türkçe içerik..." oninput="updatePreview('trContent')"></textarea>
-                <div class="preview-container">
-                    <div class="preview-title">
-                        <span>Ön İzleme:</span>
-                        <span class="char-count"><span id="trContent-count">0</span> karakter</span>
-                    </div>
-                    <div id="trContent-preview"></div>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="enContent"><i class="fas fa-globe"></i> İngilizce İçerik:</label>
-                <div class="editor-toolbar">
-                    <button onclick="formatText('enContent', 'bold')" title="Bold"><i class="fas fa-bold"></i></button>
-                    <button onclick="formatText('enContent', 'italic')" title="Italic"><i class="fas fa-italic"></i></button>
-                    <button onclick="formatText('enContent', 'underline')" title="Underline"><i class="fas fa-underline"></i></button>
-                    <button onclick="formatText('enContent', 'quote')" title="Quote"><i class="fas fa-quote-right"></i></button>
-                    <button onclick="formatText('enContent', 'paragraph')" title="Paragraph"><i class="fas fa-paragraph"></i></button>
-                    <button onclick="clearFormatting('enContent')" title="Clear"><i class="fas fa-eraser"></i></button>
-                    <button class="spotify-btn" onclick="addSpotifyEmbed('enContent')" title="Add Spotify"><i class="fab fa-spotify"></i></button>
-                    <button class="youtube-btn" onclick="addYoutubeEmbed('enContent')" title="Add Youtube"><i class="fab fa-youtube"></i></button>
-                    <button class="media-btn" onclick="openMediaUpload('enContent')" title="Add Photo/Video"><i class="fas fa-camera"></i></button>
-                </div>
-                <textarea id="enContent" placeholder="English content..." oninput="updatePreview('enContent')"></textarea>
-                <div class="preview-container">
-                    <div class="preview-title">
-                        <span>Preview:</span>
-                        <span class="char-count"><span id="enContent-count">0</span> characters</span>
-                    </div>
-                    <div id="enContent-preview"></div>
-                </div>
-            </div>
-            
-            <button class="submit-btn" onclick="submitEntry()"><i class="fas fa-paper-plane"></i> Entry Ekle</button>
-            <div id="response-message"></div>
-            <div id="debug-info" class="debug-info"></div>
-        </div>
+    
+    <div class="content-wrapper">
+        <div class="backto"><a href="/" class="back-to-home"><i class="bx bx-arrow-back"></i> Back to Home</a></div>
         
-        <div class="stats-container active" id="stats-section">
-            <h3><i class="fas fa-chart-bar"></i> İstatistikler</h3>
-            <div class="stats-grid">
-                <div class="stat-box">
-                    <i class="fas fa-heart"></i>
-                    <span id="total-likes">0</span>
-                    <small>Toplam Beğeni</small>
-                </div>
-                <div class="stat-box">
-                    <i class="fas fa-thumbtack"></i>
-                    <span id="total-pins">0</span>
-                    <small>Toplam Pin</small>
-                </div>
-                <div class="stat-box">
-                    <i class="fas fa-file-alt"></i>
-                    <span id="total-entries">0</span>
-                    <small>Toplam Entry</small>
-                </div>
-            </div>
+        <h2 class="page-title"><img src="IMAGES/vulnerabilities.svg" alt="Vulnerabilities Icon" class="vulnerabilities-icon"> Vulnerabilities Research</h2>
+        
+        <div class="vulnerabilities-container">
+            <!-- Left Sidebar - Research Titles -->
+            <aside class="research-sidebar">
+                <h3 class="sidebar-title"><i class="fas fa-bug"></i> Research Topics</h3>
+                <ul class="research-list" id="researchList">
+                    <li class="research-item loading-item">
+                        <div class="spinner"></div>
+                        <div>Loading research topics...</div>
+                    </li>
+                </ul>
+            </aside>
             
-            <div class="search-container">
-                <h3><i class="fas fa-search"></i> Entry Ara</h3>
-                <div class="search-input">
-                    <input type="number" id="searchId" placeholder="Entry ID girin">
-                    <button onclick="searchEntry()"><i class="fas fa-search"></i></button>
-                </div>
-            </div>
-            
-            <h3><i class="fas fa-history"></i> Son Entryler</h3>
-            <div class="entries-list" id="recent-entries">
-                <!-- Son entryler buraya eklenecek -->
-            </div>
-        </div>
-
-        <!-- Vulnerabilities Admin Section -->
-        <div class="vulnerabilities-container" id="vulnerabilities-section">
-            <h3><i class="fas fa-bug"></i> Yeni Vulnerability Ekle</h3>
-            
-            <div class="vuln-form-grid">
-                <div class="form-group">
-                    <label for="vulnId"><i class="fas fa-hashtag"></i> Vulnerability ID:</label>
-                    <input type="number" id="vulnId" placeholder="Otomatik ID için boş bırakın">
+            <!-- Main Content Area -->
+            <main class="research-content">
+                <div class="content-placeholder" id="contentPlaceholder">
+                    <i class="fas fa-search"></i>
+                    <p>Select a research topic from the sidebar to view details</p>
                 </div>
                 
-                <div class="form-group">
-                    <label for="vulnTitle"><i class="fas fa-heading"></i> Başlık:</label>
-                    <input type="text" id="vulnTitle" placeholder="Vulnerability başlığı">
+                <div class="research-detail" id="researchDetail">
+                    <!-- Content will be loaded here dynamically -->
                 </div>
-                
-                <div class="form-group">
-                    <label for="vulnCategory"><i class="fas fa-tag"></i> Kategori:</label>
-                    <select id="vulnCategory">
-                        <option value="Web Application">Web Application</option>
-                        <option value="Network">Network</option>
-                        <option value="Mobile">Mobile</option>
-                        <option value="IoT">IoT</option>
-                        <option value="Cloud">Cloud</option>
-                        <option value="Other">Diğer</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="vulnCvss"><i class="fas fa-shield-alt"></i> CVSS Skoru:</label>
-                    <input type="number" id="vulnCvss" min="0" max="10" step="0.1" placeholder="0.0 - 10.0">
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="vulnContent"><i class="fas fa-file-alt"></i> İçerik:</label>
-                <div class="editor-toolbar">
-                    <button onclick="formatText('vulnContent', 'bold')" title="Kalın"><i class="fas fa-bold"></i></button>
-                    <button onclick="formatText('vulnContent', 'italic')" title="İtalik"><i class="fas fa-italic"></i></button>
-                    <button onclick="formatText('vulnContent', 'underline')" title="Altı Çizili"><i class="fas fa-underline"></i></button>
-                    <button onclick="formatText('vulnContent', 'quote')" title="Tırnak İşareti"><i class="fas fa-quote-right"></i></button>
-                    <button onclick="formatText('vulnContent', 'paragraph')" title="Paragraf"><i class="fas fa-paragraph"></i></button>
-                    <button onclick="clearFormatting('vulnContent')" title="Temizle"><i class="fas fa-eraser"></i></button>
-                    <button class="media-btn" onclick="openMediaUpload('vulnContent')" title="Fotoğraf/Video Ekle"><i class="fas fa-camera"></i></button>
-                </div>
-                <textarea id="vulnContent" placeholder="Vulnerability detayları..." oninput="updatePreview('vulnContent')"></textarea>
-                <div class="preview-container">
-                    <div class="preview-title">
-                        <span>Ön İzleme:</span>
-                        <span class="char-count"><span id="vulnContent-count">0</span> karakter</span>
-                    </div>
-                    <div id="vulnContent-preview"></div>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="vulnTags"><i class="fas fa-tags"></i> Etiketler (virgülle ayırın):</label>
-                <input type="text" id="vulnTags" placeholder="SQLi, XSS, RCE">
-            </div>
-            
-            <button class="submit-btn vuln-submit-btn" onclick="submitVulnerability()"><i class="fas fa-bug"></i> Vulnerability Ekle</button>
-            <div id="vuln-response-message"></div>
-            
-            <h3 style="margin-top: 30px;"><i class="fas fa-list"></i> Mevcut Vulnerabilities</h3>
-            <div class="search-container">
-                <div class="search-input">
-                    <input type="number" id="searchVulnId" placeholder="Vulnerability ID girin">
-                    <button onclick="searchVulnerability()"><i class="fas fa-search"></i></button>
-                </div>
-            </div>
-            <div class="vuln-list" id="recent-vulnerabilities">
-                <!-- Son vulnerabilities buraya eklenecek -->
-            </div>
+            </main>
         </div>
 
-        <!-- Email Section -->
-        <div class="email-container" id="email-section">
-            <h3><i class="fas fa-envelope"></i> Abonelere E-posta Gönder</h3>
+        <!-- Subscription Section -->
+        <section class="subscription-section">
+            <h3><i class="fas fa-bell"></i> Get Notified of New Vulnerabilities</h3>
+            <p>Subscribe to receive email notifications when new vulnerability research is published.</p>
             
-            <div class="form-group">
-                <label for="emailSubject"><i class="fas fa-tag"></i> Konu:</label>
-                <input type="text" id="emailSubject" placeholder="E-posta konusu">
-            </div>
+            <form class="subscription-form" id="subscriptionForm">
+                <input type="email" class="subscription-input" id="emailInput" placeholder="Enter your email address" required>
+                <button type="submit" class="subscription-btn" id="subscribeBtn">Subscribe</button>
+            </form>
             
-            <div class="form-group">
-                <label for="emailContent"><i class="fas fa-envelope-open-text"></i> İçerik:</label>
-                <textarea id="emailContent" placeholder="E-posta içeriği..." rows="10"></textarea>
-            </div>
-            
-            <div class="email-form">
-                <h4><i class="fas fa-users"></i> Aboneler <span class="subscribers-count" id="subscribersCount">0</span></h4>
-                <p>Yeni vulnerability eklendiğinde otomatik olarak abonelere bildirim gönderilsin mi?</p>
-                <div style="display: flex; gap: 10px; margin-top: 10px;">
-                    <button class="submit-btn" onclick="sendNotificationEmail()"><i class="fas fa-paper-plane"></i> Bildirim Gönder</button>
-                    <button class="submit-btn" onclick="loadSubscribers()"><i class="fas fa-sync"></i> Aboneleri Yenile</button>
-                </div>
-            </div>
-            
-            <button class="submit-btn" onclick="sendCustomEmail()" style="margin-top: 20px;"><i class="fas fa-envelope"></i> Özel E-posta Gönder</button>
-            <div id="email-response-message"></div>
-        </div>
+            <div class="subscription-message" id="subscriptionMessage"></div>
+        </section>
     </div>
 
-    <!-- IP İstatistikleri Bölümü -->
-    <div class="ip-stats-container">
-        <div class="ip-stats-title">
-            <i class="fas fa-network-wired"></i>
-            <h3>IP İstatistikleri ve Son Girişler</h3>
-        </div>
-        
-        <div class="filter-container">
-            <div class="filter-controls">
-                <input type="text" id="filter-ip" placeholder="IP adresi">
-                <input type="text" id="filter-fingerprint" placeholder="Fingerprint">
-                <input type="number" id="filter-entry" placeholder="Entry ID">
-                <select id="filter-country">
-                    <option value="">Ülke seçin</option>
-                </select>
-                <button onclick="applyFilters()"><i class="fas fa-filter"></i> Filtrele</button>
-                <button onclick="clearFilters()"><i class="fas fa-times"></i> Temizle</button>
-            </div>
-            <div class="filter-controls">
-                <button onclick="exportData('ip')"><i class="fas fa-download"></i> IP Verilerini İndir</button>
-                <button onclick="exportData('stats')"><i class="fas fa-download"></i> İstatistikleri İndir</button>
-            </div>
-        </div>
-        
-        <div class="ip-stats-grid">
-            <div class="ip-stat-box">
-                <h4>Toplam Ziyaretçi</h4>
-                <span id="total-visitors">0</span>
-            </div>
-            <div class="ip-stat-box">
-                <h4>Benzersiz IP</h4>
-                <span id="unique-ips">0</span>
-            </div>
-            <div class="ip-stat-box">
-                <h4>Benzersiz Fingerprint</h4>
-                <span id="unique-fingerprints">0</span>
-            </div>
-            <div class="ip-stat-box">
-                <h4>Son Giriş</h4>
-                <span id="last-visit">-</span>
-            </div>
-        </div>
-        
-        <div class="entry-stats">
-            <h4><i class="fas fa-chart-pie"></i> En Çok Görüntülenen Entry'ler</h4>
-            <div id="top-entries">
-                <div class="loading-spinner">
-                    <i class="fas fa-spinner fa-spin"></i>
-                </div>
-            </div>
-        </div>
-        
-        <div class="recent-ips">
-            <h4><i class="fas fa-list"></i> Son IP Girişleri</h4>
-            <div id="recent-ips-list">
-                <div class="loading-spinner">
-                    <i class="fas fa-spinner fa-spin"></i>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
 
-    <!-- Media Upload Input -->
-    <input type="file" id="media-file-input" style="display: none;" accept="image/*,video/*" onchange="handleMediaSelection(event)">
+    <footer style="text-align: center; padding: 20px; font-size: 14px; color: white; margin-top: 50px;">
+        <hr style="margin-bottom: 10px; border-color: limegreen;" />
+        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.3 | July 2025</p>
+    </footer>
 
-    <!-- Crop Modal -->
-    <div class="crop-modal" id="cropModal">
-        <div class="crop-modal-content">
-            <div class="crop-modal-header">
-                <h3><i class="fas fa-crop-alt"></i> Resmi Düzenle</h3>
-                <button class="close-crop" onclick="closeCropModal()">&times;</button>
-            </div>
-            <div class="crop-container">
-                <img id="cropImage" src="" alt="Crop preview">
-            </div>
-            <div class="crop-controls">
-                <button class="aspect-ratio-btn active" data-ratio="16/9">16:9</button>
-                <button class="aspect-ratio-btn" data-ratio="1/1">1:1</button>
-                <button class="aspect-ratio-btn" data-ratio="4/3">4:3</button>
-                <button class="aspect-ratio-btn" data-ratio="9/16">9:16</button>
-                <button class="aspect-ratio-btn" data-ratio="free">Serbest</button>
-            </div>
-            <div class="crop-actions">
-                <button class="cancel-crop" onclick="closeCropModal()">İptal</button>
-                <button class="confirm-crop" onclick="cropAndUpload()">Kırp ve Yükle</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Cropper.js Script -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
-
+    <script src="/JAVASCRIPT/monitor.js"></script>
+    <canvas id="matrixCanvas"></canvas>
+    <script src="/JAVASCRIPT/matrix.js"></script>
+    
     <script>
-        // Constants
-        const ENTRIES_BIN_ID = '68933248ae596e708fc2fbbc';
-        const INTERACTIONS_BIN_ID = '68862fd97b4b8670d8a81945';
-        const IP_STATS_BIN_ID = '68ba0ba543b1c97be93705fb';
-        const VULNERABILITIES_BIN_ID = '68d78989d0ea881f408cad3f';
-        const SUBSCRIBERS_BIN_ID = '68d7fc3bae596e708ffdcc6e';
-        const PROXY_URL = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
+        // JSON configuration
+        const CONFIG = {
+            VULNERABILITIES_BIN_ID: '68d78989d0ea881f408cad3f',
+            SUBSCRIBERS_BIN_ID: '68d7fc3bae596e708ffdcc6e',
+            MAILJET_CONFIG: {
+                apiKey: '4eab53d0383497317f9d58afd0176d9f',
+                secretKey: 'e46dc21f710c911ba855e1eca0675971', // Burayı kendi secret key'inizle değiştirin
+                senderEmail: 'noreply@adembayazit.com',
+                senderName: 'Adem Bayazıt - Vulnerabilities Research'
+            }
+        };
         
         // Global variables
-        let activeTextareaId = null;
-        let cropper = null;
-        let selectedFile = null;
-        let allVisitors = [];
-        let filteredVisitors = [];
         let vulnerabilitiesData = [];
-        let subscribers = [];
-
-        // Navigation functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set up navigation
-            document.querySelectorAll('.nav-btn').forEach(button => {
-                button.addEventListener('click', function() {
-                    const section = this.getAttribute('data-section');
-                    switchSection(section);
+        let currentResearchId = null;
+        
+        // Proxy helper function
+        async function fetchViaProxy(path, method = 'GET', body = null, binId = null) {
+            const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
+            
+            const actualPath = binId ? `/b/${binId}${path}` : path;
+            
+            try {
+                const response = await fetch(proxyUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ path: actualPath, method, body })
                 });
-            });
 
-            // Check authentication
-            if (!localStorage.getItem('adminAuth') || localStorage.getItem('adminAuth') !== 'true') {
-                window.location.href = 'index.html';
-            } else {
-                loadStats();
-                loadRecentEntries();
-                updatePreview('trContent');
-                updatePreview('enContent');
-                loadIpStats();
-                loadVulnerabilities();
-                loadSubscribers();
-            }
-        });
-
-        function switchSection(section) {
-            // Update active button
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            document.querySelector(`[data-section="${section}"]`).classList.add('active');
-            
-            // Hide all sections
-            document.querySelectorAll('.editor-container, .stats-container, .vulnerabilities-container, .email-container').forEach(container => {
-                container.classList.remove('active');
-            });
-            
-            // Show selected section
-            if (section === 'microblog') {
-                document.getElementById('microblog-section').classList.add('active');
-                document.getElementById('stats-section').classList.add('active');
-            } else if (section === 'vulnerabilities') {
-                document.getElementById('vulnerabilities-section').classList.add('active');
-            } else if (section === 'email') {
-                document.getElementById('email-section').classList.add('active');
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                console.error('Proxy error:', error);
+                throw error;
             }
         }
-
-        // VULNERABILITIES FUNCTIONS
-        async function loadVulnerabilities() {
+        
+        // Show toast notification
+        function showToast(message, duration = 3000) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
+        }
+        
+        // Copy to clipboard function
+        async function copyToClipboard(text) {
             try {
-                const response = await fetchFromJsonBin(VULNERABILITIES_BIN_ID);
-                vulnerabilitiesData = response.records || response;
+                await navigator.clipboard.writeText(text);
+                return true;
+            } catch (err) {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    return true;
+                } catch (err) {
+                    return false;
+                } finally {
+                    document.body.removeChild(textArea);
+                }
+            }
+        }
+        
+        // Share research function
+        function shareResearch(researchId) {
+            const research = vulnerabilitiesData.find(item => item.id == researchId);
+            if (!research) return;
+            
+            const shareUrl = `${window.location.origin}${window.location.pathname}#${researchId}`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: research.title,
+                    text: research.content.substring(0, 100) + '...',
+                    url: shareUrl
+                }).catch(() => {
+                    copyShareUrl(shareUrl, research.title);
+                });
+            } else {
+                copyShareUrl(shareUrl, research.title);
+            }
+        }
+        
+        // Copy share URL to clipboard
+        async function copyShareUrl(url, title) {
+            const success = await copyToClipboard(url);
+            if (success) {
+                showToast('Link copied to clipboard!');
+            } else {
+                showToast('Failed to copy link');
+            }
+        }
+        
+        // Load vulnerabilities data from JSON Bin
+        async function loadVulnerabilitiesData() {
+            try {
+                const result = await fetchViaProxy('/latest', 'GET', null, CONFIG.VULNERABILITIES_BIN_ID);
+                vulnerabilitiesData = result.records || result;
                 
                 // Sort by date (newest first)
                 vulnerabilitiesData.sort((a, b) => new Date(b.date) - new Date(a.date));
                 
-                renderVulnerabilitiesList();
+                // Render the research list
+                renderResearchList();
+                
+                // If there's a hash in URL, load that research
+                if (window.location.hash) {
+                    const researchId = window.location.hash.substring(1);
+                    loadResearchDetail(researchId);
+                } else {
+                    // If no hash, automatically load the latest research
+                    if (vulnerabilitiesData.length > 0) {
+                        const latestResearch = vulnerabilitiesData[0];
+                        loadResearchDetail(latestResearch.id);
+                        
+                        // Update URL hash without page scroll
+                        history.replaceState(null, null, `#${latestResearch.id}`);
+                        
+                        // Set the active class on the list item
+                        setTimeout(() => {
+                            document.querySelectorAll('.research-item').forEach(item => {
+                                item.classList.remove('active');
+                                if (item.dataset.id == latestResearch.id) {
+                                    item.classList.add('active');
+                                }
+                            });
+                        }, 100);
+                    }
+                }
             } catch (error) {
-                console.error('Vulnerabilities yüklenirken hata:', error);
-                document.getElementById('recent-vulnerabilities').innerHTML = 
-                    '<div class="vuln-item">Vulnerabilities yüklenirken hata oluştu.</div>';
+                console.error('Error loading vulnerabilities data:', error);
+                document.getElementById('researchList').innerHTML = 
+                    '<li class="research-item">Error loading research topics. Please try again later.</li>';
             }
         }
-
-        function renderVulnerabilitiesList() {
-            const vulnList = document.getElementById('recent-vulnerabilities');
-            vulnList.innerHTML = '';
+        
+        // Render the list of research topics
+        function renderResearchList() {
+            const researchList = document.getElementById('researchList');
+            researchList.innerHTML = '';
             
             if (vulnerabilitiesData.length === 0) {
-                vulnList.innerHTML = '<div class="vuln-item">Henüz vulnerability bulunmamaktadır.</div>';
+                researchList.innerHTML = '<li class="research-item">No research topics available.</li>';
                 return;
             }
             
-            vulnerabilitiesData.slice(0, 7).forEach(vuln => {
-                const vulnEl = document.createElement('div');
-                vulnEl.className = 'vuln-item';
+            vulnerabilitiesData.forEach(research => {
+                const listItem = document.createElement('li');
+                listItem.className = 'research-item';
+                listItem.dataset.id = research.id;
                 
-                // CVSS badge
+                // Format date
+                const researchDate = new Date(research.date).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+                
+                // Create CVSS badge if available
                 let cvssBadge = '';
-                if (vuln.cvss_score) {
+                if (research.cvss_score) {
                     let cvssClass = 'cvss-medium';
-                    if (vuln.cvss_score >= 9.0) cvssClass = 'cvss-critical';
-                    else if (vuln.cvss_score >= 7.0) cvssClass = 'cvss-high';
-                    else if (vuln.cvss_score >= 4.0) cvssClass = 'cvss-medium';
+                    if (research.cvss_score >= 9.0) cvssClass = 'cvss-critical';
+                    else if (research.cvss_score >= 7.0) cvssClass = 'cvss-high';
+                    else if (research.cvss_score >= 4.0) cvssClass = 'cvss-medium';
                     else cvssClass = 'cvss-low';
                     
-                    cvssBadge = `<span class="cvss-badge ${cvssClass}">CVSS: ${vuln.cvss_score}</span>`;
+                    cvssBadge = `<span class="cvss-badge ${cvssClass}">CVSS: ${research.cvss_score}</span>`;
                 }
                 
-                vulnEl.innerHTML = `
-                    <div class="vuln-content">${vuln.title} ${cvssBadge}</div>
-                    <div class="vuln-meta">
-                        <span>ID: ${vuln.id}</span>
-                        <span>Kategori: ${vuln.category}</span>
-                        <span>${formatDate(vuln.date)}</span>
+                // Determine author badge class
+                const authorClass = research.author === 'Adem Bayazıt' ? 'author-adem' : '';
+                
+                listItem.innerHTML = `
+                    <div class="research-title">${research.title} ${cvssBadge}</div>
+                    <div class="research-meta">
+                        <span class="research-date">${researchDate}</span>
+                        ${research.author ? `<span class="research-author ${authorClass}">${research.author}</span>` : ''}
                     </div>
-                    <div class="vuln-actions">
-                        <button onclick="editVulnerability(${vuln.id})" title="Düzenle"><i class="fas fa-edit"></i></button>
-                        <button onclick="confirmDeleteVulnerability(${vuln.id})" title="Sil"><i class="fas fa-trash"></i></button>
-                    </div>
+                    <button class="research-share" onclick="event.stopPropagation(); shareResearch(${research.id})">
+                        <i class="fas fa-share-alt"></i>
+                    </button>
                 `;
                 
-                vulnList.appendChild(vulnEl);
+                listItem.addEventListener('click', () => {
+                    // Update URL hash
+                    window.location.hash = research.id;
+                    
+                    // Load research detail
+                    loadResearchDetail(research.id);
+                    
+                    // Update active state
+                    document.querySelectorAll('.research-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    listItem.classList.add('active');
+                });
+                
+                researchList.appendChild(listItem);
             });
         }
-
-        async function submitVulnerability() {
-            const vulnIdInput = document.getElementById('vulnId');
-            const title = document.getElementById('vulnTitle').value;
-            const category = document.getElementById('vulnCategory').value;
-            const cvss = document.getElementById('vulnCvss').value;
-            const content = document.getElementById('vulnContent').value;
-            const tags = document.getElementById('vulnTags').value;
-            const responseEl = document.getElementById('vuln-response-message');
+        
+        // Load and display research detail
+        function loadResearchDetail(researchId) {
+            const research = vulnerabilitiesData.find(item => item.id == researchId);
             
-            responseEl.style.display = 'none';
-            
-            if (!title || !content) {
-                showVulnMessage('Lütfen başlık ve içerik girin!', 'error');
+            if (!research) {
+                document.getElementById('contentPlaceholder').style.display = 'block';
+                document.getElementById('researchDetail').classList.remove('active');
                 return;
             }
             
+            // Hide placeholder
+            document.getElementById('contentPlaceholder').style.display = 'none';
+            
+            // Format date
+            const researchDate = new Date(research.date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            // Create CVSS badge if available
+            let cvssBadge = '';
+            if (research.cvss_score) {
+                let cvssClass = 'cvss-medium';
+                if (research.cvss_score >= 9.0) cvssClass = 'cvss-critical';
+                else if (research.cvss_score >= 7.0) cvssClass = 'cvss-high';
+                else if (research.cvss_score >= 4.0) cvssClass = 'cvss-medium';
+                else cvssClass = 'cvss-low';
+                
+                cvssBadge = `<span class="cvss-badge ${cvssClass}">CVSS: ${research.cvss_score}</span>`;
+            }
+            
+            // Build tags if available
+            let tagsHtml = '';
+            if (research.tags && research.tags.length > 0) {
+                tagsHtml = `<div class="detail-tags" style="margin-top: 10px;">
+                    <strong>Tags:</strong> ${research.tags.map(tag => `<span style="background: rgba(0,255,0,0.2); padding: 2px 8px; border-radius: 12px; margin: 0 5px; font-size: 0.8em;">${tag}</span>`).join('')}
+                </div>`;
+            }
+            
+            // Determine author badge class
+            const authorClass = research.author === 'Adem Bayazıt' ? 'author-adem' : '';
+            
+            // Set the research detail content
+            document.getElementById('researchDetail').innerHTML = `
+                <button class="detail-share" onclick="shareResearch(${research.id})">
+                    <i class="fas fa-share-alt"></i> Share This Research
+                </button>
+                <div class="detail-header">
+                    <h1 class="detail-title">${research.title} ${cvssBadge}</h1>
+                    <div class="detail-meta">
+                        <span class="detail-date"><i class="far fa-calendar"></i> ${researchDate}</span>
+                        <span class="detail-category"><i class="fas fa-tag"></i> ${research.category || 'Vulnerability Research'}</span>
+                        ${research.author ? `<span class="detail-author ${authorClass}"><i class="fas fa-user"></i> ${research.author}</span>` : ''}
+                    </div>
+                    ${tagsHtml}
+                </div>
+                <div class="detail-body">
+                    ${formatResearchContent(research.content)}
+                </div>
+            `;
+            
+            // Show the detail section
+            document.getElementById('researchDetail').classList.add('active');
+            
+            // Set the corresponding list item as active
+            document.querySelectorAll('.research-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.id == researchId) {
+                    item.classList.add('active');
+                }
+            });
+            
+            // Scroll to top of content
+            document.querySelector('.research-content').scrollTop = 0;
+        }
+        
+        // Format research content with proper HTML rendering
+        function formatResearchContent(content) {
+            if (!content) return '<p>No content available for this research.</p>';
+            
+            // Convert line breaks to paragraphs
+            let formattedContent = content
+                .split('\n')
+                .filter(paragraph => paragraph.trim() !== '')
+                .map(paragraph => {
+                    // Check if it's a code block
+                    if (paragraph.trim().startsWith('```') && paragraph.trim().endsWith('```')) {
+                        const code = paragraph.trim().substring(3, paragraph.length - 3);
+                        return `<pre><code>${code}</code></pre>`;
+                    }
+                    
+                    // Check if it's a heading
+                    if (paragraph.startsWith('## ')) {
+                        return `<h3>${paragraph.substring(3)}</h3>`;
+                    }
+                    
+                    if (paragraph.startsWith('# ')) {
+                        return `<h2>${paragraph.substring(2)}</h2>`;
+                    }
+                    
+                    // Regular paragraph
+                    return `<p>${paragraph}</p>`;
+                })
+                .join('');
+            
+            return formattedContent;
+        }
+        
+        // Send email notification via Mailjet
+        async function sendNewVulnerabilityEmail(vulnerability) {
             try {
-                const submitBtn = document.querySelector('.vuln-submit-btn');
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...';
+                // Get subscribers list
+                const subscribersData = await fetchViaProxy('/latest', 'GET', null, CONFIG.SUBSCRIBERS_BIN_ID);
+                const subscribers = subscribersData.subscribers || [];
                 
-                const currentData = await fetchFromJsonBin(VULNERABILITIES_BIN_ID);
-                let vulnerabilities = Array.isArray(currentData) ? currentData : (currentData.records || []);
-                
-                let vulnId = vulnIdInput.value ? parseInt(vulnIdInput.value) : await getNextVulnId();
-                
-                if (vulnIdInput.value && vulnerabilities.some(v => v.id === vulnId)) {
-                    showVulnMessage('Bu ID zaten kullanılıyor!', 'error');
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = '<i class="fas fa-bug"></i> Vulnerability Ekle';
-                    return;
+                if (subscribers.length === 0) {
+                    console.log('No subscribers to notify');
+                    return { success: true, message: 'No subscribers to notify' };
                 }
                 
-                const newVulnerability = {
-                    id: vulnId,
-                    title: title,
-                    category: category,
-                    cvss_score: cvss ? parseFloat(cvss) : null,
-                    content: content,
-                    tags: tags ? tags.split(',').map(tag => tag.trim()) : [],
-                    date: new Date().toISOString(),
-                    author: 'Adem Bayazıt'
+                // Prepare email content
+                const emailData = {
+                    Messages: [
+                        {
+                            From: {
+                                Email: CONFIG.MAILJET_CONFIG.senderEmail,
+                                Name: CONFIG.MAILJET_CONFIG.senderName
+                            },
+                            To: subscribers.map(email => ({ Email: email })),
+                            Subject: `New Vulnerability: ${vulnerability.title}`,
+                            HTMLPart: `
+                                <h2>New Vulnerability Published</h2>
+                                <div style="background: #f5f5f5; padding: 20px; border-radius: 10px; color: #333;">
+                                    <h3 style="color: #d9534f;">${vulnerability.title}</h3>
+                                    <p><strong>Date:</strong> ${new Date(vulnerability.date).toLocaleDateString()}</p>
+                                    ${vulnerability.cvss_score ? `<p><strong>CVSS Score:</strong> ${vulnerability.cvss_score}</p>` : ''}
+                                    ${vulnerability.category ? `<p><strong>Category:</strong> ${vulnerability.category}</p>` : ''}
+                                    <p>${vulnerability.content.substring(0, 200)}...</p>
+                                    <a href="https://adembayazit.com/vulnerabilities#${vulnerability.id}" 
+                                       style="background: #00cc00; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 15px;">
+                                        Read Full Research
+                                    </a>
+                                </div>
+                                <p style="margin-top: 20px; color: #666; font-size: 12px;">
+                                    You received this email because you subscribed to vulnerability notifications from Adem Bayazıt.
+                                    <br><a href="https://adembayazit.com/unsubscribe" style="color: #666;">Unsubscribe</a>
+                                </p>
+                            `
+                        }
+                    ]
                 };
                 
-                const updatedVulnerabilities = [newVulnerability, ...vulnerabilities];
-                await fetchFromJsonBin(VULNERABILITIES_BIN_ID, 'PUT', updatedVulnerabilities);
+                // Send email via Netlify function (to keep API keys secure)
+                const response = await fetch('/.netlify/functions/send-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        emailData: emailData,
+                        apiKey: CONFIG.MAILJET_CONFIG.apiKey,
+                        secretKey: CONFIG.MAILJET_CONFIG.secretKey
+                    })
+                });
                 
-                showVulnMessage('Vulnerability başarıyla eklendi!', 'success');
+                if (!response.ok) {
+                    throw new Error('Failed to send email notification');
+                }
                 
-                // Clear form
-                vulnIdInput.value = '';
-                document.getElementById('vulnTitle').value = '';
-                document.getElementById('vulnCategory').value = 'Web Application';
-                document.getElementById('vulnCvss').value = '';
-                document.getElementById('vulnContent').value = '';
-                document.getElementById('vulnTags').value = '';
-                
-                updatePreview('vulnContent');
-                
-                await loadVulnerabilities();
+                return { success: true, message: `Notification sent to ${subscribers.length} subscribers` };
             } catch (error) {
-                showVulnMessage(`Hata: ${error.message}`, 'error');
-                console.error('Vulnerability ekleme hatası:', error);
+                console.error('Error sending email notification:', error);
+                return { success: false, message: 'Failed to send notification email' };
+            }
+        }
+        
+        // Subscription functionality
+        async function handleSubscription(email) {
+            const messageElement = document.getElementById('subscriptionMessage');
+            const subscribeBtn = document.getElementById('subscribeBtn');
+            
+            // Simple email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showSubscriptionMessage('Please enter a valid email address.', 'error');
+                return false;
+            }
+            
+            // Disable button and show loading
+            subscribeBtn.disabled = true;
+            subscribeBtn.textContent = 'Subscribing...';
+            
+            try {
+                // Save subscriber to JSON Bin
+                const result = await saveSubscriber(email);
+                
+                if (result.success) {
+                    showSubscriptionMessage('Successfully subscribed! You will receive notifications for new vulnerabilities.', 'success');
+                    document.getElementById('emailInput').value = '';
+                    return true;
+                } else {
+                    showSubscriptionMessage(result.message || 'Subscription failed. Please try again.', 'error');
+                    return false;
+                }
+            } catch (error) {
+                console.error('Subscription error:', error);
+                showSubscriptionMessage('An error occurred. Please try again.', 'error');
+                return false;
             } finally {
-                const submitBtn = document.querySelector('.vuln-submit-btn');
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-bug"></i> Vulnerability Ekle';
+                subscribeBtn.disabled = false;
+                subscribeBtn.textContent = 'Subscribe';
             }
         }
-
-        async function getNextVulnId() {
+        
+        // Save subscriber to JSON Bin
+        async function saveSubscriber(email) {
             try {
-                const currentData = await fetchFromJsonBin(VULNERABILITIES_BIN_ID);
-                let vulnerabilities = Array.isArray(currentData) ? currentData : (currentData.records || []);
+                // Get current subscribers
+                const currentData = await fetchViaProxy('/latest', 'GET', null, CONFIG.SUBSCRIBERS_BIN_ID);
+                const subscribers = currentData.subscribers || [];
                 
-                if (vulnerabilities.length === 0) return 1;
+                // Check if email already exists
+                if (subscribers.includes(email)) {
+                    return { success: false, message: 'This email is already subscribed.' };
+                }
                 
-                const maxId = Math.max(...vulnerabilities.map(v => v.id));
-                return maxId + 1;
+                // Add new subscriber
+                subscribers.push(email);
+                const timestamp = new Date().toISOString();
+                
+                // Update JSON Bin
+                await fetchViaProxy('', 'PUT', { 
+                    subscribers: subscribers,
+                    lastUpdated: timestamp
+                }, CONFIG.SUBSCRIBERS_BIN_ID);
+                
+                return { success: true, message: 'Subscription successful' };
             } catch (error) {
-                console.error('Vuln ID alınırken hata:', error);
-                return Math.floor(Math.random() * 900000) + 100000;
+                console.error('Error saving subscriber:', error);
+                return { success: false, message: 'Failed to save subscription.' };
             }
         }
-
-        function showVulnMessage(message, type) {
-            const responseEl = document.getElementById('vuln-response-message');
-            responseEl.textContent = message;
-            responseEl.className = type;
-            responseEl.style.display = 'block';
+        
+        // Show subscription message
+        function showSubscriptionMessage(message, type) {
+            const messageElement = document.getElementById('subscriptionMessage');
+            messageElement.textContent = message;
+            messageElement.className = `subscription-message subscription-${type}`;
+            messageElement.style.display = 'block';
             
+            // Hide message after 5 seconds
             setTimeout(() => {
-                responseEl.style.display = 'none';
+                messageElement.style.display = 'none';
             }, 5000);
         }
-
-        // EMAIL FUNCTIONS
-        async function loadSubscribers() {
-            try {
-                const response = await fetchFromJsonBin(SUBSCRIBERS_BIN_ID);
-                subscribers = response.subscribers || [];
-                document.getElementById('subscribersCount').textContent = subscribers.length;
-            } catch (error) {
-                console.error('Aboneler yüklenirken hata:', error);
-            }
-        }
-
-        async function sendNotificationEmail() {
-            if (vulnerabilitiesData.length === 0) {
-                showEmailMessage('Önce bir vulnerability ekleyin!', 'error');
-                return;
-            }
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load vulnerabilities data
+            loadVulnerabilitiesData();
             
-            const latestVuln = vulnerabilitiesData[0];
+            // Handle hash changes
+            window.addEventListener('hashchange', function() {
+                if (window.location.hash) {
+                    const researchId = window.location.hash.substring(1);
+                    loadResearchDetail(researchId);
+                }
+            });
             
-            try {
-                showEmailMessage('Bildirim gönderiliyor...', 'warning');
-                
-                // Burada Mailjet API'si kullanılabilir
-                // Şimdilik simüle ediyoruz
-                setTimeout(() => {
-                    showEmailMessage(`Bildirim ${subscribers.length} aboneye gönderildi!`, 'success');
-                }, 2000);
-                
-            } catch (error) {
-                console.error('Bildirim gönderme hatası:', error);
-                showEmailMessage(`Hata: ${error.message}`, 'error');
+            // Handle subscription form
+            const subscriptionForm = document.getElementById('subscriptionForm');
+            if (subscriptionForm) {
+                subscriptionForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const email = document.getElementById('emailInput').value.trim();
+                    handleSubscription(email);
+                });
             }
-        }
-
-        async function sendCustomEmail() {
-            const subject = document.getElementById('emailSubject').value;
-            const content = document.getElementById('emailContent').value;
-            
-            if (!subject || !content) {
-                showEmailMessage('Lütfen konu ve içerik girin!', 'error');
-                return;
-            }
-            
-            if (subscribers.length === 0) {
-                showEmailMessage('Henüz abone bulunmamaktadır!', 'error');
-                return;
-            }
-            
-            try {
-                showEmailMessage('E-posta gönderiliyor...', 'warning');
-                
-                // Burada Mailjet API'si kullanılabilir
-                // Şimdilik simüle ediyoruz
-                setTimeout(() => {
-                    showEmailMessage(`E-posta ${subscribers.length} aboneye gönderildi!`, 'success');
-                    document.getElementById('emailSubject').value = '';
-                    document.getElementById('emailContent').value = '';
-                }, 2000);
-                
-            } catch (error) {
-                console.error('E-posta gönderme hatası:', error);
-                showEmailMessage(`Hata: ${error.message}`, 'error');
-            }
-        }
-
-        function showEmailMessage(message, type) {
-            const responseEl = document.getElementById('email-response-message');
-            responseEl.textContent = message;
-            responseEl.className = type;
-            responseEl.style.display = 'block';
-            
-            setTimeout(() => {
-                responseEl.style.display = 'none';
-            }, 5000);
-        }
-
-        // Mevcut fonksiyonlar (önceden var olan)
-        // ... (fetchFromJsonBin, getNextId, addSpotifyEmbed, extractTrackId, insertAtCursor, 
-        // openMediaUpload, handleMediaSelection, openCropModal, closeCropModal, cropAndUpload, 
-        // handleMediaUpload, showAlternativeUploadOption, submitEntry, loadRecentEntries, 
-        // searchEntry, editEntry, saveEntry, cancelEdit, confirmDelete, deleteEntry, 
-        // updateStats, loadStats, showMessage, logout, updatePreview, updateEditPreview, 
-        // formatText, clearFormatting, loadIpStats, updateIpStats, displayTopEntries, 
-        // displayRecentIps, populateCountryFilter, applyFilters, clearFilters, exportData, 
-        // getTopEntries, extractBrowserInfo, formatDate, showDebugInfo fonksiyonları)
-
-        // Burada mevcut tüm fonksiyonlarınızı eklemem gerekiyor ama kod uzunluğu nedeniyle
-        // kısaltıyorum. Yukarıdaki yeni fonksiyonlarla birlikte çalışacak şekilde
-        // mevcut fonksiyonları da eklemeniz gerekiyor.
-
+        });
     </script>
 </body>
 </html>
