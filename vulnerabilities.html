@@ -682,9 +682,17 @@
     <script src="/JAVASCRIPT/matrix.js"></script>
     
     <script>
-        // JSON Bin IDs
-        const VULNERABILITIES_BIN_ID = '68d78989d0ea881f408cad3f';
-        const SUBSCRIBERS_BIN_ID = '68d78989d0ea881f408cad3f_subscribers'; // Yeni bir bin oluşturmalısınız
+        // JSON configuration
+        const CONFIG = {
+            VULNERABILITIES_BIN_ID: '68d78989d0ea881f408cad3f',
+            SUBSCRIBERS_BIN_ID: '68d78989d0ea881f408cad3f_subscribers',
+            MAILJET_CONFIG: {
+                apiKey: '4eab53d0383497317f9d58afd0176d9f',
+                secretKey: 'your_mailjet_secret_key', // Burayı kendi secret key'inizle değiştirin
+                senderEmail: 'noreply@adembayazit.com',
+                senderName: 'Adem Bayazıt - Vulnerabilities Research'
+            }
+        };
         
         // Global variables
         let vulnerabilitiesData = [];
@@ -778,7 +786,7 @@
         // Load vulnerabilities data from JSON Bin
         async function loadVulnerabilitiesData() {
             try {
-                const result = await fetchViaProxy('/latest', 'GET', null, VULNERABILITIES_BIN_ID);
+                const result = await fetchViaProxy('/latest', 'GET', null, CONFIG.VULNERABILITIES_BIN_ID);
                 vulnerabilitiesData = result.records || result;
                 
                 // Sort by date (newest first)
@@ -995,6 +1003,74 @@
             return formattedContent;
         }
         
+        // Send email notification via Mailjet
+        async function sendNewVulnerabilityEmail(vulnerability) {
+            try {
+                // Get subscribers list
+                const subscribersData = await fetchViaProxy('/latest', 'GET', null, CONFIG.SUBSCRIBERS_BIN_ID);
+                const subscribers = subscribersData.subscribers || [];
+                
+                if (subscribers.length === 0) {
+                    console.log('No subscribers to notify');
+                    return { success: true, message: 'No subscribers to notify' };
+                }
+                
+                // Prepare email content
+                const emailData = {
+                    Messages: [
+                        {
+                            From: {
+                                Email: CONFIG.MAILJET_CONFIG.senderEmail,
+                                Name: CONFIG.MAILJET_CONFIG.senderName
+                            },
+                            To: subscribers.map(email => ({ Email: email })),
+                            Subject: `New Vulnerability: ${vulnerability.title}`,
+                            HTMLPart: `
+                                <h2>New Vulnerability Published</h2>
+                                <div style="background: #f5f5f5; padding: 20px; border-radius: 10px; color: #333;">
+                                    <h3 style="color: #d9534f;">${vulnerability.title}</h3>
+                                    <p><strong>Date:</strong> ${new Date(vulnerability.date).toLocaleDateString()}</p>
+                                    ${vulnerability.cvss_score ? `<p><strong>CVSS Score:</strong> ${vulnerability.cvss_score}</p>` : ''}
+                                    ${vulnerability.category ? `<p><strong>Category:</strong> ${vulnerability.category}</p>` : ''}
+                                    <p>${vulnerability.content.substring(0, 200)}...</p>
+                                    <a href="https://adembayazit.com/vulnerabilities#${vulnerability.id}" 
+                                       style="background: #00cc00; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 15px;">
+                                        Read Full Research
+                                    </a>
+                                </div>
+                                <p style="margin-top: 20px; color: #666; font-size: 12px;">
+                                    You received this email because you subscribed to vulnerability notifications from Adem Bayazıt.
+                                    <br><a href="https://adembayazit.com/unsubscribe" style="color: #666;">Unsubscribe</a>
+                                </p>
+                            `
+                        }
+                    ]
+                };
+                
+                // Send email via Netlify function (to keep API keys secure)
+                const response = await fetch('/.netlify/functions/send-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        emailData: emailData,
+                        apiKey: CONFIG.MAILJET_CONFIG.apiKey,
+                        secretKey: CONFIG.MAILJET_CONFIG.secretKey
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to send email notification');
+                }
+                
+                return { success: true, message: `Notification sent to ${subscribers.length} subscribers` };
+            } catch (error) {
+                console.error('Error sending email notification:', error);
+                return { success: false, message: 'Failed to send notification email' };
+            }
+        }
+        
         // Subscription functionality
         async function handleSubscription(email) {
             const messageElement = document.getElementById('subscriptionMessage');
@@ -1037,7 +1113,7 @@
         async function saveSubscriber(email) {
             try {
                 // Get current subscribers
-                const currentData = await fetchViaProxy('/latest', 'GET', null, SUBSCRIBERS_BIN_ID);
+                const currentData = await fetchViaProxy('/latest', 'GET', null, CONFIG.SUBSCRIBERS_BIN_ID);
                 const subscribers = currentData.subscribers || [];
                 
                 // Check if email already exists
@@ -1053,7 +1129,7 @@
                 await fetchViaProxy('', 'PUT', { 
                     subscribers: subscribers,
                     lastUpdated: timestamp
-                }, SUBSCRIBERS_BIN_ID);
+                }, CONFIG.SUBSCRIBERS_BIN_ID);
                 
                 return { success: true, message: 'Subscription successful' };
             } catch (error) {
