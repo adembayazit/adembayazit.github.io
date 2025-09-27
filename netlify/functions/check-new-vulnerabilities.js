@@ -2,31 +2,45 @@ const fetch = require('node-fetch');
 
 exports.handler = async (event, context) => {
   try {
-    // 1. Son kontrol tarihini al
-    const subscribersData = await getSubscribersData();
-    const lastChecked = subscribersData.last_checked;
+    // Environment variables
+    const {
+      JSONBIN_MASTER_KEY,
+      VULNERABILITIES_BIN_ID,
+      SUBSCRIBERS_BIN_ID,
+      MAILJET_API_KEY,
+      MAILJET_SECRET_KEY
+    } = process.env;
+
+    // 1. Son kontrol verilerini al
+    const subscribersData = await getSubscribersData(SUBSCRIBERS_BIN_ID, JSONBIN_MASTER_KEY);
+    const lastChecked = new Date(subscribersData.last_checked);
     const lastVulnId = subscribersData.last_vulnerability_id;
 
     // 2. Tüm vulnerabiliteleri al
-    const vulnerabilities = await getVulnerabilities();
+    const vulnerabilities = await getVulnerabilities(VULNERABILITIES_BIN_ID, JSONBIN_MASTER_KEY);
     
     // 3. Yeni vulnerabiliteleri bul (son kontrol tarihinden sonra eklenenler)
     const newVulnerabilities = vulnerabilities.filter(vuln => {
-      return new Date(vuln.date) > new Date(lastChecked) || vuln.id > lastVulnId;
+      const vulnDate = new Date(vuln.date);
+      return vulnDate > lastChecked || vuln.id > lastVulnId;
     });
 
-    // 4. Yeni vulnerabiliteler varsa mail gönder
+    console.log(`Found ${newVulnerabilities.length} new vulnerabilities`);
+
+    // 4. Yeni vulnerabiliteler varsa işle
     if (newVulnerabilities.length > 0) {
       for (const vuln of newVulnerabilities) {
-        await sendNotificationEmail(vuln, subscribersData.subscribers);
+        await sendNotificationEmail(vuln, subscribersData.subscribers, MAILJET_API_KEY, MAILJET_SECRET_KEY);
+        console.log(`Notification sent for vulnerability: ${vuln.title}`);
       }
 
-      // 5. Son kontrol tarihini güncelle
+      // 5. Son kontrol verilerini güncelle
       const latestVulnId = Math.max(...vulnerabilities.map(v => v.id));
-      await updateSubscribersData({
+      await updateSubscribersData(SUBSCRIBERS_BIN_ID, JSONBIN_MASTER_KEY, {
+        subscribers: subscribersData.subscribers,
         last_checked: new Date().toISOString(),
         last_vulnerability_id: latestVulnId,
-        subscribers: subscribersData.subscribers
+        settings: subscribersData.settings
       });
     }
 
@@ -37,6 +51,7 @@ exports.handler = async (event, context) => {
       })
     };
   } catch (error) {
+    console.error('Error in check-new-vulnerabilities:', error);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: error.message })
@@ -44,33 +59,29 @@ exports.handler = async (event, context) => {
   }
 };
 
-async function getSubscribersData() {
-  // JSON Bin'den subscribers verisini al
-  const response = await fetch(`https://api.jsonbin.io/v3/b/${process.env.SUBSCRIBERS_BIN_ID}/latest`, {
+async function getSubscribersData(binId, masterKey) {
+  const response = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
     headers: {
-      'X-Master-Key': process.env.JSONBIN_MASTER_KEY
-    }
-  });
-  return await response.json();
-}
-
-async function getVulnerabilities() {
-  // JSON Bin'den vulnerabilities verisini al
-  const response = await fetch(`https://api.jsonbin.io/v3/b/${process.env.VULNERABILITIES_BIN_ID}/latest`, {
-    headers: {
-      'X-Master-Key': process.env.JSONBIN_MASTER_KEY
+      'X-Master-Key': masterKey
     }
   });
   const data = await response.json();
-  return data.records || data;
+  return data.record;
 }
 
-async function sendNotificationEmail(vulnerability, subscribers) {
-  // Mailjet ile mail gönder
-  const mailjet = require('node-mailjet').apiConnect(
-    process.env.MAILJET_API_KEY,
-    process.env.MAILJET_SECRET_KEY
-  );
+async function getVulnerabilities(binId, masterKey) {
+  const response = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
+    headers: {
+      'X-Master-Key': masterKey
+    }
+  });
+  const data = await response.json();
+  return data.record.records || data.record;
+}
+
+async function sendNotificationEmail(vulnerability, subscribers, apiKey, secretKey) {
+  const Mailjet = require('node-mailjet');
+  const mailjet = Mailjet.apiConnect(apiKey, secretKey);
 
   const emailData = {
     Messages: [
@@ -102,16 +113,19 @@ function createEmailHTML(vulnerability) {
         Tam Araştırmayı Oku
       </a>
     </div>
+    <p style="margin-top: 20px; color: #666; font-size: 12px;">
+      Bu bildirimi aldınız çünkü Adem Bayazıt'ın vulnerability araştırmalarına abone oldunuz.
+      <br><a href="https://adembayazit.com/unsubscribe" style="color: #666;">Aboneliği iptal et</a>
+    </p>
   `;
 }
 
-async function updateSubscribersData(newData) {
-  // JSON Bin'i güncelle
-  await fetch(`https://api.jsonbin.io/v3/b/${process.env.SUBSCRIBERS_BIN_ID}`, {
+async function updateSubscribersData(binId, masterKey, newData) {
+  await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
-      'X-Master-Key': process.env.JSONBIN_MASTER_KEY
+      'X-Master-Key': masterKey
     },
     body: JSON.stringify(newData)
   });
