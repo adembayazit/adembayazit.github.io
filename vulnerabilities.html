@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vulnerabilities Research | Adem Bayazıt</title>
+    <meta property="og:title" content="Adem Bayazıt | Vulnerabilities Research" />
+    <meta property="og:description" content="Cybersecurity vulnerabilities research and analysis by Adem Bayazıt" />
+    <meta property="og:image" content="https://adembayazit.com/IMAGES/preview.png" />
+    <meta property="og:url" content="https://adembayazit.com/vulnerabilities" />
+    <meta property="og:type" content="website" />
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Adem Bayazıt - Vulnerabilities Research">
+    <meta name="twitter:description" content="Cybersecurity vulnerabilities research and analysis by Adem Bayazıt">
+    <meta name="twitter:image" content="https://adembayazit.com/IMAGES/preview.png">
+    <meta name="twitter:image:alt" content="Adem Bayazıt">
+    
+    <link rel="icon" type="png|image" href="/IMAGES/ab.png">
+    <link rel="stylesheet" href="/CSS/style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href='https://cdn.boxicons.com/fonts/basic/boxicons.min.css' rel='stylesheet'>
+    <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
+    <style>
+        :root {
+            --primary-color: #00ff00;
+            --primary-dark: #00cc00;
+            --primary-light: #33ff33;
+            --bg-color: #0a1916;
+            --card-bg: rgba(10, 25, 20, 0.7);
+            --text-color: #ffffff;
+            --text-muted: #cccccc;
+            --border-color: #00aa00;
+            --highlight-color: #99ff99;
+            --sidebar-width: 320px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Logo ve slogan için stil */
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        
+        .logo-slogan {
+            font-size: 10px;
+            color: white;
+            margin-top: 2px;
+            font-style: italic;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            text-align: right;
+            width: 100%;
+            padding-right: 5px;
+        }
+        
+        /* Navbar için responsive ayarlar */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 5%;
+        }
+        
+        .content-wrapper {
+            margin-top: 160px;
+            position: relative;
+            z-index: 2;
+            padding: 0 20px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .backto {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .back-to-home {
+            display: inline-block;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            padding: 10px 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+        }
+        
+        .back-to-home:hover {
+            text-decoration: underline;
+            color: var(--highlight-color);
+            background: rgba(0, 255, 0, 0.1);
+        }
+        
+        .page-title {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 1.7rem;
+            color: white;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+            position: relative;
+            filter: drop-shadow(0 0 5px limegreen);
+        }
+        
+        .page-title::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 3px;
+        }
+        
+        /* Main layout */
+        .vulnerabilities-container {
+            display: flex;
+            gap: 30px;
+            min-height: 600px;
+        }
+        
+        /* Sidebar styles */
+        .research-sidebar {
+            width: var(--sidebar-width);
+            flex-shrink: 0;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+        
+        .sidebar-title {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .research-list {
+            list-style: none;
+        }
+        
+        .research-item {
+            padding: 15px;
+            border-bottom: 1px solid rgba(0, 255, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+        
+        .research-item:hover {
+            background: rgba(0, 255, 0, 0.1);
+        }
+        
+        .research-item.active {
+            background: rgba(0, 255, 0, 0.2);
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        .research-title {
+            font-weight: bold;
+            color: var(--text-color);
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .research-date {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+        
+        /* Content area styles */
+        .research-content {
+            flex: 1;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 30px;
+            min-height: 600px;
+        }
+        
+        .content-placeholder {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+        
+        .content-placeholder i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--border-color);
+        }
+        
+        .content-placeholder p {
+            font-size: 1.1rem;
+        }
+        
+        /* Content styles when loaded */
+        .research-detail {
+            display: none;
+        }
+        
+        .research-detail.active {
+            display: block;
+        }
+        
+        .detail-header {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .detail-title {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .detail-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        .detail-date, .detail-category {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .detail-body {
+            line-height: 1.6;
+        }
+        
+        .detail-body img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px solid var(--border-color);
+        }
+        
+        .detail-body pre {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 15px 0;
+            border: 1px solid var(--border-color);
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .detail-body code {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .detail-body h2, .detail-body h3 {
+            color: var(--primary-color);
+            margin: 20px 0 10px;
+        }
+        
+        .detail-body p {
+            margin-bottom: 15px;
+        }
+        
+        .detail-body ul, .detail-body ol {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .detail-body li {
+            margin-bottom: 5px;
+        }
+        
+        .cvss-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            margin-left: 10px;
+        }
+        
+        .cvss-critical {
+            background: #ff0000;
+            color: white;
+        }
+        
+        .cvss-high {
+            background: #ff6b00;
+            color: white;
+        }
+        
+        .cvss-medium {
+            background: #ffcc00;
+            color: black;
+        }
+        
+        .cvss-low {
+            background: #00cc00;
+            color: white;
+        }
+        
+        /* Loading animation */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--primary-color);
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 255, 0, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary-color);
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Matrix Canvas Styles */
+        #matrixCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .vulnerabilities-container {
+                flex-direction: column;
+            }
+            
+            .research-sidebar {
+                width: 100%;
+                position: static;
+            }
+            
+            .research-content {
+                min-height: auto;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .content-wrapper {
+                margin-top: 160px;
+                padding: 0 10px;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+            }
+            
+            .research-content {
+                padding: 20px;
+            }
+            
+            .detail-title {
+                font-size: 1.3rem;
+            }
+            
+            .detail-meta {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TFN7XD9Z"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header class="header">
+        <div class="logo-container">
+            <a href="https://adembayazit.com" class="logo"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">{adembayazit} </a>
+            <span class="logo-slogan">One step further every day…</span>
+        </div>
+        <nav class="navbar">
+            <div class="dropdown">
+                <a href="#" style="--i:5;" class="dropbtn"> <img src="IMAGES/Ata.svg" alt="Ata Icon" class="ata-icon"><span class="fi fi-tr"></span> <span class='bx bx-code-alt'></span> Ethical Hacker <span class='bx bx-chevron-down'></span></a>
+                <div class="dropdown-content">
+                    <a href="/whatishacker"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hacker-icon"> What is an Ethical Hacker?</a>
+                    <a href="/cybersecurityglossary.html"><img src="IMAGES/glossary.svg" alt="Glossary" class="glossary-icon"> Cybersecurity Glossary</a>
+                    <a href="/whatissoc"><img src="IMAGES/soc.svg" alt="Soc" class="soc-icon"> What is a SOC ?</a>
+                    <a href="/vulnerabilities"><img src="IMAGES/vulnerabilities.svg" alt="Vulnerabilities" class="vulnerabilities-icon"> Vulnerabilities Research</a>
+                    <a href="/steganography"><img src="IMAGES/steganography.svg" alt="Steganography" class="steganography-icon"> Steganography</a>
+                    <a href="/cryptography"><img src="IMAGES/cryptography.svg" alt="Cryptography" class="cryptography-icon"> Cryptography</a>    
+                    <a href="#payloads"><img src="IMAGES/education.svg" alt="Education" class="education-icon"> Cybersecurity Learning Resources</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+    
+    <div class="content-wrapper">
+        <div class="backto"><a href="/" class="back-to-home"><i class="bx bx-arrow-back"></i> Back to Home</a></div>
+        
+        <h2 class="page-title"><img src="IMAGES/vulnerabilities.svg" alt="Vulnerabilities Icon" class="vulnerabilities-icon"> Vulnerabilities Research</h2>
+        
+        <div class="vulnerabilities-container">
+            <!-- Left Sidebar - Research Titles -->
+            <aside class="research-sidebar">
+                <h3 class="sidebar-title"><i class="fas fa-bug"></i> Research Topics</h3>
+                <ul class="research-list" id="researchList">
+                    <li class="research-item loading-item">
+                        <div class="spinner"></div>
+                        <div>Loading research topics...</div>
+                    </li>
+                </ul>
+            </aside>
+            
+            <!-- Main Content Area -->
+            <main class="research-content">
+                <div class="content-placeholder" id="contentPlaceholder">
+                    <i class="fas fa-search"></i>
+                    <p>Select a research topic from the sidebar to view details</p>
+                </div>
+                
+                <div class="research-detail" id="researchDetail">
+                    <!-- Content will be loaded here dynamically -->
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <footer style="text-align: center; padding: 20px; font-size: 14px; color: white; margin-top: 50px;">
+        <hr style="margin-bottom: 10px; border-color: limegreen;" />
+        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.2 | July 2025</p>
+    </footer>
+
+    <script src="/JAVASCRIPT/monitor.js"></script>
+    <canvas id="matrixCanvas"></canvas>
+    <script src="/JAVASCRIPT/matrix.js"></script>
+    
+    <script>
+        // JSON Bin ID
+        const JSON_BIN_ID = '68d78989d0ea881f408cad3f';
+        
+        // Global variables
+        let vulnerabilitiesData = [];
+        let currentResearchId = null;
+        
+        // Proxy helper function (same as in microblog)
+        async function fetchViaProxy(path, method = 'GET', body = null, binId = null) {
+            const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
+            
+            // If a specific bin ID is provided, update the path
+            const actualPath = binId ? `/b/${binId}${path}` : path;
+            
+            try {
+                const response = await fetch(proxyUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ path: actualPath, method, body })
+                });
+
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                console.error('Proxy error:', error);
+                throw error;
+            }
+        }
+        
+        // Load vulnerabilities data from JSON Bin
+        async function loadVulnerabilitiesData() {
+            try {
+                const result = await fetchViaProxy('/latest', 'GET', null, JSON_BIN_ID);
+                vulnerabilitiesData = result.records || result;
+                
+                // Sort by date (newest first)
+                vulnerabilitiesData.sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                // Render the research list
+                renderResearchList();
+                
+                // If there's a hash in URL, load that research
+                if (window.location.hash) {
+                    const researchId = window.location.hash.substring(1);
+                    loadResearchDetail(researchId);
+                }
+            } catch (error) {
+                console.error('Error loading vulnerabilities data:', error);
+                document.getElementById('researchList').innerHTML = 
+                    '<li class="research-item">Error loading research topics. Please try again later.</li>';
+            }
+        }
+        
+        // Render the list of research topics
+        function renderResearchList() {
+            const researchList = document.getElementById('researchList');
+            researchList.innerHTML = '';
+            
+            if (vulnerabilitiesData.length === 0) {
+                researchList.innerHTML = '<li class="research-item">No research topics available.</li>';
+                return;
+            }
+            
+            vulnerabilitiesData.forEach(research => {
+                const listItem = document.createElement('li');
+                listItem.className = 'research-item';
+                listItem.dataset.id = research.id;
+                
+                // Format date
+                const researchDate = new Date(research.date).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+                
+                // Create CVSS badge if available
+                let cvssBadge = '';
+                if (research.cvss_score) {
+                    let cvssClass = 'cvss-medium';
+                    if (research.cvss_score >= 9.0) cvssClass = 'cvss-critical';
+                    else if (research.cvss_score >= 7.0) cvssClass = 'cvss-high';
+                    else if (research.cvss_score >= 4.0) cvssClass = 'cvss-medium';
+                    else cvssClass = 'cvss-low';
+                    
+                    cvssBadge = `<span class="cvss-badge ${cvssClass}">CVSS: ${research.cvss_score}</span>`;
+                }
+                
+                listItem.innerHTML = `
+                    <div class="research-title">${research.title} ${cvssBadge}</div>
+                    <div class="research-date">${researchDate}</div>
+                `;
+                
+                listItem.addEventListener('click', () => {
+                    // Update URL hash
+                    window.location.hash = research.id;
+                    
+                    // Load research detail
+                    loadResearchDetail(research.id);
+                    
+                    // Update active state
+                    document.querySelectorAll('.research-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    listItem.classList.add('active');
+                });
+                
+                researchList.appendChild(listItem);
+            });
+        }
+        
+        // Load and display research detail
+        function loadResearchDetail(researchId) {
+            const research = vulnerabilitiesData.find(item => item.id == researchId);
+            
+            if (!research) {
+                document.getElementById('contentPlaceholder').style.display = 'block';
+                document.getElementById('researchDetail').classList.remove('active');
+                return;
+            }
+            
+            // Hide placeholder
+            document.getElementById('contentPlaceholder').style.display = 'none';
+            
+            // Format date
+            const researchDate = new Date(research.date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            // Create CVSS badge if available
+            let cvssBadge = '';
+            if (research.cvss_score) {
+                let cvssClass = 'cvss-medium';
+                if (research.cvss_score >= 9.0) cvssClass = 'cvss-critical';
+                else if (research.cvss_score >= 7.0) cvssClass = 'cvss-high';
+                else if (research.cvss_score >= 4.0) cvssClass = 'cvss-medium';
+                else cvssClass = 'cvss-low';
+                
+                cvssBadge = `<span class="cvss-badge ${cvssClass}">CVSS: ${research.cvss_score}</span>`;
+            }
+            
+            // Build tags if available
+            let tagsHtml = '';
+            if (research.tags && research.tags.length > 0) {
+                tagsHtml = `<div class="detail-tags" style="margin-top: 10px;">
+                    <strong>Tags:</strong> ${research.tags.map(tag => `<span style="background: rgba(0,255,0,0.2); padding: 2px 8px; border-radius: 12px; margin: 0 5px; font-size: 0.8em;">${tag}</span>`).join('')}
+                </div>`;
+            }
+            
+            // Set the research detail content
+            document.getElementById('researchDetail').innerHTML = `
+                <div class="detail-header">
+                    <h1 class="detail-title">${research.title} ${cvssBadge}</h1>
+                    <div class="detail-meta">
+                        <span class="detail-date"><i class="far fa-calendar"></i> ${researchDate}</span>
+                        <span class="detail-category"><i class="fas fa-tag"></i> ${research.category || 'Vulnerability Research'}</span>
+                    </div>
+                    ${tagsHtml}
+                </div>
+                <div class="detail-body">
+                    ${formatResearchContent(research.content)}
+                </div>
+            `;
+            
+            // Show the detail section
+            document.getElementById('researchDetail').classList.add('active');
+            
+            // Set the corresponding list item as active
+            document.querySelectorAll('.research-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.id == researchId) {
+                    item.classList.add('active');
+                }
+            });
+            
+            // Scroll to top of content
+            document.querySelector('.research-content').scrollTop = 0;
+        }
+        
+        // Format research content with proper HTML rendering
+        function formatResearchContent(content) {
+            if (!content) return '<p>No content available for this research.</p>';
+            
+            // Convert line breaks to paragraphs
+            let formattedContent = content
+                .split('\n')
+                .filter(paragraph => paragraph.trim() !== '')
+                .map(paragraph => {
+                    // Check if it's a code block
+                    if (paragraph.trim().startsWith('```') && paragraph.trim().endsWith('```')) {
+                        const code = paragraph.trim().substring(3, paragraph.length - 3);
+                        return `<pre><code>${code}</code></pre>`;
+                    }
+                    
+                    // Check if it's a heading
+                    if (paragraph.startsWith('## ')) {
+                        return `<h3>${paragraph.substring(3)}</h3>`;
+                    }
+                    
+                    if (paragraph.startsWith('# ')) {
+                        return `<h2>${paragraph.substring(2)}</h2>`;
+                    }
+                    
+                    // Regular paragraph
+                    return `<p>${paragraph}</p>`;
+                })
+                .join('');
+            
+            return formattedContent;
+        }
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load vulnerabilities data
+            loadVulnerabilitiesData();
+            
+            // Handle hash changes
+            window.addEventListener('hashchange', function() {
+                if (window.location.hash) {
+                    const researchId = window.location.hash.substring(1);
+                    loadResearchDetail(researchId);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
