@@ -1557,102 +1557,211 @@
             // Implement test email functionality here
         }
         
-        // Send email to subscribers
-        async function sendEmail() {
-            const vulnerabilityId = document.getElementById('email-vulnerability').value;
-            const subject = document.getElementById('email-subject').value.trim();
-            const customMessage = document.getElementById('email-message').value.trim();
-            
-            if (!vulnerabilityId) {
-                showToast('Please select a vulnerability to announce', 5000);
-                return;
-            }
-            
-            if (!subject) {
-                showToast('Email subject is required', 5000);
-                return;
-            }
-            
-            const vulnerability = vulnerabilitiesData.find(v => v.id == vulnerabilityId);
-            if (!vulnerability) {
-                showToast('Vulnerability not found', 5000);
-                return;
-            }
-            
-            if (subscribersData.length === 0) {
-                showToast('No subscribers to send email to', 5000);
-                return;
-            }
-            
-            const sendBtn = document.getElementById('send-email-btn');
-            const originalText = sendBtn.innerHTML;
-            sendBtn.disabled = true;
-            sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-            
-            try {
-                // Prepare email data
-                const emailData = {
-                    Messages: [
-                        {
-                            From: {
-                                Email: 'fyi@adembayazit.com',
-                                Name: 'Adem Bayazıt - Vulnerabilities Research'
-                            },
-                            To: subscribersData.map(email => ({ Email: email })),
-                            Subject: subject,
-                            HTMLPart: `
-                                <h2>New Vulnerability Published</h2>
-                                <div style="background: #f5f5f5; padding: 20px; border-radius: 10px; color: #333;">
-                                    <h3 style="color: #d9534f;">${vulnerability.title}</h3>
-                                    <p><strong>Date:</strong> ${new Date(vulnerability.date).toLocaleDateString()}</p>
-                                    ${vulnerability.cvss_score ? `<p><strong>CVSS Score:</strong> ${vulnerability.cvss_score}</p>` : ''}
-                                    ${vulnerability.category ? `<p><strong>Category:</strong> ${vulnerability.category}</p>` : ''}
-                                    ${customMessage ? `<p><strong>Message:</strong> ${customMessage}</p>` : ''}
-                                    <p>${vulnerability.content.substring(0, 200)}...</p>
-                                    <a href="https://adembayazit.com/vulnerabilities#${vulnerability.id}" 
-                                       style="background: #00cc00; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 15px;">
-                                        Read Full Research
-                                    </a>
-                                </div>
-                                <p style="margin-top: 20px; color: #666; font-size: 12px;">
-                                    You received this email because you subscribed to vulnerability notifications from Adem Bayazıt.
-                                    <br><a href="https://adembayazit.com/unsubscribe" style="color: #666;">Unsubscribe</a>
-                                </p>
-                            `
-                        }
-                    ]
-                };
-                
-                // Send email via Netlify function
-                const response = await fetch('https://adembayazit.netlify.app/.netlify/functions/send-email', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
+                // Send email to subscribers
+async function sendEmail() {
+    const vulnerabilityId = document.getElementById('email-vulnerability').value;
+    const subject = document.getElementById('email-subject').value.trim();
+    const customMessage = document.getElementById('email-message').value.trim();
+    const template = document.getElementById('email-template').value;
+
+    if (!vulnerabilityId) {
+        showToast('Please select a vulnerability to announce', 5000);
+        return;
+    }
+
+    if (!subject) {
+        showToast('Email subject is required', 5000);
+        return;
+    }
+
+    const vulnerability = vulnerabilitiesData.find(v => v.id == vulnerabilityId);
+    if (!vulnerability) {
+        showToast('Vulnerability not found', 5000);
+        return;
+    }
+
+    if (subscribersData.length === 0) {
+        showToast('No subscribers to send email to', 5000);
+        return;
+    }
+
+    const sendBtn = document.getElementById('send-email-btn');
+    const originalText = sendBtn.innerHTML;
+    sendBtn.disabled = true;
+    sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+
+    try {
+        // Create email content based on template
+        let emailHtml = createEmailTemplate(vulnerability, customMessage, template);
+        let emailText = createTextTemplate(vulnerability, customMessage);
+
+        // Prepare email data for Mailjet
+        const emailData = {
+            Messages: [
+                {
+                    From: {
+                        Email: 'fyi@adembayazit.com',
+                        Name: 'Adem Bayazıt - Vulnerabilities Research'
                     },
-                    body: JSON.stringify({
-                        emailData: emailData
-                    })
-                });
-                
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+                    To: subscribersData.map(email => ({ Email: email })),
+                    Subject: subject,
+                    TextPart: emailText,
+                    HTMLPart: emailHtml
                 }
-                
-                const result = await response.json();
-                
-                // Update email stats
-                document.getElementById('stats-last-sent').textContent = new Date().toLocaleString();
-                
-                showToast(result.message || `Email sent successfully to ${subscribersData.length} subscribers`);
-            } catch (error) {
-                console.error('Error sending email:', error);
-                showToast('Error sending email: ' + error.message, 5000);
-            } finally {
-                sendBtn.disabled = false;
-                sendBtn.innerHTML = originalText;
-            }
+            ]
+        };
+
+        // Send email via Netlify function
+        const response = await fetch('/.netlify/functions/send-email', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                emailData: emailData
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
         }
+
+        const result = await response.json();
+
+        // Update email stats
+        document.getElementById('stats-last-sent').textContent = new Date().toLocaleString();
+        
+        // Update monthly count
+        const currentMonth = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+        const monthlyCount = localStorage.getItem(`email-sent-${currentMonth}`) || 0;
+        localStorage.setItem(`email-sent-${currentMonth}`, parseInt(monthlyCount) + 1);
+        document.getElementById('stats-this-month').textContent = parseInt(monthlyCount) + 1;
+
+        showToast(result.message || `Email sent successfully to ${subscribersData.length} subscribers`);
+    } catch (error) {
+        console.error('Error sending email:', error);
+        showToast('Error sending email: ' + error.message, 5000);
+    } finally {
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = originalText;
+    }
+}
+
+// Create HTML email template
+function createEmailTemplate(vulnerability, customMessage, template) {
+    let titleColor = '#d9534f';
+    let borderColor = '#d9534f';
+    let bgColor = '#fff5f5';
+
+    if (template === 'critical') {
+        titleColor = '#ff0000';
+        borderColor = '#ff0000';
+        bgColor = '#fff5f5';
+    } else if (template === 'update') {
+        titleColor = '#007bff';
+        borderColor = '#007bff';
+        bgColor = '#f0f8ff';
+    }
+
+    return `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                .header { text-align: center; border-bottom: 2px solid #00cc00; padding-bottom: 10px; margin-bottom: 20px; }
+                .vulnerability-card { background: ${bgColor}; padding: 20px; border-radius: 10px; border-left: 4px solid ${borderColor}; margin: 20px 0; }
+                .btn { background: #00cc00; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 10px 0; }
+                .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; font-size: 12px; color: #666; }
+                .cvss-badge { display: inline-block; padding: 4px 8px; border-radius: 4px; color: white; font-weight: bold; margin-left: 10px; }
+                .critical { background: #ff0000; }
+                .high { background: #ff6b00; }
+                .medium { background: #ffcc00; color: black; }
+                .low { background: #00cc00; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>Adem Bayazıt</h1>
+                    <p>Vulnerabilities Research</p>
+                </div>
+                
+                <h2>New Vulnerability Published</h2>
+                
+                <div class="vulnerability-card">
+                    <h3 style="color: ${titleColor}; margin-top: 0;">${vulnerability.title}</h3>
+                    
+                    <p><strong>Date Published:</strong> ${new Date(vulnerability.date).toLocaleDateString()}</p>
+                    
+                    ${vulnerability.cvss_score ? `
+                    <p><strong>CVSS Score:</strong> 
+                        ${vulnerability.cvss_score}
+                        <span class="cvss-badge ${
+                            vulnerability.cvss_score >= 9.0 ? 'critical' : 
+                            vulnerability.cvss_score >= 7.0 ? 'high' : 
+                            vulnerability.cvss_score >= 4.0 ? 'medium' : 'low'
+                        }">
+                            ${vulnerability.cvss_score >= 9.0 ? 'CRITICAL' : 
+                              vulnerability.cvss_score >= 7.0 ? 'HIGH' : 
+                              vulnerability.cvss_score >= 4.0 ? 'MEDIUM' : 'LOW'}
+                        </span>
+                    </p>
+                    ` : ''}
+                    
+                    ${vulnerability.category ? `<p><strong>Category:</strong> ${vulnerability.category}</p>` : ''}
+                    
+                    ${customMessage ? `
+                    <div style="background: #e7f3ff; padding: 15px; border-radius: 5px; margin: 15px 0;">
+                        <strong>Message from Adem:</strong> ${customMessage}
+                    </div>
+                    ` : ''}
+                    
+                    <p><strong>Summary:</strong> ${vulnerability.content.substring(0, 250)}...</p>
+                    
+                    <a href="https://adembayazit.com/vulnerabilities#${vulnerability.id}" class="btn">
+                        Read Full Research Details
+                    </a>
+                </div>
+                
+                <div class="footer">
+                    <p>You received this email because you subscribed to vulnerability notifications from Adem Bayazıt.</p>
+                    <p>
+                        <a href="https://adembayazit.com/unsubscribe" style="color: #666;">Unsubscribe</a> | 
+                        <a href="https://adembayazit.com/vulnerabilities" style="color: #666;">View All Vulnerabilities</a>
+                    </p>
+                    <p>&copy; 2025 Adem Bayazıt. All rights reserved.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+    `;
+}
+
+// Create plain text email template
+function createTextTemplate(vulnerability, customMessage) {
+    return `
+NEW VULNERABILITY PUBLISHED
+
+Title: ${vulnerability.title}
+Date: ${new Date(vulnerability.date).toLocaleDateString()}
+${vulnerability.cvss_score ? `CVSS Score: ${vulnerability.cvss_score}` : ''}
+${vulnerability.category ? `Category: ${vulnerability.category}` : ''}
+
+${customMessage ? `Message from Adem: ${customMessage}\n\n` : ''}
+
+Summary: ${vulnerability.content.substring(0, 200)}...
+
+Read the full research: https://adembayazit.com/vulnerabilities#${vulnerability.id}
+
+---
+You received this email because you subscribed to vulnerability notifications from Adem Bayazıt.
+Unsubscribe: https://adembayazit.com/unsubscribe
+    `;
+}
         
         // Initialize the admin panel
         document.addEventListener('DOMContentLoaded', function() {
