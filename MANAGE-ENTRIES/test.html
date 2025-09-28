@@ -1,1 +1,1549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vulnerabilities Research Admin | Adem Bayazıt</title>
+    <meta property="og:title" content="Adem Bayazıt | Vulnerabilities Research Admin" />
+    <meta property="og:description" content="Cybersecurity vulnerabilities research and analysis by Adem Bayazıt" />
+    <meta property="og:image" content="https://adembayazit.com/IMAGES/preview.png" />
+    <meta property="og:url" content="https://adembayazit.com/vulnerabilities" />
+    <meta property="og:type" content="website" />
 
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Adem Bayazıt - Vulnerabilities Research Admin">
+    <meta name="twitter:description" content="Cybersecurity vulnerabilities research and analysis by Adem Bayazıt">
+    <meta name="twitter:image" content="https://adembayazit.com/IMAGES/preview.png">
+    <meta name="twitter:image:alt" content="Adem Bayazıt">
+    
+    <link rel="icon" type="png|image" href="/IMAGES/ab.png">
+    <link rel="stylesheet" href="/CSS/style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href='https://cdn.boxicons.com/fonts/basic/boxicons.min.css' rel='stylesheet'>
+    <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
+    <style>
+        :root {
+            --primary-color: #00ff00;
+            --primary-dark: #00cc00;
+            --primary-light: #33ff33;
+            --bg-color: #0a1916;
+            --card-bg: rgba(10, 25, 20, 0.7);
+            --text-color: #ffffff;
+            --text-muted: #cccccc;
+            --border-color: #00aa00;
+            --highlight-color: #99ff99;
+            --sidebar-width: 320px;
+            --admin-sidebar-width: 250px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Logo ve slogan için stil */
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        
+        .logo-slogan {
+            font-size: 10px;
+            color: white;
+            margin-top: 2px;
+            font-style: italic;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            text-align: right;
+            width: 100%;
+            padding-right: 5px;
+        }
+        
+        /* Navbar için responsive ayarlar */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 5%;
+        }
+        
+        .content-wrapper {
+            margin-top: 160px;
+            position: relative;
+            z-index: 2;
+            padding: 0 20px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .backto {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .back-to-home {
+            display: inline-block;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            padding: 10px 20px;
+        }
+        
+        .back-to-home:hover {
+            text-decoration: underline;
+            color: var(--highlight-color);
+            background: rgba(0, 255, 0, 0.1);
+        }
+        
+        .page-title {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 1.7rem;
+            color: white;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+            position: relative;
+            filter: drop-shadow(0 0 5px limegreen);
+        }
+        
+        .page-title::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 3px;
+        }
+        
+        /* Admin Panel Styles */
+        .admin-container {
+            display: flex;
+            min-height: 800px;
+            gap: 20px;
+        }
+        
+        .admin-sidebar {
+            width: var(--admin-sidebar-width);
+            flex-shrink: 0;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+        
+        .admin-sidebar h3 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .admin-nav {
+            list-style: none;
+        }
+        
+        .admin-nav-item {
+            padding: 12px 15px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .admin-nav-item:hover {
+            background: rgba(0, 255, 0, 0.1);
+        }
+        
+        .admin-nav-item.active {
+            background: rgba(0, 255, 0, 0.2);
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        .admin-content {
+            flex: 1;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 30px;
+            min-height: 800px;
+        }
+        
+        .admin-section {
+            display: none;
+        }
+        
+        .admin-section.active {
+            display: block;
+        }
+        
+        .section-title {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .section-title h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Statistics Section */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        
+        .chart-container {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            height: 300px;
+        }
+        
+        /* Vulnerabilities List Section */
+        .vulnerabilities-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        .vulnerabilities-table th,
+        .vulnerabilities-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .vulnerabilities-table th {
+            background: rgba(0, 255, 0, 0.1);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .vulnerabilities-table tr:hover {
+            background: rgba(0, 255, 0, 0.05);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-edit {
+            background: #ffc107;
+            color: black;
+        }
+        
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-view {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        .btn-add {
+            background: var(--primary-color);
+            color: black;
+            padding: 10px 20px;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-send {
+            background: #28a745;
+            color: white;
+            padding: 8px 15px;
+        }
+        
+        /* Editor Section */
+        .editor-form {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-size: 1rem;
+        }
+        
+        textarea.form-control {
+            min-height: 200px;
+            resize: vertical;
+            font-family: monospace;
+        }
+        
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        
+        .tag {
+            background: rgba(0, 255, 0, 0.2);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .tag-remove {
+            cursor: pointer;
+            color: #ff6b6b;
+        }
+        
+        .tag-input {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .tag-input input {
+            flex: 1;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        
+        /* Subscribers Section */
+        .subscribers-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .subscriber-item {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .subscriber-email {
+            font-weight: 500;
+        }
+        
+        .subscriber-date {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        /* Email Section */
+        .email-form {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .email-preview {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 5px;
+            border: 1px solid var(--primary-color);
+            z-index: 1000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1001;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 30px;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .modal-title {
+            color: var(--primary-color);
+            margin: 0;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .admin-container {
+                flex-direction: column;
+            }
+            
+            .admin-sidebar {
+                width: 100%;
+                position: static;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .content-wrapper {
+                margin-top: 160px;
+                padding: 0 10px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .vulnerabilities-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+        
+        /* CVSS badges */
+        .cvss-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        
+        .cvss-critical {
+            background: #ff0000;
+            color: white;
+        }
+        
+        .cvss-high {
+            background: #ff6b00;
+            color: white;
+        }
+        
+        .cvss-medium {
+            background: #ffcc00;
+            color: black;
+        }
+        
+        .cvss-low {
+            background: #00cc00;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TFN7XD9Z"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header class="header">
+        <div class="logo-container">
+            <a href="https://adembayazit.com" class="logo"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">{adembayazit} </a>
+            <span class="logo-slogan">One step further every day…</span>
+        </div>
+        <nav class="navbar">
+            <div class="dropdown">
+                <a href="#" style="--i:5;" class="dropbtn"> <img src="IMAGES/Ata.svg" alt="Ata Icon" class="ata-icon"><span class="fi fi-tr"></span> <span class='bx bx-code-alt'></span> Ethical Hacker <span class='bx bx-chevron-down'></span></a>
+                <div class="dropdown-content">
+                    <a href="/whatishacker"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hacker-icon"> What is an Ethical Hacker?</a>
+                    <a href="/cybersecurityglossary.html"><img src="IMAGES/glossary.svg" alt="Glossary" class="glossary-icon"> Cybersecurity Glossary</a>
+                    <a href="/whatissoc"><img src="IMAGES/soc.svg" alt="Soc" class="soc-icon"> What is a SOC ?</a>
+                    <a href="/vulnerabilities"><img src="IMAGES/vulnerabilities.svg" alt="Vulnerabilities" class="vulnerabilities-icon"> Vulnerabilities </a>
+                    <a href="/steganography"><img src="IMAGES/steganography.svg" alt="Steganography" class="steganography-icon"> Steganography</a>
+                    <a href="/cryptography"><img src="IMAGES/cryptography.svg" alt="Cryptography" class="cryptography-icon"> Cryptography</a>    
+                    <a href="#payloads"><img src="IMAGES/education.svg" alt="Education" class="education-icon"> Cybersecurity Learning Resources</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+    
+    <div class="content-wrapper">
+        <div class="backto">
+            <a href="/" class="back-to-home"><i class="bx bx-arrow-back"></i> Back to Home</a>
+            <a href="/vulnerabilities" class="back-to-home" style="margin-left: 10px;"><i class="bx bx-arrow-back"></i> Back to Vulnerabilities</a>
+        </div>
+        
+        <h2 class="page-title"><img src="IMAGES/vulnerabilities.svg" alt="Vulnerabilities Icon" class="vulnerabilities-icon"> Vulnerabilities Research Admin Panel</h2>
+        
+        <div class="admin-container">
+            <!-- Admin Sidebar -->
+            <aside class="admin-sidebar">
+                <h3><i class="fas fa-cogs"></i> Admin Panel</h3>
+                <ul class="admin-nav">
+                    <li class="admin-nav-item active" data-section="statistics">
+                        <i class="fas fa-chart-bar"></i> Statistics
+                    </li>
+                    <li class="admin-nav-item" data-section="vulnerabilities">
+                        <i class="fas fa-bug"></i> Vulnerabilities
+                    </li>
+                    <li class="admin-nav-item" data-section="editor">
+                        <i class="fas fa-edit"></i> Editor
+                    </li>
+                    <li class="admin-nav-item" data-section="subscribers">
+                        <i class="fas fa-users"></i> Subscribers
+                    </li>
+                    <li class="admin-nav-item" data-section="email">
+                        <i class="fas fa-envelope"></i> Email Sender
+                    </li>
+                </ul>
+            </aside>
+            
+            <!-- Admin Content -->
+            <main class="admin-content">
+                <!-- Statistics Section -->
+                <section id="statistics" class="admin-section active">
+                    <div class="section-title">
+                        <h2><i class="fas fa-chart-bar"></i> Statistics</h2>
+                        <span id="last-updated"></span>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="total-vulnerabilities">0</div>
+                            <div class="stat-label">Total Vulnerabilities</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="total-subscribers">0</div>
+                            <div class="stat-label">Total Subscribers</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="critical-vulnerabilities">0</div>
+                            <div class="stat-label">Critical Vulnerabilities</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="last-vulnerability-date">-</div>
+                            <div class="stat-label">Last Vulnerability Added</div>
+                        </div>
+                    </div>
+                    
+                    <div class="section-title">
+                        <h2><i class="fas fa-chart-pie"></i> Vulnerabilities by CVSS Score</h2>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="cvssChart"></canvas>
+                    </div>
+                </section>
+                
+                <!-- Vulnerabilities List Section -->
+                <section id="vulnerabilities" class="admin-section">
+                    <div class="section-title">
+                        <h2><i class="fas fa-bug"></i> Vulnerabilities List</h2>
+                        <button class="btn btn-add" id="add-vulnerability-btn">
+                            <i class="fas fa-plus"></i> Add New
+                        </button>
+                    </div>
+                    
+                    <table class="vulnerabilities-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>CVSS</th>
+                                <th>Date</th>
+                                <th>Tags</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vulnerabilities-tbody">
+                            <!-- Vulnerabilities will be loaded here -->
+                        </tbody>
+                    </table>
+                </section>
+                
+                <!-- Editor Section -->
+                <section id="editor" class="admin-section">
+                    <div class="section-title">
+                        <h2><i class="fas fa-edit"></i> Vulnerability Editor</h2>
+                        <span id="editor-mode">Add New Vulnerability</span>
+                    </div>
+                    
+                    <form id="vulnerability-form" class="editor-form">
+                        <input type="hidden" id="edit-id" value="">
+                        
+                        <div class="form-group">
+                            <label for="title">Title *</label>
+                            <input type="text" id="title" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="category">Category</label>
+                            <input type="text" id="category" class="form-control" placeholder="e.g., Web Application, Network, etc.">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="cvss_score">CVSS Score (0-10)</label>
+                            <input type="number" id="cvss_score" class="form-control" min="0" max="10" step="0.1">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="content">Content *</label>
+                            <textarea id="content" class="form-control" required placeholder="Include: Impact, Technical Details, etc."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Tags</label>
+                            <div class="tags-container" id="tags-container">
+                                <!-- Tags will be added here -->
+                            </div>
+                            <div class="tag-input">
+                                <input type="text" id="tag-input" class="form-control" placeholder="Add a tag">
+                                <button type="button" class="btn btn-add" id="add-tag-btn">Add</button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-edit" id="reset-form-btn">Reset</button>
+                            <button type="submit" class="btn btn-add" id="save-vulnerability-btn">Save Vulnerability</button>
+                        </div>
+                    </form>
+                </section>
+                
+                <!-- Subscribers Section -->
+                <section id="subscribers" class="admin-section">
+                    <div class="section-title">
+                        <h2><i class="fas fa-users"></i> Subscribers List</h2>
+                        <span id="subscribers-count">0 subscribers</span>
+                    </div>
+                    
+                    <div class="subscribers-list" id="subscribers-list">
+                        <!-- Subscribers will be loaded here -->
+                    </div>
+                </section>
+                
+                <!-- Email Section -->
+                <section id="email" class="admin-section">
+                    <div class="section-title">
+                        <h2><i class="fas fa-envelope"></i> Email Notification</h2>
+                    </div>
+                    
+                    <div class="email-form">
+                        <div class="form-group">
+                            <label for="email-subject">Subject</label>
+                            <input type="text" id="email-subject" class="form-control" value="New Vulnerability Published">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email-vulnerability">Select Vulnerability to Announce</label>
+                            <select id="email-vulnerability" class="form-control">
+                                <option value="">-- Select a vulnerability --</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email-message">Custom Message (optional)</label>
+                            <textarea id="email-message" class="form-control" rows="4" placeholder="Add a custom message to include in the email..."></textarea>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-send" id="send-email-btn">
+                                <i class="fas fa-paper-plane"></i> Send Email to All Subscribers
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="email-preview" id="email-preview">
+                        <h3>Email Preview</h3>
+                        <div id="email-preview-content">
+                            Select a vulnerability to preview the email content.
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Vulnerability Details Modal -->
+    <div class="modal" id="vulnerability-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-vulnerability-title">Vulnerability Details</h3>
+                <button class="modal-close" id="modal-close">&times;</button>
+            </div>
+            <div id="modal-vulnerability-content">
+                <!-- Content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <footer style="text-align: center; padding: 20px; font-size: 14px; color: white; margin-top: 50px;">
+        <hr style="margin-bottom: 10px; border-color: limegreen;" />
+        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.3 | July 2025</p>
+    </footer>
+
+    <script src="/JAVASCRIPT/monitor.js"></script>
+    <canvas id="matrixCanvas"></canvas>
+    <script src="/JAVASCRIPT/matrix.js"></script>
+    
+    <!-- Chart.js for statistics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        // JSON configuration
+        const CONFIG = {
+            VULNERABILITIES_BIN_ID: '68d78989d0ea881f408cad3f',
+            SUBSCRIBERS_BIN_ID: '68d7fc3bae596e708ffdcc6e',
+            MAILJET_CONFIG: {
+                apiKey: '4eab53d0383497317f9d58afd0176d9f',
+                secretKey: 'e46dc21f710c911ba855e1eca0675971',
+                senderEmail: 'noreply@adembayazit.com',
+                senderName: 'Adem Bayazıt - Vulnerabilities Research'
+            }
+        };
+        
+        // Global variables
+        let vulnerabilitiesData = [];
+        let subscribersData = [];
+        let currentEditingId = null;
+        let tags = [];
+        let cvssChart = null;
+        
+        // Proxy helper function
+        async function fetchViaProxy(path, method = 'GET', body = null, binId = null) {
+            const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
+            
+            const actualPath = binId ? `/b/${binId}${path}` : path;
+            
+            try {
+                const response = await fetch(proxyUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ path: actualPath, method, body })
+                });
+
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                console.error('Proxy error:', error);
+                throw error;
+            }
+        }
+        
+        // Show toast notification
+        function showToast(message, duration = 3000) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
+        }
+        
+        // Load vulnerabilities data from JSON Bin
+        async function loadVulnerabilitiesData() {
+            try {
+                const result = await fetchViaProxy('/latest', 'GET', null, CONFIG.VULNERABILITIES_BIN_ID);
+                vulnerabilitiesData = result.records || result;
+                
+                // Sort by date (newest first)
+                vulnerabilitiesData.sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                // Update statistics
+                updateStatistics();
+                
+                // Render vulnerabilities list
+                renderVulnerabilitiesList();
+                
+                // Update email dropdown
+                updateEmailDropdown();
+                
+                return true;
+            } catch (error) {
+                console.error('Error loading vulnerabilities data:', error);
+                showToast('Error loading vulnerabilities data', 5000);
+                return false;
+            }
+        }
+        
+        // Load subscribers data from JSON Bin
+        async function loadSubscribersData() {
+            try {
+                const result = await fetchViaProxy('/latest', 'GET', null, CONFIG.SUBSCRIBERS_BIN_ID);
+                subscribersData = result.subscribers || [];
+                
+                // Update statistics
+                updateStatistics();
+                
+                // Render subscribers list
+                renderSubscribersList();
+                
+                return true;
+            } catch (error) {
+                console.error('Error loading subscribers data:', error);
+                showToast('Error loading subscribers data', 5000);
+                return false;
+            }
+        }
+        
+        // Update statistics
+        function updateStatistics() {
+            // Total vulnerabilities
+            document.getElementById('total-vulnerabilities').textContent = vulnerabilitiesData.length;
+            
+            // Total subscribers
+            document.getElementById('total-subscribers').textContent = subscribersData.length;
+            document.getElementById('subscribers-count').textContent = `${subscribersData.length} subscribers`;
+            
+            // Critical vulnerabilities (CVSS >= 9.0)
+            const criticalCount = vulnerabilitiesData.filter(v => v.cvss_score >= 9.0).length;
+            document.getElementById('critical-vulnerabilities').textContent = criticalCount;
+            
+            // Last vulnerability date
+            if (vulnerabilitiesData.length > 0) {
+                const lastDate = new Date(vulnerabilitiesData[0].date).toLocaleDateString();
+                document.getElementById('last-vulnerability-date').textContent = lastDate;
+            } else {
+                document.getElementById('last-vulnerability-date').textContent = '-';
+            }
+            
+            // Last updated
+            document.getElementById('last-updated').textContent = `Last updated: ${new Date().toLocaleString()}`;
+            
+            // Update CVSS chart
+            updateCvssChart();
+        }
+        
+        // Update CVSS chart
+        function updateCvssChart() {
+            const ctx = document.getElementById('cvssChart').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (cvssChart) {
+                cvssChart.destroy();
+            }
+            
+            // Count vulnerabilities by CVSS severity
+            const critical = vulnerabilitiesData.filter(v => v.cvss_score >= 9.0).length;
+            const high = vulnerabilitiesData.filter(v => v.cvss_score >= 7.0 && v.cvss_score < 9.0).length;
+            const medium = vulnerabilitiesData.filter(v => v.cvss_score >= 4.0 && v.cvss_score < 7.0).length;
+            const low = vulnerabilitiesData.filter(v => v.cvss_score > 0 && v.cvss_score < 4.0).length;
+            const none = vulnerabilitiesData.filter(v => !v.cvss_score || v.cvss_score === 0).length;
+            
+            cvssChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Critical (9.0-10.0)', 'High (7.0-8.9)', 'Medium (4.0-6.9)', 'Low (0.1-3.9)', 'None/Unknown'],
+                    datasets: [{
+                        data: [critical, high, medium, low, none],
+                        backgroundColor: [
+                            '#ff0000',
+                            '#ff6b00',
+                            '#ffcc00',
+                            '#00cc00',
+                            '#6c757d'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: 'white',
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Vulnerabilities by CVSS Score',
+                            color: 'white',
+                            font: {
+                                size: 16
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Render vulnerabilities list
+        function renderVulnerabilitiesList() {
+            const tbody = document.getElementById('vulnerabilities-tbody');
+            tbody.innerHTML = '';
+            
+            if (vulnerabilitiesData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No vulnerabilities found.</td></tr>';
+                return;
+            }
+            
+            vulnerabilitiesData.forEach(vulnerability => {
+                const row = document.createElement('tr');
+                
+                // Format date
+                const vulnerabilityDate = new Date(vulnerability.date).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+                
+                // Create CVSS badge if available
+                let cvssBadge = '';
+                if (vulnerability.cvss_score) {
+                    let cvssClass = 'cvss-medium';
+                    if (vulnerability.cvss_score >= 9.0) cvssClass = 'cvss-critical';
+                    else if (vulnerability.cvss_score >= 7.0) cvssClass = 'cvss-high';
+                    else if (vulnerability.cvss_score >= 4.0) cvssClass = 'cvss-medium';
+                    else cvssClass = 'cvss-low';
+                    
+                    cvssBadge = `<span class="cvss-badge ${cvssClass}">${vulnerability.cvss_score}</span>`;
+                } else {
+                    cvssBadge = '<span class="cvss-badge" style="background: #6c757d;">N/A</span>';
+                }
+                
+                // Format tags
+                const tagsHtml = vulnerability.tags && vulnerability.tags.length > 0 
+                    ? vulnerability.tags.map(tag => `<span style="background: rgba(0,255,0,0.2); padding: 2px 6px; border-radius: 10px; font-size: 0.7rem; margin-right: 3px;">${tag}</span>`).join('')
+                    : '-';
+                
+                row.innerHTML = `
+                    <td>${vulnerability.id}</td>
+                    <td>${vulnerability.title}</td>
+                    <td>${cvssBadge}</td>
+                    <td>${vulnerabilityDate}</td>
+                    <td>${tagsHtml}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-view" onclick="viewVulnerability(${vulnerability.id})">View</button>
+                            <button class="btn btn-edit" onclick="editVulnerability(${vulnerability.id})">Edit</button>
+                            <button class="btn btn-delete" onclick="deleteVulnerability(${vulnerability.id})">Delete</button>
+                        </div>
+                    </td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+        
+        // Render subscribers list
+        function renderSubscribersList() {
+            const subscribersList = document.getElementById('subscribers-list');
+            subscribersList.innerHTML = '';
+            
+            if (subscribersData.length === 0) {
+                subscribersList.innerHTML = '<div class="subscriber-item" style="justify-content: center;">No subscribers found.</div>';
+                return;
+            }
+            
+            subscribersData.forEach(email => {
+                const subscriberItem = document.createElement('div');
+                subscriberItem.className = 'subscriber-item';
+                subscriberItem.innerHTML = `
+                    <div class="subscriber-email">${email}</div>
+                    <div class="subscriber-date">Subscribed</div>
+                `;
+                subscribersList.appendChild(subscriberItem);
+            });
+        }
+        
+        // Update email dropdown
+        function updateEmailDropdown() {
+            const dropdown = document.getElementById('email-vulnerability');
+            dropdown.innerHTML = '<option value="">-- Select a vulnerability --</option>';
+            
+            vulnerabilitiesData.forEach(vulnerability => {
+                const option = document.createElement('option');
+                option.value = vulnerability.id;
+                option.textContent = `${vulnerability.id} - ${vulnerability.title}`;
+                dropdown.appendChild(option);
+            });
+            
+            // Add event listener for preview
+            dropdown.addEventListener('change', function() {
+                updateEmailPreview(this.value);
+            });
+        }
+        
+        // Update email preview
+        function updateEmailPreview(vulnerabilityId) {
+            const preview = document.getElementById('email-preview-content');
+            
+            if (!vulnerabilityId) {
+                preview.innerHTML = 'Select a vulnerability to preview the email content.';
+                return;
+            }
+            
+            const vulnerability = vulnerabilitiesData.find(v => v.id == vulnerabilityId);
+            if (!vulnerability) {
+                preview.innerHTML = 'Vulnerability not found.';
+                return;
+            }
+            
+            const customMessage = document.getElementById('email-message').value;
+            const subject = document.getElementById('email-subject').value;
+            
+            preview.innerHTML = `
+                <h4>Subject: ${subject}</h4>
+                <hr>
+                <h3>New Vulnerability Published</h3>
+                <div style="background: #f5f5f5; padding: 15px; border-radius: 5px; color: #333;">
+                    <h4 style="color: #d9534f; margin-top: 0;">${vulnerability.title}</h4>
+                    <p><strong>Date:</strong> ${new Date(vulnerability.date).toLocaleDateString()}</p>
+                    ${vulnerability.cvss_score ? `<p><strong>CVSS Score:</strong> ${vulnerability.cvss_score}</p>` : ''}
+                    ${vulnerability.category ? `<p><strong>Category:</strong> ${vulnerability.category}</p>` : ''}
+                    ${customMessage ? `<p><strong>Message:</strong> ${customMessage}</p>` : ''}
+                    <p>${vulnerability.content.substring(0, 200)}...</p>
+                    <a href="https://adembayazit.com/vulnerabilities#${vulnerability.id}" 
+                       style="background: #00cc00; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 10px;">
+                        Read Full Research
+                    </a>
+                </div>
+                <p style="margin-top: 15px; color: #666; font-size: 12px;">
+                    You received this email because you subscribed to vulnerability notifications from Adem Bayazıt.
+                    <br><a href="https://adembayazit.com/unsubscribe" style="color: #666;">Unsubscribe</a>
+                </p>
+            `;
+        }
+        
+        // View vulnerability details
+        function viewVulnerability(id) {
+            const vulnerability = vulnerabilitiesData.find(v => v.id == id);
+            if (!vulnerability) return;
+            
+            document.getElementById('modal-vulnerability-title').textContent = vulnerability.title;
+            
+            // Format date
+            const vulnerabilityDate = new Date(vulnerability.date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            // Create CVSS badge if available
+            let cvssBadge = '';
+            if (vulnerability.cvss_score) {
+                let cvssClass = 'cvss-medium';
+                if (vulnerability.cvss_score >= 9.0) cvssClass = 'cvss-critical';
+                else if (vulnerability.cvss_score >= 7.0) cvssClass = 'cvss-high';
+                else if (vulnerability.cvss_score >= 4.0) cvssClass = 'cvss-medium';
+                else cvssClass = 'cvss-low';
+                
+                cvssBadge = `<span class="cvss-badge ${cvssClass}">CVSS: ${vulnerability.cvss_score}</span>`;
+            }
+            
+            // Format tags
+            const tagsHtml = vulnerability.tags && vulnerability.tags.length > 0 
+                ? vulnerability.tags.map(tag => `<span style="background: rgba(0,255,0,0.2); padding: 2px 8px; border-radius: 12px; margin: 0 5px; font-size: 0.8em;">${tag}</span>`).join('')
+                : 'No tags';
+            
+            document.getElementById('modal-vulnerability-content').innerHTML = `
+                <div style="margin-bottom: 15px;">
+                    <p><strong>Date:</strong> ${vulnerabilityDate}</p>
+                    <p><strong>Category:</strong> ${vulnerability.category || 'Not specified'}</p>
+                    <p><strong>CVSS Score:</strong> ${cvssBadge || 'Not specified'}</p>
+                    <p><strong>Tags:</strong> ${tagsHtml}</p>
+                </div>
+                <div>
+                    <h4 style="color: var(--primary-color); margin-bottom: 10px;">Content:</h4>
+                    <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 5px; border: 1px solid var(--border-color);">
+                        ${formatResearchContent(vulnerability.content)}
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('vulnerability-modal').style.display = 'flex';
+        }
+        
+        // Edit vulnerability
+        function editVulnerability(id) {
+            const vulnerability = vulnerabilitiesData.find(v => v.id == id);
+            if (!vulnerability) return;
+            
+            // Switch to editor section
+            switchSection('editor');
+            
+            // Set form values
+            document.getElementById('edit-id').value = vulnerability.id;
+            document.getElementById('title').value = vulnerability.title;
+            document.getElementById('category').value = vulnerability.category || '';
+            document.getElementById('cvss_score').value = vulnerability.cvss_score || '';
+            document.getElementById('content').value = vulnerability.content;
+            
+            // Set tags
+            tags = vulnerability.tags || [];
+            renderTags();
+            
+            // Update editor mode
+            document.getElementById('editor-mode').textContent = `Editing: ${vulnerability.title}`;
+            currentEditingId = id;
+        }
+        
+        // Delete vulnerability
+        async function deleteVulnerability(id) {
+            if (!confirm('Are you sure you want to delete this vulnerability?')) return;
+            
+            try {
+                // Remove from local data
+                vulnerabilitiesData = vulnerabilitiesData.filter(v => v.id != id);
+                
+                // Update JSON Bin
+                await fetchViaProxy('', 'PUT', vulnerabilitiesData, CONFIG.VULNERABILITIES_BIN_ID);
+                
+                // Reload data and update UI
+                await loadVulnerabilitiesData();
+                showToast('Vulnerability deleted successfully');
+            } catch (error) {
+                console.error('Error deleting vulnerability:', error);
+                showToast('Error deleting vulnerability', 5000);
+            }
+        }
+        
+        // Format research content with proper HTML rendering
+        function formatResearchContent(content) {
+            if (!content) return '<p>No content available.</p>';
+            
+            // Convert line breaks to paragraphs
+            let formattedContent = content
+                .split('\n')
+                .filter(paragraph => paragraph.trim() !== '')
+                .map(paragraph => {
+                    // Check if it's a code block
+                    if (paragraph.trim().startsWith('```') && paragraph.trim().endsWith('```')) {
+                        const code = paragraph.trim().substring(3, paragraph.length - 3);
+                        return `<pre style="background: rgba(0,0,0,0.5); padding: 10px; border-radius: 5px; overflow-x: auto;"><code>${code}</code></pre>`;
+                    }
+                    
+                    // Check if it's a heading
+                    if (paragraph.startsWith('## ')) {
+                        return `<h4 style="color: var(--primary-color); margin: 15px 0 5px;">${paragraph.substring(3)}</h4>`;
+                    }
+                    
+                    if (paragraph.startsWith('# ')) {
+                        return `<h3 style="color: var(--primary-color); margin: 20px 0 10px;">${paragraph.substring(2)}</h3>`;
+                    }
+                    
+                    // Regular paragraph
+                    return `<p style="margin-bottom: 10px;">${paragraph}</p>`;
+                })
+                .join('');
+            
+            return formattedContent;
+        }
+        
+        // Switch between admin sections
+        function switchSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.admin-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Update active nav item
+            document.querySelectorAll('.admin-nav-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.section === sectionId) {
+                    item.classList.add('active');
+                }
+            });
+        }
+        
+        // Add tag to the current vulnerability
+        function addTag() {
+            const tagInput = document.getElementById('tag-input');
+            const tagValue = tagInput.value.trim();
+            
+            if (tagValue && !tags.includes(tagValue)) {
+                tags.push(tagValue);
+                renderTags();
+                tagInput.value = '';
+            }
+        }
+        
+        // Remove tag from the current vulnerability
+        function removeTag(index) {
+            tags.splice(index, 1);
+            renderTags();
+        }
+        
+        // Render tags
+        function renderTags() {
+            const tagsContainer = document.getElementById('tags-container');
+            tagsContainer.innerHTML = '';
+            
+            tags.forEach((tag, index) => {
+                const tagElement = document.createElement('span');
+                tagElement.className = 'tag';
+                tagElement.innerHTML = `
+                    ${tag}
+                    <span class="tag-remove" onclick="removeTag(${index})">&times;</span>
+                `;
+                tagsContainer.appendChild(tagElement);
+            });
+        }
+        
+        // Reset form
+        function resetForm() {
+            document.getElementById('vulnerability-form').reset();
+            tags = [];
+            renderTags();
+            currentEditingId = null;
+            document.getElementById('editor-mode').textContent = 'Add New Vulnerability';
+        }
+        
+        // Save vulnerability
+        async function saveVulnerability(event) {
+            event.preventDefault();
+            
+            const title = document.getElementById('title').value.trim();
+            const category = document.getElementById('category').value.trim();
+            const cvssScore = document.getElementById('cvss_score').value;
+            const content = document.getElementById('content').value.trim();
+            const editId = document.getElementById('edit-id').value;
+            
+            if (!title || !content) {
+                showToast('Title and content are required', 5000);
+                return;
+            }
+            
+            try {
+                let vulnerability;
+                
+                if (editId) {
+                    // Editing existing vulnerability
+                    vulnerability = vulnerabilitiesData.find(v => v.id == editId);
+                    if (!vulnerability) throw new Error('Vulnerability not found');
+                    
+                    vulnerability.title = title;
+                    vulnerability.category = category || null;
+                    vulnerability.cvss_score = cvssScore ? parseFloat(cvssScore) : null;
+                    vulnerability.content = content;
+                    vulnerability.tags = tags;
+                    vulnerability.date = new Date().toISOString(); // Update date
+                } else {
+                    // Adding new vulnerability
+                    const newId = vulnerabilitiesData.length > 0 
+                        ? Math.max(...vulnerabilitiesData.map(v => v.id)) + 1 
+                        : 1;
+                    
+                    vulnerability = {
+                        id: newId,
+                        title: title,
+                        category: category || null,
+                        cvss_score: cvssScore ? parseFloat(cvssScore) : null,
+                        content: content,
+                        tags: tags,
+                        date: new Date().toISOString(),
+                        author: 'Adem Bayazıt'
+                    };
+                    
+                    vulnerabilitiesData.unshift(vulnerability); // Add to beginning
+                }
+                
+                // Update JSON Bin
+                await fetchViaProxy('', 'PUT', vulnerabilitiesData, CONFIG.VULNERABILITIES_BIN_ID);
+                
+                // Reload data and update UI
+                await loadVulnerabilitiesData();
+                resetForm();
+                
+                showToast(`Vulnerability ${editId ? 'updated' : 'added'} successfully`);
+                
+                // Switch to vulnerabilities list
+                switchSection('vulnerabilities');
+            } catch (error) {
+                console.error('Error saving vulnerability:', error);
+                showToast('Error saving vulnerability', 5000);
+            }
+        }
+        
+        // Send email to subscribers
+        async function sendEmail() {
+            const vulnerabilityId = document.getElementById('email-vulnerability').value;
+            const subject = document.getElementById('email-subject').value.trim();
+            const customMessage = document.getElementById('email-message').value.trim();
+            
+            if (!vulnerabilityId) {
+                showToast('Please select a vulnerability to announce', 5000);
+                return;
+            }
+            
+            if (!subject) {
+                showToast('Email subject is required', 5000);
+                return;
+            }
+            
+            const vulnerability = vulnerabilitiesData.find(v => v.id == vulnerabilityId);
+            if (!vulnerability) {
+                showToast('Vulnerability not found', 5000);
+                return;
+            }
+            
+            if (subscribersData.length === 0) {
+                showToast('No subscribers to send email to', 5000);
+                return;
+            }
+            
+            const sendBtn = document.getElementById('send-email-btn');
+            sendBtn.disabled = true;
+            sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            
+            try {
+                // Prepare email data
+                const emailData = {
+                    Messages: [
+                        {
+                            From: {
+                                Email: CONFIG.MAILJET_CONFIG.senderEmail,
+                                Name: CONFIG.MAILJET_CONFIG.senderName
+                            },
+                            To: subscribersData.map(email => ({ Email: email })),
+                            Subject: subject,
+                            HTMLPart: `
+                                <h2>New Vulnerability Published</h2>
+                                <div style="background: #f5f5f5; padding: 20px; border-radius: 10px; color: #333;">
+                                    <h3 style="color: #d9534f;">${vulnerability.title}</h3>
+                                    <p><strong>Date:</strong> ${new Date(vulnerability.date).toLocaleDateString()}</p>
+                                    ${vulnerability.cvss_score ? `<p><strong>CVSS Score:</strong> ${vulnerability.cvss_score}</p>` : ''}
+                                    ${vulnerability.category ? `<p><strong>Category:</strong> ${vulnerability.category}</p>` : ''}
+                                    ${customMessage ? `<p><strong>Message:</strong> ${customMessage}</p>` : ''}
+                                    <p>${vulnerability.content.substring(0, 200)}...</p>
+                                    <a href="https://adembayazit.com/vulnerabilities#${vulnerability.id}" 
+                                       style="background: #00cc00; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 15px;">
+                                        Read Full Research
+                                    </a>
+                                </div>
+                                <p style="margin-top: 20px; color: #666; font-size: 12px;">
+                                    You received this email because you subscribed to vulnerability notifications from Adem Bayazıt.
+                                    <br><a href="https://adembayazit.com/unsubscribe" style="color: #666;">Unsubscribe</a>
+                                </p>
+                            `
+                        }
+                    ]
+                };
+                
+                // Send email via Netlify function
+                const response = await fetch('/.netlify/functions/send-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        emailData: emailData,
+                        apiKey: CONFIG.MAILJET_CONFIG.apiKey,
+                        secretKey: CONFIG.MAILJET_CONFIG.secretKey
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to send email notification');
+                }
+                
+                showToast(`Email sent successfully to ${subscribersData.length} subscribers`);
+            } catch (error) {
+                console.error('Error sending email:', error);
+                showToast('Error sending email notification', 5000);
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Email to All Subscribers';
+            }
+        }
+        
+        // Initialize the admin panel
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load data
+            loadVulnerabilitiesData();
+            loadSubscribersData();
+            
+            // Navigation event listeners
+            document.querySelectorAll('.admin-nav-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    switchSection(this.dataset.section);
+                });
+            });
+            
+            // Add vulnerability button
+            document.getElementById('add-vulnerability-btn').addEventListener('click', function() {
+                switchSection('editor');
+                resetForm();
+            });
+            
+            // Tag functionality
+            document.getElementById('add-tag-btn').addEventListener('click', addTag);
+            document.getElementById('tag-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addTag();
+                }
+            });
+            
+            // Form functionality
+            document.getElementById('vulnerability-form').addEventListener('submit', saveVulnerability);
+            document.getElementById('reset-form-btn').addEventListener('click', resetForm);
+            
+            // Email functionality
+            document.getElementById('send-email-btn').addEventListener('click', sendEmail);
+            document.getElementById('email-message').addEventListener('input', function() {
+                const vulnerabilityId = document.getElementById('email-vulnerability').value;
+                if (vulnerabilityId) {
+                    updateEmailPreview(vulnerabilityId);
+                }
+            });
+            
+            // Modal functionality
+            document.getElementById('modal-close').addEventListener('click', function() {
+                document.getElementById('vulnerability-modal').style.display = 'none';
+            });
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', function(event) {
+                const modal = document.getElementById('vulnerability-modal');
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
