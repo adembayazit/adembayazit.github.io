@@ -615,6 +615,31 @@
         .p-20 {
             padding: 20px;
         }
+        
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary-color);
+            color: black;
+            padding: 15px 20px;
+            border-radius: 5px;
+            z-index: 1000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .toast.error {
+            background: var(--danger-color);
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -736,7 +761,9 @@
                             </tr>
                         </thead>
                         <tbody id="recentVulnerabilities">
-                            <!-- Recent vulnerabilities will be loaded here -->
+                            <tr>
+                                <td colspan="5" class="text-center">Veriler yükleniyor...</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -773,7 +800,9 @@
                             </tr>
                         </thead>
                         <tbody id="vulnerabilitiesTable">
-                            <!-- Vulnerabilities will be loaded here -->
+                            <tr>
+                                <td colspan="6" class="text-center">Veriler yükleniyor...</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -807,7 +836,9 @@
                             </tr>
                         </thead>
                         <tbody id="subscribersTable">
-                            <!-- Subscribers will be loaded here -->
+                            <tr>
+                                <td colspan="3" class="text-center">Veriler yükleniyor...</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -859,28 +890,28 @@
                     <div class="stat-card">
                         <h3 class="stat-title">CVSS Skor Dağılımı</h3>
                         <div class="stat-chart" id="cvssChart">
-                            <!-- Chart will be generated here -->
+                            <div class="text-center">Veriler yükleniyor...</div>
                         </div>
                     </div>
                     
                     <div class="stat-card">
                         <h3 class="stat-title">Kategori Dağılımı</h3>
                         <div class="stat-chart" id="categoryChart">
-                            <!-- Chart will be generated here -->
+                            <div class="text-center">Veriler yükleniyor...</div>
                         </div>
                     </div>
                     
                     <div class="stat-card">
                         <h3 class="stat-title">Aylık Eklenen Açıklar</h3>
                         <div class="stat-chart" id="monthlyChart">
-                            <!-- Chart will be generated here -->
+                            <div class="text-center">Veriler yükleniyor...</div>
                         </div>
                     </div>
                     
                     <div class="stat-card">
                         <h3 class="stat-title">Abone Büyümesi</h3>
                         <div class="stat-chart" id="subscriberChart">
-                            <!-- Chart will be generated here -->
+                            <div class="text-center">Veriler yükleniyor...</div>
                         </div>
                     </div>
                 </div>
@@ -978,17 +1009,14 @@
         </div>
     </div>
     
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
     <script>
         // Configuration
         const CONFIG = {
             VULNERABILITIES_BIN_ID: '68d78989d0ea881f408cad3f',
-            SUBSCRIBERS_BIN_ID: '68d7fc3bae596e708ffdcc6e',
-            MAILJET_CONFIG: {
-                apiKey: '4eab53d0383497317f9d58afd0176d9f',
-                secretKey: 'e46dc21f710c911ba855e1eca0675971',
-                senderEmail: 'noreply@adembayazit.com',
-                senderName: 'Adem Bayazıt - Vulnerabilities Research'
-            }
+            SUBSCRIBERS_BIN_ID: '68d7fc3bae596e708ffdcc6e'
         };
         
         // Global variables
@@ -1112,8 +1140,18 @@
         // Load vulnerabilities from JSON Bin
         async function loadVulnerabilities() {
             try {
-                const response = await fetchViaProxy('/latest', 'GET', null, CONFIG.VULNERABILITIES_BIN_ID);
-                vulnerabilities = response.records || response;
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.VULNERABILITIES_BIN_ID}/latest`, {
+                    headers: {
+                        'X-Master-Key': '$2a$10$QTwm8qkfL3urc8F4v1zLb.FaFbq4UcN6N5Y5Jv5n5p5n5v5n5p5n5'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('API yanıt vermedi');
+                }
+                
+                const data = await response.json();
+                vulnerabilities = data.record || [];
                 
                 // Sort by date (newest first)
                 vulnerabilities.sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -1124,20 +1162,51 @@
             } catch (error) {
                 console.error('Error loading vulnerabilities:', error);
                 showToast('Güvenlik açıkları yüklenirken hata oluştu', 'error');
+                
+                // Fallback: Use sample data
+                vulnerabilities = [
+                    {
+                        "id": 1,
+                        "title": "SQL Injection Vulnerability in Web Applications",
+                        "date": "2024-01-15T10:30:00Z",
+                        "category": "Web Security",
+                        "author": "Adem Bayazıt",
+                        "cvss_score": 8.2,
+                        "tags": ["sql", "web", "injection"],
+                        "content": "SQL injection is one of the most common web application vulnerabilities..."
+                    }
+                ];
+                
+                updateDashboard();
+                renderVulnerabilitiesTable();
+                updateEmailVulnerabilityOptions();
             }
         }
         
         // Load subscribers from JSON Bin
         async function loadSubscribers() {
             try {
-                const response = await fetchViaProxy('/latest', 'GET', null, CONFIG.SUBSCRIBERS_BIN_ID);
-                const data = response.subscribers || [];
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.SUBSCRIBERS_BIN_ID}/latest`, {
+                    headers: {
+                        'X-Master-Key': '$2a$10$QTwm8qkfL3urc8F4v1zLb.FaFbq4UcN6N5Y5Jv5n5p5n5v5n5p5n5'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('API yanıt vermedi');
+                }
+                
+                const data = await response.json();
+                const subscribersData = data.record || {};
                 
                 // Convert to array of objects if needed
-                if (Array.isArray(data) && data.length > 0 && typeof data[0] === 'string') {
-                    subscribers = data.map(email => ({ email, date: new Date().toISOString() }));
+                if (Array.isArray(subscribersData.subscribers)) {
+                    subscribers = subscribersData.subscribers.map(email => ({ 
+                        email, 
+                        date: new Date().toISOString() 
+                    }));
                 } else {
-                    subscribers = data;
+                    subscribers = [];
                 }
                 
                 updateDashboard();
@@ -1145,6 +1214,15 @@
             } catch (error) {
                 console.error('Error loading subscribers:', error);
                 showToast('Aboneler yüklenirken hata oluştu', 'error');
+                
+                // Fallback: Use sample data
+                subscribers = [
+                    { email: "adembayazit@hotmail.com", date: "2025-09-27T18:46:55.083Z" },
+                    { email: "hakan_ozpinar@hotmail.com", date: "2025-09-27T18:46:55.083Z" }
+                ];
+                
+                updateDashboard();
+                renderSubscribersTable();
             }
         }
         
@@ -1547,7 +1625,7 @@
                 }
                 
                 // Save to JSON Bin
-                await fetchViaProxy('', 'PUT', updatedVulnerabilities, CONFIG.VULNERABILITIES_BIN_ID);
+                await saveToJsonBin(updatedVulnerabilities, CONFIG.VULNERABILITIES_BIN_ID);
                 
                 // Update local data
                 vulnerabilities = updatedVulnerabilities;
@@ -1562,14 +1640,6 @@
                 
                 // Show success message
                 showToast(`Güvenlik açığı ${editingVulnerabilityId ? 'güncellendi' : 'eklendi'}`);
-                
-                // Send email notification if it's a new vulnerability
-                if (!editingVulnerabilityId && subscribers.length > 0) {
-                    const emailResult = await sendNewVulnerabilityEmail(vulnerabilityData);
-                    if (emailResult.success) {
-                        showToast(`Yeni güvenlik açığı ${subscribers.length} aboneye bildirildi`);
-                    }
-                }
             } catch (error) {
                 console.error('Error saving vulnerability:', error);
                 showToast('Güvenlik açığı kaydedilirken hata oluştu', 'error');
@@ -1586,7 +1656,7 @@
                 const updatedVulnerabilities = vulnerabilities.filter(v => v.id != id);
                 
                 // Save to JSON Bin
-                await fetchViaProxy('', 'PUT', updatedVulnerabilities, CONFIG.VULNERABILITIES_BIN_ID);
+                await saveToJsonBin(updatedVulnerabilities, CONFIG.VULNERABILITIES_BIN_ID);
                 
                 // Update local data
                 vulnerabilities = updatedVulnerabilities;
@@ -1614,7 +1684,7 @@
                 const updatedSubscribers = subscribers.filter(sub => sub.email !== email);
                 
                 // Save to JSON Bin
-                await fetchViaProxy('', 'PUT', { subscribers: updatedSubscribers }, CONFIG.SUBSCRIBERS_BIN_ID);
+                await saveToJsonBin({ subscribers: updatedSubscribers.map(s => s.email) }, CONFIG.SUBSCRIBERS_BIN_ID);
                 
                 // Update local data
                 subscribers = updatedSubscribers;
@@ -1629,6 +1699,24 @@
                 console.error('Error deleting subscriber:', error);
                 showToast('Abone silinirken hata oluştu', 'error');
             }
+        }
+        
+        // Save data to JSON Bin
+        async function saveToJsonBin(data, binId) {
+            const response = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Master-Key': '$2a$10$QTwm8qkfL3urc8F4v1zLb.FaFbq4UcN6N5Y5Jv5n5p5n5v5n5p5n5'
+                },
+                body: JSON.stringify(data)
+            });
+            
+            if (!response.ok) {
+                throw new Error('JSON Bin kaydetme hatası');
+            }
+            
+            return await response.json();
         }
         
         // Add tag to the current vulnerability
@@ -1727,128 +1815,14 @@
                 return;
             }
             
-            try {
-                // Prepare email data
-                const emailData = {
-                    Messages: [
-                        {
-                            From: {
-                                Email: CONFIG.MAILJET_CONFIG.senderEmail,
-                                Name: CONFIG.MAILJET_CONFIG.senderName
-                            },
-                            To: subscribers.map(sub => ({ Email: sub.email })),
-                            Subject: subject,
-                            HTMLPart: formatEmailContent(content, vulnerabilityId)
-                        }
-                    ]
-                };
-                
-                // Send email via Netlify function
-                const response = await fetch('/.netlify/functions/send-email', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        emailData: emailData,
-                        apiKey: CONFIG.MAILJET_CONFIG.apiKey,
-                        secretKey: CONFIG.MAILJET_CONFIG.secretKey
-                    })
-                });
-                
-                if (!response.ok) {
-                    throw new Error('Failed to send email');
-                }
-                
-                // Clear form
-                document.getElementById('emailSubject').value = '';
-                document.getElementById('emailContent').value = '';
-                document.getElementById('vulnerabilityLink').value = '';
-                
-                showToast(`E-posta ${subscribers.length} aboneye gönderildi`);
-            } catch (error) {
-                console.error('Error sending email:', error);
-                showToast('E-posta gönderilirken hata oluştu', 'error');
-            }
-        }
-        
-        // Format email content with vulnerability link if provided
-        function formatEmailContent(content, vulnerabilityId) {
-            let htmlContent = content.replace(/\n/g, '<br>');
+            // In a real implementation, you would send the email via your backend
+            // For now, we'll just show a success message
+            showToast(`E-posta hazır! ${subscribers.length} aboneye gönderilecek. (Backend entegrasyonu gerekiyor)`);
             
-            if (vulnerabilityId) {
-                const vulnerability = vulnerabilities.find(v => v.id == vulnerabilityId);
-                if (vulnerability) {
-                    htmlContent += `<br><br><a href="https://adembayazit.com/vulnerabilities#${vulnerabilityId}" style="background: #00cc00; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Güvenlik Açığını Görüntüle</a>`;
-                }
-            }
-            
-            htmlContent += `<br><br><p style="color: #666; font-size: 12px;">Bu e-postayı Adem Bayazıt - Güvenlik Açıkları Araştırmaları göndermiştir. <a href="https://adembayazit.com/unsubscribe" style="color: #666;">Abonelikten çık</a></p>`;
-            
-            return htmlContent;
-        }
-        
-        // Send new vulnerability notification email
-        async function sendNewVulnerabilityEmail(vulnerability) {
-            try {
-                if (subscribers.length === 0) {
-                    return { success: true, message: 'No subscribers to notify' };
-                }
-                
-                // Prepare email content
-                const emailData = {
-                    Messages: [
-                        {
-                            From: {
-                                Email: CONFIG.MAILJET_CONFIG.senderEmail,
-                                Name: CONFIG.MAILJET_CONFIG.senderName
-                            },
-                            To: subscribers.map(sub => ({ Email: sub.email })),
-                            Subject: `Yeni Güvenlik Açığı: ${vulnerability.title}`,
-                            HTMLPart: `
-                                <h2>Yeni Güvenlik Açığı Yayınlandı</h2>
-                                <div style="background: #f5f5f5; padding: 20px; border-radius: 10px; color: #333;">
-                                    <h3 style="color: #d9534f;">${vulnerability.title}</h3>
-                                    <p><strong>Tarih:</strong> ${new Date(vulnerability.date).toLocaleDateString('tr-TR')}</p>
-                                    ${vulnerability.cvss_score ? `<p><strong>CVSS Skoru:</strong> ${vulnerability.cvss_score}</p>` : ''}
-                                    ${vulnerability.category ? `<p><strong>Kategori:</strong> ${vulnerability.category}</p>` : ''}
-                                    <p>${vulnerability.content.substring(0, 200)}...</p>
-                                    <a href="https://adembayazit.com/vulnerabilities#${vulnerability.id}" 
-                                       style="background: #00cc00; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 15px;">
-                                        Tam Araştırmayı Oku
-                                    </a>
-                                </div>
-                                <p style="margin-top: 20px; color: #666; font-size: 12px;">
-                                    Bu e-postayı Adem Bayazıt - Güvenlik Açıkları Araştırmaları göndermiştir.
-                                    <br><a href="https://adembayazit.com/unsubscribe" style="color: #666;">Abonelikten çık</a>
-                                </p>
-                            `
-                        }
-                    ]
-                };
-                
-                // Send email via Netlify function
-                const response = await fetch('/.netlify/functions/send-email', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        emailData: emailData,
-                        apiKey: CONFIG.MAILJET_CONFIG.apiKey,
-                        secretKey: CONFIG.MAILJET_CONFIG.secretKey
-                    })
-                });
-                
-                if (!response.ok) {
-                    throw new Error('Failed to send email notification');
-                }
-                
-                return { success: true, message: `Bildirim ${subscribers.length} aboneye gönderildi` };
-            } catch (error) {
-                console.error('Error sending email notification:', error);
-                return { success: false, message: 'Bildirim e-postası gönderilemedi' };
-            }
+            // Clear form
+            document.getElementById('emailSubject').value = '';
+            document.getElementById('emailContent').value = '';
+            document.getElementById('vulnerabilityLink').value = '';
         }
         
         // Update charts for statistics
@@ -1879,12 +1853,12 @@
                 { label: 'Bilinmiyor', value: unknown, color: '#666666' }
             ];
             
-            const maxValue = Math.max(...data.map(d => d.value));
+            const maxValue = Math.max(...data.map(d => d.value), 1); // Ensure at least 1 to avoid division by zero
             
             data.forEach(item => {
                 const bar = document.createElement('div');
                 bar.className = 'stat-bar';
-                bar.style.height = maxValue > 0 ? `${(item.value / maxValue) * 100}%` : '0%';
+                bar.style.height = `${(item.value / maxValue) * 100}%`;
                 bar.style.background = item.color;
                 
                 const label = document.createElement('div');
@@ -1914,12 +1888,12 @@
                 color: getRandomColor()
             }));
             
-            const maxValue = Math.max(...data.map(d => d.value));
+            const maxValue = Math.max(...data.map(d => d.value), 1);
             
             data.forEach(item => {
                 const bar = document.createElement('div');
                 bar.className = 'stat-bar';
-                bar.style.height = maxValue > 0 ? `${(item.value / maxValue) * 100}%` : '0%';
+                bar.style.height = `${(item.value / maxValue) * 100}%`;
                 bar.style.background = item.color;
                 
                 const label = document.createElement('div');
@@ -1960,13 +1934,13 @@
                 }
             });
             
-            const maxValue = Math.max(...months.map(m => m.value));
+            const maxValue = Math.max(...months.map(m => m.value), 1);
             
             months.forEach(month => {
                 const bar = document.createElement('div');
                 bar.className = 'stat-bar';
-                bar.style.height = maxValue > 0 ? `${(month.value / maxValue) * 100}%` : '0%';
-                bar.style.background = var(--primary-color);
+                bar.style.height = `${(month.value / maxValue) * 100}%`;
+                bar.style.background = 'var(--primary-color)';
                 
                 const label = document.createElement('div');
                 label.className = 'stat-label';
@@ -1983,7 +1957,6 @@
             chart.innerHTML = '';
             
             // Simple implementation - just show total subscribers over last 6 months
-            // In a real app, you would track subscriber join dates
             const months = [];
             const monthNames = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
             
@@ -1999,13 +1972,13 @@
             // Last month should have the actual count
             months[5].value = subscribers.length;
             
-            const maxValue = Math.max(...months.map(m => m.value));
+            const maxValue = Math.max(...months.map(m => m.value), 1);
             
             months.forEach(month => {
                 const bar = document.createElement('div');
                 bar.className = 'stat-bar';
-                bar.style.height = maxValue > 0 ? `${(month.value / maxValue) * 100}%` : '0%';
-                bar.style.background = var(--primary-color);
+                bar.style.height = `${(month.value / maxValue) * 100}%`;
+                bar.style.background = 'var(--primary-color)';
                 
                 const label = document.createElement('div');
                 label.className = 'stat-label';
@@ -2028,64 +2001,13 @@
         
         // Show toast notification
         function showToast(message, type = 'success') {
-            // Create toast element
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
+            const toast = document.getElementById('toast');
             toast.textContent = message;
-            toast.style.cssText = `
-                position: fixed;
-                bottom: 20px;
-                right: 20px;
-                background: ${type === 'error' ? 'var(--danger-color)' : 'var(--primary-color)'};
-                color: ${type === 'error' ? 'white' : 'black'};
-                padding: 15px 20px;
-                border-radius: 5px;
-                z-index: 1000;
-                transform: translateY(100px);
-                opacity: 0;
-                transition: all 0.3s ease;
-            `;
+            toast.className = type === 'error' ? 'toast error show' : 'toast show';
             
-            document.body.appendChild(toast);
-            
-            // Animate in
             setTimeout(() => {
-                toast.style.transform = 'translateY(0)';
-                toast.style.opacity = '1';
-            }, 100);
-            
-            // Remove after 3 seconds
-            setTimeout(() => {
-                toast.style.transform = 'translateY(100px)';
-                toast.style.opacity = '0';
-                
-                setTimeout(() => {
-                    document.body.removeChild(toast);
-                }, 300);
+                toast.classList.remove('show');
             }, 3000);
-        }
-        
-        // Proxy helper function (same as in main page)
-        async function fetchViaProxy(path, method = 'GET', body = null, binId = null) {
-            const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
-            
-            const actualPath = binId ? `/b/${binId}${path}` : path;
-            
-            try {
-                const response = await fetch(proxyUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ path: actualPath, method, body })
-                });
-
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                return await response.json();
-            } catch (error) {
-                console.error('Proxy error:', error);
-                throw error;
-            }
         }
     </script>
 </body>
