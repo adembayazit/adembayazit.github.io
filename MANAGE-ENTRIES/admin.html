@@ -2,17 +2,33 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Paneli - adembayazit.com</title>
+    <title>LadyBug Admin Panel - adembayazit.com</title>
+    <meta property="og:title" content="LadyBug Admin Panel - Adem Bayazıt" />
+    <meta property="og:description" content="LadyBug Admin Panel for content management" />
+    <meta property="og:image" content="../IMAGES/preview.png" />
+    <meta property="og:url" content="https://adembayazit.com/admin" />
+    <meta property="og:type" content="website" />
+
+    <link rel="icon" type="png|image" href="../IMAGES/ab.png">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Cropper.js CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     <style>
         :root {
-            --primary-color: limegreen;
-            --secondary-color: #001e00;
-            --text-color: limegreen;
-            --bg-color: #000;
+            --primary-color: #00ff00;
+            --primary-dark: #00cc00;
+            --primary-light: #33ff33;
+            --bg-color: #0a1916;
+            --card-bg: rgba(10, 25, 20, 0.7);
+            --text-color: #ffffff;
+            --text-muted: #cccccc;
+            --border-color: #00aa00;
+            --highlight-color: #99ff99;
+            --sidebar-width: 320px;
+            --admin-sidebar-width: 250px;
             --error-color: #ff3333;
             --success-color: #00ff00;
             --warning-color: #ffcc00;
@@ -20,89 +36,247 @@
             --youtube-color: #FF0000;
         }
         
-        body {
-            background: var(--bg-color);
-            color: var(--text-color);
-            font-family: 'Courier New', monospace;
+        * {
             margin: 0;
             padding: 0;
-            overflow-x: hidden;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
         }
         
-        .admin-header {
-            background: rgba(0, 30, 0, 0.9);
-            border-bottom: 1px solid var(--primary-color);
-            padding: 1rem;
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Logo ve slogan için stil */
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        
+        .logo-slogan {
+            font-size: 10px;
+            color: white;
+            margin-top: 2px;
+            font-style: italic;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            text-align: right;
+            width: 100%;
+            padding-right: 5px;
+        }
+        
+        /* Navbar için responsive ayarlar */
+        .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 10px 5%;
+            background: rgba(0, 30, 0, 0.9);
+            border-bottom: 1px solid var(--primary-color);
             box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
         }
         
-        .logo {
+        .content-wrapper {
+            margin-top: 120px;
+            position: relative;
+            z-index: 2;
+            padding: 0 20px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .backto {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .back-to-home {
+            display: inline-block;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            padding: 10px 20px;
+        }
+        
+        .back-to-home:hover {
+            text-decoration: underline;
+            color: var(--highlight-color);
+            background: rgba(0, 255, 0, 0.1);
+        }
+        
+        .page-title {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 1.7rem;
+            color: white;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+            position: relative;
+            filter: drop-shadow(0 0 5px limegreen);
+        }
+        
+        .page-title::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 3px;
+        }
+        
+        /* Admin Panel Styles */
+        .admin-container {
+            display: flex;
+            min-height: 800px;
+            gap: 20px;
+        }
+        
+        .admin-sidebar {
+            width: var(--admin-sidebar-width);
+            flex-shrink: 0;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px;
+            height: fit-content;
+            position: sticky;
+            top: 140px;
+        }
+        
+        .admin-sidebar h3 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 0.9rem;
         }
         
-        .logo img {
-            height: 30px;
-            filter: drop-shadow(0 0 5px var(--primary-color));
+        .admin-nav {
+            list-style: none;
         }
         
-        .logo h2 {
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 1rem;
-        }
-        
-        .bug-icon {
-            color: red;
-            animation: bugPulse 1.5s infinite;
-        }
-        
-        .logout-btn {
-            background: var(--primary-color);
-            color: black;
-            border: none;
-            padding: 6px 10px;
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            border-radius: 3px;
-            transition: all 0.3s;
-            font-size: 0.8rem;
-        }
-        
-        .logout-btn:hover {
-            box-shadow: 0 0 10px var(--primary-color);
-            transform: translateY(-2px);
-        }
-        
-        .admin-container {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            padding: 1rem;
-        }
-        
-        .editor-container, .stats-container, .entries-container {
-            background: rgba(0, 30, 0, 0.7);
-            border: 1px solid var(--primary-color);
+        .admin-nav-item {
+            padding: 12px 15px;
+            margin-bottom: 5px;
             border-radius: 5px;
-            padding: 1rem;
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .admin-nav-item:hover {
+            background: rgba(0, 255, 0, 0.1);
+        }
+        
+        .admin-nav-item.active {
+            background: rgba(0, 255, 0, 0.2);
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        .admin-content {
+            flex: 1;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 30px;
+            min-height: 800px;
+        }
+        
+        .admin-section {
+            display: none;
+        }
+        
+        .admin-section.active {
+            display: block;
+        }
+        
+        .section-title {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .section-title h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Statistics Section */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
             position: relative;
             overflow: hidden;
         }
         
-        .editor-container::after, .stats-container::after, .entries-container::after {
+        .stat-card::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+            animation: scanline 3s linear infinite;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        
+        /* Editor Styles */
+        .editor-container {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .editor-container::after {
             content: "";
             position: absolute;
             top: 0;
@@ -126,8 +300,8 @@
         
         input[type="number"], textarea, input[type="text"] {
             width: 100%;
-            padding: 8px;
-            background: #111;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
             border: 1px solid var(--primary-color);
             color: var(--text-color);
             font-family: 'Courier New', monospace;
@@ -148,14 +322,17 @@
         }
         
         .editor-toolbar button {
-            background: #111;
+            background: rgba(0, 0, 0, 0.5);
             border: 1px solid var(--primary-color);
             color: var(--text-color);
-            padding: 4px 8px;
+            padding: 6px 10px;
             cursor: pointer;
             border-radius: 3px;
             font-size: 0.8rem;
             transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
         
         .editor-toolbar button:hover {
@@ -164,7 +341,7 @@
         }
         
         .editor-toolbar .spotify-btn {
-            background: #111;
+            background: rgba(0, 0, 0, 0.5);
             border: 1px solid var(--spotify-color);
             color: var(--spotify-color);
         }
@@ -175,7 +352,7 @@
         }
         
         .editor-toolbar .youtube-btn {
-            background: #111;
+            background: rgba(0, 0, 0, 0.5);
             border: 1px solid var(--youtube-color);
             color: var(--youtube-color);
         }
@@ -189,7 +366,7 @@
             background: var(--primary-color);
             color: black;
             border: none;
-            padding: 8px 15px;
+            padding: 10px 20px;
             font-family: 'Courier New', monospace;
             font-weight: bold;
             cursor: pointer;
@@ -201,6 +378,7 @@
             width: 100%;
             justify-content: center;
             font-size: 0.9rem;
+            margin-top: 10px;
         }
         
         .submit-btn:hover {
@@ -208,79 +386,46 @@
             transform: translateY(-2px);
         }
         
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .stat-box {
-            background: rgba(0, 30, 0, 0.5);
-            border: 1px solid var(--primary-color);
-            padding: 0.5rem;
-            text-align: center;
+        .preview-container {
+            margin-top: 5px;
+            padding: 10px;
+            background: rgba(0, 30, 0, 0.3);
+            border: 1px dashed var(--primary-color);
             border-radius: 3px;
             font-size: 0.8rem;
         }
         
-        .stat-box i {
-            font-size: 1rem;
-            margin-bottom: 0.3rem;
-            color: var(--primary-color);
-        }
-        
-        .stat-box span {
-            display: block;
-            font-size: 1rem;
+        .preview-title {
             font-weight: bold;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
         }
         
-        #response-message {
-            padding: 8px;
-            margin-top: 10px;
-            border-radius: 3px;
-            text-align: center;
-            display: none;
-            font-size: 0.9rem;
+        .char-count {
+            font-size: 0.7rem;
+            color: #aaa;
         }
         
-        .success {
-            background: rgba(0, 255, 0, 0.1);
-            border: 1px solid var(--success-color);
-            color: var(--success-color);
-        }
-        
-        .error {
-            background: rgba(255, 0, 0, 0.1);
-            border: 1px solid var(--error-color);
-            color: var(--error-color);
-        }
-        
-        .warning {
-            background: rgba(255, 204, 0, 0.1);
-            border: 1px solid var(--warning-color);
-            color: var(--warning-color);
-        }
-        
+        /* Entries List Styles */
         .entries-list {
-            max-height: 400px;
+            max-height: 500px;
             overflow-y: auto;
-            margin-top: 0.5rem;
+            margin-top: 20px;
         }
         
         .entry-item {
-            background: rgba(0, 30, 0, 0.5);
-            border: 1px solid var(--primary-color);
-            padding: 0.8rem;
-            margin-bottom: 0.8rem;
-            border-radius: 3px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
             position: relative;
             font-size: 0.9rem;
         }
         
         .entry-item:hover {
-            background: rgba(0, 60, 0, 0.5);
+            background: rgba(0, 255, 0, 0.05);
         }
         
         .entry-content {
@@ -309,22 +454,22 @@
         
         .entry-actions {
             position: absolute;
-            top: 3px;
-            right: 3px;
+            top: 10px;
+            right: 10px;
             display: none;
         }
         
         .entry-item:hover .entry-actions {
             display: flex;
-            gap: 3px;
+            gap: 5px;
         }
         
         .entry-actions button {
             background: rgba(0, 0, 0, 0.7);
             border: 1px solid var(--primary-color);
             color: var(--text-color);
-            width: 20px;
-            height: 20px;
+            width: 30px;
+            height: 30px;
             border-radius: 3px;
             cursor: pointer;
             font-size: 0.7rem;
@@ -348,10 +493,6 @@
             font-size: 0.9rem;
         }
         
-        .edit-form textarea {
-            min-height: 80px;
-        }
-        
         .edit-actions {
             display: flex;
             gap: 8px;
@@ -360,12 +501,15 @@
         
         .edit-actions button {
             flex: 1;
-            padding: 4px;
+            padding: 6px;
             font-size: 0.8rem;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 3px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
         }
         
         .save-btn {
@@ -383,34 +527,14 @@
             color: white;
         }
         
-        .preview-container {
-            margin-top: 5px;
-            padding: 8px;
-            background: rgba(0, 30, 0, 0.3);
-            border: 1px dashed var(--primary-color);
-            border-radius: 3px;
-            font-size: 0.8rem;
-        }
-        
-        .preview-title {
-            font-weight: bold;
-            margin-bottom: 5px;
-            display: flex;
-            justify-content: space-between;
-        }
-        
-        .char-count {
-            font-size: 0.7rem;
-            color: #aaa;
-        }
-        
+        /* Search Styles */
         .search-container {
             margin-bottom: 1rem;
         }
         
         .search-input {
             display: flex;
-            gap: 5px;
+            gap: 10px;
         }
         
         .search-input input {
@@ -421,92 +545,21 @@
             background: var(--primary-color);
             color: black;
             border: none;
-            padding: 0 10px;
+            padding: 0 15px;
             cursor: pointer;
             border-radius: 3px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
         
-        #trContent-preview, #enContent-preview,
-        [id$="-preview"] {
-            font-family: 'Courier New', monospace;
-            line-height: 1.5;
-            overflow: hidden;
-        }
-        
-        #trContent-preview strong, #enContent-preview strong,
-        [id$="-preview"] strong {
-            color: var(--primary-color);
-            font-weight: bold;
-        }
-        
-        #trContent-preview em, #enContent-preview em,
-        [id$="-preview"] em {
-            font-style: italic;
-        }
-        
-        #trContent-preview u, #enContent-preview u,
-        [id$="-preview"] u {
-            text-decoration: underline;
-        }
-        
-        #trContent-preview blockquote, #enContent-preview blockquote,
-        [id$="-preview"] blockquote {
-            border-left: 3px solid var(--primary-color);
-            padding-left: 10px;
-            margin: 5px 0;
-            color: #aaa;
-        }
-        
-        /* Medya içerikleri için responsive stiller */
-        #trContent-preview img, #enContent-preview img,
-        #trContent-preview video, #enContent-preview video,
-        [id$="-preview"] img, [id$="-preview"] video {
-            max-width: 100%;
-            height: auto;
-            display: block;
-            margin: 5px 0;
-            border: 1px solid var(--primary-color);
-        }
-        
-        .spotify-embed {
-            width: 100%;
-            height: 152px;
-            border-radius: 12px;
-            margin: 10px 0;
-            border: 1px solid var(--spotify-color);
-            overflow: hidden;
-        }
-        
-        .spotify-embed iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-          
-        .youtube-embed {
-            width: 100%;
-            margin: 10px 0;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid var(--youtube-color);
-            border-radius: 8px;
-        }
-
-        .youtube-embed iframe {
-            width: 100%;
-            height: 315px;
-            display: block;
-            border: none;
-        }
-        
-        /* IP İstatistikleri için stiller */
+        /* IP Statistics Styles */
         .ip-stats-container {
-            background: rgba(0, 30, 0, 0.7);
-            border: 1px solid var(--primary-color);
-            border-radius: 5px;
-            padding: 1rem;
-            margin: 1rem;
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
             position: relative;
             overflow: hidden;
         }
@@ -533,15 +586,15 @@
         .ip-stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 10px;
+            gap: 15px;
             margin-bottom: 15px;
         }
         
         .ip-stat-box {
-            background: rgba(0, 30, 0, 0.5);
-            border: 1px solid var(--primary-color);
-            padding: 10px;
-            border-radius: 3px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            border-radius: 5px;
             text-align: center;
         }
         
@@ -552,13 +605,12 @@
         }
         
         .ip-stat-box span {
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             font-weight: bold;
         }
         
         .recent-ips {
             margin-top: 20px;
-            padding: 0 1rem 1rem 1rem;
         }
         
         .recent-ips h4 {
@@ -570,11 +622,11 @@
         }
         
         .ip-item {
-            background: rgba(0, 30, 0, 0.5);
-            border: 1px solid var(--primary-color);
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 3px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
             font-size: 0.85rem;
         }
         
@@ -599,7 +651,7 @@
         .ip-details {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 8px;
+            gap: 10px;
         }
         
         .ip-detail-item {
@@ -631,10 +683,10 @@
         
         .filter-container {
             margin: 15px 0;
-            padding: 10px;
-            background: rgba(0, 30, 0, 0.3);
-            border: 1px solid var(--primary-color);
-            border-radius: 3px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
         }
         
         .filter-controls {
@@ -645,10 +697,10 @@
         }
         
         .filter-controls input, .filter-controls select {
-            background: #111;
+            background: rgba(0, 0, 0, 0.5);
             border: 1px solid var(--primary-color);
             color: var(--text-color);
-            padding: 5px 10px;
+            padding: 8px 12px;
             border-radius: 3px;
             font-family: 'Courier New', monospace;
         }
@@ -657,19 +709,22 @@
             background: var(--primary-color);
             color: black;
             border: none;
-            padding: 5px 10px;
+            padding: 8px 15px;
             cursor: pointer;
             border-radius: 3px;
             font-family: 'Courier New', monospace;
             font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
         
         .entry-stats {
             margin-top: 20px;
             padding: 15px;
-            background: rgba(0, 30, 0, 0.5);
-            border: 1px solid var(--primary-color);
-            border-radius: 3px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
         }
         
         .entry-stats h4 {
@@ -738,14 +793,17 @@
         }
 
         .media-btn {
-            background: #111;
+            background: rgba(0, 0, 0, 0.5);
             border: 1px solid var(--primary-color);
             color: var(--text-color);
-            padding: 4px 8px;
+            padding: 6px 10px;
             cursor: pointer;
             border-radius: 3px;
             font-size: 0.8rem;
             transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
         .media-btn:hover {
@@ -792,7 +850,7 @@
         }
 
         .crop-modal-content {
-            background: var(--secondary-color);
+            background: var(--card-bg);
             border: 2px solid var(--primary-color);
             border-radius: 5px;
             padding: 20px;
@@ -840,10 +898,10 @@
         }
 
         .aspect-ratio-btn {
-            background: #111;
+            background: rgba(0, 0, 0, 0.5);
             border: 1px solid var(--primary-color);
             color: var(--text-color);
-            padding: 5px 10px;
+            padding: 8px 12px;
             cursor: pointer;
             border-radius: 3px;
             font-size: 0.8rem;
@@ -879,6 +937,33 @@
             color: black;
         }
 
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 5px;
+            border: 1px solid var(--primary-color);
+            z-index: 1000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        /* Bug icon animation */
+        .bug-icon {
+            color: red;
+            animation: bugPulse 1.5s infinite;
+        }
+        
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -895,47 +980,32 @@
             100% { transform: scale(1); }
         }
         
-        @media (min-width: 768px) {
+        /* Responsive Design */
+        @media (max-width: 992px) {
             .admin-container {
-                display: grid;
-                grid-template-columns: 2fr 1fr;
-                gap: 1.5rem;
-                padding: 1.5rem;
+                flex-direction: column;
             }
             
-            .stats-grid {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 1rem;
-            }
-            
-            .logo {
-                font-size: 1rem;
-            }
-            
-            .logo h2 {
-                font-size: 1.2rem;
-            }
-            
-            .logout-btn {
-                padding: 8px 15px;
-                font-size: 0.9rem;
+            .admin-sidebar {
+                width: 100%;
+                position: static;
             }
         }
         
-        @media (max-width: 767px) {
-            .spotify-embed {
-                height: 80px;
+        @media (max-width: 768px) {
+            .content-wrapper {
+                margin-top: 120px;
+                padding: 0 10px;
             }
             
-            .youtube-embed iframe {
-                height: 200px;
+            .stats-grid {
+                grid-template-columns: 1fr;
             }
             
-            .entry-meta {
+            .filter-controls {
                 flex-direction: column;
-                gap: 3px;
             }
-
+            
             .crop-container {
                 height: 300px;
             }
@@ -952,181 +1022,239 @@
             .ip-details {
                 grid-template-columns: 1fr;
             }
-            
-            .filter-controls {
-                flex-direction: column;
-            }
         }
     </style>
 </head>
 <body>
-    <header class="admin-header">
-        <div class="logo">
-            <img src="../IMAGES/hackerwhite.svg" alt="adembayazit.com" class="hacker-icon">
-            <h2>LadyB<span class="fa-solid fa-bug bug-icon"></span>G Admin</h2>
+    <header class="header">
+        <div class="logo-container">
+            <a href="https://adembayazit.com" class="logo"><img src="../IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">LadyB<span class="fa-solid fa-bug bug-icon"></span>G Admin</a>
+            <span class="logo-slogan">One step further every day…</span>
         </div>
-        <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Çıkış</button>
+        <nav class="navbar">
+            <div class="dropdown">
+                <a href="#" style="--i:5;" class="dropbtn"> <img src="../IMAGES/Ata.svg" alt="Ata Icon" class="ata-icon"> Ethical Hacker <span class='bx bx-chevron-down'></span></a>
+                <div class="dropdown-content">
+                    <a href="/whatishacker"><img src="../IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hacker-icon"> What is an Ethical Hacker?</a>
+                    <a href="/cybersecurityglossary.html"><img src="../IMAGES/glossary.svg" alt="Glossary" class="glossary-icon"> Cybersecurity Glossary</a>
+                    <a href="/whatissoc"><img src="../IMAGES/soc.svg" alt="Soc" class="soc-icon"> What is a SOC ?</a>
+                    <a href="/vulnerabilities"><img src="../IMAGES/vulnerabilities.svg" alt="Vulnerabilities" class="vulnerabilities-icon"> Vulnerabilities </a>
+                    <a href="/steganography"><img src="../IMAGES/steganography.svg" alt="Steganography" class="steganography-icon"> Steganography</a>
+                    <a href="/cryptography"><img src="../IMAGES/cryptography.svg" alt="Cryptography" class="cryptography-icon"> Cryptography</a>    
+                    <a href="#payloads"><img src="../IMAGES/education.svg" alt="Education" class="education-icon"> Cybersecurity Learning Resources</a>
+                </div>
+            </div>
+        </nav>
     </header>
-
-    <div class="admin-container">
-        <div class="editor-container">
-            <h3><i class="fas fa-plus-circle"></i> Yeni Entry Ekle</h3>
+    
+    <div class="content-wrapper">
+        <div class="backto">
+            <a href="/" class="back-to-home"><i class="bx bx-arrow-back"></i> Back to Home</a>
+            <a href="/vulnerabilities" class="back-to-home" style="margin-left: 10px;"><i class="bx bx-arrow-back"></i> Back to Vulnerabilities</a>
+        </div>
+        
+        <h2 class="page-title"><img src="../IMAGES/vulnerabilities.svg" alt="Vulnerabilities Icon" class="vulnerabilities-icon"> LadyBug Admin Panel</h2>
+        
+        <div class="admin-container">
+            <!-- Admin Sidebar -->
+            <aside class="admin-sidebar">
+                <h3><i class="fas fa-cogs"></i> Admin Panel</h3>
+                <ul class="admin-nav">
+                    <li class="admin-nav-item active" data-section="statistics">
+                        <i class="fas fa-chart-bar"></i> Statistics
+                    </li>
+                    <li class="admin-nav-item" data-section="editor">
+                        <i class="fas fa-edit"></i> Entry Editor
+                    </li>
+                    <li class="admin-nav-item" data-section="entries">
+                        <i class="fas fa-list"></i> Entries List
+                    </li>
+                    <li class="admin-nav-item" data-section="ip-stats">
+                        <i class="fas fa-network-wired"></i> IP Statistics
+                    </li>
+                    <li class="admin-nav-item" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </li>
+                </ul>
+            </aside>
             
-            <div class="form-group">
-                <label for="entryId"><i class="fas fa-hashtag"></i> Entry ID:</label>
-                <input type="number" id="entryId" placeholder="Otomatik ID için boş bırakın">
-            </div>
-            
-            <div class="form-group">
-                <label for="referenceId"><i class="fas fa-link"></i> Referans ID (opsiyonel):</label>
-                <input type="number" id="referenceId" placeholder="Referans ID">
-            </div>
-            
-            <div class="form-group">
-                <label for="trContent"><i class="fas fa-language"></i> Türkçe İçerik:</label>
-                <div class="editor-toolbar">
-                    <button onclick="formatText('trContent', 'bold')" title="Kalın"><i class="fas fa-bold"></i></button>
-                    <button onclick="formatText('trContent', 'italic')" title="İtalik"><i class="fas fa-italic"></i></button>
-                    <button onclick="formatText('trContent', 'underline')" title="Altı Çizili"><i class="fas fa-underline"></i></button>
-                    <button onclick="formatText('trContent', 'quote')" title="Tırnak İşareti"><i class="fas fa-quote-right"></i></button>
-                    <button onclick="formatText('trContent', 'paragraph')" title="Paragraf"><i class="fas fa-paragraph"></i></button>
-                    <button onclick="clearFormatting('trContent')" title="Temizle"><i class="fas fa-eraser"></i></button>
-                    <button class="spotify-btn" onclick="addSpotifyEmbed('trContent')" title="Spotify Ekle"><i class="fab fa-spotify"></i></button>
-                    <button class="youtube-btn" onclick="addYoutubeEmbed('trContent')" title="Youtube Ekle"><i class="fab fa-youtube"></i></button>
-                    <button class="media-btn" onclick="openMediaUpload('trContent')" title="Fotoğraf/Video Ekle"><i class="fas fa-camera"></i></button>
-                </div>
-                <textarea id="trContent" placeholder="Türkçe içerik..." oninput="updatePreview('trContent')"></textarea>
-                <div class="preview-container">
-                    <div class="preview-title">
-                        <span>Ön İzleme:</span>
-                        <span class="char-count"><span id="trContent-count">0</span> karakter</span>
+            <!-- Admin Content -->
+            <main class="admin-content">
+                <!-- Statistics Section -->
+                <section id="statistics" class="admin-section active">
+                    <div class="section-title">
+                        <h2><i class="fas fa-chart-bar"></i> Statistics</h2>
                     </div>
-                    <div id="trContent-preview"></div>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="enContent"><i class="fas fa-globe"></i> İngilizce İçerik:</label>
-                <div class="editor-toolbar">
-                    <button onclick="formatText('enContent', 'bold')" title="Bold"><i class="fas fa-bold"></i></button>
-                    <button onclick="formatText('enContent', 'italic')" title="Italic"><i class="fas fa-italic"></i></button>
-                    <button onclick="formatText('enContent', 'underline')" title="Underline"><i class="fas fa-underline"></i></button>
-                    <button onclick="formatText('enContent', 'quote')" title="Quote"><i class="fas fa-quote-right"></i></button>
-                    <button onclick="formatText('enContent', 'paragraph')" title="Paragraph"><i class="fas fa-paragraph"></i></button>
-                    <button onclick="clearFormatting('enContent')" title="Clear"><i class="fas fa-eraser"></i></button>
-                    <button class="spotify-btn" onclick="addSpotifyEmbed('enContent')" title="Add Spotify"><i class="fab fa-spotify"></i></button>
-                    <button class="youtube-btn" onclick="addYoutubeEmbed('enContent')" title="Add Youtube"><i class="fab fa-youtube"></i></button>
-                    <button class="media-btn" onclick="openMediaUpload('enContent')" title="Add Photo/Video"><i class="fas fa-camera"></i></button>
-                </div>
-                <textarea id="enContent" placeholder="English content..." oninput="updatePreview('enContent')"></textarea>
-                <div class="preview-container">
-                    <div class="preview-title">
-                        <span>Preview:</span>
-                        <span class="char-count"><span id="enContent-count">0</span> characters</span>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="total-entries">0</div>
+                            <div class="stat-label">Total Entries</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="total-likes">0</div>
+                            <div class="stat-label">Total Likes</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="total-pins">0</div>
+                            <div class="stat-label">Total Pins</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="last-entry-date">-</div>
+                            <div class="stat-label">Last Entry Added</div>
+                        </div>
                     </div>
-                    <div id="enContent-preview"></div>
-                </div>
-            </div>
-            
-            <button class="submit-btn" onclick="submitEntry()"><i class="fas fa-paper-plane"></i> Entry Ekle</button>
-            <div id="response-message"></div>
-            <div id="debug-info" class="debug-info"></div>
-        </div>
-        
-        <div class="stats-container">
-            <h3><i class="fas fa-chart-bar"></i> İstatistikler</h3>
-            <div class="stats-grid">
-                <div class="stat-box">
-                    <i class="fas fa-heart"></i>
-                    <span id="total-likes">0</span>
-                    <small>Toplam Beğeni</small>
-                </div>
-                <div class="stat-box">
-                    <i class="fas fa-thumbtack"></i>
-                    <span id="total-pins">0</span>
-                    <small>Toplam Pin</small>
-                </div>
-                <div class="stat-box">
-                    <i class="fas fa-file-alt"></i>
-                    <span id="total-entries">0</span>
-                    <small>Toplam Entry</small>
-                </div>
-            </div>
-            
-            <div class="search-container">
-                <h3><i class="fas fa-search"></i> Entry Ara</h3>
-                <div class="search-input">
-                    <input type="number" id="searchId" placeholder="Entry ID girin">
-                    <button onclick="searchEntry()"><i class="fas fa-search"></i></button>
-                </div>
-            </div>
-            
-            <h3><i class="fas fa-history"></i> Son Entryler</h3>
-            <div class="entries-list" id="recent-entries">
-                <!-- Son entryler buraya eklenecek -->
-            </div>
-        </div>
-    </div>
-
-    <!-- IP İstatistikleri Bölümü -->
-    <div class="ip-stats-container">
-        <div class="ip-stats-title">
-            <i class="fas fa-network-wired"></i>
-            <h3>IP İstatistikleri ve Son Girişler</h3>
-        </div>
-        
-        <div class="filter-container">
-            <div class="filter-controls">
-                <input type="text" id="filter-ip" placeholder="IP adresi">
-                <input type="text" id="filter-fingerprint" placeholder="Fingerprint">
-                <input type="number" id="filter-entry" placeholder="Entry ID">
-                <select id="filter-country">
-                    <option value="">Ülke seçin</option>
-                </select>
-                <button onclick="applyFilters()"><i class="fas fa-filter"></i> Filtrele</button>
-                <button onclick="clearFilters()"><i class="fas fa-times"></i> Temizle</button>
-            </div>
-            <div class="filter-controls">
-                <button onclick="exportData('ip')"><i class="fas fa-download"></i> IP Verilerini İndir</button>
-                <button onclick="exportData('stats')"><i class="fas fa-download"></i> İstatistikleri İndir</button>
-            </div>
-        </div>
-        
-        <div class="ip-stats-grid">
-            <div class="ip-stat-box">
-                <h4>Toplam Ziyaretçi</h4>
-                <span id="total-visitors">0</span>
-            </div>
-            <div class="ip-stat-box">
-                <h4>Benzersiz IP</h4>
-                <span id="unique-ips">0</span>
-            </div>
-            <div class="ip-stat-box">
-                <h4>Benzersiz Fingerprint</h4>
-                <span id="unique-fingerprints">0</span>
-            </div>
-            <div class="ip-stat-box">
-                <h4>Son Giriş</h4>
-                <span id="last-visit">-</span>
-            </div>
-        </div>
-        
-        <div class="entry-stats">
-            <h4><i class="fas fa-chart-pie"></i> En Çok Görüntülenen Entry'ler</h4>
-            <div id="top-entries">
-                <div class="loading-spinner">
-                    <i class="fas fa-spinner fa-spin"></i>
-                </div>
-            </div>
-        </div>
-        
-        <div class="recent-ips">
-            <h4><i class="fas fa-list"></i> Son IP Girişleri</h4>
-            <div id="recent-ips-list">
-                <div class="loading-spinner">
-                    <i class="fas fa-spinner fa-spin"></i>
-                </div>
-            </div>
+                </section>
+                
+                <!-- Editor Section -->
+                <section id="editor" class="admin-section">
+                    <div class="section-title">
+                        <h2><i class="fas fa-edit"></i> Entry Editor</h2>
+                    </div>
+                    
+                    <div class="editor-container">
+                        <div class="form-group">
+                            <label for="entryId"><i class="fas fa-hashtag"></i> Entry ID:</label>
+                            <input type="number" id="entryId" placeholder="Leave empty for auto ID">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="referenceId"><i class="fas fa-link"></i> Reference ID (optional):</label>
+                            <input type="number" id="referenceId" placeholder="Reference ID">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="trContent"><i class="fas fa-language"></i> Turkish Content:</label>
+                            <div class="editor-toolbar">
+                                <button onclick="formatText('trContent', 'bold')" title="Bold"><i class="fas fa-bold"></i></button>
+                                <button onclick="formatText('trContent', 'italic')" title="Italic"><i class="fas fa-italic"></i></button>
+                                <button onclick="formatText('trContent', 'underline')" title="Underline"><i class="fas fa-underline"></i></button>
+                                <button onclick="formatText('trContent', 'quote')" title="Quote"><i class="fas fa-quote-right"></i></button>
+                                <button onclick="formatText('trContent', 'paragraph')" title="Paragraph"><i class="fas fa-paragraph"></i></button>
+                                <button onclick="clearFormatting('trContent')" title="Clear"><i class="fas fa-eraser"></i></button>
+                                <button class="spotify-btn" onclick="addSpotifyEmbed('trContent')" title="Add Spotify"><i class="fab fa-spotify"></i></button>
+                                <button class="youtube-btn" onclick="addYoutubeEmbed('trContent')" title="Add Youtube"><i class="fab fa-youtube"></i></button>
+                                <button class="media-btn" onclick="openMediaUpload('trContent')" title="Add Photo/Video"><i class="fas fa-camera"></i></button>
+                            </div>
+                            <textarea id="trContent" placeholder="Turkish content..." oninput="updatePreview('trContent')"></textarea>
+                            <div class="preview-container">
+                                <div class="preview-title">
+                                    <span>Preview:</span>
+                                    <span class="char-count"><span id="trContent-count">0</span> characters</span>
+                                </div>
+                                <div id="trContent-preview"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="enContent"><i class="fas fa-globe"></i> English Content:</label>
+                            <div class="editor-toolbar">
+                                <button onclick="formatText('enContent', 'bold')" title="Bold"><i class="fas fa-bold"></i></button>
+                                <button onclick="formatText('enContent', 'italic')" title="Italic"><i class="fas fa-italic"></i></button>
+                                <button onclick="formatText('enContent', 'underline')" title="Underline"><i class="fas fa-underline"></i></button>
+                                <button onclick="formatText('enContent', 'quote')" title="Quote"><i class="fas fa-quote-right"></i></button>
+                                <button onclick="formatText('enContent', 'paragraph')" title="Paragraph"><i class="fas fa-paragraph"></i></button>
+                                <button onclick="clearFormatting('enContent')" title="Clear"><i class="fas fa-eraser"></i></button>
+                                <button class="spotify-btn" onclick="addSpotifyEmbed('enContent')" title="Add Spotify"><i class="fab fa-spotify"></i></button>
+                                <button class="youtube-btn" onclick="addYoutubeEmbed('enContent')" title="Add Youtube"><i class="fab fa-youtube"></i></button>
+                                <button class="media-btn" onclick="openMediaUpload('enContent')" title="Add Photo/Video"><i class="fas fa-camera"></i></button>
+                            </div>
+                            <textarea id="enContent" placeholder="English content..." oninput="updatePreview('enContent')"></textarea>
+                            <div class="preview-container">
+                                <div class="preview-title">
+                                    <span>Preview:</span>
+                                    <span class="char-count"><span id="enContent-count">0</span> characters</span>
+                                </div>
+                                <div id="enContent-preview"></div>
+                            </div>
+                        </div>
+                        
+                        <button class="submit-btn" onclick="submitEntry()"><i class="fas fa-paper-plane"></i> Add Entry</button>
+                        <div id="response-message"></div>
+                        <div id="debug-info" class="debug-info"></div>
+                    </div>
+                </section>
+                
+                <!-- Entries List Section -->
+                <section id="entries" class="admin-section">
+                    <div class="section-title">
+                        <h2><i class="fas fa-list"></i> Entries List</h2>
+                    </div>
+                    
+                    <div class="search-container">
+                        <div class="search-input">
+                            <input type="number" id="searchId" placeholder="Enter Entry ID">
+                            <button onclick="searchEntry()"><i class="fas fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                    
+                    <div class="entries-list" id="recent-entries">
+                        <!-- Recent entries will be loaded here -->
+                    </div>
+                </section>
+                
+                <!-- IP Statistics Section -->
+                <section id="ip-stats" class="admin-section">
+                    <div class="section-title">
+                        <h2><i class="fas fa-network-wired"></i> IP Statistics</h2>
+                    </div>
+                    
+                    <div class="filter-container">
+                        <div class="filter-controls">
+                            <input type="text" id="filter-ip" placeholder="IP address">
+                            <input type="text" id="filter-fingerprint" placeholder="Fingerprint">
+                            <input type="number" id="filter-entry" placeholder="Entry ID">
+                            <select id="filter-country">
+                                <option value="">Select country</option>
+                            </select>
+                            <button onclick="applyFilters()"><i class="fas fa-filter"></i> Filter</button>
+                            <button onclick="clearFilters()"><i class="fas fa-times"></i> Clear</button>
+                        </div>
+                        <div class="filter-controls">
+                            <button onclick="exportData('ip')"><i class="fas fa-download"></i> Download IP Data</button>
+                            <button onclick="exportData('stats')"><i class="fas fa-download"></i> Download Statistics</button>
+                            <button onclick="clearIpData()" style="background: var(--error-color);"><i class="fas fa-trash"></i> Clear IP Data</button>
+                        </div>
+                    </div>
+                    
+                    <div class="ip-stats-grid">
+                        <div class="ip-stat-box">
+                            <h4>Total Visitors</h4>
+                            <span id="total-visitors">0</span>
+                        </div>
+                        <div class="ip-stat-box">
+                            <h4>Unique IPs</h4>
+                            <span id="unique-ips">0</span>
+                        </div>
+                        <div class="ip-stat-box">
+                            <h4>Unique Fingerprints</h4>
+                            <span id="unique-fingerprints">0</span>
+                        </div>
+                        <div class="ip-stat-box">
+                            <h4>Last Visit</h4>
+                            <span id="last-visit">-</span>
+                        </div>
+                    </div>
+                    
+                    <div class="entry-stats">
+                        <h4><i class="fas fa-chart-pie"></i> Most Viewed Entries</h4>
+                        <div id="top-entries">
+                            <div class="loading-spinner">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="recent-ips">
+                        <h4><i class="fas fa-list"></i> Recent IP Visits</h4>
+                        <div id="recent-ips-list">
+                            <div class="loading-spinner">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
         </div>
     </div>
 
@@ -1137,7 +1265,7 @@
     <div class="crop-modal" id="cropModal">
         <div class="crop-modal-content">
             <div class="crop-modal-header">
-                <h3><i class="fas fa-crop-alt"></i> Resmi Düzenle</h3>
+                <h3><i class="fas fa-crop-alt"></i> Edit Image</h3>
                 <button class="close-crop" onclick="closeCropModal()">&times;</button>
             </div>
             <div class="crop-container">
@@ -1148,30 +1276,42 @@
                 <button class="aspect-ratio-btn" data-ratio="1/1">1:1</button>
                 <button class="aspect-ratio-btn" data-ratio="4/3">4:3</button>
                 <button class="aspect-ratio-btn" data-ratio="9/16">9:16</button>
-                <button class="aspect-ratio-btn" data-ratio="free">Serbest</button>
+                <button class="aspect-ratio-btn" data-ratio="free">Free</button>
             </div>
             <div class="crop-actions">
-                <button class="cancel-crop" onclick="closeCropModal()">İptal</button>
-                <button class="confirm-crop" onclick="cropAndUpload()">Kırp ve Yükle</button>
+                <button class="cancel-crop" onclick="closeCropModal()">Cancel</button>
+                <button class="confirm-crop" onclick="cropAndUpload()">Crop and Upload</button>
             </div>
         </div>
     </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <footer style="text-align: center; padding: 20px; font-size: 14px; color: white; margin-top: 50px;">
+        <hr style="margin-bottom: 10px; border-color: limegreen;" />
+        <p>Design & Code by <strong>Adem Bayazıt</strong> | LadyBug Admin Panel | Version 2.0</p>
+    </footer>
 
     <!-- Cropper.js Script -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
     <script>
+        // JSON Bin IDs
         const ENTRIES_BIN_ID = '68933248ae596e708fc2fbbc';
         const INTERACTIONS_BIN_ID = '68862fd97b4b8670d8a81945';
-        const IP_STATS_BIN_ID = '68ba0ba543b1c97be93705fb'; // IP istatistikleri için bin ID
+        const IP_STATS_BIN_ID = '68ba0ba543b1c97be93705fb';
         const PROXY_URL = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
         
+        // Global variables
         let activeTextareaId = null;
         let cropper = null;
         let selectedFile = null;
         let allVisitors = [];
         let filteredVisitors = [];
+        let entriesData = [];
 
+        // Authentication check
         window.addEventListener('DOMContentLoaded', () => {
             if (!localStorage.getItem('adminAuth') || localStorage.getItem('adminAuth') !== 'true') {
                 window.location.href = 'index.html';
@@ -1180,277 +1320,50 @@
                 loadRecentEntries();
                 updatePreview('trContent');
                 updatePreview('enContent');
-                loadIpStats(); // IP istatistiklerini yükle
+                loadIpStats();
             }
         });
 
-        // IP İstatistiklerini Yükleme Fonksiyonu
-        async function loadIpStats() {
-            try {
-                const response = await fetchFromJsonBin(IP_STATS_BIN_ID);
-                allVisitors = response.visitors || [];
-                filteredVisitors = [...allVisitors];
-                
-                // İstatistikleri hesapla
-                updateIpStats(allVisitors);
-                
-                // En çok görüntülenen entry'leri göster
-                displayTopEntries(allVisitors);
-                
-                // Son IP girişlerini listele
-                displayRecentIps(allVisitors);
-                
-                // Ülke filtreleme seçeneklerini doldur
-                populateCountryFilter(allVisitors);
-            } catch (error) {
-                console.error('IP istatistikleri yüklenirken hata oluştu:', error);
-                document.getElementById('recent-ips-list').innerHTML = 
-                    '<div class="ip-item">IP istatistikleri yüklenirken hata oluştu.</div>';
-            }
-        }
-        
-        // IP İstatistiklerini güncelleme fonksiyonu
-        function updateIpStats(visitors) {
-            const totalVisitors = visitors.length;
-            const uniqueIps = new Set(visitors.map(v => v.ip)).size;
-            const uniqueFingerprints = new Set(visitors.map(v => v.fingerprint)).size;
-            
-            // En son ziyareti bul
-            let lastVisit = '-';
-            if (visitors.length > 0) {
-                const sortedVisits = [...visitors].sort((a, b) => 
-                    new Date(b.timestamp) - new Date(a.timestamp)
-                );
-                lastVisit = formatDate(sortedVisits[0].timestamp);
-            }
-            
-            // İstatistikleri göster
-            document.getElementById('total-visitors').textContent = totalVisitors;
-            document.getElementById('unique-ips').textContent = uniqueIps;
-            document.getElementById('unique-fingerprints').textContent = uniqueFingerprints;
-            document.getElementById('last-visit').textContent = lastVisit;
-        }
-        
-        // En çok görüntülenen entry'leri göster
-        function displayTopEntries(visitors) {
-            const topEntriesContainer = document.getElementById('top-entries');
-            
-            // Entry ID'lerine göre grupla ve say
-            const entryCounts = {};
-            visitors.forEach(visit => {
-                if (visit.entryId) {
-                    if (!entryCounts[visit.entryId]) {
-                        entryCounts[visit.entryId] = 0;
-                    }
-                    entryCounts[visit.entryId]++;
-                }
+        // Section switching
+        function switchSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.admin-section').forEach(section => {
+                section.classList.remove('active');
             });
             
-            // Sıralama yap
-            const sortedEntries = Object.entries(entryCounts)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 10); // En çok görüntülenen 10 entry
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
             
-            if (sortedEntries.length === 0) {
-                topEntriesContainer.innerHTML = '<div class="ip-item">Henüz entry görüntüleme verisi bulunmamaktadır.</div>';
-                return;
-            }
-            
-            let html = '';
-            sortedEntries.forEach(([entryId, count]) => {
-                html += `
-                    <div class="entry-stat-item">
-                        <span class="entry-id">Entry #${entryId}</span>
-                        <span class="entry-count">${count} görüntülenme</span>
-                    </div>
-                `;
-            });
-            
-            topEntriesContainer.innerHTML = html;
-        }
-        
-        // Son IP girişlerini görüntüleme fonksiyonu
-        function displayRecentIps(visitors) {
-            const recentIpsList = document.getElementById('recent-ips-list');
-            
-            if (visitors.length === 0) {
-                recentIpsList.innerHTML = '<div class="ip-item">Henüz IP kaydı bulunmamaktadır.</div>';
-                return;
-            }
-            
-            // Tarihe göre sırala (en yeni en üstte)
-            const sortedVisits = [...visitors].sort((a, b) => 
-                new Date(b.timestamp) - new Date(a.timestamp)
-            ).slice(0, 10); // En son 10 kaydı al
-            
-            let html = '';
-            sortedVisits.forEach(visit => {
-                html += `
-                    <div class="ip-item">
-                        <div class="ip-item-header">
-                            <span class="ip-address">${visit.ip}</span>
-                            <span class="ip-date">${formatDate(visit.timestamp)}</span>
-                        </div>
-                        <div class="ip-details">
-                            <div class="ip-detail-item">
-                                <span class="ip-detail-label">Entry ID</span>
-                                <span class="ip-detail-value">${visit.entryId || 'Bilinmiyor'}</span>
-                            </div>
-                            <div class="ip-detail-item">
-                                <span class="ip-detail-label">Ülke/Şehir</span>
-                                <span class="ip-detail-value">${visit.country || 'Bilinmiyor'}${visit.city ? '/' + visit.city : ''}</span>
-                            </div>
-                            <div class="ip-detail-item">
-                                <span class="ip-detail-label">Cihaz</span>
-                                <span class="ip-detail-value">${extractBrowserInfo(visit.userAgent)}</span>
-                            </div>
-                            <div class="ip-detail-item">
-                                <span class="ip-detail-label">Fingerprint</span>
-                                <span class="ip-detail-value">${visit.fingerprint || 'Bilinmiyor'}</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            recentIpsList.innerHTML = html;
-        }
-        
-        // Ülke filtreleme seçeneklerini doldur
-        function populateCountryFilter(visitors) {
-            const countryFilter = document.getElementById('filter-country');
-            const countries = new Set(visitors.map(v => v.country).filter(c => c));
-            
-            countries.forEach(country => {
-                const option = document.createElement('option');
-                option.value = country;
-                option.textContent = country;
-                countryFilter.appendChild(option);
-            });
-        }
-        
-        // Filtreleme uygula
-        function applyFilters() {
-            const ipFilter = document.getElementById('filter-ip').value.toLowerCase();
-            const fingerprintFilter = document.getElementById('filter-fingerprint').value.toLowerCase();
-            const entryFilter = document.getElementById('filter-entry').value;
-            const countryFilter = document.getElementById('filter-country').value;
-            
-            filteredVisitors = allVisitors.filter(visitor => {
-                let matches = true;
-                
-                if (ipFilter && !visitor.ip.toLowerCase().includes(ipFilter)) {
-                    matches = false;
-                }
-                
-                if (fingerprintFilter && (!visitor.fingerprint || !visitor.fingerprint.toLowerCase().includes(fingerprintFilter))) {
-                    matches = false;
-                }
-                
-                if (entryFilter && visitor.entryId !== entryFilter) {
-                    matches = false;
-                }
-                
-                if (countryFilter && visitor.country !== countryFilter) {
-                    matches = false;
-                }
-                
-                return matches;
-            });
-            
-            // Filtrelenmiş verileri göster
-            updateIpStats(filteredVisitors);
-            displayRecentIps(filteredVisitors);
-            displayTopEntries(filteredVisitors);
-        }
-        
-        // Filtreleri temizle
-        function clearFilters() {
-            document.getElementById('filter-ip').value = '';
-            document.getElementById('filter-fingerprint').value = '';
-            document.getElementById('filter-entry').value = '';
-            document.getElementById('filter-country').value = '';
-            
-            filteredVisitors = [...allVisitors];
-            updateIpStats(filteredVisitors);
-            displayRecentIps(filteredVisitors);
-            displayTopEntries(filteredVisitors);
-        }
-        
-        // Veri indirme fonksiyonu
-        function exportData(type) {
-            let data, filename, contentType;
-            
-            if (type === 'ip') {
-                data = JSON.stringify(filteredVisitors, null, 2);
-                filename = 'ip-istatistikleri.json';
-                contentType = 'application/json';
-            } else if (type === 'stats') {
-                const stats = {
-                    totalVisitors: filteredVisitors.length,
-                    uniqueIps: new Set(filteredVisitors.map(v => v.ip)).size,
-                    uniqueFingerprints: new Set(filteredVisitors.map(v => v.fingerprint)).size,
-                    topEntries: getTopEntries(filteredVisitors, 10),
-                    generatedAt: new Date().toISOString()
-                };
-                data = JSON.stringify(stats, null, 2);
-                filename = 'istatistik-ozeti.json';
-                contentType = 'application/json';
-            }
-            
-            const blob = new Blob([data], { type: contentType });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-        
-        // En çok görüntülenen entry'leri al
-        function getTopEntries(visitors, limit) {
-            const entryCounts = {};
-            visitors.forEach(visit => {
-                if (visit.entryId) {
-                    if (!entryCounts[visit.entryId]) {
-                        entryCounts[visit.entryId] = 0;
-                    }
-                    entryCounts[visit.entryId]++;
+            // Update active nav item
+            document.querySelectorAll('.admin-nav-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.section === sectionId) {
+                    item.classList.add('active');
                 }
             });
+        }
+
+        // Add event listeners for navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.admin-nav-item[data-section]').forEach(item => {
+                item.addEventListener('click', function() {
+                    switchSection(this.dataset.section);
+                });
+            });
+        });
+
+        // Show toast notification
+        function showToast(message, duration = 3000) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
             
-            return Object.entries(entryCounts)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, limit)
-                .map(([id, count]) => ({ entryId: id, viewCount: count }));
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
         }
-        
-        // UserAgent'dan tarayıcı bilgisini çıkarma
-        function extractBrowserInfo(userAgent) {
-            if (!userAgent) return 'Bilinmiyor';
-            
-            if (userAgent.includes('Chrome')) return 'Chrome';
-            if (userAgent.includes('Firefox')) return 'Firefox';
-            if (userAgent.includes('Safari')) return 'Safari';
-            if (userAgent.includes('Edge')) return 'Edge';
-            if (userAgent.includes('Opera')) return 'Opera';
-            
-            return 'Diğer';
-        }
-        
-        // Tarih formatlama
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('tr-TR') + ' ' + date.toLocaleTimeString('tr-TR');
-        }
-        
-        function showDebugInfo(message) {
-            const debugEl = document.getElementById('debug-info');
-            debugEl.textContent = message;
-            debugEl.style.display = 'block';
-            console.log('DEBUG:', message);
-        }
-        
+
+        // Proxy helper function
         async function fetchFromJsonBin(binId, method = 'GET', data = null) {
             try {
                 const response = await fetch(PROXY_URL, {
@@ -1472,7 +1385,16 @@
                 throw error;
             }
         }
-        
+
+        // Debug info display
+        function showDebugInfo(message) {
+            const debugEl = document.getElementById('debug-info');
+            debugEl.textContent = message;
+            debugEl.style.display = 'block';
+            console.log('DEBUG:', message);
+        }
+
+        // Get next available ID
         async function getNextId() {
             try {
                 const currentData = await fetchFromJsonBin(ENTRIES_BIN_ID);
@@ -1487,692 +1409,8 @@
                 return Math.floor(Math.random() * 900000) + 100000;
             }
         }
-        
-        function addSpotifyEmbed(textareaId) {
-            const spotifyUrl = prompt("Spotify URL veya Track ID girin:");
-            if (!spotifyUrl) return;
-            
-            let trackId = extractTrackId(spotifyUrl);
-            if (!trackId) {
-                alert("Geçersiz Spotify URL veya Track ID!");
-                return;
-            }
-            
-            const spotifyEmbed = `<iframe class="spotify-embed"
-                    src="https://open.spotify.com/embed/track/${trackId}?utm_source=generator&theme=0" 
-                    frameborder="0"
-                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
-                    loading="lazy">
-                </iframe>`;
-            
-            insertAtCursor(textareaId, spotifyEmbed);
-            updatePreview(textareaId);
-        }
-        
-        function extractTrackId(url) {
-            if (/^[a-zA-Z0-9]{22}$/.test(url)) {
-                return url;
-            }
-            
-            const regex = /open\.spotify\.com\/track\/([a-zA-Z0-9]{22})/;
-            const match = url.match(regex);
-            if (match && match[1]) {
-                return match[1];
-            }
-            
-            return null;
-        }
-        
-        // Youtube eklemek için fonksiyon
-        function addYoutubeEmbed(textareaId) {
-            // Kullanıcıdan Youtube URL'sini al
-            const youtubeUrl = prompt("Youtube URL veya Video ID girin:");
-            if (!youtubeUrl) return;
-            
-            // Video ID'yi URL'den çıkart
-            let videoId = extractYoutubeId(youtubeUrl);
-            if (!videoId) {
-                alert("Geçersiz Youtube URL veya Video ID!");
-                return;
-            }
-            
-            // Youtube embed kodu oluştur
-            const youtubeEmbed = `<div class="youtube-embed">
-                <iframe 
-                    width="100%" 
-                    height="315" 
-                    src="https://www.youtube.com/embed/${videoId}" 
-                    frameborder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    allowfullscreen>
-                </iframe>
-            </div>`;
-            
-            // İlgili textarea'ya ekle
-            insertAtCursor(textareaId, youtubeEmbed);
-            
-            // Ön izlemeyi güncelle
-            updatePreview(textareaId);
-        }
 
-        // Youtube URL'sinden Video ID çıkartma
-        function extractYoutubeId(url) {
-            // Eğer zaten bir ID gibi görünüyorsa (11 karakter) doğrudan dön
-            if (/^[a-zA-Z0-9_-]{11}$/.test(url)) {
-                return url;
-            }
-            
-            // Çeşitli Youtube URL formatları için regex'ler
-            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-            const match = url.match(regExp);
-            
-            if (match && match[2].length === 11) {
-                return match[2];
-            }
-            
-            // Shorts URL'si için
-            const shortsRegExp = /youtube\.com\/shorts\/([^\/\?]+)/;
-            const shortsMatch = url.match(shortsRegExp);
-            
-            if (shortsMatch && shortsMatch[1]) {
-                return shortsMatch[1];
-            }
-            
-            return null;
-        }
-        
-        function insertAtCursor(textareaId, text) {
-            const textarea = document.getElementById(textareaId);
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            
-            textarea.value = textarea.value.substring(0, start) + text + textarea.value.substring(end);
-            
-            const newCursorPos = start + text.length;
-            textarea.selectionStart = newCursorPos;
-            textarea.selectionEnd = newCursorPos;
-            textarea.focus();
-        }
-        
-        function openMediaUpload(textareaId) {
-            activeTextareaId = textareaId;
-            document.getElementById('media-file-input').click();
-        }
-
-        function handleMediaSelection(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
-                showMessage('Sadece fotoğraf veya video yükleyebilirsiniz!', 'error');
-                return;
-            }
-            
-            selectedFile = file;
-            
-            // Eğer video ise doğrudan yükle, resim ise crop modalını aç
-            if (file.type.startsWith('video/')) {
-                handleMediaUpload(file);
-            } else {
-                openCropModal(file);
-            }
-        }
-
-        function openCropModal(file) {
-            const cropModal = document.getElementById('cropModal');
-            const cropImage = document.getElementById('cropImage');
-            
-            // Önceki cropper'ı temizle
-            if (cropper) {
-                cropper.destroy();
-            }
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                cropImage.src = e.target.result;
-                cropModal.style.display = 'flex';
-                
-                // Cropper'ı başlat
-                setTimeout(() => {
-                    cropper = new Cropper(cropImage, {
-                        aspectRatio: 16/9,
-                        viewMode: 1,
-                        guides: true,
-                        background: false,
-                        autoCropArea: 0.8,
-                        responsive: true,
-                        checkCrossOrigin: false
-                    });
-                    
-                    // Aspect ratio butonlarına tıklama olayları ekle
-                    document.querySelectorAll('.aspect-ratio-btn').forEach(btn => {
-                        btn.addEventListener('click', function() {
-                            document.querySelectorAll('.aspect-ratio-btn').forEach(b => b.classList.remove('active'));
-                            this.classList.add('active');
-                            
-                            const ratio = this.getAttribute('data-ratio');
-                            if (ratio === 'free') {
-                                cropper.setAspectRatio(NaN);
-                            } else {
-                                const parts = ratio.split('/');
-                                cropper.setAspectRatio(parts[0] / parts[1]);
-                            }
-                        });
-                    });
-                }, 100);
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function closeCropModal() {
-            document.getElementById('cropModal').style.display = 'none';
-            if (cropper) {
-                cropper.destroy();
-                cropper = null;
-            }
-            // Input'u sıfırla
-            document.getElementById('media-file-input').value = '';
-        }
-
-        async function cropAndUpload() {
-            if (!cropper) return;
-            
-            try {
-                showMessage('Resim kırpılıyor ve yükleniyor...', 'warning');
-                
-                // Canvas üzerinden kırpılmış resmi al
-                const canvas = cropper.getCroppedCanvas({
-                    imageSmoothingEnabled: true,
-                    imageSmoothingQuality: 'high'
-                });
-                
-                // Canvas'ı blob'a dönüştür
-                canvas.toBlob(async function(blob) {
-                    try {
-                        // Blob'u File nesnesine dönüştür
-                        const croppedFile = new File([blob], selectedFile.name, {
-                            type: 'image/jpeg',
-                            lastModified: Date.now()
-                        });
-                        
-                        // Yükleme işlemini başlat
-                        await handleMediaUpload(croppedFile);
-                        closeCropModal();
-                    } catch (error) {
-                        console.error('Kırpma hatası:', error);
-                        showMessage(`Kırpma hatası: ${error.message}`, 'error');
-                    }
-                }, 'image/jpeg', 0.9);
-                
-            } catch (error) {
-                console.error('Kırpma hatası:', error);
-                showMessage(`Kırpma hatası: ${error.message}`, 'error');
-            }
-        }
-
-        async function handleMediaUpload(file) {
-            try {
-                showMessage('Dosya yükleniyor...', 'warning');
-                showDebugInfo('Authentication parametreleri alınıyor...');
-                
-                const authResponse = await fetch('https://adembayazit.netlify.app/.netlify/functions/imagekit-auth');
-                
-                if (!authResponse.ok) {
-                    throw new Error(`Auth endpoint hatası: ${authResponse.status}`);
-                }
-                
-                const authData = await authResponse.json();
-                showDebugInfo('Auth data alındı');
-                
-                const formData = new FormData();
-                formData.append('file', file);
-                formData.append('fileName', file.name);
-                formData.append('signature', authData.signature);
-                formData.append('token', authData.token);
-                formData.append('expire', authData.expire);
-                formData.append('publicKey', authData.publicKey);
-                
-                showDebugInfo('ImageKit upload çağrılıyor...');
-                
-                const uploadResponse = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                showDebugInfo('Upload response: ' + uploadResponse.status);
-                
-                if (!uploadResponse.ok) {
-                    const errorText = await uploadResponse.text();
-                    showDebugInfo('Upload error: ' + errorText);
-                    throw new Error(`Upload hatası: ${uploadResponse.status}`);
-                }
-                
-                const uploadData = await uploadResponse.json();
-                showDebugInfo('Upload başarılı: ' + uploadData.url);
-                
-                const textarea = document.getElementById(activeTextareaId);
-                const url = uploadData.url;
-                
-                let mediaTag;
-                if (file.type.startsWith('image/')) {
-                    mediaTag = `<img src="${url}" alt="Yüklenen resim" style="max-width: 100%; height: auto;">`;
-                } else if (file.type.startsWith('video/')) {
-                    mediaTag = `<video src="${url}" controls style="max-width: 100%; height: auto;"></video>`;
-                }
-                
-                // DÜZELTME: Burada textareaId yerine activeTextareaId kullan
-                insertAtCursor(activeTextareaId, `\n${mediaTag}\n`);
-                updatePreview(activeTextareaId);
-                
-                showMessage('Dosya başarıyla yüklendi!', 'success');
-                showDebugInfo('');
-                
-            } catch (error) {
-                console.error('Yükleme hatası:', error);
-                let errorMessage = error.message;
-                
-                if (errorMessage.includes('Failed to fetch')) {
-                    errorMessage = 'Sunucuya bağlanılamadı. İnternet bağlantınızı kontrol edin.';
-                }
-                
-                showMessage(`Yükleme hatası: ${errorMessage}`, 'error');
-                showDebugInfo('Hata detayı: ' + errorMessage);
-                
-                showAlternativeUploadOption();
-            }
-        }
-        
-        function showAlternativeUploadOption() {
-            const responseEl = document.getElementById('response-message');
-            const alternativeHtml = `
-                <div class="alternative-upload">
-                    <p>Alternatif olarak, dosyayı manuel olarak yükleyip URL'sini ekleyebilirsiniz:</p>
-                    <p><a href="https://imagekit.io/dashboard/media-library" target="_blank">ImageKit Media Library</a></p>
-                </div>
-            `;
-            
-            if (!responseEl.nextElementSibling || !responseEl.nextElementSibling.classList.contains('alternative-upload')) {
-                responseEl.insertAdjacentHTML('afterend', alternativeHtml);
-            }
-        }
-        
-        async function submitEntry() {
-            const entryIdInput = document.getElementById('entryId');
-            const referenceId = document.getElementById('referenceId').value;
-            const trContent = document.getElementById('trContent').value;
-            const enContent = document.getElementById('enContent').value;
-            const responseEl = document.getElementById('response-message');
-            
-            responseEl.style.display = 'none';
-            
-            if (!trContent && !enContent) {
-                showMessage('Lütfen en az bir dilde içerik girin!', 'error');
-                return;
-            }
-            
-            try {
-                const submitBtn = document.querySelector('.submit-btn');
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...';
-                
-                const currentData = await fetchFromJsonBin(ENTRIES_BIN_ID);
-                let entries = Array.isArray(currentData) ? currentData : (currentData.records || []);
-                
-                let entryId = entryIdInput.value ? parseInt(entryIdInput.value) : await getNextId();
-                
-                if (entryIdInput.value && entries.some(e => e.id === entryId)) {
-                    showMessage('Bu ID zaten kullanılıyor!', 'error');
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Entry Ekle';
-                    return;
-                }
-                
-                const newEntry = {
-                    id: entryId,
-                    date: new Date().toISOString(),
-                    content: enContent || '',
-                    content_tr: trContent || null,
-                    references: referenceId ? [parseInt(referenceId)] : []
-                };
-                
-                const updatedEntries = [newEntry, ...entries];
-                await fetchFromJsonBin(ENTRIES_BIN_ID, 'PUT', updatedEntries);
-                
-                showMessage('Entry başarıyla eklendi!', 'success');
-                
-                entryIdInput.value = '';
-                document.getElementById('referenceId').value = '';
-                document.getElementById('trContent').value = '';
-                document.getElementById('enContent').value = '';
-                
-                updatePreview('trContent');
-                updatePreview('enContent');
-                
-                await updateStats();
-                await loadRecentEntries();
-            } catch (error) {
-                showMessage(`Hata: ${error.message}`, 'error');
-                console.error('Entry ekleme hatası:', error);
-            } finally {
-                const submitBtn = document.querySelector('.submit-btn');
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Entry Ekle';
-            }
-        }
-        
-        async function loadRecentEntries() {
-            try {
-                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
-                const recentEntriesContainer = document.getElementById('recent-entries');
-                recentEntriesContainer.innerHTML = '';
-                
-                const recentEntries = Array.isArray(entries) ? 
-                    entries.slice(0, 7) :  // 5 yerine 7 entry göster
-                    (entries.records ? entries.records.slice(0, 7) : []);
-                
-                if (recentEntries.length === 0) {
-                    recentEntriesContainer.innerHTML = '<p>Henüz entry bulunmamaktadır.</p>';
-                    return;
-                }
-                
-                recentEntries.forEach(entry => {
-                    const entryEl = document.createElement('div');
-                    entryEl.className = 'entry-item';
-                    
-                    let displayContent = entry.content_tr || entry.content;
-                    
-                    entryEl.innerHTML = `
-                        <div class="entry-content">${displayContent}</div>
-                        <div class="entry-meta">
-                            <span>ID: ${entry.id}</span>
-                            <span>Referans ID: ${entry.references}</span>
-                            <span>${formatDate(entry.date)}</span>
-                        </div>
-                        <div class="entry-actions">
-                            <button onclick="editEntry(${entry.id})" title="Düzenle"><i class="fas fa-edit"></i></button>
-                            <button onclick="confirmDelete(${entry.id})" title="Sil"><i class="fas fa-trash"></i></button>
-                        </div>
-                    `;
-                    
-                    recentEntriesContainer.appendChild(entryEl);
-                });
-            } catch (error) {
-                console.error('Son entryleri yükleme hatası:', error);
-            }
-        }
-        
-        async function searchEntry() {
-            const searchId = document.getElementById('searchId').value;
-            if (!searchId) {
-                loadRecentEntries();
-                return;
-            }
-            
-            try {
-                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
-                const recentEntriesContainer = document.getElementById('recent-entries');
-                recentEntriesContainer.innerHTML = '';
-                
-                let entriesArray = Array.isArray(entries) ? entries : (entries.records || []);
-                const entry = entriesArray.find(e => e.id === parseInt(searchId));
-                
-                if (!entry) {
-                    recentEntriesContainer.innerHTML = '<p>Entry bulunamadı.</p>';
-                    return;
-                }
-                
-                const entryEl = document.createElement('div');
-                entryEl.className = 'entry-item';
-                
-                let displayContent = entry.content_tr || entry.content;
-                
-                entryEl.innerHTML = `
-                    <div class="entry-content">${displayContent}</div>
-                    <div class="entry-meta">
-                        <span>ID: ${entry.id}</span>
-                        <span>Referans ID: ${entry.references}</span>
-                        <span>${formatDate(entry.date)}</span>
-                    </div>
-                    <div class="entry-actions">
-                        <button onclick="editEntry(${entry.id})" title="Düzenle"><i class="fas fa-edit"></i></button>
-                        <button onclick="confirmDelete(${entry.id})" title="Sil"><i class="fas fa-trash"></i></button>
-                    </div>
-                `;
-                
-                recentEntriesContainer.appendChild(entryEl);
-            } catch (error) {
-                console.error('Entry arama hatası:', error);
-                showMessage(`Arama hatası: ${error.message}`, 'error');
-            }
-        }
-        
-        async function editEntry(entryId) {
-            try {
-                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
-                const entry = Array.isArray(entries) ? 
-                    entries.find(e => e.id === entryId) : 
-                    (entries.records ? entries.records.find(e => e.id === entryId) : null);
-                
-                if (!entry) {
-                    showMessage('Entry bulunamadı!', 'error');
-                    return;
-                }
-                
-                const entryItems = document.querySelectorAll('.entry-item');
-                const targetItem = Array.from(entryItems).find(item => 
-                    item.querySelector('.entry-meta span').textContent.includes(`ID: ${entryId}`));
-                
-                if (!targetItem) return;
-                
-                let editForm = targetItem.querySelector('.edit-form');
-                
-                if (!editForm) {
-                    editForm = document.createElement('div');
-                    editForm.className = 'edit-form';
-                    editForm.innerHTML = `
-                        <div class="form-group">
-                            <label for="edit-tr-${entryId}">Türkçe İçerik:</label>
-                            <textarea id="edit-tr-${entryId}" oninput="updateEditPreview(${entryId}, 'tr')">${entry.content_tr || ''}</textarea>
-                            <div class="preview-container">
-                                <div class="preview-title">
-                                    <span>Ön İzleme:</span>
-                                    <span class="char-count"><span id="edit-tr-${entryId}-count">0</span> karakter</span>
-                                </div>
-                                <div id="edit-tr-${entryId}-preview"></div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="edit-en-${entryId}">İngilizce İçerik:</label>
-                            <textarea id="edit-en-${entryId}" oninput="updateEditPreview(${entryId}, 'en')">${entry.content || ''}</textarea>
-                            <div class="preview-container">
-                                <div class="preview-title">
-                                    <span>Preview:</span>
-                                    <span class="char-count"><span id="edit-en-${entryId}-count">0</span> characters</span>
-                                </div>
-                                <div id="edit-en-${entryId}-preview"></div>
-                            </div>
-                        </div>
-                        <div class="edit-actions">
-                            <button class="save-btn" onclick="saveEntry(${entryId})"><i class="fas fa-save"></i> Kaydet</button>
-                            <button class="cancel-btn" onclick="cancelEdit(${entryId})"><i class="fas fa-times"></i> İptal</button>
-                        </div>
-                    `;
-                    targetItem.appendChild(editForm);
-                    
-                    updateEditPreview(entryId, 'tr');
-                    updateEditPreview(entryId, 'en');
-                }
-                
-                editForm.style.display = 'block';
-            } catch (error) {
-                console.error('Entry düzenleme hatası:', error);
-                showMessage(`Düzenleme hatası: ${error.message}`, 'error');
-            }
-        }
-        
-        async function saveEntry(entryId) {
-            try {
-                const trContent = document.getElementById(`edit-tr-${entryId}`).value;
-                const enContent = document.getElementById(`edit-en-${entryId}`).value;
-                
-                if (!trContent && !enContent) {
-                    showMessage('En az bir dilde içerik girin!', 'error');
-                    return;
-                }
-                
-                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
-                let entriesArray = Array.isArray(entries) ? entries : (entries.records || []);
-                
-                const entryIndex = entriesArray.findIndex(e => e.id === entryId);
-                if (entryIndex === -1) {
-                    showMessage('Entry bulunamadı!', 'error');
-                    return;
-                }
-                
-                entriesArray[entryIndex] = {
-                    ...entriesArray[entryIndex],
-                    content_tr: trContent || null,
-                    content: enContent || '',
-                    date: new Date().toISOString()
-                };
-                
-                await fetchFromJsonBin(ENTRIES_BIN_ID, 'PUT', entriesArray);
-                
-                showMessage('Entry başarıyla güncellendi!', 'success');
-                await loadRecentEntries();
-            } catch (error) {
-                console.error('Entry kaydetme hatası:', error);
-                showMessage(`Kaydetme hatası: ${error.message}`, 'error');
-            }
-        }
-        
-        function cancelEdit(entryId) {
-            const entryItems = document.querySelectorAll('.entry-item');
-            const targetItem = Array.from(entryItems).find(item => 
-                item.querySelector('.entry-meta span').textContent.includes(`ID: ${entryId}`));
-            
-            if (targetItem) {
-                const editForm = targetItem.querySelector('.edit-form');
-                if (editForm) {
-                    editForm.style.display = 'none';
-                }
-            }
-        }
-        
-        function confirmDelete(entryId) {
-            if (confirm('Bu entryi silmek istediğinize emin misiniz?')) {
-                deleteEntry(entryId);
-            }
-        }
-        
-        async function deleteEntry(entryId) {
-            try {
-                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
-                let entriesArray = Array.isArray(entries) ? entries : (entries.records || []);
-                
-                const updatedEntries = entriesArray.filter(e => e.id !== entryId);
-                
-                await fetchFromJsonBin(ENTRIES_BIN_ID, 'PUT', updatedEntries);
-                
-                showMessage('Entry başarıyla silindi!', 'success');
-                await loadRecentEntries();
-                await updateStats();
-            } catch (error) {
-                console.error('Entry silme hatası:', error);
-                showMessage(`Silme hatası: ${error.message}`, 'error');
-            }
-        }
-        
-        async function updateStats() {
-            try {
-                const entriesData = await fetchFromJsonBin(ENTRIES_BIN_ID);
-                const interactions = await fetchFromJsonBin(INTERACTIONS_BIN_ID);
-                
-                const totalEntries = Array.isArray(entriesData) ? 
-                    entriesData.length : 
-                    (entriesData.records ? entriesData.records.length : 0);
-                
-                const totalLikes = interactions.likes ? 
-                    Object.values(interactions.likes).reduce((a, b) => a + b, 0) : 0;
-                
-                const totalPins = interactions.pins ? 
-                    Object.values(interactions.pins).reduce((a, b) => a + b, 0) : 0;
-                
-                document.getElementById('total-entries').textContent = totalEntries;
-                document.getElementById('total-likes').textContent = totalLikes;
-                document.getElementById('total-pins').textContent = totalPins;
-            } catch (error) {
-                console.error('İstatistik güncelleme hatası:', error);
-            }
-        }
-        
-        async function loadStats() {
-            await updateStats();
-        }
-        
-        function showMessage(message, type) {
-            const responseEl = document.getElementById('response-message');
-            responseEl.textContent = message;
-            responseEl.className = type;
-            responseEl.style.display = 'block';
-            
-            setTimeout(() => {
-                responseEl.style.display = 'none';
-            }, 5000);
-        }
-        
-        function logout() {
-            localStorage.removeItem('adminAuth');
-            window.location.href = 'index.html';
-        }
-        
-        function updatePreview(textareaId) {
-            const textarea = document.getElementById(textareaId);
-            const preview = document.getElementById(`${textareaId}-preview`);
-            const charCount = document.getElementById(`${textareaId}-count`);
-            
-            if (textarea && preview && charCount) {
-                // Özel medya içerikleri için işleme
-                let content = textarea.value;
-                
-                // Video etiketlerini işle
-                content = content.replace(/<video([^>]*)>/g, '<video$1 style="max-width: 100%; height: auto;">');
-                
-                // Resim etiketlerini işle
-                content = content.replace(/<img([^>]*)>/g, '<img$1 style="max-width: 100%; height: auto;">');
-                
-                // Spotify ve YouTube embed'leri için işleme
-                content = content.replace(/<iframe class="spotify-embed">([\s\S]*?)<\/iframe>/g, '<iframe class="spotify-embed" style="max-width: 100%;">$1</iframe>');
-                content = content.replace(/<iframe class="youtube-embed">([\s\S]*?)<\/iframe>/g, '<iframe class="youtube-embed" style="max-width: 100%;">$1</iframe>');
-                
-                preview.innerHTML = content.replace(/\n/g, '<br>');
-                charCount.textContent = textarea.value.length;
-            }
-        }
-        
-        function updateEditPreview(entryId, lang) {
-            const textarea = document.getElementById(`edit-${lang}-${entryId}`);
-            const preview = document.getElementById(`edit-${lang}-${entryId}-preview`);
-            const charCount = document.getElementById(`edit-${lang}-${entryId}-count`);
-            
-            if (textarea && preview && charCount) {
-                let content = textarea.value;
-                
-                // Video etiketlerini işle
-                content = content.replace(/<video([^>]*)>/g, '<video$1 style="max-width: 100%; height: auto;">');
-                
-                // Resim etiketlerini işle
-                content = content.replace(/<img([^>]*)>/g, '<img$1 style="max-width: 100%; height: auto;">');
-                
-                // Spotify ve YouTube embed'leri için işleme
-                content = content.replace(/<iframe class="spotify-embed">([\s\S]*?)<\/iframe>/g, '<iframe class="spotify-embed" style="max-width: 100%;">$1</iframe>');
-                content = content.replace(/<iframe class="youtube-embed">([\s\S]*?)<\/iframe>/g, '<iframe class="youtube-embed" style="max-width: 100%;">$1</iframe>');
-                
-                preview.innerHTML = content.replace(/\n/g, '<br>');
-                charCount.textContent = textarea.value.length;
-            }
-        }
-        
+        // Format text in editor
         function formatText(textareaId, format) {
             const textarea = document.getElementById(textareaId);
             const start = textarea.selectionStart;
@@ -2204,7 +1442,8 @@
             
             updatePreview(textareaId);
         }
-        
+
+        // Clear formatting
         function clearFormatting(textareaId) {
             const textarea = document.getElementById(textareaId);
             const start = textarea.selectionStart;
@@ -2223,6 +1462,925 @@
             textarea.setSelectionRange(start + cleanedText.length, start + cleanedText.length);
             
             updatePreview(textareaId);
+        }
+
+        // Update preview
+        function updatePreview(textareaId) {
+            const textarea = document.getElementById(textareaId);
+            const preview = document.getElementById(`${textareaId}-preview`);
+            const charCount = document.getElementById(`${textareaId}-count`);
+            
+            if (textarea && preview && charCount) {
+                // Özel medya içerikleri için işleme
+                let content = textarea.value;
+                
+                // Video etiketlerini işle
+                content = content.replace(/<video([^>]*)>/g, '<video$1 style="max-width: 100%; height: auto;">');
+                
+                // Resim etiketlerini işle
+                content = content.replace(/<img([^>]*)>/g, '<img$1 style="max-width: 100%; height: auto;">');
+                
+                // Spotify ve YouTube embed'leri için işleme
+                content = content.replace(/<iframe class="spotify-embed">([\s\S]*?)<\/iframe>/g, '<iframe class="spotify-embed" style="max-width: 100%;">$1</iframe>');
+                content = content.replace(/<iframe class="youtube-embed">([\s\S]*?)<\/iframe>/g, '<iframe class="youtube-embed" style="max-width: 100%;">$1</iframe>');
+                
+                preview.innerHTML = content.replace(/\n/g, '<br>');
+                charCount.textContent = textarea.value.length;
+            }
+        }
+
+        // Insert text at cursor
+        function insertAtCursor(textareaId, text) {
+            const textarea = document.getElementById(textareaId);
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            
+            textarea.value = textarea.value.substring(0, start) + text + textarea.value.substring(end);
+            
+            const newCursorPos = start + text.length;
+            textarea.selectionStart = newCursorPos;
+            textarea.selectionEnd = newCursorPos;
+            textarea.focus();
+            updatePreview(textareaId);
+        }
+
+        // Spotify embed
+        function addSpotifyEmbed(textareaId) {
+            const spotifyUrl = prompt("Enter Spotify URL or Track ID:");
+            if (!spotifyUrl) return;
+            
+            let trackId = extractTrackId(spotifyUrl);
+            if (!trackId) {
+                alert("Invalid Spotify URL or Track ID!");
+                return;
+            }
+            
+            const spotifyEmbed = `<iframe class="spotify-embed"
+                    src="https://open.spotify.com/embed/track/${trackId}?utm_source=generator&theme=0" 
+                    frameborder="0"
+                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+                    loading="lazy">
+                </iframe>`;
+            
+            insertAtCursor(textareaId, spotifyEmbed);
+        }
+
+        function extractTrackId(url) {
+            if (/^[a-zA-Z0-9]{22}$/.test(url)) {
+                return url;
+            }
+            
+            const regex = /open\.spotify\.com\/track\/([a-zA-Z0-9]{22})/;
+            const match = url.match(regex);
+            if (match && match[1]) {
+                return match[1];
+            }
+            
+            return null;
+        }
+
+        // YouTube embed
+        function addYoutubeEmbed(textareaId) {
+            const youtubeUrl = prompt("Enter Youtube URL or Video ID:");
+            if (!youtubeUrl) return;
+            
+            let videoId = extractYoutubeId(youtubeUrl);
+            if (!videoId) {
+                alert("Invalid Youtube URL or Video ID!");
+                return;
+            }
+            
+            const youtubeEmbed = `<div class="youtube-embed">
+                <iframe 
+                    width="100%" 
+                    height="315" 
+                    src="https://www.youtube.com/embed/${videoId}" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            </div>`;
+            
+            insertAtCursor(textareaId, youtubeEmbed);
+        }
+
+        function extractYoutubeId(url) {
+            if (/^[a-zA-Z0-9_-]{11}$/.test(url)) {
+                return url;
+            }
+            
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+            const match = url.match(regExp);
+            
+            if (match && match[2].length === 11) {
+                return match[2];
+            }
+            
+            const shortsRegExp = /youtube\.com\/shorts\/([^\/\?]+)/;
+            const shortsMatch = url.match(shortsRegExp);
+            
+            if (shortsMatch && shortsMatch[1]) {
+                return shortsMatch[1];
+            }
+            
+            return null;
+        }
+
+        // Media upload functions
+        function openMediaUpload(textareaId) {
+            activeTextareaId = textareaId;
+            document.getElementById('media-file-input').click();
+        }
+
+        function handleMediaSelection(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
+                showToast('Only images or videos can be uploaded!', 'error');
+                return;
+            }
+            
+            selectedFile = file;
+            
+            if (file.type.startsWith('video/')) {
+                handleMediaUpload(file);
+            } else {
+                openCropModal(file);
+            }
+        }
+
+        function openCropModal(file) {
+            const cropModal = document.getElementById('cropModal');
+            const cropImage = document.getElementById('cropImage');
+            
+            if (cropper) {
+                cropper.destroy();
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                cropImage.src = e.target.result;
+                cropModal.style.display = 'flex';
+                
+                setTimeout(() => {
+                    cropper = new Cropper(cropImage, {
+                        aspectRatio: 16/9,
+                        viewMode: 1,
+                        guides: true,
+                        background: false,
+                        autoCropArea: 0.8,
+                        responsive: true,
+                        checkCrossOrigin: false
+                    });
+                    
+                    document.querySelectorAll('.aspect-ratio-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            document.querySelectorAll('.aspect-ratio-btn').forEach(b => b.classList.remove('active'));
+                            this.classList.add('active');
+                            
+                            const ratio = this.getAttribute('data-ratio');
+                            if (ratio === 'free') {
+                                cropper.setAspectRatio(NaN);
+                            } else {
+                                const parts = ratio.split('/');
+                                cropper.setAspectRatio(parts[0] / parts[1]);
+                            }
+                        });
+                    });
+                }, 100);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function closeCropModal() {
+            document.getElementById('cropModal').style.display = 'none';
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+            document.getElementById('media-file-input').value = '';
+        }
+
+        async function cropAndUpload() {
+            if (!cropper) return;
+            
+            try {
+                showToast('Cropping and uploading image...', 'warning');
+                
+                const canvas = cropper.getCroppedCanvas({
+                    imageSmoothingEnabled: true,
+                    imageSmoothingQuality: 'high'
+                });
+                
+                canvas.toBlob(async function(blob) {
+                    try {
+                        const croppedFile = new File([blob], selectedFile.name, {
+                            type: 'image/jpeg',
+                            lastModified: Date.now()
+                        });
+                        
+                        await handleMediaUpload(croppedFile);
+                        closeCropModal();
+                    } catch (error) {
+                        console.error('Cropping error:', error);
+                        showToast(`Cropping error: ${error.message}`, 'error');
+                    }
+                }, 'image/jpeg', 0.9);
+                
+            } catch (error) {
+                console.error('Cropping error:', error);
+                showToast(`Cropping error: ${error.message}`, 'error');
+            }
+        }
+
+        async function handleMediaUpload(file) {
+            try {
+                showToast('Uploading file...', 'warning');
+                showDebugInfo('Getting authentication parameters...');
+                
+                const authResponse = await fetch('https://adembayazit.netlify.app/.netlify/functions/imagekit-auth');
+                
+                if (!authResponse.ok) {
+                    throw new Error(`Auth endpoint error: ${authResponse.status}`);
+                }
+                
+                const authData = await authResponse.json();
+                showDebugInfo('Auth data received');
+                
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('fileName', file.name);
+                formData.append('signature', authData.signature);
+                formData.append('token', authData.token);
+                formData.append('expire', authData.expire);
+                formData.append('publicKey', authData.publicKey);
+                
+                showDebugInfo('Calling ImageKit upload...');
+                
+                const uploadResponse = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                showDebugInfo('Upload response: ' + uploadResponse.status);
+                
+                if (!uploadResponse.ok) {
+                    const errorText = await uploadResponse.text();
+                    showDebugInfo('Upload error: ' + errorText);
+                    throw new Error(`Upload error: ${uploadResponse.status}`);
+                }
+                
+                const uploadData = await uploadResponse.json();
+                showDebugInfo('Upload successful: ' + uploadData.url);
+                
+                const textarea = document.getElementById(activeTextareaId);
+                const url = uploadData.url;
+                
+                let mediaTag;
+                if (file.type.startsWith('image/')) {
+                    mediaTag = `<img src="${url}" alt="Uploaded image" style="max-width: 100%; height: auto;">`;
+                } else if (file.type.startsWith('video/')) {
+                    mediaTag = `<video src="${url}" controls style="max-width: 100%; height: auto;"></video>`;
+                }
+                
+                insertAtCursor(activeTextareaId, `\n${mediaTag}\n`);
+                
+                showToast('File uploaded successfully!', 'success');
+                showDebugInfo('');
+                
+            } catch (error) {
+                console.error('Upload error:', error);
+                let errorMessage = error.message;
+                
+                if (errorMessage.includes('Failed to fetch')) {
+                    errorMessage = 'Could not connect to server. Check your internet connection.';
+                }
+                
+                showToast(`Upload error: ${errorMessage}`, 'error');
+                showDebugInfo('Error detail: ' + errorMessage);
+                
+                showAlternativeUploadOption();
+            }
+        }
+        
+        function showAlternativeUploadOption() {
+            const responseEl = document.getElementById('response-message');
+            const alternativeHtml = `
+                <div class="alternative-upload">
+                    <p>Alternatively, you can upload the file manually and add the URL:</p>
+                    <p><a href="https://imagekit.io/dashboard/media-library" target="_blank">ImageKit Media Library</a></p>
+                </div>
+            `;
+            
+            if (!responseEl.nextElementSibling || !responseEl.nextElementSibling.classList.contains('alternative-upload')) {
+                responseEl.insertAdjacentHTML('afterend', alternativeHtml);
+            }
+        }
+
+        // Entry management functions
+        async function submitEntry() {
+            const entryIdInput = document.getElementById('entryId');
+            const referenceId = document.getElementById('referenceId').value;
+            const trContent = document.getElementById('trContent').value;
+            const enContent = document.getElementById('enContent').value;
+            
+            if (!trContent && !enContent) {
+                showToast('Please enter content in at least one language!', 'error');
+                return;
+            }
+            
+            try {
+                const submitBtn = document.querySelector('.submit-btn');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+                
+                const currentData = await fetchFromJsonBin(ENTRIES_BIN_ID);
+                let entries = Array.isArray(currentData) ? currentData : (currentData.records || []);
+                
+                let entryId = entryIdInput.value ? parseInt(entryIdInput.value) : await getNextId();
+                
+                if (entryIdInput.value && entries.some(e => e.id === entryId)) {
+                    showToast('This ID is already in use!', 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Add Entry';
+                    return;
+                }
+                
+                const newEntry = {
+                    id: entryId,
+                    date: new Date().toISOString(),
+                    content: enContent || '',
+                    content_tr: trContent || null,
+                    references: referenceId ? [parseInt(referenceId)] : []
+                };
+                
+                const updatedEntries = [newEntry, ...entries];
+                await fetchFromJsonBin(ENTRIES_BIN_ID, 'PUT', updatedEntries);
+                
+                showToast('Entry added successfully!', 'success');
+                
+                entryIdInput.value = '';
+                document.getElementById('referenceId').value = '';
+                document.getElementById('trContent').value = '';
+                document.getElementById('enContent').value = '';
+                
+                updatePreview('trContent');
+                updatePreview('enContent');
+                
+                await updateStats();
+                await loadRecentEntries();
+            } catch (error) {
+                showToast(`Error: ${error.message}`, 'error');
+                console.error('Entry addition error:', error);
+            } finally {
+                const submitBtn = document.querySelector('.submit-btn');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Add Entry';
+            }
+        }
+
+        async function loadRecentEntries() {
+            try {
+                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
+                const recentEntriesContainer = document.getElementById('recent-entries');
+                recentEntriesContainer.innerHTML = '';
+                
+                entriesData = Array.isArray(entries) ? 
+                    entries : 
+                    (entries.records ? entries.records : []);
+                
+                const recentEntries = entriesData.slice(0, 7);
+                
+                if (recentEntries.length === 0) {
+                    recentEntriesContainer.innerHTML = '<p>No entries found.</p>';
+                    return;
+                }
+                
+                recentEntries.forEach(entry => {
+                    const entryEl = document.createElement('div');
+                    entryEl.className = 'entry-item';
+                    
+                    let displayContent = entry.content_tr || entry.content;
+                    
+                    entryEl.innerHTML = `
+                        <div class="entry-content">${displayContent}</div>
+                        <div class="entry-meta">
+                            <span>ID: ${entry.id}</span>
+                            <span>Reference ID: ${entry.references}</span>
+                            <span>${formatDate(entry.date)}</span>
+                        </div>
+                        <div class="entry-actions">
+                            <button onclick="editEntry(${entry.id})" title="Edit"><i class="fas fa-edit"></i></button>
+                            <button onclick="confirmDelete(${entry.id})" title="Delete"><i class="fas fa-trash"></i></button>
+                        </div>
+                    `;
+                    
+                    recentEntriesContainer.appendChild(entryEl);
+                });
+            } catch (error) {
+                console.error('Error loading recent entries:', error);
+            }
+        }
+
+        async function searchEntry() {
+            const searchId = document.getElementById('searchId').value;
+            if (!searchId) {
+                loadRecentEntries();
+                return;
+            }
+            
+            try {
+                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
+                const recentEntriesContainer = document.getElementById('recent-entries');
+                recentEntriesContainer.innerHTML = '';
+                
+                let entriesArray = Array.isArray(entries) ? entries : (entries.records || []);
+                const entry = entriesArray.find(e => e.id === parseInt(searchId));
+                
+                if (!entry) {
+                    recentEntriesContainer.innerHTML = '<p>Entry not found.</p>';
+                    return;
+                }
+                
+                const entryEl = document.createElement('div');
+                entryEl.className = 'entry-item';
+                
+                let displayContent = entry.content_tr || entry.content;
+                
+                entryEl.innerHTML = `
+                    <div class="entry-content">${displayContent}</div>
+                    <div class="entry-meta">
+                        <span>ID: ${entry.id}</span>
+                        <span>Reference ID: ${entry.references}</span>
+                        <span>${formatDate(entry.date)}</span>
+                    </div>
+                    <div class="entry-actions">
+                        <button onclick="editEntry(${entry.id})" title="Edit"><i class="fas fa-edit"></i></button>
+                        <button onclick="confirmDelete(${entry.id})" title="Delete"><i class="fas fa-trash"></i></button>
+                    </div>
+                `;
+                
+                recentEntriesContainer.appendChild(entryEl);
+            } catch (error) {
+                console.error('Entry search error:', error);
+                showToast(`Search error: ${error.message}`, 'error');
+            }
+        }
+
+        async function editEntry(entryId) {
+            try {
+                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
+                const entry = Array.isArray(entries) ? 
+                    entries.find(e => e.id === entryId) : 
+                    (entries.records ? entries.records.find(e => e.id === entryId) : null);
+                
+                if (!entry) {
+                    showToast('Entry not found!', 'error');
+                    return;
+                }
+                
+                const entryItems = document.querySelectorAll('.entry-item');
+                const targetItem = Array.from(entryItems).find(item => 
+                    item.querySelector('.entry-meta span').textContent.includes(`ID: ${entryId}`));
+                
+                if (!targetItem) return;
+                
+                let editForm = targetItem.querySelector('.edit-form');
+                
+                if (!editForm) {
+                    editForm = document.createElement('div');
+                    editForm.className = 'edit-form';
+                    editForm.innerHTML = `
+                        <div class="form-group">
+                            <label for="edit-tr-${entryId}">Turkish Content:</label>
+                            <textarea id="edit-tr-${entryId}" oninput="updateEditPreview(${entryId}, 'tr')">${entry.content_tr || ''}</textarea>
+                            <div class="preview-container">
+                                <div class="preview-title">
+                                    <span>Preview:</span>
+                                    <span class="char-count"><span id="edit-tr-${entryId}-count">0</span> characters</span>
+                                </div>
+                                <div id="edit-tr-${entryId}-preview"></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-en-${entryId}">English Content:</label>
+                            <textarea id="edit-en-${entryId}" oninput="updateEditPreview(${entryId}, 'en')">${entry.content || ''}</textarea>
+                            <div class="preview-container">
+                                <div class="preview-title">
+                                    <span>Preview:</span>
+                                    <span class="char-count"><span id="edit-en-${entryId}-count">0</span> characters</span>
+                                </div>
+                                <div id="edit-en-${entryId}-preview"></div>
+                            </div>
+                        </div>
+                        <div class="edit-actions">
+                            <button class="save-btn" onclick="saveEntry(${entryId})"><i class="fas fa-save"></i> Save</button>
+                            <button class="cancel-btn" onclick="cancelEdit(${entryId})"><i class="fas fa-times"></i> Cancel</button>
+                        </div>
+                    `;
+                    targetItem.appendChild(editForm);
+                    
+                    updateEditPreview(entryId, 'tr');
+                    updateEditPreview(entryId, 'en');
+                }
+                
+                editForm.style.display = 'block';
+            } catch (error) {
+                console.error('Entry editing error:', error);
+                showToast(`Editing error: ${error.message}`, 'error');
+            }
+        }
+
+        function updateEditPreview(entryId, lang) {
+            const textarea = document.getElementById(`edit-${lang}-${entryId}`);
+            const preview = document.getElementById(`edit-${lang}-${entryId}-preview`);
+            const charCount = document.getElementById(`edit-${lang}-${entryId}-count`);
+            
+            if (textarea && preview && charCount) {
+                let content = textarea.value;
+                
+                content = content.replace(/<video([^>]*)>/g, '<video$1 style="max-width: 100%; height: auto;">');
+                content = content.replace(/<img([^>]*)>/g, '<img$1 style="max-width: 100%; height: auto;">');
+                content = content.replace(/<iframe class="spotify-embed">([\s\S]*?)<\/iframe>/g, '<iframe class="spotify-embed" style="max-width: 100%;">$1</iframe>');
+                content = content.replace(/<iframe class="youtube-embed">([\s\S]*?)<\/iframe>/g, '<iframe class="youtube-embed" style="max-width: 100%;">$1</iframe>');
+                
+                preview.innerHTML = content.replace(/\n/g, '<br>');
+                charCount.textContent = textarea.value.length;
+            }
+        }
+
+        async function saveEntry(entryId) {
+            try {
+                const trContent = document.getElementById(`edit-tr-${entryId}`).value;
+                const enContent = document.getElementById(`edit-en-${entryId}`).value;
+                
+                if (!trContent && !enContent) {
+                    showToast('Please enter content in at least one language!', 'error');
+                    return;
+                }
+                
+                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
+                let entriesArray = Array.isArray(entries) ? entries : (entries.records || []);
+                
+                const entryIndex = entriesArray.findIndex(e => e.id === entryId);
+                if (entryIndex === -1) {
+                    showToast('Entry not found!', 'error');
+                    return;
+                }
+                
+                entriesArray[entryIndex] = {
+                    ...entriesArray[entryIndex],
+                    content_tr: trContent || null,
+                    content: enContent || '',
+                    date: new Date().toISOString()
+                };
+                
+                await fetchFromJsonBin(ENTRIES_BIN_ID, 'PUT', entriesArray);
+                
+                showToast('Entry updated successfully!', 'success');
+                await loadRecentEntries();
+            } catch (error) {
+                console.error('Entry saving error:', error);
+                showToast(`Saving error: ${error.message}`, 'error');
+            }
+        }
+
+        function cancelEdit(entryId) {
+            const entryItems = document.querySelectorAll('.entry-item');
+            const targetItem = Array.from(entryItems).find(item => 
+                item.querySelector('.entry-meta span').textContent.includes(`ID: ${entryId}`));
+            
+            if (targetItem) {
+                const editForm = targetItem.querySelector('.edit-form');
+                if (editForm) {
+                    editForm.style.display = 'none';
+                }
+            }
+        }
+
+        function confirmDelete(entryId) {
+            if (confirm('Are you sure you want to delete this entry?')) {
+                deleteEntry(entryId);
+            }
+        }
+
+        async function deleteEntry(entryId) {
+            try {
+                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
+                let entriesArray = Array.isArray(entries) ? entries : (entries.records || []);
+                
+                const updatedEntries = entriesArray.filter(e => e.id !== entryId);
+                
+                await fetchFromJsonBin(ENTRIES_BIN_ID, 'PUT', updatedEntries);
+                
+                showToast('Entry deleted successfully!', 'success');
+                await loadRecentEntries();
+                await updateStats();
+            } catch (error) {
+                console.error('Entry deletion error:', error);
+                showToast(`Deletion error: ${error.message}`, 'error');
+            }
+        }
+
+        // Statistics functions
+        async function updateStats() {
+            try {
+                const entriesData = await fetchFromJsonBin(ENTRIES_BIN_ID);
+                const interactions = await fetchFromJsonBin(INTERACTIONS_BIN_ID);
+                
+                const totalEntries = Array.isArray(entriesData) ? 
+                    entriesData.length : 
+                    (entriesData.records ? entriesData.records.length : 0);
+                
+                const totalLikes = interactions.likes ? 
+                    Object.values(interactions.likes).reduce((a, b) => a + b, 0) : 0;
+                
+                const totalPins = interactions.pins ? 
+                    Object.values(interactions.pins).reduce((a, b) => a + b, 0) : 0;
+                
+                document.getElementById('total-entries').textContent = totalEntries;
+                document.getElementById('total-likes').textContent = totalLikes;
+                document.getElementById('total-pins').textContent = totalPins;
+                
+                // Last entry date
+                if (totalEntries > 0) {
+                    const entriesArray = Array.isArray(entriesData) ? entriesData : (entriesData.records || []);
+                    const lastDate = new Date(entriesArray[0].date).toLocaleDateString();
+                    document.getElementById('last-entry-date').textContent = lastDate;
+                } else {
+                    document.getElementById('last-entry-date').textContent = '-';
+                }
+            } catch (error) {
+                console.error('Statistics update error:', error);
+            }
+        }
+
+        async function loadStats() {
+            await updateStats();
+        }
+
+        // IP Statistics functions
+        async function loadIpStats() {
+            try {
+                const response = await fetchFromJsonBin(IP_STATS_BIN_ID);
+                allVisitors = response.visitors || [];
+                filteredVisitors = [...allVisitors];
+                
+                updateIpStats(allVisitors);
+                displayTopEntries(allVisitors);
+                displayRecentIps(allVisitors);
+                populateCountryFilter(allVisitors);
+            } catch (error) {
+                console.error('Error loading IP statistics:', error);
+                document.getElementById('recent-ips-list').innerHTML = 
+                    '<div class="ip-item">Error loading IP statistics.</div>';
+            }
+        }
+        
+        function updateIpStats(visitors) {
+            const totalVisitors = visitors.length;
+            const uniqueIps = new Set(visitors.map(v => v.ip)).size;
+            const uniqueFingerprints = new Set(visitors.map(v => v.fingerprint)).size;
+            
+            let lastVisit = '-';
+            if (visitors.length > 0) {
+                const sortedVisits = [...visitors].sort((a, b) => 
+                    new Date(b.timestamp) - new Date(a.timestamp)
+                );
+                lastVisit = formatDate(sortedVisits[0].timestamp);
+            }
+            
+            document.getElementById('total-visitors').textContent = totalVisitors;
+            document.getElementById('unique-ips').textContent = uniqueIps;
+            document.getElementById('unique-fingerprints').textContent = uniqueFingerprints;
+            document.getElementById('last-visit').textContent = lastVisit;
+        }
+        
+        function displayTopEntries(visitors) {
+            const topEntriesContainer = document.getElementById('top-entries');
+            
+            const entryCounts = {};
+            visitors.forEach(visit => {
+                if (visit.entryId) {
+                    if (!entryCounts[visit.entryId]) {
+                        entryCounts[visit.entryId] = 0;
+                    }
+                    entryCounts[visit.entryId]++;
+                }
+            });
+            
+            const sortedEntries = Object.entries(entryCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10);
+            
+            if (sortedEntries.length === 0) {
+                topEntriesContainer.innerHTML = '<div class="ip-item">No entry view data available yet.</div>';
+                return;
+            }
+            
+            let html = '';
+            sortedEntries.forEach(([entryId, count]) => {
+                html += `
+                    <div class="entry-stat-item">
+                        <span class="entry-id">Entry #${entryId}</span>
+                        <span class="entry-count">${count} views</span>
+                    </div>
+                `;
+            });
+            
+            topEntriesContainer.innerHTML = html;
+        }
+        
+        function displayRecentIps(visitors) {
+            const recentIpsList = document.getElementById('recent-ips-list');
+            
+            if (visitors.length === 0) {
+                recentIpsList.innerHTML = '<div class="ip-item">No IP records found.</div>';
+                return;
+            }
+            
+            const sortedVisits = [...visitors].sort((a, b) => 
+                new Date(b.timestamp) - new Date(a.timestamp)
+            ).slice(0, 10);
+            
+            let html = '';
+            sortedVisits.forEach(visit => {
+                html += `
+                    <div class="ip-item">
+                        <div class="ip-item-header">
+                            <span class="ip-address">${visit.ip}</span>
+                            <span class="ip-date">${formatDate(visit.timestamp)}</span>
+                        </div>
+                        <div class="ip-details">
+                            <div class="ip-detail-item">
+                                <span class="ip-detail-label">Entry ID</span>
+                                <span class="ip-detail-value">${visit.entryId || 'Unknown'}</span>
+                            </div>
+                            <div class="ip-detail-item">
+                                <span class="ip-detail-label">Country/City</span>
+                                <span class="ip-detail-value">${visit.country || 'Unknown'}${visit.city ? '/' + visit.city : ''}</span>
+                            </div>
+                            <div class="ip-detail-item">
+                                <span class="ip-detail-label">Device</span>
+                                <span class="ip-detail-value">${extractBrowserInfo(visit.userAgent)}</span>
+                            </div>
+                            <div class="ip-detail-item">
+                                <span class="ip-detail-label">Fingerprint</span>
+                                <span class="ip-detail-value">${visit.fingerprint || 'Unknown'}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            recentIpsList.innerHTML = html;
+        }
+        
+        function populateCountryFilter(visitors) {
+            const countryFilter = document.getElementById('filter-country');
+            const countries = new Set(visitors.map(v => v.country).filter(c => c));
+            
+            countries.forEach(country => {
+                const option = document.createElement('option');
+                option.value = country;
+                option.textContent = country;
+                countryFilter.appendChild(option);
+            });
+        }
+        
+        function applyFilters() {
+            const ipFilter = document.getElementById('filter-ip').value.toLowerCase();
+            const fingerprintFilter = document.getElementById('filter-fingerprint').value.toLowerCase();
+            const entryFilter = document.getElementById('filter-entry').value;
+            const countryFilter = document.getElementById('filter-country').value;
+            
+            filteredVisitors = allVisitors.filter(visitor => {
+                let matches = true;
+                
+                if (ipFilter && !visitor.ip.toLowerCase().includes(ipFilter)) {
+                    matches = false;
+                }
+                
+                if (fingerprintFilter && (!visitor.fingerprint || !visitor.fingerprint.toLowerCase().includes(fingerprintFilter))) {
+                    matches = false;
+                }
+                
+                if (entryFilter && visitor.entryId !== entryFilter) {
+                    matches = false;
+                }
+                
+                if (countryFilter && visitor.country !== countryFilter) {
+                    matches = false;
+                }
+                
+                return matches;
+            });
+            
+            updateIpStats(filteredVisitors);
+            displayRecentIps(filteredVisitors);
+            displayTopEntries(filteredVisitors);
+        }
+        
+        function clearFilters() {
+            document.getElementById('filter-ip').value = '';
+            document.getElementById('filter-fingerprint').value = '';
+            document.getElementById('filter-entry').value = '';
+            document.getElementById('filter-country').value = '';
+            
+            filteredVisitors = [...allVisitors];
+            updateIpStats(filteredVisitors);
+            displayRecentIps(filteredVisitors);
+            displayTopEntries(filteredVisitors);
+        }
+        
+        function exportData(type) {
+            let data, filename, contentType;
+            
+            if (type === 'ip') {
+                data = JSON.stringify(filteredVisitors, null, 2);
+                filename = 'ip-statistics.json';
+                contentType = 'application/json';
+            } else if (type === 'stats') {
+                const stats = {
+                    totalVisitors: filteredVisitors.length,
+                    uniqueIps: new Set(filteredVisitors.map(v => v.ip)).size,
+                    uniqueFingerprints: new Set(filteredVisitors.map(v => v.fingerprint)).size,
+                    topEntries: getTopEntries(filteredVisitors, 10),
+                    generatedAt: new Date().toISOString()
+                };
+                data = JSON.stringify(stats, null, 2);
+                filename = 'statistics-summary.json';
+                contentType = 'application/json';
+            }
+            
+            const blob = new Blob([data], { type: contentType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // New function to clear IP data
+        async function clearIpData() {
+            if (confirm('Are you sure you want to clear all IP data? This action cannot be undone.')) {
+                try {
+                    await fetchFromJsonBin(IP_STATS_BIN_ID, 'PUT', { visitors: [] });
+                    showToast('IP data cleared successfully!', 'success');
+                    
+                    // Reload IP statistics
+                    allVisitors = [];
+                    filteredVisitors = [];
+                    updateIpStats([]);
+                    displayRecentIps([]);
+                    displayTopEntries([]);
+                } catch (error) {
+                    console.error('Error clearing IP data:', error);
+                    showToast(`Error clearing IP data: ${error.message}`, 'error');
+                }
+            }
+        }
+        
+        function getTopEntries(visitors, limit) {
+            const entryCounts = {};
+            visitors.forEach(visit => {
+                if (visit.entryId) {
+                    if (!entryCounts[visit.entryId]) {
+                        entryCounts[visit.entryId] = 0;
+                    }
+                    entryCounts[visit.entryId]++;
+                }
+            });
+            
+            return Object.entries(entryCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, limit)
+                .map(([id, count]) => ({ entryId: id, viewCount: count }));
+        }
+        
+        function extractBrowserInfo(userAgent) {
+            if (!userAgent) return 'Unknown';
+            
+            if (userAgent.includes('Chrome')) return 'Chrome';
+            if (userAgent.includes('Firefox')) return 'Firefox';
+            if (userAgent.includes('Safari')) return 'Safari';
+            if (userAgent.includes('Edge')) return 'Edge';
+            if (userAgent.includes('Opera')) return 'Opera';
+            
+            return 'Other';
+        }
+        
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US') + ' ' + date.toLocaleTimeString('en-US');
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('adminAuth');
+            window.location.href = 'index.html';
         }
     </script>
 </body>
