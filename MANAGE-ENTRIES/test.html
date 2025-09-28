@@ -1539,33 +1539,20 @@
         }
         
         // Send test email
-        async function sendTestEmail() {
-            const testEmail = document.getElementById('test-email').value.trim();
-            const vulnerabilityId = document.getElementById('email-vulnerability').value;
-            
-            if (!testEmail) {
-                showToast('Please enter test email address', 5000);
-                return;
-            }
-            
-            if (!vulnerabilityId) {
-                showToast('Please select a vulnerability', 5000);
-                return;
-            }
-            
-            showToast('Sending test email...', 3000);
-            // Implement test email functionality here
-        }
-        
-                // Send email to subscribers
-async function sendEmail() {
+async function sendTestEmail() {
+    const testEmail = document.getElementById('test-email').value.trim();
     const vulnerabilityId = document.getElementById('email-vulnerability').value;
     const subject = document.getElementById('email-subject').value.trim();
     const customMessage = document.getElementById('email-message').value.trim();
     const template = document.getElementById('email-template').value;
 
+    if (!testEmail) {
+        showToast('Please enter test email address', 5000);
+        return;
+    }
+
     if (!vulnerabilityId) {
-        showToast('Please select a vulnerability to announce', 5000);
+        showToast('Please select a vulnerability', 5000);
         return;
     }
 
@@ -1580,22 +1567,15 @@ async function sendEmail() {
         return;
     }
 
-    if (subscribersData.length === 0) {
-        showToast('No subscribers to send email to', 5000);
-        return;
-    }
-
-    const sendBtn = document.getElementById('send-email-btn');
-    const originalText = sendBtn.innerHTML;
-    sendBtn.disabled = true;
-    sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+    const testBtn = document.getElementById('test-email-btn');
+    const originalText = testBtn.innerHTML;
+    testBtn.disabled = true;
+    testBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending Test...';
 
     try {
-        // Create email content based on template
         let emailHtml = createEmailTemplate(vulnerability, customMessage, template);
         let emailText = createTextTemplate(vulnerability, customMessage);
 
-        // Prepare email data for Mailjet
         const emailData = {
             Messages: [
                 {
@@ -1603,13 +1583,39 @@ async function sendEmail() {
                         Email: 'fyi@adembayazit.com',
                         Name: 'Adem Bayazıt - Vulnerabilities Research'
                     },
-                    To: subscribersData.map(email => ({ Email: email })),
-                    Subject: subject,
+                    To: [{ Email: testEmail }],
+                    Subject: `[TEST] ${subject}`,
                     TextPart: emailText,
                     HTMLPart: emailHtml
                 }
             ]
         };
+
+        const response = await fetch('/.netlify/functions/send-email', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                emailData: emailData
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        showToast(`Test email sent to ${testEmail}`);
+    } catch (error) {
+        console.error('Error sending test email:', error);
+        showToast('Error sending test email: ' + error.message, 5000);
+    } finally {
+        testBtn.disabled = false;
+        testBtn.innerHTML = originalText;
+    }
+}
 
         // Send email via Netlify function
         const response = await fetch('/.netlify/functions/send-email', {
