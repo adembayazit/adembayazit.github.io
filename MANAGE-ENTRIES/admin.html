@@ -266,7 +266,7 @@
             color: var(--text-muted);
         }
         
-        /* Editor Styles */
+        /* Editor Styles - MOBILE IMPROVEMENTS */
         .editor-container {
             background: rgba(0, 0, 0, 0.3);
             border: 1px solid var(--border-color);
@@ -313,6 +313,26 @@
         textarea {
             min-height: 100px;
             resize: vertical;
+        }
+        
+        /* Mobile için textarea yüksekliği artırıldı */
+        @media (max-width: 768px) {
+            textarea {
+                min-height: 150px;
+                height: 200px;
+            }
+            
+            .editor-container {
+                margin: 0 -10px;
+                border-radius: 0;
+                border-left: none;
+                border-right: none;
+                padding: 15px 10px;
+            }
+            
+            .admin-content {
+                padding: 15px;
+            }
         }
         
         .editor-toolbar {
@@ -408,7 +428,7 @@
             color: #aaa;
         }
         
-        /* Entries List Styles */
+        /* Entries List Styles - VIEW IMPROVEMENT */
         .entries-list {
             max-height: 500px;
             overflow-y: auto;
@@ -451,6 +471,12 @@
             justify-content: space-between;
             font-size: 0.7rem;
             color: #aaa;
+        }
+        
+        /* View bilgisi için yeni stil */
+        .entry-views {
+            color: var(--primary-color);
+            font-weight: bold;
         }
         
         .entry-actions {
@@ -554,7 +580,7 @@
             gap: 5px;
         }
         
-        /* IP Statistics Styles */
+        /* IP Statistics Styles - UNIQUE IP LIST */
         .ip-stats-container {
             background: rgba(0, 0, 0, 0.3);
             border: 1px solid var(--border-color);
@@ -667,6 +693,61 @@
         
         .ip-detail-value {
             font-size: 0.85rem;
+        }
+        
+        /* Benzersiz IP listesi için yeni stil */
+        .unique-ips-list {
+            margin-top: 20px;
+        }
+        
+        .unique-ips-list h4 {
+            margin-bottom: 10px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .unique-ip-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .unique-ip-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .unique-ip-address {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .unique-ip-count {
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+        
+        .unique-ip-actions button {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--primary-color);
+            color: var(--text-color);
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.7rem;
+        }
+        
+        .unique-ip-actions button:hover {
+            background: var(--primary-color);
+            color: black;
         }
         
         .loading-spinner {
@@ -1023,6 +1104,20 @@
             .ip-details {
                 grid-template-columns: 1fr;
             }
+            
+            /* Mobile için entry editor genişletme */
+            .editor-container {
+                margin: 0 -10px;
+                width: calc(100% + 20px);
+                border-radius: 0;
+                border-left: none;
+                border-right: none;
+            }
+            
+            textarea {
+                min-height: 150px;
+                height: 200px;
+            }
         }
     </style>
 </head>
@@ -1237,6 +1332,16 @@
                         </div>
                     </div>
                     
+                    <!-- Benzersiz IP Listesi -->
+                    <div class="unique-ips-list">
+                        <h4><i class="fas fa-list-ol"></i> Unique IP Addresses</h4>
+                        <div id="unique-ips-list">
+                            <div class="loading-spinner">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="entry-stats">
                         <h4><i class="fas fa-chart-pie"></i> Most Viewed Entries</h4>
                         <div id="top-entries">
@@ -1311,6 +1416,7 @@
         let allVisitors = [];
         let filteredVisitors = [];
         let entriesData = [];
+        let entryViewCounts = {};
 
         // Authentication check
         window.addEventListener('DOMContentLoaded', () => {
@@ -1793,6 +1899,7 @@
             
             try {
                 const submitBtn = document.querySelector('.submit-btn');
+                const originalText = submitBtn.innerHTML;
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
                 
@@ -1804,7 +1911,7 @@
                 if (entryIdInput.value && entries.some(e => e.id === entryId)) {
                     showToast('This ID is already in use!', 'error');
                     submitBtn.disabled = false;
-                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Add Entry';
+                    submitBtn.innerHTML = originalText;
                     return;
                 }
                 
@@ -1819,7 +1926,15 @@
                 const updatedEntries = [newEntry, ...entries];
                 await fetchFromJsonBin(ENTRIES_BIN_ID, 'PUT', updatedEntries);
                 
+                // Gönderildi mesajı
                 showToast('Entry added successfully!', 'success');
+                
+                // Butonu geçici olarak değiştir
+                submitBtn.innerHTML = '<i class="fas fa-check"></i> Sent!';
+                setTimeout(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                }, 2000);
                 
                 entryIdInput.value = '';
                 document.getElementById('referenceId').value = '';
@@ -1834,11 +1949,24 @@
             } catch (error) {
                 showToast(`Error: ${error.message}`, 'error');
                 console.error('Entry addition error:', error);
-            } finally {
                 const submitBtn = document.querySelector('.submit-btn');
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Add Entry';
             }
+        }
+
+        // Görüntüleme sayısını hesapla
+        function calculateViewCounts(visitors) {
+            entryViewCounts = {};
+            visitors.forEach(visitor => {
+                if (visitor.entryId) {
+                    if (!entryViewCounts[visitor.entryId]) {
+                        entryViewCounts[visitor.entryId] = 0;
+                    }
+                    entryViewCounts[visitor.entryId]++;
+                }
+            });
+            return entryViewCounts;
         }
 
         async function loadRecentEntries() {
@@ -1850,6 +1978,9 @@
                 entriesData = Array.isArray(entries) ? 
                     entries : 
                     (entries.records ? entries.records : []);
+                
+                // Görüntüleme sayılarını hesapla
+                calculateViewCounts(allVisitors);
                 
                 const recentEntries = entriesData.slice(0, 7);
                 
@@ -1863,12 +1994,14 @@
                     entryEl.className = 'entry-item';
                     
                     let displayContent = entry.content_tr || entry.content;
+                    const viewCount = entryViewCounts[entry.id] || 0;
                     
                     entryEl.innerHTML = `
                         <div class="entry-content">${displayContent}</div>
                         <div class="entry-meta">
                             <span>ID: ${entry.id}</span>
                             <span>Reference ID: ${entry.references}</span>
+                            <span class="entry-views">${viewCount} views</span>
                             <span>${formatDate(entry.date)}</span>
                         </div>
                         <div class="entry-actions">
@@ -1904,6 +2037,7 @@
                     return;
                 }
                 
+                const viewCount = entryViewCounts[entry.id] || 0;
                 const entryEl = document.createElement('div');
                 entryEl.className = 'entry-item';
                 
@@ -1914,6 +2048,7 @@
                     <div class="entry-meta">
                         <span>ID: ${entry.id}</span>
                         <span>Reference ID: ${entry.references}</span>
+                        <span class="entry-views">${viewCount} views</span>
                         <span>${formatDate(entry.date)}</span>
                     </div>
                     <div class="entry-actions">
@@ -2131,6 +2266,7 @@
                 updateIpStats(allVisitors);
                 displayTopEntries(allVisitors);
                 displayRecentIps(allVisitors);
+                displayUniqueIps(allVisitors);
                 populateCountryFilter(allVisitors);
             } catch (error) {
                 console.error('Error loading IP statistics:', error);
@@ -2156,6 +2292,50 @@
             document.getElementById('unique-ips').textContent = uniqueIps;
             document.getElementById('unique-fingerprints').textContent = uniqueFingerprints;
             document.getElementById('last-visit').textContent = lastVisit;
+        }
+        
+        // Benzersiz IP'leri listele
+        function displayUniqueIps(visitors) {
+            const uniqueIpsList = document.getElementById('unique-ips-list');
+            
+            const ipCounts = {};
+            visitors.forEach(visit => {
+                if (ipCounts[visit.ip]) {
+                    ipCounts[visit.ip]++;
+                } else {
+                    ipCounts[visit.ip] = 1;
+                }
+            });
+            
+            const sortedIps = Object.entries(ipCounts)
+                .sort((a, b) => b[1] - a[1]);
+            
+            if (sortedIps.length === 0) {
+                uniqueIpsList.innerHTML = '<div class="ip-item">No unique IPs found.</div>';
+                return;
+            }
+            
+            let html = '';
+            sortedIps.forEach(([ip, count]) => {
+                html += `
+                    <div class="unique-ip-item">
+                        <div class="unique-ip-info">
+                            <span class="unique-ip-address">${ip}</span>
+                            <span class="unique-ip-count">${count} visits</span>
+                        </div>
+                        <div class="unique-ip-actions">
+                            <button onclick="filterByIp('${ip}')">Filter</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            uniqueIpsList.innerHTML = html;
+        }
+        
+        function filterByIp(ip) {
+            document.getElementById('filter-ip').value = ip;
+            applyFilters();
         }
         
         function displayTopEntries(visitors) {
@@ -2281,6 +2461,7 @@
             updateIpStats(filteredVisitors);
             displayRecentIps(filteredVisitors);
             displayTopEntries(filteredVisitors);
+            displayUniqueIps(filteredVisitors);
         }
         
         function clearFilters() {
@@ -2293,6 +2474,7 @@
             updateIpStats(filteredVisitors);
             displayRecentIps(filteredVisitors);
             displayTopEntries(filteredVisitors);
+            displayUniqueIps(filteredVisitors);
         }
         
         function exportData(type) {
@@ -2337,6 +2519,7 @@
                     updateIpStats([]);
                     displayRecentIps([]);
                     displayTopEntries([]);
+                    displayUniqueIps([]);
                 } catch (error) {
                     console.error('Error clearing IP data:', error);
                     showToast(`Error clearing IP data: ${error.message}`, 'error');
