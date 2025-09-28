@@ -569,6 +569,69 @@
             background: #00cc00;
             color: white;
         }
+        
+        /* Custom icons for improved UI */
+        .custom-icon {
+            width: 16px;
+            height: 16px;
+            display: inline-block;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        
+        .hacker-icon {
+            background: var(--primary-color);
+            border-radius: 50%;
+            position: relative;
+        }
+        
+        .hacker-icon::after {
+            content: ">";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 10px;
+            color: black;
+            font-weight: bold;
+        }
+        
+        /* Email stats section */
+        .email-stats {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        
+        /* Form help text */
+        .form-help {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin-top: 5px;
+            display: block;
+        }
+        
+        /* Tooltip styles */
+        .btn[title]:hover::after {
+            content: attr(title);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            white-space: nowrap;
+            z-index: 1000;
+        }
+        
+        .btn {
+            position: relative;
+        }
     </style>
 </head>
 <body>
@@ -576,20 +639,24 @@
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <header class="header">
         <div class="logo-container">
-            <a href="https://adembayazit.com" class="logo"><img src="../IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">{adembayazit} </a>
+            <a href="https://adembayazit.com" class="logo">
+                <i class='bx bx-shield-alt'></i>{adembayazit} 
+            </a>
             <span class="logo-slogan">One step further every day…</span>
         </div>
         <nav class="navbar">
             <div class="dropdown">
-                <a href="#" style="--i:5;" class="dropbtn"> <img src="../IMAGES/Ata.svg" alt="Ata Icon" class="ata-icon"><span class="fi fi-tr"></span> <span class='bx bx-code-alt'></span> Ethical Hacker <span class='bx bx-chevron-down'></span></a>
+                <a href="#" style="--i:5;" class="dropbtn">
+                    <span class="fi fi-tr"></span> <i class='bx bx-code-alt'></i> Ethical Hacker <i class='bx bx-chevron-down'></i>
+                </a>
                 <div class="dropdown-content">
-                    <a href="/whatishacker"><img src="../IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hacker-icon"> What is an Ethical Hacker?</a>
-                    <a href="/cybersecurityglossary.html"><img src="../IMAGES/glossary.svg" alt="Glossary" class="glossary-icon"> Cybersecurity Glossary</a>
-                    <a href="/whatissoc"><img src="../IMAGES/soc.svg" alt="Soc" class="soc-icon"> What is a SOC ?</a>
-                    <a href="/vulnerabilities"><img src="../IMAGES/vulnerabilities.svg" alt="Vulnerabilities" class="vulnerabilities-icon"> Vulnerabilities </a>
-                    <a href="/steganography"><img src="../IMAGES/steganography.svg" alt="Steganography" class="steganography-icon"> Steganography</a>
-                    <a href="/cryptography"><img src="../IMAGES/cryptography.svg" alt="Cryptography" class="cryptography-icon"> Cryptography</a>    
-                    <a href="#payloads"><img src="../IMAGES/education.svg" alt="Education" class="education-icon"> Cybersecurity Learning Resources</a>
+                    <a href="/whatishacker"><i class='bx bx-user'></i> What is an Ethical Hacker?</a>
+                    <a href="/cybersecurityglossary.html"><i class='bx bx-book'></i> Cybersecurity Glossary</a>
+                    <a href="/whatissoc"><i class='bx bx-building'></i> What is a SOC ?</a>
+                    <a href="/vulnerabilities"><i class='bx bx-bug'></i> Vulnerabilities </a>
+                    <a href="/steganography"><i class='bx bx-hide'></i> Steganography</a>
+                    <a href="/cryptography"><i class='bx bx-lock'></i> Cryptography</a>    
+                    <a href="#payloads"><i class='bx bx-book-reader'></i> Cybersecurity Learning Resources</a>
                 </div>
             </div>
         </nav>
@@ -602,7 +669,7 @@
             <a href="/vulnerabilities" class="back-to-home" style="margin-left: 10px;"><i class="bx bx-arrow-back"></i> Back to Vulnerabilities</a>
         </div>
         
-        <h2 class="page-title"><img src="../IMAGES/vulnerabilities.svg" alt="Vulnerabilities Icon" class="vulnerabilities-icon"> Vulnerabilities Research Admin Panel</h2>
+        <h2 class="page-title"><i class='bx bx-bug'></i> Vulnerabilities Research Admin Panel</h2>
         
         <div class="admin-container">
             <!-- Admin Sidebar -->
@@ -702,22 +769,45 @@
                         
                         <div class="form-group">
                             <label for="title">Title *</label>
-                            <input type="text" id="title" class="form-control" required>
+                            <input type="text" id="title" class="form-control" required placeholder="Enter vulnerability title">
                         </div>
                         
                         <div class="form-group">
                             <label for="category">Category</label>
-                            <input type="text" id="category" class="form-control" placeholder="e.g., Web Application, Network, etc.">
+                            <select id="category" class="form-control">
+                                <option value="">Select Category</option>
+                                <option value="Web Application">Web Application</option>
+                                <option value="Network Security">Network Security</option>
+                                <option value="Operating System">Operating System</option>
+                                <option value="Mobile Application">Mobile Application</option>
+                                <option value="IoT Device">IoT Device</option>
+                                <option value="API Security">API Security</option>
+                                <option value="Database">Database</option>
+                                <option value="Cloud Security">Cloud Security</option>
+                            </select>
                         </div>
                         
                         <div class="form-group">
                             <label for="cvss_score">CVSS Score (0-10)</label>
-                            <input type="number" id="cvss_score" class="form-control" min="0" max="10" step="0.1">
+                            <input type="number" id="cvss_score" class="form-control" min="0" max="10" step="0.1" placeholder="9.8">
+                            <span class="form-help">0-3.9: Low, 4.0-6.9: Medium, 7.0-8.9: High, 9.0-10.0: Critical</span>
                         </div>
                         
                         <div class="form-group">
                             <label for="content">Content *</label>
-                            <textarea id="content" class="form-control" required placeholder="Include: Impact, Technical Details, etc."></textarea>
+                            <textarea id="content" class="form-control" required placeholder="Enter detailed vulnerability description: Impact, Technical Details, Mitigation, References, etc." rows="10"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="severity">Severity Level</label>
+                            <select id="severity" class="form-control">
+                                <option value="">Select Level</option>
+                                <option value="critical">Critical</option>
+                                <option value="high">High</option>
+                                <option value="medium">Medium</option>
+                                <option value="low">Low</option>
+                                <option value="info">Info</option>
+                            </select>
                         </div>
                         
                         <div class="form-group">
@@ -726,14 +816,17 @@
                                 <!-- Tags will be added here -->
                             </div>
                             <div class="tag-input">
-                                <input type="text" id="tag-input" class="form-control" placeholder="Add a tag">
+                                <input type="text" id="tag-input" class="form-control" placeholder="Add tag (e.g., XSS, SQLi, RCE)">
                                 <button type="button" class="btn btn-add" id="add-tag-btn">Add</button>
                             </div>
+                            <span class="form-help">Press Enter for quick tag addition</span>
                         </div>
                         
                         <div class="form-actions">
                             <button type="button" class="btn btn-edit" id="reset-form-btn">Reset</button>
-                            <button type="submit" class="btn btn-add" id="save-vulnerability-btn">Save Vulnerability</button>
+                            <button type="submit" class="btn btn-add" id="save-vulnerability-btn">
+                                <i class="fas fa-save"></i> Save Vulnerability
+                            </button>
                         </div>
                     </form>
                 </section>
@@ -770,21 +863,47 @@
                         </div>
                         
                         <div class="form-group">
+                            <label for="email-template">Email Template</label>
+                            <select id="email-template" class="form-control">
+                                <option value="standard">Standard Template</option>
+                                <option value="critical">Critical Vulnerability Alert</option>
+                                <option value="update">Update Notification</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
                             <label for="email-message">Custom Message (optional)</label>
-                            <textarea id="email-message" class="form-control" rows="4" placeholder="Add a custom message to include in the email..."></textarea>
+                            <textarea id="email-message" class="form-control" rows="4" placeholder="Add custom message to include in email..."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="test-email">Test Email (optional)</label>
+                            <input type="email" id="test-email" class="form-control" placeholder="Email address for testing">
                         </div>
                         
                         <div class="form-actions">
+                            <button type="button" class="btn btn-view" id="test-email-btn">
+                                <i class="fas fa-vial"></i> Send Test Email
+                            </button>
                             <button type="button" class="btn btn-send" id="send-email-btn">
-                                <i class="fas fa-paper-plane"></i> Send Email to All Subscribers
+                                <i class="fas fa-paper-plane"></i> Send to All Subscribers
                             </button>
                         </div>
                     </div>
                     
                     <div class="email-preview" id="email-preview">
-                        <h3>Email Preview</h3>
+                        <h3><i class="fas fa-eye"></i> Email Preview</h3>
                         <div id="email-preview-content">
-                            Select a vulnerability to preview the email content.
+                            Select a vulnerability to preview email content.
+                        </div>
+                    </div>
+                    
+                    <div class="email-stats">
+                        <h4><i class="fas fa-chart-line"></i> Sending Statistics</h4>
+                        <div id="email-stats-content">
+                            <p>Total Subscribers: <span id="stats-total-subscribers">0</span></p>
+                            <p>Last Sent: <span id="stats-last-sent">-</span></p>
+                            <p>Sent This Month: <span id="stats-this-month">0</span></p>
                         </div>
                     </div>
                 </section>
@@ -810,7 +929,7 @@
 
     <footer style="text-align: center; padding: 20px; font-size: 14px; color: white; margin-top: 50px;">
         <hr style="margin-bottom: 10px; border-color: limegreen;" />
-        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.3 | July 2025</p>
+        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 2.0.0 | July 2025</p>
     </footer>
 
     <script src="/JAVASCRIPT/monitor.js"></script>
@@ -824,13 +943,7 @@
         // JSON configuration with updated email from second page
         const CONFIG = {
             VULNERABILITIES_BIN_ID: '68d78989d0ea881f408cad3f',
-            SUBSCRIBERS_BIN_ID: '68d7fc3bae596e708ffdcc6e',
-            MAILJET_CONFIG: {
-                apiKey: '4eab53d0383497317f9d58afd0176d9f',
-                secretKey: 'e46dc21f710c911ba855e1eca0675971',
-                senderEmail: 'fyi@adembayazit.com',  // Updated from second page
-                senderName: 'Adem Bayazıt - Vulnerabilities Research'
-            }
+            SUBSCRIBERS_BIN_ID: '68d7fc3bae596e708ffdcc6e'
         };
         
         // Global variables
@@ -877,6 +990,7 @@
         // Load vulnerabilities data from JSON Bin
         async function loadVulnerabilitiesData() {
             try {
+                showToast('Loading vulnerabilities...', 2000);
                 const result = await fetchViaProxy('/latest', 'GET', null, CONFIG.VULNERABILITIES_BIN_ID);
                 vulnerabilitiesData = result.records || result;
                 
@@ -928,6 +1042,7 @@
             // Total subscribers
             document.getElementById('total-subscribers').textContent = subscribersData.length;
             document.getElementById('subscribers-count').textContent = `${subscribersData.length} subscribers`;
+            document.getElementById('stats-total-subscribers').textContent = subscribersData.length;
             
             // Critical vulnerabilities (CVSS >= 9.0)
             const criticalCount = vulnerabilitiesData.filter(v => v.cvss_score >= 9.0).length;
@@ -1053,9 +1168,15 @@
                     <td>${tagsHtml}</td>
                     <td>
                         <div class="action-buttons">
-                            <button class="btn btn-view" onclick="viewVulnerability(${vulnerability.id})">View</button>
-                            <button class="btn btn-edit" onclick="editVulnerability(${vulnerability.id})">Edit</button>
-                            <button class="btn btn-delete" onclick="deleteVulnerability(${vulnerability.id})">Delete</button>
+                            <button class="btn btn-view" onclick="viewVulnerability(${vulnerability.id})" title="View">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-edit" onclick="editVulnerability(${vulnerability.id})" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-delete" onclick="deleteVulnerability(${vulnerability.id})" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </div>
                     </td>
                 `;
@@ -1074,15 +1195,37 @@
                 return;
             }
             
-            subscribersData.forEach(email => {
+            subscribersData.forEach((email, index) => {
                 const subscriberItem = document.createElement('div');
                 subscriberItem.className = 'subscriber-item';
                 subscriberItem.innerHTML = `
-                    <div class="subscriber-email">${email}</div>
-                    <div class="subscriber-date">Subscribed</div>
+                    <div>
+                        <div class="subscriber-email">${email}</div>
+                        <div class="subscriber-date">${index === 0 ? 'Latest subscriber' : 'Subscriber'}</div>
+                    </div>
+                    <button class="btn btn-delete" onclick="removeSubscriber('${email}')" title="Remove Subscription">
+                        <i class="fas fa-times"></i>
+                    </button>
                 `;
                 subscribersList.appendChild(subscriberItem);
             });
+        }
+        
+        // Remove subscriber
+        async function removeSubscriber(email) {
+            if (!confirm(`Are you sure you want to remove "${email}" subscription?`)) return;
+            
+            try {
+                subscribersData = subscribersData.filter(e => e !== email);
+                
+                await fetchViaProxy('', 'PUT', { subscribers: subscribersData }, CONFIG.SUBSCRIBERS_BIN_ID);
+                
+                await loadSubscribersData();
+                showToast('Subscription removed');
+            } catch (error) {
+                console.error('Error removing subscriber:', error);
+                showToast('Error removing subscription', 5000);
+            }
         }
         
         // Update email dropdown
@@ -1108,7 +1251,7 @@
             const preview = document.getElementById('email-preview-content');
             
             if (!vulnerabilityId) {
-                preview.innerHTML = 'Select a vulnerability to preview the email content.';
+                preview.innerHTML = 'Select a vulnerability to preview email content.';
                 return;
             }
             
@@ -1120,17 +1263,29 @@
             
             const customMessage = document.getElementById('email-message').value;
             const subject = document.getElementById('email-subject').value;
+            const template = document.getElementById('email-template').value;
+            
+            let templateStyle = '';
+            let titleColor = '#d9534f';
+            
+            if (template === 'critical') {
+                templateStyle = 'border-left: 4px solid #ff0000; background: #fff5f5;';
+                titleColor = '#ff0000';
+            } else if (template === 'update') {
+                templateStyle = 'border-left: 4px solid #007bff; background: #f0f8ff;';
+                titleColor = '#007bff';
+            }
             
             preview.innerHTML = `
                 <h4>Subject: ${subject}</h4>
                 <hr>
                 <h3>New Vulnerability Published</h3>
-                <div style="background: #f5f5f5; padding: 15px; border-radius: 5px; color: #333;">
-                    <h4 style="color: #d9534f; margin-top: 0;">${vulnerability.title}</h4>
+                <div style="${templateStyle} background: #f5f5f5; padding: 15px; border-radius: 5px; color: #333;">
+                    <h4 style="color: ${titleColor}; margin-top: 0;">${vulnerability.title}</h4>
                     <p><strong>Date:</strong> ${new Date(vulnerability.date).toLocaleDateString()}</p>
                     ${vulnerability.cvss_score ? `<p><strong>CVSS Score:</strong> ${vulnerability.cvss_score}</p>` : ''}
                     ${vulnerability.category ? `<p><strong>Category:</strong> ${vulnerability.category}</p>` : ''}
-                    ${customMessage ? `<p><strong>Message:</strong> ${customMessage}</p>` : ''}
+                    ${customMessage ? `<p><strong>Custom Message:</strong> ${customMessage}</p>` : ''}
                     <p>${vulnerability.content.substring(0, 200)}...</p>
                     <a href="https://adembayazit.com/vulnerabilities#${vulnerability.id}" 
                        style="background: #00cc00; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 10px;">
@@ -1182,6 +1337,7 @@
                     <p><strong>Date:</strong> ${vulnerabilityDate}</p>
                     <p><strong>Category:</strong> ${vulnerability.category || 'Not specified'}</p>
                     <p><strong>CVSS Score:</strong> ${cvssBadge || 'Not specified'}</p>
+                    <p><strong>Severity:</strong> ${vulnerability.severity || 'Not specified'}</p>
                     <p><strong>Tags:</strong> ${tagsHtml}</p>
                 </div>
                 <div>
@@ -1209,6 +1365,7 @@
             document.getElementById('category').value = vulnerability.category || '';
             document.getElementById('cvss_score').value = vulnerability.cvss_score || '';
             document.getElementById('content').value = vulnerability.content;
+            document.getElementById('severity').value = vulnerability.severity || '';
             
             // Set tags
             tags = vulnerability.tags || [];
@@ -1221,7 +1378,10 @@
         
         // Delete vulnerability
         async function deleteVulnerability(id) {
-            if (!confirm('Are you sure you want to delete this vulnerability?')) return;
+            const vulnerability = vulnerabilitiesData.find(v => v.id == id);
+            if (!vulnerability) return;
+            
+            if (!confirm(`Are you sure you want to delete "${vulnerability.title}" vulnerability?`)) return;
             
             try {
                 // Remove from local data
@@ -1232,7 +1392,7 @@
                 
                 // Reload data and update UI
                 await loadVulnerabilitiesData();
-                showToast('Vulnerability deleted successfully');
+                showToast('Vulnerability deleted');
             } catch (error) {
                 console.error('Error deleting vulnerability:', error);
                 showToast('Error deleting vulnerability', 5000);
@@ -1341,10 +1501,11 @@
             const category = document.getElementById('category').value.trim();
             const cvssScore = document.getElementById('cvss_score').value;
             const content = document.getElementById('content').value.trim();
+            const severity = document.getElementById('severity').value;
             const editId = document.getElementById('edit-id').value;
             
             if (!title || !content) {
-                showToast('Title and content are required', 5000);
+                showToast('Title and content fields are required', 5000);
                 return;
             }
             
@@ -1360,6 +1521,7 @@
                     vulnerability.category = category || null;
                     vulnerability.cvss_score = cvssScore ? parseFloat(cvssScore) : null;
                     vulnerability.content = content;
+                    vulnerability.severity = severity || null;
                     vulnerability.tags = tags;
                     vulnerability.date = new Date().toISOString(); // Update date
                 } else {
@@ -1374,6 +1536,7 @@
                         category: category || null,
                         cvss_score: cvssScore ? parseFloat(cvssScore) : null,
                         content: content,
+                        severity: severity || null,
                         tags: tags,
                         date: new Date().toISOString(),
                         author: 'Adem Bayazıt'
@@ -1389,7 +1552,7 @@
                 await loadVulnerabilitiesData();
                 resetForm();
                 
-                showToast(`Vulnerability ${editId ? 'updated' : 'added'} successfully`);
+                showToast(`Vulnerability ${editId ? 'updated' : 'added'}`);
                 
                 // Switch to vulnerabilities list
                 switchSection('vulnerabilities');
@@ -1397,6 +1560,25 @@
                 console.error('Error saving vulnerability:', error);
                 showToast('Error saving vulnerability', 5000);
             }
+        }
+        
+        // Send test email
+        async function sendTestEmail() {
+            const testEmail = document.getElementById('test-email').value.trim();
+            const vulnerabilityId = document.getElementById('email-vulnerability').value;
+            
+            if (!testEmail) {
+                showToast('Please enter test email address', 5000);
+                return;
+            }
+            
+            if (!vulnerabilityId) {
+                showToast('Please select a vulnerability', 5000);
+                return;
+            }
+            
+            showToast('Sending test email...', 3000);
+            // Implement test email functionality here
         }
         
         // Send email to subscribers
@@ -1427,6 +1609,7 @@
             }
             
             const sendBtn = document.getElementById('send-email-btn');
+            const originalText = sendBtn.innerHTML;
             sendBtn.disabled = true;
             sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
             
@@ -1436,8 +1619,8 @@
                     Messages: [
                         {
                             From: {
-                                Email: CONFIG.MAILJET_CONFIG.senderEmail,
-                                Name: CONFIG.MAILJET_CONFIG.senderName
+                                Email: 'fyi@adembayazit.com',
+                                Name: 'Adem Bayazıt - Vulnerabilities Research'
                             },
                             To: subscribersData.map(email => ({ Email: email })),
                             Subject: subject,
@@ -1471,23 +1654,27 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        emailData: emailData,
-                        apiKey: CONFIG.MAILJET_CONFIG.apiKey,
-                        secretKey: CONFIG.MAILJET_CONFIG.secretKey
+                        emailData: emailData
                     })
                 });
                 
                 if (!response.ok) {
-                    throw new Error('Failed to send email notification');
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
                 }
                 
-                showToast(`Email sent successfully to ${subscribersData.length} subscribers`);
+                const result = await response.json();
+                
+                // Update email stats
+                document.getElementById('stats-last-sent').textContent = new Date().toLocaleString();
+                
+                showToast(result.message || `Email sent successfully to ${subscribersData.length} subscribers`);
             } catch (error) {
                 console.error('Error sending email:', error);
-                showToast('Error sending email notification', 5000);
+                showToast('Error sending email: ' + error.message, 5000);
             } finally {
                 sendBtn.disabled = false;
-                sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Email to All Subscribers';
+                sendBtn.innerHTML = originalText;
             }
         }
         
@@ -1525,7 +1712,16 @@
             
             // Email functionality
             document.getElementById('send-email-btn').addEventListener('click', sendEmail);
+            document.getElementById('test-email-btn').addEventListener('click', sendTestEmail);
             document.getElementById('email-message').addEventListener('input', function() {
+                const vulnerabilityId = document.getElementById('email-vulnerability').value;
+                if (vulnerabilityId) {
+                    updateEmailPreview(vulnerabilityId);
+                }
+            });
+            
+            // Template change
+            document.getElementById('email-template').addEventListener('change', function() {
                 const vulnerabilityId = document.getElementById('email-vulnerability').value;
                 if (vulnerabilityId) {
                     updateEmailPreview(vulnerabilityId);
@@ -1544,6 +1740,39 @@
                     modal.style.display = 'none';
                 }
             });
+            
+            // Auto-save draft every 30 seconds
+            setInterval(() => {
+                const title = document.getElementById('title').value;
+                const content = document.getElementById('content').value;
+                if (title || content) {
+                    localStorage.setItem('vulnerability-draft', JSON.stringify({
+                        title: title,
+                        content: content,
+                        tags: tags,
+                        category: document.getElementById('category').value,
+                        cvss_score: document.getElementById('cvss_score').value,
+                        severity: document.getElementById('severity').value
+                    }));
+                }
+            }, 30000);
+            
+            // Load draft on page load
+            const draft = localStorage.getItem('vulnerability-draft');
+            if (draft && !currentEditingId) {
+                const draftData = JSON.parse(draft);
+                if (draftData.title || draftData.content) {
+                    if (confirm('Unsaved draft found. Would you like to load it?')) {
+                        document.getElementById('title').value = draftData.title || '';
+                        document.getElementById('content').value = draftData.content || '';
+                        document.getElementById('category').value = draftData.category || '';
+                        document.getElementById('cvss_score').value = draftData.cvss_score || '';
+                        document.getElementById('severity').value = draftData.severity || '';
+                        tags = draftData.tags || [];
+                        renderTags();
+                    }
+                }
+            }
         });
     </script>
 </body>
