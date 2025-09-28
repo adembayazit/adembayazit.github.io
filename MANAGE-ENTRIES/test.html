@@ -133,9 +133,100 @@
             border-radius: 3px;
         }
         
+        /* Login Form Styles */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 500px;
+            margin: 50px 0;
+        }
+        
+        .login-form {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+        }
+        
+        .login-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        
+        .login-title {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary-color);
+            color: black;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        .login-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .login-btn:active {
+            transform: translateY(0);
+        }
+        
+        .error-message {
+            color: #ff6b6b;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
         /* Admin Panel Styles */
         .admin-container {
-            display: flex;
+            display: none;
             min-height: 800px;
             gap: 20px;
         }
@@ -539,6 +630,10 @@
             .action-buttons {
                 flex-direction: column;
             }
+            
+            .login-form {
+                padding: 30px 20px;
+            }
         }
         
         /* CVSS badges */
@@ -615,6 +710,25 @@
         .btn {
             position: relative;
         }
+        
+        /* Logout button */
+        .logout-btn {
+            background: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
+            border: 1px solid #dc3545;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            width: 100%;
+        }
+        
+        .logout-btn:hover {
+            background: #dc3545;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -645,7 +759,33 @@
         
         <h2 class="page-title"><img src="../IMAGES/vulnerabilities.svg" alt="Vulnerabilities Icon" class="vulnerabilities-icon"> Vulnerabilities Research Admin Panel</h2>
         
-        <div class="admin-container">
+        <!-- Login Form -->
+        <div class="login-container" id="login-container">
+            <div class="login-form">
+                <div class="login-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <h2 class="login-title">Admin Girişi</h2>
+                <p style="margin-bottom: 20px; color: var(--text-muted);">Bu sayfaya erişim için yetkilendirme gereklidir.</p>
+                
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="password">Şifre</label>
+                        <input type="password" id="password" class="form-control" placeholder="Şifrenizi girin" required>
+                    </div>
+                    <button type="submit" class="login-btn">
+                        <i class="fas fa-sign-in-alt"></i> Giriş Yap
+                    </button>
+                </form>
+                
+                <div class="error-message" id="error-message">
+                    Hatalı şifre! Lütfen tekrar deneyin.
+                </div>
+            </div>
+        </div>
+        
+        <!-- Admin Panel (Initially Hidden) -->
+        <div class="admin-container" id="admin-container">
             <!-- Admin Sidebar -->
             <aside class="admin-sidebar">
                 <h3><i class="fas fa-cogs"></i> Admin Panel</h3>
@@ -666,6 +806,10 @@
                         <i class="fas fa-envelope"></i> Email Sender
                     </li>
                 </ul>
+                
+                <button class="logout-btn" id="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Çıkış Yap
+                </button>
             </aside>
             
             <!-- Admin Content -->
@@ -914,6 +1058,11 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <script>
+        // Password configuration - SHA-256 hash of the password
+        // Default password is "admin123" - you can change the PASSWORD_HASH to match your desired password
+        const PASSWORD_HASH = "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9"; // SHA-256 of "admin123"
+        const SESSION_TIMEOUT = 60 * 60 * 1000; // 60 minutes in milliseconds
+        
         // JSON configuration with updated email from second page
         const CONFIG = {
             VULNERABILITIES_BIN_ID: '68d78989d0ea881f408cad3f',
@@ -926,6 +1075,119 @@
         let currentEditingId = null;
         let tags = [];
         let cvssChart = null;
+        let sessionTimer = null;
+        
+        // SHA-256 hash function
+        async function sha256(message) {
+            // Encode the message as UTF-8
+            const msgBuffer = new TextEncoder().encode(message);
+            
+            // Hash the message
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            
+            // Convert ArrayBuffer to Array
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            
+            // Convert bytes to hex string
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
+        
+        // Check if user is already logged in
+        function checkAuthentication() {
+            const authenticated = sessionStorage.getItem('adminAuthenticated');
+            const loginTime = sessionStorage.getItem('adminLoginTime');
+            
+            if (authenticated && loginTime) {
+                const currentTime = new Date().getTime();
+                const loginTimestamp = parseInt(loginTime);
+                
+                // Check if session has expired
+                if (currentTime - loginTimestamp < SESSION_TIMEOUT) {
+                    showAdminPanel();
+                    startSessionTimer();
+                    return true;
+                } else {
+                    // Session expired
+                    sessionStorage.removeItem('adminAuthenticated');
+                    sessionStorage.removeItem('adminLoginTime');
+                }
+            }
+            
+            return false;
+        }
+        
+        // Handle login
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const passwordInput = document.getElementById('password');
+            const errorMessage = document.getElementById('error-message');
+            const password = passwordInput.value;
+            
+            if (!password) {
+                errorMessage.textContent = 'Lütfen şifre girin.';
+                errorMessage.style.display = 'block';
+                return;
+            }
+            
+            // Calculate SHA-256 hash of entered password
+            const passwordHash = await sha256(password);
+            
+            // Compare with stored hash
+            if (passwordHash === PASSWORD_HASH) {
+                // Successful login
+                sessionStorage.setItem('adminAuthenticated', 'true');
+                sessionStorage.setItem('adminLoginTime', new Date().getTime().toString());
+                
+                showAdminPanel();
+                startSessionTimer();
+            } else {
+                // Failed login
+                errorMessage.style.display = 'block';
+                passwordInput.value = '';
+                passwordInput.focus();
+            }
+        }
+        
+        // Show admin panel and hide login form
+        function showAdminPanel() {
+            document.getElementById('login-container').style.display = 'none';
+            document.getElementById('admin-container').style.display = 'flex';
+            
+            // Load admin data
+            loadVulnerabilitiesData();
+            loadSubscribersData();
+        }
+        
+        // Handle logout
+        function handleLogout() {
+            if (confirm('Çıkış yapmak istediğinizden emin misiniz?')) {
+                sessionStorage.removeItem('adminAuthenticated');
+                sessionStorage.removeItem('adminLoginTime');
+                
+                if (sessionTimer) {
+                    clearTimeout(sessionTimer);
+                }
+                
+                document.getElementById('admin-container').style.display = 'none';
+                document.getElementById('login-container').style.display = 'flex';
+                document.getElementById('password').value = '';
+                document.getElementById('error-message').style.display = 'none';
+            }
+        }
+        
+        // Start session timer
+        function startSessionTimer() {
+            if (sessionTimer) {
+                clearTimeout(sessionTimer);
+            }
+            
+            sessionTimer = setTimeout(() => {
+                alert('Oturum süreniz doldu. Lütfen tekrar giriş yapın.');
+                handleLogout();
+            }, SESSION_TIMEOUT);
+        }
         
         // Proxy helper function
         async function fetchViaProxy(path, method = 'GET', body = null, binId = null) {
@@ -1823,9 +2085,16 @@ Unsubscribe: https://adembayazit.com/unsubscribe
         
         // Initialize the admin panel
         document.addEventListener('DOMContentLoaded', function() {
-            // Load data
-            loadVulnerabilitiesData();
-            loadSubscribersData();
+            // Check if user is already authenticated
+            if (checkAuthentication()) {
+                return;
+            }
+            
+            // Login form event listener
+            document.getElementById('login-form').addEventListener('submit', handleLogin);
+            
+            // Logout button event listener
+            document.getElementById('logout-btn').addEventListener('click', handleLogout);
             
             // Navigation event listeners
             document.querySelectorAll('.admin-nav-item').forEach(item => {
