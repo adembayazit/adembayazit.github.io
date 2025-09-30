@@ -842,6 +842,90 @@
             border-radius: 3px;
         }
         
+        /* Most Viewed Entries için yeni stil - YENİDEN TASARLANDI */
+        .top-entries-container {
+            margin-top: 20px;
+        }
+        
+        .top-entry-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .top-entry-item:hover {
+            background: rgba(0, 255, 0, 0.1);
+            border-color: var(--primary-color);
+        }
+        
+        .top-entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px dashed var(--primary-color);
+        }
+        
+        .top-entry-id {
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+        
+        .top-entry-views {
+            background: rgba(0, 255, 0, 0.2);
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .top-entry-content {
+            font-size: 0.85rem;
+            max-height: 100px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .top-entry-content:after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: linear-gradient(transparent, rgba(0, 30, 0, 0.8));
+        }
+        
+        .top-entry-actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 5px;
+            justify-content: flex-end;
+        }
+        
+        .top-entry-actions button {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--primary-color);
+            color: var(--text-color);
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+        
+        .top-entry-actions button:hover {
+            background: var(--primary-color);
+            color: black;
+        }
+        
         .media-upload-container {
             margin-top: 10px;
             padding: 10px;
@@ -1121,6 +1205,16 @@
                 min-height: 150px;
                 height: 200px;
             }
+            
+            .top-entry-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+            
+            .top-entry-actions {
+                justify-content: flex-start;
+            }
         }
     </style>
 </head>
@@ -1338,9 +1432,10 @@
                         </div>
                     </div>
                     
+                    <!-- YENİDEN TASARLANMIŞ Most Viewed Entries Bölümü -->
                     <div class="entry-stats">
                         <h4><i class="fas fa-chart-pie"></i> Most Viewed Entries</h4>
-                        <div id="top-entries">
+                        <div class="top-entries-container" id="top-entries">
                             <div class="loading-spinner">
                                 <i class="fas fa-spinner fa-spin"></i>
                             </div>
@@ -1962,17 +2057,25 @@
             }
         }
 
-        // Görüntüleme sayısını hesapla - GÜNCELLENDİ
+        // Görüntüleme sayısını hesapla - TAMAMEN YENİLENDİ
         function calculateViewCounts(visitors) {
             entryViewCounts = {};
             visitors.forEach(visitor => {
                 if (visitor.entryId) {
-                    // Entry ID'yi düzgün bir şekilde al
+                    // Entry ID'yi hem string hem de number formatında kontrol et
                     const entryId = visitor.entryId.toString();
+                    const entryIdNum = parseInt(visitor.entryId);
+                    
                     if (!entryViewCounts[entryId]) {
                         entryViewCounts[entryId] = 0;
                     }
                     entryViewCounts[entryId]++;
+                    
+                    // Number formatında da kaydet
+                    if (!entryViewCounts[entryIdNum]) {
+                        entryViewCounts[entryIdNum] = 0;
+                    }
+                    entryViewCounts[entryIdNum]++;
                 }
             });
             return entryViewCounts;
@@ -2369,22 +2472,32 @@
             applyFilters();
         }
         
-        // En çok görüntülenen entry'leri göster - GÜNCELLENDİ (Entry ID'ler artık gösteriliyor)
+        // YENİDEN TASARLANMIŞ Most Viewed Entries fonksiyonu
         function displayTopEntries(visitors) {
             const topEntriesContainer = document.getElementById('top-entries');
             
+            // Entry görüntüleme sayılarını hesapla
             const entryCounts = {};
             visitors.forEach(visit => {
                 if (visit.entryId) {
-                    // Entry ID'yi düzgün bir şekilde al
-                    const entryId = visit.entryId.toString();
-                    if (!entryCounts[entryId]) {
-                        entryCounts[entryId] = 0;
+                    // Entry ID'yi hem string hem number olarak kontrol et
+                    const entryIdStr = visit.entryId.toString();
+                    const entryIdNum = parseInt(visit.entryId);
+                    
+                    if (!entryCounts[entryIdStr]) {
+                        entryCounts[entryIdStr] = 0;
                     }
-                    entryCounts[entryId]++;
+                    entryCounts[entryIdStr]++;
+                    
+                    // Number formatında da kaydet
+                    if (!entryCounts[entryIdNum]) {
+                        entryCounts[entryIdNum] = 0;
+                    }
+                    entryCounts[entryIdNum]++;
                 }
             });
             
+            // Görüntüleme sayısına göre sırala
             const sortedEntries = Object.entries(entryCounts)
                 .sort((a, b) => b[1] - a[1])
                 .slice(0, 10);
@@ -2396,10 +2509,43 @@
             
             let html = '';
             sortedEntries.forEach(([entryId, count]) => {
+                // Entry bilgilerini bul
+                const entry = entriesData.find(e => 
+                    e.id === parseInt(entryId) || e.id.toString() === entryId
+                );
+                
+                let contentSnippet = 'Entry content not available';
+                if (entry) {
+                    // İçerik önizlemesi oluştur
+                    const content = entry.content_tr || entry.content || '';
+                    contentSnippet = stripHtml(content).substring(0, 150);
+                    if (contentSnippet.length >= 150) {
+                        contentSnippet += '...';
+                    }
+                }
+                
                 html += `
-                    <div class="entry-stat-item">
-                        <span class="entry-id">Entry #${entryId}</span>
-                        <span class="entry-count">${count} views</span>
+                    <div class="top-entry-item">
+                        <div class="top-entry-header">
+                            <span class="top-entry-id">Entry #${entryId}</span>
+                            <span class="top-entry-views">${count} views</span>
+                        </div>
+                        <div class="top-entry-content">
+                            ${contentSnippet}
+                        </div>
+                        <div class="top-entry-actions">
+                            <button onclick="createChildEntry(${entryId})" title="Add Child Entry">
+                                <i class="fas fa-plus"></i> Child Entry
+                            </button>
+                            <button onclick="switchSection('entries'); document.getElementById('searchId').value = ${entryId}; searchEntry();" title="Find Entry">
+                                <i class="fas fa-search"></i> Find
+                            </button>
+                            ${entry ? `
+                            <button onclick="switchSection('editor'); document.getElementById('entryId').value = ${entryId};" title="Edit Entry">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            ` : ''}
+                        </div>
                     </div>
                 `;
             });
@@ -2565,7 +2711,6 @@
             const entryCounts = {};
             visitors.forEach(visit => {
                 if (visit.entryId) {
-                    // Entry ID'yi düzgün bir şekilde al
                     const entryId = visit.entryId.toString();
                     if (!entryCounts[entryId]) {
                         entryCounts[entryId] = 0;
