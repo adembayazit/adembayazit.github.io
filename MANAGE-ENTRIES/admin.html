@@ -443,10 +443,13 @@
             border-radius: 5px;
             position: relative;
             font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
         
         .entry-item:hover {
-            background: rgba(0, 255, 0, 0.05);
+            background: rgba(0, 255, 0, 0.1);
+            border-color: var(--primary-color);
         }
         
         .entry-content {
@@ -484,11 +487,11 @@
             top: 10px;
             right: 10px;
             display: none;
+            gap: 5px;
         }
         
         .entry-item:hover .entry-actions {
             display: flex;
-            gap: 5px;
         }
         
         .entry-actions button {
@@ -1229,7 +1232,7 @@
                             <div class="preview-container">
                                 <div class="preview-title">
                                     <span>Preview:</span>
-                                    <span class="char-count"><span id="trContent-count">0</span> characters</span>
+                                    <span class="char-count"><span id="trContent-count">0</span> characters (visible: <span id="trContent-visible-count">0</span>)</span>
                                 </div>
                                 <div id="trContent-preview"></div>
                             </div>
@@ -1252,7 +1255,7 @@
                             <div class="preview-container">
                                 <div class="preview-title">
                                     <span>Preview:</span>
-                                    <span class="char-count"><span id="enContent-count">0</span> characters</span>
+                                    <span class="char-count"><span id="enContent-count">0</span> characters (visible: <span id="enContent-visible-count">0</span>)</span>
                                 </div>
                                 <div id="enContent-preview"></div>
                             </div>
@@ -1389,7 +1392,7 @@
 
     <footer style="text-align: center; padding: 20px; font-size: 14px; color: white; margin-top: 50px;">
         <hr style="margin-bottom: 10px; border-color: limegreen;" />
-        <p>Design & Code by <strong>Adem Bayazıt</strong> | LadyBug Admin Panel | Version 2.0</p>
+        <p>Design & Code by <strong>Adem Bayazıt</strong> | LadyBug Admin Panel | Version 2.1</p>
     </footer>
 
     <!-- Cropper.js Script -->
@@ -1564,13 +1567,21 @@
             updatePreview(textareaId);
         }
 
+        // Strip HTML tags to count visible characters
+        function stripHtml(html) {
+            const tmp = document.createElement("div");
+            tmp.innerHTML = html;
+            return tmp.textContent || tmp.innerText || "";
+        }
+
         // Update preview
         function updatePreview(textareaId) {
             const textarea = document.getElementById(textareaId);
             const preview = document.getElementById(`${textareaId}-preview`);
             const charCount = document.getElementById(`${textareaId}-count`);
+            const visibleCharCount = document.getElementById(`${textareaId}-visible-count`);
             
-            if (textarea && preview && charCount) {
+            if (textarea && preview && charCount && visibleCharCount) {
                 // Özel medya içerikleri için işleme
                 let content = textarea.value;
                 
@@ -1585,7 +1596,10 @@
                 content = content.replace(/<iframe class="youtube-embed">([\s\S]*?)<\/iframe>/g, '<iframe class="youtube-embed" style="max-width: 100%;">$1</iframe>');
                 
                 preview.innerHTML = content.replace(/\n/g, '<br>');
+                
+                // Karakter sayılarını güncelle
                 charCount.textContent = textarea.value.length;
+                visibleCharCount.textContent = stripHtml(textarea.value).length;
             }
         }
 
@@ -1948,18 +1962,28 @@
             }
         }
 
-        // Görüntüleme sayısını hesapla
+        // Görüntüleme sayısını hesapla - GÜNCELLENDİ
         function calculateViewCounts(visitors) {
             entryViewCounts = {};
             visitors.forEach(visitor => {
                 if (visitor.entryId) {
-                    if (!entryViewCounts[visitor.entryId]) {
-                        entryViewCounts[visitor.entryId] = 0;
+                    // Entry ID'yi düzgün bir şekilde al
+                    const entryId = visitor.entryId.toString();
+                    if (!entryViewCounts[entryId]) {
+                        entryViewCounts[entryId] = 0;
                     }
-                    entryViewCounts[visitor.entryId]++;
+                    entryViewCounts[entryId]++;
                 }
             });
             return entryViewCounts;
+        }
+
+        // Entry'e tıklayarak child entry oluşturma
+        function createChildEntry(entryId) {
+            document.getElementById('referenceId').value = entryId;
+            switchSection('editor');
+            document.getElementById('trContent').focus();
+            showToast(`Reference ID set to ${entryId}. You can now create a child entry.`);
         }
 
         async function loadRecentEntries() {
@@ -1989,6 +2013,10 @@
                     let displayContent = entry.content_tr || entry.content;
                     const viewCount = entryViewCounts[entry.id] || 0;
                     
+                    // Entry'e tıklanabilir özellik ekle
+                    entryEl.setAttribute('onclick', `createChildEntry(${entry.id})`);
+                    entryEl.title = "Click to create a child entry";
+                    
                     entryEl.innerHTML = `
                         <div class="entry-content">${displayContent}</div>
                         <div class="entry-meta">
@@ -1998,8 +2026,9 @@
                             <span>${formatDate(entry.date)}</span>
                         </div>
                         <div class="entry-actions">
-                            <button onclick="editEntry(${entry.id})" title="Edit"><i class="fas fa-edit"></i></button>
-                            <button onclick="confirmDelete(${entry.id})" title="Delete"><i class="fas fa-trash"></i></button>
+                            <button onclick="event.stopPropagation(); editEntry(${entry.id})" title="Edit"><i class="fas fa-edit"></i></button>
+                            <button onclick="event.stopPropagation(); confirmDelete(${entry.id})" title="Delete"><i class="fas fa-trash"></i></button>
+                            <button onclick="event.stopPropagation(); createChildEntry(${entry.id})" title="Add Child Entry"><i class="fas fa-plus"></i></button>
                         </div>
                     `;
                     
@@ -2036,6 +2065,10 @@
                 
                 let displayContent = entry.content_tr || entry.content;
                 
+                // Entry'e tıklanabilir özellik ekle
+                entryEl.setAttribute('onclick', `createChildEntry(${entry.id})`);
+                entryEl.title = "Click to create a child entry";
+                
                 entryEl.innerHTML = `
                     <div class="entry-content">${displayContent}</div>
                     <div class="entry-meta">
@@ -2045,8 +2078,9 @@
                         <span>${formatDate(entry.date)}</span>
                     </div>
                     <div class="entry-actions">
-                        <button onclick="editEntry(${entry.id})" title="Edit"><i class="fas fa-edit"></i></button>
-                        <button onclick="confirmDelete(${entry.id})" title="Delete"><i class="fas fa-trash"></i></button>
+                        <button onclick="event.stopPropagation(); editEntry(${entry.id})" title="Edit"><i class="fas fa-edit"></i></button>
+                        <button onclick="event.stopPropagation(); confirmDelete(${entry.id})" title="Delete"><i class="fas fa-trash"></i></button>
+                        <button onclick="event.stopPropagation(); createChildEntry(${entry.id})" title="Add Child Entry"><i class="fas fa-plus"></i></button>
                     </div>
                 `;
                 
@@ -2087,7 +2121,7 @@
                             <div class="preview-container">
                                 <div class="preview-title">
                                     <span>Preview:</span>
-                                    <span class="char-count"><span id="edit-tr-${entryId}-count">0</span> characters</span>
+                                    <span class="char-count"><span id="edit-tr-${entryId}-count">0</span> characters (visible: <span id="edit-tr-${entryId}-visible-count">0</span>)</span>
                                 </div>
                                 <div id="edit-tr-${entryId}-preview"></div>
                             </div>
@@ -2098,7 +2132,7 @@
                             <div class="preview-container">
                                 <div class="preview-title">
                                     <span>Preview:</span>
-                                    <span class="char-count"><span id="edit-en-${entryId}-count">0</span> characters</span>
+                                    <span class="char-count"><span id="edit-en-${entryId}-count">0</span> characters (visible: <span id="edit-en-${entryId}-visible-count">0</span>)</span>
                                 </div>
                                 <div id="edit-en-${entryId}-preview"></div>
                             </div>
@@ -2125,8 +2159,9 @@
             const textarea = document.getElementById(`edit-${lang}-${entryId}`);
             const preview = document.getElementById(`edit-${lang}-${entryId}-preview`);
             const charCount = document.getElementById(`edit-${lang}-${entryId}-count`);
+            const visibleCharCount = document.getElementById(`edit-${lang}-${entryId}-visible-count`);
             
-            if (textarea && preview && charCount) {
+            if (textarea && preview && charCount && visibleCharCount) {
                 let content = textarea.value;
                 
                 content = content.replace(/<video([^>]*)>/g, '<video$1 style="max-width: 100%; height: auto;">');
@@ -2135,7 +2170,10 @@
                 content = content.replace(/<iframe class="youtube-embed">([\s\S]*?)<\/iframe>/g, '<iframe class="youtube-embed" style="max-width: 100%;">$1</iframe>');
                 
                 preview.innerHTML = content.replace(/\n/g, '<br>');
+                
+                // Karakter sayılarını güncelle
                 charCount.textContent = textarea.value.length;
+                visibleCharCount.textContent = stripHtml(textarea.value).length;
             }
         }
 
@@ -2331,16 +2369,19 @@
             applyFilters();
         }
         
+        // En çok görüntülenen entry'leri göster - GÜNCELLENDİ
         function displayTopEntries(visitors) {
             const topEntriesContainer = document.getElementById('top-entries');
             
             const entryCounts = {};
             visitors.forEach(visit => {
                 if (visit.entryId) {
-                    if (!entryCounts[visit.entryId]) {
-                        entryCounts[visit.entryId] = 0;
+                    // Entry ID'yi düzgün bir şekilde al
+                    const entryId = visit.entryId.toString();
+                    if (!entryCounts[entryId]) {
+                        entryCounts[entryId] = 0;
                     }
-                    entryCounts[visit.entryId]++;
+                    entryCounts[entryId]++;
                 }
             });
             
@@ -2524,10 +2565,12 @@
             const entryCounts = {};
             visitors.forEach(visit => {
                 if (visit.entryId) {
-                    if (!entryCounts[visit.entryId]) {
-                        entryCounts[visit.entryId] = 0;
+                    // Entry ID'yi düzgün bir şekilde al
+                    const entryId = visit.entryId.toString();
+                    if (!entryCounts[entryId]) {
+                        entryCounts[entryId] = 0;
                     }
-                    entryCounts[visit.entryId]++;
+                    entryCounts[entryId]++;
                 }
             });
             
