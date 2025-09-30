@@ -18,7 +18,6 @@
     <meta name="twitter:image:alt" content="Adem Bayazıt">
     
     <link rel="icon" type="png|image" href="/IMAGES/ab.png">
-    <link rel="stylesheet" href="/CSS/style.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -52,31 +51,31 @@
         }
         
         /* Logo ve slogan için stil */
-      .logo-container {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-      }
-      
-      .logo-slogan {
-        font-size: 10px;
-        color: white;
-        margin-top: 2px;
-        font-style: italic;
-        letter-spacing: 0.5px;
-        white-space: nowrap;
-        text-align: right;
-        width: 100%;
-        padding-right: 5px;
-      }
-      
-      /* Navbar için responsive ayarlar */
-      .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 5%;
-      }
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        
+        .logo-slogan {
+            font-size: 10px;
+            color: white;
+            margin-top: 2px;
+            font-style: italic;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            text-align: right;
+            width: 100%;
+            padding-right: 5px;
+        }
+        
+        /* Navbar için responsive ayarlar */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 5%;
+        }
         
         .content-wrapper {
             margin-top: 160px;
@@ -84,6 +83,7 @@
             z-index: 2;
             padding: 0 20px;
         }
+        
         .backto {
             text-align: center;
         }
@@ -227,7 +227,6 @@
         .content-image {
             max-width: 40%;
             border-radius: 8px;
-            /*border: 1px solid var(--border-color); */
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
         
@@ -280,7 +279,7 @@
         .hacker-type img{
             filter: drop-shadow(0 0 10px limegreen);
             height: 35px;
-             width: 35px;
+            width: 35px;
             
         }
         
@@ -343,11 +342,13 @@
             color: var(--primary-color);
             margin-bottom: 10px;
         }
+        
         .step-content span {
             color: white;
             font-size: 35px;
         }
-         .video-caption1 {
+        
+        .video-caption1 {
             text-align: center;
             aling-items:center;
             border-radius: 8px;
@@ -361,106 +362,77 @@
             aling-items:center;   
         }
         
-        /* Roadmap Dairesel Tasarım */
+        /* Roadmap Grid Tasarım */
         .roadmap-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 800px;
+            max-width: 1200px;
+            margin: 0 auto;
             position: relative;
-            margin: 50px 0;
         }
         
-        .roadmap-circle {
-            position: relative;
-            width: 700px;
-            height: 700px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .center-title {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 180px;
-            height: 180px;
-            background: var(--card-bg);
-            border: 2px solid var(--border-color);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--primary-color);
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
-            z-index: 10;
-            padding: 15px;
-            line-height: 1.3;
+        .roadmap-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 30px;
         }
         
         .roadmap-item {
-            position: absolute;
-            width: 120px;
-            height: 120px;
             background: var(--card-bg);
-            border: 1px solid var(--border-color);
             border-radius: 10px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            min-height: 120px;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 10px;
-            transform-origin: 350px;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            cursor: pointer;
         }
         
         .roadmap-item:hover {
-            transform: scale(1.1) rotate(0deg) !important;
-            background: rgba(0, 100, 0, 0.3);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 255, 0, 0.2);
             border-color: var(--primary-color);
-            box-shadow: 0 0 15px var(--primary-color);
-            z-index: 5;
         }
         
-        .roadmap-number {
-            font-size: 0.9rem;
-            font-weight: bold;
-            color: var(--primary-color);
-            margin-bottom: 5px;
-        }
-        
-        .roadmap-text {
-            font-size: 0.65rem;
-            line-height: 1.2;
-            color: var(--text-color);
-        }
-        
-        .roadmap-lines {
+        .roadmap-item::before {
+            content: "";
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
+            width: 5px;
             height: 100%;
-            pointer-events: none;
+            background: var(--primary-color);
         }
         
-        .roadmap-line {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 350px;
-            height: 2px;
-            background: rgba(0, 255, 0, 0.2);
-            transform-origin: 0 0;
+        .roadmap-number {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .roadmap-number::before {
+            content: "";
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .roadmap-title {
+            font-size: 1rem;
+            color: var(--text-color);
+            line-height: 1.4;
+        }
+        
+        .roadmap-arrows {
+            display: none;
         }
         
         .roadmap-note {
@@ -475,8 +447,134 @@
             border-left: 4px solid var(--primary-color);
         }
         
-        /* Responsive Design */
-        @media (max-width: 768px) {
+        /* Sarmal Yol için Masaüstü Görünümü */
+        @media (min-width: 1024px) {
+            .roadmap-grid {
+                grid-template-columns: repeat(4, 1fr);
+                grid-auto-flow: dense;
+                position: relative;
+            }
+            
+            /* Sarmal düzen için özel pozisyonlar */
+            .roadmap-item:nth-child(1) { grid-column: 1; grid-row: 1; }
+            .roadmap-item:nth-child(2) { grid-column: 2; grid-row: 1; }
+            .roadmap-item:nth-child(3) { grid-column: 3; grid-row: 1; }
+            .roadmap-item:nth-child(4) { grid-column: 4; grid-row: 1; }
+            .roadmap-item:nth-child(5) { grid-column: 4; grid-row: 2; }
+            .roadmap-item:nth-child(6) { grid-column: 4; grid-row: 3; }
+            .roadmap-item:nth-child(7) { grid-column: 4; grid-row: 4; }
+            .roadmap-item:nth-child(8) { grid-column: 3; grid-row: 4; }
+            .roadmap-item:nth-child(9) { grid-column: 2; grid-row: 4; }
+            .roadmap-item:nth-child(10) { grid-column: 1; grid-row: 4; }
+            .roadmap-item:nth-child(11) { grid-column: 1; grid-row: 3; }
+            .roadmap-item:nth-child(12) { grid-column: 1; grid-row: 2; }
+            .roadmap-item:nth-child(13) { grid-column: 2; grid-row: 2; }
+            .roadmap-item:nth-child(14) { grid-column: 3; grid-row: 2; }
+            .roadmap-item:nth-child(15) { grid-column: 3; grid-row: 3; }
+            .roadmap-item:nth-child(16) { grid-column: 2; grid-row: 3; }
+            .roadmap-item:nth-child(17) { grid-column: 2; grid-row: 5; }
+            .roadmap-item:nth-child(18) { grid-column: 3; grid-row: 5; }
+            .roadmap-item:nth-child(19) { grid-column: 4; grid-row: 5; }
+            .roadmap-item:nth-child(20) { grid-column: 4; grid-row: 6; }
+            .roadmap-item:nth-child(21) { grid-column: 3; grid-row: 6; }
+            .roadmap-item:nth-child(22) { grid-column: 2; grid-row: 6; }
+            .roadmap-item:nth-child(23) { grid-column: 1; grid-row: 6; }
+            .roadmap-item:nth-child(24) { grid-column: 1; grid-row: 5; }
+            .roadmap-item:nth-child(25) { grid-column: 1; grid-row: 7; }
+            .roadmap-item:nth-child(26) { grid-column: 2; grid-row: 7; }
+            .roadmap-item:nth-child(27) { grid-column: 3; grid-row: 7; }
+            .roadmap-item:nth-child(28) { grid-column: 4; grid-row: 7; }
+            .roadmap-item:nth-child(29) { grid-column: 4; grid-row: 8; }
+            
+            /* Ok işaretleri için stil */
+            .roadmap-arrows {
+                display: block;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                pointer-events: none;
+            }
+            
+            .arrow {
+                position: absolute;
+                color: var(--primary-color);
+                font-size: 24px;
+                font-weight: bold;
+                z-index: 5;
+            }
+            
+            /* Yatay oklar */
+            .arrow.horizontal {
+                top: 50%;
+                transform: translateY(-50%);
+            }
+            
+            /* Dikey oklar */
+            .arrow.vertical {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            
+            /* Özel ok pozisyonları */
+            .arrow-1 { left: 25%; top: 12%; }
+            .arrow-2 { left: 50%; top: 12%; }
+            .arrow-3 { left: 75%; top: 12%; }
+            .arrow-4 { left: 87%; top: 25%; transform: rotate(90deg); }
+            .arrow-5 { left: 87%; top: 50%; transform: rotate(90deg); }
+            .arrow-6 { left: 87%; top: 75%; transform: rotate(90deg); }
+            .arrow-7 { left: 75%; top: 87%; }
+            .arrow-8 { left: 50%; top: 87%; }
+            .arrow-9 { left: 25%; top: 87%; }
+            .arrow-10 { left: 12%; top: 75%; transform: rotate(90deg); }
+            .arrow-11 { left: 12%; top: 50%; transform: rotate(90deg); }
+            .arrow-12 { left: 12%; top: 25%; transform: rotate(90deg); }
+            .arrow-13 { left: 25%; top: 37%; }
+            .arrow-14 { left: 50%; top: 37%; }
+            .arrow-15 { left: 62%; top: 50%; transform: rotate(90deg); }
+            .arrow-16 { left: 37%; top: 50%; transform: rotate(90deg); }
+            .arrow-17 { left: 37%; top: 62%; }
+            .arrow-18 { left: 50%; top: 62%; }
+            .arrow-19 { left: 62%; top: 62%; }
+            .arrow-20 { left: 75%; top: 75%; transform: rotate(90deg); }
+            .arrow-21 { left: 62%; top: 87%; }
+            .arrow-22 { left: 37%; top: 87%; }
+            .arrow-23 { left: 25%; top: 75%; transform: rotate(90deg); }
+            .arrow-24 { left: 12%; top: 62%; transform: rotate(90deg); }
+            .arrow-25 { left: 25%; top: 100%; }
+            .arrow-26 { left: 50%; top: 100%; }
+            .arrow-27 { left: 75%; top: 100%; }
+            .arrow-28 { left: 87%; top: 112%; transform: rotate(90deg); }
+        }
+        
+        /* Tablet görünümü */
+        @media (max-width: 1023px) and (min-width: 768px) {
+            .roadmap-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        /* Mobil görünümü */
+        @media (max-width: 767px) {
+            .roadmap-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            
+            .roadmap-item {
+                min-height: 100px;
+                padding: 15px;
+            }
+            
+            .roadmap-number {
+                font-size: 1rem;
+            }
+            
+            .roadmap-title {
+                font-size: 0.85rem;
+            }
+            
             .content-wrapper {
                 margin-top: 160px;
             }
@@ -503,81 +601,16 @@
             }
             
             .video-caption1 {
-            text-align: center;
-            aling-items:center;
-            border-radius: 8px;
-            width:100%;
-            height: 100%;
-            object-fit: cover;
-            }
-            
-            .roadmap-container {
-                min-height: 500px;
-            }
-            
-            .roadmap-circle {
-                width: 450px;
-                height: 450px;
-            }
-            
-            .center-title {
-                width: 120px;
-                height: 120px;
-                font-size: 0.9rem;
-            }
-            
-            .roadmap-item {
-                width: 80px;
-                height: 80px;
-                transform-origin: 225px;
-                padding: 5px;
-            }
-            
-            .roadmap-number {
-                font-size: 0.7rem;
-            }
-            
-            .roadmap-text {
-                font-size: 0.55rem;
-            }
-            
-            .roadmap-line {
-                width: 225px;
+                width:100%;
+                height: 100%;
+                object-fit: cover;
             }
         }
         
+        /* Küçük mobil görünümü */
         @media (max-width: 480px) {
-            .roadmap-container {
-                min-height: 400px;
-            }
-            
-            .roadmap-circle {
-                width: 350px;
-                height: 350px;
-            }
-            
-            .center-title {
-                width: 100px;
-                height: 100px;
-                font-size: 0.8rem;
-            }
-            
-            .roadmap-item {
-                width: 70px;
-                height: 70px;
-                transform-origin: 175px;
-            }
-            
-            .roadmap-number {
-                font-size: 0.6rem;
-            }
-            
-            .roadmap-text {
-                font-size: 0.5rem;
-            }
-            
-            .roadmap-line {
-                width: 175px;
+            .roadmap-grid {
+                grid-template-columns: 1fr;
             }
         }
         
@@ -786,131 +819,183 @@
                     <p>This roadmap provides a structured learning path for aspiring ethical hackers and cybersecurity professionals. Follow these steps in order to build a solid foundation and advance your skills systematically.</p>
                     
                     <div class="roadmap-container">
-                        <div class="roadmap-circle">
-                            <div class="center-title">Ethical Hacking Roadmap</div>
-                            
-                            <!-- Roadmap Lines -->
-                            <div class="roadmap-lines">
-                                <!-- Lines will be generated by JavaScript -->
-                            </div>
-                            
-                            <!-- Roadmap Items -->
-                            <div class="roadmap-item" style="transform: rotate(0deg) translate(350px) rotate(0deg);">
+                        <div class="roadmap-grid">
+                            <div class="roadmap-item">
                                 <div class="roadmap-number">01</div>
-                                <div class="roadmap-text">Computer & Internet Fundamentals</div>
+                                <div class="roadmap-title">Computer & Internet Fundamentals</div>
                             </div>
-                            <div class="roadmap-item" style="transform: rotate(12.4deg) translate(350px) rotate(-12.4deg);">
-                                <div class="roadmap-number">16</div>
-                                <div class="roadmap-text">Social Engineering Awareness</div>
-                            </div>
-                            <div class="roadmap-item" style="transform: rotate(24.8deg) translate(350px) rotate(-24.8deg);">
-                                <div class="roadmap-number">17</div>
-                                <div class="roadmap-text">Service Disruption Testing</div>
-                            </div>
-                            <div class="roadmap-item" style="transform: rotate(37.2deg) translate(350px) rotate(-37.2deg);">
+                            
+                            <div class="roadmap-item">
                                 <div class="roadmap-number">02</div>
-                                <div class="roadmap-text">Networking Essentials</div>
+                                <div class="roadmap-title">Networking Essentials</div>
                             </div>
-                            <div class="roadmap-item" style="transform: rotate(49.6deg) translate(350px) rotate(-49.6deg);">
-                                <div class="roadmap-number">15</div>
-                                <div class="roadmap-text">Network Monitoring & Packet Analysis</div>
-                            </div>
-                            <div class="roadmap-item" style="transform: rotate(62deg) translate(350px) rotate(-62deg);">
-                                <div class="roadmap-number">18</div>
-                                <div class="roadmap-text">Session Security & Spoofing</div>
-                            </div>
-                            <div class="roadmap-item" style="transform: rotate(74.4deg) translate(350px) rotate(-74.4deg);">
+                            
+                            <div class="roadmap-item">
                                 <div class="roadmap-number">03</div>
-                                <div class="roadmap-text">Linux & Command Line Basics</div>
+                                <div class="roadmap-title">Linux & Command Line Basics</div>
                             </div>
-                            <div class="roadmap-item" style="transform: rotate(86.8deg) translate(350px) rotate(-86.8deg);">
-                                <div class="roadmap-number">14</div>
-                                <div class="roadmap-text">Malware Concepts & Prevention</div>
-                            </div>
-                            <div class="roadmap-item" style="transform: rotate(99.2deg) translate(350px) rotate(-99.2deg);">
-                                <div class="roadmap-number">19</div>
-                                <div class="roadmap-text">Web App Testing</div>
-                            </div>
-                            <div class="roadmap-item" style="transform: rotate(111.6deg) translate(350px) rotate(-111.6deg);">
+                            
+                            <div class="roadmap-item">
                                 <div class="roadmap-number">04</div>
-                                <div class="roadmap-text">Basic Programming</div>
+                                <div class="roadmap-title">Basic Programming</div>
                             </div>
-                            <div class="roadmap-item" style="transform: rotate(124deg) translate(350px) rotate(-124deg);">
-                                <div class="roadmap-number">13</div>
-                                <div class="roadmap-text">System Security Testing</div>
-                            </div>
-                            <div class="roadmap-item" style="transform: rotate(136.4deg) translate(350px) rotate(-136.4deg);">
-                                <div class="roadmap-number">20</div>
-                                <div class="roadmap-text">Wireless Network Security</div>
-                            </div>
-                            <div class="roadmap-item" style="transform: rotate(148.8deg) translate(350px) rotate(-148.8deg);">
-                                <div class="roadmap-number">29</div>
-                                <div class="roadmap-text">Industry Certifications</div>
-                            </div>
-                            <div class="roadmap-item" style="transform: rotate(161.2deg) translate(350px) rotate(-161.2deg);">
+                            
+                            <div class="roadmap-item">
                                 <div class="roadmap-number">05</div>
-                                <div class="roadmap-text">Operating System Internals</div>
+                                <div class="roadmap-title">Operating System Internals</div>
                             </div>
-                            <div class="roadmap-item" style="transform: rotate(173.6deg) translate(350px) rotate(-173.6deg);">
-                                <div class="roadmap-number">12</div>
-                                <div class="roadmap-text">Vulnerability Assessment Tools</div>
-                            </div>
-                            <div class="roadmap-item" style="transform: rotate(186deg) translate(350px) rotate(-186deg);">
-                                <div class="roadmap-number">21</div>
-                                <div class="roadmap-text">Intrusion Detection Systems</div>
-                            </div>
-                            <div class="roadmap-item" style="transform: rotate(198.4deg) translate(350px) rotate(-198.4deg);">
-                                <div class="roadmap-number">28</div>
-                                <div class="roadmap-text">Red Team Skills & Simulation</div>
-                            </div>
-                            <div class="roadmap-item" style="transform: rotate(210.8deg) translate(350px) rotate(-210.8deg);">
+                            
+                            <div class="roadmap-item">
                                 <div class="roadmap-number">06</div>
-                                <div class="roadmap-text">Web Technologies & HTTP Protocol</div>
+                                <div class="roadmap-title">Web Technologies & HTTP Protocol</div>
                             </div>
-                            <div class="roadmap-item" style="transform: rotate(223.2deg) translate(350px) rotate(-223.2deg);">
-                                <div class="roadmap-number">11</div>
-                                <div class="roadmap-text">Enumeration Techniques</div>
-                            </div>
-                            <div class="roadmap-item" style="transform: rotate(235.6deg) translate(350px) rotate(-235.6deg);">
-                                <div class="roadmap-number">22</div>
-                                <div class="roadmap-text">Cryptography Basics</div>
-                            </div>
-                            <div class="roadmap-item" style="transform: rotate(248deg) translate(350px) rotate(-248deg);">
-                                <div class="roadmap-number">27</div>
-                                <div class="roadmap-text">Vulnerability Disclosure & Bug Bounty</div>
-                            </div>
-                            <div class="roadmap-item" style="transform: rotate(260.4deg) translate(350px) rotate(-260.4deg);">
+                            
+                            <div class="roadmap-item">
                                 <div class="roadmap-number">07</div>
-                                <div class="roadmap-text">Setup Lab Environment</div>
+                                <div class="roadmap-title">Setup Lab Environment</div>
                             </div>
-                            <div class="roadmap-item" style="transform: rotate(272.8deg) translate(350px) rotate(-272.8deg);">
-                                <div class="roadmap-number">10</div>
-                                <div class="roadmap-text">Network Scanning</div>
-                            </div>
-                            <div class="roadmap-item" style="transform: rotate(285.2deg) translate(350px) rotate(-285.2deg);">
-                                <div class="roadmap-number">23</div>
-                                <div class="roadmap-text">Exploitation Tools</div>
-                            </div>
-                            <div class="roadmap-item" style="transform: rotate(297.6deg) translate(350px) rotate(-297.6deg);">
-                                <div class="roadmap-number">26</div>
-                                <div class="roadmap-text">Capture The Flag (CTF) Challenges</div>
-                            </div>
-                            <div class="roadmap-item" style="transform: rotate(310deg) translate(350px) rotate(-310deg);">
+                            
+                            <div class="roadmap-item">
                                 <div class="roadmap-number">08</div>
-                                <div class="roadmap-text">Introduction to Ethical Cybersecurity</div>
+                                <div class="roadmap-title">Introduction to Ethical Cybersecurity</div>
                             </div>
-                            <div class="roadmap-item" style="transform: rotate(322.4deg) translate(350px) rotate(-322.4deg);">
+                            
+                            <div class="roadmap-item">
                                 <div class="roadmap-number">09</div>
-                                <div class="roadmap-text">Information Gathering</div>
+                                <div class="roadmap-title">Information Gathering</div>
                             </div>
-                            <div class="roadmap-item" style="transform: rotate(334.8deg) translate(350px) rotate(-334.8deg);">
+                            
+                            <div class="roadmap-item">
+                                <div class="roadmap-number">10</div>
+                                <div class="roadmap-title">Network Scanning</div>
+                            </div>
+                            
+                            <div class="roadmap-item">
+                                <div class="roadmap-number">11</div>
+                                <div class="roadmap-title">Enumeration Techniques</div>
+                            </div>
+                            
+                            <div class="roadmap-item">
+                                <div class="roadmap-number">12</div>
+                                <div class="roadmap-title">Vulnerability Assessment Tools</div>
+                            </div>
+                            
+                            <div class="roadmap-item">
+                                <div class="roadmap-number">13</div>
+                                <div class="roadmap-title">System Security Testing</div>
+                            </div>
+                            
+                            <div class="roadmap-item">
+                                <div class="roadmap-number">14</div>
+                                <div class="roadmap-title">Malware Concepts & Prevention</div>
+                            </div>
+                            
+                            <div class="roadmap-item">
+                                <div class="roadmap-number">15</div>
+                                <div class="roadmap-title">Network Monitoring & Packet Analysis</div>
+                            </div>
+                            
+                            <div class="roadmap-item">
+                                <div class="roadmap-number">16</div>
+                                <div class="roadmap-title">Social Engineering Awareness</div>
+                            </div>
+                            
+                            <div class="roadmap-item">
+                                <div class="roadmap-number">17</div>
+                                <div class="roadmap-title">Service Disruption Testing</div>
+                            </div>
+                            
+                            <div class="roadmap-item">
+                                <div class="roadmap-number">18</div>
+                                <div class="roadmap-title">Session Security & Spoofing</div>
+                            </div>
+                            
+                            <div class="roadmap-item">
+                                <div class="roadmap-number">19</div>
+                                <div class="roadmap-title">Web App Testing</div>
+                            </div>
+                            
+                            <div class="roadmap-item">
+                                <div class="roadmap-number">20</div>
+                                <div class="roadmap-title">Wireless Network Security</div>
+                            </div>
+                            
+                            <div class="roadmap-item">
+                                <div class="roadmap-number">21</div>
+                                <div class="roadmap-title">Intrusion Detection Systems</div>
+                            </div>
+                            
+                            <div class="roadmap-item">
+                                <div class="roadmap-number">22</div>
+                                <div class="roadmap-title">Cryptography Basics</div>
+                            </div>
+                            
+                            <div class="roadmap-item">
+                                <div class="roadmap-number">23</div>
+                                <div class="roadmap-title">Exploitation Tools</div>
+                            </div>
+                            
+                            <div class="roadmap-item">
                                 <div class="roadmap-number">24</div>
-                                <div class="roadmap-text">Reverse Engineering Introduction</div>
+                                <div class="roadmap-title">Reverse Engineering Introduction</div>
                             </div>
-                            <div class="roadmap-item" style="transform: rotate(347.2deg) translate(350px) rotate(-347.2deg);">
+                            
+                            <div class="roadmap-item">
                                 <div class="roadmap-number">25</div>
-                                <div class="roadmap-text">Malware Analysis</div>
+                                <div class="roadmap-title">Malware Analysis</div>
                             </div>
+                            
+                            <div class="roadmap-item">
+                                <div class="roadmap-number">26</div>
+                                <div class="roadmap-title">Capture The Flag (CTF) Challenges</div>
+                            </div>
+                            
+                            <div class="roadmap-item">
+                                <div class="roadmap-number">27</div>
+                                <div class="roadmap-title">Vulnerability Disclosure & Bug Bounty</div>
+                            </div>
+                            
+                            <div class="roadmap-item">
+                                <div class="roadmap-number">28</div>
+                                <div class="roadmap-title">Red Team Skills & Simulation</div>
+                            </div>
+                            
+                            <div class="roadmap-item">
+                                <div class="roadmap-number">29</div>
+                                <div class="roadmap-title">Industry Certifications</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Masaüstü için ok işaretleri -->
+                        <div class="roadmap-arrows">
+                            <div class="arrow arrow-1">→</div>
+                            <div class="arrow arrow-2">→</div>
+                            <div class="arrow arrow-3">→</div>
+                            <div class="arrow arrow-4">↓</div>
+                            <div class="arrow arrow-5">↓</div>
+                            <div class="arrow arrow-6">↓</div>
+                            <div class="arrow arrow-7">←</div>
+                            <div class="arrow arrow-8">←</div>
+                            <div class="arrow arrow-9">←</div>
+                            <div class="arrow arrow-10">↑</div>
+                            <div class="arrow arrow-11">↑</div>
+                            <div class="arrow arrow-12">↑</div>
+                            <div class="arrow arrow-13">→</div>
+                            <div class="arrow arrow-14">→</div>
+                            <div class="arrow arrow-15">↓</div>
+                            <div class="arrow arrow-16">↑</div>
+                            <div class="arrow arrow-17">→</div>
+                            <div class="arrow arrow-18">→</div>
+                            <div class="arrow arrow-19">→</div>
+                            <div class="arrow arrow-20">↓</div>
+                            <div class="arrow arrow-21">←</div>
+                            <div class="arrow arrow-22">←</div>
+                            <div class="arrow arrow-23">↑</div>
+                            <div class="arrow arrow-24">↑</div>
+                            <div class="arrow arrow-25">→</div>
+                            <div class="arrow arrow-26">→</div>
+                            <div class="arrow arrow-27">→</div>
+                            <div class="arrow arrow-28">↓</div>
                         </div>
                     </div>
                     
@@ -953,20 +1038,5 @@
     <script src="/JAVASCRIPT/monitor.js"></script>
     <canvas id="matrixCanvas"></canvas>
     <script src="/JAVASCRIPT/matrix.js"></script>
-    
-    <script>
-        // Roadmap çizgilerini oluşturma
-        document.addEventListener('DOMContentLoaded', function() {
-            const roadmapLines = document.querySelector('.roadmap-lines');
-            const totalItems = 29;
-            
-            for (let i = 0; i < totalItems; i++) {
-                const line = document.createElement('div');
-                line.className = 'roadmap-line';
-                line.style.transform = `rotate(${i * (360 / totalItems)}deg)`;
-                roadmapLines.appendChild(line);
-            }
-        });
-    </script>
 </body>
 </html>
