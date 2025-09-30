@@ -361,76 +361,106 @@
             aling-items:center;   
         }
         
-        /* Roadmap Styles */
+        /* Roadmap Dairesel Tasarım */
         .roadmap-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            position: relative;
-        }
-        
-        .roadmap-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin-top: 30px;
-        }
-        
-        .roadmap-item {
-            background: var(--card-bg);
-            border-radius: 10px;
-            padding: 20px;
-            border: 1px solid var(--border-color);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .roadmap-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 255, 0, 0.2);
-            border-color: var(--primary-color);
-        }
-        
-        .roadmap-item::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 5px;
-            height: 100%;
-            background: var(--primary-color);
-        }
-        
-        .roadmap-number {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--primary-color);
-            margin-bottom: 10px;
             display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 800px;
+            position: relative;
+            margin: 50px 0;
+        }
+        
+        .roadmap-circle {
+            position: relative;
+            width: 700px;
+            height: 700px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
             align-items: center;
         }
         
-        .roadmap-number::before {
-            content: "";
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            background: var(--primary-color);
+        .center-title {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 180px;
+            height: 180px;
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
             border-radius: 50%;
-            margin-right: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+            z-index: 10;
+            padding: 15px;
+            line-height: 1.3;
         }
         
-        .roadmap-title {
-            font-size: 1rem;
+        .roadmap-item {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 10px;
+            transform-origin: 350px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+        }
+        
+        .roadmap-item:hover {
+            transform: scale(1.1) rotate(0deg) !important;
+            background: rgba(0, 100, 0, 0.3);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 15px var(--primary-color);
+            z-index: 5;
+        }
+        
+        .roadmap-number {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+        
+        .roadmap-text {
+            font-size: 0.65rem;
+            line-height: 1.2;
             color: var(--text-color);
-            line-height: 1.4;
         }
         
-        .roadmap-description {
-            margin-top: 15px;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            line-height: 1.5;
+        .roadmap-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .roadmap-line {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 350px;
+            height: 2px;
+            background: rgba(0, 255, 0, 0.2);
+            transform-origin: 0 0;
         }
         
         .roadmap-note {
@@ -481,8 +511,73 @@
             object-fit: cover;
             }
             
-            .roadmap-grid {
-                grid-template-columns: 1fr;
+            .roadmap-container {
+                min-height: 500px;
+            }
+            
+            .roadmap-circle {
+                width: 450px;
+                height: 450px;
+            }
+            
+            .center-title {
+                width: 120px;
+                height: 120px;
+                font-size: 0.9rem;
+            }
+            
+            .roadmap-item {
+                width: 80px;
+                height: 80px;
+                transform-origin: 225px;
+                padding: 5px;
+            }
+            
+            .roadmap-number {
+                font-size: 0.7rem;
+            }
+            
+            .roadmap-text {
+                font-size: 0.55rem;
+            }
+            
+            .roadmap-line {
+                width: 225px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .roadmap-container {
+                min-height: 400px;
+            }
+            
+            .roadmap-circle {
+                width: 350px;
+                height: 350px;
+            }
+            
+            .center-title {
+                width: 100px;
+                height: 100px;
+                font-size: 0.8rem;
+            }
+            
+            .roadmap-item {
+                width: 70px;
+                height: 70px;
+                transform-origin: 175px;
+            }
+            
+            .roadmap-number {
+                font-size: 0.6rem;
+            }
+            
+            .roadmap-text {
+                font-size: 0.5rem;
+            }
+            
+            .roadmap-line {
+                width: 175px;
             }
         }
         
@@ -691,185 +786,136 @@
                     <p>This roadmap provides a structured learning path for aspiring ethical hackers and cybersecurity professionals. Follow these steps in order to build a solid foundation and advance your skills systematically.</p>
                     
                     <div class="roadmap-container">
-                        <div class="roadmap-grid">
-                            <div class="roadmap-item">
+                        <div class="roadmap-circle">
+                            <div class="center-title">Ethical Hacking Roadmap</div>
+                            
+                            <!-- Roadmap Lines -->
+                            <div class="roadmap-lines">
+                                <!-- Lines will be generated by JavaScript -->
+                            </div>
+                            
+                            <!-- Roadmap Items -->
+                            <div class="roadmap-item" style="transform: rotate(0deg) translate(350px) rotate(0deg);">
                                 <div class="roadmap-number">01</div>
-                                <div class="roadmap-title">Computer & Internet Fundamentals</div>
-                                <div class="roadmap-description">Understanding basic computer architecture, operating systems, and how the internet works.</div>
+                                <div class="roadmap-text">Computer & Internet Fundamentals</div>
                             </div>
-                            
-                            <div class="roadmap-item">
-                                <div class="roadmap-number">02</div>
-                                <div class="roadmap-title">Networking Essentials</div>
-                                <div class="roadmap-description">Learning TCP/IP, network protocols, subnetting, and network infrastructure.</div>
-                            </div>
-                            
-                            <div class="roadmap-item">
-                                <div class="roadmap-number">03</div>
-                                <div class="roadmap-title">Linux & Command Line Basics</div>
-                                <div class="roadmap-description">Mastering Linux operating system and essential command-line operations.</div>
-                            </div>
-                            
-                            <div class="roadmap-item">
-                                <div class="roadmap-number">04</div>
-                                <div class="roadmap-title">Basic Programming</div>
-                                <div class="roadmap-description">Learning programming fundamentals with Python, Bash scripting, or other relevant languages.</div>
-                            </div>
-                            
-                            <div class="roadmap-item">
-                                <div class="roadmap-number">05</div>
-                                <div class="roadmap-title">Operating System Internals</div>
-                                <div class="roadmap-description">Understanding how operating systems work at a deeper level, including memory management and processes.</div>
-                            </div>
-                            
-                            <div class="roadmap-item">
-                                <div class="roadmap-number">06</div>
-                                <div class="roadmap-title">Web Technologies & HTTP Protocol</div>
-                                <div class="roadmap-description">Learning how web applications work, HTTP protocol, and web architecture.</div>
-                            </div>
-                            
-                            <div class="roadmap-item">
-                                <div class="roadmap-number">07</div>
-                                <div class="roadmap-title">Setup Lab Environment</div>
-                                <div class="roadmap-description">Creating a safe testing environment using virtualization tools like VirtualBox or VMware.</div>
-                            </div>
-                            
-                            <div class="roadmap-item">
-                                <div class="roadmap-number">08</div>
-                                <div class="roadmap-title">Introduction to Ethical Cybersecurity</div>
-                                <div class="roadmap-description">Understanding ethical hacking principles, legal aspects, and professional ethics.</div>
-                            </div>
-                            
-                            <div class="roadmap-item">
-                                <div class="roadmap-number">09</div>
-                                <div class="roadmap-title">Information Gathering</div>
-                                <div class="roadmap-description">Learning passive and active reconnaissance techniques to gather intelligence about targets.</div>
-                            </div>
-                            
-                            <div class="roadmap-item">
-                                <div class="roadmap-number">10</div>
-                                <div class="roadmap-title">Network Scanning</div>
-                                <div class="roadmap-description">Using tools like Nmap to discover network hosts, services, and open ports.</div>
-                            </div>
-                            
-                            <div class="roadmap-item">
-                                <div class="roadmap-number">11</div>
-                                <div class="roadmap-title">Enumeration Techniques</div>
-                                <div class="roadmap-description">Extracting detailed information about network resources, users, and shares.</div>
-                            </div>
-                            
-                            <div class="roadmap-item">
-                                <div class="roadmap-number">12</div>
-                                <div class="roadmap-title">Vulnerability Assessment Tools</div>
-                                <div class="roadmap-description">Using automated tools to identify and assess security vulnerabilities.</div>
-                            </div>
-                            
-                            <div class="roadmap-item">
-                                <div class="roadmap-number">13</div>
-                                <div class="roadmap-title">System Security Testing</div>
-                                <div class="roadmap-description">Testing operating system security and identifying configuration weaknesses.</div>
-                            </div>
-                            
-                            <div class="roadmap-item">
-                                <div class="roadmap-number">14</div>
-                                <div class="roadmap-title">Malware Concepts & Prevention</div>
-                                <div class="roadmap-description">Understanding malware types, behavior, and prevention techniques.</div>
-                            </div>
-                            
-                            <div class="roadmap-item">
-                                <div class="roadmap-number">15</div>
-                                <div class="roadmap-title">Network Monitoring & Packet Analysis</div>
-                                <div class="roadmap-description">Using tools like Wireshark to analyze network traffic and detect anomalies.</div>
-                            </div>
-                            
-                            <div class="roadmap-item">
+                            <div class="roadmap-item" style="transform: rotate(12.4deg) translate(350px) rotate(-12.4deg);">
                                 <div class="roadmap-number">16</div>
-                                <div class="roadmap-title">Social Engineering Awareness</div>
-                                <div class="roadmap-description">Understanding human-based attacks and developing countermeasures.</div>
+                                <div class="roadmap-text">Social Engineering Awareness</div>
                             </div>
-                            
-                            <div class="roadmap-item">
+                            <div class="roadmap-item" style="transform: rotate(24.8deg) translate(350px) rotate(-24.8deg);">
                                 <div class="roadmap-number">17</div>
-                                <div class="roadmap-title">Service Disruption Testing</div>
-                                <div class="roadmap-description">Learning about DoS/DDoS attacks and testing service resilience.</div>
+                                <div class="roadmap-text">Service Disruption Testing</div>
                             </div>
-                            
-                            <div class="roadmap-item">
+                            <div class="roadmap-item" style="transform: rotate(37.2deg) translate(350px) rotate(-37.2deg);">
+                                <div class="roadmap-number">02</div>
+                                <div class="roadmap-text">Networking Essentials</div>
+                            </div>
+                            <div class="roadmap-item" style="transform: rotate(49.6deg) translate(350px) rotate(-49.6deg);">
+                                <div class="roadmap-number">15</div>
+                                <div class="roadmap-text">Network Monitoring & Packet Analysis</div>
+                            </div>
+                            <div class="roadmap-item" style="transform: rotate(62deg) translate(350px) rotate(-62deg);">
                                 <div class="roadmap-number">18</div>
-                                <div class="roadmap-title">Session Security & Spoofing</div>
-                                <div class="roadmap-description">Understanding session management vulnerabilities and identity spoofing techniques.</div>
+                                <div class="roadmap-text">Session Security & Spoofing</div>
                             </div>
-                            
-                            <div class="roadmap-item">
+                            <div class="roadmap-item" style="transform: rotate(74.4deg) translate(350px) rotate(-74.4deg);">
+                                <div class="roadmap-number">03</div>
+                                <div class="roadmap-text">Linux & Command Line Basics</div>
+                            </div>
+                            <div class="roadmap-item" style="transform: rotate(86.8deg) translate(350px) rotate(-86.8deg);">
+                                <div class="roadmap-number">14</div>
+                                <div class="roadmap-text">Malware Concepts & Prevention</div>
+                            </div>
+                            <div class="roadmap-item" style="transform: rotate(99.2deg) translate(350px) rotate(-99.2deg);">
                                 <div class="roadmap-number">19</div>
-                                <div class="roadmap-title">Web App Testing</div>
-                                <div class="roadmap-description">Identifying and exploiting web application vulnerabilities like SQL injection and XSS.</div>
+                                <div class="roadmap-text">Web App Testing</div>
                             </div>
-                            
-                            <div class="roadmap-item">
+                            <div class="roadmap-item" style="transform: rotate(111.6deg) translate(350px) rotate(-111.6deg);">
+                                <div class="roadmap-number">04</div>
+                                <div class="roadmap-text">Basic Programming</div>
+                            </div>
+                            <div class="roadmap-item" style="transform: rotate(124deg) translate(350px) rotate(-124deg);">
+                                <div class="roadmap-number">13</div>
+                                <div class="roadmap-text">System Security Testing</div>
+                            </div>
+                            <div class="roadmap-item" style="transform: rotate(136.4deg) translate(350px) rotate(-136.4deg);">
                                 <div class="roadmap-number">20</div>
-                                <div class="roadmap-title">Wireless Network Security</div>
-                                <div class="roadmap-description">Testing and securing wireless networks against various attacks.</div>
+                                <div class="roadmap-text">Wireless Network Security</div>
                             </div>
-                            
-                            <div class="roadmap-item">
-                                <div class="roadmap-number">21</div>
-                                <div class="roadmap-title">Intrusion Detection Systems</div>
-                                <div class="roadmap-description">Understanding and evading IDS/IPS systems.</div>
-                            </div>
-                            
-                            <div class="roadmap-item">
-                                <div class="roadmap-number">22</div>
-                                <div class="roadmap-title">Cryptography Basics</div>
-                                <div class="roadmap-description">Learning encryption algorithms, cryptographic protocols, and their weaknesses.</div>
-                            </div>
-                            
-                            <div class="roadmap-item">
-                                <div class="roadmap-number">23</div>
-                                <div class="roadmap-title">Exploitation Tools</div>
-                                <div class="roadmap-description">Mastering exploitation frameworks like Metasploit for vulnerability exploitation.</div>
-                            </div>
-                            
-                            <div class="roadmap-item">
-                                <div class="roadmap-number">24</div>
-                                <div class="roadmap-title">Reverse Engineering Introduction</div>
-                                <div class="roadmap-description">Learning basic reverse engineering techniques to analyze malicious software.</div>
-                            </div>
-                            
-                            <div class="roadmap-item">
-                                <div class="roadmap-number">25</div>
-                                <div class="roadmap-title">Malware Analysis</div>
-                                <div class="roadmap-description">Analyzing malware behavior and developing detection mechanisms.</div>
-                            </div>
-                            
-                            <div class="roadmap-item">
-                                <div class="roadmap-number">26</div>
-                                <div class="roadmap-title">Capture The Flag (CTF) Challenges</div>
-                                <div class="roadmap-description">Participating in CTF competitions to practice skills in a controlled environment.</div>
-                            </div>
-                            
-                            <div class="roadmap-item">
-                                <div class="roadmap-number">27</div>
-                                <div class="roadmap-title">Vulnerability Disclosure & Bug Bounty</div>
-                                <div class="roadmap-description">Learning responsible vulnerability disclosure and participating in bug bounty programs.</div>
-                            </div>
-                            
-                            <div class="roadmap-item">
-                                <div class="roadmap-number">28</div>
-                                <div class="roadmap-title">Red Team Skills & Simulation</div>
-                                <div class="roadmap-description">Developing advanced attack simulation skills for red team operations.</div>
-                            </div>
-                            
-                            <div class="roadmap-item">
+                            <div class="roadmap-item" style="transform: rotate(148.8deg) translate(350px) rotate(-148.8deg);">
                                 <div class="roadmap-number">29</div>
-                                <div class="roadmap-title">Industry Certifications</div>
-                                <div class="roadmap-description">Pursuing professional certifications like CEH, OSCP, or CISSP to validate skills.</div>
+                                <div class="roadmap-text">Industry Certifications</div>
+                            </div>
+                            <div class="roadmap-item" style="transform: rotate(161.2deg) translate(350px) rotate(-161.2deg);">
+                                <div class="roadmap-number">05</div>
+                                <div class="roadmap-text">Operating System Internals</div>
+                            </div>
+                            <div class="roadmap-item" style="transform: rotate(173.6deg) translate(350px) rotate(-173.6deg);">
+                                <div class="roadmap-number">12</div>
+                                <div class="roadmap-text">Vulnerability Assessment Tools</div>
+                            </div>
+                            <div class="roadmap-item" style="transform: rotate(186deg) translate(350px) rotate(-186deg);">
+                                <div class="roadmap-number">21</div>
+                                <div class="roadmap-text">Intrusion Detection Systems</div>
+                            </div>
+                            <div class="roadmap-item" style="transform: rotate(198.4deg) translate(350px) rotate(-198.4deg);">
+                                <div class="roadmap-number">28</div>
+                                <div class="roadmap-text">Red Team Skills & Simulation</div>
+                            </div>
+                            <div class="roadmap-item" style="transform: rotate(210.8deg) translate(350px) rotate(-210.8deg);">
+                                <div class="roadmap-number">06</div>
+                                <div class="roadmap-text">Web Technologies & HTTP Protocol</div>
+                            </div>
+                            <div class="roadmap-item" style="transform: rotate(223.2deg) translate(350px) rotate(-223.2deg);">
+                                <div class="roadmap-number">11</div>
+                                <div class="roadmap-text">Enumeration Techniques</div>
+                            </div>
+                            <div class="roadmap-item" style="transform: rotate(235.6deg) translate(350px) rotate(-235.6deg);">
+                                <div class="roadmap-number">22</div>
+                                <div class="roadmap-text">Cryptography Basics</div>
+                            </div>
+                            <div class="roadmap-item" style="transform: rotate(248deg) translate(350px) rotate(-248deg);">
+                                <div class="roadmap-number">27</div>
+                                <div class="roadmap-text">Vulnerability Disclosure & Bug Bounty</div>
+                            </div>
+                            <div class="roadmap-item" style="transform: rotate(260.4deg) translate(350px) rotate(-260.4deg);">
+                                <div class="roadmap-number">07</div>
+                                <div class="roadmap-text">Setup Lab Environment</div>
+                            </div>
+                            <div class="roadmap-item" style="transform: rotate(272.8deg) translate(350px) rotate(-272.8deg);">
+                                <div class="roadmap-number">10</div>
+                                <div class="roadmap-text">Network Scanning</div>
+                            </div>
+                            <div class="roadmap-item" style="transform: rotate(285.2deg) translate(350px) rotate(-285.2deg);">
+                                <div class="roadmap-number">23</div>
+                                <div class="roadmap-text">Exploitation Tools</div>
+                            </div>
+                            <div class="roadmap-item" style="transform: rotate(297.6deg) translate(350px) rotate(-297.6deg);">
+                                <div class="roadmap-number">26</div>
+                                <div class="roadmap-text">Capture The Flag (CTF) Challenges</div>
+                            </div>
+                            <div class="roadmap-item" style="transform: rotate(310deg) translate(350px) rotate(-310deg);">
+                                <div class="roadmap-number">08</div>
+                                <div class="roadmap-text">Introduction to Ethical Cybersecurity</div>
+                            </div>
+                            <div class="roadmap-item" style="transform: rotate(322.4deg) translate(350px) rotate(-322.4deg);">
+                                <div class="roadmap-number">09</div>
+                                <div class="roadmap-text">Information Gathering</div>
+                            </div>
+                            <div class="roadmap-item" style="transform: rotate(334.8deg) translate(350px) rotate(-334.8deg);">
+                                <div class="roadmap-number">24</div>
+                                <div class="roadmap-text">Reverse Engineering Introduction</div>
+                            </div>
+                            <div class="roadmap-item" style="transform: rotate(347.2deg) translate(350px) rotate(-347.2deg);">
+                                <div class="roadmap-number">25</div>
+                                <div class="roadmap-text">Malware Analysis</div>
                             </div>
                         </div>
-                        
-                        <div class="roadmap-note">
-                            <p><strong>Note:</strong> This roadmap provides a comprehensive learning path. Progress at your own pace and focus on mastering each topic before moving to the next. Practical hands-on experience is essential for developing real-world skills.</p>
-                        </div>
+                    </div>
+                    
+                    <div class="roadmap-note">
+                        <p><strong>Note:</strong> This roadmap provides a comprehensive learning path. Progress at your own pace and focus on mastering each topic before moving to the next. Practical hands-on experience is essential for developing real-world skills.</p>
                     </div>
                 </div>
             </div>
@@ -907,5 +953,20 @@
     <script src="/JAVASCRIPT/monitor.js"></script>
     <canvas id="matrixCanvas"></canvas>
     <script src="/JAVASCRIPT/matrix.js"></script>
+    
+    <script>
+        // Roadmap çizgilerini oluşturma
+        document.addEventListener('DOMContentLoaded', function() {
+            const roadmapLines = document.querySelector('.roadmap-lines');
+            const totalItems = 29;
+            
+            for (let i = 0; i < totalItems; i++) {
+                const line = document.createElement('div');
+                line.className = 'roadmap-line';
+                line.style.transform = `rotate(${i * (360 / totalItems)}deg)`;
+                roadmapLines.appendChild(line);
+            }
+        });
+    </script>
 </body>
 </html>
