@@ -389,17 +389,22 @@
             padding-left: 50px;
         }
         
-        .timeline-item::before {
-            content: '';
+        .timeline-marker {
             position: absolute;
-            left: -6px;
-            top: 25px;
-            width: 12px;
-            height: 12px;
+            left: -15px;
+            top: 20px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
-            background-color: var(--primary-color);
-            border: 2px solid var(--bg-color);
-            box-shadow: 0 0 0 2px var(--primary-color);
+            background-color: var(--bg-color);
+            border: 3px solid var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.8rem;
+            color: var(--primary-color);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
             z-index: 2;
         }
         
@@ -420,24 +425,6 @@
             transform: translateX(5px);
             box-shadow: 0 5px 15px rgba(0, 255, 0, 0.2);
             border-color: var(--primary-color);
-        }
-        
-        .timeline-number {
-            position: absolute;
-            top: 15px;
-            left: -45px;
-            background: var(--primary-color);
-            color: var(--bg-color);
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 0.8rem;
-            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
-            z-index: 3;
         }
         
         .timeline-title {
@@ -487,6 +474,7 @@
             background: rgba(0, 100, 0, 0.1);
             border-radius: 8px;
             border-left: 4px solid var(--primary-color);
+            border-right: 4px solid var(--primary-color);
         }
         
         /* Responsive Design */
@@ -533,19 +521,12 @@
                 padding-left: 40px;
             }
             
-            .timeline-number {
-                left: -35px;
-                width: 25px;
-                height: 25px;
+            .timeline-marker {
+                left: -12px;
+                width: 24px;
+                height: 24px;
                 font-size: 0.7rem;
                 top: 20px;
-            }
-            
-            .timeline-item::before {
-                left: -4px;
-                top: 27px;
-                width: 10px;
-                height: 10px;
             }
             
             .timeline-content {
@@ -789,7 +770,7 @@
                         <div class="roadmap-timeline">
                             <!-- Foundation Steps (1-10) -->
                             <div class="timeline-item" data-category="foundation">
-                                <div class="timeline-number">01</div>
+                                <div class="timeline-marker">01</div>
                                 <div class="timeline-content">
                                     <h3 class="timeline-title">Computer & Internet Fundamentals</h3>
                                     <p class="timeline-description">Understand how computers and the internet work at a fundamental level.</p>
@@ -797,7 +778,7 @@
                             </div>
                             
                             <div class="timeline-item" data-category="foundation">
-                                <div class="timeline-number">02</div>
+                                <div class="timeline-marker">02</div>
                                 <div class="timeline-content">
                                     <h3 class="timeline-title">Networking Essentials</h3>
                                     <p class="timeline-description">Learn about TCP/IP, DNS, HTTP, and other networking protocols.</p>
@@ -805,7 +786,7 @@
                             </div>
                             
                             <div class="timeline-item" data-category="foundation">
-                                <div class="timeline-number">03</div>
+                                <div class="timeline-marker">03</div>
                                 <div class="timeline-content">
                                     <h3 class="timeline-title">Linux & Command Line Basics</h3>
                                     <p class="timeline-description">Master the Linux command line interface and basic system administration.</p>
@@ -813,7 +794,7 @@
                             </div>
                             
                             <div class="timeline-item" data-category="foundation">
-                                <div class="timeline-number">04</div>
+                                <div class="timeline-marker">04</div>
                                 <div class="timeline-content">
                                     <h3 class="timeline-title">Basic Programming</h3>
                                     <p class="timeline-description">Learn Python, Bash scripting, or another programming language.</p>
@@ -821,7 +802,7 @@
                             </div>
                             
                             <div class="timeline-item" data-category="foundation">
-                                <div class="timeline-number">05</div>
+                                <div class="timeline-marker">05</div>
                                 <div class="timeline-content">
                                     <h3 class="timeline-title">Operating System Internals</h3>
                                     <p class="timeline-description">Understand how operating systems work under the hood.</p>
@@ -829,7 +810,7 @@
                             </div>
                             
                             <div class="timeline-item" data-category="foundation">
-                                <div class="timeline-number">06</div>
+                                <div class="timeline-marker">06</div>
                                 <div class="timeline-content">
                                     <h3 class="timeline-title">Web Technologies & HTTP Protocol</h3>
                                     <p class="timeline-description">Learn how web applications work and the HTTP protocol.</p>
@@ -837,7 +818,7 @@
                             </div>
                             
                             <div class="timeline-item" data-category="foundation">
-                                <div class="timeline-number">07</div>
+                                <div class="timeline-marker">07</div>
                                 <div class="timeline-content">
                                     <h3 class="timeline-title">Setup Lab Environment</h3>
                                     <p class="timeline-description">Create a safe environment for testing and practicing hacking techniques.</p>
@@ -845,7 +826,7 @@
                             </div>
                             
                             <div class="timeline-item" data-category="foundation">
-                                <div class="timeline-number">08</div>
+                                <div class="timeline-marker">08</div>
                                 <div class="timeline-content">
                                     <h3 class="timeline-title">Introduction to Ethical Cybersecurity</h3>
                                     <p class="timeline-description">Understand the ethics, laws, and principles of ethical hacking.</p>
@@ -853,7 +834,7 @@
                             </div>
                             
                             <div class="timeline-item" data-category="foundation">
-                                <div class="timeline-number">09</div>
+                                <div class="timeline-marker">09</div>
                                 <div class="timeline-content">
                                     <h3 class="timeline-title">Information Gathering</h3>
                                     <p class="timeline-description">Learn passive and active reconnaissance techniques.</p>
@@ -861,7 +842,7 @@
                             </div>
                             
                             <div class="timeline-item" data-category="foundation">
-                                <div class="timeline-number">10</div>
+                                <div class="timeline-marker">10</div>
                                 <div class="timeline-content">
                                     <h3 class="timeline-title">Network Scanning</h3>
                                     <p class="timeline-description">Master port scanning and network enumeration techniques.</p>
@@ -870,7 +851,7 @@
                             
                             <!-- Tools & Techniques (11-20) -->
                             <div class="timeline-item" data-category="tools">
-                                <div class="timeline-number">11</div>
+                                <div class="timeline-marker">11</div>
                                 <div class="timeline-content">
                                     <h3 class="timeline-title">Enumeration Techniques</h3>
                                     <p class="timeline-description">Learn to enumerate services, users, and network resources.</p>
@@ -878,7 +859,7 @@
                             </div>
                             
                             <div class="timeline-item" data-category="tools">
-                                <div class="timeline-number">12</div>
+                                <div class="timeline-marker">12</div>
                                 <div class="timeline-content">
                                     <h3 class="timeline-title">Vulnerability Assessment Tools</h3>
                                     <p class="timeline-description">Master tools like Nessus, OpenVAS for vulnerability scanning.</p>
@@ -886,7 +867,7 @@
                             </div>
                             
                             <div class="timeline-item" data-category="tools">
-                                <div class="timeline-number">13</div>
+                                <div class="timeline-marker">13</div>
                                 <div class="timeline-content">
                                     <h3 class="timeline-title">System Security Testing</h3>
                                     <p class="timeline-description">Learn to test and secure operating systems.</p>
@@ -894,7 +875,7 @@
                             </div>
                             
                             <div class="timeline-item" data-category="tools">
-                                <div class="timeline-number">14</div>
+                                <div class="timeline-marker">14</div>
                                 <div class="timeline-content">
                                     <h3 class="timeline-title">Malware Concepts & Prevention</h3>
                                     <p class="timeline-description">Understand malware types and prevention techniques.</p>
@@ -902,7 +883,7 @@
                             </div>
                             
                             <div class="timeline-item" data-category="tools">
-                                <div class="timeline-number">15</div>
+                                <div class="timeline-marker">15</div>
                                 <div class="timeline-content">
                                     <h3 class="timeline-title">Network Monitoring & Packet Analysis</h3>
                                     <p class="timeline-description">Master Wireshark and network traffic analysis.</p>
@@ -910,7 +891,7 @@
                             </div>
                             
                             <div class="timeline-item" data-category="tools">
-                                <div class="timeline-number">16</div>
+                                <div class="timeline-marker">16</div>
                                 <div class="timeline-content">
                                     <h3 class="timeline-title">Social Engineering Awareness</h3>
                                     <p class="timeline-description">Learn about social engineering attacks and countermeasures.</p>
@@ -918,7 +899,7 @@
                             </div>
                             
                             <div class="timeline-item" data-category="tools">
-                                <div class="timeline-number">17</div>
+                                <div class="timeline-marker">17</div>
                                 <div class="timeline-content">
                                     <h3 class="timeline-title">Service Disruption Testing</h3>
                                     <p class="timeline-description">Understand DoS/DDoS attacks and prevention.</p>
@@ -926,7 +907,7 @@
                             </div>
                             
                             <div class="timeline-item" data-category="tools">
-                                <div class="timeline-number">18</div>
+                                <div class="timeline-marker">18</div>
                                 <div class="timeline-content">
                                     <h3 class="timeline-title">Session Security & Spoofing</h3>
                                     <p class="timeline-description">Learn about session hijacking and spoofing attacks.</p>
@@ -934,7 +915,7 @@
                             </div>
                             
                             <div class="timeline-item" data-category="tools">
-                                <div class="timeline-number">19</div>
+                                <div class="timeline-marker">19</div>
                                 <div class="timeline-content">
                                     <h3 class="timeline-title">Web App Testing</h3>
                                     <p class="timeline-description">Master web application penetration testing.</p>
@@ -942,7 +923,7 @@
                             </div>
                             
                             <div class="timeline-item" data-category="tools">
-                                <div class="timeline-number">20</div>
+                                <div class="timeline-marker">20</div>
                                 <div class="timeline-content">
                                     <h3 class="timeline-title">Wireless Network Security</h3>
                                     <p class="timeline-description">Learn to test and secure wireless networks.</p>
@@ -951,7 +932,7 @@
                             
                             <!-- Advanced Topics (21-29) -->
                             <div class="timeline-item" data-category="advanced">
-                                <div class="timeline-number">21</div>
+                                <div class="timeline-marker">21</div>
                                 <div class="timeline-content">
                                     <h3 class="timeline-title">Intrusion Detection Systems</h3>
                                     <p class="timeline-description">Understand and test IDS/IPS systems.</p>
@@ -959,7 +940,7 @@
                             </div>
                             
                             <div class="timeline-item" data-category="advanced">
-                                <div class="timeline-number">22</div>
+                                <div class="timeline-marker">22</div>
                                 <div class="timeline-content">
                                     <h3 class="timeline-title">Cryptography Basics</h3>
                                     <p class="timeline-description">Learn cryptographic principles and implementations.</p>
@@ -967,7 +948,7 @@
                             </div>
                             
                             <div class="timeline-item" data-category="advanced">
-                                <div class="timeline-number">23</div>
+                                <div class="timeline-marker">23</div>
                                 <div class="timeline-content">
                                     <h3 class="timeline-title">Exploitation Tools</h3>
                                     <p class="timeline-description">Master exploitation frameworks like Metasploit.</p>
@@ -975,7 +956,7 @@
                             </div>
                             
                             <div class="timeline-item" data-category="advanced">
-                                <div class="timeline-number">24</div>
+                                <div class="timeline-marker">24</div>
                                 <div class="timeline-content">
                                     <h3 class="timeline-title">Reverse Engineering Introduction</h3>
                                     <p class="timeline-description">Learn the basics of reverse engineering software.</p>
@@ -983,7 +964,7 @@
                             </div>
                             
                             <div class="timeline-item" data-category="advanced">
-                                <div class="timeline-number">25</div>
+                                <div class="timeline-marker">25</div>
                                 <div class="timeline-content">
                                     <h3 class="timeline-title">Malware Analysis</h3>
                                     <p class="timeline-description">Learn to analyze and understand malware behavior.</p>
@@ -991,7 +972,7 @@
                             </div>
                             
                             <div class="timeline-item" data-category="advanced">
-                                <div class="timeline-number">26</div>
+                                <div class="timeline-marker">26</div>
                                 <div class="timeline-content">
                                     <h3 class="timeline-title">Capture The Flag (CTF) Challenges</h3>
                                     <p class="timeline-description">Participate in CTF competitions to practice skills.</p>
@@ -999,7 +980,7 @@
                             </div>
                             
                             <div class="timeline-item" data-category="advanced">
-                                <div class="timeline-number">27</div>
+                                <div class="timeline-marker">27</div>
                                 <div class="timeline-content">
                                     <h3 class="timeline-title">Vulnerability Disclosure & Bug Bounty</h3>
                                     <p class="timeline-description">Learn responsible disclosure and bug bounty programs.</p>
@@ -1007,7 +988,7 @@
                             </div>
                             
                             <div class="timeline-item" data-category="advanced">
-                                <div class="timeline-number">28</div>
+                                <div class="timeline-marker">28</div>
                                 <div class="timeline-content">
                                     <h3 class="timeline-title">Red Team Skills & Simulation</h3>
                                     <p class="timeline-description">Master advanced attack simulation and red teaming.</p>
@@ -1015,7 +996,7 @@
                             </div>
                             
                             <div class="timeline-item" data-category="advanced">
-                                <div class="timeline-number">29</div>
+                                <div class="timeline-marker">29</div>
                                 <div class="timeline-content">
                                     <h3 class="timeline-title">Industry Certifications</h3>
                                     <p class="timeline-description">Pursue certifications like CEH, OSCP, CISSP to validate skills.</p>
