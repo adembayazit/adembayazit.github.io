@@ -2194,6 +2194,7 @@
             }
         }
 
+        // Entry edit fonksiyonu - DÜZELTİLMİŞ VERSİYON
         async function editEntry(entryId) {
             try {
                 const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
@@ -2214,6 +2215,18 @@
                 
                 let editForm = targetItem.querySelector('.edit-form');
                 
+                // Eğer edit form zaten açıksa kapat
+                if (editForm && editForm.style.display === 'block') {
+                    editForm.style.display = 'none';
+                    return;
+                }
+                
+                // Eğer başka bir edit form açıksa kapat
+                document.querySelectorAll('.edit-form').forEach(form => {
+                    form.style.display = 'none';
+                });
+                
+                // Yeni edit form oluştur
                 if (!editForm) {
                     editForm = document.createElement('div');
                     editForm.className = 'edit-form';
@@ -2395,7 +2408,11 @@
             try {
                 const response = await fetchFromJsonBin(IP_STATS_BIN_ID);
                 allVisitors = response.visitors || [];
+                filteredVisitors = [...ATS_BIN_ID);
+                allVisitors = response.visitors || [];
                 filteredVisitors = [...allVisitors];
+                
+                updateIpallVisitors];
                 
                 updateIpStats(allVisitors);
                 displayTopEntries(allVisitors);
@@ -2404,6 +2421,18 @@
                 populateCountryFilter(allVisitors);
             } catch (error) {
                 console.error('Error loading IP statistics:', error);
+               Stats(allVisitors);
+                displayTopEntries(allVisitors);
+                displayRecentIps(allVisitors);
+                displayUniqueIps(allVisitors);
+                populateCountryFilter(allVisitors);
+            } catch (error) {
+                console.error('Error loading IP statistics:', error document.getElementById('recent-ips-list').innerHTML = 
+                    '<div class="ip-item">Error loading IP statistics.</div>';
+            }
+        }
+        
+        function updateIpStats);
                 document.getElementById('recent-ips-list').innerHTML = 
                     '<div class="ip-item">Error loading IP statistics.</div>';
             }
@@ -2411,11 +2440,21 @@
         
         function updateIpStats(visitors) {
             const totalVisitors = visitors.length;
+            const unique(visitors) {
+            const totalVisitors = visitors.length;
             const uniqueIps = new Set(visitors.map(v => v.ip)).size;
+            const uniqueFingerprints = new Set(visitors.map(v => v.fingerprint)).size;
+Ips = new Set(visitors.map(v => v.ip)).size;
             const uniqueFingerprints = new Set(visitors.map(v => v.fingerprint)).size;
             
             let lastVisit = '-';
             if (visitors.length > 0) {
+                           
+            let lastVisit = '-';
+            if (visitors.length > 0) const sortedVisits = [...visitors].sort((a, b) => 
+                    new Date(b.timestamp) - new Date(a.timestamp)
+                );
+                lastVisit = formatDate(sorted {
                 const sortedVisits = [...visitors].sort((a, b) => 
                     new Date(b.timestamp) - new Date(a.timestamp)
                 );
@@ -2424,7 +2463,18 @@
             
             document.getElementById('total-visitors').textContent = totalVisitors;
             document.getElementById('unique-ips').textContent = uniqueIps;
-            document.getElementById('unique-fingerprints').textContent = uniqueFingerprints;
+Visits[0].timestamp);
+            }
+            
+            document.getElementById('total-visitors').textContent = totalVisitors;
+            document.getElementById('unique-ips').textContent = uniqueIps;
+            document.getElementById('unique-fingerprints').text            document.getElementById('unique-fingerprints').textContent = uniqueFingerprints;
+            document.getElementById('last-visit').textContent = lastVisit;
+        }
+        
+        // Benzersiz IP'leri listele
+        function displayUniqueIps(visitors) {
+            const uniqueIpsContent = uniqueFingerprints;
             document.getElementById('last-visit').textContent = lastVisit;
         }
         
@@ -2434,6 +2484,13 @@
             
             const ipCounts = {};
             visitors.forEach(visit => {
+List = document.getElementById('unique-ips-list');
+            
+            const ipCounts = {};
+            visitors.forEach(visit => {
+                if (ipCounts[visit.ip]) {
+                    ipCounts[visit.ip]++;
+                } else {
                 if (ipCounts[visit.ip]) {
                     ipCounts[visit.ip]++;
                 } else {
@@ -2441,24 +2498,49 @@
                 }
             });
             
+                    ipCounts[visit.ip] = 1;
+                }
+            });
+            
             const sortedIps = Object.entries(ipCounts)
+                .sort((a, b) => b            const sortedIps = Object.entries(ipCounts)
                 .sort((a, b) => b[1] - a[1]);
             
+            if (sortedIps.length[1] - a[1]);
+            
             if (sortedIps.length === 0) {
+                uniqueIpsList.innerHTML = '<div class="ip-item">No unique IPs found === 0) {
                 uniqueIpsList.innerHTML = '<div class="ip-item">No unique IPs found.</div>';
                 return;
             }
             
             let html = '';
-            sortedIps.forEach(([ip, count]) => {
+            sortedIps.forEach((.</div>';
+                return;
+            }
+            
+            let html = '';
+            sorted[ip, count]) => {
+                html += `
+                    <div class="unique-ip-item">
+                        <div class="unique-ip-info">
+                            <span class="unique-ipIps.forEach(([ip, count]) => {
                 html += `
                     <div class="unique-ip-item">
                         <div class="unique-ip-info">
                             <span class="unique-ip-address">${ip}</span>
+                            <span class="unique--address">${ip}</span>
                             <span class="unique-ip-count">${count} visits</span>
                         </div>
+                        <div class="ip-count">${count} visits</span>
+                        </div>
                         <div class="unique-ip-actions">
+                            <button onclick="filterByIp('unique-ip-actions">
                             <button onclick="filterByIp('${ip}')">Filter</button>
+                        </div>
+                    </div>
+                `;
+${ip}')">Filter</button>
                         </div>
                     </div>
                 `;
@@ -2472,20 +2554,49 @@
             applyFilters();
         }
         
-        // YENİDEN TASARLANMIŞ Most Viewed Entries fonksiyonu
+        // YEN            });
+            
+            uniqueIpsList.innerHTML = html;
+        }
+        
+        function filterByIp(ip) {
+            document.getElementById('filter-ip').value = ip;
+            applyFilters();
+        }
+        
+İDEN TASARLANMIŞ Most Viewed Entries fonksiyonu
+        function displayTopEntries(visitors) {
+            const topEntriesContainer = document.getElementById('top-entries');
+            
+            // Entry görüntüleme        // YENİDEN TASARLANMIŞ Most Viewed Entries fonksiyonu
         function displayTopEntries(visitors) {
             const topEntriesContainer = document.getElementById('top-entries');
             
             // Entry görüntüleme sayılarını hesapla
             const entryCounts = {};
+            visitors.forEach sayılarını hesapla
+            const entryCounts = {};
             visitors.forEach(visit => {
                 if (visit.entryId) {
                     // Entry ID'yi hem string hem number olarak kontrol et
                     const entryIdStr = visit.entryId.toString();
+                    const(visit => {
+                if (visit.entryId) {
+                    // Entry ID'yi hem string hem number olarak kontrol et
+                    const entryIdStr = visit. entryIdNum = parseInt(visit.entryId);
+                    
+                    if (!entryCounts[entryIdStr]) {
+                        entryCounts[entryIdStr] =entryId.toString();
                     const entryIdNum = parseInt(visit.entryId);
                     
                     if (!entryCounts[entryIdStr]) {
-                        entryCounts[entryIdStr] = 0;
+                        entryCounts[entryIdStr] = 0 0;
+                    }
+                    entryCounts[entryIdStr]++;
+                    
+                    // Number formatında da kaydet
+                    if (!entryCounts[entryIdNum]) {
+                        entryCounts;
                     }
                     entryCounts[entryIdStr]++;
                     
@@ -2494,18 +2605,38 @@
                         entryCounts[entryIdNum] = 0;
                     }
                     entryCounts[entryIdNum]++;
+[entryIdNum] = 0;
+                    }
+                    entryCounts[entryIdNum]++;
                 }
             });
             
+            // Görüntüleme sayısına göre                }
+            });
+            
             // Görüntüleme sayısına göre sırala
+            const sorted sırala
             const sortedEntries = Object.entries(entryCounts)
                 .sort((a, b) => b[1] - a[1])
+                .slice(Entries = Object.entries(entryCounts)
+                .sort((a, b) => b[1] - a0, 10);
+            
+            if (sortedEntries.length === 0) {
+                topEntriesContainer.innerHTML = '<div class="ip-item">No entry view data[1])
                 .slice(0, 10);
             
             if (sortedEntries.length === 0) {
                 topEntriesContainer.innerHTML = '<div class="ip-item">No entry view data available yet.</div>';
                 return;
+ available yet.</div>';
+                return;
             }
+            
+            let html = '';
+            sortedEntries.forEach(([entryId, count]) => {
+                // Entry bilgilerini bul
+                const entry = entriesData.find(e => 
+                    e.id === parseInt(entryId)            }
             
             let html = '';
             sortedEntries.forEach(([entryId, count]) => {
@@ -2514,37 +2645,76 @@
                     e.id === parseInt(entryId) || e.id.toString() === entryId
                 );
                 
+                let contentSnippet || e.id.toString() === entryId
+                );
+                
                 let contentSnippet = 'Entry content not available';
+                if (entry) {
+                    // İçerik önizlemes = 'Entry content not available';
                 if (entry) {
                     // İçerik önizlemesi oluştur
                     const content = entry.content_tr || entry.content || '';
+i oluştur
+                    const content = entry.content_tr || entry.content || '';
+                    contentSnippet = stripHtml(content).substring(0, 150);
                     contentSnippet = stripHtml(content).substring(0, 150);
                     if (contentSnippet.length >= 150) {
+                        contentSnippet                    if (contentSnippet.length >= 150) {
                         contentSnippet += '...';
                     }
                 }
                 
                 html += `
                     <div class="top-entry-item">
+ += '...';
+                    }
+                }
+                
+                html += `
+                    <div class="top-entry-item">
                         <div class="top-entry-header">
+                            <span class="top-entry                        <div class="top-entry-header">
                             <span class="top-entry-id">Entry #${entryId}</span>
-                            <span class="top-entry-views">${count} views</span>
+                            <span class="top-entry-views">-id">Entry #${entryId}</span>
+                            <span class="top${count} views</span>
                         </div>
                         <div class="top-entry-content">
                             ${contentSnippet}
                         </div>
-                        <div class="top-entry-actions">
+                        <div class="-entry-views">${count} views</span>
+                        </div>
+                        <div class="top-entry-content">
+                            ${contentSnippet}
+                        </div>
+                        <divtop-entry-actions">
                             <button onclick="createChildEntry(${entryId})" title="Add Child Entry">
                                 <i class="fas fa-plus"></i> Child Entry
                             </button>
+ class="top-entry-actions">
+                            <button onclick="createChildEntry(${entryId})" title="Add Child Entry">
+                                <i class="fas fa-plus"></i> Child Entry
+                            </                            <button onclick="switchSection('entries'); document.getElementById('searchId').value = ${entryId}; searchEntry();" title="button>
                             <button onclick="switchSection('entries'); document.getElementById('searchId').value = ${entryId}; searchEntry();" title="Find Entry">
                                 <i class="fas fa-search"></i> Find
                             </button>
                             ${entry ? `
-                            <button onclick="switchSection('editor'); document.getElementById('entryId').value = ${entryId};" title="Edit Entry">
+                            <button onclick="editEntry(${entryId})" title="Edit Entry">
+                                <Find Entry">
+                                <i class="fas fa-search"></i> Find
+                            </button>
+                            ${entry ? `
+                            <button onclick="editEntry(${entryId})" title="Edit Entry">
                                 <i class="fas fa-edit"></i> Edit
                             </button>
+                            ` :i class="fas fa-edit"></i> Edit
+                            </button>
                             ` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            top ''}
                         </div>
                     </div>
                 `;
@@ -2553,43 +2723,93 @@
             topEntriesContainer.innerHTML = html;
         }
         
+        function displayRecentIps(EntriesContainer.innerHTML = html;
+        }
+        
         function displayRecentIps(visitors) {
             const recentIpsList = document.getElementById('recent-ips-list');
             
+           visitors) {
+            const recentIpsList = document.getElementById('recent-ips-list');
+            
             if (visitors.length === 0) {
-                recentIpsList.innerHTML = '<div class="ip-item">No IP records found.</div>';
+                recentIpsList.innerHTML = '<div class if (visitors.length === 0) {
+                recentIpsList.innerHTML = '<div class="ip-item">No IP records found.</="ip-item">No IP records found.</div>';
+                return;
+            }
+            
+            const sortedVisits = [...visitors].sort((a, bdiv>';
                 return;
             }
             
             const sortedVisits = [...visitors].sort((a, b) => 
+                new Date(b.timestamp) - new Date(a.timestamp)
+            ).slice(0, ) => 
                 new Date(b.timestamp) - new Date(a.timestamp)
             ).slice(0, 10);
             
             let html = '';
             sortedVisits.forEach(visit => {
                 html += `
+                    <div10);
+            
+            let html = '';
+            sortedVisits.forEach(visit => {
+                html += `
                     <div class="ip-item">
                         <div class="ip-item-header">
-                            <span class="ip-address">${visit.ip}</span>
+                            <span class class="ip-item">
+                        <div class="ip-item-header">
+                            <span class="ip-address="ip-address">${visit.ip}</span>
+                            <span class="ip-date">${formatDate(visit.timestamp)}</span>
+                        </div>
+                        <div class="ip">${visit.ip}</span>
                             <span class="ip-date">${formatDate(visit.timestamp)}</span>
                         </div>
                         <div class="ip-details">
                             <div class="ip-detail-item">
+                                <span class="ip-d-details">
+                            <div class="ip-detail-item">
                                 <span class="ip-detail-label">Entry ID</span>
+                                <span class="ip-detail-value">${visitetail-label">Entry ID</span>
                                 <span class="ip-detail-value">${visit.entryId || 'Unknown'}</span>
+                            </div>
+                            <div class="ip.entryId || 'Unknown'}</span>
                             </div>
                             <div class="ip-detail-item">
                                 <span class="ip-detail-label">Country/City</span>
-                                <span class="ip-detail-value">${visit.country || 'Unknown'}${visit.city ? '/' + visit.city : ''}</span>
+-detail-item">
+                                <span class="ip-detail-label">Country/City</span>
+                                <span class="ip-detail-value">${visit.country || 'Unknown'}${visit                                <span class="ip-detail-value">${visit.country || 'Unknown'}${visit.city ? '/' + visit.city : ''}</span>
+                            </div>
+                            <div class="ip-detail-item.city ? '/' + visit.city : ''}</span>
                             </div>
                             <div class="ip-detail-item">
                                 <span class="ip-detail-label">Device</span>
+                                <span class">
+                                <span class="ip-detail-label">Device</span>
                                 <span class="ip-detail-value">${extractBrowserInfo(visit.userAgent)}</span>
+                            </="ip-detail-value">${extractBrowserInfo(visit.userAgent)}</div>
+                            <div class="ip-detail-item">
+                                <span class="ip-detail-label">Fingerprint</span>
+                                <span class="ip-detailspan>
                             </div>
                             <div class="ip-detail-item">
                                 <span class="ip-detail-label">Fingerprint</span>
                                 <span class="ip-detail-value">${visit.fingerprint || 'Unknown'}</span>
+                            </-value">${visit.fingerprint || 'Unknown'}</span>
                             </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            recentIpsList.innerHTML = html;
+        }
+        
+        function populateCountryFilter(visitors) {
+            const countryFilter = document.getElementById('filter-country');
+            const countriesdiv>
                         </div>
                     </div>
                 `;
@@ -2602,7 +2822,11 @@
             const countryFilter = document.getElementById('filter-country');
             const countries = new Set(visitors.map(v => v.country).filter(c => c));
             
+            = new Set(visitors.map(v => v.country).filter(c => c));
+            
             countries.forEach(country => {
+                const option = document.createElement('option');
+                option.value = country countries.forEach(country => {
                 const option = document.createElement('option');
                 option.value = country;
                 option.textContent = country;
@@ -2610,10 +2834,25 @@
             });
         }
         
+;
+                option.textContent = country;
+                countryFilter.appendChild(option);
+            });
+        }
+        
         function applyFilters() {
+            const ipFilter = document.getElementById('filter-ip').value        function applyFilters() {
             const ipFilter = document.getElementById('filter-ip').value.toLowerCase();
             const fingerprintFilter = document.getElementById('filter-fingerprint').value.toLowerCase();
-            const entryFilter = document.getElementById('filter-entry').value;
+            const entryFilter = document.getElementById('.toLowerCase();
+            const fingerprintFilter = document.getElementById('filter-fingerprint').value.toLowerCase();
+            const entryFilter =filter-entry').value;
+            const countryFilter = document.getElementById('filter-country').value;
+            
+            filteredVisitors = allVisitors.filter(visitor => {
+                let matches = true;
+                
+ document.getElementById('filter-entry').value;
             const countryFilter = document.getElementById('filter-country').value;
             
             filteredVisitors = allVisitors.filter(visitor => {
@@ -2621,13 +2860,25 @@
                 
                 if (ipFilter && !visitor.ip.toLowerCase().includes(ipFilter)) {
                     matches = false;
+                if (ipFilter && !visitor.ip.toLowerCase().includes(ipFilter)) {
+                    matches = false;
                 }
+                
+                if (fingerprintFilter && (!visitor.fingerprint ||                }
                 
                 if (fingerprintFilter && (!visitor.fingerprint || !visitor.fingerprint.toLowerCase().includes(fingerprintFilter))) {
                     matches = false;
                 }
+ !visitor.fingerprint.toLowerCase().includes(fingerprintFilter))) {
+                    matches = false;
+                }
                 
+                if (entryFilter && visitor.entryId                
                 if (entryFilter && visitor.entryId !== entryFilter) {
+                    matches = false;
+                }
+                
+                if (countryFilter && visitor.country !== countryFilter) !== entryFilter) {
                     matches = false;
                 }
                 
@@ -2638,21 +2889,47 @@
                 return matches;
             });
             
+            updateIpStats(filteredVis {
+                    matches = false;
+                }
+                
+                return matches;
+            });
+            
             updateIpStats(filteredVisitors);
             displayRecentIps(filteredVisitors);
+            displayTopEntries(filtereditors);
+            displayRecentIps(filteredVisitors);
             displayTopEntries(filteredVisitors);
+            displayUniqueIps(filteredVisitors);
+        }
+        
+        function clearFiltersVisitors);
             displayUniqueIps(filteredVisitors);
         }
         
         function clearFilters() {
             document.getElementById('filter-ip').value = '';
             document.getElementById('filter-fingerprint').value = '';
+           () {
+            document.getElementById('filter-ip').value = '';
+            document.getElementById('filter-fingerprint').value = '';
             document.getElementById('filter-entry').value = '';
             document.getElementById('filter-country').value = '';
             
+ document.getElementById('filter-entry').value = '';
+            document.getElementById('filter-country').value = '';
+            
             filteredVisitors = [...allVisitors];
+            updateIpStats(filtered            filteredVisitors = [...allVisitors];
             updateIpStats(filteredVisitors);
+            displayVisitors);
             displayRecentIps(filteredVisitors);
+            displayTopEntries(filteredVisitors);
+            displayUniqueIps(filteredVisitors);
+        }
+        
+        functionRecentIps(filteredVisitors);
             displayTopEntries(filteredVisitors);
             displayUniqueIps(filteredVisitors);
         }
@@ -2661,45 +2938,96 @@
             let data, filename, contentType;
             
             if (type === 'ip') {
+                data = JSON.stringify(filter exportData(type) {
+            let data, filename, contentType;
+            
+            if (type === 'ip') {
+edVisitors, null, 2);
+                filename = 'ip-statistics.json';
+                contentType = 'application/json';
+            } else if (type === 'stats') {
                 data = JSON.stringify(filteredVisitors, null, 2);
                 filename = 'ip-statistics.json';
                 contentType = 'application/json';
             } else if (type === 'stats') {
                 const stats = {
                     totalVisitors: filteredVisitors.length,
+                    uniqueIps:                const stats = {
+                    totalVisitors: filteredVisitors.length,
                     uniqueIps: new Set(filteredVisitors.map(v => v.ip)).size,
+                    uniqueFingerprints: new Set(filteredVisitors.map(v => v.fingerprint)).size,
+                    topEntries: getTopEntries(filter new Set(filteredVisitors.map(v => v.ip)).size,
                     uniqueFingerprints: new Set(filteredVisitors.map(v => v.fingerprint)).size,
                     topEntries: getTopEntries(filteredVisitors, 10),
                     generatedAt: new Date().toISOString()
                 };
-                data = JSON.stringify(stats, null, 2);
+                data = JSON.stringify(stedVisitors, 10),
+                    generatedAt: new Date().toISOString()
+               ats, null, 2);
                 filename = 'statistics-summary.json';
                 contentType = 'application/json';
             }
             
             const blob = new Blob([data], { type: contentType });
+ };
+                data = JSON.stringify(stats, null, 2);
+                filename = 'statistics-summary.json';
+                contentType = 'application/json';
+            }
+            
+            const blob = new Blob([data], { type:            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click contentType });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
             a.download = filename;
             a.click();
+           ();
             URL.revokeObjectURL(url);
+        }
+
+        // New function to clear IP data
+        async function clearIpData() {
+            if (confirm('Are you sure you want to clear all IP URL.revokeObjectURL(url);
         }
 
         // New function to clear IP data
         async function clearIpData() {
             if (confirm('Are you sure you want to clear all IP data? This action cannot be undone.')) {
                 try {
+                    await fetchFromJson data? This action cannot be undone.')) {
+                try {
                     await fetchFromJsonBin(IP_STATS_BIN_ID, 'PUT', { visitors: [] });
                     showToast('IP data cleared successfully!', 'success');
+Bin(IP_STATS_BIN_ID, 'PUT', { visitors: [] });
+                    showToast('IP data cleared successfully!', 'success');
                     
+                    // Reload IP statistics
+                    allVisitors = [];
+                    filteredVisitors                    
                     // Reload IP statistics
                     allVisitors = [];
                     filteredVisitors = [];
                     updateIpStats([]);
                     displayRecentIps([]);
+                    displayTopEntries = [];
+                    updateIpStats([]);
+                    displayRecentIps([]);
                     displayTopEntries([]);
+([]);
                     displayUniqueIps([]);
+                } catch (error) {
+                    console.error('Error clearing IP data:', error);
+                    showToast(`Error clearing IP data: ${error.message}`, 'error');
+                }
+            }
+        }
+        
+        function getTopEntries(visitors, limit) {
+            const entryCounts =                    displayUniqueIps([]);
                 } catch (error) {
                     console.error('Error clearing IP data:', error);
                     showToast(`Error clearing IP data: ${error.message}`, 'error');
@@ -2712,17 +3040,37 @@
             visitors.forEach(visit => {
                 if (visit.entryId) {
                     const entryId = visit.entryId.toString();
+ {};
+            visitors.forEach(visit => {
+                if (visit.entryId) {
+                    const entryId = visit.entryId.toString();
                     if (!entryCounts[entryId]) {
+                        entryCounts                    if (!entryCounts[entryId]) {
                         entryCounts[entryId] = 0;
                     }
                     entryCounts[entryId]++;
                 }
             });
             
+           [entryId] = 0;
+                    }
+                    entryCounts[entryId]++;
+                }
+            });
+            
             return Object.entries(entryCounts)
+                .sort((a, b) => b[1] return Object.entries(entryCounts)
                 .sort((a, b) => b[1] - a[1])
                 .slice(0, limit)
-                .map(([id, count]) => ({ entryId: id, viewCount: count }));
+                .map(( - a[1])
+                .slice(0, limit)
+                .map(([id, count])[id, count]) => ({ entryId: id, viewCount: count }));
+        }
+        
+        function extractBrowserInfo(userAgent) {
+            if (!userAgent) return 'Unknown';
+            
+            if (userAgent.includes('Chrome')) return => ({ entryId: id, viewCount: count }));
         }
         
         function extractBrowserInfo(userAgent) {
@@ -2730,9 +3078,20 @@
             
             if (userAgent.includes('Chrome')) return 'Chrome';
             if (userAgent.includes('Firefox')) return 'Firefox';
+            if (user 'Chrome';
+            if (userAgent.includes('Firefox')) return 'Firefox';
             if (userAgent.includes('Safari')) return 'Safari';
+            if (userAgent.includes('Agent.includes('Safari')) return 'Safari';
             if (userAgent.includes('Edge')) return 'Edge';
-            if (userAgent.includes('Opera')) return 'Opera';
+            ifEdge')) return 'Edge';
+            if (userAgent.includes('Opera')) return (userAgent.includes('Opera')) return 'Opera';
+            
+            return 'Other';
+        }
+        
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDate 'Opera';
             
             return 'Other';
         }
@@ -2745,7 +3104,12 @@
         // Logout function
         function logout() {
             localStorage.removeItem('adminAuth');
-            window.location.href = 'index.html';
+String('en-US') + ' ' + date.toLocaleTimeString('en-US');
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('admin            window.location.href = 'index.html';
         }
     </script>
 </body>
