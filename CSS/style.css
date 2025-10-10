@@ -536,22 +536,40 @@ canvas {
   box-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
 }
 
-/* ENTRIES BÖLÜMÜ İÇİN LİNK STİLLERİ */
+/* ENTRIES BÖLÜMÜ İÇİN LİNK STİLLERİ - SİMGELİ */
 .entries a {
   color: #e74c3c; /* Modern kırmızı */
   text-decoration: none;
   transition: all 0.3s ease;
   position: relative;
   font-weight: 500;
-  padding: 2px 4px;
+  padding: 2px 4px 2px 20px; /* Sol tarafa boşluk ekledik */
   border-radius: 3px;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* LINK SİMGESİ (OK İŞARETİ) */
+.entries a::before {
+  content: "→";
+  position: absolute;
+  left: 4px;
+  font-weight: bold;
+  transition: transform 0.2s ease;
+  opacity: 0.8;
 }
 
 /* HOVER (FARE ÜZERİNE GELDİĞİNDE) */
 .entries a:hover {
-  color: #c0392b; /* Daha koyu kırmızı */
-  background-color: #ffeaea; /* Hafif kırmızı arkaplan */
+  color: #c0392b;
+  background-color: #ffeaea;
   transform: translateY(-1px);
+  padding-left: 22px; /* Hover'da biraz daha kaydır */
+}
+
+.entries a:hover::before {
+  transform: translateX(2px);
+  opacity: 1;
 }
 
 /* ALT ÇİZGİ EFEKTİ */
@@ -561,45 +579,63 @@ canvas {
   width: 0;
   height: 2px;
   bottom: 0;
-  left: 0;
+  left: 20px; /* Simgeyi hesaba katarak */
+  right: 0;
   background-color: #e74c3c;
   transition: width 0.3s ease;
 }
 
 .entries a:hover::after {
-  width: 100%;
+  width: calc(100% - 20px);
 }
 
-/* ZİYARET EDİLMİŞ LİNKLER */
-.entries a:visited {
-  color: #d35400; /* Turuncuya yakın kırmızı */
+/* ZİYARET EDİLMİŞ LİNKLER - FARKLI SİMGE */
+.entries a:visited::before {
+  content: "✓";
+  color: #d35400;
 }
 
-/* TIKLANMA ANI */
-.entries a:active {
-  color: #ff0000;
-  transform: translateY(0);
+/* DIŞ LİNKLER İÇİN FARKLI SİMGE */
+.entries a[href*="//"]:not([href*="sitemiz.com"])::before {
+  content: "↗";
+  font-size: 0.9em;
 }
 
-/* FOCUS (ERİŞİLEBİLİRLİK İÇİN) */
-.entries a:focus {
-  outline: 2px solid #e74c3c;
-  outline-offset: 2px;
-}
-
-/* BUTON GÖRÜNÜMLÜ LİNKLER İÇİN EK STİL */
+/* BUTON GÖRÜNÜMLÜ LİNKLER */
 .entries a.button-style {
   background-color: #e74c3c;
   color: white !important;
-  padding: 8px 16px;
+  padding: 8px 16px 8px 36px;
   border-radius: 6px;
-  display: inline-block;
+  display: inline-flex;
+}
+
+.entries a.button-style::before {
+  content: "🔗";
+  left: 12px;
+  color: white;
 }
 
 .entries a.button-style:hover {
   background-color: #c0392b;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+  padding-left: 38px;
+}
+
+/* PDF LİNKLERİ İÇİN ÖZEL SİMGE */
+.entries a[href$=".pdf"]::before {
+  content: "📄";
+}
+
+/* E-MAİL LİNKLERİ İÇİN */
+.entries a[href^="mailto:"]::before {
+  content: "✉";
+}
+
+/* TELEFON LİNKLERİ İÇİN */
+.entries a[href^="tel:"]::before {
+  content: "📞";
 }
 
 /* --------------------------- HİYERARŞİK LİSTE STİLLERİ ------------------------- */
