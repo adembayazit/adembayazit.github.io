@@ -35,7 +35,6 @@
             --warning-color: #ffcc00;
             --spotify-color: #1DB954;
             --youtube-color: #FF0000;
-            --link-color: #66ccff;
         }
         
         * {
@@ -384,17 +383,6 @@
             color: white;
         }
         
-        .editor-toolbar .link-btn {
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--link-color);
-            color: var(--link-color);
-        }
-        
-        .editor-toolbar .link-btn:hover {
-            background: var(--link-color);
-            color: black;
-        }
-        
         .submit-btn {
             background: var(--primary-color);
             color: black;
@@ -455,7 +443,7 @@
             border-radius: 5px;
             position: relative;
             font-size: 0.9rem;
-            cursor: default; /* Değiştirildi: pointer -> default */
+            cursor: default;
             transition: all 0.3s ease;
         }
         
@@ -498,11 +486,9 @@
             position: absolute;
             top: 10px;
             right: 10px;
-            display: flex; /* Değiştirildi: none -> flex */
+            display: flex;
             gap: 5px;
         }
-        
-        /* Silindi: .entry-item:hover .entry-actions { display: flex; } */
         
         .entry-actions button {
             background: rgba(0, 0, 0, 0.7);
@@ -1002,21 +988,16 @@
         
         .alternative-upload {
             margin-top: 10px;
-            padding: 15px;
-            background: rgba(255, 100, 0, 0.1);
-            border: 1px dashed #ff6600;
-            border-radius: 5px;
+            padding: 10px;
+            background: rgba(0, 30, 0, 0.3);
+            border: 1px dashed var(--primary-color);
+            border-radius: 3px;
             font-size: 0.8rem;
         }
         
         .alternative-upload a {
-            color: #ff6600;
+            color: var(--primary-color);
             text-decoration: underline;
-            font-weight: bold;
-        }
-
-        .alternative-upload p {
-            margin-bottom: 8px;
         }
 
         /* Crop Modal Stilleri */
@@ -1333,7 +1314,6 @@
                                 <button onclick="formatText('trContent', 'quote')" title="Quote"><i class="fas fa-quote-right"></i></button>
                                 <button onclick="formatText('trContent', 'paragraph')" title="Paragraph"><i class="fas fa-paragraph"></i></button>
                                 <button onclick="clearFormatting('trContent')" title="Clear"><i class="fas fa-eraser"></i></button>
-                                <button class="link-btn" onclick="addExternalLink('trContent')" title="Add Link"><i class="fas fa-link"></i></button>
                                 <button class="spotify-btn" onclick="addSpotifyEmbed('trContent')" title="Add Spotify"><i class="fab fa-spotify"></i></button>
                                 <button class="youtube-btn" onclick="addYoutubeEmbed('trContent')" title="Add Youtube"><i class="fab fa-youtube"></i></button>
                                 <button class="media-btn" onclick="openMediaUpload('trContent')" title="Add Photo/Video"><i class="fas fa-camera"></i></button>
@@ -1357,7 +1337,6 @@
                                 <button onclick="formatText('enContent', 'quote')" title="Quote"><i class="fas fa-quote-right"></i></button>
                                 <button onclick="formatText('enContent', 'paragraph')" title="Paragraph"><i class="fas fa-paragraph"></i></button>
                                 <button onclick="clearFormatting('enContent')" title="Clear"><i class="fas fa-eraser"></i></button>
-                                <button class="link-btn" onclick="addExternalLink('enContent')" title="Add Link"><i class="fas fa-link"></i></button>
                                 <button class="spotify-btn" onclick="addSpotifyEmbed('enContent')" title="Add Spotify"><i class="fab fa-spotify"></i></button>
                                 <button class="youtube-btn" onclick="addYoutubeEmbed('enContent')" title="Add Youtube"><i class="fab fa-youtube"></i></button>
                                 <button class="media-btn" onclick="openMediaUpload('enContent')" title="Add Photo/Video"><i class="fas fa-camera"></i></button>
@@ -1670,8 +1649,7 @@
                 .replace(/<em>(.*?)<\/em>/g, '$1')
                 .replace(/<u>(.*?)<\/u>/g, '$1')
                 .replace(/<p>(.*?)<\/p>/g, '$1')
-                .replace(/<blockquote>(.*?)<\/blockquote>/g, '$1')
-                .replace(/<a href="(.*?)">(.*?)<\/a>/g, '$2');
+                .replace(/<blockquote>(.*?)<\/blockquote>/g, '$1');
                 
             textarea.value = textarea.value.substring(0, start) + cleanedText + textarea.value.substring(end);
             textarea.focus();
@@ -1704,9 +1682,6 @@
                 // Resim etiketlerini işle
                 content = content.replace(/<img([^>]*)>/g, '<img$1 style="max-width: 100%; height: auto;">');
                 
-                // Link etiketlerini işle
-                content = content.replace(/<a href="([^"]*)"([^>]*)>([^<]*)<\/a>/g, '<a href="$1"$2 style="color: #66ccff; text-decoration: underline;">$3</a>');
-                
                 // Spotify ve YouTube embed'leri için işleme
                 content = content.replace(/<iframe class="spotify-embed">([\s\S]*?)<\/iframe>/g, '<iframe class="spotify-embed" style="max-width: 100%;">$1</iframe>');
                 content = content.replace(/<iframe class="youtube-embed">([\s\S]*?)<\/iframe>/g, '<iframe class="youtube-embed" style="max-width: 100%;">$1</iframe>');
@@ -1732,18 +1707,6 @@
             textarea.selectionEnd = newCursorPos;
             textarea.focus();
             updatePreview(textareaId);
-        }
-
-        // Add external link function
-        function addExternalLink(textareaId) {
-            const url = prompt("Enter the URL:");
-            if (!url) return;
-            
-            const text = prompt("Enter the link text (optional):") || url;
-            
-            const linkHtml = `<a href="${url}" target="_blank">${text}</a>`;
-            
-            insertAtCursor(textareaId, linkHtml);
         }
 
         // Spotify embed
@@ -1843,20 +1806,18 @@
                 return;
             }
             
-            // Video boyut kontrolü (50MB limit)
-            if (file.type.startsWith('video/') && file.size > 50 * 1024 * 1024) {
-                showToast('Video file is too large! Maximum 50MB video can be uploaded.', 'error');
+            // Dosya boyutu kontrolü (20MB = 20 * 1024 * 1024 bytes)
+            const MAX_FILE_SIZE = 20 * 1024 * 1024;
+            if (file.size > MAX_FILE_SIZE) {
+                showToast('File size too large. Maximum 20MB allowed.', 'error');
                 return;
             }
             
             selectedFile = file;
             
             if (file.type.startsWith('video/')) {
-                // Video için doğrudan yükleme
-                showToast('Video uploading, this may take a while...', 'warning');
                 handleMediaUpload(file);
             } else {
-                // Resim için crop modal
                 openCropModal(file);
             }
         }
@@ -1959,69 +1920,53 @@
                 const authData = await authResponse.json();
                 showDebugInfo('Auth data received');
                 
+                // Video dosyaları için farklı fileName formatı
+                const timestamp = Date.now();
+                const fileExtension = file.name.split('.').pop();
+                const fileName = file.type.startsWith('video/') 
+                    ? `video_${timestamp}.${fileExtension}`
+                    : `image_${timestamp}.${fileExtension}`;
+                
                 const formData = new FormData();
                 formData.append('file', file);
-                formData.append('fileName', `admin_${Date.now()}_${file.name}`);
+                formData.append('fileName', fileName);
                 formData.append('signature', authData.signature);
                 formData.append('token', authData.token);
                 formData.append('expire', authData.expire);
                 formData.append('publicKey', authData.publicKey);
                 
-                // Video dosyaları için ek parametreler
-                if (file.type.startsWith('video/')) {
-                    formData.append('useUniqueFileName', 'false');
-                    formData.append('overwriteFile', 'true');
-                    showDebugInfo('Video file detected - special settings applied');
-                }
-                
                 showDebugInfo('Calling ImageKit upload...');
                 
-                // Upload işlemi - timeout ile
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 saniye timeout
+                const uploadResponse = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
+                    method: 'POST',
+                    body: formData
+                });
                 
-                try {
-                    const uploadResponse = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
-                        method: 'POST',
-                        body: formData,
-                        signal: controller.signal
-                    });
-                    
-                    clearTimeout(timeoutId);
-                    showDebugInfo('Upload response: ' + uploadResponse.status);
-                    
-                    if (!uploadResponse.ok) {
-                        const errorText = await uploadResponse.text();
-                        showDebugInfo('Upload error: ' + errorText);
-                        throw new Error(`Upload error: ${uploadResponse.status} - ${errorText}`);
-                    }
-                    
-                    const uploadData = await uploadResponse.json();
-                    showDebugInfo('Upload successful: ' + uploadData.url);
-                    
-                    // Textarea'ya ekle
-                    const textarea = document.getElementById(activeTextareaId);
-                    const url = uploadData.url;
-                    
-                    let mediaTag;
-                    if (file.type.startsWith('image/')) {
-                        mediaTag = `<img src="${url}" alt="Uploaded image" style="max-width: 100%; height: auto;">`;
-                    } else if (file.type.startsWith('video/')) {
-                        mediaTag = `<video src="${url}" controls style="max-width: 100%; height: auto;"></video>`;
-                    }
-                    
-                    insertAtCursor(activeTextareaId, `\n${mediaTag}\n`);
-                    
-                    showToast('File uploaded successfully!', 'success');
-                    showDebugInfo('');
-                    
-                } catch (fetchError) {
-                    clearTimeout(timeoutId);
-                    if (fetchError.name === 'AbortError') {
-                        throw new Error('Upload timed out. File may be too large.');
-                    }
-                    throw fetchError;
+                showDebugInfo('Upload response: ' + uploadResponse.status);
+                
+                if (!uploadResponse.ok) {
+                    const errorText = await uploadResponse.text();
+                    showDebugInfo('Upload error: ' + errorText);
+                    throw new Error(`Upload error: ${uploadResponse.status}`);
                 }
+                
+                const uploadData = await uploadResponse.json();
+                showDebugInfo('Upload successful: ' + uploadData.url);
+                
+                const textarea = document.getElementById(activeTextareaId);
+                const url = uploadData.url;
+                
+                let mediaTag;
+                if (file.type.startsWith('image/')) {
+                    mediaTag = `<img src="${url}" alt="Uploaded image" style="max-width: 100%; height: auto;">`;
+                } else if (file.type.startsWith('video/')) {
+                    mediaTag = `<video src="${url}" controls style="max-width: 100%; height: auto;"></video>`;
+                }
+                
+                insertAtCursor(activeTextareaId, `\n${mediaTag}\n`);
+                
+                showToast('File uploaded successfully!', 'success');
+                showDebugInfo('');
                 
             } catch (error) {
                 console.error('Upload error:', error);
@@ -2029,8 +1974,6 @@
                 
                 if (errorMessage.includes('Failed to fetch')) {
                     errorMessage = 'Could not connect to server. Check your internet connection.';
-                } else if (errorMessage.includes('timeout')) {
-                    errorMessage = 'Upload took too long. Try reducing file size.';
                 }
                 
                 showToast(`Upload error: ${errorMessage}`, 'error');
@@ -2183,8 +2126,6 @@
                     let displayContent = entry.content_tr || entry.content;
                     const viewCount = entryViewCounts[entry.id] || 0;
                     
-                    // DEĞİŞTİRİLDİ: Entry'e tıklanabilir özellik KALDIRILDI
-                    
                     entryEl.innerHTML = `
                         <div class="entry-content">${displayContent}</div>
                         <div class="entry-meta">
@@ -2232,8 +2173,6 @@
                 entryEl.className = 'entry-item';
                 
                 let displayContent = entry.content_tr || entry.content;
-                
-                // DEĞİŞTİRİLDİ: Entry'e tıklanabilir özellik KALDIRILDI
                 
                 entryEl.innerHTML = `
                     <div class="entry-content">${displayContent}</div>
@@ -2332,7 +2271,6 @@
                 
                 content = content.replace(/<video([^>]*)>/g, '<video$1 style="max-width: 100%; height: auto;">');
                 content = content.replace(/<img([^>]*)>/g, '<img$1 style="max-width: 100%; height: auto;">');
-                content = content.replace(/<a href="([^"]*)"([^>]*)>([^<]*)<\/a>/g, '<a href="$1"$2 style="color: #66ccff; text-decoration: underline;">$3</a>');
                 content = content.replace(/<iframe class="spotify-embed">([\s\S]*?)<\/iframe>/g, '<iframe class="spotify-embed" style="max-width: 100%;">$1</iframe>');
                 content = content.replace(/<iframe class="youtube-embed">([\s\S]*?)<\/iframe>/g, '<iframe class="youtube-embed" style="max-width: 100%;">$1</iframe>');
                 
