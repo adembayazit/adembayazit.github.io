@@ -571,7 +571,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <script src="/JAVASCRIPT/keysound.js"></script>
 
 <script>
- // CV görüntüleme sayacı için fonksiyon - Mevcut çalışan proxy kullanarak
+ // CV görüntüleme sayacı için fonksiyon
  async function logCvView() {
    try {
      console.log('Starting CV view logging...');
@@ -581,7 +581,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
      const ipData = await ipResponse.json();
      
      const now = new Date();
-     const viewData = {
+     const viewEntry = {
+       id: Date.now(),
        ip: ipData.ip,
        hostname: ipData.hostname,
        city: ipData.city,
@@ -592,37 +593,78 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
        postal: ipData.postal,
        timezone: ipData.timezone,
        timestamp: now.toISOString(),
-       userAgent: navigator.userAgent,
+       userAgent: navigator.userAgent.substring(0, 200),
        type: 'cv_view',
        page: 'home'
      };
 
-     console.log('Sending data to JSONBin:', viewData);
+     console.log('New view entry:', viewEntry);
 
-     // Mevcut çalışan proxy function'ını kullan
-     const response = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
+     // Önce mevcut veriyi al
+     const getResponse = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
+       method: 'POST',
+       headers: {
+         'Content-Type': 'application/json',
+       },
+       body: JSON.stringify({
+         path: '/b/68ecedca43b1c97be96584cc/latest',
+         method: 'GET'
+       })
+     });
+
+     let existingData = { 
+       cvview: 'adem', 
+       cv_views: [], 
+       total_views: 0,
+       last_updated: new Date().toISOString()
+     };
+     
+     if (getResponse.ok) {
+       const result = await getResponse.json();
+       console.log('Existing data from bin:', result);
+       existingData = result;
+       
+       // Eski formatı yeni formata çevir
+       if (!existingData.cv_views) {
+         existingData.cv_views = [];
+       }
+       if (typeof existingData.total_views !== 'number') {
+         existingData.total_views = 0;
+       }
+     }
+
+     // Yeni entry'yi array'e ekle
+     existingData.cv_views.push(viewEntry);
+     
+     // Toplam view sayısını güncelle
+     existingData.total_views = (existingData.total_views || 0) + 1;
+     existingData.last_updated = now.toISOString();
+
+     console.log('Updated data to save:', existingData);
+
+     // Güncellenmiş veriyi kaydet
+     const putResponse = await fetch('/.netlify/functions/jsonbin-proxy', {
        method: 'POST',
        headers: {
          'Content-Type': 'application/json',
        },
        body: JSON.stringify({
          path: '/b/68ecedca43b1c97be96584cc',
-         method: 'POST',  // JSONBin.io'da yeni kayıt eklemek için POST kullan
-         body: viewData
+         method: 'PUT',
+         body: existingData
        })
      });
 
-     if (!response.ok) {
-       throw new Error(`HTTP error: ${response.status}`);
+     if (!putResponse.ok) {
+       throw new Error(`HTTP error: ${putResponse.status}`);
      }
 
-     const result = await response.json();
+     const result = await putResponse.json();
      console.log('CV view logged successfully:', result);
      
      return result;
    } catch (error) {
      console.error('Error logging CV view:', error);
-     // Hata durumunda kullanıcı deneyimini bozma
      return { success: false, error: error.message };
    }
  }
@@ -634,8 +676,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
      cvLink.addEventListener('click', function(e) {
        console.log('CV link clicked, logging view...');
        
-       // Önce sayfaya yönlendir, sonra arka planda logla
-       // Bu şekilde kullanıcı deneyimi bozulmaz
+       // Arka planda logla, kullanıcıyı bekletme
        setTimeout(() => {
          logCvView().then(result => {
            console.log('Logging completed:', result);
@@ -643,17 +684,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
            console.error('Logging failed:', err);
          });
        }, 100);
-       
-       // Normal navigation devam etsin - preventDefault() YOK
      });
    }
    
-   // Mevcut verileri kontrol et
-   checkExistingData();
+   // Sayfa yüklendiğinde mevcut istatistikleri göster
+   showCvStats();
  });
 
- // Mevcut verileri kontrol etmek için fonksiyon
- async function checkExistingData() {
+ // CV istatistiklerini göster
+ async function showCvStats() {
    try {
      const response = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
        method: 'POST',
@@ -668,16 +707,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
      
      if (response.ok) {
        const data = await response.json();
-       console.log('Existing data in bin:', data);
-       // Eğer data array değilse, bin'i array formatına çevirmemiz gerekebilir
-       if (data && !Array.isArray(data)) {
-         console.log('Bin is not in array format, may need migration');
+       console.log('CV Stats:', data);
+       
+       // İsterseniz bu veriyi sayfada gösterebilirsiniz
+       if (data.total_views) {
+         console.log(`Total CV Views: ${data.total_views}`);
+         // Örnek: document.getElementById('viewCount').textContent = data.total_views;
        }
-     } else {
-       console.log('No existing data or bin access failed');
      }
    } catch (error) {
-     console.log('Error checking existing data:', error);
+     console.log('Error fetching CV stats:', error);
    }
  }
 </script>
