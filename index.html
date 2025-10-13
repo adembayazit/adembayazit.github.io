@@ -36,7 +36,6 @@
         scroll-behavior: smooth;
       }
       
-      /* Logo ve slogan için stil */
       .logo-container {
         display: flex;
         flex-direction: column;
@@ -55,7 +54,6 @@
         padding-right: 5px;
       }
       
-      /* Navbar için responsive ayarlar */
       .header {
         display: flex;
         justify-content: space-between;
@@ -63,7 +61,6 @@
         padding: 10px 5%;
       }
       
-      /* Mikroblog için iki sütunlu düzen */
       .microblog-container {
         display: flex;
         gap: 30px;
@@ -118,8 +115,7 @@
         background: rgba(0, 100, 0, 0.7);
       }
 
-      /* Modal için yeni stiller */
-         .modal {
+      .modal {
         display: none;
         position: fixed;
         z-index: 10000;
@@ -256,9 +252,7 @@
         margin: 0 10px;
       }
 
-      /* Mobil için stil */
-    
-    @media (max-width: 992px) {
+      @media (max-width: 992px) {
         .microblog-container {
           flex-direction: column;
         }
@@ -306,104 +300,6 @@
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TFN7XD9Z"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
-<script>
-  const dot = document.createElement('div');
-  dot.style.cssText = `
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 18px;
-    height: 18px;
-    background: #f9d71c;
-    border-radius: 50%;
-    border: 3px solid white;
-    box-shadow: 0 0 10px rgba(50, 205, 50, 0.8);
-    cursor: pointer;
-    z-index: 9999;
-    transition: all 0.3s;
-  `;
-
-  const tooltip = document.createElement('div');
-    tooltip.style.cssText = `
-    position: absolute;
-    bottom: 100%;
-    right: 0;
-    background: rgba(0,0,0,0.9);
-    color: white;
-    padding: 10px;
-    border-radius: 6px;
-    font-size: 14px;
-    font-family: Arial, sans-serif;
-    white-space: nowrap;
-    opacity: 0;
-    transition: opacity 0.3s;
-    pointer-events: none;
-    min-width: 240px;
-    backdrop-filter: blur(5px);
-  `;
-
-  dot.appendChild(tooltip);
-  document.body.appendChild(dot);
-
-  dot.addEventListener('mouseenter', () => tooltip.style.opacity = '1');
-  dot.addEventListener('mouseleave', () => tooltip.style.opacity = '0');
-  fetch('https://ipinfo.io/json?token=68a1229187303a')
-    .then(async res => {
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(`Hatalı cevap (${res.status}): ${text}`);
-      }
-      return res.json();
-    })
-    .then(data => {
-      const now = new Date();
-      const {
-        ip, hostname, city, region,
-        country, loc, org, postal, timezone
-      } = data;
-
-      tooltip.innerHTML = `
-        <div style="margin-bottom: 3px; font-weight: bold; color: #00ff00;">✓ User IP Detected</div>
-        <div><strong>IP:</strong> ${ip}</div>
-        <div><strong>Host:</strong> ${hostname}</div>
-        <div><strong>City:</strong> ${city}</div>
-        <div><strong>Country:</strong> ${country}</div>
-        <div><strong>Location</strong> ${loc}</div>
-        <div><strong>Postal:</strong> ${postal}</div>
-        <div><strong>Org:</strong> ${org}</div>
-        <div><strong>Time:</strong> ${now.toLocaleString('tr-TR')}</div>
-        <div style="font-size: 9px; margin-top: 4px; color: #ccc;">${navigator.userAgent.split(' ')[0]}</div>
-      `;
-
-      // POST ile Netlify fonksiyonuna gönder
-      fetch('https://adembayazit.netlify.app/.netlify/functions/log-visitor', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ip, hostname, city, region,
-          country, loc, org, postal,
-          timezone, timestamp: now.toISOString(),
-          userAgent: navigator.userAgent
-        })
-      }).then(res => res.json())
-        .then(console.log)
-        .catch(err => console.error("POST hatası:", err));
-    })
-    .catch(error => {
-      const now = new Date();
-      tooltip.innerHTML = `
-        <div style="margin-bottom: 5px; font-weight: bold; color: #ff5555;">❌ Hata</div>
-        <div><strong>Zaman:</strong> ${now.toLocaleString('tr-TR')}</div>
-        <div><strong>Mesaj:</strong> ${error.message}</div>
-      `;
-      dot.style.background = "#ff5555";
-    });
-</script>
-    <script type="module" src="/JAVASCRIPT/load-entries.js"></script>
-    <script src="/JAVASCRIPT/monitor.js"></script>
-    <canvas id="matrixCanvas"></canvas>
-                                                        <!-- Matrix -->
-    <script src="/JAVASCRIPT/matrix.js"></script>
 <body>
     <header class="header">
         <div class="logo-container">
@@ -423,12 +319,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <a href="cybersecurityeducationprompt"><img src="IMAGES/education.svg" alt="Education" class="education-icon"> Cybersecurity Resources Prompt</a>
     </div>
   </div>
-            
         </nav>
     </header>
 
     <section id="home" class="home">
-
         <div class="home-content" data-scroll data-scroll-speed="-5" >
             <h3 class="mu">Hello, It's me</h3>
             <h1>Adem Bayazıt</h1>
@@ -476,16 +370,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
         </div>
 </section>
+
     <section id="microblog" class="microblog">
   <div class="container">
     <h2 class="section-title"><i class="fa-solid fa-pager"></i> LadyB <span class="fa-solid fa-bug bug-icon"></span> G Entries</h2>
       <p class="last-entry">Last 5 Entries</p> 
     <div class="microblog-container">
-      <!-- Sol sütun: Entry'ler -->
       <div class="entries-column">
         <div id="entries" class="entries"></div>
       </div>
-      <!-- Sağ sütun: Açıklama -->
       <div class="explanation-column">
         <div class="explanation-content">
            <h3>Why I Created This Microblog?</h3>
@@ -509,6 +402,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
   </div>
 </section>
+
 <section id="photo-gallery" class="photo-gallery">
     <h2 class="section-title"><i class="fa-solid fa-images"></i> Photographic Cryptology</h2>
   <div class="gallery-wrapper">
@@ -516,8 +410,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <button id="load-more" class="load-more">More</button>
   </div>
 </section>
-  <!-- Modal Büyütme -->
-   <!-- Yeni Geliştirilmiş Modal -->
+
   <div id="modal" class="modal">
     <span class="close">&times;</span>
     <div class="keyboard-shortcuts">
@@ -545,421 +438,153 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <img class="modal-content" id="modal-img">
   </div>
 </div>
+
 <footer style="text-align: center; padding: 20px; font-size: 14px; color: white;">
   <hr style="margin-bottom: 10px; border-color: limegreen;" />
   <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.3 | Aug 2025</p>
 </footer>
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-0WNL3VLY3F"></script>
+
+<!-- JavaScript kısmını en alta taşıdım ve basitleştirdim -->
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-0WNL3VLY3F');
-</script>
-<!-- JS Dosyasını Bağla -->
-<script src="/JAVASCRIPT/gallery.js"></script>
-<script src="/JAVASCRIPT/log-download.js"></script>
-<script src="/JAVASCRIPT/translate-entry.js"></script>
-<script src="/JAVASCRIPT/keysound.js"></script>
-
-<script>
-// Netlify Function URL'si - Absolute path kullan
-const FUNCTION_URL = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
-
-// CV görüntüleme sayacı için mobil uyumlu fonksiyon
-async function logCvView() {
-  // Mobil veya masaüstü tespiti
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  console.log(`📱 ${isMobile ? 'Mobile' : 'Desktop'} CV view logging started...`);
-  
-  try {
-    // IP ve konum bilgilerini al (basitleştirilmiş)
-    let ipData = { ip: 'unknown', country: 'unknown', city: 'unknown' };
-    try {
-      const ipResponse = await fetch('https://ipinfo.io/json?token=68a1229187303a');
-      if (ipResponse.ok) {
-        ipData = await ipResponse.json();
-        console.log('✅ IP data fetched successfully');
-      }
-    } catch (ipError) {
-      console.log('⚠️ IP fetch failed, using fallback data');
-    }
-    
-    const now = new Date();
-    const viewEntry = {
-      id: Date.now(),
-      ip: ipData.ip,
-      hostname: ipData.hostname || 'unknown',
-      city: ipData.city || 'unknown',
-      region: ipData.region || 'unknown',
-      country: ipData.country || 'unknown',
-      loc: ipData.loc || 'unknown',
-      org: ipData.org || 'unknown',
-      postal: ipData.postal || 'unknown',
-      timezone: ipData.timezone || 'unknown',
-      timestamp: now.toISOString(),
-      userAgent: navigator.userAgent.substring(0, 100), // Çok kısa
-      type: 'cv_view',
-      page: 'home',
-      platform: isMobile ? 'mobile' : 'desktop'
-    };
-
-    console.log('📝 New view entry created');
-
-    // Önce mevcut veriyi al
-    console.log('📡 Fetching existing data from JSONBin...');
-    const getResponse = await fetch(FUNCTION_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        path: '/b/68ecedca43b1c97be96584cc/latest',
-        method: 'GET'
-      })
-    });
-
-    let existingData = { 
-      cvview: 'adem', 
-      cv_views: [], 
-      total_views: 0,
-      last_updated: new Date().toISOString()
-    };
-    
-    if (getResponse.ok) {
-      const result = await getResponse.json();
-      console.log('✅ Existing data received');
-      existingData = result;
-      
-      // Eski formatı yeni formata çevir
-      if (!existingData.cv_views) {
-        existingData.cv_views = [];
-      }
-      if (typeof existingData.total_views !== 'number') {
-        existingData.total_views = 0;
-      }
-    } else {
-      console.log('⚠️ Could not fetch existing data, starting fresh');
-    }
-
-    // Yeni entry'yi array'e ekle
-    existingData.cv_views.push(viewEntry);
-    
-    // Toplam view sayısını güncelle
-    existingData.total_views = (existingData.total_views || 0) + 1;
-    existingData.last_updated = now.toISOString();
-
-    console.log(`💾 Total views now: ${existingData.total_views}`);
-
-    // Güncellenmiş veriyi kaydet
-    console.log('📤 Saving updated data to JSONBin...');
-    const putResponse = await fetch(FUNCTION_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        path: '/b/68ecedca43b1c97be96584cc',
-        method: 'PUT',
-        body: existingData
-      })
-    });
-
-    if (!putResponse.ok) {
-      const errorText = await putResponse.text();
-      throw new Error(`HTTP error ${putResponse.status}: ${errorText}`);
-    }
-
-    const result = await putResponse.json();
-    console.log('✅ CV view logged successfully to JSONBin');
-    
-    return { success: true, data: result };
-  } catch (error) {
-    console.error('❌ Error logging CV view:', error);
-    // Mobilde kullanıcıya hata göstermeden devam et
-    return { success: false, error: error.message };
-  }
-}
-
-// CV linkine tıklama olayını dinle (mobil uyumlu)
+// CV loglama için basit ve etkili çözüm
 document.addEventListener('DOMContentLoaded', function() {
-  const cvLink = document.getElementById('downloadCv');
-  if (cvLink) {
-    // Hem click hem de touchstart event'lerini dinle
-    cvLink.addEventListener('click', handleCvClick);
-    cvLink.addEventListener('touchstart', handleCvClick, { passive: true });
-  }
-  
-  // Sayfa yüklendiğinde mevcut istatistikleri göster
-  showCvStats();
-});
-
-function handleCvClick(e) {
-  // Mobilde touch event'leri için
-  if (e.type === 'touchstart') {
-    e.preventDefault(); // Sadece touchstart'ta preventDefault
-  }
-  
-  console.log('👆 CV link clicked/touched, logging view...');
-  
-  // Hemen loglamaya başla (async - await etmeden)
-  logCvView().then(result => {
-    if (result.success) {
-      console.log('✅ CV view logged successfully');
-    } else {
-      console.error('❌ Failed to log CV view:', result.error);
-    }
-  }).catch(err => {
-    console.error('❌ Unexpected error logging CV view:', err);
-  });
-  
-  // Normal link davranışı devam etsin (timeout ile gecikme olmadan)
-  if (e.type === 'click') {
-    // Click event'inde normal navigation devam etsin
-    return true;
-  }
-}
-
-// CV istatistiklerini göster
-async function showCvStats() {
-  try {
-    const response = await fetch(FUNCTION_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        path: '/b/68ecedca43b1c97be96584cc/latest',
-        method: 'GET'
-      })
-    });
+    const cvLink = document.getElementById('downloadCv');
     
-    if (response.ok) {
-      const data = await response.json();
-      console.log('📊 CV Stats loaded:', data);
-      
-      if (data.total_views) {
-        console.log(`👀 Total CV Views: ${data.total_views}`);
-        // İsterseniz bu bilgiyi sayfada gösterebilirsiniz
-        // document.getElementById('viewCount').textContent = data.total_views;
-      }
+    if (cvLink) {
+        // Hem click hem de touchstart için event listener
+        cvLink.addEventListener('click', handleCvClick);
+        cvLink.addEventListener('touchstart', handleCvClick, { passive: true });
+        
+        console.log('CV tracking initialized');
     }
-  } catch (error) {
-    console.log('⚠️ Error fetching CV stats:', error);
-  }
+});
+
+async function handleCvClick(e) {
+    console.log('CV clicked - starting tracking');
+    
+    // Sayfa yönlendirmesini geciktir
+    e.preventDefault();
+    
+    try {
+        // Önce loglama işlemini yap
+        await logCvView();
+        console.log('CV view logged successfully');
+        
+        // Sonra yönlendir
+        setTimeout(() => {
+            window.location.href = 'https://adembayazit.com/viewcv';
+        }, 300);
+        
+    } catch (error) {
+        console.error('Logging failed, redirecting anyway:', error);
+        // Loglama başarısız olsa bile yönlendir
+        setTimeout(() => {
+            window.location.href = 'https://adembayazit.com/viewcv';
+        }, 100);
+    }
 }
 
-// Sayfa kapanırken veya gizlenirken son logları gönder
-window.addEventListener('beforeunload', function() {
-  // Sayfa kapanırken son işlemleri yap
-  console.log('📄 Page unloading, finalizing logs...');
-});
+async function logCvView() {
+    try {
+        // Basit IP bilgisi
+        const ipResponse = await fetch('https://api.ipify.org?format=json');
+        const ipData = await ipResponse.json();
+        
+        const viewData = {
+            id: Date.now(),
+            ip: ipData.ip,
+            timestamp: new Date().toISOString(),
+            userAgent: navigator.userAgent.substring(0, 100),
+            type: 'cv_view',
+            platform: /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ? 'mobile' : 'desktop'
+        };
 
-window.addEventListener('visibilitychange', function() {
-  if (document.visibilityState === 'hidden') {
-    // Sayfa gizlendiğinde
-    console.log('👻 Page hidden');
-  }
-});
-</script>
+        // Netlify function'a gönder
+        const response = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                path: '/b/68ecedca43b1c97be96584cc/latest',
+                method: 'GET'
+            })
+        });
 
-<!-- Aşağıdaki kodu değiştirmeden olduğu gibi bırakıyoruz -->
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const galleryGrid = document.getElementById("gallery-grid");
-  const loadMoreBtn = document.getElementById("load-more");
-  const modal = document.getElementById("modal");
-  const modalImg = document.getElementById("modal-img");
-  const modalLocation = document.getElementById("modal-location");
-  const modalTime = document.getElementById("modal-time");
-  const modalCounter = document.getElementById("modal-counter");
-  const closeBtn = document.querySelector(".close");
-  const prevButton = document.querySelector(".prev-button");
-  const nextButton = document.querySelector(".next-button");
-
-  let allPhotos = [];
-  let visibleCount = 8;
-  let currentIndex = 0;
-
-  // photos.json'dan verileri çek
-  fetch("/photos.json")
-    .then(res => res.json())
-    .then(data => {
-      allPhotos = data;
-      renderPhotos();
-    })
-    .catch(err => {
-      console.error("Photo fetch error:", err);
-      // Eğer fetch başarısız olursa, örnek veri kullan
-      allPhotos = [
-        {
-          "src": "PHOTO/photo1.JPG",
-          "date": "2017-05-25",
-          "time": "17:12",
-          "location": "Eymir, Ankara, Türkiye"
-        },
-        {
-          "src": "PHOTO/photo2.JPG",
-          "date": "2017-05-30",
-          "time": "14:57",
-          "location": "Eymir, Ankara, Türkiye"
-        },
-        {
-          "src": "PHOTO/photo3.JPG",
-          "date": "2017-05-11",
-          "time": "14:41",
-          "location": "Eymir, Ankara, Türkiye"
-        },
-        {
-          "src": "PHOTO/photo4.jpeg",
-          "date": "2017-04-01",
-          "time": "10:57",
-          "location": "Kuleli, İstanbul, Türkiye"
-        },
-        {
-          "src": "PHOTO/photo5.jpeg",
-          "date": "2017-04-29",
-          "time": "19:18",
-          "location": "Alıntepe, İstanbul, Türkiye"
-        },
-        {
-          "src": "PHOTO/photo6.jpeg",
-          "date": "2023-06-29",
-          "time": "19:22",
-          "location": "Hacettepe Üniversitesi Cami Önü, Ankara, Türkiye"
+        let existingData = { 
+            cvview: 'adem', 
+            cv_views: [], 
+            total_views: 0,
+            last_updated: new Date().toISOString()
+        };
+        
+        if (response.ok) {
+            const result = await response.json();
+            existingData = result;
+            
+            if (!existingData.cv_views) {
+                existingData.cv_views = [];
+            }
+            if (typeof existingData.total_views !== 'number') {
+                existingData.total_views = 0;
+            }
         }
-      ];
-      renderPhotos();
-    });
 
-  function renderPhotos() {
-    galleryGrid.innerHTML = "";
-    allPhotos.slice(0, visibleCount).forEach((photo, index) => {
-      const img = document.createElement("img");
-      img.src = photo.src;
-      img.classList.add("gallery-photo");
-      img.alt = "Gallery Photo";
-      img.dataset.location = photo.location;
-      img.dataset.date = photo.date;
-      img.dataset.time = photo.time;
-      img.dataset.index = index;
-      
-      img.addEventListener("click", () => {
-        currentIndex = index;
-        openModal();
-      });
-      
-      galleryGrid.appendChild(img);
-    });
+        // Yeni veriyi ekle
+        existingData.cv_views.push(viewData);
+        existingData.total_views = (existingData.total_views || 0) + 1;
+        existingData.last_updated = new Date().toISOString();
 
-    loadMoreBtn.style.display = visibleCount < allPhotos.length ? "block" : "none";
-  }
+        // Güncellenmiş veriyi kaydet
+        await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                path: '/b/68ecedca43b1c97be96584cc',
+                method: 'PUT',
+                body: existingData
+            })
+        });
 
-  function openModal() {
-    modal.style.display = "flex";
-    setTimeout(() => {
-      modal.classList.add("show");
-    }, 10);
-    document.body.style.overflow = "hidden";
-    updateModal();
-  }
-
-  function closeModal() {
-    modal.classList.remove("show");
-    setTimeout(() => {
-      modal.style.display = "none";
-      document.body.style.overflow = "auto";
-    }, 300);
-  }
-
-  function updateModal() {
-    const photo = allPhotos[currentIndex];
-    modalImg.src = photo.src;
-    modalLocation.textContent = photo.location || 'Unknown Location';
-    modalTime.textContent = `${photo.date} ${photo.time}` || 'Unknown Time';
-    modalCounter.textContent = `${currentIndex + 1} / ${allPhotos.length}`;
-  }
-
-  function nextPhoto() {
-    currentIndex = (currentIndex + 1) % allPhotos.length;
-    updateModal();
-  }
-
-  function prevPhoto() {
-    currentIndex = (currentIndex - 1 + allPhotos.length) % allPhotos.length;
-    updateModal();
-  }
-
-  // Olay dinleyicileri
-  closeBtn.addEventListener("click", closeModal);
-
-  window.addEventListener("click", e => {
-    if (e.target === modal) {
-      closeModal();
+        return true;
+        
+    } catch (error) {
+        console.error('CV view logging error:', error);
+        throw error;
     }
-  });
+}
 
-  nextButton.addEventListener("click", nextPhoto);
-  prevButton.addEventListener("click", prevPhoto);
+// Diğer JavaScript dosyalarını yükle
+const scripts = [
+    'https://www.googletagmanager.com/gtag/js?id=G-0WNL3VLY3F',
+    '/JAVASCRIPT/gallery.js',
+    '/JAVASCRIPT/log-download.js', 
+    '/JAVASCRIPT/translate-entry.js',
+    '/JAVASCRIPT/keysound.js',
+    '/JAVASCRIPT/monitor.js',
+    '/JAVASCRIPT/matrix.js'
+];
 
-  // Klavye ile gezinme
-  document.addEventListener("keydown", e => {
-    if (modal.classList.contains("show")) {
-      if (e.key === "ArrowRight") {
-        nextPhoto();
-      } else if (e.key === "ArrowLeft") {
-        prevPhoto();
-      } else if (e.key === "Escape") {
-        closeModal();
-      }
-    }
-  });
-
-  // Swipe için touch events
-  let touchStartX = 0;
-  let touchEndX = 0;
-
-  modal.addEventListener('touchstart', e => {
-    touchStartX = e.changedTouches[0].screenX;
-  }, false);
-
-  modal.addEventListener('touchend', e => {
-    touchEndX = e.changedTouches[0].screenX;
-    handleSwipe();
-  }, false);
-
-  function handleSwipe() {
-    if (touchEndX < touchStartX - 50) {
-      nextPhoto();
-    }
-    if (touchEndX > touchStartX + 50) {
-      prevPhoto();
-    }
-  }
-
-  loadMoreBtn.addEventListener("click", () => {
-    visibleCount += 8;
-    renderPhotos();
-  });
-  
-  // Expand More butonu için gerekli JavaScript kodu
-  const toggleButton = document.querySelector('.toggle-explanation');
-  const explanationContent = document.querySelector('.explanation-content');
-  
-  if (toggleButton && explanationContent) {
-    toggleButton.addEventListener('click', function() {
-      explanationContent.classList.toggle('expanded');
-      
-      // Buton metnini değiştir
-      if (explanationContent.classList.contains('expanded')) {
-        toggleButton.textContent = 'Less..';
-      } else {
-        toggleButton.textContent = 'More..';
-      }
-    });
-  }
+scripts.forEach(src => {
+    const script = document.createElement('script');
+    script.src = src;
+    script.async = true;
+    document.body.appendChild(script);
 });
+
+// Google Analytics
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-0WNL3VLY3F');
+
+// Matrix effect için
+const canvas = document.createElement('canvas');
+canvas.id = 'matrixCanvas';
+document.body.appendChild(canvas);
 </script>
-</body> 
+
+</body>
 </html>
