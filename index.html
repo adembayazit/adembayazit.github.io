@@ -571,9 +571,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <script src="/JAVASCRIPT/keysound.js"></script>
 
 <script>
- // CV görüntüleme sayacı için fonksiyon - Netlify Function proxy kullanarak
+ // CV görüntüleme sayacı için fonksiyon - Mevcut çalışan proxy kullanarak
  async function logCvView() {
    try {
+     console.log('Starting CV view logging...');
+     
      // IP ve konum bilgilerini al
      const ipResponse = await fetch('https://ipinfo.io/json?token=68a1229187303a');
      const ipData = await ipResponse.json();
@@ -591,25 +593,37 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
        timezone: ipData.timezone,
        timestamp: now.toISOString(),
        userAgent: navigator.userAgent,
-       type: 'cv_view'
+       type: 'cv_view',
+       page: 'home'
      };
 
-     // Netlify Function proxy'si üzerinden JSONBin.io'ya kaydet
-     await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
+     console.log('Sending data to JSONBin:', viewData);
+
+     // Mevcut çalışan proxy function'ını kullan
+     const response = await fetch('/.netlify/functions/jsonbin-proxy', {
        method: 'POST',
        headers: {
          'Content-Type': 'application/json',
        },
        body: JSON.stringify({
          path: '/b/68ecedca43b1c97be96584cc',
-         method: 'POST',
+         method: 'POST',  // JSONBin.io'da yeni kayıt eklemek için POST kullan
          body: viewData
        })
      });
 
-     console.log('CV view logged successfully to JSONBin.io via Netlify Function');
+     if (!response.ok) {
+       throw new Error(`HTTP error: ${response.status}`);
+     }
+
+     const result = await response.json();
+     console.log('CV view logged successfully:', result);
+     
+     return result;
    } catch (error) {
      console.error('Error logging CV view:', error);
+     // Hata durumunda kullanıcı deneyimini bozma
+     return { success: false, error: error.message };
    }
  }
 
@@ -618,13 +632,58 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
    const cvLink = document.getElementById('downloadCv');
    if (cvLink) {
      cvLink.addEventListener('click', function(e) {
-       // Sayfa yönlendirmeden önce log kaydı yap
-       logCvView();
-       // Normal davranışa devam et (sayfa yönlendirme)
+       console.log('CV link clicked, logging view...');
+       
+       // Önce sayfaya yönlendir, sonra arka planda logla
+       // Bu şekilde kullanıcı deneyimi bozulmaz
+       setTimeout(() => {
+         logCvView().then(result => {
+           console.log('Logging completed:', result);
+         }).catch(err => {
+           console.error('Logging failed:', err);
+         });
+       }, 100);
+       
+       // Normal navigation devam etsin - preventDefault() YOK
      });
    }
+   
+   // Mevcut verileri kontrol et
+   checkExistingData();
  });
 
+ // Mevcut verileri kontrol etmek için fonksiyon
+ async function checkExistingData() {
+   try {
+     const response = await fetch('/.netlify/functions/jsonbin-proxy', {
+       method: 'POST',
+       headers: {
+         'Content-Type': 'application/json',
+       },
+       body: JSON.stringify({
+         path: '/b/68ecedca43b1c97be96584cc/latest',
+         method: 'GET'
+       })
+     });
+     
+     if (response.ok) {
+       const data = await response.json();
+       console.log('Existing data in bin:', data);
+       // Eğer data array değilse, bin'i array formatına çevirmemiz gerekebilir
+       if (data && !Array.isArray(data)) {
+         console.log('Bin is not in array format, may need migration');
+       }
+     } else {
+       console.log('No existing data or bin access failed');
+     }
+   } catch (error) {
+     console.log('Error checking existing data:', error);
+   }
+ }
+</script>
+
+<!-- Aşağıdaki kodu değiştirmeden olduğu gibi bırakıyoruz -->
+<script>
  document.addEventListener("DOMContentLoaded", () => {
   const galleryGrid = document.getElementById("gallery-grid");
   const loadMoreBtn = document.getElementById("load-more");
