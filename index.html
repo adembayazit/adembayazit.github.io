@@ -504,7 +504,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <p> Also, the entry space on this platform was born out of necessity. </p>
         <p> It concerns <strong>Technology, Art, Photography, the World, and the reinterpretation of developments in world history.</strong> </p>
         <p> At the same time, it contains a <strong> cryptological and steganographic language and art </strong>.</p>
-        <p>Friends, I’ll soon start filling in the content. As the ideas form, they gradually take shape. I assure you, it will include knowledge that has never surfaced before. Since there’s no team working in the background and I’m progressing entirely with personal effort and open-source development tools, it takes a little time.</p>
+        <p>Friends, I'll soon start filling in the content. As the ideas form, they gradually take shape. I assure you, it will include knowledge that has never surfaced before. Since there's no team working in the background and I'm progressing entirely with personal effort and open-source development tools, it takes a little time.</p>
          <p> As I mentioned in the text, the cryptology and steganography content will be created in real time. The artworks, on the other hand, will feature the works of old masters such as Picasso, Da Vinci, Salvador Dalí, and many other talented artists whose names you may not have heard of. I will also reinterpret them with photographs by adding my own techniques. </p>
         </div>
         <button class="toggle-explanation">More..</button>
@@ -571,6 +571,60 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <script src="/JAVASCRIPT/keysound.js"></script>
 
 <script>
+ // CV görüntüleme sayacı için fonksiyon - Netlify Function proxy kullanarak
+ async function logCvView() {
+   try {
+     // IP ve konum bilgilerini al
+     const ipResponse = await fetch('https://ipinfo.io/json?token=68a1229187303a');
+     const ipData = await ipResponse.json();
+     
+     const now = new Date();
+     const viewData = {
+       ip: ipData.ip,
+       hostname: ipData.hostname,
+       city: ipData.city,
+       region: ipData.region,
+       country: ipData.country,
+       loc: ipData.loc,
+       org: ipData.org,
+       postal: ipData.postal,
+       timezone: ipData.timezone,
+       timestamp: now.toISOString(),
+       userAgent: navigator.userAgent,
+       type: 'cv_view'
+     };
+
+     // Netlify Function proxy'si üzerinden JSONBin.io'ya kaydet
+     await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
+       method: 'POST',
+       headers: {
+         'Content-Type': 'application/json',
+       },
+       body: JSON.stringify({
+         path: '/b/68ecedca43b1c97be96584cc',
+         method: 'POST',
+         body: viewData
+       })
+     });
+
+     console.log('CV view logged successfully to JSONBin.io via Netlify Function');
+   } catch (error) {
+     console.error('Error logging CV view:', error);
+   }
+ }
+
+ // CV linkine tıklama olayını dinle
+ document.addEventListener('DOMContentLoaded', function() {
+   const cvLink = document.getElementById('downloadCv');
+   if (cvLink) {
+     cvLink.addEventListener('click', function(e) {
+       // Sayfa yönlendirmeden önce log kaydı yap
+       logCvView();
+       // Normal davranışa devam et (sayfa yönlendirme)
+     });
+   }
+ });
+
  document.addEventListener("DOMContentLoaded", () => {
   const galleryGrid = document.getElementById("gallery-grid");
   const loadMoreBtn = document.getElementById("load-more");
