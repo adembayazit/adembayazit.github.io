@@ -328,86 +328,6 @@
         border-radius: 5px;
         z-index: 10010;
       }
-
-      /* Entry stilleri */
-      .entry {
-        background: rgba(10, 25, 20, 0.7);
-        border-radius: 15px;
-        padding: 20px;
-        margin-bottom: 20px;
-        border: 1px solid rgba(0, 255, 0, 0.3);
-        box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);
-        position: relative;
-        overflow: hidden;
-      }
-
-      .timestamp {
-        color: #90ee90;
-        font-size: 12px;
-        margin-bottom: 10px;
-        display: flex;
-        align-items: center;
-      }
-
-      .bug-iconentry {
-        margin-right: 8px;
-        color: #ff5555;
-      }
-
-      .entry-id {
-        color: #f9d71c;
-        font-size: 14px;
-        margin-bottom: 15px;
-        font-weight: bold;
-      }
-
-      .content {
-        color: white;
-        line-height: 1.6;
-        font-size: 14px;
-      }
-
-      .content img {
-        max-width: 100%;
-        height: auto;
-        border-radius: 8px;
-        margin: 10px 0;
-        cursor: pointer;
-        transition: all 0.3s ease;
-      }
-
-      .content img:hover {
-        transform: scale(1.02);
-        box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
-      }
-
-      .video-container {
-        position: relative;
-        width: 100%;
-        padding-bottom: 56.25%;
-        height: 0;
-        overflow: hidden;
-        margin: 10px 0;
-        border-radius: 8px;
-        border: 1px solid rgba(0, 255, 0, 0.3);
-      }
-      
-      .video-container iframe {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        border: none;
-      }
-
-      .image-slider {
-        position: relative;
-        margin: 10px 0;
-        overflow: hidden;
-        border-radius: 8px;
-        background: #000;
-      }
     </style>
 </head>
 <!-- Google Tag Manager (noscript) -->
@@ -514,10 +434,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       dot.style.background = "#ff5555";
     });
 </script>
-    <!-- load-entries.js kaldırıldı, yerine master bin yapısı eklendi -->
-    <script src="/JAVASCRIPT/monitor.js"></script>
-    <canvas id="matrixCanvas"></canvas>
-    <script src="/JAVASCRIPT/matrix.js"></script>
 <body>
     <header class="header">
         <div class="logo-container">
@@ -671,213 +587,181 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         gtag('config', 'G-0WNL3VLY3F');
     </script>
 
+    <script src="/JAVASCRIPT/matrix.js"></script>
+    <script src="/JAVASCRIPT/monitor.js"></script>
     <script src="/JAVASCRIPT/gallery.js"></script>
     <script src="/JAVASCRIPT/log-download.js"></script>
     <script src="/JAVASCRIPT/translate-entry.js"></script>
     <script src="/JAVASCRIPT/keysound.js"></script>
 
-    <!-- Master Bin Yapısı ile Entry Yükleme -->
+    <!-- MASTER BIN ENTRY YÜKLEME SİSTEMİ -->
     <script>
-        // Master bin yapısı için değişkenler
-        const MASTER_BIN_ID = '68933248ae596e708fc2fbbc';
-        let currentActiveBinId = MASTER_BIN_ID;
-        let allBins = [];
+        // MASTER BIN YAPISI - Entry yükleme sistemi
+        document.addEventListener("DOMContentLoaded", function() {
+            const MASTER_BIN_ID = '68933248ae596e708fc2fbbc';
+            const entriesContainer = document.getElementById('entries');
+            let allEntries = [];
 
-        // Proxy helper fonksiyonu
-        async function fetchViaProxy(path, method = 'GET', body = null, binId = null) {
-            const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
-            
-            const actualPath = binId ? `/b/${binId}${path}` : path;
-            
-            try {
-                const response = await fetch(proxyUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ path: actualPath, method, body })
+            // Proxy helper function
+            async function fetchViaProxy(path, method = 'GET', body = null, binId = null) {
+                const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
+                const actualPath = binId ? `/b/${binId}${path}` : path;
+                
+                try {
+                    const response = await fetch(proxyUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ path: actualPath, method, body })
+                    });
+
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    return await response.json();
+                } catch (error) {
+                    console.error('Proxy error:', error);
+                    throw error;
+                }
+            }
+
+            // Tüm bin'lerden entry'leri yükle
+            async function loadAllEntries() {
+                try {
+                    // Master bin'den bin listesini al
+                    const masterData = await fetchViaProxy('/latest', 'GET', null, MASTER_BIN_ID);
+                    
+                    let allEntries = [];
+                    let bins = [];
+                    let activeBinId = MASTER_BIN_ID;
+
+                    if (masterData.bins && masterData.bins.length > 0) {
+                        bins = masterData.bins;
+                        activeBinId = masterData.activeBin || MASTER_BIN_ID;
+                    } else {
+                        // İlk kez çalışıyorsa, sadece master bin kullan
+                        bins = [{ id: MASTER_BIN_ID, createdAt: new Date().toISOString(), entryCount: 0 }];
+                    }
+
+                    // Tüm bin'leri ters sırada yükle (en yeniden en eskiye)
+                    const sortedBins = [...bins]
+                        .filter(bin => !bin.isMaster)
+                        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+                    // Aktif bin'i de ekle
+                    sortedBins.unshift({ id: activeBinId });
+
+                    console.log(`Loading entries from ${sortedBins.length} bins...`);
+
+                    for (const bin of sortedBins) {
+                        try {
+                            const binData = await fetchViaProxy('/latest', 'GET', null, bin.id);
+                            
+                            if (binData.records && Array.isArray(binData.records)) {
+                                allEntries = [...allEntries, ...binData.records];
+                                console.log(`Loaded ${binData.records.length} entries from bin ${bin.id}`);
+                            }
+                        } catch (error) {
+                            console.error(`Failed to load bin ${bin.id}:`, error);
+                        }
+                    }
+
+                    // Eğer hiç bin yoksa, mevcut bin'den yükle
+                    if (allEntries.length === 0) {
+                        console.log('No bins found, trying to load from current bin...');
+                        try {
+                            const currentBinData = await fetchViaProxy('/latest', 'GET', null, MASTER_BIN_ID);
+                            if (currentBinData.records && Array.isArray(currentBinData.records)) {
+                                allEntries = currentBinData.records;
+                                console.log(`Loaded ${allEntries.length} entries from master bin`);
+                            }
+                        } catch (error) {
+                            console.error('Failed to load from current bin:', error);
+                        }
+                    }
+
+                    return allEntries;
+                } catch (error) {
+                    console.error('Load all entries failed:', error);
+                    return [];
+                }
+            }
+
+            // Entry'leri göster
+            function displayEntries(entries) {
+                if (!entriesContainer) return;
+
+                // Son 5 entry'yi al ve tarihe göre sırala (yeniden eskiye)
+                const last5Entries = entries
+                    .sort((a, b) => new Date(b.date) - new Date(a.date))
+                    .slice(0, 5);
+
+                entriesContainer.innerHTML = '';
+
+                last5Entries.forEach(entry => {
+                    const entryElement = createEntryElement(entry);
+                    entriesContainer.appendChild(entryElement);
+                });
+            }
+
+            // Entry elementi oluştur
+            function createEntryElement(entry) {
+                const entryDiv = document.createElement('div');
+                entryDiv.className = 'entry';
+                
+                const time = new Date(entry.date).toLocaleString("tr-TR", {
+                    year: "numeric", 
+                    month: "2-digit", 
+                    day: "2-digit", 
+                    hour: "2-digit", 
+                    minute: "2-digit"
+                }).replace(",", "");
+
+                // HTML içeriğini temizle ve formatla
+                const formattedContent = formatContent(entry.content);
+
+                entryDiv.innerHTML = `
+                    <div class="timestamp">
+                        <span class="fa-solid fa-bug bug-iconentry"></span> ${time}
+                    </div>
+                    <div class="entry-id">#${entry.id}</div>
+                    <div class="content">${formattedContent}</div>
+                `;
+
+                return entryDiv;
+            }
+
+            // HTML içeriğini formatla
+            function formatContent(content) {
+                if (!content) return '';
+                
+                // YouTube embed linklerini tespit et ve iframe'e dönüştür
+                content = content.replace(/(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/g, 
+                    '<div class="video-container"><iframe src="https://www.youtube.com/embed/$4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>');
+                
+                // Resimleri işle
+                content = content.replace(/<img[^>]+>/g, (imgTag) => {
+                    return imgTag.replace('<img', '<img style="max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0;"');
                 });
 
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                return await response.json();
-            } catch (error) {
-                console.error('Proxy error:', error);
-                throw error;
+                return content;
             }
-        }
 
-        // Bin sistemini başlat
-        async function initializeBinSystem() {
-            try {
-                // Master bin'den bin listesini al
-                const masterData = await fetchViaProxy('/latest', 'GET', null, MASTER_BIN_ID);
-                
-                if (masterData.bins && masterData.bins.length > 0) {
-                    allBins = masterData.bins;
-                    currentActiveBinId = masterData.activeBin || MASTER_BIN_ID;
-                } else {
-                    // İlk kez çalışıyorsa, master bin'i başlat
-                    allBins = [{
-                        id: MASTER_BIN_ID,
-                        createdAt: new Date().toISOString(),
-                        entryCount: 0,
-                        size: 0,
-                        isMaster: true
-                    }];
-                    currentActiveBinId = MASTER_BIN_ID;
-                }
-                
-                console.log('Bin system initialized:', { allBins, currentActiveBinId });
-            } catch (error) {
-                console.error('Bin system initialization failed:', error);
-                // Fallback: sadece master bin kullan
-                allBins = [{ 
-                    id: MASTER_BIN_ID, 
-                    createdAt: new Date().toISOString(), 
-                    entryCount: 0, 
-                    size: 0,
-                    isMaster: true 
-                }];
-                currentActiveBinId = MASTER_BIN_ID;
-            }
-        }
-
-        // Tüm entry'leri tüm bin'lerden yükle
-        async function loadAllEntries() {
-            try {
-                let allEntries = [];
-                
-                // Tüm bin'leri ters sırada yükle (en yeniden en eskiye)
-                const sortedBins = [...allBins]
-                    .filter(bin => !bin.isMaster) // Master bin'i hariç tut (sadece yönetim için)
-                    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                
-                console.log(`Loading entries from ${sortedBins.length} bins...`);
-                
-                for (const bin of sortedBins) {
-                    try {
-                        const binData = await fetchViaProxy('/latest', 'GET', null, bin.id);
-                        
-                        if (binData.records && Array.isArray(binData.records)) {
-                            allEntries = [...allEntries, ...binData.records];
-                            console.log(`Loaded ${binData.records.length} entries from bin ${bin.id}`);
-                        }
-                    } catch (error) {
-                        console.error(`Failed to load bin ${bin.id}:`, error);
-                    }
-                }
-                
-                // Eğer hiç bin yoksa, mevcut bin'den yükle (geçiş dönemi için)
-                if (allEntries.length === 0) {
-                    console.log('No bins found, trying to load from current bin...');
-                    try {
-                        const currentBinData = await fetchViaProxy('/latest', 'GET', null, MASTER_BIN_ID);
-                        if (currentBinData.records && Array.isArray(currentBinData.records)) {
-                            allEntries = currentBinData.records;
-                            console.log(`Loaded ${allEntries.length} entries from master bin`);
-                        }
-                    } catch (error) {
-                        console.error('Failed to load from current bin:', error);
-                    }
-                }
-                
-                return allEntries;
-            } catch (error) {
-                console.error('Load all entries failed:', error);
-                return [];
-            }
-        }
-
-        // Entry'leri yükle ve göster
-        async function loadAndDisplayEntries() {
-            try {
-                await initializeBinSystem();
-                const allEntries = await loadAllEntries();
-                
-                // Entry'leri tarihe göre sırala (yeniden eskiye)
-                allEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
-                
-                // Son 5 entry'yi al
-                const last5Entries = allEntries.slice(0, 5);
-                
-                // Entry'leri göster
-                const entriesContainer = document.getElementById('entries');
-                if (entriesContainer) {
-                    entriesContainer.innerHTML = '';
-                    
-                    last5Entries.forEach(entry => {
-                        const entryElement = createEntryElement(entry);
-                        entriesContainer.appendChild(entryElement);
-                    });
-                }
-            } catch (error) {
-                console.error('Error loading entries:', error);
-                // Fallback: entries.json'dan yükle
+            // Uygulamayı başlat
+            async function initializeEntries() {
                 try {
-                    const response = await fetch('/entries.json');
-                    const entriesData = await response.json();
-                    const allEntries = entriesData.records || entriesData;
-                    allEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
-                    const last5Entries = allEntries.slice(0, 5);
-                    
-                    const entriesContainer = document.getElementById('entries');
-                    if (entriesContainer) {
-                        entriesContainer.innerHTML = '';
-                        
-                        last5Entries.forEach(entry => {
-                            const entryElement = createEntryElement(entry);
-                            entriesContainer.appendChild(entryElement);
-                        });
-                    }
-                } catch (fallbackError) {
-                    console.error('Fallback also failed:', fallbackError);
-                    document.getElementById('entries').innerHTML = 
-                        '<div class="error">Veriler yüklenirken bir hata oluştu</div>';
+                    console.log('Loading entries from master bin system...');
+                    allEntries = await loadAllEntries();
+                    displayEntries(allEntries);
+                    console.log(`Successfully loaded ${allEntries.length} entries`);
+                } catch (error) {
+                    console.error('Error loading entries:', error);
+                    entriesContainer.innerHTML = '<div class="error">Entries could not be loaded</div>';
                 }
             }
-        }
 
-        // Entry elementini oluştur
-        function createEntryElement(entry) {
-            const entryDiv = document.createElement('div');
-            entryDiv.className = 'entry';
-            
-            const time = new Date(entry.date).toLocaleString('tr-TR', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit'
-            }).replace(',', '');
-            
-            // İçeriği formatla (basit bir format)
-            let content = entry.content;
-            // YouTube embed linklerini tespit et ve iframe'e dönüştür
-            content = content.replace(/(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/g, 
-                '<div class="video-container"><iframe src="https://www.youtube.com/embed/$4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>');
-            
-            // Birden fazla resim için slider oluştur (basit bir slider)
-            content = content.replace(/(<img[^>]+>\s*){2,}/g, (imgs) => {
-                const images = imgs.match(/<img[^>]+>/g);
-                if (images && images.length > 1) {
-                    return `<div class="image-slider">${images.join('')}</div>`;
-                }
-                return imgs;
-            });
-            
-            entryDiv.innerHTML = `
-                <div class="timestamp">
-                    <span class="fa-solid fa-bug bug-iconentry"></span> ${time}
-                </div>
-                <div class="entry-id">#${entry.id}</div>
-                <div class="content">${content}</div>
-            `;
-            
-            return entryDiv;
-        }
-
-        // Sayfa yüklendiğinde entry'leri yükle
-        document.addEventListener('DOMContentLoaded', loadAndDisplayEntries);
+            // Sayfa yüklendiğinde entry'leri başlat
+            initializeEntries();
+        });
     </script>
 
     <script>
