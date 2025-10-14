@@ -1600,17 +1600,13 @@
           isUpdating: false
         };
 
-        // Yeni IP izleme için değişkenler
-        const viewIpsBinId = '68ba0ba543b1c97be93705fb'; // View-ip bin ID'si
-        const viewsBinId = '68b69f3fd0ea881f406f17e3'; // View-data bin ID'si
-        
         // View güncellemelerini toplamak için
         const pendingViewUpdates = {};
         let viewUpdateInterval;
         let allEntries = [];
         let groupedEntries = [];
         let displayedEntries = 0;
-        const entriesPerPage = 13; // Grup sayısı olarak değiştirildi
+        const entriesPerPage = 13;
         let latestEntryId = null;
         let parentOfLatestId = null;
         let checkInterval;
@@ -1628,22 +1624,10 @@
         let currentModalImages = [];
         let currentModalIndex = 0;
 
-        // BİLDİRİM SİSTEMİ DEĞİŞKENLERİ - YENİ EKLENDİ
-        let swRegistration = null;
-        let isSubscribed = false;
-        let pushManagerSupported = false;
-
-        // BİN YÖNETİM SİSTEMİ - YENİ EKLENDİ
-        const MASTER_BIN_ID = '68933248ae596e708fc2fbbc'; // Mevcut ana bin ID'niz
-        const BIN_SIZE_LIMIT = 95 * 1024; // 95KB (güvenlik payı ile)
-        let currentActiveBinId = MASTER_BIN_ID;
-        let allBins = [];
-
         // 2. PROXY HELPER FONKSİYONU - GÜNCELLENDİ
         async function fetchViaProxy(path, method = 'GET', body = null, binId = null) {
           const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
           
-          // Eğer özel bir bin ID verilmişse path'i güncelle
           const actualPath = binId ? `/b/${binId}${path}` : path;
           
           try {
@@ -1663,798 +1647,183 @@
           }
         }
 
-        // BİN YÖNETİM SİSTEMİ FONKSİYONLARI - YENİ EKLENDİ
-        // Bin sistemini başlat
-        async function initializeBinSystem() {
-            try {
-                // Master bin'den bin listesini al
-                const masterData = await fetchViaProxy('/latest', 'GET', null, MASTER_BIN_ID);
-                
-                if (masterData.bins && masterData.bins.length > 0) {
-                    allBins = masterData.bins;
-                    currentActiveBinId = masterData.activeBin || MASTER_BIN_ID;
-                } else {
-                    // İlk kez çalışıyorsa, master bin'i başlat
-                    allBins = [{
-                        id: MASTER_BIN_ID,
-                        createdAt: new Date().toISOString(),
-                        entryCount: 0,
-                        size: 0,
-                        isMaster: true
-                    }];
-                    currentActiveBinId = MASTER_BIN_ID;
-                    await updateMasterBin();
-                }
-                
-                console.log('Bin system initialized:', { allBins, currentActiveBinId });
-                updateBinStats();
-            } catch (error) {
-                console.error('Bin system initialization failed:', error);
-                // Fallback: sadece master bin kullan
-                allBins = [{ 
-                    id: MASTER_BIN_ID, 
-                    createdAt: new Date().toISOString(), 
-                    entryCount: 0, 
-                    size: 0,
-                    isMaster: true 
-                }];
-                currentActiveBinId = MASTER_BIN_ID;
-            }
-        }
-
-        // Master bin'i güncelle
-        async function updateMasterBin() {
-            try {
-                await fetchViaProxy('', 'PUT', {
-                    bins: allBins,
-                    activeBin: currentActiveBinId,
-                    lastUpdated: new Date().toISOString(),
-                    totalBins: allBins.length,
-                    totalEntries: allEntries.length
-                }, MASTER_BIN_ID);
-                
-                updateBinStats();
-            } catch (error) {
-                console.error('Master bin update failed:', error);
-            }
-        }
-
-        // Aktif bin'in boyutunu kontrol et
-        async function checkCurrentBinSize() {
-            try {
-                const activeBinData = await fetchViaProxy('/latest', 'GET', null, currentActiveBinId);
-                const binSize = JSON.stringify(activeBinData).length;
-                
-                console.log(`Current bin size: ${binSize} bytes`);
-                
-                // Bin istatistiklerini güncelle
-                const binIndex = allBins.findIndex(bin => bin.id === currentActiveBinId);
-                if (binIndex !== -1) {
-                    allBins[binIndex].size = binSize;
-                    allBins[binIndex].lastChecked = new Date().toISOString();
-                }
-                
-                updateBinStats();
-                
-                if (binSize >= BIN_SIZE_LIMIT) {
-                    console.log('Bin size limit reached, creating new bin...');
-                    await createNewBin();
-                }
-                
-                return binSize;
-            } catch (error) {
-                console.error('Bin size check failed:', error);
-                return 0;
-            }
-        }
-
-        // Yeni bin oluştur
-        async function createNewBin() {
-            try {
-                console.log('Creating new bin...');
-                
-                // Yeni bin oluştur
-                const newBinData = {
-                    records: [],
-                    createdAt: new Date().toISOString(),
-                    previousBin: currentActiveBinId,
-                    binIndex: allBins.length
-                };
-                
-                const newBinResponse = await fetchViaProxy('', 'POST', newBinData);
-                const newBinId = newBinResponse.metadata.id;
-                
-                console.log('New bin created:', newBinId);
-                
-                // Yeni bin'i listeye ekle
-                const newBinInfo = {
-                    id: newBinId,
-                    createdAt: new Date().toISOString(),
-                    entryCount: 0,
-                    size: 0,
-                    binIndex: allBins.length
-                };
-                
-                allBins.push(newBinInfo);
-                currentActiveBinId = newBinId;
-                
-                // Master bin'i güncelle
-                await updateMasterBin();
-                
-                console.log('Bin system updated with new bin:', newBinId);
-                return newBinId;
-            } catch (error) {
-                console.error('New bin creation failed:', error);
-                throw error;
-            }
-        }
-
-        // Tüm entry'leri tüm bin'lerden yükle
-        async function loadAllEntries() {
-            try {
-                let allEntries = [];
-                
-                // Tüm bin'leri ters sırada yükle (en yeniden en eskiye)
-                const sortedBins = [...allBins]
-                    .filter(bin => !bin.isMaster) // Master bin'i hariç tut (sadece yönetim için)
-                    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                
-                console.log(`Loading entries from ${sortedBins.length} bins...`);
-                
-                for (const bin of sortedBins) {
-                    try {
-                        const binData = await fetchViaProxy('/latest', 'GET', null, bin.id);
-                        
-                        if (binData.records && Array.isArray(binData.records)) {
-                            // Bin bilgilerini güncelle
-                            bin.entryCount = binData.records.length;
-                            bin.size = JSON.stringify(binData).length;
-                            bin.lastAccess = new Date().toISOString();
-                            
-                            allEntries = [...allEntries, ...binData.records];
-                            console.log(`Loaded ${binData.records.length} entries from bin ${bin.id}`);
-                        }
-                    } catch (error) {
-                        console.error(`Failed to load bin ${bin.id}:`, error);
-                    }
-                }
-                
-                // Eğer hiç bin yoksa, mevcut bin'den yükle (geçiş dönemi için)
-                if (allEntries.length === 0) {
-                    console.log('No bins found, trying to load from current bin...');
-                    try {
-                        const currentBinData = await fetchViaProxy('/latest', 'GET', null, MASTER_BIN_ID);
-                        if (currentBinData.records && Array.isArray(currentBinData.records)) {
-                            allEntries = currentBinData.records;
-                            console.log(`Loaded ${allEntries.length} entries from master bin`);
-                            
-                            // Mevcut verileri yeni bir bin'e taşı
-                            if (allEntries.length > 0) {
-                                console.log('Migrating data to new bin system...');
-                                await migrateToBinSystem(allEntries);
-                            }
-                        }
-                    } catch (error) {
-                        console.error('Failed to load from current bin:', error);
-                    }
-                }
-                
-                // Master bin'i güncelle (istatistikler için)
-                await updateMasterBin();
-                
-                return allEntries;
-            } catch (error) {
-                console.error('Load all entries failed:', error);
-                // Fallback: sadece aktif bin'den yükle
-                try {
-                    const activeBinData = await fetchViaProxy('/latest', 'GET', null, currentActiveBinId);
-                    return activeBinData.records || [];
-                } catch (fallbackError) {
-                    console.error('Fallback also failed:', fallbackError);
-                    return [];
-                }
-            }
-        }
-
-        // Mevcut verileri yeni bin sistemine taşı
-        async function migrateToBinSystem(entries) {
-            try {
-                // Yeni bir bin oluştur
-                const newBinId = await createNewBin();
-                
-                // Entry'leri yeni bin'e taşı
-                await fetchViaProxy('', 'PUT', {
-                    records: entries,
-                    createdAt: new Date().toISOString(),
-                    migratedFrom: MASTER_BIN_ID,
-                    entryCount: entries.length
-                }, newBinId);
-                
-                console.log(`Migrated ${entries.length} entries to new bin: ${newBinId}`);
-                
-                // Bin istatistiklerini güncelle
-                const binIndex = allBins.findIndex(bin => bin.id === newBinId);
-                if (binIndex !== -1) {
-                    allBins[binIndex].entryCount = entries.length;
-                    allBins[binIndex].size = JSON.stringify({ records: entries }).length;
-                }
-                
-                await updateMasterBin();
-                
-            } catch (error) {
-                console.error('Migration failed:', error);
-            }
-        }
-
-        // Bin istatistiklerini güncelle
-        function updateBinStats() {
-            const totalBins = allBins.filter(bin => !bin.isMaster).length;
-            const activeBin = allBins.find(bin => bin.id === currentActiveBinId);
-            const binSize = activeBin ? Math.round(activeBin.size / 1024) : 0;
-            
-            document.getElementById('total-bins').textContent = totalBins;
-            document.getElementById('active-bin').textContent = currentActiveBinId.substring(0, 8) + '...';
-            document.getElementById('bin-size').textContent = `${binSize} KB`;
-            
-            // Eğer bin boyutu limitine yakınsa uyarı göster
-            if (binSize > 80) {
-                document.getElementById('bin-size').style.color = '#ff5555';
-                document.getElementById('bin-size').innerHTML = `${binSize} KB <span style="color: #f9d71c;">(Nearly Full)</span>`;
-            } else {
-                document.getElementById('bin-size').style.color = '#90ee90';
-            }
-        }
-
-        // 3. TEMEL FONKSİYONLAR
+        // 3. INTERACTION FONKSİYONLARI - TAMAMEN YENİLENDİ
         async function loadInteractions() {
           try {
+            // Önce localStorage'dan yükle
+            const localLikes = localStorage.getItem('entryLikes');
+            const localPins = localStorage.getItem('entryPins');
+            
+            if (localLikes) {
+              likesCache.data = JSON.parse(localLikes);
+            }
+            if (localPins) {
+              pinsCache.data = JSON.parse(localPins);
+            }
+            
+            // Sonra sunucudan güncel verileri al
             const result = await fetchViaProxy('/b/68862fd97b4b8670d8a81945/latest');
-            likesCache.data = result.likes || {};
-            pinsCache.data = result.pins || {};
             
-            // View verilerini ayrı bir bin'den yükle
-            await loadViewCounts();
+            if (result.likes) {
+              // Sunucu verileriyle birleştir (sunucu öncelikli)
+              likesCache.data = { ...likesCache.data, ...result.likes };
+            }
+            if (result.pins) {
+              pinsCache.data = { ...pinsCache.data, ...result.pins };
+            }
             
-            // İstatistikleri güncelle
-            updateStatistics();
+            // Güncellenmiş verileri localStorage'a kaydet
+            localStorage.setItem('entryLikes', JSON.stringify(likesCache.data));
+            localStorage.setItem('entryPins', JSON.stringify(pinsCache.data));
+            
+            console.log('Interactions loaded:', { likes: likesCache.data, pins: pinsCache.data });
           } catch (error) {
             console.error('loadInteractions error:', error);
+            // Hata durumunda sadece localStorage'dan devam et
             try {
               const localLikes = localStorage.getItem('entryLikes') || '{}';
               const localPins = localStorage.getItem('entryPins') || '{}';
-              const localViews = localStorage.getItem('entryViews') || '{}';
               likesCache.data = JSON.parse(localLikes);
               pinsCache.data = JSON.parse(localPins);
-              viewsCache.data = JSON.parse(localViews);
-              updateStatistics();
-            } catch (parseError) {
-              console.Error('Local storage parse error:', parseError);
-            }
-          }
-        }
-        
-        // View sayacını yükle - YENİ FONKSİYON
-        async function loadViewCounts() {
-          try {
-            const result = await fetchViaProxy('/latest', 'GET', null, viewsBinId);
-            viewsCache.data = result.views || {};
-            viewsCache.lastUpdated = Date.now();
-            
-            // İstatistikleri güncelle
-            updateStatistics();
-          } catch (error) {
-            console.error('loadViewCounts error:', error);
-            try {
-              const localViews = localStorage.getItem('entryViews') || '{}';
-              viewsCache.data = JSON.parse(localViews);
             } catch (parseError) {
               console.error('Local storage parse error:', parseError);
+              likesCache.data = {};
+              pinsCache.data = {};
             }
           }
-        }
-        
-        // İstatistikleri güncelleme fonksiyonu
-        function updateStatistics() {
-          const totalLikes = Object.values(likesCache.data).reduce((sum, count) => sum + count, 0);
-          const totalPins = Object.values(pinsCache.data).reduce((sum, count) => sum + count, 0);
-          const totalViews = Object.values(viewsCache.data).reduce((sum, count) => sum + count, 0);
-          
-          document.getElementById('total-entries').textContent = allEntries.length;
-          document.getElementById('total-likes').textContent = totalLikes;
-          document.getElementById('total-pins').textContent = totalPins;
-          
-          // Mobil istatistikleri güncelle
-          document.getElementById('mobile-total-entries').textContent = allEntries.length;
-          document.getElementById('mobile-total-likes').textContent = totalLikes;
-          document.getElementById('mobile-total-pins').textContent = totalPins;
-          
-          // Bu ayın entry sayısını hesapla
-          const thisMonth = new Date().getMonth();
-          const thisYear = new Date().getFullYear();
-          const thisMonthEntries = allEntries.filter(entry => {
-            const entryDate = new Date(entry.date);
-            return entryDate.getMonth() === thisMonth && entryDate.getFullYear() === thisYear;
-          }).length;
-          
-          document.getElementById('this-month').textContent = thisMonthEntries;
-          document.getElementById('mobile-this-month').textContent = thisMonthEntries;
         }
 
-        // HTML içeriğini düzgün işlemek için yardımcı fonksiyon
-        function formatContent(content, shouldTruncate = false) {
-          // İlk temizlik: <br> etiketlerini standartlaştır ve boş <p> etiketlerini kaldır
-          content = content.replace(/<br\s*\/?>/gi, '<br>');
-          content = content.replace(/<p>\s*<\/p>/gi, '');
-          
-          // DOM temizliği için geçici bir div oluştur
-          const tempDiv = document.createElement('div');
-          tempDiv.innerHTML = content;
-          
-          // Boş <p> etiketlerini ve gereksiz boşlukları temizle
-          const paragraphs = tempDiv.querySelectorAll('p');
-          paragraphs.forEach(p => {
-            // İçeriği olmayan veya sadece boşluk içeren <p> etiketlerini kaldır
-            if (!p.textContent.trim() && p.children.length === 0) {
-              p.remove();
-            }
-          });
-          
-          // Gereksiz <br> etiketlerini temizle
-          const lineBreaks = tempDiv.querySelectorAll('br');
-          lineBreaks.forEach(br => {
-            // Eğer <br> etiketinden sonra başka bir <br> geliyorsa veya bir önceki kardeş yoksa kaldır
-            if (br.nextElementSibling && br.nextElementSibling.tagName === 'BR') {
-              br.remove();
-            }
-          });
-          
-          // İçeriği temizlenmiş olarak al
-          content = tempDiv.innerHTML.trim();
-          
-          // YouTube embed linklerini tespit ve ve iframe'e dönüştür
-          content = content.replace(/(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/g, 
-            '<div class="video-container"><iframe src="https://www.youtube.com/embed/$4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>');
-          
-          // Birden fazla resim için slider oluştur
-          content = content.replace(/(<img[^>]+>\s*){2,}/g, (imgs) => {
-            const images = imgs.match(/<img[^>]+>/g);
-            if (images && images.length > 1) {
-              return createImageSlider(images);
-            }
-            return imgs;
-          });
-          
-          return content;
-        }
-        
-        // HTML etiketlerini koruyarak kısaltma fonksiyonu - YENİ EKLENDİ
-        function truncateHTML(html, maxLength) {
-          // HTML etiketlerini koruyarak kısaltma
-          let length = 0;
-          let result = '';
-          let inTag = false;
-          let tagBuffer = '';
-          
-          for (let i = 0; i < html.length; i++) {
-            const char = html[i];
+        async function handleLikeClick(entryId, entryDiv) {
+          if (likesCache.isUpdating) {
+            console.log('Like update already in progress for entry:', entryId);
+            return;
+          }
+
+          likesCache.isUpdating = true;
+          const likeCountSpan = entryDiv.querySelector(".like-count");
+          const likeContainer = entryDiv.querySelector(".daisy-like");
+          const currentCount = parseInt(likeCountSpan.textContent) || 0;
+
+          try {
+            console.log('Adding like to entry:', entryId, 'Current count:', currentCount);
             
-            if (char === '<') {
-              inTag = true;
-              tagBuffer = char;
-            } else if (char === '>') {
-              inTag = false;
-              result += tagBuffer + char;
-              tagBuffer = '';
-            } else if (inTag) {
-              tagBuffer += char;
-            } else {
-              if (length < maxLength) {
-                result += char;
-                length++;
-              } else {
-                break;
-              }
-            }
+            // UI'ı anında güncelle
+            likeCountSpan.textContent = currentCount + 1;
+            likeContainer.classList.add("action-animation");
+            
+            // Yerel önbelleği güncelle
+            likesCache.data[entryId] = currentCount + 1;
+            localStorage.setItem('entryLikes', JSON.stringify(likesCache.data));
+            
+            // Sunucuyu güncelle
+            await updateInteractionsOnServer();
+            
+            console.log('Like added successfully to entry:', entryId);
+            
+          } catch (error) {
+            console.error('Like update failed:', error);
+            // Hata durumunda UI'ı geri al
+            likeCountSpan.textContent = currentCount;
+            likesCache.data[entryId] = currentCount;
+            localStorage.setItem('entryLikes', JSON.stringify(likesCache.data));
+          } finally {
+            likesCache.isUpdating = false;
+            setTimeout(() => {
+              likeContainer.classList.remove("action-animation");
+            }, 500);
           }
-          
-          // Kapanmamış etiketleri kapat
-          if (inTag && tagBuffer) {
-            result += tagBuffer + '>';
-          }
-          
-          return result;
-        }
-        
-        // Resim slider'ı oluşturma fonksiyonu - İLK KODDAN ALINDI
-        function createImageSlider(images) {
-          const sliderId = 'slider-' + Math.random().toString(36).substr(2, 9);
-          
-          let sliderHtml = `
-            <div class="image-slider" id="${sliderId}">
-              <div class="slider-container">
-          `;
-          
-          images.forEach(img => {
-            // Görüntü yüklendikten sonra slider'ı yeniden başlat
-            const imgWithLoad = img.replace('<img', '<img onload="initSlider(\'' + sliderId + '\')" ');
-            sliderHtml += `<div class="slider-item">${imgWithLoad}</div>`;
-          });
-          
-          sliderHtml += `
-              </div>
-              <div class="slider-nav">
-                <button class="slider-btn prev-btn"><i class="fas fa-chevron-left"></i></button>
-                <button class="slider-btn next-btn"><i class="fas fa-chevron-right"></i></button>
-              </div>
-              <div class="slider-dots">
-          `;
-          
-          for (let i = 0; i < images.length; i++) {
-            sliderHtml += `<div class="dot ${i === 0 ? 'active' : ''}" data-index="${i}"></div>`;
-          }
-          
-          sliderHtml += `
-              </div>
-            </div>
-          `;
-          
-          return sliderHtml;
         }
 
-        // Slider başlatma fonksiyonu - İLK KODDAN ALINDI
-        function initSlider(sliderId) {
-          const slider = document.getElementById(sliderId);
-          if (!slider) return;
-          
-          // Eğer bu slider zaten başlatıldıysa, önceki olay dinleyicilerini temizle
-          if (slidersState[sliderId]) {
-            const { prevBtn, nextBtn, dots, container, resizeObserver, touchStartHandler, touchEndHandler } = slidersState[sliderId];
-            
-            if (prevBtn && prevBtn.cloneNode) prevBtn.replaceWith(prevBtn.cloneNode(true));
-            if (nextBtn && nextBtn.cloneNode) nextBtn.replaceWith(nextBtn.cloneNode(true));
-            
-            if (dots && dots.length) {
-              dots.forEach((dot, index) => {
-                if (dot && dot.cloneNode) dot.replaceWith(dot.cloneNode(true));
-              });
-            }
-            
-            if (resizeObserver) {
-              resizeObserver.disconnect();
-            }
-            
-            if (touchStartHandler && touchEndHandler) {
-              slider.removeEventListener('touchstart', touchStartHandler);
-              slider.removeEventListener('touchend', touchEndHandler);
-            }
+        async function handlePinClick(entryId, entryDiv) {
+          if (pinsCache.isUpdating) {
+            console.log('Pin update already in progress for entry:', entryId);
+            return;
           }
-          
-          const container = slider.querySelector('.slider-container');
-          const items = slider.querySelectorAll('.slider-item');
-          const prevBtn = slider.querySelector('.prev-btn');
-          const nextBtn = slider.querySelector('.next-btn');
-          const dots = slider.querySelectorAll('.dot');
-          
-          if (!container || items.length === 0) return;
-          
-          let currentIndex = 0;
-          const totalItems = items.length;
-          
-          // Slider'ı güncelle
-          function updateSlider() {
-            // Konteyner genişliğini yeniden hesapla
-            const slideWidth = slider.offsetWidth;
-            container.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+
+          pinsCache.isUpdating = true;
+          const pinCountSpan = entryDiv.querySelector(".pin-count");
+          const pinContainer = entryDiv.querySelector(".pine-pin");
+          const currentCount = parseInt(pinCountSpan.textContent) || 0;
+
+          try {
+            console.log('Adding pin to entry:', entryId, 'Current count:', currentCount);
             
-            // Noktaları güncelle
-            dots.forEach((dot, index) => {
-              dot.classList.toggle('active', index === currentIndex);
+            // UI'ı anında güncelle
+            pinCountSpan.textContent = currentCount + 1;
+            pinContainer.classList.add("action-animation");
+            
+            // Yerel önbelleği güncelle
+            pinsCache.data[entryId] = currentCount + 1;
+            localStorage.setItem('entryPins', JSON.stringify(pinsCache.data));
+            
+            // Sunucuyu güncelle
+            await updateInteractionsOnServer();
+            
+            console.log('Pin added successfully to entry:', entryId);
+            
+          } catch (error) {
+            console.error('Pin update failed:', error);
+            // Hata durumunda UI'ı geri al
+            pinCountSpan.textContent = currentCount;
+            pinsCache.data[entryId] = currentCount;
+            localStorage.setItem('entryPins', JSON.stringify(pinsCache.data));
+          } finally {
+            pinsCache.isUpdating = false;
+            setTimeout(() => {
+              pinContainer.classList.remove("action-animation");
+            }, 500);
+          }
+        }
+
+        async function updateInteractionsOnServer() {
+          try {
+            await fetchViaProxy('/b/68862fd97b4b8670d8a81945', 'PUT', {
+              likes: likesCache.data,
+              pins: pinsCache.data,
+              lastUpdated: new Date().toISOString()
             });
-            
-            // Durumu güncelle
-            slidersState[sliderId].currentIndex = currentIndex;
+            console.log('Interactions updated on server successfully');
+          } catch (error) {
+            console.error('Failed to update interactions on server:', error);
+            throw error;
           }
-          
-          // Sonraki slayt
-          function nextSlide() {
-            currentIndex = (currentIndex + 1) % totalItems;
-            updateSlider();
-          }
-          
-          // Önceki slayt
-          function prevSlide() {
-            currentIndex = (currentIndex - 1 + totalItems) % totalItems;
-            updateSlider();
-          }
-          
-          // Olay dinleyicileri ekle
-          if (nextBtn) {
-            nextBtn.addEventListener('click', nextSlide);
-            slidersState[sliderId] = {
-              ...slidersState[sliderId],
-              nextBtn,
-              nextHandler: nextSlide
-            };
-          }
-          
-          if (prevBtn) {
-            prevBtn.addEventListener('click', prevSlide);
-            slidersState[sliderId] = {
-              ...slidersState[sliderId],
-              prevBtn,
-              prevHandler: prevSlide
-            };
-          }
-          
-          // Noktalara tıklama
-          dots.forEach((dot, index) => {
-            const clickHandler = () => {
-              currentIndex = index;
-              updateSlider();
-            };
-            
-            dot.addEventListener('click', clickHandler);
-            slidersState[sliderId] = {
-              ...slidersState[sliderId],
-              [`dotHandler-${index}`]: clickHandler
-            };
-          });
-          
-          // Mobil dokunma olayları
-          let startX = 0;
-          let endX = 0;
-          
-          const touchStartHandler = (e) => {
-            startX = e.touches[0].clientX;
-          };
-          
-          const touchEndHandler = (e) => {
-            endX = e.changedTouches[0].clientX;
-            handleSwipe();
-          };
-          
-          slider.addEventListener('touchstart', touchStartHandler, { passive: true });
-          slider.addEventListener('touchend', touchEndHandler, { passive: true });
-          
-          slidersState[sliderId] = {
-            ...slidersState[sliderId],
-            touchStartHandler,
-            touchEndHandler
-          };
-          
-          function handleSwipe() {
-            const diffX = startX - endX;
-            
-            // Minimum kayma mesafesi
-            if (Math.abs(diffX) > 50) {
-              if (diffX > 0) {
-                // Sağa kaydırma - sonraki slayt
-                nextSlide();
-              } else {
-                // Sola kaydırma - önceki slayt
-                prevSlide();
-              }
-            }
-          }
-          
-          // İlk slider konumunu ayarla
-          updateSlider();
-          
-          // Yeniden boyutlandırmada slider'ı güncelle
-          const resizeObserver = new ResizeObserver(updateSlider);
-          resizeObserver.observe(slider);
-          
-          slidersState[sliderId] = {
-            ...slidersState[sliderId],
-            container,
-            items,
-            dots,
-            currentIndex,
-            totalItems,
-            resizeObserver
-          };
         }
 
-        // Tüm slider'ları başlat - GÜNCELLENMİŞ
-        function initAllSliders() {
-          const sliders = document.querySelectorAll('.image-slider');
-          sliders.forEach(slider => {
-            initSlider(slider.id);
-          });
-        }
-
-        // Görsel modal işlevselliği - TAMAMEN YENİLENDİ
-        function setupImageModal() {
-            const modal = document.getElementById("imageModal");
-            const modalImg = document.getElementById("modalImage");
-            const closeBtn = document.getElementsByClassName("close")[0];
-            const prevBtn = document.querySelector(".modal-prev-btn");
-            const nextBtn = document.querySelector(".modal-next-btn");
-            const counter = document.getElementById("modalCounter");
-            
-            // Modal'ı kapat
-            function closeModal() {
-                modal.style.display = "none";
-                document.body.style.overflow = "auto";
-                // Modal kapatıldığında event listener'ları temizle
-                document.removeEventListener('keydown', handleKeyDown);
-            }
-            
-            // Modal'ı aç
-            function openModal(images, index) {
-                currentModalImages = images;
-                currentModalIndex = index;
-                updateModalImage();
-                modal.style.display = "block";
-                document.body.style.overflow = "hidden";
-                // Klavye event listener'ını ekle
-                document.addEventListener('keydown', handleKeyDown);
-            }
-            
-            // Modal resmini güncelle
-            function updateModalImage() {
-                if (currentModalImages.length === 0) return;
-                modalImg.src = currentModalImages[currentModalIndex].src;
-                modalImg.alt = currentModalImages[currentModalIndex].alt;
-                updateCounter();
-            }
-            
-            // Sayacı güncelle
-            function updateCounter() {
-                if (counter) {
-                    counter.textContent = `${currentModalIndex + 1} / ${currentModalImages.length}`;
-                }
-            }
-            
-            // Sonraki resim
-            function nextImage() {
-                if (currentModalImages.length === 0) return;
-                currentModalIndex = (currentModalIndex + 1) % currentModalImages.length;
-                updateModalImage();
-            }
-            
-            // Önceki resim
-            function prevImage() {
-                if (currentModalImages.length === 0) return;
-                currentModalIndex = (currentModalIndex - 1 + currentModalImages.length) % currentModalImages.length;
-                updateModalImage();
-            }
-            
-            // Klavye olaylarını yönet
-            function handleKeyDown(event) {
-                if (event.key === "ArrowLeft") {
-                    prevImage();
-                } else if (event.key === "ArrowRight") {
-                    nextImage();
-                } else if (event.key === "Escape") {
-                    closeModal();
-                }
-            }
-            
-            // Kapatma butonu
-            closeBtn.onclick = closeModal;
-            
-            // Modal dışına tıklayınca kapat
-            modal.onclick = function(event) {
-                if (event.target === modal) {
-                    closeModal();
-                }
-            };
-            
-            // Önceki/Sonraki butonları
-            prevBtn.onclick = function(e) {
-                e.stopPropagation();
-                prevImage();
-            };
-            
-            nextBtn.onclick = function(e) {
-                e.stopPropagation();
-                nextImage();
-            };
-            
-            // Tüm entry görsellerine tıklanabilirlik ekle
-            document.addEventListener('click', function(event) {
-                if (event.target.tagName === 'IMG' && event.target.closest('.content')) {
-                    // Tıklanan resmin içinde bulunduğu slider'ı bul
-                    const slider = event.target.closest('.image-slider');
-                    let images = [];
-                    let index = 0;
-                    
-                    if (slider) {
-                        // Slider içindeki tüm resimleri al
-                        const sliderImgs = slider.querySelectorAll('.slider-item img');
-                        images = Array.from(sliderImgs);
-                        // Tıklanan resmin index'ini bul
-                        index = images.findIndex(img => img === event.target);
-                    } else {
-                        // Slider yoksa, sadece tıklanan resmi kullan
-                        images = [event.target];
-                        index = 0;
-                    }
-                    
-                    openModal(images, index);
-                }
-            });
-            
-            // Mobil dokunma olayları (swipe)
-            let touchStartX = 0;
-            let touchEndX = 0;
-            
-            modalImg.addEventListener('touchstart', function(event) {
-                touchStartX = event.changedTouches[0].screenX;
-            }, false);
-            
-            modalImg.addEventListener('touchend', function(event) {
-                touchEndX = event.changedTouches[0].screenX;
-                handleSwipe();
-            }, false);
-            
-            function handleSwipe() {
-                const diffX = touchEndX - touchStartX;
-                
-                if (Math.abs(diffX) > 50) { // Minimum kayma mesafesi
-                    if (diffX > 0) {
-                        // Sağa kaydırma - önceki resim
-                        prevImage();
-                    } else {
-                        // Sola kaydırma - sonraki resim
-                        nextImage();
-                    }
-                }
-            }
-        }
-
-        // ÇEVİRİ İKONLARINI EKLEME FONKSİYONU
-        async function addTranslationIcons() {
-          const entries = document.querySelectorAll(".entry");
-          if (entries.length === 0) return;
-
-          entries.forEach(entry => {
-            const idDiv = entry.querySelector(".entry-id");
-            const contentDiv = entry.querySelector(".content");
-            const originalContent = contentDiv?.innerHTML?.trim();
-            if (!idDiv || !originalContent) return;
-            
-            if (idDiv.querySelector(".translation-icon")) return;
-
-            const idValue = parseInt(idDiv.textContent.replace(/\D/g, ''));
-            if (isNaN(idValue)) return;
-
-            const translationEntry = allEntries.find(item => item.id === idValue);
-            
-            if (!translationEntry?.content_tr) return;
-
-            const icon = document.createElement("span");
-            icon.classList.add("translation-icon", "fi", "fi-tr");
-            icon.title = "Çeviriyi göster/gizle";
-            
-            const langCode = translationEntry?.lang || 'tr';
-            icon.classList.add(`fi-${langCode}`);
-
-            icon.addEventListener("click", (e) => {
-              e.stopPropagation();
-              icon.classList.toggle("active");
+        // 4. EVENT LISTENER SETUP - YENİ FONKSİYON
+        function setupInteractionListeners() {
+          // Delegated event listeners for Daisy and Pine buttons
+          document.addEventListener('click', function(e) {
+            // Daisy like butonu
+            if (e.target.closest('.daisy-like')) {
+              const likeContainer = e.target.closest('.daisy-like');
+              const entryId = likeContainer.dataset.entryId;
+              const entryDiv = likeContainer.closest('.entry');
               
-              if (icon.classList.contains("active")) {
-                if (translationEntry.content_tr) {
-                  contentDiv.innerHTML = formatContent(translationEntry.content_tr);
-                }
-              } else {
-                contentDiv.innerHTML = originalContent;
+              if (entryId && entryDiv) {
+                e.preventDefault();
+                e.stopPropagation();
+                handleLikeClick(entryId, entryDiv);
               }
-            });
-
-            document.addEventListener("click", (e) => {
-              if (!icon.contains(e.target) && !contentDiv.contains(e.target)) {
-                icon.classList.remove("active");
-                contentDiv.innerHTML = originalContent;
+            }
+            
+            // Pine pin butonu
+            if (e.target.closest('.pine-pin')) {
+              const pinContainer = e.target.closest('.pine-pin');
+              const entryId = pinContainer.dataset.entryId;
+              const entryDiv = pinContainer.closest('.entry');
+              
+              if (entryId && entryDiv) {
+                e.preventDefault();
+                e.stopPropagation();
+                handlePinClick(entryId, entryDiv);
               }
-            });
-
-            idDiv.appendChild(icon);
+            }
           });
+          
+          console.log('Interaction listeners setup completed');
         }
 
+        // 5. ENTRY OLUŞTURMA FONKSİYONU - GÜNCELLENDİ
         function createEntryElement(entry, depth = 0) {
           const entryDiv = document.createElement("div");
           entryDiv.className = `entry ${depth > 0 ? 'child-entry' : ''}`;
@@ -2484,26 +1853,13 @@
           const pinCount = pinsCache.data[entry.id] || 0;
           const viewCount = viewsCache.data[entry.id] || 0;
 
-          // Metin uzunluğunu kontrol et (HTML etiketleri olmadan)
-          const textContent = entry.content.replace(/<[^>]*>/g, '');
-          const shouldTruncate = textContent.length > 632;
-
-          // İçeriği formatla (more butonu eklemeden)
-          const formattedContent = formatContent(entry.content, false);
-          let shortContent = '';
-          
-          if (shouldTruncate) {
-            // Kısa içerik için HTML'i kısalt
-            shortContent = truncateHTML(formattedContent, 5000);
-          }
-
           entryDiv.innerHTML = `
             <div class="timestamp">
               <span class="fa-solid fa-bug bug-iconentry"></span> ${time}
             </div>
             <div class="entry-id">#${entry.id}</div>
             <div class="content-wrapper">
-                <div class="content ${shouldTruncate ? 'collapsed' : ''}">${shouldTruncate ? shortContent : formattedContent}</div>
+                <div class="content">${entry.content}</div>
             </div>
             <div class="interaction-buttons">
               <div class="view-count">
@@ -2523,804 +1879,25 @@
             </div>
           `;
 
-          // Eğer kısaltma yapıldıysa, more butonu ekle ve tam içeriği sakla
-          if (shouldTruncate) {
-            const contentWrapper = entryDiv.querySelector('.content-wrapper');
-            const seeMoreContainer = document.createElement('div');
-            seeMoreContainer.className = 'see-more-container';
-            seeMoreContainer.innerHTML = `<span class="see-more-btn">More..</span>`;
-            contentWrapper.appendChild(seeMoreContainer);
-            
-            // Tam içeriği sakla
-            const contentDiv = entryDiv.querySelector('.content');
-            contentDiv.setAttribute('data-full-content', formattedContent);
-          }
-
-          const likeIcon = entryDiv.querySelector(".daisy-like");
-          likeIcon?.addEventListener("click", () => handleLikeClick(entry.id, entryDiv));
-
-          const pinIcon = entryDiv.querySelector(".pine-pin");
-          pinIcon?.addEventListener("click", () => handlePinClick(entry.id, entryDiv));
-
-          const shareIcon = entryDiv.querySelector(".share-entry");
-          shareIcon?.addEventListener("click", () => handleShareClick(entry.id));
-
           return entryDiv;
         }
 
-        // Entry'leri gruplama fonksiyonu
-        function groupEntries(entries) {
-          const parentMap = new Map();
-          const childMap = new Map();
-          const parentEntries = [];
-          
-          // Önce tüm entry'leri parent and child olarak ayır
-          entries.forEach(entry => {
-            if (!entry.references || entry.references.length === 0) {
-              parentEntries.push(entry);
-            } else {
-              const parentId = entry.references[0];
-              if (!childMap.has(parentId)) {
-                childMap.set(parentId, []);
-              }
-              childMap.get(parentId).push(entry);
-            }
-          });
-          
-          // Parent entry'leri tarihe göre sırala (yeniden eskiye)
-          parentEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
-          
-          // Parent entry'leri grupla ve child'larını ekle
-          const groups = [];
-          parentEntries.forEach(parent => {
-            const children = childMap.get(parent.id) || [];
-            
-            // Child'ları tarihe göre sırala (yeniden eskiye)
-            children.sort((a, b) => new Date(b.date) - new Date(a.date));
-            
-            // Grubun tarihini belirle (en yeni tarih - parent veya child'lardan)
-            const groupDate = children.length > 0 
-              ? new Date(Math.max(new Date(parent.date), ...children.map(c => new Date(c.date))))
-              : new Date(parent.date);
-            
-            groups.push({
-              parent,
-              children,
-              groupDate
-            });
-          });
-          
-          // Grupları grup tarihine göre sırala (yeniden eskiye)
-          groups.sort((a, b) => b.groupDate - a.groupDate);
-          
-          return groups;
-        }
-
-        function displayEntries(startIndex, count, callback) {
-          const container = document.getElementById("entries");
-          const loadingElement = document.getElementById("loading");
-          const loadMoreBtn = document.getElementById("loadMoreBtn");
-          
-          if (startIndex >= groupedEntries.length) {
-            loadMoreBtn.style.display = 'none';
-            if (callback) callback();
-            return;
-          }
-          
-          loadingElement.style.display = 'block';
-          
-          // Yeni grupları ekle
-          const endIndex = Math.min(startIndex + count, groupedEntries.length);
-          for (let i = startIndex; i < endIndex; i++) {
-            const group = groupedEntries[i];
-            
-            // Grup container'ı oluştur
-            const groupDiv = document.createElement("div");
-            groupDiv.className = "entry-group";
-            groupDiv.id = `group-${group.parent.id}`;
-            
-            // Parent entry'yi ekle
-            const parentElement = createEntryElement(group.parent, 0);
-            groupDiv.appendChild(parentElement);
-            
-            // Child entry'leri ekle
-            group.children.forEach(child => {
-              const childElement = createEntryElement(child, 1);
-              groupDiv.appendChild(childElement);
-            });
-            
-            container.appendChild(groupDiv);
-          }
-          
-          displayedEntries = endIndex;
-          document.getElementById('entryCount').textContent = `Total ${allEntries.length} entries loaded`;
-          
-          // İstatistikleri güncelle
-          updateStatistics();
-          
-          // Çeviri ikonlarını ekle
-          addTranslationIcons();
-          
-          // More butonları için event listener ekle
-          setupSeeMoreButtons();
-          
-          // Slider'ları başlat
-          setTimeout(() => {
-            initAllSliders();
-            
-            // Görünür slider'ların boyutlarını güncelle
-            document.querySelectorAll('.image-slider').forEach(slider => {
-              if (slider.offsetParent !== null) {
-                const event = new Event('resize');
-                window.dispatchEvent(event);
-              }
-            });
-          }, 100);
-          
-          // GÖRÜNÜM SAYAÇLARINI GÜNCELLE - HER ENTRY İÇİN AYRI OBSERVER
-          setupViewCountObservers();
-          
-          loadingElement.style.display = 'none';
-          
-          // Eğer tüm entry'ler yüklendiyse "More Entry" butonunu gizle
-          if (displayedEntries >= groupedEntries.length) {
-            loadMoreBtn.style.display = 'none';
-          } else {
-            loadMoreBtn.style.display = 'block';
-          }
-          
-          // Daha fazla yükle butonunun metnini güncelle
-          const remaining = groupedEntries.length - displayedEntries;
-          loadMoreBtn.textContent = `More Entry (${Math.min(remaining, entriesPerPage)}) ${remaining > 0 ? '' : ''}`;
-          
-          // Callback'i çağır (hash kontrolü için)
-          if (callback) callback();
-        }
-
-        // More butonları için event listener - YENİ EKLENDİ
-        function setupSeeMoreButtons() {
-          document.querySelectorAll('.see-more-btn').forEach(btn => {
-            // Eğer bu buton zaten işlenmişse atla
-            if (btn.getAttribute('data-processed') === 'true') return;
-            
-            btn.setAttribute('data-processed', 'true');
-            
-            btn.addEventListener('click', function(e) {
-              e.preventDefault();
-              const contentWrapper = this.closest('.content-wrapper');
-              const contentDiv = contentWrapper.querySelector('.content');
-              const isCollapsed = contentDiv.classList.contains('collapsed');
-              
-              if (isCollapsed) {
-                // İçeriği genişlet
-                const fullContent = contentDiv.getAttribute('data-full-content');
-                contentDiv.innerHTML = fullContent;
-                contentDiv.classList.remove('collapsed');
-                this.textContent = '..Less';
-                
-                // Sadece bu entry içindeki slider'ları başlat
-                const sliders = contentDiv.querySelectorAll('.image-slider');
-                sliders.forEach(slider => {
-                  initSlider(slider.id);
-                });
-              } else {
-                // İçeriği daralt
-                const textContent = contentDiv.textContent || contentDiv.innerText;
-                const shortContent = truncateHTML(contentDiv.innerHTML, 632);
-                contentDiv.innerHTML = shortContent;
-                contentDiv.classList.add('collapsed');
-                this.textContent = 'More';
-              }
-            });
-          });
-        }
-
-        // 4. INTERACTION FONKSİYONLARI
-        async function handleLikeClick(entryId, entryDiv) {
-          if (likesCache.isUpdating) return;
-
-          likesCache.isUpdating = true;
-          const likeCountSpan = entryDiv.querySelector(".like-count");
-          const likeContainer = entryDiv.querySelector(".daisy-like");
-          const currentCount = parseInt(likeCountSpan.textContent) || 0;
-
-          try {
-            likeCountSpan.textContent = currentCount + 1;
-            likeContainer.classList.add("action-animation");
-            
-            likesCache.data[entryId] = currentCount + 1;
-            localStorage.setItem('entryLikes', JSON.stringify(likesCache.data));
-            
-            await updateInteractionsOnServer(entryId, currentCount + 1, null);
-            likesCache.lastUpdated = Date.now();
-            
-            // İstatistikleri güncelle
-            updateStatistics();
-          } catch (error) {
-            console.error('Like update failed:', error);
-            likeCountSpan.textContent = currentCount;
-            likesCache.data[entryId] = currentCount;
-          } finally {
-            likesCache.isUpdating = false;
-            setTimeout(() => {
-              likeContainer.classList.remove("action-animation");
-            }, 500);
-          }
-        }
-
-        async function handlePinClick(entryId, entryDiv) {
-          if (pinsCache.isUpdating) return;
-
-          pinsCache.isUpdating = true;
-          const pinCountSpan = entryDiv.querySelector(".pin-count");
-          const pinContainer = entryDiv.querySelector(".pine-pin");
-          const currentCount = parseInt(pinCountSpan.textContent) || 0;
-
-          try {
-            pinCountSpan.textContent = currentCount + 1;
-            pinContainer.classList.add("action-animation");
-            
-            pinsCache.data[entryId] = currentCount + 1;
-            localStorage.setItem('entryPins', JSON.stringify(pinsCache.data));
-            
-            await updateInteractionsOnServer(entryId, null, currentCount + 1);
-            pinsCache.lastUpdated = Date.now();
-            
-            // İstatistikleri güncelle
-            updateStatistics();
-          } catch (error) {
-            console.error('Pin update failed:', error);
-            pinCountSpan.textContent = currentCount;
-            pinsCache.data[entryId] = currentCount;
-          } finally {
-            pinsCache.isUpdating = false;
-            setTimeout(() => {
-              pinContainer.classList.remove("action-animation");
-            }, 500);
-          }
-        }
-
-        // GÖRÜNÜM SAYACI GÜNCELLEME FONKSİYONU - TAMAMEN YENİLENDİ
-        async function updateViewCount(entryId) {
-          if (viewsCache.isUpdating) return;
-          
-          // Benzersiz bir kullanıcı fingerprint'i oluştur
-          const fingerprint = await generateFingerprint();
-          
-          // Aynı fingerprint ile aynı entry için birden fazla görüntülenme saymasın
-          const viewedEntries = JSON.parse(sessionStorage.getItem('viewedEntries') || '{}');
-          if (viewedEntries[`${entryId}-${fingerprint}`]) return;
-          
-          // Yerel önbellekte view sayısını güncelle
-          const currentCount = viewsCache.data[entryId] || 0;
-          viewsCache.data[entryId] = currentCount + 1;
-          
-          // UI'da görüntülenme sayısını güncelle
-          const viewCountElement = document.querySelector(`#entry-${entryId} .view-count`);
-          if (viewCountElement) {
-            viewCountElement.innerHTML = `<i class="fas fa-eye"> </i> ${currentCount + 1}`;
-          }
-          
-          // Oturumda bu entry'nin bu fingerprint ile görüntülendiğini işaretle
-          viewedEntries[`${entryId}-${fingerprint}`] = true;
-          sessionStorage.setItem('viewedEntries', JSON.stringify(viewedEntries));
-          
-          // Bekleyen güncellemelere ekle (anında değil, periyodik olarak gönderilecek)
-          pendingViewUpdates[entryId] = (pendingViewUpdates[entryId] || 0) + 1;
-          
-          // IP ve view bilgisini kaydet
-          logViewIp(entryId, fingerprint);
-          
-          // İstatistikleri güncelle
-          updateStatistics();
-        }
-
-        // Fingerprint oluşturma fonksiyonu
-        async function generateFingerprint() {
-          // IP bilgisini al
-          let ip = 'unknown';
-          try {
-            const ipResponse = await fetch('https://ipinfo.io/json?token=68a1229187303a');
-            const ipData = await ipResponse.json();
-            ip = ipData.ip;
-          } catch (error) {
-            console.error('IP alınamadı:', error);
-          }
-          
-          // Diğer kullanıcı bilgilerini topla
-          const userAgent = navigator.userAgent;
-          const language = navigator.language;
-          const screenResolution = `${screen.width}x${screen.height}`;
-          const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-          
-          // Bu bilgileri birleştir ve hash'le (basit bir hash)
-          const dataString = `${ip}-${userAgent}-${language}-${screenResolution}-${timezone}`;
-          let hash = 0;
-          for (let i = 0; i < dataString.length; i++) {
-            const char = dataString.charCodeAt(i);
-            hash = ((hash << 5) - hash) + char;
-            hash = hash & hash; // 32-bit integer'a dönüştür
-          }
-          
-          return hash.toString();
-        }
-
-        // BEKLEYEN VIEW GÜNCELLEMELERİNİ GÖNDER - YENİ FONKSİYON
-        async function sendPendingViewUpdates() {
-          if (Object.keys(pendingViewUpdates).length === 0 || viewsCache.isUpdating) return;
-          
-          viewsCache.isUpdating = true;
-          
-          try {
-            // Mevcut view verilerini al
-            const currentViews = { ...viewsCache.data };
-            
-            // Sunucudaki mevcut view verilerini al
-            const serverData = await fetchViaProxy('/latest', 'GET', null, viewsBinId);
-            const serverViews = serverData.views || {};
-            
-            // Yerel verilerle sunucu verilerini birleştir
-            const mergedViews = { ...serverViews };
-            for (const [entryId, count] of Object.entries(pendingViewUpdates)) {
-              mergedViews[entryId] = (mergedViews[entryId] || 0) + count;
-            }
-            
-            // Sunucuyu güncelle
-            await fetchViaProxy('', 'PUT', { views: mergedViews }, viewsBinId);
-            
-            // Bekleyen güncellemeleri temizle
-            for (const entryId of Object.keys(pendingViewUpdates)) {
-              delete pendingViewUpdates[entryId];
-            }
-            
-            // İstatistikleri güncelle
-            updateStatistics();
-            
-          } catch (error) {
-            console.error('Pending view updates failed:', error);
-          } finally {
-            viewsCache.isUpdating = false;
-          }
-        }
-
-        // IP VE İSTATİSTİK KAYDET - GÜNCELLENDİ (fingerprint eklendi)
-        async function logViewIp(entryId, fingerprint) {
-          try {
-            // IP bilgisini al
-            const ipResponse = await fetch('https://ipinfo.io/json?token=68a1229187303a');
-            const ipData = await ipResponse.json();
-            
-            // Mevcut istatistikleri al
-            const currentStats = await fetchViaProxy('/latest', 'GET', null, viewIpsBinId);
-            
-            // Yeni ziyaretçi kaydı oluştur
-            const newVisitor = {
-              ip: ipData.ip,
-              userAgent: navigator.userAgent,
-              timestamp: new Date().toISOString(),
-              entryId: entryId,
-              country: ipData.country,
-              city: ipData.city,
-              region: ipData.region,
-              fingerprint: fingerprint // fingerprint'i de kaydet
-            };
-            
-            // İstatistikleri güncelle
-            const updatedStats = {
-              statistics: {
-                totalViews: (currentStats.statistics?.totalViews || 0) + 1,
-                uniqueVisitors: currentStats.statistics?.uniqueVisitors || 0,
-                viewsToday: currentStats.statistics?.viewsToday || 0,
-                viewsThisMonth: currentStats.statistics?.viewsThisMonth || 0
-              },
-              visitors: [
-                ...(currentStats.visitors || []),
-                newVisitor
-              ]
-            };
-            
-            // Benzersiz ziyaretçi sayısını hesapla (fingerprint'e göre)
-            const uniqueFingerprints = new Set((currentStats.visitors || []).map(v => v.fingerprint));
-            uniqueFingerprints.add(fingerprint);
-            updatedStats.statistics.uniqueVisitors = uniqueFingerprints.size;
-            
-            // Günlük ve aylık istatistikleri güncelle
-            const now = new Date();
-            const today = now.toISOString().split('T')[0];
-            const thisMonth = now.toISOString().substring(0, 7);
-            
-            const todayViews = (currentStats.visitors || []).filter(v => {
-              return v.timestamp && v.timestamp.startsWith(today);
-            }).length + 1;
-            
-            const monthViews = (currentStats.visitors || []).filter(v => {
-              return v.timestamp && v.timestamp.startsWith(thisMonth);
-            }).length + 1;
-            
-            updatedStats.statistics.viewsToday = todayViews;
-            updatedStats.statistics.viewsThisMonth = monthViews;
-            
-            // Sunucuyu güncelle
-            await fetchViaProxy('', 'PUT', updatedStats, viewIpsBinId);
-            
-          } catch (error) {
-            console.error('IP logging failed:', error);
-          }
-        }
-
-       // Intersection Observer ile görünür entry'lerın view count'unu güncelle - İYİLEŞTİRİLDİ
-        function setupViewCountObservers() {
-          const entries = document.querySelectorAll('.entry');
-          
-          const observerOptions = {
-            root: null,
-            rootMargin: '100px', // Daha erken tetikleme için margin ekle
-            threshold: 0.3 // %30'u göründüğünde tetikle (uzun entry'ler için)
-          };
-          
-          const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-              if (entry.isIntersecting) {
-                const entryId = entry.target.id.replace('entry-', '');
-                updateViewCount(entryId);
-                // Güncelleme yapıldıktan sonra observe'i durdur
-                observer.unobserve(entry.target);
-              }
-            });
-          }, observerOptions);
-          
-          // Tüm entry'leri gözle
-          entries.forEach(entry => {
-            observer.observe(entry);
-          });
-        }
-
-        async function handleShareClick(entryId) {
-          const entryUrl = `${window.location.origin}${window.location.pathname}#entry-${entryId}`;
-          
-          if (navigator.share) {
-            try {
-              await navigator.share({
-                title: 'Adem Bayazıt - LadyBuG Entry',
-                text: 'Bu entry\'i paylaşmak istiyor musunuz?',
-                url: entryUrl,
-              });
-            } catch (error) {
-              console.log('Paylaşım iptal edildi veya hata oluştu:', error);
-            }
-          } else {
-            // Web Share API desteklenmiyorsa, linki kopyala
-            await handleCopyLinkClick(entryId);
-          }
-        }
-
-        async function handleCopyLinkClick(entryId) {
-          const entryUrl = `${window.location.origin}${window.location.pathname}#entry-${entryId}`;
-          
-          try {
-            await navigator.clipboard.writeText(entryUrl);
-            alert('Link panoya kopyalandı!');
-          } catch (error) {
-            console.error('Link kopyalanırken hata oluştu:', error);
-            // Fallback için
-            const textArea = document.createElement('textarea');
-            textArea.value = entryUrl;
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-            alert('Link panoya kopyalandı!');
-          }
-        }
-
-        async function updateInteractionsOnServer(entryId, newLikeCount, newPinCount) {
-          const updatedLikes = newLikeCount !== null ? { ...likesCache.data, [entryId]: newLikeCount } : likesCache.data;
-          const updatedPins = newPinCount !== null ? { ...pinsCache.data, [entryId]: newPinCount } : pinsCache.data;
-
-          try {
-            await fetchViaProxy('/b/68862fd97b4b8670d8a81945', 'PUT', {
-              likes: updatedLikes,
-              pins: updatedPins
-            });
-          } catch (error) {
-            throw new Error('Failed to update data on server');
-          }
-        }
-
-        // 5. YENİ ENTRY KONTROLÜ ve BİLDİRİM
-        function startPolling() {
-          // 30 saniyede bir yeni entry kontrol et
-          checkInterval = setInterval(() => {
-            checkForNewEntries();
-          }, 30000);
-        }
-
-        async function checkForNewEntries() {
-          try {
-            // Tüm bin'leri kontrol et
-            const allServerEntries = await loadAllEntries();
-            
-            // Sunucudaki en yeni entry'nin ID'sini bul
-            const newestServerEntry = allServerEntries.reduce((newest, entry) => {
-              return (!newest || entry.id > newest.id) ? entry : newest;
-            }, { id: 0 });
-            
-            // İstemcideki en yeni entry ID'si
-            const clientNewestEntryId = allEntries.length > 0 ? Math.max(...allEntries.map(e => e.id)) : 0;
-            
-            // Sunucuda daha yeni bir entry var mı?
-            if (newestServerEntry.id > clientNewestEntryId && newestServerEntry.id > lastNotifiedEntryId) {
-              // Yeni entry sayısını hesapla
-              const newEntryCount = allServerEntries.filter(entry => entry.id > clientNewestEntryId).length;
-              
-              // Bildirim göster
-              showNewEntriesNotification(newEntryCount);
-              newEntriesCount = newEntryCount;
-              
-              // Push bildirimi gönder
-              if (document.visibilityState !== 'visible') {
-                sendNotification(newestServerEntry);
-              }
-              
-              lastNotifiedEntryId = newestServerEntry.id;
-            }
-          } catch (error) {
-            console.error('Yeni entry kontrol hatası:', error);
-          }
-        }
-
-        // Bildirim gönderme - Sadece sayfa görünür değilse çalışacak
-        function sendNotification(entry) {
-          // Sayfa görünür durumdaysa bildirim gönderme
-          if (document.visibilityState === 'visible') {
-            return;
-          }
-
-          if (!("Notification" in window)) {
-            console.log("This browser does not support notifications");
-            return;
-          }
-          
-          if (Notification.permission === "granted") {
-            const options = {
-              body: entry.content.replace(/<[^>]*>/g, '').substring(0, 100) + '...',
-              icon: 'https://adembayazit.com/IMAGES/ab.png',
-              badge: 'https://adembayazit.com/IMAGES/ab.png',
-              vibrate: [200, 100, 200],
-              tag: 'new-entry',
-              data: {
-                url: `https://adembayazit.com/microblog#entry-${entry.id}`
-              }
-            };
-            
-            navigator.serviceWorker.ready.then(function(registration) {
-              registration.showNotification('Yeni LadyBuG Entry!', options);
-            });
-          }
-        }
-        
-        function showNewEntriesNotification(count) {
-          // Önceki bildirim varsa kaldır
-          if (notificationElement) {
-            notificationElement.remove();
-          }
-          
-          if (notificationTimeout) {
-            clearTimeout(notificationTimeout);
-          }
-          
-          // Bildirim oluştur
-          notificationElement = document.createElement('div');
-          notificationElement.className = 'new-entry-notification';
-          notificationElement.innerHTML = `
-            <button class="minimize-btn">−</button>
-            <div class="notification-content">
-              <div style="margin-bottom: 10px; font-weight: bold;">
-                <i class="fa-solid fa-bug bug-icon"></i> ${count} New Entries!
-              </div>
-              <div style="font-size: 14px; margin-bottom: 10px;">
-                Click to refresh and view new entries.
-              </div>
-            </div>
-            <div class="notification-bell">
-              <i class="fa-solid fa-bug bug-icon"></i>
-              <span class="notification-count">${count}</span>
-            </div>
-          `;
-          
-          notificationElement.addEventListener('click', (e) => {
-            // Minimize butonuna tıklanmışsa küçült
-            if (e.target.classList.contains('minimize-btn')) {
-              e.stopPropagation();
-              minimizeNotification(count);
-              return;
-            }
-            
-            // Diğer tıklamalarda sayfayı yenile
-            location.reload();
-          });
-          
-          document.body.appendChild(notificationElement);
-          
-          // 10 saniye sonra bildirimi otomatik küçült
-          notificationTimeout = setTimeout(() => {
-            minimizeNotification(count);
-          }, 10000);
-        }
-        
-        function minimizeNotification(count) {
-          if (notificationElement) {
-            notificationElement.classList.add('minimized');
-            
-            // Sayıyı güncelle
-            const countElement = notificationElement.querySelector('.notification-count');
-            if (countElement) {
-              countElement.textContent = count;
-            }
-            
-            // Küçültülmüş bildirime tıklanınca tekrar büyüt
-            const handleMinimizedClick = () => {
-              notificationElement.classList.remove('minimized');
-              notificationElement.removeEventListener('click', handleMinimizedClick);
-              
-              // 10 saniye sonra tekrar küçült
-              notificationTimeout = setTimeout(() => {
-                minimizeNotification(count);
-              }, 10000);
-            };
-            
-            notificationElement.addEventListener('click', handleMinimizedClick);
-          }
-        }
-
-        // 6. HASH YÖNLENDİRME FONKSİYONU
-        function scrollToEntryFromHash() {
-          const hash = window.location.hash;
-          if (hash.startsWith('#entry-')) {
-            const entryId = hash.substring(7);
-            const entryElement = document.getElementById(`entry-${entryId}`);
-            
-            if (entryElement) {
-              // Header yüksekliğini al ve offset hesapla
-              const header = document.querySelector('.header');
-              const headerHeight = header ? header.offsetHeight : 80;
-              
-              setTimeout(() => {
-                // Elementın pozisyonunu hesapla ve header yüksekliği kadar aşağı kaydır
-                const elementPosition = entryElement.getBoundingClientRect().top;
-                const offsetPosition = elementPosition + window.pageYOffset - headerHeight;
-                
-                window.scrollTo({
-                  top: offsetPosition,
-                  behavior: 'smooth'
-                });
-                
-                // Entry'yi vurgula
-                entryElement.style.backgroundColor = 'rgba(0, 255, 0, 0.1)';
-                setTimeout(() => {
-                  entryElement.style.backgroundColor = '';
-                }, 3000);
-              }, 500);
-            } else {
-              if (displayedEntries < groupedEntries.length) {
-                currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
-                displayEntries(displayedEntries, entriesPerPage, scrollToEntryFromHash);
-              }
-            }
-          }
-        }
-
-        // 7. BİLDİRİM SİSTEMİ FONKSİYONLARI - YENİ EKLENDİ
-        // Service Worker kaydı
-        function registerServiceWorker() {
-          if ('serviceWorker' in navigator && 'PushManager' in window) {
-            navigator.serviceWorker.register('/sw.js')
-              .then(function(registration) {
-                console.log('Service Worker registered successfully');
-                swRegistration = registration;
-                initializePush();
-              })
-              .catch(function(error) {
-                console.log('Service Worker registration failed:', error);
-                document.getElementById('notificationStatus').textContent = 
-                  'Bildirimler etkinleştirilemedi. Lütfen daha sonra tekrar deneyin.';
-              });
-          } else {
-            console.log('Push messaging is not supported');
-            document.getElementById('notificationStatus').textContent = 
-              'Tarayıcınız bildirimleri desteklemiyor.';
-          }
-        }
-
-        // Push bildirimlerini başlat
-        function initializePush() {
-          if (!swRegistration) return;
-          
-          swRegistration.pushManager.getSubscription()
-            .then(function(subscription) {
-              isSubscribed = !(subscription === null);
-              
-              if (isSubscribed) {
-                console.log('User is already subscribed:', subscription);
-                document.getElementById('notificationStatus').textContent = 
-                  'Bildirimler zaten etkin! Yeni entrylerden anında haberdar olacaksınız.';
-                document.getElementById('enableNotifications').style.display = 'none';
-              } else {
-                document.getElementById('notificationStatus').textContent = 
-                  'Bildirimleri etkinleştirmek için butona tıklayın.';
-              }
-            }
-          )
-          .catch(function(error) {
-            console.error('Error getting subscription:', error);
-          });
-        }
-
-        // Kullanıcıyı abone et
-        function subscribeUser() {
-          if (!swRegistration) return;
-          
-          const applicationServerKey = urlB64ToUint8Array('BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U');
-          
-          swRegistration.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: applicationServerKey
-          })
-          .then(function(subscription) {
-            console.log('User subscribed:', subscription);
-            isSubscribed = true;
-            
-            document.getElementById('notificationStatus').textContent = 
-              'Bildirimler etkinleştirildi! Yeni entrylerden anında haberdar olacaksınız.';
-            document.getElementById('enableNotifications').style.display = 'none';
-            
-            // Abonelik bilgisini sunucuya kaydet
-            return fetch('https://adembayazit.com/api/save-subscription', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify(subscription)
-            });
-          })
-          .then(function(response) {
-            if (!response.ok) {
-              throw new Error('Bad status code from server.');
-            }
-            return response.json();
-          })
-          .catch(function(err) {
-            console.log('Failed to subscribe the user: ', err);
-            document.getElementById('notificationStatus').textContent = 
-              'Abonelik işlemi başarısız. Lütfen daha sonra tekrar deneyin.';
-          });
-        }
-
-        // Base64 to Uint8Array dönüşümü
-        function urlB64ToUint8Array(base64String) {
-          const padding = '='.repeat((4 - base64String.length % 4) % 4);
-          const base64 = (base64String + padding)
-            .replace(/\-/g, '+')
-            .replace(/_/g, '/');
-          const rawData = window.atob(base64);
-          const outputArray = new Uint8Array(rawData.length);
-          for (let i = 0; i < rawData.length; ++i) {
-            outputArray[i] = rawData.charCodeAt(i);
-          }
-          return outputArray;
-        }
-
-        // 8. UYGULAMAYI BAŞLAT
+        // 6. UYGULAMAYI BAŞLAT - GÜNCELLENDİ
         async function initializeApp() {
           try {
-            // Bin sistemini başlat
-            await initializeBinSystem();
+            console.log('Initializing app...');
             
-            // Bin boyutunu kontrol et
-            await checkCurrentBinSize();
+            // Önce interaction verilerini yükle
+            await loadInteractions();
+            console.log('Interactions loaded:', { likes: likesCache.data, pins: pinsCache.data });
             
-            // Tüm entry'leri yükle
-            allEntries = await loadAllEntries();
+            // Event listener'ları kur
+            setupInteractionListeners();
+            
+            // Mevcut entry yükleme kodunuz...
+            const response = await fetch("entries.json");
+            const entriesData = await response.json();
+            allEntries = entriesData.records || entriesData;
             
             allEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
             
@@ -3353,424 +1930,247 @@
               });
             });
             
-            // Popüler ve trend entry'leri yükle
-            loadPopularEntries();
-            loadTrendingEntries();
-            loadRecentActivity();
-            
-            // Arama işlevselliği
-            setupSearch();
-            
-            // Polling'i başlat
-            startPolling();
-            
-            // View güncellemelerini periyodik olarak gönder
-            viewUpdateInterval = setInterval(sendPendingViewUpdates, 60000); // 1 dakikada bir
-            
-            // Sayfadan ayrılırken view güncellemelerini gönder
-            window.addEventListener('beforeunload', sendPendingViewUpdates);
-            
-            // Bildirim sistemi başlat
-            setupNotificationSystem();
-            
-            // Sayfa yüklendiğinde slider boyutlarını ayarla
-            window.addEventListener('load', function() {
-              setTimeout(() => {
-                initAllSliders();
-                
-                // Görünür slider'ların boyutlarını güncelle
-                document.querySelectorAll('.image-slider').forEach(slider => {
-                  if (slider.offsetParent !== null) {
-                    const event = new Event('resize');
-                    window.dispatchEvent(event);
-                  }
-                });
-              }, 500);
-            });
-
-            // Pencere boyutu değiştiğinde slider'ları yeniden boyutlandır
-            window.addEventListener('resize', function() {
-              initAllSliders();
-            });
+            console.log('App initialization completed successfully');
             
           } catch (error) {
             console.error("Initialization error:", error);
-            try {
-              const response = await fetch("entries.json");
-              const entriesData = await response.json();
-              allEntries = entriesData.records || entriesData;
-              
-              allEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
-              
-              if (allEntries.length > 0) {
-                latestEntryId = allEntries[0].id;
-                
-                const latestEntry = allEntries.find(entry => entry.id === latestEntryId);
-                if (latestEntry && latestEntry.references && latestEntry.references.length > 0) {
-                  parentOfLatestId = latestEntry.references[0];
-                }
-              }
-              
-              groupedEntries = groupEntries(allEntries);
-              
-              setupImageModal();
-              
-              // Sadece ilk 5 grubu yükle (sayfa başına 5 grup)
-              displayEntries(0, entriesPerPage, scrollToEntryFromHash);
-              
-              // "More Entry" butonuna event listener ekle
-              document.getElementById('loadMoreBtn').addEventListener('click', () => {
-                currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
-                displayEntries(displayedEntries, entriesPerPage, () => {
-                  window.scrollTo(0, currentScrollPosition);
-                  scrollToEntryFromHash();
-                });
-              });
+          }
+        }
 
-              // Popüler ve trend entry'leri yükle
-              loadPopularEntries();
-              loadTrendingEntries();
-              loadRecentActivity();
-              
-              // Arama işlevselliği
-              setupSearch();
+        // 7. SAYFA YÜKLENDİĞİNDE UYGULAMAYI BAŞLAT
+        document.addEventListener("DOMContentLoaded", function() {
+          console.log('DOM Content Loaded - Starting app initialization');
+          initializeApp();
+        });
 
-              // Fallback: polling'i başlat
-              startPolling();
-              
-              // View güncellemelerini periyodik olarak gönder
-              viewUpdateInterval = setInterval(sendPendingViewUpdates, 60000); // 1 dakikada bir
-              
-              // Sayfadan ayrılırken view güncellemelerini gönder
-              window.addEventListener('beforeunload', sendPendingViewUpdates);
-              
-              // Bildirim sistemi başlat
-              setupNotificationSystem();
-              
-              // Sayfa yüklendiğinde slider boyutlarını ayarla
-              window.addEventListener('load', function() {
-                setTimeout(() => {
-                  initAllSliders();
-                  
-                  // Görünür slider'ların boyutlarını güncelle
-                  document.querySelectorAll('.image-slider').forEach(slider => {
-                    if (slider.offsetParent !== null) {
-                      const event = new Event('resize');
-                      window.dispatchEvent(event);
-                    }
-                  });
-                }, 500);
-              });
+        // 8. SAYFA KAPATILIRKEN VERİLERİ KAYDET
+        window.addEventListener('beforeunload', function() {
+          localStorage.setItem('entryLikes', JSON.stringify(likesCache.data));
+          localStorage.setItem('entryPins', JSON.stringify(pinsCache.data));
+        });
 
-              // Pencere boyutu değiştiğinde slider'ları yeniden boyutlandır
-              window.addEventListener('resize', function() {
-                initAllSliders();
-              });
-              
-            } catch (fallbackError) {
-              console.error("Fallback failed:", fallbackError);
-              document.getElementById("entries").innerHTML = 
-                '<div class="error">Veriler yüklenirken bir hata oluştu</div>';
-            }
-          }
-        }
-        
-        // Bildirim sistemi kurulumu
-        function setupNotificationSystem() {
-          const enableButton = document.getElementById('enableNotifications');
-          const statusDiv = document.getElementById('notificationStatus');
-          
-          if (!('Notification' in window)) {
-            statusDiv.textContent = 'Tarayıcınız bildirimleri desteklemiyor.';
-            enableButton.style.display = 'none';
-            return;
-          }
-          
-          if (Notification.permission === 'granted') {
-            statusDiv.textContent = 'Bildirimler etkin! Yeni entrylerden anında haberdar olacaksınız.';
-            enableButton.style.display = 'none';
-            registerServiceWorker();
-          } else if (Notification.permission === 'denied') {
-            statusDiv.textContent = 'Bildirimler engellendi. Tarayıcı ayarlarından etkinleştirebilirsiniz.';
-            enableButton.style.display = 'none';
-          } else {
-            statusDiv.textContent = 'Yeni entrylerden haberdar olmak için bildirimleri etkinleştirin.';
-            enableButton.style.display = 'block';
-          }
-          
-          enableButton.addEventListener('click', function() {
-            Notification.requestPermission().then(function(permission) {
-              if (permission === 'granted') {
-                statusDiv.textContent = 'Bildirimler etkinleştirildi!';
-                enableButton.style.display = 'none';
-                registerServiceWorker();
-              } else {
-                statusDiv.textContent = 'Bildirim izni verilmedi.';
-              }
-            });
+        // 9. SAYFA YÜKLENDİĞİNDE VERİLERİ KONTROL ET
+        window.addEventListener('load', function() {
+          console.log('Page loaded - Current interaction data:', {
+            likes: likesCache.data,
+            pins: pinsCache.data
           });
-        }
-        
-        // Popüler entry'leri yükle
-        function loadPopularEntries() {
-          const popularContainer = document.getElementById('popular-entries');
-          if (!popularContainer) return;
+        });
+
+        // Mevcut diğer fonksiyonlar aynı kalacak
+        function groupEntries(entries) {
+          const parentMap = new Map();
+          const childMap = new Map();
+          const parentEntries = [];
           
-          // Beğeni sayısına göre sırala
-          const popular = [...allEntries].sort((a, b) => {
-            const aLikes = likesCache.data[a.id] || 0;
-            const bLikes = likesCache.data[b.id] || 0;
-            return bLikes - aLikes;
-          }).slice(0, 5);
-          
-          if (popular.length === 0) {
-            popularContainer.innerHTML = '<div style="padding: 10px; text-align: center; color: #90ee90;">No popular entries yet</div>';
-            return;
-          }
-          
-          let html = '';
-          popular.forEach(entry => {
-            const likes = likesCache.data[entry.id] || 0;
-            const contentSnippet = entry.content.replace(/<[^>]*>/g, '').substring(0, 60) + '...';
-            const date = new Date(entry.date).toLocaleDateString('tr-TR');
-            
-            html += `
-              <div style="padding: 10px; border-bottom: 1px solid rgba(0, 255, 0, 0.2);">
-                <div style="font-size: 12px; color: #90ee90;">#${entry.id} • ${date}</div>
-                <div style="font-size: 14px; margin: 5px 0;">${contentSnippet}</div>
-                <div style="display: flex; align-items: center; gap: 10px; font-size: 12px;">
-                  <span><i class="fas fa-heart" style="color: #ff5555;"></i> ${likes}</span>
-                  <a href="#entry-${entry.id}" style="color: var(--primary-color); text-decoration: none;">View →</a>
-                </div>
-              </div>
-            `;
-          });
-          
-          popularContainer.innerHTML = html;
-        }
-        
-        // Trend entry'leri yükle
-        function loadTrendingEntries() {
-          const trendingContainer = document.getElementById('trending-entries');
-          if (!trendingContainer) return;
-          
-          // Son 7 gün içindeki entry'leri al
-          const oneWeekAgo = new Date();
-          oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-          
-          const recentEntries = allEntries.filter(entry => new Date(entry.date) >= oneWeekAgo);
-          
-          // Beğeni sayısına göre sırala
-          const trending = recentEntries.sort((a, b) => {
-            const aLikes = likesCache.data[a.id] || 0;
-            const bLikes = likesCache.data[b.id] || 0;
-            return bLikes - aLikes;
-          }).slice(0, 5);
-          
-          if (trending.length === 0) {
-            trendingContainer.innerHTML = '<div style="padding: 10px; text-align: center; color: #90ee90;">No trending entries</div>';
-            return;
-          }
-          
-          let html = '';
-          trending.forEach(entry => {
-            const likes = likesCache.data[entry.id] || 0;
-            const contentSnippet = entry.content.replace(/<[^>]*>/g, '').substring(0, 60) + '...';
-            const date = new Date(entry.date).toLocaleDateString('tr-TR');
-            
-            html += `
-              <div style="padding: 10px; border-bottom: 1px solid rgba(0, 255, 0, 0.2);">
-                <div style="font-size: 12px; color: #90ee90;">#${entry.id} • ${date}</div>
-                <div style="font-size: 14px; margin: 5px 0;">${contentSnippet}</div>
-                <div style="display: flex; align-items: center; gap: 10px; font-size: 12px;">
-                  <span><i class="fas fa-fire" style="color: orange;"></i> ${likes}</span>
-                  <a href="#entry-${entry.id}" style="color: var(--primary-color); text-decoration: none;">View →</a>
-                  
-                </div>
-              </div>
-            `;
-          });
-          
-          trendingContainer.innerHTML = html;
-        } 
-        // Son aktiviteleri yükle
-        function loadRecentActivity() {
-          const activityContainer = document.getElementById('recent-activity');
-          if (!activityContainer) return;
-          
-          // Son 10 entry'i al
-          const recent = allEntries.slice(0, 5);
-          
-          if (recent.length === 0) {
-            activityContainer.innerHTML = '<div style="padding: 10px; text-align: center; color: #90ee90;">No recent activity</div>';
-            return;
-          }
-          
-          let html = '';
-          recent.forEach(entry => {
-            const date = new Date(entry.date).toLocaleDateString('tr-TR', {
-              hour: '2-digit',
-              minute: '2-digit'
-            });
-            const contentSnippet = entry.content.replace(/<[^>]*>/g, '').substring(0, 40) + '...';
-            
-            html += `
-              <div style="padding: 10px; border-bottom: 1px solid rgba(0, 255, 0, 0.2);">
-                <div style="font-size: 12px; color: #90ee90;">${date}</div>
-                <div style="font-size: 14px; margin: 5px 0;">${contentSnippet}</div>
-                <a href="#entry-${entry.id}" style="color: var(--primary-color); text-decoration: none; font-size: 12px;">View →</a>
-              </div>
-            `;
-          });
-          
-          activityContainer.innerHTML = html;
-        }
-        
-        // Arama işlevselliği
-        function setupSearch() {
-          const searchInput = document.getElementById('desktop-search-input');
-          const searchButton = document.getElementById('desktop-search-btn');
-          const mobileSearchInput = document.getElementById('mobile-search-input');
-          const mobileSearchButton = document.getElementById('mobile-search-btn');
-          
-          const performSearch = (query) => {
-            if (query.length < 1) {
-              // Arama kutusu boşsa tüm entry'leri göster
-              const container = document.getElementById("entries");
-              container.innerHTML = '';
-              displayEntries(0, allEntries.length);
-              document.getElementById('loadMoreBtn').style.display = allEntries.length > 20 ? 'block' : 'none';
-              document.getElementById('entryCount').textContent = `Total ${allEntries.length} entries loaded`;
-              return;
-            }
-            
-            // Sayısal bir değer mi kontrol et (ID araması)
-            const isIdSearch = !isNaN(query) && query.trim() !== '';
-            
-            const results = allEntries.filter(entry => {
-              if (isIdSearch) {
-                // ID araması: tam eşleşme
-                return entry.id.toString() === query;
-              } else {
-                // Metin araması: içerikde ara
-                return entry.content.toLowerCase().includes(query.toLowerCase());
-              }
-            });
-            
-            // Arama sonuçlarını göster
-            displaySearchResults(results, query, isIdSearch);
-          };
-          
-          if (searchInput && searchButton) {
-            searchInput.addEventListener('keypress', (e) => {
-              if (e.key === 'Enter') {
-                performSearch(searchInput.value.trim());
-              }
-            });
-            
-            searchButton.addEventListener('click', () => {
-              performSearch(searchInput.value.trim());
-            });
-          }
-          
-          if (mobileSearchInput && mobileSearchButton) {
-            mobileSearchInput.addEventListener('keypress', (e) => {
-              if (e.key === 'Enter') {
-                performSearch(mobileSearchInput.value.trim());
-              }
-            });
-            
-            mobileSearchButton.addEventListener('click', () => {
-              performSearch(mobileSearchInput.value.trim());
-            });
-          }
-        }
-        
-        // Arama sonuçlarını göster
-        function displaySearchResults(results, query, isIdSearch) {
-          const container = document.getElementById("entries");
-          const loadMoreBtn = document.getElementById("loadMoreBtn");
-          const entryCount = document.getElementById("entryCount");
-          
-          if (results.length === 0) {
-            container.innerHTML = `
-              <div style="text-align: center; padding: 30px; color: #90ee90;">
-                <i class="fas fa-search" style="font-size: 24px; margin-bottom: 10px;"></i>
-                <div>No results found for "${query}"</div>
-                ${isIdSearch ? `<div style="margin-top: 10px; font-size: 14px;">Make sure you entered the correct ID number.</div>` : ''}
-              </div>
-            `;
-            loadMoreBtn.style.display = 'none';
-            entryCount.textContent = `0 results for "${query}"`;
-            return;
-          }
-          
-          // Sonuçları göster
-          container.innerHTML = '';
-          entryCount.textContent = `${results.length} result${results.length !== 1 ? 's' : ''} for "${query}"`;
-          
-          // ID aramasıysa ve sadece 1 sonuç varsa, grubuyla birlickte göster
-          if (isIdSearch && results.length === 1) {
-            const entry = results[0];
-            const parentId = entry.references && entry.references.length > 0 ? entry.references[0] : null;
-            
-            if (parentId) {
-              // Parent entry'yi bul
-              const parentEntry = allEntries.find(e => e.id === parentId);
-              if (parentEntry) {
-                // Parent ve child'ı birlikte göster
-                const groupDiv = document.createElement("div");
-                groupDiv.className = "entry-group";
-                groupDiv.id = `group-${parentEntry.id}`;
-                
-                // Parent entry'yi ekle
-                const parentElement = createEntryElement(parentEntry, 0);
-                groupDiv.appendChild(parentElement);
-                
-                // Child entry'leri ekle (sadece aranan child'ı)
-                const childElement = createEntryElement(entry, 1);
-                groupDiv.appendChild(childElement);
-                
-                container.appendChild(groupDiv);
-              } else {
-                // Parent bulunamadıysa sadece entry'yi göster
-                const entryElement = createEntryElement(entry);
-                container.appendChild(entryElement);
-              }
+          entries.forEach(entry => {
+            if (!entry.references || entry.references.length === 0) {
+              parentEntries.push(entry);
             } else {
-              // Parent yoksa sadece entry'yi göster
-                const entryElement = createEntryElement(entry);
-                container.appendChild(entryElement);
+              const parentId = entry.references[0];
+              if (!childMap.has(parentId)) {
+                childMap.set(parentId, []);
+              }
+              childMap.get(parentId).push(entry);
             }
-          } else {
-            // Çoklu sonuçlar veya metin araması
-            results.forEach(entry => {
-              const entryElement = createEntryElement(entry);
-              container.appendChild(entryElement);
+          });
+          
+          parentEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
+          
+          const groups = [];
+          parentEntries.forEach(parent => {
+            const children = childMap.get(parent.id) || [];
+            children.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            const groupDate = children.length > 0 
+              ? new Date(Math.max(new Date(parent.date), ...children.map(c => new Date(c.date))))
+              : new Date(parent.date);
+            
+            groups.push({
+              parent,
+              children,
+              groupDate
             });
+          });
+          
+          groups.sort((a, b) => b.groupDate - a.groupDate);
+          
+          return groups;
+        }
+
+        function displayEntries(startIndex, count, callback) {
+          const container = document.getElementById("entries");
+          const loadingElement = document.getElementById("loading");
+          const loadMoreBtn = document.getElementById("loadMoreBtn");
+          
+          if (startIndex >= groupedEntries.length) {
+            loadMoreBtn.style.display = 'none';
+            if (callback) callback();
+            return;
           }
           
-          loadMoreBtn.style.display = 'none';
-          // Çeviri ikonlarını ekle
-          addTranslationIcons();
-          // More butonları için event listener ekle
-          setupSeeMoreButtons();
-          // Slider'ları başlat
-          setTimeout(() => {
-            initAllSliders();
-            // Görünür slider'ların boyutlarını güncelle
-            document.querySelectorAll('.image-slider').forEach(slider => {
-              if (slider.offsetParent !== null) {
-                const event = new Event('resize');
-                window.dispatchEvent(event);
-              }
+          loadingElement.style.display = 'block';
+          
+          const endIndex = Math.min(startIndex + count, groupedEntries.length);
+          for (let i = startIndex; i < endIndex; i++) {
+            const group = groupedEntries[i];
+            
+            const groupDiv = document.createElement("div");
+            groupDiv.className = "entry-group";
+            groupDiv.id = `group-${group.parent.id}`;
+            
+            const parentElement = createEntryElement(group.parent, 0);
+            groupDiv.appendChild(parentElement);
+            
+            group.children.forEach(child => {
+              const childElement = createEntryElement(child, 1);
+              groupDiv.appendChild(childElement);
             });
-          }, 100);
-          // GÖRÜNÜM SAYAÇLARINI GÜNCELLE
-          setupViewCountObservers();
+            
+            container.appendChild(groupDiv);
+          }
+          
+          displayedEntries = endIndex;
+          document.getElementById('entryCount').textContent = `Total ${allEntries.length} entries loaded`;
+          
+          loadingElement.style.display = 'none';
+          
+          if (displayedEntries >= groupedEntries.length) {
+            loadMoreBtn.style.display = 'none';
+          } else {
+            loadMoreBtn.style.display = 'block';
+          }
+          
+          const remaining = groupedEntries.length - displayedEntries;
+          loadMoreBtn.textContent = `More Entry (${Math.min(remaining, entriesPerPage)}) ${remaining > 0 ? '' : ''}`;
+          
+          if (callback) callback();
         }
-        // 9. UYGULAMAYI BAŞLAT
-        document.addEventListener("DOMContentLoaded", initializeApp);
+
+        function scrollToEntryFromHash() {
+          const hash = window.location.hash;
+          if (hash.startsWith('#entry-')) {
+            const entryId = hash.substring(7);
+            const entryElement = document.getElementById(`entry-${entryId}`);
+            
+            if (entryElement) {
+              const header = document.querySelector('.header');
+              const headerHeight = header ? header.offsetHeight : 80;
+              
+              setTimeout(() => {
+                const elementPosition = entryElement.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerHeight;
+                
+                window.scrollTo({
+                  top: offsetPosition,
+                  behavior: 'smooth'
+                });
+                
+                entryElement.style.backgroundColor = 'rgba(0, 255, 0, 0.1)';
+                setTimeout(() => {
+                  entryElement.style.backgroundColor = '';
+                }, 3000);
+              }, 500);
+            }
+          }
+        }
+
+        function setupImageModal() {
+            const modal = document.getElementById("imageModal");
+            const modalImg = document.getElementById("modalImage");
+            const closeBtn = document.getElementsByClassName("close")[0];
+            const prevBtn = document.querySelector(".modal-prev-btn");
+            const nextBtn = document.querySelector(".modal-next-btn");
+            const counter = document.getElementById("modalCounter");
+            
+            function closeModal() {
+                modal.style.display = "none";
+                document.body.style.overflow = "auto";
+                document.removeEventListener('keydown', handleKeyDown);
+            }
+            
+            function openModal(images, index) {
+                currentModalImages = images;
+                currentModalIndex = index;
+                updateModalImage();
+                modal.style.display = "block";
+                document.body.style.overflow = "hidden";
+                document.addEventListener('keydown', handleKeyDown);
+            }
+            
+            function updateModalImage() {
+                if (currentModalImages.length === 0) return;
+                modalImg.src = currentModalImages[currentModalIndex].src;
+                modalImg.alt = currentModalImages[currentModalIndex].alt;
+                updateCounter();
+            }
+            
+            function updateCounter() {
+                if (counter) {
+                    counter.textContent = `${currentModalIndex + 1} / ${currentModalImages.length}`;
+                }
+            }
+            
+            function nextImage() {
+                if (currentModalImages.length === 0) return;
+                currentModalIndex = (currentModalIndex + 1) % currentModalImages.length;
+                updateModalImage();
+            }
+            
+            function prevImage() {
+                if (currentModalImages.length === 0) return;
+                currentModalIndex = (currentModalIndex - 1 + currentModalImages.length) % currentModalImages.length;
+                updateModalImage();
+            }
+            
+            function handleKeyDown(event) {
+                if (event.key === "ArrowLeft") {
+                    prevImage();
+                } else if (event.key === "ArrowRight") {
+                    nextImage();
+                } else if (event.key === "Escape") {
+                    closeModal();
+                }
+            }
+            
+            closeBtn.onclick = closeModal;
+            
+            modal.onclick = function(event) {
+                if (event.target === modal) {
+                    closeModal();
+                }
+            };
+            
+            prevBtn.onclick = function(e) {
+                e.stopPropagation();
+                prevImage();
+            };
+            
+            nextBtn.onclick = function(e) {
+                e.stopPropagation();
+                nextImage();
+            };
+            
+            document.addEventListener('click', function(event) {
+                if (event.target.tagName === 'IMG' && event.target.closest('.content')) {
+                    const slider = event.target.closest('.image-slider');
+                    let images = [];
+                    let index = 0;
+                    
+                    if (slider) {
+                        const sliderImgs = slider.querySelectorAll('.slider-item img');
+                        images = Array.from(sliderImgs);
+                        index = images.findIndex(img => img === event.target);
+                    } else {
+                        images = [event.target];
+                        index = 0;
+                    }
+                    
+                    openModal(images, index);
+                }
+            });
+        }
+
     </script>
     <script src="/JAVASCRIPT/matrix.js"></script>
 </body>
