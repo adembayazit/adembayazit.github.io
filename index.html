@@ -118,170 +118,6 @@
         background: rgba(0, 100, 0, 0.7);
       }
 
-      /* Entry stilleri için */
-      .entries-container {
-        background: rgba(10, 25, 20, 0.7);
-        border: 1px solid rgba(0, 255, 0, 0.3);
-        border-radius: 20px;
-        padding: 1rem;
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-        box-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
-        backdrop-filter: blur(5px);
-      }
-
-      .entry {
-        position: relative;
-        background: rgba(0, 0, 0, 0.5);
-        border: 1px solid rgba(0, 255, 0, 0.3);
-        border-radius: 15px;
-        padding: 1.5rem;
-        transition: all 0.3s ease;
-      }
-
-      .entry:hover {
-        border-color: rgba(0, 255, 0, 0.6);
-        box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
-      }
-
-      .timestamp {
-        color: #90ee90;
-        font-size: 12px;
-        position: relative;
-        padding-bottom: 10px;
-        margin-bottom: 10px;
-        display: flex;
-        align-items: center;
-      }
-
-      .timestamp::after {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 1px;
-        background: linear-gradient(to right, rgba(0, 255, 0, 0.5), transparent);
-      }
-
-      .bug-iconentry {
-        margin-right: 8px;
-        color: #ff0000;
-      }
-
-      .entry-id {
-        color: #f9d71c;
-        font-size: 14px;
-        margin-bottom: 10px;
-        font-weight: bold;
-      }
-
-      .content {
-        color: white;
-        line-height: 1.6;
-        font-size: 14px;
-      }
-
-      .content img {
-        max-width: 100%;
-        height: auto;
-        border-radius: 8px;
-        margin: 10px 0;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        aspect-ratio: 16/9;
-        object-fit: cover;
-        border: 1px solid rgba(0, 255, 0, 0.3);
-      }
-
-      .content img:hover {
-        transform: scale(1.02);
-        box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
-      }
-
-      .interaction-buttons {
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-        margin-top: 25px;
-        flex-wrap: wrap;
-      }
-
-      .daisy-like, .pine-pin, .share-entry {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        padding: 5px 10px;
-        border-radius: 20px;
-        background: rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(0, 255, 0, 0.3);
-        cursor: pointer;
-        transition: all 0.3s;
-        font-size: 14px;
-      }
-
-      .daisy-like:hover {
-        background: rgba(50, 205, 50, 0.2);
-        transform: translateY(-2px);
-      }
-
-      .pine-pin:hover {
-        background: rgba(30, 144, 255, 0.2);
-        transform: translateY(-2px);
-      }
-
-      .share-entry:hover {
-        background: rgba(128, 0, 128, 0.2);
-        transform: translateY(-2px);
-      }
-
-      .daisy-icon, .pine-icon, .share-icon {
-        width: 20px;
-        height: 20px;
-        transition: all 0.3s;
-        border-radius: 50%;
-        padding: 3px;
-        background: rgba(0, 0, 0, 0.3);
-      }
-
-      .daisy-like:hover .daisy-icon {
-        transform: rotate(15deg) scale(1.2);
-        color: #00cc00;
-        box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
-      }
-
-      .pine-pin:hover .pine-icon {
-        transform: rotate(-15deg) scale(1.2);
-        color: #00bfff;
-        box-shadow: 0 0 10px rgba(30, 144, 255, 0.5);
-      }
-
-      .share-entry:hover .share-icon {
-        transform: scale(1.2);
-        color: #9370db;
-        box-shadow: 0 0 10px rgba(147, 112, 219, 0.5);
-      }
-
-      .like-count, .pin-count, .view-count {
-        font-size: 14px;
-        min-width: 20px;
-        text-align: center;
-        display: flex; 
-        align-items: center;
-      }
-
-      .entry-group {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-      }
-
-      .child-entry {
-        margin-left: 30px;
-      }
-
       /* Modal için yeni stiller */
       .modal {
         display: none;
@@ -677,7 +513,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <p class="last-entry">Last 5 Entries</p> 
             <div class="microblog-container">
                 <div class="entries-column">
-                    <div id="entries" class="entries-container"></div>
+                    <div id="entries" class="entries"></div>
                 </div>
                 <div class="explanation-column">
                     <div class="explanation-content">
@@ -756,9 +592,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <script>
         // Bin Yönetim Sistemi - Microblog sayfasından uyarlanmıştır
         const MASTER_BIN_ID = '68933248ae596e708fc2fbbc';
-        const BIN_SIZE_LIMIT = 95 * 1024;
-        let currentActiveBinId = MASTER_BIN_ID;
         let allBins = [];
+        let currentActiveBinId = MASTER_BIN_ID;
         let allEntries = [];
         let groupedEntries = [];
 
