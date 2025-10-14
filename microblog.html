@@ -973,6 +973,21 @@
             width: 100%;
         }
 
+        /* Bin istatistikleri için stil */
+        .bin-stats {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 12px;
+            color: #90ee90;
+        }
+        
+        .bin-stats div {
+            margin: 5px 0;
+        }
+
         /* Mobil için stiller */
         @media (max-width: 1200px) {
             .sidebar, .right-sidebar {
@@ -1335,6 +1350,16 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- Bin İstatistikleri -->
+            <div class="sidebar-widget">
+                <h3><i class="fas fa-database"></i> Storage</h3>
+                <div class="bin-stats" id="bin-stats">
+                    <div>Total Bins: <span id="total-bins">0</span></div>
+                    <div>Active Bin: <span id="active-bin">-</span></div>
+                    <div>Bin Size: <span id="bin-size">0 KB</span></div>
+                </div>
+            </div>
         </aside>
         
         <main class="main-content">
@@ -1608,6 +1633,12 @@
         let isSubscribed = false;
         let pushManagerSupported = false;
 
+        // BİN YÖNETİM SİSTEMİ - YENİ EKLENDİ
+        const MASTER_BIN_ID = '68933248ae596e708fc2fbbc'; // Mevcut ana bin ID'niz
+        const BIN_SIZE_LIMIT = 95 * 1024; // 95KB (güvenlik payı ile)
+        let currentActiveBinId = MASTER_BIN_ID;
+        let allBins = [];
+
         // 2. PROXY HELPER FONKSİYONU - GÜNCELLENDİ
         async function fetchViaProxy(path, method = 'GET', body = null, binId = null) {
           const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
@@ -1630,6 +1661,248 @@
             console.error('Proxy error:', error);
             throw error;
           }
+        }
+
+        // BİN YÖNETİM SİSTEMİ FONKSİYONLARI - YENİ EKLENDİ
+        // Bin sistemini başlat
+        async function initializeBinSystem() {
+            try {
+                // Master bin'den bin listesini al
+                const masterData = await fetchViaProxy('/latest', 'GET', null, MASTER_BIN_ID);
+                
+                if (masterData.bins && masterData.bins.length > 0) {
+                    allBins = masterData.bins;
+                    currentActiveBinId = masterData.activeBin || MASTER_BIN_ID;
+                } else {
+                    // İlk kez çalışıyorsa, master bin'i başlat
+                    allBins = [{
+                        id: MASTER_BIN_ID,
+                        createdAt: new Date().toISOString(),
+                        entryCount: 0,
+                        size: 0,
+                        isMaster: true
+                    }];
+                    currentActiveBinId = MASTER_BIN_ID;
+                    await updateMasterBin();
+                }
+                
+                console.log('Bin system initialized:', { allBins, currentActiveBinId });
+                updateBinStats();
+            } catch (error) {
+                console.error('Bin system initialization failed:', error);
+                // Fallback: sadece master bin kullan
+                allBins = [{ 
+                    id: MASTER_BIN_ID, 
+                    createdAt: new Date().toISOString(), 
+                    entryCount: 0, 
+                    size: 0,
+                    isMaster: true 
+                }];
+                currentActiveBinId = MASTER_BIN_ID;
+            }
+        }
+
+        // Master bin'i güncelle
+        async function updateMasterBin() {
+            try {
+                await fetchViaProxy('', 'PUT', {
+                    bins: allBins,
+                    activeBin: currentActiveBinId,
+                    lastUpdated: new Date().toISOString(),
+                    totalBins: allBins.length,
+                    totalEntries: allEntries.length
+                }, MASTER_BIN_ID);
+                
+                updateBinStats();
+            } catch (error) {
+                console.error('Master bin update failed:', error);
+            }
+        }
+
+        // Aktif bin'in boyutunu kontrol et
+        async function checkCurrentBinSize() {
+            try {
+                const activeBinData = await fetchViaProxy('/latest', 'GET', null, currentActiveBinId);
+                const binSize = JSON.stringify(activeBinData).length;
+                
+                console.log(`Current bin size: ${binSize} bytes`);
+                
+                // Bin istatistiklerini güncelle
+                const binIndex = allBins.findIndex(bin => bin.id === currentActiveBinId);
+                if (binIndex !== -1) {
+                    allBins[binIndex].size = binSize;
+                    allBins[binIndex].lastChecked = new Date().toISOString();
+                }
+                
+                updateBinStats();
+                
+                if (binSize >= BIN_SIZE_LIMIT) {
+                    console.log('Bin size limit reached, creating new bin...');
+                    await createNewBin();
+                }
+                
+                return binSize;
+            } catch (error) {
+                console.error('Bin size check failed:', error);
+                return 0;
+            }
+        }
+
+        // Yeni bin oluştur
+        async function createNewBin() {
+            try {
+                console.log('Creating new bin...');
+                
+                // Yeni bin oluştur
+                const newBinData = {
+                    records: [],
+                    createdAt: new Date().toISOString(),
+                    previousBin: currentActiveBinId,
+                    binIndex: allBins.length
+                };
+                
+                const newBinResponse = await fetchViaProxy('', 'POST', newBinData);
+                const newBinId = newBinResponse.metadata.id;
+                
+                console.log('New bin created:', newBinId);
+                
+                // Yeni bin'i listeye ekle
+                const newBinInfo = {
+                    id: newBinId,
+                    createdAt: new Date().toISOString(),
+                    entryCount: 0,
+                    size: 0,
+                    binIndex: allBins.length
+                };
+                
+                allBins.push(newBinInfo);
+                currentActiveBinId = newBinId;
+                
+                // Master bin'i güncelle
+                await updateMasterBin();
+                
+                console.log('Bin system updated with new bin:', newBinId);
+                return newBinId;
+            } catch (error) {
+                console.error('New bin creation failed:', error);
+                throw error;
+            }
+        }
+
+        // Tüm entry'leri tüm bin'lerden yükle
+        async function loadAllEntries() {
+            try {
+                let allEntries = [];
+                
+                // Tüm bin'leri ters sırada yükle (en yeniden en eskiye)
+                const sortedBins = [...allBins]
+                    .filter(bin => !bin.isMaster) // Master bin'i hariç tut (sadece yönetim için)
+                    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                
+                console.log(`Loading entries from ${sortedBins.length} bins...`);
+                
+                for (const bin of sortedBins) {
+                    try {
+                        const binData = await fetchViaProxy('/latest', 'GET', null, bin.id);
+                        
+                        if (binData.records && Array.isArray(binData.records)) {
+                            // Bin bilgilerini güncelle
+                            bin.entryCount = binData.records.length;
+                            bin.size = JSON.stringify(binData).length;
+                            bin.lastAccess = new Date().toISOString();
+                            
+                            allEntries = [...allEntries, ...binData.records];
+                            console.log(`Loaded ${binData.records.length} entries from bin ${bin.id}`);
+                        }
+                    } catch (error) {
+                        console.error(`Failed to load bin ${bin.id}:`, error);
+                    }
+                }
+                
+                // Eğer hiç bin yoksa, mevcut bin'den yükle (geçiş dönemi için)
+                if (allEntries.length === 0) {
+                    console.log('No bins found, trying to load from current bin...');
+                    try {
+                        const currentBinData = await fetchViaProxy('/latest', 'GET', null, MASTER_BIN_ID);
+                        if (currentBinData.records && Array.isArray(currentBinData.records)) {
+                            allEntries = currentBinData.records;
+                            console.log(`Loaded ${allEntries.length} entries from master bin`);
+                            
+                            // Mevcut verileri yeni bir bin'e taşı
+                            if (allEntries.length > 0) {
+                                console.log('Migrating data to new bin system...');
+                                await migrateToBinSystem(allEntries);
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Failed to load from current bin:', error);
+                    }
+                }
+                
+                // Master bin'i güncelle (istatistikler için)
+                await updateMasterBin();
+                
+                return allEntries;
+            } catch (error) {
+                console.error('Load all entries failed:', error);
+                // Fallback: sadece aktif bin'den yükle
+                try {
+                    const activeBinData = await fetchViaProxy('/latest', 'GET', null, currentActiveBinId);
+                    return activeBinData.records || [];
+                } catch (fallbackError) {
+                    console.error('Fallback also failed:', fallbackError);
+                    return [];
+                }
+            }
+        }
+
+        // Mevcut verileri yeni bin sistemine taşı
+        async function migrateToBinSystem(entries) {
+            try {
+                // Yeni bir bin oluştur
+                const newBinId = await createNewBin();
+                
+                // Entry'leri yeni bin'e taşı
+                await fetchViaProxy('', 'PUT', {
+                    records: entries,
+                    createdAt: new Date().toISOString(),
+                    migratedFrom: MASTER_BIN_ID,
+                    entryCount: entries.length
+                }, newBinId);
+                
+                console.log(`Migrated ${entries.length} entries to new bin: ${newBinId}`);
+                
+                // Bin istatistiklerini güncelle
+                const binIndex = allBins.findIndex(bin => bin.id === newBinId);
+                if (binIndex !== -1) {
+                    allBins[binIndex].entryCount = entries.length;
+                    allBins[binIndex].size = JSON.stringify({ records: entries }).length;
+                }
+                
+                await updateMasterBin();
+                
+            } catch (error) {
+                console.error('Migration failed:', error);
+            }
+        }
+
+        // Bin istatistiklerini güncelle
+        function updateBinStats() {
+            const totalBins = allBins.filter(bin => !bin.isMaster).length;
+            const activeBin = allBins.find(bin => bin.id === currentActiveBinId);
+            const binSize = activeBin ? Math.round(activeBin.size / 1024) : 0;
+            
+            document.getElementById('total-bins').textContent = totalBins;
+            document.getElementById('active-bin').textContent = currentActiveBinId.substring(0, 8) + '...';
+            document.getElementById('bin-size').textContent = `${binSize} KB`;
+            
+            // Eğer bin boyutu limitine yakınsa uyarı göster
+            if (binSize > 80) {
+                document.getElementById('bin-size').style.color = '#ff5555';
+                document.getElementById('bin-size').innerHTML = `${binSize} KB <span style="color: #f9d71c;">(Nearly Full)</span>`;
+            } else {
+                document.getElementById('bin-size').style.color = '#90ee90';
+            }
         }
 
         // 3. TEMEL FONKSİYONLAR
@@ -2764,32 +3037,31 @@
 
         async function checkForNewEntries() {
           try {
-            const entriesData = await fetchViaProxy('/b/68933248ae596e708fc2fbbc/latest');
-            const serverEntries = entriesData.records || entriesData;
+            // Tüm bin'leri kontrol et
+            const allServerEntries = await loadAllEntries();
             
             // Sunucudaki en yeni entry'nin ID'sini bul
-            const newestServerEntry = serverEntries.reduce((newest, entry) => {
+            const newestServerEntry = allServerEntries.reduce((newest, entry) => {
               return (!newest || entry.id > newest.id) ? entry : newest;
             }, { id: 0 });
             
             // İstemcideki en yeni entry ID'si
             const clientNewestEntryId = allEntries.length > 0 ? Math.max(...allEntries.map(e => e.id)) : 0;
             
-            // Sunucuda daha yeni bir entry var mı ve daha önce bildirim gösterilmemiş mi?
+            // Sunucuda daha yeni bir entry var mı?
             if (newestServerEntry.id > clientNewestEntryId && newestServerEntry.id > lastNotifiedEntryId) {
               // Yeni entry sayısını hesapla
-              const newEntryCount = serverEntries.filter(entry => entry.id > clientNewestEntryId).length;
+              const newEntryCount = allServerEntries.filter(entry => entry.id > clientNewestEntryId).length;
               
               // Bildirim göster
               showNewEntriesNotification(newEntryCount);
               newEntriesCount = newEntryCount;
               
-              // Sadece sayfa görünür durumda değilse (farklı sekme veya kapalı) push bildirimi gönder
+              // Push bildirimi gönder
               if (document.visibilityState !== 'visible') {
                 sendNotification(newestServerEntry);
               }
               
-              // Son bildirim gösterilen entry ID'sini güncelle
               lastNotifiedEntryId = newestServerEntry.id;
             }
           } catch (error) {
@@ -3041,9 +3313,14 @@
         // 8. UYGULAMAYI BAŞLAT
         async function initializeApp() {
           try {
-            await loadInteractions();
-            const entriesData = await fetchViaProxy('/b/68933248ae596e708fc2fbbc/latest');
-            allEntries = entriesData.records || entriesData;
+            // Bin sistemini başlat
+            await initializeBinSystem();
+            
+            // Bin boyutunu kontrol et
+            await checkCurrentBinSize();
+            
+            // Tüm entry'leri yükle
+            allEntries = await loadAllEntries();
             
             allEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
             
