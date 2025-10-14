@@ -2536,11 +2536,12 @@
             contentDiv.setAttribute('data-full-content', formattedContent);
           }
 
-          const likeIcon = entryDiv.querySelector(".daisy-like");
-          likeIcon?.addEventListener("click", () => handleLikeClick(entry.id, entryDiv));
+          // DÜZELTME: Butonların kendisine event listener ekle
+          const likeButton = entryDiv.querySelector(".daisy-like");
+          likeButton?.addEventListener("click", () => handleLikeClick(entry.id, entryDiv));
 
-          const pinIcon = entryDiv.querySelector(".pine-pin");
-          pinIcon?.addEventListener("click", () => handlePinClick(entry.id, entryDiv));
+          const pinButton = entryDiv.querySelector(".pine-pin");
+          pinButton?.addEventListener("click", () => handlePinClick(entry.id, entryDiv));
 
           const shareIcon = entryDiv.querySelector(".share-entry");
           shareIcon?.addEventListener("click", () => handleShareClick(entry.id));
@@ -2715,7 +2716,7 @@
           });
         }
 
-        // 4. INTERACTION FONKSİYONLARI
+        // 4. INTERACTION FONKSİYONLARI - DÜZELTİLDİ
         async function handleLikeClick(entryId, entryDiv) {
           if (likesCache.isUpdating) return;
 
@@ -3013,16 +3014,19 @@
           }
         }
 
+        // DÜZELTME: JSONBin API endpoint düzeltildi
         async function updateInteractionsOnServer(entryId, newLikeCount, newPinCount) {
           const updatedLikes = newLikeCount !== null ? { ...likesCache.data, [entryId]: newLikeCount } : likesCache.data;
           const updatedPins = newPinCount !== null ? { ...pinsCache.data, [entryId]: newPinCount } : pinsCache.data;
 
           try {
-            await fetchViaProxy('/b/68862fd97b4b8670d8a81945', 'PUT', {
+            // DÜZELTME: Doğru JSONBin endpoint kullanılıyor
+            await fetchViaProxy('', 'PUT', {
               likes: updatedLikes,
               pins: updatedPins
-            });
+            }, '68862fd97b4b8670d8a81945');
           } catch (error) {
+            console.error('Failed to update interactions on server:', error);
             throw new Error('Failed to update data on server');
           }
         }
@@ -3769,6 +3773,7 @@
           // GÖRÜNÜM SAYAÇLARINI GÜNCELLE
           setupViewCountObservers();
         }
+
         // 9. UYGULAMAYI BAŞLAT
         document.addEventListener("DOMContentLoaded", initializeApp);
     </script>
