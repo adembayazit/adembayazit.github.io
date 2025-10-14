@@ -119,7 +119,7 @@
       }
 
       /* Modal için yeni stiller */
-         .modal {
+      .modal {
         display: none;
         position: fixed;
         z-index: 10000;
@@ -257,8 +257,7 @@
       }
 
       /* Mobil için stil */
-    
-    @media (max-width: 992px) {
+      @media (max-width: 992px) {
         .microblog-container {
           flex-direction: column;
         }
@@ -299,6 +298,35 @@
           right: 20px;
           font-size: 30px;
         }
+
+        /* Mobil cihazlarda tıklanabilir alanı büyüt */
+        .btn-box {
+          min-height: 44px;
+          padding: 12px 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        
+        #downloadCv {
+          padding: 15px 25px;
+          font-size: 16px;
+          min-height: 50px;
+        }
+      }
+
+      /* Keyboard shortcuts stil */
+      .keyboard-shortcuts {
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: white;
+        font-size: 12px;
+        background: rgba(0, 0, 0, 0.7);
+        padding: 5px 10px;
+        border-radius: 5px;
+        z-index: 10010;
       }
     </style>
 </head>
@@ -307,6 +335,7 @@
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 <script>
+  // IP gösterici dot
   const dot = document.createElement('div');
   dot.style.cssText = `
     position: fixed;
@@ -324,7 +353,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   `;
 
   const tooltip = document.createElement('div');
-    tooltip.style.cssText = `
+  tooltip.style.cssText = `
     position: absolute;
     bottom: 100%;
     right: 0;
@@ -340,6 +369,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     pointer-events: none;
     min-width: 240px;
     backdrop-filter: blur(5px);
+    z-index: 10000;
   `;
 
   dot.appendChild(tooltip);
@@ -347,7 +377,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   dot.addEventListener('mouseenter', () => tooltip.style.opacity = '1');
   dot.addEventListener('mouseleave', () => tooltip.style.opacity = '0');
-  fetch('https://ipinfo.io/json?token=68a1229187303a') // TOKEN doğruysa böyle bırak
+  
+  // Touch events for mobile
+  dot.addEventListener('touchstart', () => tooltip.style.opacity = '1');
+  dot.addEventListener('touchend', () => setTimeout(() => tooltip.style.opacity = '0', 2000));
+
+  fetch('https://ipinfo.io/json?token=68a1229187303a')
     .then(async res => {
       if (!res.ok) {
         const text = await res.text();
@@ -402,7 +437,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <script type="module" src="/JAVASCRIPT/load-entries.js"></script>
     <script src="/JAVASCRIPT/monitor.js"></script>
     <canvas id="matrixCanvas"></canvas>
-                                                        <!-- Matrix -->
     <script src="/JAVASCRIPT/matrix.js"></script>
 <body>
     <header class="header">
@@ -411,14 +445,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <span class="logo-slogan">One step further every day…</span>
         </div>
         <nav class="navbar">
-            <!-- <a href="#home" style="--i:1;" class="active">Home</a>
-            <a href="about.html" style="--i:2;">About</a>
-            <a href="skills.html" style="--i:3;">Skills</a>
-            <a href="#project" style="--i:4;">Projects</a>
-            <a href="#contact" style="--i:5;">Contact</a>
-            <a href="ethicalhacker.html" style="--i:5;">Ethical Hacker</a>  -->
             <div class="dropdown">
-            <a href="#" style="--i:5; class="dropbtn"> <img src="IMAGES/Ata.svg" alt= "Ata Icon" class="ata-icon"><span class="fi fi-tr"><!-- Türkiye --></span> <span class='bx bx-code-alt'></span> Ethical Hacker <span class='bx bx-chevron-down'></span></a>
+            <a href="#" style="--i:5;" class="dropbtn"> <img src="IMAGES/Ata.svg" alt="Ata Icon" class="ata-icon"><span class="fi fi-tr"></span> <span class='bx bx-code-alt'></span> Ethical Hacker <span class='bx bx-chevron-down'></span></a>
             <div class="dropdown-content">
             <a href="/whatishacker"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hacker-icon"> What is an Ethical Hacker?</a>
             <a href="/cybersecurityglossary"><img src="IMAGES/glossary.svg" alt="Glossary" class="glossary-icon"> Cybersecurity Glossary</a>
@@ -427,15 +455,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <a href="/steganography"><img src="IMAGES/steganography.svg" alt="Steganography" class="steganography-icon"> Steganography</a>
             <a href="/cryptography"><img src="IMAGES/cryptography.svg" alt="Cryptography" class="cryptography-icon"> Cryptography</a>    
             <a href="cybersecurityeducationprompt"><img src="IMAGES/education.svg" alt="Education" class="education-icon"> Cybersecurity Resources Prompt</a>
-    </div>
-  </div>
-            
+            </div>
+          </div>
         </nav>
     </header>
 
     <section id="home" class="home">
-
-        <div class="home-content" data-scroll data-scroll-speed="-5" >
+        <div class="home-content" data-scroll data-scroll-speed="-5">
             <h3 class="mu">Hello, It's me</h3>
             <h1>Adem Bayazıt</h1>
             <h3>And I'm a <span class="pro-text">
@@ -468,7 +494,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <a href="https://github.com/adembayazit" target="_blank"><i class='bx bxl-github'></i></a>
                <a href="https://www.linkedin.com/in/adembayazit/" target="_blank"><i class='bx bxl-linkedin' ></i></a>
                <a href="https://wa.me/+905365844282" target="_blank"><i class='bx bxl-whatsapp'></i></a>
-                <!-- <a href="https://www.instagram.com/adembayazit/" target="_blank"><i class='bx bxl-instagram'></i></a> -->
             </div>
                 <a id="downloadCv" href="https://adembayazit.com/viewcv" class="btn-box"><i class="fa-solid fa-file"></i> View CV</a>
         </div>
@@ -482,441 +507,484 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </div>
             </div>
         </div>
-</section>
+    </section>
+
     <section id="microblog" class="microblog">
-  <div class="container">
-    <h2 class="section-title"><i class="fa-solid fa-pager"></i> LadyB <span class="fa-solid fa-bug bug-icon"></span> G Entries</h2>
-      <p class="last-entry">Last 5 Entries</p> 
-    <div class="microblog-container">
-      <!-- Sol sütun: Entry'ler -->
-      <div class="entries-column">
-        <div id="entries" class="entries"></div>
-      </div>
-      <!-- Sağ sütun: Açıklama -->
-      <div class="explanation-column">
-        <div class="explanation-content">
-           <h3>Why I Created This Microblog?</h3>
-        <p>First of all, I want to clarify that I am not building a social media platform. I have only allocated a small area for myself on my platform to share my own opinions.</p>
-        <p>Perhaps in the future, it could evolve into a social media platform. (Supply-Demand Eq)</p>
-        <p>I am developing the platform from the ground up, completely on my own. I am not simply taking an open-source application and modifying it like others do.</p>
-        <p>Furthermore, I needed a core idea for the platform. Here it is: I have shared the photos, which are the fundamental building blocks of the idea. An entirely new platform is being built upon this foundation.</p>
-        <p> So, what am I sharing here? On this platform, I am not voicing something unknown. In fact, I bring to light what already exists but slips past your attention. </p>
-        <p> Also, the entry space on this platform was born out of necessity. </p>
-        <p> It concerns <strong>Technology, Art, Photography, the World, and the reinterpretation of developments in world history.</strong> </p>
-        <p> At the same time, it contains a <strong> cryptological and steganographic language and art </strong>.</p>
-        <p>Friends, I'll soon start filling in the content. As the ideas form, they gradually take shape. I assure you, it will include knowledge that has never surfaced before. Since there's no team working in the background and I'm progressing entirely with personal effort and open-source development tools, it takes a little time.</p>
-         <p> As I mentioned in the text, the cryptology and steganography content will be created in real time. The artworks, on the other hand, will feature the works of old masters such as Picasso, Da Vinci, Salvador Dalí, and many other talented artists whose names you may not have heard of. I will also reinterpret them with photographs by adding my own techniques. </p>
+        <div class="container">
+            <h2 class="section-title"><i class="fa-solid fa-pager"></i> LadyB <span class="fa-solid fa-bug bug-icon"></span> G Entries</h2>
+            <p class="last-entry">Last 5 Entries</p> 
+            <div class="microblog-container">
+                <div class="entries-column">
+                    <div id="entries" class="entries"></div>
+                </div>
+                <div class="explanation-column">
+                    <div class="explanation-content">
+                        <h3>Why I Created This Microblog?</h3>
+                        <p>First of all, I want to clarify that I am not building a social media platform. I have only allocated a small area for myself on my platform to share my own opinions.</p>
+                        <p>Perhaps in the future, it could evolve into a social media platform. (Supply-Demand Eq)</p>
+                        <p>I am developing the platform from the ground up, completely on my own. I am not simply taking an open-source application and modifying it like others do.</p>
+                        <p>Furthermore, I needed a core idea for the platform. Here it is: I have shared the photos, which are the fundamental building blocks of the idea. An entirely new platform is being built upon this foundation.</p>
+                        <p>So, what am I sharing here? On this platform, I am not voicing something unknown. In fact, I bring to light what already exists but slips past your attention.</p>
+                        <p>Also, the entry space on this platform was born out of necessity.</p>
+                        <p>It concerns <strong>Technology, Art, Photography, the World, and the reinterpretation of developments in world history.</strong></p>
+                        <p>At the same time, it contains a <strong>cryptological and steganographic language and art</strong>.</p>
+                        <p>Friends, I'll soon start filling in the content. As the ideas form, they gradually take shape. I assure you, it will include knowledge that has never surfaced before. Since there's no team working in the background and I'm progressing entirely with personal effort and open-source development tools, it takes a little time.</p>
+                        <p>As I mentioned in the text, the cryptology and steganography content will be created in real time. The artworks, on the other hand, will feature the works of old masters such as Picasso, Da Vinci, Salvador Dalí, and many other talented artists whose names you may not have heard of. I will also reinterpret them with photographs by adding my own techniques.</p>
+                    </div>
+                    <button class="toggle-explanation">More..</button>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="microblog.html" class="btn-box"><i class="fa-solid fa-bug"></i> All Entry Show</a>
+            </div>
         </div>
-        <button class="toggle-explanation">More..</button>
-      </div>
-    </div>
-    
-    <div style="text-align: center; margin-top: 20px;">
-      <a href="microblog.html" class="btn-box"><i class="fa-solid fa-bug"></i> All Entry Show</a>
-    </div>
-  </div>
-</section>
-<section id="photo-gallery" class="photo-gallery">
-    <h2 class="section-title"><i class="fa-solid fa-images"></i> Photographic Cryptology</h2>
-  <div class="gallery-wrapper">
-    <div id="gallery-grid" class="gallery-grid"></div>
-    <button id="load-more" class="load-more">More</button>
-  </div>
-</section>
-  <!-- Modal Büyütme -->
-   <!-- Yeni Geliştirilmiş Modal -->
-  <div id="modal" class="modal">
-    <span class="close">&times;</span>
-    <div class="keyboard-shortcuts">
-      <span>← →: Navigate | ESC: Close</span>
-    </div>
-    <div class="modal-nav">
-      <button class="nav-button prev-button">&lt;</button>
-      <button class="nav-button next-button">&gt;</button>
-    </div>
-    <div class="modal-info">
-      <div class="modal-info-content">
-        <div class="modal-info-item">
-          <i class="fas fa-map-marker-alt"></i>
-          <span id="modal-location">Unknown Location</span>
+    </section>
+
+    <section id="photo-gallery" class="photo-gallery">
+        <h2 class="section-title"><i class="fa-solid fa-images"></i> Photographic Cryptology</h2>
+        <div class="gallery-wrapper">
+            <div id="gallery-grid" class="gallery-grid"></div>
+            <button id="load-more" class="load-more">More</button>
         </div>
-        <div class="modal-info-item">
-          <i class="fas fa-clock"></i>
-          <span id="modal-time">Unknown Time</span>
+    </section>
+
+    <!-- Modal Büyütme -->
+    <div id="modal" class="modal">
+        <span class="close">&times;</span>
+        <div class="keyboard-shortcuts">
+            <span>← →: Navigate | ESC: Close</span>
         </div>
-        <div class="modal-counter">
-          <span id="modal-counter">1/10</span>
+        <div class="modal-nav">
+            <button class="nav-button prev-button">&lt;</button>
+            <button class="nav-button next-button">&gt;</button>
         </div>
-      </div>
+        <div class="modal-info">
+            <div class="modal-info-content">
+                <div class="modal-info-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span id="modal-location">Unknown Location</span>
+                </div>
+                <div class="modal-info-item">
+                    <i class="fas fa-clock"></i>
+                    <span id="modal-time">Unknown Time</span>
+                </div>
+                <div class="modal-counter">
+                    <span id="modal-counter">1/10</span>
+                </div>
+            </div>
+        </div>
+        <img class="modal-content" id="modal-img">
     </div>
-    <img class="modal-content" id="modal-img">
-  </div>
-</div>
-<footer style="text-align: center; padding: 20px; font-size: 14px; color: white;">
-  <hr style="margin-bottom: 10px; border-color: limegreen;" />
-  <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.3 | Aug 2025</p>
-</footer>
+
+    <footer style="text-align: center; padding: 20px; font-size: 14px; color: white;">
+        <hr style="margin-bottom: 10px; border-color: limegreen;" />
+        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.3 | Aug 2025</p>
+    </footer>
+
     <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-0WNL3VLY3F"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-0WNL3VLY3F');
-</script>
-<!-- JS Dosyasını Bağla -->
-<script src="/JAVASCRIPT/gallery.js"></script>
-<script src="/JAVASCRIPT/log-download.js"></script>
-<script src="/JAVASCRIPT/translate-entry.js"></script>
-<script src="/JAVASCRIPT/keysound.js"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0WNL3VLY3F"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-0WNL3VLY3F');
+    </script>
 
-<script>
- // CV görüntüleme sayacı için fonksiyon
- async function logCvView() {
-   try {
-     console.log('Starting CV view logging...');
-     
-     // IP ve konum bilgilerini al
-     const ipResponse = await fetch('https://ipinfo.io/json?token=68a1229187303a');
-     const ipData = await ipResponse.json();
-     
-     const now = new Date();
-     const viewEntry = {
-       id: Date.now(),
-       ip: ipData.ip,
-       hostname: ipData.hostname,
-       city: ipData.city,
-       region: ipData.region,
-       country: ipData.country,
-       loc: ipData.loc,
-       org: ipData.org,
-       postal: ipData.postal,
-       timezone: ipData.timezone,
-       timestamp: now.toISOString(),
-       userAgent: navigator.userAgent.substring(0, 200),
-       type: 'cv_view',
-       page: 'home'
-     };
+    <script src="/JAVASCRIPT/gallery.js"></script>
+    <script src="/JAVASCRIPT/log-download.js"></script>
+    <script src="/JAVASCRIPT/translate-entry.js"></script>
+    <script src="/JAVASCRIPT/keysound.js"></script>
 
-     console.log('New view entry:', viewEntry);
-
-     // Önce mevcut veriyi al
-     const getResponse = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
-       method: 'POST',
-       headers: {
-         'Content-Type': 'application/json',
-       },
-       body: JSON.stringify({
-         path: '/b/68ecedca43b1c97be96584cc/latest',
-         method: 'GET'
-       })
-     });
-
-     let existingData = { 
-       cvview: 'adem', 
-       cv_views: [], 
-       total_views: 0,
-       last_updated: new Date().toISOString()
-     };
-     
-     if (getResponse.ok) {
-       const result = await getResponse.json();
-       console.log('Existing data from bin:', result);
-       existingData = result;
-       
-       // Eski formatı yeni formata çevir
-       if (!existingData.cv_views) {
-         existingData.cv_views = [];
-       }
-       if (typeof existingData.total_views !== 'number') {
-         existingData.total_views = 0;
-       }
-     }
-
-     // Yeni entry'yi array'e ekle
-     existingData.cv_views.push(viewEntry);
-     
-     // Toplam view sayısını güncelle
-     existingData.total_views = (existingData.total_views || 0) + 1;
-     existingData.last_updated = now.toISOString();
-
-     console.log('Updated data to save:', existingData);
-
-     // Güncellenmiş veriyi kaydet
-     const putResponse = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
-       method: 'POST',
-       headers: {
-         'Content-Type': 'application/json',
-       },
-       body: JSON.stringify({
-         path: '/b/68ecedca43b1c97be96584cc',
-         method: 'PUT',
-         body: existingData
-       })
-     });
-
-     if (!putResponse.ok) {
-       throw new Error(`HTTP error: ${putResponse.status}`);
-     }
-
-     const result = await putResponse.json();
-     console.log('CV view logged successfully:', result);
-     
-     return result;
-   } catch (error) {
-     console.error('Error logging CV view:', error);
-     return { success: false, error: error.message };
-   }
- }
-
- // CV linkine tıklama olayını dinle
- document.addEventListener('DOMContentLoaded', function() {
-   const cvLink = document.getElementById('downloadCv');
-   if (cvLink) {
-     cvLink.addEventListener('click', function(e) {
-       console.log('CV link clicked, logging view...');
-       
-       // Arka planda logla, kullanıcıyı bekletme
-       setTimeout(() => {
-         logCvView().then(result => {
-           console.log('Logging completed:', result);
-         }).catch(err => {
-           console.error('Logging failed:', err);
-         });
-       }, 100);
-     });
-   }
-   
-   // Sayfa yüklendiğinde mevcut istatistikleri göster
-   showCvStats();
- });
-
- // CV istatistiklerini göster
- async function showCvStats() {
-   try {
-     const response = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
-       method: 'POST',
-       headers: {
-         'Content-Type': 'application/json',
-       },
-       body: JSON.stringify({
-         path: '/b/68ecedca43b1c97be96584cc/latest',
-         method: 'GET'
-       })
-     });
-     
-     if (response.ok) {
-       const data = await response.json();
-       console.log('CV Stats:', data);
-       
-       // İsterseniz bu veriyi sayfada gösterebilirsiniz
-       if (data.total_views) {
-         console.log(`Total CV Views: ${data.total_views}`);
-         // Örnek: document.getElementById('viewCount').textContent = data.total_views;
-       }
-     }
-   } catch (error) {
-     console.log('Error fetching CV stats:', error);
-   }
- }
-</script>
-
-<!-- Aşağıdaki kodu değiştirmeden olduğu gibi bırakıyoruz -->
-<script>
- document.addEventListener("DOMContentLoaded", () => {
-  const galleryGrid = document.getElementById("gallery-grid");
-  const loadMoreBtn = document.getElementById("load-more");
-  const modal = document.getElementById("modal");
-  const modalImg = document.getElementById("modal-img");
-  const modalLocation = document.getElementById("modal-location");
-  const modalTime = document.getElementById("modal-time");
-  const modalCounter = document.getElementById("modal-counter");
-  const closeBtn = document.querySelector(".close");
-  const prevButton = document.querySelector(".prev-button");
-  const nextButton = document.querySelector(".next-button");
-
-  let allPhotos = [];
-  let visibleCount = 8;
-  let currentIndex = 0;
-
-  // photos.json'dan verileri çek
-  fetch("/photos.json")
-    .then(res => res.json())
-    .then(data => {
-      allPhotos = data;
-      renderPhotos();
-    })
-    .catch(err => {
-      console.error("Photo fetch error:", err);
-      // Eğer fetch başarısız olursa, örnek veri kullan
-      allPhotos = [
-        {
-          "src": "PHOTO/photo1.JPG",
-          "date": "2017-05-25",
-          "time": "17:12",
-          "location": "Eymir, Ankara, Türkiye"
-        },
-        {
-          "src": "PHOTO/photo2.JPG",
-          "date": "2017-05-30",
-          "time": "14:57",
-          "location": "Eymir, Ankara, Türkiye"
-        },
-        {
-          "src": "PHOTO/photo3.JPG",
-          "date": "2017-05-11",
-          "time": "14:41",
-          "location": "Eymir, Ankara, Türkiye"
-        },
-        {
-          "src": "PHOTO/photo4.jpeg",
-          "date": "2017-04-01",
-          "time": "10:57",
-          "location": "Kuleli, İstanbul, Türkiye"
-        },
-        {
-          "src": "PHOTO/photo5.jpeg",
-          "date": "2017-04-29",
-          "time": "19:18",
-          "location": "Alıntepe, İstanbul, Türkiye"
-        },
-        {
-          "src": "PHOTO/photo6.jpeg",
-          "date": "2023-06-29",
-          "time": "19:22",
-          "location": "Hacettepe Üniversitesi Cami Önü, Ankara, Türkiye"
+    <script>
+        // Mobil cihaz tespiti
+        function isMobileDevice() {
+            return /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         }
-      ];
-      renderPhotos();
-    });
 
-  function renderPhotos() {
-    galleryGrid.innerHTML = "";
-    allPhotos.slice(0, visibleCount).forEach((photo, index) => {
-      const img = document.createElement("img");
-      img.src = photo.src;
-      img.classList.add("gallery-photo");
-      img.alt = "Gallery Photo";
-      img.dataset.location = photo.location;
-      img.dataset.date = photo.date;
-      img.dataset.time = photo.time;
-      img.dataset.index = index;
-      
-      img.addEventListener("click", () => {
-        currentIndex = index;
-        openModal();
-      });
-      
-      galleryGrid.appendChild(img);
-    });
+        // Debug bilgileri
+        console.log('Device type:', isMobileDevice() ? 'Mobile' : 'Desktop');
+        console.log('User Agent:', navigator.userAgent);
 
-    loadMoreBtn.style.display = visibleCount < allPhotos.length ? "block" : "none";
-  }
+        // CV görüntüleme sayacı için fonksiyon
+        async function logCvView() {
+            try {
+                console.log('Starting CV view logging...');
+                
+                // Timeout ile IP bilgisi alma
+                const ipController = new AbortController();
+                const ipTimeout = setTimeout(() => ipController.abort(), 5000);
+                
+                const ipResponse = await fetch('https://ipinfo.io/json?token=68a1229187303a', {
+                    signal: ipController.signal
+                });
+                clearTimeout(ipTimeout);
+                
+                if (!ipResponse.ok) {
+                    throw new Error(`IP API error: ${ipResponse.status}`);
+                }
+                
+                const ipData = await ipResponse.json();
+                
+                const now = new Date();
+                const viewEntry = {
+                    id: Date.now(),
+                    ip: ipData.ip,
+                    hostname: ipData.hostname || 'unknown',
+                    city: ipData.city || 'unknown',
+                    region: ipData.region || 'unknown',
+                    country: ipData.country || 'unknown',
+                    loc: ipData.loc || 'unknown',
+                    org: ipData.org || 'unknown',
+                    postal: ipData.postal || 'unknown',
+                    timezone: ipData.timezone || 'unknown',
+                    timestamp: now.toISOString(),
+                    userAgent: navigator.userAgent.substring(0, 200),
+                    type: 'cv_view',
+                    page: 'home',
+                    device: isMobileDevice() ? 'mobile' : 'desktop'
+                };
 
-  function openModal() {
-    modal.style.display = "flex";
-    setTimeout(() => {
-      modal.classList.add("show");
-    }, 10);
-    document.body.style.overflow = "hidden";
-    updateModal();
-  }
+                console.log('New view entry:', viewEntry);
 
-  function closeModal() {
-    modal.classList.remove("show");
-    setTimeout(() => {
-      modal.style.display = "none";
-      document.body.style.overflow = "auto";
-    }, 300);
-  }
+                // JSONBin işlemleri için timeout
+                const binController = new AbortController();
+                const binTimeout = setTimeout(() => binController.abort(), 10000);
 
-  function updateModal() {
-    const photo = allPhotos[currentIndex];
-    modalImg.src = photo.src;
-    modalLocation.textContent = photo.location || 'Unknown Location';
-    modalTime.textContent = `${photo.date} ${photo.time}` || 'Unknown Time';
-    modalCounter.textContent = `${currentIndex + 1} / ${allPhotos.length}`;
-  }
+                // Önce mevcut veriyi al
+                const getResponse = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        path: '/b/68ecedca43b1c97be96584cc/latest',
+                        method: 'GET'
+                    }),
+                    signal: binController.signal
+                });
 
-  function nextPhoto() {
-    currentIndex = (currentIndex + 1) % allPhotos.length;
-    updateModal();
-  }
+                let existingData = { 
+                    cvview: 'adem', 
+                    cv_views: [], 
+                    total_views: 0,
+                    last_updated: new Date().toISOString()
+                };
+                
+                if (getResponse.ok) {
+                    const result = await getResponse.json();
+                    console.log('Existing data from bin:', result);
+                    existingData = result;
+                    
+                    if (!existingData.cv_views) {
+                        existingData.cv_views = [];
+                    }
+                    if (typeof existingData.total_views !== 'number') {
+                        existingData.total_views = 0;
+                    }
+                }
 
-  function prevPhoto() {
-    currentIndex = (currentIndex - 1 + allPhotos.length) % allPhotos.length;
-    updateModal();
-  }
+                // Yeni entry'yi array'e ekle
+                existingData.cv_views.push(viewEntry);
+                existingData.total_views = (existingData.total_views || 0) + 1;
+                existingData.last_updated = now.toISOString();
 
-  // Olay dinleyicileri
-  closeBtn.addEventListener("click", closeModal);
+                console.log('Updated data to save:', existingData);
 
-  window.addEventListener("click", e => {
-    if (e.target === modal) {
-      closeModal();
-    }
-  });
+                // Güncellenmiş veriyi kaydet
+                const putResponse = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        path: '/b/68ecedca43b1c97be96584cc',
+                        method: 'PUT',
+                        body: existingData
+                    }),
+                    signal: binController.signal
+                });
 
-  nextButton.addEventListener("click", nextPhoto);
-  prevButton.addEventListener("click", prevPhoto);
+                clearTimeout(binTimeout);
 
-  // Klavye ile gezinme
-  document.addEventListener("keydown", e => {
-    if (modal.classList.contains("show")) {
-      if (e.key === "ArrowRight") {
-        nextPhoto();
-      } else if (e.key === "ArrowLeft") {
-        prevPhoto();
-      } else if (e.key === "Escape") {
-        closeModal();
-      }
-    }
-  });
+                if (!putResponse.ok) {
+                    throw new Error(`JSONBin PUT error: ${putResponse.status}`);
+                }
 
-  // Swipe için touch events
-  let touchStartX = 0;
-  let touchEndX = 0;
+                const result = await putResponse.json();
+                console.log('CV view logged successfully:', result);
+                
+                return result;
+            } catch (error) {
+                console.error('Error logging CV view:', error);
+                return { success: false, error: error.message };
+            }
+        }
 
-  modal.addEventListener('touchstart', e => {
-    touchStartX = e.changedTouches[0].screenX;
-  }, false);
+        // CV link kontrolü
+        document.addEventListener('DOMContentLoaded', function() {
+            const cvLink = document.getElementById('downloadCv');
+            console.log('CV link found:', !!cvLink);
+            if (cvLink) {
+                console.log('CV link href:', cvLink.href);
+                
+                // Hem click hem de touchstart event'lerini ekle
+                cvLink.addEventListener('click', handleCvClick);
+                cvLink.addEventListener('touchstart', handleCvClick, { passive: true });
+            }
+            
+            // Sayfa yüklendiğinde mevcut istatistikleri göster
+            showCvStats();
+        });
 
-  modal.addEventListener('touchend', e => {
-    touchEndX = e.changedTouches[0].screenX;
-    handleSwipe();
-  }, false);
+        // Ortak click/touch handler
+        function handleCvClick(e) {
+            // Mobil cihazlarda varsayılan davranışı engelle
+            e.preventDefault();
+            e.stopPropagation();
+            
+            console.log('CV link clicked/touched, logging view...');
+            
+            const originalHref = this.href;
+            
+            // Loglama işlemini başlat
+            logCvView().then(result => {
+                console.log('Logging completed:', result);
+                // Loglama tamamlandıktan sonra yönlendir
+                setTimeout(() => {
+                    window.location.href = originalHref;
+                }, 300);
+            }).catch(err => {
+                console.error('Logging failed:', err);
+                // Hata olsa bile yönlendir
+                window.location.href = originalHref;
+            });
+        }
 
-  function handleSwipe() {
-    if (touchEndX < touchStartX - 50) {
-      nextPhoto();
-    }
-    if (touchEndX > touchStartX + 50) {
-      prevPhoto();
-    }
-  }
+        // CV istatistiklerini göster
+        async function showCvStats() {
+            try {
+                const response = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        path: '/b/68ecedca43b1c97be96584cc/latest',
+                        method: 'GET'
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('CV Stats:', data);
+                    
+                    if (data.total_views) {
+                        console.log(`Total CV Views: ${data.total_views}`);
+                    }
+                }
+            } catch (error) {
+                console.log('Error fetching CV stats:', error);
+            }
+        }
 
-  loadMoreBtn.addEventListener("click", () => {
-    visibleCount += 8;
-    renderPhotos();
-  });
-  
-  // Expand More butonu için gerekli JavaScript kodu
-  const toggleButton = document.querySelector('.toggle-explanation');
-  const explanationContent = document.querySelector('.explanation-content');
-  
-  if (toggleButton && explanationContent) {
-    toggleButton.addEventListener('click', function() {
-      explanationContent.classList.toggle('expanded');
-      
-      // Buton metnini değiştir
-      if (explanationContent.classList.contains('expanded')) {
-        toggleButton.textContent = 'Less..';
-      } else {
-        toggleButton.textContent = 'More..';
-      }
-    });
-  }
-});
-</script>
+        // Galeri ve Modal işlevselliği
+        document.addEventListener("DOMContentLoaded", () => {
+            const galleryGrid = document.getElementById("gallery-grid");
+            const loadMoreBtn = document.getElementById("load-more");
+            const modal = document.getElementById("modal");
+            const modalImg = document.getElementById("modal-img");
+            const modalLocation = document.getElementById("modal-location");
+            const modalTime = document.getElementById("modal-time");
+            const modalCounter = document.getElementById("modal-counter");
+            const closeBtn = document.querySelector(".close");
+            const prevButton = document.querySelector(".prev-button");
+            const nextButton = document.querySelector(".next-button");
+
+            let allPhotos = [];
+            let visibleCount = 8;
+            let currentIndex = 0;
+
+            // photos.json'dan verileri çek
+            fetch("/photos.json")
+                .then(res => res.json())
+                .then(data => {
+                    allPhotos = data;
+                    renderPhotos();
+                })
+                .catch(err => {
+                    console.error("Photo fetch error:", err);
+                    // Fallback veri
+                    allPhotos = [
+                        {
+                            "src": "PHOTO/photo1.JPG",
+                            "date": "2017-05-25",
+                            "time": "17:12",
+                            "location": "Eymir, Ankara, Türkiye"
+                        },
+                        {
+                            "src": "PHOTO/photo2.JPG",
+                            "date": "2017-05-30",
+                            "time": "14:57",
+                            "location": "Eymir, Ankara, Türkiye"
+                        }
+                    ];
+                    renderPhotos();
+                });
+
+            function renderPhotos() {
+                if (!galleryGrid) return;
+                
+                galleryGrid.innerHTML = "";
+                allPhotos.slice(0, visibleCount).forEach((photo, index) => {
+                    const img = document.createElement("img");
+                    img.src = photo.src;
+                    img.classList.add("gallery-photo");
+                    img.alt = "Gallery Photo";
+                    img.dataset.location = photo.location;
+                    img.dataset.date = photo.date;
+                    img.dataset.time = photo.time;
+                    img.dataset.index = index;
+                    
+                    // Hem click hem touch için
+                    img.addEventListener("click", () => {
+                        currentIndex = index;
+                        openModal();
+                    });
+                    
+                    // Mobil için touch event
+                    img.addEventListener("touchstart", (e) => {
+                        e.preventDefault();
+                        currentIndex = index;
+                        openModal();
+                    }, { passive: false });
+                    
+                    galleryGrid.appendChild(img);
+                });
+
+                if (loadMoreBtn) {
+                    loadMoreBtn.style.display = visibleCount < allPhotos.length ? "block" : "none";
+                }
+            }
+
+            function openModal() {
+                if (!modal) return;
+                
+                modal.style.display = "flex";
+                setTimeout(() => {
+                    modal.classList.add("show");
+                }, 10);
+                document.body.style.overflow = "hidden";
+                updateModal();
+            }
+
+            function closeModal() {
+                if (!modal) return;
+                
+                modal.classList.remove("show");
+                setTimeout(() => {
+                    modal.style.display = "none";
+                    document.body.style.overflow = "auto";
+                }, 300);
+            }
+
+            function updateModal() {
+                const photo = allPhotos[currentIndex];
+                if (modalImg) modalImg.src = photo.src;
+                if (modalLocation) modalLocation.textContent = photo.location || 'Unknown Location';
+                if (modalTime) modalTime.textContent = `${photo.date} ${photo.time}` || 'Unknown Time';
+                if (modalCounter) modalCounter.textContent = `${currentIndex + 1} / ${allPhotos.length}`;
+            }
+
+            function nextPhoto() {
+                currentIndex = (currentIndex + 1) % allPhotos.length;
+                updateModal();
+            }
+
+            function prevPhoto() {
+                currentIndex = (currentIndex - 1 + allPhotos.length) % allPhotos.length;
+                updateModal();
+            }
+
+            // Olay dinleyicileri
+            if (closeBtn) {
+                closeBtn.addEventListener("click", closeModal);
+            }
+
+            window.addEventListener("click", e => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+
+            if (nextButton) {
+                nextButton.addEventListener("click", nextPhoto);
+            }
+
+            if (prevButton) {
+                prevButton.addEventListener("click", prevPhoto);
+            }
+
+            // Klavye ile gezinme
+            document.addEventListener("keydown", e => {
+                if (modal && modal.classList.contains("show")) {
+                    if (e.key === "ArrowRight") {
+                        nextPhoto();
+                    } else if (e.key === "ArrowLeft") {
+                        prevPhoto();
+                    } else if (e.key === "Escape") {
+                        closeModal();
+                    }
+                }
+            });
+
+            // Swipe için touch events
+            let touchStartX = 0;
+            let touchEndX = 0;
+
+            if (modal) {
+                modal.addEventListener('touchstart', e => {
+                    touchStartX = e.changedTouches[0].screenX;
+                }, false);
+
+                modal.addEventListener('touchend', e => {
+                    touchEndX = e.changedTouches[0].screenX;
+                    handleSwipe();
+                }, false);
+            }
+
+            function handleSwipe() {
+                if (touchEndX < touchStartX - 50) {
+                    nextPhoto();
+                }
+                if (touchEndX > touchStartX + 50) {
+                    prevPhoto();
+                }
+            }
+
+            if (loadMoreBtn) {
+                loadMoreBtn.addEventListener("click", () => {
+                    visibleCount += 8;
+                    renderPhotos();
+                });
+            }
+            
+            // Expand More butonu için
+            const toggleButton = document.querySelector('.toggle-explanation');
+            const explanationContent = document.querySelector('.explanation-content');
+            
+            if (toggleButton && explanationContent) {
+                toggleButton.addEventListener('click', function() {
+                    explanationContent.classList.toggle('expanded');
+                    
+                    if (explanationContent.classList.contains('expanded')) {
+                        toggleButton.textContent = 'Less..';
+                    } else {
+                        toggleButton.textContent = 'More..';
+                    }
+                });
+            }
+        });
+    </script>
 </body> 
 </html>
