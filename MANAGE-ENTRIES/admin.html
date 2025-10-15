@@ -1214,6 +1214,84 @@
                 justify-content: flex-start;
             }
         }
+
+        /* CV Statistics Styles */
+        .cv-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .cv-stat-box {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .cv-stat-box h4 {
+            margin: 0 0 8px 0;
+            font-size: 0.9rem;
+            color: var(--primary-color);
+        }
+        
+        .cv-stat-box span {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .cv-views-list {
+            margin-top: 20px;
+        }
+        
+        .cv-view-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            font-size: 0.85rem;
+        }
+        
+        .cv-view-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding-bottom: 5px;
+            border-bottom: 1px dashed var(--primary-color);
+        }
+        
+        .cv-view-ip {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .cv-view-date {
+            color: #aaa;
+            font-size: 0.8rem;
+        }
+        
+        .cv-view-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 8px;
+        }
+        
+        .cv-detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .cv-detail-label {
+            font-size: 0.75rem;
+            color: #aaa;
+        }
+        
+        .cv-detail-value {
+            font-size: 0.85rem;
+        }
     </style>
 </head>
 <body>
@@ -1255,6 +1333,9 @@
                     </li>
                     <li class="admin-nav-item" data-section="ip-stats">
                         <i class="fas fa-network-wired"></i> IP Statistics
+                    </li>
+                    <li class="admin-nav-item" data-section="cv-stats">
+                        <i class="fas fa-file-alt"></i> CV Statistics
                     </li>
                     <li class="admin-nav-item" onclick="logout()">
                         <i class="fas fa-sign-out-alt"></i> Logout
@@ -1449,6 +1530,55 @@
                         </div>
                     </div>
                 </section>
+
+                <!-- CV Statistics Section -->
+                <section id="cv-stats" class="admin-section">
+                    <div class="section-title">
+                        <h2><i class="fas fa-file-alt"></i> CV Statistics</h2>
+                    </div>
+                    
+                    <div class="cv-stats-grid">
+                        <div class="cv-stat-box">
+                            <h4>Total CV Views</h4>
+                            <span id="total-cv-views">0</span>
+                        </div>
+                        <div class="cv-stat-box">
+                            <h4>Unique CV Visitors</h4>
+                            <span id="unique-cv-visitors">0</span>
+                        </div>
+                        <div class="cv-stat-box">
+                            <h4>Last CV View</h4>
+                            <span id="last-cv-view">-</span>
+                        </div>
+                        <div class="cv-stat-box">
+                            <h4>Today's CV Views</h4>
+                            <span id="today-cv-views">0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-container">
+                        <div class="filter-controls">
+                            <input type="text" id="cv-filter-ip" placeholder="IP address">
+                            <input type="text" id="cv-filter-country" placeholder="Country">
+                            <input type="date" id="cv-filter-date">
+                            <button onclick="applyCvFilters()"><i class="fas fa-filter"></i> Filter</button>
+                            <button onclick="clearCvFilters()"><i class="fas fa-times"></i> Clear</button>
+                        </div>
+                        <div class="filter-controls">
+                            <button onclick="exportCvData()"><i class="fas fa-download"></i> Download CV Data</button>
+                            <button onclick="clearCvData()" style="background: var(--error-color);"><i class="fas fa-trash"></i> Clear CV Data</button>
+                        </div>
+                    </div>
+                    
+                    <div class="cv-views-list">
+                        <h4><i class="fas fa-list"></i> Recent CV Views</h4>
+                        <div id="recent-cv-views">
+                            <div class="loading-spinner">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </main>
         </div>
     </div>
@@ -1485,17 +1615,18 @@
 
     <footer style="text-align: center; padding: 20px; font-size: 14px; color: white; margin-top: 50px;">
         <hr style="margin-bottom: 10px; border-color: limegreen;" />
-        <p>Design & Code by <strong>Adem Bayazıt</strong> | LadyBug Admin Panel | Version 2.1</p>
+        <p>Design & Code by <strong>Adem Bayazıt</strong> | LadyBug Admin Panel | Version 2.2</p>
     </footer>
 
     <!-- Cropper.js Script -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
     <script>
-        // JSON Bin IDs
-        const ENTRIES_BIN_ID = '68933248ae596e708fc2fbbc';
+        // JSON Bin IDs - MASTER BIN YAPISINA GÖRE GÜNCELLENDİ
+        const MASTER_BIN_ID = '68933248ae596e708fc2fbbc';
         const INTERACTIONS_BIN_ID = '68862fd97b4b8670d8a81945';
         const IP_STATS_BIN_ID = '68ba0ba543b1c97be93705fb';
+        const CV_STATS_BIN_ID = '68ecedca43b1c97be96584cc';
         const PROXY_URL = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
         
         // Global variables
@@ -1506,19 +1637,148 @@
         let filteredVisitors = [];
         let entriesData = [];
         let entryViewCounts = {};
+        let cvViewsData = [];
+        let filteredCvViews = [];
+        let allBins = [];
+        let currentActiveBinId = MASTER_BIN_ID;
 
         // Authentication check
         window.addEventListener('DOMContentLoaded', () => {
             if (!localStorage.getItem('adminAuth') || localStorage.getItem('adminAuth') !== 'true') {
                 window.location.href = 'index.html';
             } else {
-                loadStats();
-                loadRecentEntries();
-                updatePreview('trContent');
-                updatePreview('enContent');
-                loadIpStats();
+                initializeBinSystem().then(() => {
+                    loadStats();
+                    loadRecentEntries();
+                    updatePreview('trContent');
+                    updatePreview('enContent');
+                    loadIpStats();
+                });
             }
         });
+
+        // Bin Management System
+        async function initializeBinSystem() {
+            try {
+                const masterData = await fetchFromJsonBin(MASTER_BIN_ID);
+                
+                if (masterData.bins && masterData.bins.length > 0) {
+                    allBins = masterData.bins;
+                    currentActiveBinId = masterData.activeBin || MASTER_BIN_ID;
+                } else {
+                    allBins = [{
+                        id: MASTER_BIN_ID,
+                        createdAt: new Date().toISOString(),
+                        entryCount: 0,
+                        size: 0,
+                        isMaster: true
+                    }];
+                    currentActiveBinId = MASTER_BIN_ID;
+                }
+                console.log('Bin system initialized:', { allBins, currentActiveBinId });
+            } catch (error) {
+                console.error('Bin system initialization failed:', error);
+                allBins = [{ 
+                    id: MASTER_BIN_ID, 
+                    createdAt: new Date().toISOString(), 
+                    entryCount: 0, 
+                    size: 0,
+                    isMaster: true 
+                }];
+                currentActiveBinId = MASTER_BIN_ID;
+            }
+        }
+
+        // Tüm entry'leri tüm bin'lerden yükle
+        async function loadAllEntries() {
+            try {
+                let allEntries = [];
+                
+                // Tüm bin'leri yükle (master hariç)
+                const sortedBins = [...allBins]
+                    .filter(bin => !bin.isMaster)
+                    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                
+                console.log(`Loading entries from ${sortedBins.length} bins...`);
+                
+                for (const bin of sortedBins) {
+                    try {
+                        const binData = await fetchFromJsonBin(bin.id);
+                        
+                        if (binData.records && Array.isArray(binData.records)) {
+                            allEntries = [...allEntries, ...binData.records];
+                            console.log(`Loaded ${binData.records.length} entries from bin ${bin.id}`);
+                        }
+                    } catch (error) {
+                        console.error(`Failed to load bin ${bin.id}:`, error);
+                    }
+                }
+                
+                // Eğer hiç bin yoksa, mevcut bin'den yükle
+                if (allEntries.length === 0) {
+                    try {
+                        const currentBinData = await fetchFromJsonBin(MASTER_BIN_ID);
+                        if (currentBinData.records && Array.isArray(currentBinData.records)) {
+                            allEntries = currentBinData.records;
+                            console.log(`Loaded ${allEntries.length} entries from master bin`);
+                        }
+                    } catch (error) {
+                        console.error('Failed to load from master bin:', error);
+                    }
+                }
+                
+                return allEntries;
+            } catch (error) {
+                console.error('Load all entries failed:', error);
+                return [];
+            }
+        }
+
+        // Entry'yi aktif bin'e ekle
+        async function addEntryToBin(entry) {
+            try {
+                // Aktif bin'in verilerini al
+                const activeBinData = await fetchFromJsonBin(currentActiveBinId);
+                const records = activeBinData.records || [];
+                
+                // Yeni entry'yi ekle
+                records.unshift(entry);
+                
+                // Bin'i güncelle
+                await fetchFromJsonBin(currentActiveBinId, 'PUT', { records });
+                
+                // Bin istatistiklerini güncelle
+                const binIndex = allBins.findIndex(bin => bin.id === currentActiveBinId);
+                if (binIndex !== -1) {
+                    allBins[binIndex].entryCount = records.length;
+                    allBins[binIndex].size = JSON.stringify({ records }).length;
+                    allBins[binIndex].lastUpdated = new Date().toISOString();
+                }
+                
+                // Master bin'i güncelle
+                await updateMasterBin();
+                
+                return true;
+            } catch (error) {
+                console.error('Add entry to bin failed:', error);
+                throw error;
+            }
+        }
+
+        // Master bin'i güncelle
+        async function updateMasterBin() {
+            try {
+                await fetchFromJsonBin(MASTER_BIN_ID, 'PUT', {
+                    bins: allBins,
+                    activeBin: currentActiveBinId,
+                    lastUpdated: new Date().toISOString(),
+                    totalBins: allBins.length,
+                    totalEntries: entriesData.length
+                });
+            } catch (error) {
+                console.error('Master bin update failed:', error);
+            }
+        }
 
         // Section switching
         function switchSection(sectionId) {
@@ -1537,6 +1797,11 @@
                     item.classList.add('active');
                 }
             });
+
+            // Load CV stats when switching to that section
+            if (sectionId === 'cv-stats') {
+                loadCvStats();
+            }
         }
 
         // Add event listeners for navigation
@@ -1593,12 +1858,9 @@
         // Get next available ID
         async function getNextId() {
             try {
-                const currentData = await fetchFromJsonBin(ENTRIES_BIN_ID);
-                let entries = Array.isArray(currentData) ? currentData : (currentData.records || []);
-                
-                if (entries.length === 0) return 1;
-                
-                const maxId = Math.max(...entries.map(e => e.id));
+                const allEntries = await loadAllEntries();
+                if (allEntries.length === 0) return 1;
+                const maxId = Math.max(...allEntries.map(e => e.id));
                 return maxId + 1;
             } catch (error) {
                 console.error('ID alınırken hata:', error);
@@ -1985,7 +2247,7 @@
             }
         }
 
-        // Entry management functions
+        // Entry management functions - MASTER BIN YAPISINA GÖRE GÜNCELLENDİ
         async function submitEntry() {
             const entryIdInput = document.getElementById('entryId');
             const referenceId = document.getElementById('referenceId').value;
@@ -2003,12 +2265,11 @@
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
                 
-                const currentData = await fetchFromJsonBin(ENTRIES_BIN_ID);
-                let entries = Array.isArray(currentData) ? currentData : (currentData.records || []);
-                
+                // Tüm entry'leri yükle ve ID kontrolü yap
+                const allEntries = await loadAllEntries();
                 let entryId = entryIdInput.value ? parseInt(entryIdInput.value) : await getNextId();
                 
-                if (entryIdInput.value && entries.some(e => e.id === entryId)) {
+                if (entryIdInput.value && allEntries.some(e => e.id === entryId)) {
                     showToast('This ID is already in use!', 'error');
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = originalText;
@@ -2023,10 +2284,9 @@
                     references: referenceId ? [parseInt(referenceId)] : []
                 };
                 
-                const updatedEntries = [newEntry, ...entries];
-                await fetchFromJsonBin(ENTRIES_BIN_ID, 'PUT', updatedEntries);
+                // Entry'yi aktif bin'e ekle
+                await addEntryToBin(newEntry);
                 
-                // Gönderildi mesajı
                 showToast('Entry added successfully!', 'success');
                 
                 // Butonu geçici olarak değiştir
@@ -2055,7 +2315,7 @@
             }
         }
 
-        // Görüntüleme sayısını hesapla - TAMAMEN YENİLENDİ
+        // Görüntüleme sayısını hesapla
         function calculateViewCounts(visitors) {
             entryViewCounts = {};
             visitors.forEach(visitor => {
@@ -2087,20 +2347,18 @@
             showToast(`Reference ID set to ${entryId}. You can now create a child entry.`);
         }
 
+        // Entry'leri listele - MASTER BIN YAPISINA GÖRE GÜNCELLENDİ
         async function loadRecentEntries() {
             try {
-                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
+                entriesData = await loadAllEntries();
                 const recentEntriesContainer = document.getElementById('recent-entries');
                 recentEntriesContainer.innerHTML = '';
-                
-                entriesData = Array.isArray(entries) ? 
-                    entries : 
-                    (entries.records ? entries.records : []);
                 
                 // Görüntüleme sayılarını hesapla
                 calculateViewCounts(allVisitors);
                 
-                const recentEntries = entriesData.slice(0, 7);
+                // En son 10 entry'yi göster
+                const recentEntries = entriesData.slice(0, 10);
                 
                 if (recentEntries.length === 0) {
                     recentEntriesContainer.innerHTML = '<p>No entries found.</p>';
@@ -2113,8 +2371,6 @@
                     
                     let displayContent = entry.content_tr || entry.content;
                     const viewCount = entryViewCounts[entry.id] || 0;
-                    
-                    // DEĞİŞTİRİLDİ: Entry'e tıklanabilir özellik KALDIRILDI
                     
                     entryEl.innerHTML = `
                         <div class="entry-content">${displayContent}</div>
@@ -2146,12 +2402,11 @@
             }
             
             try {
-                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
+                const entries = await loadAllEntries();
                 const recentEntriesContainer = document.getElementById('recent-entries');
                 recentEntriesContainer.innerHTML = '';
                 
-                let entriesArray = Array.isArray(entries) ? entries : (entries.records || []);
-                const entry = entriesArray.find(e => e.id === parseInt(searchId));
+                const entry = entries.find(e => e.id === parseInt(searchId));
                 
                 if (!entry) {
                     recentEntriesContainer.innerHTML = '<p>Entry not found.</p>';
@@ -2163,8 +2418,6 @@
                 entryEl.className = 'entry-item';
                 
                 let displayContent = entry.content_tr || entry.content;
-                
-                // DEĞİŞTİRİLDİ: Entry'e tıklanabilir özellik KALDIRILDI
                 
                 entryEl.innerHTML = `
                     <div class="entry-content">${displayContent}</div>
@@ -2190,10 +2443,8 @@
 
         async function editEntry(entryId) {
             try {
-                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
-                const entry = Array.isArray(entries) ? 
-                    entries.find(e => e.id === entryId) : 
-                    (entries.records ? entries.records.find(e => e.id === entryId) : null);
+                const entries = await loadAllEntries();
+                const entry = entries.find(e => e.id === entryId);
                 
                 if (!entry) {
                     showToast('Entry not found!', 'error');
@@ -2284,12 +2535,13 @@
                     return;
                 }
                 
-                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
-                let entriesArray = Array.isArray(entries) ? entries : (entries.records || []);
+                // Aktif bin'deki entry'yi bul ve güncelle
+                const activeBinData = await fetchFromJsonBin(currentActiveBinId);
+                let entriesArray = activeBinData.records || [];
                 
                 const entryIndex = entriesArray.findIndex(e => e.id === entryId);
                 if (entryIndex === -1) {
-                    showToast('Entry not found!', 'error');
+                    showToast('Entry not found in current bin!', 'error');
                     return;
                 }
                 
@@ -2300,7 +2552,8 @@
                     date: new Date().toISOString()
                 };
                 
-                await fetchFromJsonBin(ENTRIES_BIN_ID, 'PUT', entriesArray);
+                // Bin'i güncelle
+                await fetchFromJsonBin(currentActiveBinId, 'PUT', { records: entriesArray });
                 
                 showToast('Entry updated successfully!', 'success');
                 await loadRecentEntries();
@@ -2331,12 +2584,13 @@
 
         async function deleteEntry(entryId) {
             try {
-                const entries = await fetchFromJsonBin(ENTRIES_BIN_ID);
-                let entriesArray = Array.isArray(entries) ? entries : (entries.records || []);
+                // Aktif bin'den entry'yi sil
+                const activeBinData = await fetchFromJsonBin(currentActiveBinId);
+                let entriesArray = activeBinData.records || [];
                 
                 const updatedEntries = entriesArray.filter(e => e.id !== entryId);
                 
-                await fetchFromJsonBin(ENTRIES_BIN_ID, 'PUT', updatedEntries);
+                await fetchFromJsonBin(currentActiveBinId, 'PUT', { records: updatedEntries });
                 
                 showToast('Entry deleted successfully!', 'success');
                 await loadRecentEntries();
@@ -2347,15 +2601,13 @@
             }
         }
 
-        // Statistics functions
+        // Statistics functions - MASTER BIN YAPISINA GÖRE GÜNCELLENDİ
         async function updateStats() {
             try {
-                const entriesData = await fetchFromJsonBin(ENTRIES_BIN_ID);
+                const entriesData = await loadAllEntries();
                 const interactions = await fetchFromJsonBin(INTERACTIONS_BIN_ID);
                 
-                const totalEntries = Array.isArray(entriesData) ? 
-                    entriesData.length : 
-                    (entriesData.records ? entriesData.records.length : 0);
+                const totalEntries = entriesData.length;
                 
                 const totalLikes = interactions.likes ? 
                     Object.values(interactions.likes).reduce((a, b) => a + b, 0) : 0;
@@ -2369,8 +2621,7 @@
                 
                 // Last entry date
                 if (totalEntries > 0) {
-                    const entriesArray = Array.isArray(entriesData) ? entriesData : (entriesData.records || []);
-                    const lastDate = new Date(entriesArray[0].date).toLocaleDateString();
+                    const lastDate = new Date(entriesData[0].date).toLocaleDateString();
                     document.getElementById('last-entry-date').textContent = lastDate;
                 } else {
                     document.getElementById('last-entry-date').textContent = '-';
@@ -2734,6 +2985,155 @@
         function formatDate(dateString) {
             const date = new Date(dateString);
             return date.toLocaleDateString('en-US') + ' ' + date.toLocaleTimeString('en-US');
+        }
+
+        // CV Statistics Functions - YENİ EKLENDİ
+        async function loadCvStats() {
+            try {
+                const response = await fetchFromJsonBin(CV_STATS_BIN_ID);
+                cvViewsData = response.cv_views || [];
+                filteredCvViews = [...cvViewsData];
+                
+                updateCvStats(cvViewsData);
+                displayRecentCvViews(cvViewsData);
+            } catch (error) {
+                console.error('Error loading CV statistics:', error);
+                document.getElementById('recent-cv-views').innerHTML = 
+                    '<div class="cv-view-item">Error loading CV statistics.</div>';
+            }
+        }
+
+        function updateCvStats(views) {
+            const totalViews = views.length;
+            const uniqueVisitors = new Set(views.map(v => v.ip)).size;
+            
+            let lastView = '-';
+            let todayViews = 0;
+            const today = new Date().toISOString().split('T')[0];
+            
+            if (views.length > 0) {
+                const sortedViews = [...views].sort((a, b) => 
+                    new Date(b.timestamp) - new Date(a.timestamp)
+                );
+                lastView = formatDate(sortedViews[0].timestamp);
+                
+                // Bugünkü görüntülemeleri say
+                todayViews = views.filter(view => 
+                    view.timestamp.startsWith(today)
+                ).length;
+            }
+            
+            document.getElementById('total-cv-views').textContent = totalViews;
+            document.getElementById('unique-cv-visitors').textContent = uniqueVisitors;
+            document.getElementById('last-cv-view').textContent = lastView;
+            document.getElementById('today-cv-views').textContent = todayViews;
+        }
+
+        function displayRecentCvViews(views) {
+            const recentCvViews = document.getElementById('recent-cv-views');
+            
+            if (views.length === 0) {
+                recentCvViews.innerHTML = '<div class="cv-view-item">No CV view records found.</div>';
+                return;
+            }
+            
+            const sortedViews = [...views].sort((a, b) => 
+                new Date(b.timestamp) - new Date(a.timestamp)
+            ).slice(0, 10);
+            
+            let html = '';
+            sortedViews.forEach(view => {
+                html += `
+                    <div class="cv-view-item">
+                        <div class="cv-view-header">
+                            <span class="cv-view-ip">${view.ip}</span>
+                            <span class="cv-view-date">${formatDate(view.timestamp)}</span>
+                        </div>
+                        <div class="cv-view-details">
+                            <div class="cv-detail-item">
+                                <span class="cv-detail-label">City/Country</span>
+                                <span class="cv-detail-value">${view.city || 'Unknown'}${view.country ? '/' + view.country : ''}</span>
+                            </div>
+                            <div class="cv-detail-item">
+                                <span class="cv-detail-label">User Agent</span>
+                                <span class="cv-detail-value">${extractBrowserInfo(view.userAgent)}</span>
+                            </div>
+                            <div class="cv-detail-item">
+                                <span class="cv-detail-label">Type</span>
+                                <span class="cv-detail-value">${view.type || 'cv_view'}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            recentCvViews.innerHTML = html;
+        }
+
+        function applyCvFilters() {
+            const ipFilter = document.getElementById('cv-filter-ip').value.toLowerCase();
+            const countryFilter = document.getElementById('cv-filter-country').value.toLowerCase();
+            const dateFilter = document.getElementById('cv-filter-date').value;
+            
+            filteredCvViews = cvViewsData.filter(view => {
+                let matches = true;
+                
+                if (ipFilter && !view.ip.toLowerCase().includes(ipFilter)) {
+                    matches = false;
+                }
+                
+                if (countryFilter && (!view.country || !view.country.toLowerCase().includes(countryFilter))) {
+                    matches = false;
+                }
+                
+                if (dateFilter && !view.timestamp.startsWith(dateFilter)) {
+                    matches = false;
+                }
+                
+                return matches;
+            });
+            
+            updateCvStats(filteredCvViews);
+            displayRecentCvViews(filteredCvViews);
+        }
+
+        function clearCvFilters() {
+            document.getElementById('cv-filter-ip').value = '';
+            document.getElementById('cv-filter-country').value = '';
+            document.getElementById('cv-filter-date').value = '';
+            
+            filteredCvViews = [...cvViewsData];
+            updateCvStats(filteredCvViews);
+            displayRecentCvViews(filteredCvViews);
+        }
+
+        function exportCvData() {
+            const data = JSON.stringify(filteredCvViews, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'cv-statistics.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        async function clearCvData() {
+            if (confirm('Are you sure you want to clear all CV data? This action cannot be undone.')) {
+                try {
+                    await fetchFromJsonBin(CV_STATS_BIN_ID, 'PUT', { cv_views: [] });
+                    showToast('CV data cleared successfully!', 'success');
+                    
+                    // Reload CV statistics
+                    cvViewsData = [];
+                    filteredCvViews = [];
+                    updateCvStats([]);
+                    displayRecentCvViews([]);
+                } catch (error) {
+                    console.error('Error clearing CV data:', error);
+                    showToast(`Error clearing CV data: ${error.message}`, 'error');
+                }
+            }
         }
 
         // Logout function
