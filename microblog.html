@@ -1928,7 +1928,7 @@
               viewsCache.data = JSON.parse(localViews);
               updateStatistics();
             } catch (parseError) {
-              console.Error('Local storage parse error:', parseError);
+              console.error('Local storage parse error:', parseError);
             }
           }
         }
@@ -3317,6 +3317,9 @@
         // 8. UYGULAMAYI BAŞLAT
         async function initializeApp() {
           try {
+            // INTERACTIONS (LIKES, PINS, VIEWS) YÜKLE - EKLENDİ
+            await loadInteractions();
+            
             // Bin sistemini başlat
             await initializeBinSystem();
             
