@@ -256,102 +256,113 @@
         margin: 0 10px;
       }
 
-      /* Photographic Cryptology Header ve Buton */
+      /* Photographic Cryptology için yeni düzen */
       .photo-gallery-header {
+        margin-bottom: 30px;
+      }
+
+      .gallery-actions {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 30px;
-        position: relative;
+        margin-top: 20px;
+        gap: 15px;
       }
 
-      .photo-info-btn {
+      /* Küçük Photo Analysis Butonu */
+      .photo-analysis-btn {
         display: flex;
         align-items: center;
-        gap: 10px;
-        background: linear-gradient(135deg, rgba(10, 25, 20, 0.9), rgba(0, 100, 0, 0.7));
+        gap: 8px;
+        background: linear-gradient(135deg, rgba(15, 30, 25, 0.8), rgba(0, 80, 0, 0.6));
         color: #f9d71c;
         text-decoration: none;
-        padding: 12px 20px;
-        border-radius: 12px;
-        border: 1px solid rgba(249, 215, 28, 0.4);
-        box-shadow: 0 4px 15px rgba(0, 255, 0, 0.2);
+        padding: 8px 15px;
+        border-radius: 8px;
+        border: 1px solid rgba(249, 215, 28, 0.3);
+        box-shadow: 0 2px 8px rgba(0, 255, 0, 0.15);
         transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
-        backdrop-filter: blur(10px);
-        font-size: 0.9em;
-        min-height: 44px;
-        min-width: 140px;
+        backdrop-filter: blur(8px);
+        font-size: 0.8em;
+        min-height: 36px;
+        min-width: 120px;
         justify-content: center;
+        order: 2; /* Sağ tarafa yerleştir */
       }
 
-      .photo-info-btn::before {
+      .photo-analysis-btn::before {
         content: '';
         position: absolute;
         top: 0;
         left: -100%;
         width: 100%;
         height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(249, 215, 28, 0.1), transparent);
+        background: linear-gradient(90deg, transparent, rgba(249, 215, 28, 0.08), transparent);
         transition: left 0.6s;
       }
 
-      .photo-info-btn:hover::before {
+      .photo-analysis-btn:hover::before {
         left: 100%;
       }
 
-      .photo-info-btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(0, 255, 0, 0.3);
-        border-color: rgba(249, 215, 28, 0.6);
+      .photo-analysis-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 255, 0, 0.25);
+        border-color: rgba(249, 215, 28, 0.5);
       }
 
-      .photo-info-btn i {
-        font-size: 1.2em;
+      .photo-analysis-btn i {
+        font-size: 0.9em;
         color: #f9d71c;
-        transition: all 0.3s ease;
       }
 
-      .photo-info-btn .btn-text {
-        font-weight: 600;
-        letter-spacing: 0.5px;
-        font-size: 0.95em;
+      .photo-analysis-btn .btn-text {
+        font-weight: 500;
+        letter-spacing: 0.3px;
+        font-size: 0.85em;
       }
 
       /* Tooltip */
-      .photo-info-btn::after {
+      .photo-analysis-btn::after {
         content: attr(data-tooltip);
         position: absolute;
         bottom: 100%;
         left: 50%;
-        transform: translateX(-50%) translateY(-10px);
-        background: rgba(0, 0, 0, 0.9);
+        transform: translateX(-50%) translateY(-8px);
+        background: rgba(0, 0, 0, 0.85);
         color: white;
-        padding: 8px 12px;
-        border-radius: 6px;
-        font-size: 0.8em;
+        padding: 6px 10px;
+        border-radius: 4px;
+        font-size: 0.7em;
         white-space: nowrap;
         opacity: 0;
         pointer-events: none;
         transition: all 0.3s ease;
-        border: 1px solid rgba(249, 215, 28, 0.3);
+        border: 1px solid rgba(249, 215, 28, 0.2);
         z-index: 1000;
       }
 
-      .photo-info-btn:hover::after {
+      .photo-analysis-btn:hover::after {
         opacity: 1;
-        transform: translateX(-50%) translateY(-5px);
+        transform: translateX(-50%) translateY(-4px);
+      }
+
+      /* Load More butonu solda kalacak */
+      .load-more {
+        order: 1; /* Sol tarafa yerleştir */
+        margin-right: auto;
       }
 
       /* Animasyon için keyframes */
-      @keyframes subtlePulse {
-        0%, 100% { box-shadow: 0 4px 15px rgba(0, 255, 0, 0.2); }
-        50% { box-shadow: 0 4px 20px rgba(0, 255, 0, 0.4); }
+      @keyframes subtleGlow {
+        0%, 100% { box-shadow: 0 2px 8px rgba(0, 255, 0, 0.15); }
+        50% { box-shadow: 0 2px 12px rgba(0, 255, 0, 0.25); }
       }
 
-      .photo-info-btn {
-        animation: subtlePulse 3s ease-in-out infinite;
+      .photo-analysis-btn {
+        animation: subtleGlow 4s ease-in-out infinite;
       }
 
       /* Mobil için stil */
@@ -412,36 +423,48 @@
           min-height: 50px;
         }
 
-        /* Photographic Cryptology Header mobil */
-        .photo-gallery-header {
+        /* Galeri actions mobil */
+        .gallery-actions {
           flex-direction: column;
-          gap: 15px;
-          align-items: flex-start;
+          align-items: stretch;
+          gap: 10px;
         }
 
-        .photo-info-btn {
+        .photo-analysis-btn {
+          order: 2;
           align-self: flex-end;
-          padding: 15px 18px;
-          min-height: 50px;
-          min-width: 150px;
+          min-width: 110px;
+          min-height: 40px;
+          padding: 10px 12px;
+        }
+
+        .load-more {
+          order: 1;
+          align-self: stretch;
+          margin-right: 0;
         }
 
         /* Mobilde tooltip'ı kapat */
-        .photo-info-btn::after {
+        .photo-analysis-btn::after {
           display: none;
         }
       }
 
       /* Touch device detection ve mobil optimizasyon */
       @media (hover: none) and (pointer: coarse) {
-        .photo-info-btn {
+        .photo-analysis-btn {
           cursor: pointer;
           -webkit-tap-highlight-color: transparent;
         }
 
-        .photo-info-btn:focus {
-          outline: 2px solid rgba(249, 215, 28, 0.5);
-          outline-offset: 2px;
+        .photo-analysis-btn:focus {
+          outline: 2px solid rgba(249, 215, 28, 0.4);
+          outline-offset: 1px;
+        }
+
+        .photo-analysis-btn:active {
+          transform: scale(0.95);
+          background: linear-gradient(135deg, rgba(20, 35, 30, 0.9), rgba(0, 90, 0, 0.7));
         }
       }
 
@@ -678,13 +701,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
             <div class="gallery-wrapper">
                 <div id="gallery-grid" class="gallery-grid"></div>
-                <button id="load-more" class="load-more">More</button>
+                <div class="gallery-actions">
+                    <button id="load-more" class="load-more">More Photos</button>
+                    <a href="/photographic-cryptology-explanation" class="photo-analysis-btn" 
+                       data-tooltip="Fotoğrafların detaylı açıklamaları ve kriptolojik anlamları">
+                        <i class="fas fa-search-plus"></i>
+                        <span class="btn-text">Analysis</span>
+                    </a>
+                </div>
             </div>
-                 <a href="/photographic-cryptology-explanation" class="photo-info-btn" 
-                   data-tooltip="Fotoğrafların detaylı açıklamaları ve kriptolojik anlamları">
-                    <i class="fas fa-camera-retro"></i>
-                    <span class="btn-text">Photo Analysis</span>
-                </a>
         </div>
     </section>
 
