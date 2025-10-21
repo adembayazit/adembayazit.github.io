@@ -3,8 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - Kullanıcı Davranış Analizi</title>
+    <title>Kullanıcı Davranış Analizi - Admin Paneli</title>
     <style>
+        :root {
+            --primary-color: #00FF00;
+            --secondary-color: #008800;
+            --background-color: #000000;
+            --card-bg: #111111;
+            --text-color: #FFFFFF;
+            --border-color: #333333;
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -13,13 +22,14 @@
         }
 
         body {
-            background: linear-gradient(135deg, #1a2f3a, #0d1b23);
-            color: #fff;
+            background-color: var(--background-color);
+            color: var(--text-color);
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         .admin-container {
-            max-width: 1400px;
+            max-width: 1800px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -28,22 +38,20 @@
             text-align: center;
             margin-bottom: 30px;
             padding: 20px;
-            background: rgba(255, 255, 255, 0.1);
+            background: var(--card-bg);
             border-radius: 15px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
         }
 
         .header h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
-            background: linear-gradient(45deg, #00ff88, #00ccff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--primary-color);
         }
 
         .header p {
-            color: #ccc;
+            color: #cccccc;
             font-size: 1.1rem;
         }
 
@@ -54,31 +62,31 @@
             margin-bottom: 20px;
         }
 
-        @media (max-width: 1024px) {
+        @media (max-width: 1400px) {
             .dashboard {
                 grid-template-columns: 1fr;
             }
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.1);
+            background: var(--card-bg);
             border-radius: 15px;
             padding: 20px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid var(--border-color);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.05);
         }
 
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 25px rgba(0, 255, 0, 0.1);
         }
 
         .card h2 {
-            color: #00ff88;
+            color: var(--primary-color);
             margin-bottom: 15px;
             font-size: 1.4rem;
-            border-bottom: 2px solid #00ff88;
+            border-bottom: 2px solid var(--primary-color);
             padding-bottom: 8px;
         }
 
@@ -92,38 +100,50 @@
         .stat-item {
             text-align: center;
             padding: 15px;
-            background: rgba(0, 255, 136, 0.1);
+            background: rgba(0, 255, 0, 0.1);
             border-radius: 10px;
-            border: 1px solid rgba(0, 255, 136, 0.3);
+            border: 1px solid rgba(0, 255, 0, 0.3);
         }
 
         .stat-number {
             font-size: 2rem;
             font-weight: bold;
-            color: #00ff88;
+            color: var(--primary-color);
             margin-bottom: 5px;
         }
 
         .stat-label {
             font-size: 0.9rem;
-            color: #ccc;
+            color: #cccccc;
         }
 
         .simulation-area {
             position: relative;
             width: 100%;
-            height: 600px;
-            background: rgba(0, 0, 0, 0.3);
+            height: 700px;
+            background: rgba(0, 0, 0, 0.5);
             border-radius: 15px;
             overflow: hidden;
-            border: 2px solid rgba(255, 255, 255, 0.1);
+            border: 2px solid var(--border-color);
             margin-bottom: 20px;
         }
 
-        #simulation-screen {
+        #cv-preview-container {
             width: 100%;
             height: 100%;
             background: white;
+            position: relative;
+            overflow: auto;
+            border-radius: 10px;
+        }
+
+        #cv-preview {
+            width: 100%;
+            min-height: 100%;
+            background: white;
+            color: black;
+            padding: 20px;
+            font-family: Arial, sans-serif;
             position: relative;
         }
 
@@ -143,7 +163,7 @@
             position: absolute;
             width: 30px;
             height: 30px;
-            border: 2px solid #00ff88;
+            border: 2px solid var(--primary-color);
             border-radius: 50%;
             pointer-events: none;
             z-index: 999;
@@ -155,6 +175,31 @@
             100% { transform: scale(2); opacity: 0; }
         }
 
+        .selection-highlight {
+            position: absolute;
+            background-color: rgba(255, 255, 0, 0.3);
+            border: 1px dashed #ffcc00;
+            pointer-events: none;
+            z-index: 800;
+        }
+
+        .heatmap-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 700;
+        }
+
+        .heatmap-point {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,0,0,0.6) 0%, rgba(255,0,0,0) 70%);
+            transform: translate(-50%, -50%);
+        }
+
         .controls {
             display: flex;
             gap: 15px;
@@ -164,7 +209,7 @@
 
         .btn {
             padding: 12px 25px;
-            background: linear-gradient(45deg, #00ff88, #00ccff);
+            background: var(--primary-color);
             border: none;
             border-radius: 8px;
             color: #000;
@@ -176,11 +221,16 @@
 
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+            box-shadow: 0 5px 15px rgba(0, 255, 0, 0.4);
+            background: #00cc00;
         }
 
         .btn.secondary {
-            background: linear-gradient(45deg, #ff6b6b, #ffa500);
+            background: #ff6b6b;
+        }
+
+        .btn.secondary:hover {
+            background: #ff5252;
         }
 
         .input-group {
@@ -189,7 +239,7 @@
             align-items: center;
         }
 
-        .input-group input {
+        .input-group input, .input-group select {
             padding: 12px;
             border: none;
             border-radius: 8px;
@@ -197,10 +247,11 @@
             color: white;
             font-size: 1rem;
             min-width: 200px;
+            border: 1px solid var(--border-color);
         }
 
         .input-group input::placeholder {
-            color: #ccc;
+            color: #cccccc;
         }
 
         .data-logs {
@@ -216,7 +267,7 @@
             margin-bottom: 8px;
             background: rgba(255, 255, 255, 0.05);
             border-radius: 8px;
-            border-left: 4px solid #00ff88;
+            border-left: 4px solid var(--primary-color);
             font-family: 'Courier New', monospace;
             font-size: 0.9rem;
         }
@@ -249,25 +300,8 @@
 
         .info-value {
             font-weight: bold;
-            color: #00ff88;
+            color: var(--primary-color);
             margin-top: 5px;
-        }
-
-        .heatmap-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            opacity: 0.7;
-        }
-
-        .heatmap-point {
-            position: absolute;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(255,0,0,0.8) 0%, rgba(255,0,0,0) 70%);
-            transform: translate(-50%, -50%);
         }
 
         .timeline {
@@ -285,7 +319,7 @@
 
         .timeline-progress {
             height: 100%;
-            background: linear-gradient(90deg, #00ff88, #00ccff);
+            background: var(--primary-color);
             border-radius: 10px;
             width: 0%;
             transition: width 0.3s ease;
@@ -303,10 +337,17 @@
             border-radius: 6px;
             font-size: 0.85rem;
             border-left: 3px solid #00ccff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .interaction-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
         }
 
         .interaction-time {
-            color: #00ff88;
+            color: var(--primary-color);
             font-weight: bold;
         }
 
@@ -321,7 +362,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.95);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -329,18 +370,18 @@
         }
 
         .login-form {
-            background: rgba(255, 255, 255, 0.1);
+            background: var(--card-bg);
             padding: 40px;
             border-radius: 15px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid var(--border-color);
             text-align: center;
             min-width: 300px;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.2);
         }
 
         .login-form h2 {
             margin-bottom: 20px;
-            color: #00ff88;
+            color: var(--primary-color);
         }
 
         .login-form input {
@@ -352,10 +393,70 @@
             background: rgba(255, 255, 255, 0.1);
             color: white;
             font-size: 1rem;
+            border: 1px solid var(--border-color);
         }
 
         .hidden {
             display: none;
+        }
+
+        .cv-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .cv-section h3 {
+            color: #2e7d32;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+
+        .heatmap-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .heatmap-legend {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+            align-items: center;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 3px;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            z-index: 1001;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            border: 1px solid var(--primary-color);
+        }
+
+        .tooltip.show {
+            opacity: 1;
         }
     </style>
 </head>
@@ -366,14 +467,14 @@
             <h2>Admin Girişi</h2>
             <input type="password" id="adminPassword" placeholder="Admin Şifresi" />
             <button class="btn" onclick="checkAdminLogin()">Giriş Yap</button>
-            <p style="margin-top: 15px; color: #ccc; font-size: 0.9rem;">Demo için şifre: admin123</p>
+            <p style="margin-top: 15px; color: #cccccc; font-size: 0.9rem;">Demo için şifre: admin123</p>
         </div>
     </div>
 
     <div class="admin-container">
         <div class="header">
             <h1>Kullanıcı Davranış Analizi - Admin Paneli</h1>
-            <p>Gerçek zamanlı kullanıcı etkileşimleri ve davranış analizi</p>
+            <p>CV üzerindeki kullanıcı etkileşimlerinin gerçek zamanlı analizi ve simülasyonu</p>
         </div>
 
         <div class="controls">
@@ -382,8 +483,10 @@
             <button class="btn" onclick="clearData()">Verileri Temizle</button>
             
             <div class="input-group">
-                <input type="text" id="ipInput" placeholder="IP Adresi (örn: 192.168.1.100)" value="192.168.1.100">
-                <button class="btn" onclick="updateIp()">IP Güncelle</button>
+                <select id="sessionSelector">
+                    <option value="">Session Seçin...</option>
+                </select>
+                <button class="btn" onclick="loadSessionData()">Session Yükle</button>
             </div>
 
             <div class="input-group">
@@ -392,11 +495,77 @@
             </div>
         </div>
 
+        <div class="heatmap-controls">
+            <button class="btn" onclick="toggleHeatmap('clicks')">Tıklama Heatmap</button>
+            <button class="btn" onclick="toggleHeatmap('movements')">Hareket Heatmap</button>
+            <button class="btn" onclick="toggleHeatmap('selections')">Seçimleri Göster</button>
+            <button class="btn secondary" onclick="clearHeatmap()">Heatmap Temizle</button>
+            
+            <div class="heatmap-legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: rgba(255,0,0,0.6);"></div>
+                    <span>Tıklamalar</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: rgba(0,255,0,0.4);"></div>
+                    <span>Hareketler</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: rgba(255,255,0,0.3);"></div>
+                    <span>Seçimler</span>
+                </div>
+            </div>
+        </div>
+
         <div class="dashboard">
             <div class="card">
-                <h2>Canlı Simülasyon</h2>
+                <h2>CV Önizleme ve Simülasyon</h2>
                 <div class="simulation-area">
-                    <div id="simulation-screen">
+                    <div id="cv-preview-container">
+                        <div id="cv-preview">
+                            <!-- CV içeriği buraya eklenecek -->
+                            <div class="cv-section">
+                                <h3>Adem Bayazıt</h3>
+                                <p><strong>IT Network and Cybersecurity Architect</strong></p>
+                                <p>Experienced IT professional with expertise in network infrastructure, cybersecurity, and project management.</p>
+                            </div>
+                            
+                            <div class="cv-section">
+                                <h3>İletişim Bilgileri</h3>
+                                <p>Email: iam@adembayazit.com</p>
+                                <p>Telefon: +90 536 584 42 82</p>
+                                <p>Konum: Ankara, Türkiye</p>
+                                <p>Web: adembayazit.com</p>
+                            </div>
+                            
+                            <div class="cv-section">
+                                <h3>Teknik Beceriler</h3>
+                                <p>CCNP, CCNA, Linux, Nmap, Fortinet, Juniper SRX Firewall, F5 LTM Load Balancer, OpenVAS, Metasploit Framework</p>
+                            </div>
+                            
+                            <div class="cv-section">
+                                <h3>İş Deneyimi</h3>
+                                <p><strong>Network and Security Specialist</strong> - Ministry of Treasury and Finance (2019-2023)</p>
+                                <p>SDN Migration, Network Transformation, Cybersecurity Optimization</p>
+                                
+                                <p><strong>Network and Security Specialist</strong> - SBI Information Technology (2018-2019)</p>
+                                <p>Central management of large-scale network infrastructure</p>
+                                
+                                <p><strong>Information Security Specialist</strong> - Barikat Information Security (2016-2017)</p>
+                                <p>SIEM and Log Management, ArcSight FlexConnector</p>
+                            </div>
+                            
+                            <div class="cv-section">
+                                <h3>Eğitim</h3>
+                                <p><strong>Bachelor's Degree in Computer and Control Education</strong> - Marmara University (2007-2011)</p>
+                                <p><strong>High School in Computer Software</strong> - Yenimahalle Industrial Vocational High School (2002-2005)</p>
+                            </div>
+                            
+                            <div class="cv-section">
+                                <h3>Sertifikalar</h3>
+                                <p>CCNA Training (2014), CCNP Route, Switch, TSHOOT (2019), Fortinet Certification (2021), Ethical Hacker (2024)</p>
+                            </div>
+                        </div>
                         <div id="mouse-pointer"></div>
                         <div class="heatmap-overlay" id="heatmap"></div>
                     </div>
@@ -409,7 +578,7 @@
             </div>
 
             <div class="card">
-                <h2>Session Bilgileri</h2>
+                <h2>Session Bilgileri ve İstatistikler</h2>
                 <div class="session-info">
                     <div class="info-item">
                         <div>Session ID</div>
@@ -446,6 +615,14 @@
                         <div class="stat-number" id="keyCount">0</div>
                         <div class="stat-label">Klavye</div>
                     </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="selectionCount">0</div>
+                        <div class="stat-label">Metin Seçimi</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="copyCount">0</div>
+                        <div class="stat-label">Kopyalama</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -461,7 +638,7 @@
             <div class="card">
                 <h2>Sistem Logları</h2>
                 <div class="data-logs" id="dataLogs">
-                    <div class="log-entry info">Sistem başlatıldı. Simülasyonu başlatmak için butona tıklayın.</div>
+                    <div class="log-entry info">Sistem başlatıldı. Session seçin ve simülasyonu başlatın.</div>
                 </div>
             </div>
         </div>
@@ -474,6 +651,7 @@
             if (password === 'admin123') {
                 document.getElementById('adminLogin').classList.add('hidden');
                 initializeAdminPanel();
+                loadSessionsFromJsonBin();
             } else {
                 alert('Geçersiz şifre! Demo şifresi: admin123');
             }
@@ -482,163 +660,343 @@
         // Simülasyon değişkenleri
         let simulationActive = false;
         let simulationInterval;
-        let sessionData = {
-            sessionId: generateSessionId(),
-            ipInfo: { ip: '192.168.1.100', city: 'Ankara', country: 'TR' },
-            deviceInfo: { deviceType: 'desktop' },
-            interactions: [],
-            mouseMovements: [],
-            clicks: [],
-            startTime: Date.now()
+        let currentSessionData = null;
+        let heatmapLayers = {
+            clicks: false,
+            movements: false,
+            selections: false
         };
 
         // DOM elementleri
         const mousePointer = document.getElementById('mouse-pointer');
         const heatmap = document.getElementById('heatmap');
-        const simulationScreen = document.getElementById('simulation-screen');
+        const cvPreview = document.getElementById('cv-preview');
+
+        // Örnek session verileri (gerçek uygulamada JSONBin'den çekilecek)
+        const sampleSessions = {
+            "session_001": {
+                sessionId: "session_001",
+                ipInfo: { ip: '192.168.1.100', city: 'Ankara', country: 'TR' },
+                deviceInfo: { deviceType: 'desktop', browser: 'Chrome' },
+                interactions: [
+                    { type: 'click', timestamp: 1000, x: 150, y: 200, element: 'H3' },
+                    { type: 'mouse_move', timestamp: 1500, x: 200, y: 250 },
+                    { type: 'selection', timestamp: 2000, text: 'Network and Cybersecurity', startX: 120, startY: 180, endX: 320, endY: 180 },
+                    { type: 'click', timestamp: 3000, x: 180, y: 400, element: 'P' },
+                    { type: 'scroll', timestamp: 3500, position: 150 },
+                    { type: 'copy', timestamp: 4000, text: 'Network and Cybersecurity' },
+                    { type: 'mouse_move', timestamp: 4500, x: 250, y: 500 },
+                    { type: 'click', timestamp: 5000, x: 300, y: 600, element: 'H3' },
+                    { type: 'selection', timestamp: 5500, text: 'Technical Skills', startX: 100, startY: 350, endX: 250, endY: 350 },
+                    { type: 'keypress', timestamp: 6000, key: 'Tab' },
+                    { type: 'mouse_move', timestamp: 6500, x: 400, y: 700 },
+                    { type: 'click', timestamp: 7000, x: 350, y: 800, element: 'P' }
+                ],
+                startTime: Date.now() - 3600000
+            },
+            "session_002": {
+                sessionId: "session_002",
+                ipInfo: { ip: '192.168.1.101', city: 'İstanbul', country: 'TR' },
+                deviceInfo: { deviceType: 'mobile', browser: 'Safari' },
+                interactions: [
+                    { type: 'click', timestamp: 1000, x: 100, y: 150, element: 'H3' },
+                    { type: 'scroll', timestamp: 2000, position: 100 },
+                    { type: 'selection', timestamp: 3000, text: 'Experience', startX: 80, startY: 200, endX: 200, endY: 200 },
+                    { type: 'click', timestamp: 4000, x: 120, y: 300, element: 'P' },
+                    { type: 'mouse_move', timestamp: 5000, x: 180, y: 350 },
+                    { type: 'copy', timestamp: 6000, text: 'Experience' },
+                    { type: 'click', timestamp: 7000, x: 200, y: 450, element: 'H3' }
+                ],
+                startTime: Date.now() - 7200000
+            }
+        };
 
         // Session ID oluşturma
         function generateSessionId() {
-            return 'sim_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
         }
 
         // Admin panelini başlat
         function initializeAdminPanel() {
-            document.getElementById('sessionId').value = sessionData.sessionId;
-            document.getElementById('displaySessionId').textContent = sessionData.sessionId.substring(0, 15) + '...';
-            document.getElementById('displayIp').textContent = sessionData.ipInfo.ip;
-            document.getElementById('displayDevice').textContent = sessionData.deviceInfo.deviceType;
+            document.getElementById('sessionId').value = "session_001";
+            document.getElementById('displaySessionId').textContent = "session_001";
+            document.getElementById('displayIp').textContent = "192.168.1.100";
+            document.getElementById('displayDevice').textContent = "desktop";
             
             addLog('Admin paneli başlatıldı', 'info');
             updateStats();
         }
 
+        // JSONBin'den session verilerini yükle (simülasyon)
+        function loadSessionsFromJsonBin() {
+            const sessionSelector = document.getElementById('sessionSelector');
+            sessionSelector.innerHTML = '<option value="">Session Seçin...</option>';
+            
+            // Örnek session'ları ekle
+            for (const sessionId in sampleSessions) {
+                const option = document.createElement('option');
+                option.value = sessionId;
+                option.textContent = sessionId + ' - ' + sampleSessions[sessionId].ipInfo.ip;
+                sessionSelector.appendChild(option);
+            }
+            
+            addLog('Session listesi yüklendi', 'info');
+        }
+
+        // Session verilerini yükle
+        function loadSessionData() {
+            const sessionId = document.getElementById('sessionSelector').value;
+            if (!sessionId) {
+                alert('Lütfen bir session seçin!');
+                return;
+            }
+            
+            currentSessionData = sampleSessions[sessionId];
+            if (!currentSessionData) {
+                addLog('Session verileri bulunamadı: ' + sessionId, 'error');
+                return;
+            }
+            
+            document.getElementById('sessionId').value = sessionId;
+            document.getElementById('displaySessionId').textContent = sessionId;
+            document.getElementById('displayIp').textContent = currentSessionData.ipInfo.ip;
+            document.getElementById('displayDevice').textContent = currentSessionData.deviceInfo.deviceType;
+            
+            // İstatistikleri sıfırla
+            document.getElementById('clickCount').textContent = '0';
+            document.getElementById('moveCount').textContent = '0';
+            document.getElementById('scrollCount').textContent = '0';
+            document.getElementById('keyCount').textContent = '0';
+            document.getElementById('selectionCount').textContent = '0';
+            document.getElementById('copyCount').textContent = '0';
+            
+            // Interaction listesini temizle
+            document.getElementById('interactionList').innerHTML = '';
+            
+            // Heatmap'i temizle
+            clearHeatmap();
+            
+            addLog('Session verileri yüklendi: ' + sessionId, 'info');
+        }
+
         // Simülasyonu başlat
         function startSimulation() {
+            if (!currentSessionData) {
+                alert('Lütfen önce bir session yükleyin!');
+                return;
+            }
+            
             if (simulationActive) return;
             
             simulationActive = true;
-            sessionData.startTime = Date.now();
+            const startTime = Date.now();
             
-            addLog('Simülasyon başlatıldı', 'info');
+            addLog('Simülasyon başlatıldı: ' + currentSessionData.sessionId, 'info');
             
-            // Fare hareketi simülasyonu
+            // Timeline'ı sıfırla
+            document.getElementById('timelineProgress').style.width = '0%';
+            
+            // İnterval ile simülasyonu çalıştır
+            let interactionIndex = 0;
+            const totalInteractions = currentSessionData.interactions.length;
+            
             simulationInterval = setInterval(() => {
-                if (!simulationActive) return;
+                if (!simulationActive || interactionIndex >= totalInteractions) {
+                    stopSimulation();
+                    return;
+                }
                 
-                simulateMouseMovement();
-                simulateRandomInteractions();
-                updateDuration();
-            }, 100);
-            
-            document.getElementById('timelineProgress').style.width = '100%';
+                const interaction = currentSessionData.interactions[interactionIndex];
+                const elapsedTime = Date.now() - startTime;
+                const interactionTime = interaction.timestamp;
+                
+                // Zamanlayıcıyı güncelle
+                const progress = (interactionIndex / totalInteractions) * 100;
+                document.getElementById('timelineProgress').style.width = progress + '%';
+                
+                // Etkileşimi işle
+                processInteraction(interaction);
+                
+                interactionIndex++;
+            }, 500); // Her yarım saniyede bir etkileşim
         }
 
         // Simülasyonu durdur
         function stopSimulation() {
             simulationActive = false;
-            clearInterval(simulationInterval);
+            if (simulationInterval) {
+                clearInterval(simulationInterval);
+            }
             addLog('Simülasyon durduruldu', 'warning');
-            document.getElementById('timelineProgress').style.width = '0%';
+            document.getElementById('timelineProgress').style.width = '100%';
         }
 
-        // Fare hareketi simülasyonu
-        function simulateMouseMovement() {
-            const screenRect = simulationScreen.getBoundingClientRect();
-            const x = Math.random() * (screenRect.width - 40) + 20;
-            const y = Math.random() * (screenRect.height - 40) + 20;
+        // Etkileşimi işle
+        function processInteraction(interaction) {
+            // Fareyi hareket ettir
+            if (interaction.x && interaction.y) {
+                mousePointer.style.left = interaction.x + 'px';
+                mousePointer.style.top = interaction.y + 'px';
+            }
             
-            // Fare pointer'ını hareket ettir
-            mousePointer.style.left = x + 'px';
-            mousePointer.style.top = y + 'px';
-            
-            // Heatmap noktası ekle
-            addHeatmapPoint(x, y);
-            
-            // Veri kaydet
-            sessionData.mouseMovements.push({
-                x: x,
-                y: y,
-                timestamp: Date.now()
-            });
-            
-            document.getElementById('moveCount').textContent = sessionData.mouseMovements.length;
-        }
-
-        // Rastgele etkileşimler simüle et
-        function simulateRandomInteractions() {
-            const interactions = ['click', 'scroll', 'keypress', 'hover', 'focus'];
-            const randomInteraction = interactions[Math.floor(Math.random() * interactions.length)];
-            
-            const interactionData = {
-                type: randomInteraction,
-                timestamp: Date.now(),
-                details: {}
-            };
-            
-            switch(randomInteraction) {
+            // Etkileşim türüne göre işlem yap
+            switch(interaction.type) {
                 case 'click':
-                    interactionData.details = { x: mousePointer.style.left, y: mousePointer.style.top };
-                    simulateClick();
-                    document.getElementById('clickCount').textContent = sessionData.clicks.length;
+                    simulateClick(interaction.x, interaction.y);
+                    document.getElementById('clickCount').textContent = parseInt(document.getElementById('clickCount').textContent) + 1;
+                    break;
+                case 'mouse_move':
+                    document.getElementById('moveCount').textContent = parseInt(document.getElementById('moveCount').textContent) + 1;
+                    if (heatmapLayers.movements) {
+                        addHeatmapPoint(interaction.x, interaction.y, 'movements');
+                    }
                     break;
                 case 'scroll':
-                    interactionData.details = { direction: Math.random() > 0.5 ? 'down' : 'up' };
                     document.getElementById('scrollCount').textContent = parseInt(document.getElementById('scrollCount').textContent) + 1;
                     break;
                 case 'keypress':
-                    const keys = ['Enter', 'Space', 'Tab', 'Escape'];
-                    interactionData.details = { key: keys[Math.floor(Math.random() * keys.length)] };
                     document.getElementById('keyCount').textContent = parseInt(document.getElementById('keyCount').textContent) + 1;
+                    break;
+                case 'selection':
+                    document.getElementById('selectionCount').textContent = parseInt(document.getElementById('selectionCount').textContent) + 1;
+                    if (heatmapLayers.selections) {
+                        highlightSelection(interaction);
+                    }
+                    break;
+                case 'copy':
+                    document.getElementById('copyCount').textContent = parseInt(document.getElementById('copyCount').textContent) + 1;
                     break;
             }
             
-            sessionData.interactions.push(interactionData);
-            addInteractionToList(interactionData);
+            // Interaction listesine ekle
+            addInteractionToList(interaction);
+            
+            // Heatmap için tıklamaları işle
+            if (interaction.type === 'click' && heatmapLayers.clicks) {
+                addHeatmapPoint(interaction.x, interaction.y, 'clicks');
+            }
         }
 
         // Tıklama simülasyonu
-        function simulateClick() {
+        function simulateClick(x, y) {
             const clickEffect = document.createElement('div');
             clickEffect.className = 'click-effect';
-            clickEffect.style.left = mousePointer.style.left;
-            clickEffect.style.top = mousePointer.style.top;
-            simulationScreen.appendChild(clickEffect);
-            
-            // Tıklama verisini kaydet
-            sessionData.clicks.push({
-                x: parseInt(mousePointer.style.left),
-                y: parseInt(mousePointer.style.top),
-                timestamp: Date.now()
-            });
+            clickEffect.style.left = x + 'px';
+            clickEffect.style.top = y + 'px';
+            cvPreview.appendChild(clickEffect);
             
             // Efekti temizle
             setTimeout(() => {
-                clickEffect.remove();
+                if (clickEffect.parentNode) {
+                    clickEffect.remove();
+                }
             }, 600);
         }
 
         // Heatmap noktası ekle
-        function addHeatmapPoint(x, y) {
+        function addHeatmapPoint(x, y, type) {
             const point = document.createElement('div');
             point.className = 'heatmap-point';
             point.style.left = x + 'px';
             point.style.top = y + 'px';
-            point.style.width = '20px';
-            point.style.height = '20px';
+            
+            if (type === 'clicks') {
+                point.style.background = 'radial-gradient(circle, rgba(255,0,0,0.6) 0%, rgba(255,0,0,0) 70%)';
+                point.style.width = '30px';
+                point.style.height = '30px';
+            } else if (type === 'movements') {
+                point.style.background = 'radial-gradient(circle, rgba(0,255,0,0.4) 0%, rgba(0,255,0,0) 70%)';
+                point.style.width = '20px';
+                point.style.height = '20px';
+            }
             
             heatmap.appendChild(point);
             
             // Noktayı yavaşça kaybet
             setTimeout(() => {
-                point.style.opacity = '0';
-                point.style.transition = 'opacity 2s ease';
+                point.style.opacity = '0.5';
             }, 1000);
             
             // Noktayı temizle
             setTimeout(() => {
-                point.remove();
-            }, 3000);
+                if (point.parentNode) {
+                    point.remove();
+                }
+            }, 5000);
+        }
+
+        // Metin seçimini vurgula
+        function highlightSelection(interaction) {
+            const highlight = document.createElement('div');
+            highlight.className = 'selection-highlight';
+            highlight.style.left = interaction.startX + 'px';
+            highlight.style.top = interaction.startY + 'px';
+            highlight.style.width = (interaction.endX - interaction.startX) + 'px';
+            highlight.style.height = '20px';
+            
+            // Tooltip ekle
+            highlight.setAttribute('data-text', interaction.text);
+            highlight.addEventListener('mouseenter', showTooltip);
+            highlight.addEventListener('mouseleave', hideTooltip);
+            
+            cvPreview.appendChild(highlight);
+        }
+
+        // Tooltip göster
+        function showTooltip(e) {
+            const tooltip = document.createElement('div');
+            tooltip.className = 'tooltip';
+            tooltip.textContent = e.target.getAttribute('data-text');
+            tooltip.style.left = e.pageX + 'px';
+            tooltip.style.top = (e.pageY - 40) + 'px';
+            document.body.appendChild(tooltip);
+            
+            setTimeout(() => {
+                tooltip.classList.add('show');
+            }, 10);
+            
+            e.target.tooltip = tooltip;
+        }
+
+        // Tooltip gizle
+        function hideTooltip(e) {
+            if (e.target.tooltip) {
+                e.target.tooltip.remove();
+            }
+        }
+
+        // Heatmap katmanlarını aç/kapa
+        function toggleHeatmap(type) {
+            heatmapLayers[type] = !heatmapLayers[type];
+            addLog(`${type} heatmap ${heatmapLayers[type] ? 'açıldı' : 'kapandı'}`, 'info');
+            
+            // Eğer açıksa ve session verisi varsa, mevcut verileri göster
+            if (heatmapLayers[type] && currentSessionData) {
+                currentSessionData.interactions.forEach(interaction => {
+                    if ((type === 'clicks' && interaction.type === 'click') ||
+                        (type === 'movements' && interaction.type === 'mouse_move') ||
+                        (type === 'selections' && interaction.type === 'selection')) {
+                        if (type === 'selections') {
+                            highlightSelection(interaction);
+                        } else {
+                            addHeatmapPoint(interaction.x, interaction.y, type);
+                        }
+                    }
+                });
+            }
+        }
+
+        // Heatmap'i temizle
+        function clearHeatmap() {
+            heatmap.innerHTML = '';
+            
+            // Seçim vurgularını temizle
+            const highlights = document.querySelectorAll('.selection-highlight');
+            highlights.forEach(highlight => {
+                highlight.remove();
+            });
+            
+            addLog('Heatmap temizlendi', 'info');
         }
 
         // Etkileşim listesine ekle
@@ -647,11 +1005,27 @@
             const item = document.createElement('div');
             item.className = 'interaction-item';
             
-            const time = new Date(interaction.timestamp).toLocaleTimeString();
+            const time = new Date().toLocaleTimeString();
+            let details = '';
+            
+            if (interaction.type === 'selection') {
+                details = `"${interaction.text}"`;
+            } else if (interaction.type === 'copy') {
+                details = `"${interaction.text}" kopyalandı`;
+            } else if (interaction.type === 'click') {
+                details = `(${interaction.x}, ${interaction.y}) - ${interaction.element}`;
+            } else if (interaction.type === 'mouse_move') {
+                details = `(${interaction.x}, ${interaction.y})`;
+            } else if (interaction.type === 'scroll') {
+                details = `Pozisyon: ${interaction.position}`;
+            } else if (interaction.type === 'keypress') {
+                details = `Tuş: ${interaction.key}`;
+            }
+            
             item.innerHTML = `
                 <span class="interaction-time">${time}</span>
                 <span class="interaction-type">${interaction.type}</span>
-                <span>${JSON.stringify(interaction.details)}</span>
+                <span>${details}</span>
             `;
             
             list.insertBefore(item, list.firstChild);
@@ -680,17 +1054,11 @@
             // İstatistikler zaten canlı olarak güncelleniyor
         }
 
-        // Süreyi güncelle
-        function updateDuration() {
-            const duration = Math.floor((Date.now() - sessionData.startTime) / 1000);
-            document.getElementById('displayDuration').textContent = duration + 'sn';
-        }
-
         // IP güncelle
         function updateIp() {
             const newIp = document.getElementById('ipInput').value;
             if (newIp) {
-                sessionData.ipInfo.ip = newIp;
+                currentSessionData.ipInfo.ip = newIp;
                 document.getElementById('displayIp').textContent = newIp;
                 addLog(`IP adresi güncellendi: ${newIp}`, 'info');
             }
@@ -706,17 +1074,20 @@
 
         // Verileri temizle
         function clearData() {
-            sessionData.interactions = [];
-            sessionData.mouseMovements = [];
-            sessionData.clicks = [];
+            if (currentSessionData) {
+                currentSessionData.interactions = [];
+            }
             
             document.getElementById('interactionList').innerHTML = '';
-            document.getElementById('heatmap').innerHTML = '';
             document.getElementById('clickCount').textContent = '0';
             document.getElementById('moveCount').textContent = '0';
             document.getElementById('scrollCount').textContent = '0';
             document.getElementById('keyCount').textContent = '0';
+            document.getElementById('selectionCount').textContent = '0';
+            document.getElementById('copyCount').textContent = '0';
             document.getElementById('displayDuration').textContent = '0sn';
+            
+            clearHeatmap();
             
             addLog('Tüm veriler temizlendi', 'warning');
         }
