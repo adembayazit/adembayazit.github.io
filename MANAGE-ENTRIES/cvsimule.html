@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kullanıcı Davranış Analizi - Admin Paneli</title>
+    <title>CV Analytics Admin</title>
     <style>
         :root {
             --primary-color: #00FF00;
-            --secondary-color: #008800;
-            --background-color: #000000;
+            --secondary-color: #008000;
+            --bg-color: #000000;
             --card-bg: #111111;
-            --text-color: #FFFFFF;
+            --text-color: #e0e0e0;
             --border-color: #333333;
         }
         
@@ -20,180 +20,168 @@
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
+        
         body {
-            background-color: var(--background-color);
+            background-color: var(--bg-color);
             color: var(--text-color);
-            min-height: 100vh;
             overflow-x: hidden;
         }
-
-        .admin-container {
-            max-width: 1800px;
-            margin: 0 auto;
+        
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sol Panel */
+        .left-panel {
+            width: 30%;
+            background-color: var(--card-bg);
             padding: 20px;
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
         }
-
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: var(--card-bg);
-            border-radius: 15px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
-        }
-
-        .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            color: var(--primary-color);
-        }
-
-        .header p {
-            color: #cccccc;
-            font-size: 1.1rem;
-        }
-
-        .dashboard {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
+        
+        .login-section {
+            background-color: #1a1a1a;
+            padding: 15px;
+            border-radius: 5px;
             margin-bottom: 20px;
-        }
-
-        @media (max-width: 1400px) {
-            .dashboard {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 20px;
             border: 1px solid var(--border-color);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.05);
         }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 255, 0, 0.1);
+        
+        .login-section input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #222;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            border-radius: 3px;
         }
-
-        .card h2 {
+        
+        .login-section button {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--primary-color);
+            color: #000;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .session-section, .heatmap-section, .simulation-section, .stats-section {
+            background-color: #1a1a1a;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+        
+        h2 {
             color: var(--primary-color);
             margin-bottom: 15px;
-            font-size: 1.4rem;
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 8px;
+            font-size: 1.2rem;
         }
-
-        .stat-grid {
+        
+        select {
+            width: 100%;
+            padding: 10px;
+            background-color: #222;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            border-radius: 3px;
+            margin-bottom: 10px;
+        }
+        
+        .checkbox-group {
+            margin: 10px 0;
+        }
+        
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        
+        .checkbox-group input {
+            margin-right: 10px;
+        }
+        
+        .simulation-controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .simulation-controls button {
+            flex: 1;
+            padding: 10px;
+            background-color: var(--primary-color);
+            color: #000;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .simulation-controls button:last-child {
+            background-color: #ff4444;
+        }
+        
+        .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
         }
-
-        .stat-item {
+        
+        .stat-card {
+            background-color: #222;
+            padding: 10px;
+            border-radius: 3px;
             text-align: center;
-            padding: 15px;
-            background: rgba(0, 255, 0, 0.1);
-            border-radius: 10px;
-            border: 1px solid rgba(0, 255, 0, 0.3);
         }
-
-        .stat-number {
-            font-size: 2rem;
+        
+        .stat-value {
+            font-size: 1.5rem;
             font-weight: bold;
             color: var(--primary-color);
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+        
+        .session-info {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #222;
+            border-radius: 3px;
+            font-size: 0.9rem;
+        }
+        
+        .session-info p {
             margin-bottom: 5px;
         }
-
-        .stat-label {
-            font-size: 0.9rem;
-            color: #cccccc;
-        }
-
-        .simulation-area {
+        
+        /* Sağ Panel */
+        .right-panel {
+            width: 70%;
+            padding: 20px;
             position: relative;
-            width: 100%;
-            height: 700px;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 15px;
-            overflow: hidden;
-            border: 2px solid var(--border-color);
-            margin-bottom: 20px;
         }
-
-        #cv-preview-container {
+        
+        .cv-container {
             width: 100%;
             height: 100%;
-            background: white;
-            position: relative;
+            background-color: white;
+            border-radius: 5px;
             overflow: auto;
-            border-radius: 10px;
-        }
-
-        #cv-content {
-            width: 100%;
-            min-height: 100%;
-            background: white;
-            color: black;
-            padding: 20px;
-            font-family: Arial, sans-serif;
             position: relative;
-            transform: scale(0.8);
-            transform-origin: top left;
-            width: 125%;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
         }
-
-        #mouse-pointer {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background: #ff4444;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 1000;
-            transition: all 0.1s ease;
-            box-shadow: 0 0 10px rgba(255, 68, 68, 0.8);
-        }
-
-        .click-effect {
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            border: 2px solid var(--primary-color);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 999;
-            animation: clickPulse 0.6s ease-out;
-        }
-
-        @keyframes clickPulse {
-            0% { transform: scale(0.5); opacity: 1; }
-            100% { transform: scale(2); opacity: 0; }
-        }
-
-        .selection-highlight {
-            position: absolute;
-            background-color: rgba(255, 255, 0, 0.3);
-            border: 1px dashed #ffcc00;
-            pointer-events: none;
-            z-index: 800;
-        }
-
-        .copy-highlight {
-            position: absolute;
-            background-color: rgba(255, 165, 0, 0.3);
-            border: 1px dashed #ff9900;
-            pointer-events: none;
-            z-index: 800;
-        }
-
+        
         .heatmap-overlay {
             position: absolute;
             top: 0;
@@ -201,1201 +189,1144 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 700;
+            z-index: 10;
         }
-
+        
         .heatmap-point {
             position: absolute;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(255,0,0,0.6) 0%, rgba(255,0,0,0) 70%);
             transform: translate(-50%, -50%);
         }
-
+        
+        .click-point {
+            background-color: rgba(255, 0, 0, 0.7);
+            width: 12px;
+            height: 12px;
+            box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+        }
+        
         .movement-point {
+            background-color: rgba(0, 255, 0, 0.3);
+            width: 8px;
+            height: 8px;
+        }
+        
+        .selection-highlight {
+            background-color: rgba(255, 255, 0, 0.4);
             position: absolute;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(0,255,0,0.3) 0%, rgba(0,255,0,0) 70%);
-            transform: translate(-50%, -50%);
+            border-radius: 2px;
         }
-
-        .controls {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
+        
+        .copy-highlight {
+            background-color: rgba(255, 165, 0, 0.4);
+            position: absolute;
+            border-radius: 2px;
         }
-
-        .btn {
-            padding: 12px 25px;
-            background: var(--primary-color);
-            border: none;
-            border-radius: 8px;
-            color: #000;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1rem;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 255, 0, 0.4);
-            background: #00cc00;
-        }
-
-        .btn.secondary {
-            background: #ff6b6b;
-        }
-
-        .btn.secondary:hover {
-            background: #ff5252;
-        }
-
-        .input-group {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .input-group input, .input-group select {
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            font-size: 1rem;
-            min-width: 200px;
-            border: 1px solid var(--border-color);
-        }
-
-        .input-group input::placeholder {
-            color: #cccccc;
-        }
-
-        .data-logs {
-            max-height: 400px;
-            overflow-y: auto;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            padding: 15px;
-        }
-
-        .log-entry {
-            padding: 10px;
-            margin-bottom: 8px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            border-left: 4px solid var(--primary-color);
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-        }
-
-        .log-entry.error {
-            border-left-color: #ff4444;
-        }
-
-        .log-entry.warning {
-            border-left-color: #ffa500;
-        }
-
-        .log-entry.info {
-            border-left-color: #00ccff;
-        }
-
-        .session-info {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .info-item {
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .info-value {
-            font-weight: bold;
-            color: var(--primary-color);
-            margin-top: 5px;
-        }
-
-        .timeline {
-            margin-top: 20px;
-        }
-
-        .timeline-bar {
-            width: 100%;
-            height: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .timeline-progress {
-            height: 100%;
-            background: var(--primary-color);
-            border-radius: 10px;
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        .interaction-list {
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .interaction-item {
-            padding: 8px 12px;
-            margin-bottom: 5px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 6px;
-            font-size: 0.85rem;
-            border-left: 3px solid #00ccff;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .interaction-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateX(5px);
-        }
-
-        .interaction-time {
-            color: var(--primary-color);
-            font-weight: bold;
-        }
-
-        .interaction-type {
-            color: #ffa500;
-            margin: 0 5px;
-        }
-
-        .admin-login {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 10000;
-        }
-
-        .login-form {
-            background: var(--card-bg);
-            padding: 40px;
-            border-radius: 15px;
-            border: 1px solid var(--border-color);
-            text-align: center;
-            min-width: 300px;
-            box-shadow: 0 0 30px rgba(0, 255, 0, 0.2);
-        }
-
-        .login-form h2 {
-            margin-bottom: 20px;
-            color: var(--primary-color);
-        }
-
-        .login-form input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            border: none;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            font-size: 1rem;
-            border: 1px solid var(--border-color);
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .heatmap-controls {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
-
-        .heatmap-legend {
-            display: flex;
-            gap: 15px;
-            margin-top: 10px;
-            align-items: center;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .legend-color {
+        
+        .cursor {
+            position: absolute;
             width: 15px;
             height: 15px;
-            border-radius: 3px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            box-shadow: 0 0 5px var(--primary-color);
+            transform: translate(-50%, -50%);
+            z-index: 20;
+            pointer-events: none;
+            transition: all 0.1s ease;
         }
-
+        
+        .cursor::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background-color: #000;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
         .tooltip {
             position: absolute;
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 6px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: var(--primary-color);
+            padding: 5px 10px;
+            border-radius: 3px;
             font-size: 0.8rem;
-            z-index: 1001;
+            z-index: 30;
             pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.3s;
+            white-space: nowrap;
             border: 1px solid var(--primary-color);
         }
-
-        .tooltip.show {
-            opacity: 1;
-        }
-
-        .session-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .session-stat {
-            text-align: center;
+        
+        .timeline {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
             padding: 10px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
+            border-top: 1px solid var(--border-color);
         }
-
-        .session-stat-value {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--primary-color);
+        
+        .timeline-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
-
-        .session-stat-label {
-            font-size: 0.7rem;
-            color: #cccccc;
+        
+        .timeline-slider {
+            flex: 1;
+            margin: 0 10px;
+        }
+        
+        .hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <!-- Admin Giriş Modal -->
-    <div id="adminLogin" class="admin-login">
-        <div class="login-form">
-            <h2>Admin Girişi</h2>
-            <input type="password" id="adminPassword" placeholder="Admin Şifresi" />
-            <button class="btn" onclick="checkAdminLogin()">Giriş Yap</button>
-            <p style="margin-top: 15px; color: #cccccc; font-size: 0.9rem;">Demo için şifre: admin123</p>
-        </div>
-    </div>
-
-    <div class="admin-container">
-        <div class="header">
-            <h1>Kullanıcı Davranış Analizi - Admin Paneli</h1>
-            <p>CV üzerindeki kullanıcı etkileşimlerinin gerçek zamanlı analizi ve simülasyonu</p>
-        </div>
-
-        <div class="controls">
-            <button class="btn" onclick="startSimulation()">Simülasyon Başlat</button>
-            <button class="btn secondary" onclick="stopSimulation()">Simülasyon Durdur</button>
-            <button class="btn" onclick="clearData()">Verileri Temizle</button>
+    <div class="container">
+        <!-- Sol Panel -->
+        <div class="left-panel">
+            <div class="login-section">
+                <h2>Admin Girişi</h2>
+                <input type="password" id="password" placeholder="Şifre">
+                <button id="login-btn">Giriş Yap</button>
+            </div>
             
-            <div class="input-group">
-                <select id="sessionSelector">
-                    <option value="">Session Seçin...</option>
+            <div class="session-section">
+                <h2>Session Seçimi</h2>
+                <select id="session-select">
+                    <option value="">Session seçin...</option>
                 </select>
-                <button class="btn" onclick="loadSessionData()">Session Yükle</button>
+                <div class="session-info" id="session-info">
+                    <p><strong>IP:</strong> <span id="session-ip">-</span></p>
+                    <p><strong>Konum:</strong> <span id="session-location">-</span></p>
+                    <p><strong>Cihaz:</strong> <span id="session-device">-</span></p>
+                    <p><strong>Ekran:</strong> <span id="session-screen">-</span></p>
+                    <p><strong>Yükleme Zamanı:</strong> <span id="session-load-time">-</span></p>
+                </div>
             </div>
-
-            <div class="input-group">
-                <input type="text" id="sessionId" placeholder="Session ID" readonly>
-                <button class="btn" onclick="copySessionId()">Kopyala</button>
-            </div>
-        </div>
-
-        <div class="heatmap-controls">
-            <button class="btn" id="heatmap-clicks" onclick="toggleHeatmap('clicks')">Tıklama Heatmap</button>
-            <button class="btn" id="heatmap-movements" onclick="toggleHeatmap('movements')">Hareket Heatmap</button>
-            <button class="btn" id="heatmap-selections" onclick="toggleHeatmap('selections')">Seçimleri Göster</button>
-            <button class="btn" id="heatmap-copies" onclick="toggleHeatmap('copies')">Kopyalamaları Göster</button>
-            <button class="btn secondary" onclick="clearHeatmap()">Heatmap Temizle</button>
             
-            <div class="heatmap-legend">
-                <div class="legend-item">
-                    <div class="legend-color" style="background: rgba(255,0,0,0.6);"></div>
-                    <span>Tıklamalar</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: rgba(0,255,0,0.4);"></div>
-                    <span>Hareketler</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: rgba(255,255,0,0.3);"></div>
-                    <span>Seçimler</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: rgba(255,165,0,0.3);"></div>
-                    <span>Kopyalamalar</span>
+            <div class="heatmap-section">
+                <h2>Heatmap Ayarları</h2>
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" id="click-heatmap" checked>
+                        <span style="color: #ff0000">Tıklama Heatmap (Kırmızı)</span>
+                    </label>
+                    <label>
+                        <input type="checkbox" id="movement-heatmap" checked>
+                        <span style="color: #00ff00">Hareket Heatmap (Yeşil)</span>
+                    </label>
+                    <label>
+                        <input type="checkbox" id="selection-heatmap" checked>
+                        <span style="color: #ffff00">Seçim Göstergesi (Sarı)</span>
+                    </label>
+                    <label>
+                        <input type="checkbox" id="copy-heatmap" checked>
+                        <span style="color: #ffa500">Kopyalama Göstergesi (Turuncu)</span>
+                    </label>
+                    <label>
+                        <input type="checkbox" id="cursor-animation" checked>
+                        <span style="color: #00ff00">Fare Hareketi Animasyonu</span>
+                    </label>
                 </div>
             </div>
-        </div>
-
-        <div class="dashboard">
-            <div class="card">
-                <h2>CV Önizleme ve Simülasyon</h2>
-                <div class="simulation-area">
-                    <div id="cv-preview-container">
-                        <div id="cv-content">
-                            <!-- CV içeriği buraya dinamik olarak eklenecek -->
-                        </div>
-                        <div id="mouse-pointer"></div>
-                        <div class="heatmap-overlay" id="heatmap"></div>
-                    </div>
+            
+            <div class="simulation-section">
+                <h2>Simülasyon Kontrolleri</h2>
+                <div class="simulation-controls">
+                    <button id="start-simulation">Simülasyon Başlat</button>
+                    <button id="pause-simulation">Duraklat</button>
+                    <button id="reset-simulation">Sıfırla</button>
                 </div>
                 <div class="timeline">
-                    <div class="timeline-bar">
-                        <div class="timeline-progress" id="timelineProgress"></div>
+                    <div class="timeline-controls">
+                        <span id="current-time">00:00</span>
+                        <input type="range" min="0" max="100" value="0" class="timeline-slider" id="timeline-slider">
+                        <span id="total-time">00:00</span>
                     </div>
                 </div>
             </div>
-
-            <div class="card">
-                <h2>Session Bilgileri ve İstatistikler</h2>
-                <div class="session-info">
-                    <div class="info-item">
-                        <div>Session ID</div>
-                        <div class="info-value" id="displaySessionId">-</div>
+            
+            <div class="stats-section">
+                <h2>İstatistikler</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="total-clicks">0</div>
+                        <div class="stat-label">Toplam Tıklama</div>
                     </div>
-                    <div class="info-item">
-                        <div>IP Adresi</div>
-                        <div class="info-value" id="displayIp">-</div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="total-movements">0</div>
+                        <div class="stat-label">Fare Hareketi</div>
                     </div>
-                    <div class="info-item">
-                        <div>Cihaz</div>
-                        <div class="info-value" id="displayDevice">-</div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="total-scrolls">0</div>
+                        <div class="stat-label">Kaydırma</div>
                     </div>
-                    <div class="info-item">
-                        <div>Süre</div>
-                        <div class="info-value" id="displayDuration">0sn</div>
-                    </div>
-                </div>
-
-                <div class="session-stats">
-                    <div class="session-stat">
-                        <div class="session-stat-value" id="clickCount">0</div>
-                        <div class="session-stat-label">Tıklama</div>
-                    </div>
-                    <div class="session-stat">
-                        <div class="session-stat-value" id="moveCount">0</div>
-                        <div class="session-stat-label">Fare Hareketi</div>
-                    </div>
-                    <div class="session-stat">
-                        <div class="session-stat-value" id="scrollCount">0</div>
-                        <div class="session-stat-label">Kaydırma</div>
-                    </div>
-                    <div class="session-stat">
-                        <div class="session-stat-value" id="keyCount">0</div>
-                        <div class="session-stat-label">Klavye</div>
-                    </div>
-                    <div class="session-stat">
-                        <div class="session-stat-value" id="selectionCount">0</div>
-                        <div class="session-stat-label">Metin Seçimi</div>
-                    </div>
-                    <div class="session-stat">
-                        <div class="session-stat-value" id="copyCount">0</div>
-                        <div class="session-stat-label">Kopyalama</div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="total-selections">0</div>
+                        <div class="stat-label">Metin Seçimi</div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="dashboard">
-            <div class="card">
-                <h2>Gerçek Zamanlı Etkileşimler</h2>
-                <div class="interaction-list" id="interactionList">
-                    <!-- Etkileşimler buraya eklenecek -->
-                </div>
-            </div>
-
-            <div class="card">
-                <h2>Sistem Logları</h2>
-                <div class="data-logs" id="dataLogs">
-                    <div class="log-entry info">Sistem başlatıldı. Session seçin ve simülasyonu başlatın.</div>
-                </div>
+        
+        <!-- Sağ Panel -->
+        <div class="right-panel">
+            <div class="cv-container" id="cv-container">
+                <!-- CV içeriği burada görünecek -->
+                <div class="heatmap-overlay" id="heatmap-overlay"></div>
+                <div class="cursor" id="cursor"></div>
             </div>
         </div>
     </div>
 
     <script>
-        // Admin giriş kontrolü
-        function checkAdminLogin() {
-            const password = document.getElementById('adminPassword').value;
-            if (password === 'admin123') {
-                document.getElementById('adminLogin').classList.add('hidden');
-                initializeAdminPanel();
-                loadSessionsFromJsonBin();
-            } else {
-                alert('Geçersiz şifre! Demo şifresi: admin123');
-            }
-        }
-
-        // Simülasyon değişkenleri
-        let simulationActive = false;
-        let simulationInterval;
-        let currentSessionData = null;
-        let heatmapLayers = {
-            clicks: false,
-            movements: false,
-            selections: false,
-            copies: false
+        // Örnek veri
+        const sampleData = {
+            "totalSessions": 1,
+            "lastUpdated": "2024-01-15T10:32:30.000Z",
+            "cv_analytics": [
+                {
+                    "session": {
+                        "sessionId": "session_1761045424027_m1tz1z97e",
+                        "ipInfo": {
+                            "ip": "88.227.76.219",
+                            "hostname": "88.227.76.219.dynamic.ttnet.com.tr",
+                            "city": "Ankara",
+                            "region": "Ankara",
+                            "country": "TR",
+                            "loc": "39.9199,32.8543",
+                            "org": "AS47331 TTNet A.S.",
+                            "postal": "06420",
+                            "timezone": "Europe/Istanbul"
+                        },
+                        "deviceInfo": {
+                            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+                            "platform": "Win32",
+                            "language": "tr-TR",
+                            "screenWidth": 1536,
+                            "screenHeight": 864,
+                            "viewportWidth": 971,
+                            "viewportHeight": 695,
+                            "deviceType": "desktop"
+                        },
+                        "pageLoadTime": 1761045424027,
+                        "interactions": [
+                            {
+                                "type": "page_load",
+                                "timestamp": 1761045424071
+                            },
+                            {
+                                "type": "visibility_change",
+                                "state": "hidden",
+                                "timestamp": 1761045427786
+                            },
+                            {
+                                "type": "visibility_change",
+                                "state": "visible",
+                                "timestamp": 1761045454291
+                            }
+                        ],
+                        "mouseMovements": [
+                            {
+                                "x": 446,
+                                "y": 238,
+                                "timestamp": 1761045426008,
+                                "element": "DIV"
+                            },
+                            {
+                                "x": 436,
+                                "y": 349,
+                                "timestamp": 1761045426529,
+                                "element": "P"
+                            },
+                            {
+                                "x": 444,
+                                "y": 5,
+                                "timestamp": 1761045426985,
+                                "element": "BODY"
+                            }
+                        ],
+                        "textSelections": [],
+                        "clicks": [],
+                        "keyStrokes": [],
+                        "performance": {
+                            "loadTime": -1761045423966,
+                            "domReadyTime": -1761045423966,
+                            "readyStart": 3,
+                            "redirectTime": 0,
+                            "appcacheTime": 0,
+                            "unloadEventTime": 0,
+                            "lookupDomainTime": 0,
+                            "connectTime": 0,
+                            "requestTime": 0,
+                            "initDomTreeTime": 100,
+                            "loadEventTime": 0
+                        },
+                        "pdfDownload": false
+                    },
+                    "timestamp": "2025-10-21T11:17:35.187Z"
+                },
+                {
+                    "session": {
+                        "sessionId": "session_1761045465323_i7x3w9zs0",
+                        "ipInfo": {
+                            "ip": "88.227.76.219",
+                            "hostname": "88.227.76.219.dynamic.ttnet.com.tr",
+                            "city": "Ankara",
+                            "region": "Ankara",
+                            "country": "TR",
+                            "loc": "39.9199,32.8543",
+                            "org": "AS47331 TTNet A.S.",
+                            "postal": "06420",
+                            "timezone": "Europe/Istanbul"
+                        },
+                        "deviceInfo": {
+                            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+                            "platform": "Win32",
+                            "language": "tr-TR",
+                            "screenWidth": 1536,
+                            "screenHeight": 864,
+                            "viewportWidth": 1536,
+                            "viewportHeight": 695,
+                            "deviceType": "desktop"
+                        },
+                        "pageLoadTime": 1761045465323,
+                        "interactions": [
+                            {
+                                "type": "page_load",
+                                "timestamp": 1761045465345
+                            },
+                            {
+                                "type": "click",
+                                "tag": "P",
+                                "id": "none",
+                                "className": "none",
+                                "timestamp": 1761045467776,
+                                "x": 1216,
+                                "y": 351
+                            },
+                            {
+                                "type": "click",
+                                "tag": "DIV",
+                                "id": "none",
+                                "className": "right-column",
+                                "timestamp": 1761045470759,
+                                "x": 367,
+                                "y": 391
+                            },
+                            {
+                                "type": "click",
+                                "tag": "DIV",
+                                "id": "none",
+                                "className": "right-column",
+                                "timestamp": 1761045470876,
+                                "x": 367,
+                                "y": 391
+                            },
+                            {
+                                "type": "click",
+                                "tag": "DIV",
+                                "id": "none",
+                                "className": "right-column",
+                                "timestamp": 1761045471856,
+                                "x": 404,
+                                "y": 327
+                            },
+                            {
+                                "type": "click",
+                                "tag": "P",
+                                "id": "none",
+                                "className": "none",
+                                "timestamp": 1761045472035,
+                                "x": 485,
+                                "y": 365
+                            },
+                            {
+                                "type": "click",
+                                "tag": "DIV",
+                                "id": "none",
+                                "className": "section",
+                                "timestamp": 1761045472575,
+                                "x": 620,
+                                "y": 502
+                            },
+                            {
+                                "type": "click",
+                                "tag": "P",
+                                "id": "none",
+                                "className": "none",
+                                "timestamp": 1761045473685,
+                                "x": 476,
+                                "y": 378
+                            },
+                            {
+                                "type": "click",
+                                "tag": "P",
+                                "id": "none",
+                                "className": "none",
+                                "timestamp": 1761045474467,
+                                "x": 504,
+                                "y": 411
+                            },
+                            {
+                                "type": "click",
+                                "tag": "P",
+                                "id": "none",
+                                "className": "none",
+                                "timestamp": 1761045479489,
+                                "x": 655,
+                                "y": 347
+                            },
+                            {
+                                "type": "scroll",
+                                "position": 4817.60009765625,
+                                "maxScroll": 4818,
+                                "timestamp": 1761045483992
+                            },
+                            {
+                                "type": "pdf_download_click",
+                                "timestamp": 1761045484732
+                            },
+                            {
+                                "type": "click",
+                                "tag": "BUTTON",
+                                "id": "download-pdf",
+                                "className": "btn",
+                                "timestamp": 1761045484732,
+                                "x": 426,
+                                "y": 623
+                            },
+                            {
+                                "type": "pdf_download_completed",
+                                "timestamp": 1761045487741
+                            }
+                        ],
+                        "mouseMovements": [
+                            {
+                                "x": 250,
+                                "y": 409,
+                                "timestamp": 1761045465714,
+                                "element": "BODY"
+                            },
+                            {
+                                "x": 250,
+                                "y": 408,
+                                "timestamp": 1761045465886,
+                                "element": "BODY"
+                            },
+                            {
+                                "x": 249,
+                                "y": 407,
+                                "timestamp": 1761045466028,
+                                "element": "BODY"
+                            },
+                            {
+                                "x": 1170,
+                                "y": 371,
+                                "timestamp": 1761045466725,
+                                "element": "P"
+                            },
+                            {
+                                "x": 1170,
+                                "y": 371,
+                                "timestamp": 1761045466946,
+                                "element": "P"
+                            },
+                            {
+                                "x": 1216,
+                                "y": 351,
+                                "timestamp": 1761045467848,
+                                "element": "P"
+                            },
+                            {
+                                "x": 367,
+                                "y": 391,
+                                "timestamp": 1761045470773,
+                                "element": "DIV"
+                            },
+                            {
+                                "x": 379,
+                                "y": 315,
+                                "timestamp": 1761045471470,
+                                "element": "P"
+                            },
+                            {
+                                "x": 374,
+                                "y": 318,
+                                "timestamp": 1761045471722,
+                                "element": "DIV"
+                            },
+                            {
+                                "x": 475,
+                                "y": 375,
+                                "timestamp": 1761045473815,
+                                "element": "P"
+                            },
+                            {
+                                "x": 504,
+                                "y": 411,
+                                "timestamp": 1761045474258,
+                                "element": "P"
+                            },
+                            {
+                                "x": 689,
+                                "y": 366,
+                                "timestamp": 1761045475657,
+                                "element": "B"
+                            },
+                            {
+                                "x": 964,
+                                "y": 228,
+                                "timestamp": 1761045476836,
+                                "element": "HTML"
+                            },
+                            {
+                                "x": 655,
+                                "y": 347,
+                                "timestamp": 1761045479344,
+                                "element": "P"
+                            },
+                            {
+                                "x": 491,
+                                "y": 392,
+                                "timestamp": 1761045480229,
+                                "element": "P"
+                            },
+                            {
+                                "x": 465,
+                                "y": 408,
+                                "timestamp": 1761045480730,
+                                "element": "P"
+                            },
+                            {
+                                "x": 426,
+                                "y": 623,
+                                "timestamp": 1761045484637,
+                                "element": "BUTTON"
+                            },
+                            {
+                                "x": 648,
+                                "y": 264,
+                                "timestamp": 1761045486014,
+                                "element": "DIV"
+                            }
+                        ],
+                        "textSelections": [
+                            {
+                                "text": "played",
+                                "timestamp": 1761045470809,
+                                "length": 6
+                            },
+                            {
+                                "text": "I",
+                                "timestamp": 1761045471800,
+                                "length": 1
+                            },
+                            {
+                                "text": "I",
+                                "timestamp": 1761045471815,
+                                "length": 1
+                            },
+                            {
+                                "text": "I h",
+                                "timestamp": 1761045471831,
+                                "length": 3
+                            },
+                            {
+                                "text": "I ha",
+                                "timestamp": 1761045471839,
+                                "length": 4
+                            },
+                            {
+                                "text": "I hav",
+                                "timestamp": 1761045471864,
+                                "length": 5
+                            },
+                            {
+                                "text": "b",
+                                "timestamp": 1761045471885,
+                                "length": 1
+                            },
+                            {
+                                "text": "be",
+                                "timestamp": 1761045471909,
+                                "length": 2
+                            },
+                            {
+                                "text": "been actively working in the information technology sector since 2002. I began my",
+                                "timestamp": 1761045471957,
+                                "length": 81
+                            },
+                            {
+                                "text": "been actively working in the information technology sector since 2002. I began my",
+                                "timestamp": 1761045471971,
+                                "length": 81
+                            },
+                            {
+                                "text": "been actively working in the information technology sector since 2002. I began my c",
+                                "timestamp": 1761045471979,
+                                "length": 83
+                            },
+                            {
+                                "text": "been actively working in the information technology sector since 2002. I began my ca",
+                                "timestamp": 1761045471987,
+                                "length": 84
+                            },
+                            {
+                                "text": "been actively working in the information technology sector since 2002. I began my car",
+                                "timestamp": 1761045472003,
+                                "length": 85
+                            },
+                            {
+                                "text": "been actively working in the information technology sector since 2002. I began my career by receiving software education at a vocational high school and have held",
+                                "timestamp": 1761045472019,
+                                "length": 162
+                            },
+                            {
+                                "text": "been actively working in the information technology sector since 2002. I began my career by receiving software education at a vocational high school and have held v",
+                                "timestamp": 1761045472027,
+                                "length": 164
+                            },
+                            {
+                                "text": "been actively working in the information technology sector since 2002. I began my career by receiving software education at a vocational high school and have held va",
+                                "timestamp": 1761045472048,
+                                "length": 165
+                            },
+                            {
+                                "text": "ive roles in both administrative and technical processes such as the design, reloc",
+                                "timestamp": 1761045473358,
+                                "length": 82
+                            },
+                            {
+                                "text": "tive roles in both administrative and technical processes such as the design, reloc",
+                                "timestamp": 1761045473364,
+                                "length": 83
+                            },
+                            {
+                                "text": "ctive roles in both administrative and technical processes such as the design, reloc",
+                                "timestamp": 1761045473371,
+                                "length": 84
+                            },
+                            {
+                                "text": "ective roles in both administrative and technical processes such as the design, reloc",
+                                "timestamp": 1761045473380,
+                                "length": 85
+                            },
+                            {
+                                "text": "ng and project planning. Additionally, I worked on the customer side, taking on effective roles in both administrative and technical processes such as the design, reloc",
+                                "timestamp": 1761045473387,
+                                "length": 168
+                            },
+                            {
+                                "text": "ning and project planning. Additionally, I worked on the customer side, taking on effective roles in both administrative and technical processes such as the design, reloc",
+                                "timestamp": 1761045473395,
+                                "length": 170
+                            },
+                            {
+                                "text": "ssioning and project planning. Additionally, I worked on the customer side, taking on effective roles in both administrative and technical processes such as the design, reloc",
+                                "timestamp": 1761045473403,
+                                "length": 174
+                            },
+                            {
+                                "text": "issioning and project planning. Additionally, I worked on the customer side, taking on effective roles in both administrative and technical processes such as the design, reloc",
+                                "timestamp": 1761045473411,
+                                "length": 175
+                            },
+                            {
+                                "text": "in all stages of post-sales processes, from the installation of products to their commissioning and project planning. Additionally, I worked on the customer side, taking on effective roles in both administrative and technical processes such as the design, reloc",
+                                "timestamp": 1761045473419,
+                                "length": 261
+                            },
+                            {
+                                "text": "e in all stages of post-sales processes, from the installation of products to their commissioning and project planning. Additionally, I worked on the customer side, taking on effective roles in both administrative and technical processes such as the design, reloc",
+                                "timestamp": 1761045473427,
+                                "length": 263
+                            },
+                            {
+                                "text": "le in all stages of post-sales processes, from the installation of products to their commissioning and project planning. Additionally, I worked on the customer side, taking on effective roles in both administrative and technical processes such as the design, reloc",
+                                "timestamp": 1761045473435,
+                                "length": 264
+                            },
+                            {
+                                "text": "ole in all stages of post-sales processes, from the installation of products to their commissioning and project planning. Additionally, I worked on the customer side, taking on effective roles in both administrative and technical processes such as the design, reloc",
+                                "timestamp": 1761045473443,
+                                "length": 265
+                            },
+                            {
+                                "text": "role in all stages of post-sales processes, from the installation of products to their commissioning and project planning. Additionally, I worked on the customer side, taking on effective roles in both administrative and technical processes such as the design, reloc",
+                                "timestamp": 1761045473449,
+                                "length": 266
+                            },
+                            {
+                                "text": "role in all stages of post-sales processes, from the installation of products to their commissioning and project planning. Additionally, I worked on the customer side, taking on effective roles in both administrative and technical processes such as the design, reloc",
+                                "timestamp": 1761045473457,
+                                "length": 266
+                            },
+                            {
+                                "text": "e role in all stages of post-sales processes, from the installation of products to their commissioning and project planning. Additionally, I worked on the customer side, taking on effective roles in both administrative and technical processes such as the design, reloc",
+                                "timestamp": 1761045473515,
+                                "length": 268
+                            }
+                        ],
+                        "clicks": [
+                            {
+                                "type": "click",
+                                "tag": "P",
+                                "id": "none",
+                                "className": "none",
+                                "timestamp": 1761045467776,
+                                "x": 1216,
+                                "y": 351
+                            },
+                            {
+                                "type": "click",
+                                "tag": "DIV",
+                                "id": "none",
+                                "className": "right-column",
+                                "timestamp": 1761045470759,
+                                "x": 367,
+                                "y": 391
+                            },
+                            {
+                                "type": "click",
+                                "tag": "DIV",
+                                "id": "none",
+                                "className": "right-column",
+                                "timestamp": 1761045470876,
+                                "x": 367,
+                                "y": 391
+                            },
+                            {
+                                "type": "click",
+                                "tag": "DIV",
+                                "id": "none",
+                                "className": "right-column",
+                                "timestamp": 1761045471856,
+                                "x": 404,
+                                "y": 327
+                            },
+                            {
+                                "type": "click",
+                                "tag": "P",
+                                "id": "none",
+                                "className": "none",
+                                "timestamp": 1761045472035,
+                                "x": 485,
+                                "y": 365
+                            },
+                            {
+                                "type": "click",
+                                "tag": "DIV",
+                                "id": "none",
+                                "className": "section",
+                                "timestamp": 1761045472575,
+                                "x": 620,
+                                "y": 502
+                            },
+                            {
+                                "type": "click",
+                                "tag": "P",
+                                "id": "none",
+                                "className": "none",
+                                "timestamp": 1761045473685,
+                                "x": 476,
+                                "y": 378
+                            },
+                            {
+                                "type": "click",
+                                "tag": "P",
+                                "id": "none",
+                                "className": "none",
+                                "timestamp": 1761045474467,
+                                "x": 504,
+                                "y": 411
+                            },
+                            {
+                                "type": "click",
+                                "tag": "P",
+                                "id": "none",
+                                "className": "none",
+                                "timestamp": 1761045479489,
+                                "x": 655,
+                                "y": 347
+                            },
+                            {
+                                "type": "click",
+                                "tag": "BUTTON",
+                                "id": "download-pdf",
+                                "className": "btn",
+                                "timestamp": 1761045484732,
+                                "x": 426,
+                                "y": 623
+                            }
+                        ],
+                        "keyStrokes": [],
+                        "performance": {
+                            "loadTime": -1761045464835,
+                            "domReadyTime": -1761045464835,
+                            "readyStart": 10,
+                            "redirectTime": 0,
+                            "appcacheTime": 0,
+                            "unloadEventTime": 0,
+                            "lookupDomainTime": 0,
+                            "connectTime": 0,
+                            "requestTime": 192,
+                            "initDomTreeTime": 305,
+                            "loadEventTime": 0
+                        },
+                        "pdfDownload": true
+                    },
+                    "timestamp": "2025-10-21T11:18:08.521Z"
+                }
+            ],
+            "total_sessions": 9,
+            "last_updated": "2025-10-21T12:10:41.022Z"
         };
 
-        // DOM elementleri
-        const mousePointer = document.getElementById('mouse-pointer');
-        const heatmap = document.getElementById('heatmap');
-        const cvContent = document.getElementById('cv-content');
-
-        // Örnek session verileri (gerçek uygulamada JSONBin'den çekilecek)
-        let sampleSessions = {};
-
-        // CV HTML içeriği
-        const cvHtml = `
-            <div class="cv-container">
-                <div class="header">
-                    <div>
-                        <img src="https://ik.imagekit.io/adembayazit/IMG_9413_de_JlqWTa.jpeg" alt="Profil Resmi" class="profile-img">
-                    </div>
-                    <div class="header-text">
-                        <h1>Adem Bayazıt</h1>
-                        <h2>IT Network and Cybersecurity Architect</h2>
-                        <p>Experienced IT professional with expertise in network infrastructure, cybersecurity, and project management.</p>
-                        <div class="contact-info">
-                            <div class="contact-item2">
-                                <i class="fas fa-envelope"></i>
-                                <span>iam@adembayazit.com</span>
-                            </div>
-                            <div class="contact-item2">
-                                <i class="fas fa-phone"></i>
-                                <span>+90 536 584 42 82</span>
-                            </div>
-                            <div class="contact-item2">
-                                <i class="fas fa-map-marker-alt"></i>
-                                <span>Ankara, Turkiye</span>
-                            </div>
-                            <div class="contact-item2">
-                                <i class="fas fa-globe"></i>
-                                <span>adembayazit.com</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        // DOM Elementleri
+        const loginBtn = document.getElementById('login-btn');
+        const sessionSelect = document.getElementById('session-select');
+        const sessionInfo = document.getElementById('session-info');
+        const cvContainer = document.getElementById('cv-container');
+        const heatmapOverlay = document.getElementById('heatmap-overlay');
+        const cursor = document.getElementById('cursor');
+        const startSimulationBtn = document.getElementById('start-simulation');
+        const pauseSimulationBtn = document.getElementById('pause-simulation');
+        const resetSimulationBtn = document.getElementById('reset-simulation');
+        const timelineSlider = document.getElementById('timeline-slider');
+        const currentTimeEl = document.getElementById('current-time');
+        const totalTimeEl = document.getElementById('total-time');
+        
+        // Heatmap checkbox'ları
+        const clickHeatmap = document.getElementById('click-heatmap');
+        const movementHeatmap = document.getElementById('movement-heatmap');
+        const selectionHeatmap = document.getElementById('selection-heatmap');
+        const copyHeatmap = document.getElementById('copy-heatmap');
+        const cursorAnimation = document.getElementById('cursor-animation');
+        
+        // İstatistik elementleri
+        const totalClicksEl = document.getElementById('total-clicks');
+        const totalMovementsEl = document.getElementById('total-movements');
+        const totalScrollsEl = document.getElementById('total-scrolls');
+        const totalSelectionsEl = document.getElementById('total-selections');
+        
+        // Session bilgisi elementleri
+        const sessionIp = document.getElementById('session-ip');
+        const sessionLocation = document.getElementById('session-location');
+        const sessionDevice = document.getElementById('session-device');
+        const sessionScreen = document.getElementById('session-screen');
+        const sessionLoadTime = document.getElementById('session-load-time');
+        
+        // Değişkenler
+        let currentSession = null;
+        let isLoggedIn = false;
+        let isSimulating = false;
+        let simulationInterval;
+        let currentSimulationTime = 0;
+        let totalSimulationTime = 0;
+        let events = [];
+        
+        // Giriş kontrolü
+        loginBtn.addEventListener('click', () => {
+            const password = document.getElementById('password').value;
+            if (password === 'admin123') {
+                isLoggedIn = true;
+                document.querySelector('.login-section').style.display = 'none';
+                loadSessions();
+            } else {
+                alert('Hatalı şifre!');
+            }
+        });
+        
+        // Session yükleme
+        function loadSessions() {
+            sampleData.cv_analytics.forEach(session => {
+                const option = document.createElement('option');
+                option.value = session.session.sessionId;
+                option.textContent = `${session.session.sessionId} - ${session.session.ipInfo.city}, ${session.session.ipInfo.country}`;
+                sessionSelect.appendChild(option);
+            });
+        }
+        
+        // Session seçimi
+        sessionSelect.addEventListener('change', () => {
+            const sessionId = sessionSelect.value;
+            if (sessionId) {
+                currentSession = sampleData.cv_analytics.find(s => s.session.sessionId === sessionId).session;
+                displaySessionInfo();
+                renderHeatmap();
+                updateStats();
+            }
+        });
+        
+        // Session bilgilerini göster
+        function displaySessionInfo() {
+            sessionIp.textContent = currentSession.ipInfo.ip;
+            sessionLocation.textContent = `${currentSession.ipInfo.city}, ${currentSession.ipInfo.region}, ${currentSession.ipInfo.country}`;
+            sessionDevice.textContent = `${currentSession.deviceInfo.deviceType} - ${currentSession.deviceInfo.platform}`;
+            sessionScreen.textContent = `${currentSession.deviceInfo.screenWidth}x${currentSession.deviceInfo.screenHeight}`;
+            sessionLoadTime.textContent = new Date(currentSession.pageLoadTime).toLocaleString();
+        }
+        
+        // Heatmap render etme
+        function renderHeatmap() {
+            heatmapOverlay.innerHTML = '';
+            
+            // Tıklamalar
+            if (clickHeatmap.checked) {
+                currentSession.clicks.forEach(click => {
+                    const point = document.createElement('div');
+                    point.className = 'heatmap-point click-point';
+                    point.style.left = `${click.x}px`;
+                    point.style.top = `${click.y}px`;
+                    heatmapOverlay.appendChild(point);
+                });
+            }
+            
+            // Fare hareketleri
+            if (movementHeatmap.checked) {
+                currentSession.mouseMovements.forEach(movement => {
+                    const point = document.createElement('div');
+                    point.className = 'heatmap-point movement-point';
+                    point.style.left = `${movement.x}px`;
+                    point.style.top = `${movement.y}px`;
+                    heatmapOverlay.appendChild(point);
+                });
+            }
+            
+            // Metin seçimleri (basit bir gösterim)
+            if (selectionHeatmap.checked) {
+                currentSession.textSelections.forEach(selection => {
+                    // Gerçek bir uygulamada, seçilen metnin konumunu belirlemek gerekir
+                    // Burada sadece örnek olarak rastgele bir konum gösteriyoruz
+                    const highlight = document.createElement('div');
+                    highlight.className = 'selection-highlight';
+                    highlight.style.left = `${Math.random() * 500 + 100}px`;
+                    highlight.style.top = `${Math.random() * 300 + 100}px`;
+                    highlight.style.width = `${selection.length * 5}px`;
+                    highlight.style.height = '20px';
+                    heatmapOverlay.appendChild(highlight);
+                });
+            }
+        }
+        
+        // İstatistikleri güncelle
+        function updateStats() {
+            totalClicksEl.textContent = currentSession.clicks.length;
+            totalMovementsEl.textContent = currentSession.mouseMovements.length;
+            totalScrollsEl.textContent = currentSession.interactions.filter(i => i.type === 'scroll').length;
+            totalSelectionsEl.textContent = currentSession.textSelections.length;
+        }
+        
+        // Simülasyon başlatma
+        startSimulationBtn.addEventListener('click', () => {
+            if (!currentSession) return;
+            
+            isSimulating = true;
+            events = prepareEvents();
+            totalSimulationTime = getTotalSimulationTime();
+            
+            // Timeline slider'ı ayarla
+            timelineSlider.max = totalSimulationTime;
+            totalTimeEl.textContent = formatTime(totalSimulationTime);
+            
+            // Simülasyonu başlat
+            clearInterval(simulationInterval);
+            simulationInterval = setInterval(simulate, 50);
+        });
+        
+        // Simülasyonu duraklat
+        pauseSimulationBtn.addEventListener('click', () => {
+            isSimulating = !isSimulating;
+            if (isSimulating) {
+                simulationInterval = setInterval(simulate, 50);
+                pauseSimulationBtn.textContent = 'Duraklat';
+            } else {
+                clearInterval(simulationInterval);
+                pauseSimulationBtn.textContent = 'Devam Et';
+            }
+        });
+        
+        // Simülasyonu sıfırla
+        resetSimulationBtn.addEventListener('click', () => {
+            isSimulating = false;
+            clearInterval(simulationInterval);
+            currentSimulationTime = 0;
+            timelineSlider.value = 0;
+            currentTimeEl.textContent = '00:00';
+            cursor.style.display = 'none';
+            heatmapOverlay.innerHTML = '';
+            pauseSimulationBtn.textContent = 'Duraklat';
+        });
+        
+        // Timeline slider değişikliği
+        timelineSlider.addEventListener('input', () => {
+            if (!isSimulating) {
+                currentSimulationTime = parseInt(timelineSlider.value);
+                currentTimeEl.textContent = formatTime(currentSimulationTime);
+                // Bu noktada, timeline'a göre heatmap'i güncellemek gerekir
+            }
+        });
+        
+        // Etkinlikleri hazırlama
+        function prepareEvents() {
+            const allEvents = [];
+            
+            // Tüm etkileşimleri birleştir
+            if (currentSession.interactions) {
+                currentSession.interactions.forEach(interaction => {
+                    allEvents.push({
+                        type: 'interaction',
+                        data: interaction,
+                        timestamp: interaction.timestamp - currentSession.pageLoadTime
+                    });
+                });
+            }
+            
+            if (currentSession.mouseMovements) {
+                currentSession.mouseMovements.forEach(movement => {
+                    allEvents.push({
+                        type: 'movement',
+                        data: movement,
+                        timestamp: movement.timestamp - currentSession.pageLoadTime
+                    });
+                });
+            }
+            
+            // Zaman damgasına göre sırala
+            allEvents.sort((a, b) => a.timestamp - b.timestamp);
+            
+            return allEvents;
+        }
+        
+        // Toplam simülasyon süresini hesapla
+        function getTotalSimulationTime() {
+            if (events.length === 0) return 0;
+            return events[events.length - 1].timestamp;
+        }
+        
+        // Simülasyonu çalıştır
+        function simulate() {
+            if (!isSimulating) return;
+            
+            currentSimulationTime += 50;
+            timelineSlider.value = currentSimulationTime;
+            currentTimeEl.textContent = formatTime(currentSimulationTime);
+            
+            // Geçerli zaman dilimindeki olayları işle
+            const currentEvents = events.filter(event => 
+                event.timestamp <= currentSimulationTime && 
+                event.timestamp > currentSimulationTime - 50
+            );
+            
+            currentEvents.forEach(event => {
+                switch (event.type) {
+                    case 'movement':
+                        if (cursorAnimation.checked) {
+                            cursor.style.left = `${event.data.x}px`;
+                            cursor.style.top = `${event.data.y}px`;
+                            cursor.style.display = 'block';
+                        }
+                        break;
+                    case 'interaction':
+                        if (event.data.type === 'click') {
+                            // Tıklama efekti
+                            const clickEffect = document.createElement('div');
+                            clickEffect.className = 'heatmap-point click-point';
+                            clickEffect.style.left = `${event.data.x}px`;
+                            clickEffect.style.top = `${event.data.y}px`;
+                            heatmapOverlay.appendChild(clickEffect);
+                            
+                            // Tıklama efekti zamanla kaybolur
+                            setTimeout(() => {
+                                if (heatmapOverlay.contains(clickEffect)) {
+                                    heatmapOverlay.removeChild(clickEffect);
+                                }
+                            }, 1000);
+                        }
+                        break;
+                }
+            });
+            
+            // Simülasyon sona erdi
+            if (currentSimulationTime >= totalSimulationTime) {
+                clearInterval(simulationInterval);
+                isSimulating = false;
+            }
+        }
+        
+        // Zamanı formatlama
+        function formatTime(milliseconds) {
+            const seconds = Math.floor(milliseconds / 1000);
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+        
+        // Heatmap ayarları değiştiğinde
+        clickHeatmap.addEventListener('change', renderHeatmap);
+        movementHeatmap.addEventListener('change', renderHeatmap);
+        selectionHeatmap.addEventListener('change', renderHeatmap);
+        copyHeatmap.addEventListener('change', renderHeatmap);
+        
+        // Örnek CV içeriği (basit bir HTML)
+        cvContainer.innerHTML = `
+            <div style="padding: 40px; font-family: Arial, sans-serif; color: #333;">
+                <h1 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;">Örnek CV</h1>
                 
-                <div class="main-content">
-                    <div class="left-column">
-                        <div class="section">
-                            <h3 class="section-title">Personal Details</h3>
-                            <div class="contact-item">
-                                <i class="fas fa-birthday-cake"></i>
-                                <span>July 13, 1988</span>
-                            </div>
-                            <div class="contact-item">
-                                <i class="fas fa-map-pin"></i>
-                                <span>Ankara</span>
-                            </div>
-                            <div class="contact-item">
-                                <i class="fas fa-id-card"></i>
-                                <span>Driver's License (E)</span>
-                            </div>
-                            <div class="contact-item">
-                                <i class="fas fa-user"></i>
-                                <span>Male</span>
-                            </div>
-                        </div>
+                <div style="display: flex; margin-top: 30px;">
+                    <div style="flex: 1; padding-right: 20px;">
+                        <h2 style="color: #3498db;">Kişisel Bilgiler</h2>
+                        <p><strong>Ad Soyad:</strong> Ahmet Yılmaz</p>
+                        <p><strong>E-posta:</strong> ahmet.yilmaz@example.com</p>
+                        <p><strong>Telefon:</strong> +90 555 123 4567</p>
+                        <p><strong>Adres:</strong> Ankara, Türkiye</p>
                         
-                        <div class="section">
-                            <h3 class="section-title">Technical Skills</h3>
-                            <div class="skill-item">
-                                <div class="skill-name">
-                                    <span>CCNP</span>
-                                    <span>90%</span>
-                                </div>
-                                <div class="skill-bar">
-                                    <div class="skill-level" style="width: 90%;"></div>
-                                </div>
-                            </div>
-                            <div class="skill-item">
-                                <div class="skill-name">
-                                    <span>CCNA</span>
-                                    <span>85%</span>
-                                </div>
-                                <div class="skill-bar">
-                                    <div class="skill-level" style="width: 85%;"></div>
-                                </div>
-                            </div>
-                            <div class="skill-item">
-                                <div class="skill-name">
-                                    <span>Linux</span>
-                                    <span>80%</span>
-                                </div>
-                                <div class="skill-bar">
-                                    <div class="skill-level" style="width: 80%;"></div>
-                                </div>
-                            </div>
-                        </div>
+                        <h2 style="color: #3498db; margin-top: 30px;">Beceriler</h2>
+                        <ul>
+                            <li>JavaScript</li>
+                            <li>HTML/CSS</li>
+                            <li>React</li>
+                            <li>Node.js</li>
+                            <li>Python</li>
+                        </ul>
                     </div>
                     
-                    <div class="right-column">
-                        <div class="section">
-                            <h3 class="section-title">About Me</h3>
-                            <p>I have been actively working in the information technology sector <b>since 2002</b>. I began my career by receiving software education at a vocational high school and have held various <b>technical and administrative positions </b>since then. I played an active role in all stages of post-sales processes, from the installation of products to their commissioning and project planning. Additionally, I worked on the customer side, taking on effective roles in both administrative and technical processes such as the design, relocation, and restructuring of large-scale data centers. Throughout these processes, I provided technical support and contributed to the successful completion of projects.</p>
-                            <br>
-                            <p>In short, since I started in the industry at a time when specialization was not yet so sharply defined, I gained <b>broad technical and comprehensive experience </b>ranging from <b>software, networking, and cybersecurity to infrastructure, project management, and customer relations</b>.Having witnessed the transformation of technology firsthand, I can evaluate both the past and the present of the industry from a <b>holistic perspective</b>.</p>
-                            <br>
-                            <p>I am considering leveraging this experience I have gained across different disciplines to continue my career as a <b>Cybersecurity Analyst</b>.</p>
+                    <div style="flex: 2; border-left: 1px solid #ddd; padding-left: 20px;">
+                        <h2 style="color: #3498db;">Deneyim</h2>
+                        <div style="margin-bottom: 20px;">
+                            <h3>Senior Yazılım Geliştirici - ABC Şirketi</h3>
+                            <p><em>2020 - Günümüz</em></p>
+                            <p>Web uygulamaları geliştirme, ekip liderliği, proje yönetimi</p>
                         </div>
                         
-                        <div class="divider"></div>
-                        
-                        <div class="section">
-                            <h3 class="section-title">Work Experience</h3>
-                            <div class="timeline-item">
-                                <div class="timeline-date">2023 - Present</div>
-                                <div class="timeline-title">Career Break</div>
-                                <div class="timeline-subtitle">Professional Development, Ankara</div>
-                                <p>Due to health issues experienced in 2023, I took a break from work and completed my treatment process that lasted about 1.5 years. After this period, I focused on personal development instead of job hunting.</p>
-                            </div>
-                            
-                            <div class="timeline-item">
-                                <div class="timeline-date">2019 - 2023</div>
-                                <div class="timeline-title">Network and Security Specialist</div>
-                                <div class="timeline-subtitle">Ministry of Treasury and Finance, Ankara</div>
-                                <p><b>1. SDN Migration & Network Transformation</b></p>
-                                <p>Migration of the existing network infrastructure of central and provincial units to <b>Software-Defined Networking (SDN)</b> architecture. Replacement of <b>Juniper Firewall (Layer 3)</b> infrastructure with <b>Fortinet NGFW (Layer 7)</b> solutions.</p>
-                            </div>
+                        <div style="margin-bottom: 20px;">
+                            <h3>Yazılım Geliştirici - XYZ Şirketi</h3>
+                            <p><em>2017 - 2020</em></p>
+                            <p>Frontend ve backend geliştirme, veritabanı yönetimi</p>
                         </div>
+                        
+                        <h2 style="color: #3498db; margin-top: 30px;">Eğitim</h2>
+                        <div style="margin-bottom: 20px;">
+                            <h3>Bilgisayar Mühendisliği - ODTÜ</h3>
+                            <p><em>2013 - 2017</em></p>
+                            <p>Lisans derecesi</p>
+                        </div>
+                        
+                        <button id="download-pdf" class="btn" style="background-color: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 20px;">
+                            PDF İndir
+                        </button>
                     </div>
-                </div>
-                
-                <div class="pdf-download">
-                    <button class="btn" id="download-pdf">
-                        <i class="fas fa-download"></i> Download as PDF
-                    </button>
-                    <a id="view-jobseeker" href="https://www.jobseeker.com/d/6lC0jFnRrJm6mZliwFGSBx/view" class="btn">View Jobseeker</a>
                 </div>
             </div>
         `;
-
-        // Session ID oluşturma
-        function generateSessionId() {
-            return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        }
-
-        // Admin panelini başlat
-        function initializeAdminPanel() {
-            // CV içeriğini yükle
-            cvContent.innerHTML = cvHtml;
-            
-            document.getElementById('sessionId').value = "";
-            document.getElementById('displaySessionId').textContent = "-";
-            document.getElementById('displayIp').textContent = "-";
-            document.getElementById('displayDevice').textContent = "-";
-            
-            addLog('Admin paneli başlatıldı', 'info');
-        }
-
-        // JSONBin'den session verilerini yükle
-        async function loadSessionsFromJsonBin() {
-            try {
-                addLog('JSONBin\'den session verileri yükleniyor...', 'info');
-                
-                const response = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        path: '/b/68f7500aae596e708f213111/latest',
-                        method: 'GET'
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                
-                // Örnek verileri kullan (gerçek JSONBin yapısına göre düzenle)
-                sampleSessions = processJsonBinData(data);
-                
-                const sessionSelector = document.getElementById('sessionSelector');
-                sessionSelector.innerHTML = '<option value="">Session Seçin...</option>';
-                
-                // Session'ları ekle
-                for (const sessionId in sampleSessions) {
-                    const session = sampleSessions[sessionId];
-                    const option = document.createElement('option');
-                    option.value = sessionId;
-                    option.textContent = `${sessionId} - ${session.ipInfo.ip} - ${new Date(session.timestamp).toLocaleString()}`;
-                    sessionSelector.appendChild(option);
-                }
-                
-                addLog(`${Object.keys(sampleSessions).length} session yüklendi`, 'info');
-            } catch (error) {
-                console.error('Session yükleme hatası:', error);
-                addLog('Session verileri yüklenirken hata oluştu: ' + error.message, 'error');
-                
-                // Fallback: Örnek veriler
-                loadFallbackSessions();
-            }
-        }
-
-        // JSONBin verilerini işle
-        function processJsonBinData(data) {
-            const sessions = {};
-            
-            // JSONBin yapısına göre verileri işle
-            if (data.cv_analytics && Array.isArray(data.cv_analytics)) {
-                data.cv_analytics.forEach((item, index) => {
-                    if (item.session && item.session.sessionId) {
-                        const sessionId = item.session.sessionId;
-                        sessions[sessionId] = {
-                            ...item.session,
-                            timestamp: item.timestamp || new Date().toISOString()
-                        };
-                    } else {
-                        // Eğer sessionId yoksa, otomatik oluştur
-                        const sessionId = `session_${Date.now()}_${index}`;
-                        sessions[sessionId] = {
-                            ...item.session,
-                            sessionId: sessionId,
-                            timestamp: item.timestamp || new Date().toISOString()
-                        };
-                    }
-                });
-            }
-            
-            return sessions;
-        }
-
-        // Fallback session verileri
-        function loadFallbackSessions() {
-            sampleSessions = {
-                "session_1761045465323_i7x3w9zs0": {
-                    sessionId: "session_1761045465323_i7x3w9zs0",
-                    ipInfo: {
-                        ip: "88.227.76.219",
-                        hostname: "88.227.76.219.dynamic.ttnet.com.tr",
-                        city: "Ankara",
-                        region: "Ankara",
-                        country: "TR",
-                        loc: "39.9199,32.8543",
-                        org: "AS47331 TTNet A.S.",
-                        postal: "06420",
-                        timezone: "Europe/Istanbul"
-                    },
-                    deviceInfo: {
-                        userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-                        platform: "Win32",
-                        language: "tr-TR",
-                        screenWidth: 1536,
-                        screenHeight: 864,
-                        viewportWidth: 1536,
-                        viewportHeight: 695,
-                        deviceType: "desktop"
-                    },
-                    interactions: [
-                        { type: "page_load", timestamp: 1761045465345 },
-                        { type: "click", tag: "P", className: "none", timestamp: 1761045467776, x: 300, y: 200 },
-                        { type: "click", tag: "DIV", className: "right-column", timestamp: 1761045470759, x: 400, y: 300 },
-                        { type: "scroll", position: 4817, timestamp: 1761045483992 },
-                        { type: "pdf_download_click", timestamp: 1761045484732 },
-                        { type: "click", tag: "BUTTON", id: "download-pdf", className: "btn", timestamp: 1761045484732, x: 500, y: 600 }
-                    ],
-                    mouseMovements: [
-                        { x: 250, y: 409, timestamp: 1761045465714 },
-                        { x: 300, y: 408, timestamp: 1761045465886 },
-                        { x: 350, y: 407, timestamp: 1761045466028 },
-                        { x: 400, y: 371, timestamp: 1761045466725 }
-                    ],
-                    textSelections: [
-                        { text: "been actively working in the information technology sector since 2002", timestamp: 1761045471957, length: 81 },
-                        { text: "technical and administrative positions", timestamp: 1761045473358, length: 38 }
-                    ],
-                    clicks: [
-                        { type: "click", tag: "P", timestamp: 1761045467776, x: 300, y: 200 },
-                        { type: "click", tag: "DIV", timestamp: 1761045470759, x: 400, y: 300 },
-                        { type: "click", tag: "BUTTON", timestamp: 1761045484732, x: 500, y: 600 }
-                    ],
-                    timestamp: "2025-10-21T11:18:08.521Z"
-                },
-                "session_1761045424027_m1tz1z97e": {
-                    sessionId: "session_1761045424027_m1tz1z97e",
-                    ipInfo: {
-                        ip: "192.168.1.100",
-                        city: "Ankara",
-                        country: "TR"
-                    },
-                    deviceInfo: {
-                        deviceType: "desktop"
-                    },
-                    interactions: [
-                        { type: "page_load", timestamp: 1761045424071 },
-                        { type: "click", tag: "H1", timestamp: 1761045425000, x: 350, y: 150 },
-                        { type: "scroll", position: 1200, timestamp: 1761045426000 }
-                    ],
-                    mouseMovements: [
-                        { x: 200, y: 300, timestamp: 1761045424500 },
-                        { x: 250, y: 320, timestamp: 1761045424600 },
-                        { x: 300, y: 340, timestamp: 1761045424700 }
-                    ],
-                    textSelections: [
-                        { text: "Network and Cybersecurity Architect", timestamp: 1761045425500, length: 34 }
-                    ],
-                    clicks: [
-                        { type: "click", tag: "H1", timestamp: 1761045425000, x: 350, y: 150 }
-                    ],
-                    timestamp: "2025-10-21T11:17:35.187Z"
-                }
-            };
-
-            const sessionSelector = document.getElementById('sessionSelector');
-            sessionSelector.innerHTML = '<option value="">Session Seçin...</option>';
-            
-            for (const sessionId in sampleSessions) {
-                const session = sampleSessions[sessionId];
-                const option = document.createElement('option');
-                option.value = sessionId;
-                option.textContent = `${sessionId} - ${session.ipInfo.ip} - ${new Date(session.timestamp).toLocaleString()}`;
-                sessionSelector.appendChild(option);
-            }
-            
-            addLog('Fallback session verileri yüklendi', 'warning');
-        }
-
-        // Session verilerini yükle
-        function loadSessionData() {
-            const sessionId = document.getElementById('sessionSelector').value;
-            if (!sessionId) {
-                alert('Lütfen bir session seçin!');
-                return;
-            }
-            
-            currentSessionData = sampleSessions[sessionId];
-            if (!currentSessionData) {
-                addLog('Session verileri bulunamadı: ' + sessionId, 'error');
-                return;
-            }
-            
-            document.getElementById('sessionId').value = sessionId;
-            document.getElementById('displaySessionId').textContent = sessionId;
-            document.getElementById('displayIp').textContent = currentSessionData.ipInfo.ip;
-            document.getElementById('displayDevice').textContent = currentSessionData.deviceInfo.deviceType;
-            
-            // İstatistikleri sıfırla
-            resetStats();
-            
-            // Interaction listesini temizle
-            document.getElementById('interactionList').innerHTML = '';
-            
-            // Heatmap'i temizle
-            clearHeatmap();
-            
-            // Mevcut heatmap ayarlarını uygula
-            applyCurrentHeatmap();
-            
-            addLog('Session verileri yüklendi: ' + sessionId, 'info');
-        }
-
-        // İstatistikleri sıfırla
-        function resetStats() {
-            document.getElementById('clickCount').textContent = '0';
-            document.getElementById('moveCount').textContent = '0';
-            document.getElementById('scrollCount').textContent = '0';
-            document.getElementById('keyCount').textContent = '0';
-            document.getElementById('selectionCount').textContent = '0';
-            document.getElementById('copyCount').textContent = '0';
-            document.getElementById('displayDuration').textContent = '0sn';
-        }
-
-        // Simülasyonu başlat
-        function startSimulation() {
-            if (!currentSessionData) {
-                alert('Lütfen önce bir session yükleyin!');
-                return;
-            }
-            
-            if (simulationActive) return;
-            
-            simulationActive = true;
-            const startTime = Date.now();
-            
-            addLog('Simülasyon başlatıldı: ' + currentSessionData.sessionId, 'info');
-            
-            // Timeline'ı sıfırla
-            document.getElementById('timelineProgress').style.width = '0%';
-            
-            // İnterval ile simülasyonu çalıştır
-            let interactionIndex = 0;
-            const totalInteractions = currentSessionData.interactions ? currentSessionData.interactions.length : 0;
-            const mouseMovements = currentSessionData.mouseMovements || [];
-            const textSelections = currentSessionData.textSelections || [];
-            
-            simulationInterval = setInterval(() => {
-                if (!simulationActive) {
-                    clearInterval(simulationInterval);
-                    return;
-                }
-                
-                // Zamanlayıcıyı güncelle
-                const progress = ((interactionIndex + 1) / totalInteractions) * 100;
-                document.getElementById('timelineProgress').style.width = progress + '%';
-                
-                // Tüm etkileşimleri işle
-                if (interactionIndex < totalInteractions) {
-                    const interaction = currentSessionData.interactions[interactionIndex];
-                    processInteraction(interaction);
-                    interactionIndex++;
-                } else {
-                    // Tüm etkileşimler tamamlandı
-                    stopSimulation();
-                    addLog('Simülasyon tamamlandı', 'info');
-                }
-            }, 500); // Her yarım saniyede bir etkileşim
-        }
-
-        // Simülasyonu durdur
-        function stopSimulation() {
-            simulationActive = false;
-            if (simulationInterval) {
-                clearInterval(simulationInterval);
-            }
-            addLog('Simülasyon durduruldu', 'warning');
-        }
-
-        // Etkileşimi işle
-        function processInteraction(interaction) {
-            // Fareyi hareket ettir
-            if (interaction.x && interaction.y) {
-                // CV içeriğinin scale'ine göre koordinatları ayarla
-                const scale = 0.8;
-                const scaledX = interaction.x * scale;
-                const scaledY = interaction.y * scale;
-                
-                mousePointer.style.left = scaledX + 'px';
-                mousePointer.style.top = scaledY + 'px';
-            }
-            
-            // Etkileşim türüne göre işlem yap
-            switch(interaction.type) {
-                case 'click':
-                    simulateClick(interaction.x, interaction.y);
-                    updateStat('clickCount');
-                    if (heatmapLayers.clicks) {
-                        addHeatmapPoint(interaction.x, interaction.y, 'clicks');
-                    }
-                    break;
-                case 'mouse_move':
-                    updateStat('moveCount');
-                    if (heatmapLayers.movements) {
-                        addHeatmapPoint(interaction.x, interaction.y, 'movements');
-                    }
-                    break;
-                case 'scroll':
-                    updateStat('scrollCount');
-                    break;
-                case 'keypress':
-                    updateStat('keyCount');
-                    break;
-                case 'text_selection':
-                    updateStat('selectionCount');
-                    if (heatmapLayers.selections && interaction.data) {
-                        highlightSelection(interaction.data);
-                    }
-                    break;
-                case 'copy':
-                    updateStat('copyCount');
-                    if (heatmapLayers.copies && interaction.data) {
-                        highlightCopy(interaction.data);
-                    }
-                    break;
-                case 'pdf_download_click':
-                    addLog('PDF indirme butonuna tıklandı', 'info');
-                    break;
-                case 'pdf_download_completed':
-                    addLog('PDF indirme tamamlandı', 'info');
-                    break;
-            }
-            
-            // Interaction listesine ekle
-            addInteractionToList(interaction);
-        }
-
-        // İstatistik güncelle
-        function updateStat(statId) {
-            const element = document.getElementById(statId);
-            element.textContent = parseInt(element.textContent) + 1;
-        }
-
-        // Tıklama simülasyonu
-        function simulateClick(x, y) {
-            const scale = 0.8;
-            const scaledX = x * scale;
-            const scaledY = y * scale;
-            
-            const clickEffect = document.createElement('div');
-            clickEffect.className = 'click-effect';
-            clickEffect.style.left = scaledX + 'px';
-            clickEffect.style.top = scaledY + 'px';
-            cvContent.appendChild(clickEffect);
-            
-            // Efekti temizle
-            setTimeout(() => {
-                if (clickEffect.parentNode) {
-                    clickEffect.remove();
-                }
-            }, 600);
-        }
-
-        // Heatmap noktası ekle
-        function addHeatmapPoint(x, y, type) {
-            const scale = 0.8;
-            const scaledX = x * scale;
-            const scaledY = y * scale;
-            
-            const point = document.createElement('div');
-            
-            if (type === 'clicks') {
-                point.className = 'heatmap-point';
-                point.style.background = 'radial-gradient(circle, rgba(255,0,0,0.6) 0%, rgba(255,0,0,0) 70%)';
-                point.style.width = '30px';
-                point.style.height = '30px';
-            } else if (type === 'movements') {
-                point.className = 'movement-point';
-                point.style.background = 'radial-gradient(circle, rgba(0,255,0,0.3) 0%, rgba(0,255,0,0) 70%)';
-                point.style.width = '20px';
-                point.style.height = '20px';
-            }
-            
-            point.style.left = scaledX + 'px';
-            point.style.top = scaledY + 'px';
-            
-            heatmap.appendChild(point);
-        }
-
-        // Metin seçimini vurgula
-        function highlightSelection(selectionData) {
-            // Basit bir seçim vurgulama - gerçek uygulamada daha gelişmiş olmalı
-            const highlight = document.createElement('div');
-            highlight.className = 'selection-highlight';
-            highlight.style.left = '100px';
-            highlight.style.top = '300px';
-            highlight.style.width = '400px';
-            highlight.style.height = '20px';
-            
-            // Tooltip ekle
-            highlight.setAttribute('data-text', selectionData.text || 'Seçilen metin');
-            highlight.addEventListener('mouseenter', showTooltip);
-            highlight.addEventListener('mouseleave', hideTooltip);
-            
-            cvContent.appendChild(highlight);
-        }
-
-        // Kopyalama vurgula
-        function highlightCopy(copyData) {
-            const highlight = document.createElement('div');
-            highlight.className = 'copy-highlight';
-            highlight.style.left = '100px';
-            highlight.style.top = '350px';
-            highlight.style.width = '400px';
-            highlight.style.height = '20px';
-            
-            // Tooltip ekle
-            highlight.setAttribute('data-text', copyData.text || 'Kopyalanan metin');
-            highlight.addEventListener('mouseenter', showTooltip);
-            highlight.addEventListener('mouseleave', hideTooltip);
-            
-            cvContent.appendChild(highlight);
-        }
-
-        // Tooltip göster
-        function showTooltip(e) {
-            const tooltip = document.createElement('div');
-            tooltip.className = 'tooltip';
-            tooltip.textContent = e.target.getAttribute('data-text');
-            tooltip.style.left = e.pageX + 'px';
-            tooltip.style.top = (e.pageY - 40) + 'px';
-            document.body.appendChild(tooltip);
-            
-            setTimeout(() => {
-                tooltip.classList.add('show');
-            }, 10);
-            
-            e.target.tooltip = tooltip;
-        }
-
-        // Tooltip gizle
-        function hideTooltip(e) {
-            if (e.target.tooltip) {
-                e.target.tooltip.remove();
-            }
-        }
-
-        // Heatmap katmanlarını aç/kapa
-        function toggleHeatmap(type) {
-            heatmapLayers[type] = !heatmapLayers[type];
-            
-            // Buton durumunu güncelle
-            const button = document.getElementById(`heatmap-${type}`);
-            if (heatmapLayers[type]) {
-                button.style.background = '#008800';
-            } else {
-                button.style.background = '';
-            }
-            
-            addLog(`${type} heatmap ${heatmapLayers[type] ? 'açıldı' : 'kapandı'}`, 'info');
-            
-            // Eğer açıksa ve session verisi varsa, mevcut verileri göster
-            if (heatmapLayers[type] && currentSessionData) {
-                if (type === 'clicks' && currentSessionData.clicks) {
-                    currentSessionData.clicks.forEach(click => {
-                        addHeatmapPoint(click.x, click.y, 'clicks');
-                    });
-                }
-                if (type === 'movements' && currentSessionData.mouseMovements) {
-                    currentSessionData.mouseMovements.forEach(move => {
-                        addHeatmapPoint(move.x, move.y, 'movements');
-                    });
-                }
-            }
-        }
-
-        // Mevcut heatmap ayarlarını uygula
-        function applyCurrentHeatmap() {
-            if (!currentSessionData) return;
-            
-            for (const type in heatmapLayers) {
-                if (heatmapLayers[type]) {
-                    toggleHeatmap(type);
-                }
-            }
-        }
-
-        // Heatmap'i temizle
-        function clearHeatmap() {
-            heatmap.innerHTML = '';
-            
-            // Seçim ve kopyalama vurgularını temizle
-            const highlights = document.querySelectorAll('.selection-highlight, .copy-highlight');
-            highlights.forEach(highlight => {
-                highlight.remove();
-            });
-            
-            addLog('Heatmap temizlendi', 'info');
-        }
-
-        // Etkileşim listesine ekle
-        function addInteractionToList(interaction) {
-            const list = document.getElementById('interactionList');
-            const item = document.createElement('div');
-            item.className = 'interaction-item';
-            
-            const time = new Date(interaction.timestamp).toLocaleTimeString();
-            let details = '';
-            
-            if (interaction.type === 'text_selection' && interaction.data) {
-                details = `"${interaction.data.text}"`;
-            } else if (interaction.type === 'copy' && interaction.data) {
-                details = `"${interaction.data.text}" kopyalandı`;
-            } else if (interaction.type === 'click') {
-                details = `(${interaction.x}, ${interaction.y}) - ${interaction.tag}`;
-            } else if (interaction.type === 'mouse_move') {
-                details = `(${interaction.x}, ${interaction.y})`;
-            } else if (interaction.type === 'scroll') {
-                details = `Pozisyon: ${interaction.position}`;
-            } else if (interaction.type === 'keypress') {
-                details = `Tuş: ${interaction.key}`;
-            } else if (interaction.type === 'pdf_download_click') {
-                details = `PDF indirme başlatıldı`;
-            } else if (interaction.type === 'pdf_download_completed') {
-                details = `PDF indirme tamamlandı`;
-            }
-            
-            item.innerHTML = `
-                <span class="interaction-time">${time}</span>
-                <span class="interaction-type">${interaction.type}</span>
-                <span>${details}</span>
-            `;
-            
-            list.insertBefore(item, list.firstChild);
-            
-            // Listeyi sınırla
-            if (list.children.length > 20) {
-                list.removeChild(list.lastChild);
-            }
-        }
-
-        // Log ekle
-        function addLog(message, type = 'info') {
-            const logs = document.getElementById('dataLogs');
-            const logEntry = document.createElement('div');
-            logEntry.className = `log-entry ${type}`;
-            
-            const time = new Date().toLocaleTimeString();
-            logEntry.textContent = `[${time}] ${message}`;
-            
-            logs.appendChild(logEntry);
-            logs.scrollTop = logs.scrollHeight;
-        }
-
-        // Session ID kopyala
-        function copySessionId() {
-            const sessionIdInput = document.getElementById('sessionId');
-            sessionIdInput.select();
-            document.execCommand('copy');
-            addLog('Session ID panoya kopyalandı', 'info');
-        }
-
-        // Verileri temizle
-        function clearData() {
-            if (currentSessionData) {
-                currentSessionData.interactions = [];
-                currentSessionData.mouseMovements = [];
-                currentSessionData.clicks = [];
-                currentSessionData.textSelections = [];
-            }
-            
-            document.getElementById('interactionList').innerHTML = '';
-            resetStats();
-            
-            clearHeatmap();
-            
-            addLog('Tüm veriler temizlendi', 'warning');
-        }
-
-        // Sayfa kapatıldığında simülasyonu durdur
-        window.addEventListener('beforeunload', () => {
-            if (simulationActive) {
-                stopSimulation();
-            }
-        });
-
-        // Enter tuşu ile giriş
-        document.getElementById('adminPassword').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                checkAdminLogin();
-            }
-        });
     </script>
 </body>
 </html>
