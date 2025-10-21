@@ -90,33 +90,6 @@
             padding-bottom: 8px;
         }
 
-        .stat-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .stat-item {
-            text-align: center;
-            padding: 15px;
-            background: rgba(0, 255, 0, 0.1);
-            border-radius: 10px;
-            border: 1px solid rgba(0, 255, 0, 0.3);
-        }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--primary-color);
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            font-size: 0.9rem;
-            color: #cccccc;
-        }
-
         .simulation-area {
             position: relative;
             width: 100%;
@@ -510,26 +483,6 @@
             z-index: 100;
         }
         
-        .cv-scale-controls {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 200;
-            background: rgba(0,0,0,0.7);
-            padding: 10px;
-            border-radius: 5px;
-        }
-        
-        .cv-scale-controls button {
-            background: var(--primary-color);
-            color: black;
-            border: none;
-            padding: 5px 10px;
-            margin: 0 5px;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-        
         .selections-container {
             max-height: 200px;
             overflow-y: auto;
@@ -575,6 +528,33 @@
             border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
+        }
+        
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: rgba(0, 255, 0, 0.1);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #cccccc;
         }
     </style>
 </head>
@@ -685,30 +665,30 @@
                     </div>
                 </div>
 
-                <div class="session-stats">
-                    <div class="session-stat">
-                        <div class="session-stat-value" id="clickCount">0</div>
-                        <div class="session-stat-label">Tıklama</div>
+                <div class="stat-grid">
+                    <div class="stat-item">
+                        <div class="stat-number" id="clickCount">0</div>
+                        <div class="stat-label">Tıklama</div>
                     </div>
-                    <div class="session-stat">
-                        <div class="session-stat-value" id="moveCount">0</div>
-                        <div class="session-stat-label">Fare Hareketi</div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="moveCount">0</div>
+                        <div class="stat-label">Fare Hareketi</div>
                     </div>
-                    <div class="session-stat">
-                        <div class="session-stat-value" id="scrollCount">0</div>
-                        <div class="session-stat-label">Kaydırma</div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="scrollCount">0</div>
+                        <div class="stat-label">Kaydırma</div>
                     </div>
-                    <div class="session-stat">
-                        <div class="session-stat-value" id="keyCount">0</div>
-                        <div class="session-stat-label">Klavye</div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="keyCount">0</div>
+                        <div class="stat-label">Klavye</div>
                     </div>
-                    <div class="session-stat">
-                        <div class="session-stat-value" id="selectionCount">0</div>
-                        <div class="session-stat-label">Metin Seçimi</div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="selectionCount">0</div>
+                        <div class="stat-label">Metin Seçimi</div>
                     </div>
-                    <div class="session-stat">
-                        <div class="session-stat-value" id="copyCount">0</div>
-                        <div class="session-stat-label">Kopyalama</div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="copyCount">0</div>
+                        <div class="stat-label">Kopyalama</div>
                     </div>
                 </div>
                 
@@ -766,13 +746,23 @@
         // Admin giriş kontrolü
         function checkAdminLogin() {
             const password = document.getElementById('adminPassword').value;
-            if (password === 'admin123') {
+            const hashedPassword = sha256(password);
+            
+            if (hashedPassword === 'f0db7cc4eda10ec5f4e92c10ba8e4d5d4367af07a7ebf7399394bcddfcd8da3c') {
                 document.getElementById('adminLogin').classList.add('hidden');
                 initializeAdminPanel();
                 loadSessionsFromJsonBin();
             } else {
-                alert('Geçersiz şifre! Demo şifresi: admin123');
+                alert('Geçersiz şifre!');
             }
+        }
+
+        // SHA256 hash fonksiyonu
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
         // Simülasyon değişkenleri
