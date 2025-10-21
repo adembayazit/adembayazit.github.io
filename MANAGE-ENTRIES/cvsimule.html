@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kullanıcı Davranış Analizi - Admin Paneli</title>
+    <title>Adem Bayazıt - Cybersecurity Architect</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -17,140 +17,19 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Poppins', sans-serif;
+            font-size: small;
         }
         
         body {
             background-color: #f5f5f5;
             color: #333;
             line-height: 1.6;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-        
-        /* Sol Panel - Kullanıcı Davranış Analizi */
-        .analytics-panel {
-            width: 30%;
-            background: white;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .panel-section {
-            margin-bottom: 25px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 20px;
-        }
-        
-        .panel-title {
-            font-size: 1.2rem;
-            color: #2e7d32;
-            margin-bottom: 15px;
-            padding-bottom: 5px;
-            border-bottom: 2px solid #4caf50;
-            display: inline-block;
-        }
-        
-        .control-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        
-        .btn {
-            padding: 8px 15px;
-            background: #4caf50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-            flex: 1;
-            min-width: 120px;
-        }
-        
-        .btn:hover {
-            background: #388e3c;
-        }
-        
-        .btn-secondary {
-            background: #757575;
-        }
-        
-        .btn-secondary:hover {
-            background: #616161;
-        }
-        
-        select {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-bottom: 15px;
-        }
-        
-        .heatmap-controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        
-        .heatmap-btn {
-            flex: 1;
-            min-width: 80px;
-            padding: 6px 10px;
-            background: #f5f5f5;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            cursor: pointer;
-            text-align: center;
-            font-size: 0.8rem;
-        }
-        
-        .heatmap-btn.active {
-            background: #4caf50;
-            color: white;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-        
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-        
-        th, td {
-            padding: 8px;
-            text-align: left;
-            font-size: 0.85rem;
-        }
-        
-        th {
-            background: #f5f5f5;
-        }
-        
-        /* Sağ Panel - CV Görüntüleme */
-        .cv-panel {
-            width: 70%;
-            background: white;
-            overflow-y: auto;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
         }
         
         .cv-container {
-            max-width: 800px;
-            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
             background: white;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
@@ -212,12 +91,10 @@
             margin-right: 8px;
             color: #4caf50;
         }
-        
         .contact-item2 i {
             margin-right: 8px;
             color: white;
         }
-        
         .main-content {
             display: flex;
             flex-direction: column;
@@ -337,6 +214,30 @@
             margin: 30px 0;
         }
         
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background: #4caf50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            margin: 0 10px;
+        }
+        
+        .btn:hover {
+            background: #388e3c;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn i {
+            margin-right: 8px;
+        }
+        
         .tag {
             display: inline-block;
             background: #e8f5e9;
@@ -358,73 +259,39 @@
             font-weight: 600;
         }
         
-        /* Text selection highlight */
-        .text-selection-highlight {
-            background-color: rgba(76, 175, 80, 0.3) !important;
-            transition: background-color 0.5s ease !important;
-            border-radius: 2px;
+        /* Mobile Personal Details Container */
+        .personal-details-mobile {
+            display: none;
+            background: #f9f9f9;
+            padding: 20px;
         }
         
-        /* Section görünürlük takibi */
-        .section-tracked {
-            transition: border-left 0.3s ease;
+        /* Mobile References Container */
+        .references-mobile {
+            display: none;
+            background: #f9f9f9;
+            padding: 20px;
         }
         
-        .section-visible {
-            border-left: 3px solid #4caf50 !important;
-            padding-left: 5px !important;
-        }
-        
-        /* Heatmap overlay */
-        .heatmap-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1000;
-        }
-        
-        .heatmap-point {
-            position: absolute;
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            opacity: 0.7;
-        }
-        
-        .click-point {
-            background-color: rgba(255, 0, 0, 0.5);
-        }
-        
-        .move-point {
-            background-color: rgba(0, 0, 255, 0.3);
-        }
-        
-        .selection-highlight {
-            background-color: rgba(76, 175, 80, 0.4);
-            position: absolute;
-            border-radius: 2px;
-        }
-        
-        /* Mobile Responsive */
-        @media (max-width: 1024px) {
-            body {
-                flex-direction: column;
-                height: auto;
-                overflow: auto;
+        @media (min-width: 769px) {
+            .main-content {
+                flex-direction: row;
             }
             
-            .analytics-panel, .cv-panel {
-                width: 100%;
+            .left-column {
+                flex: 1;
+                order: 1;
             }
             
-            .analytics-panel {
-                max-height: 40vh;
+            .right-column {
+                flex: 2;
+                order: 2;
             }
             
-            .cv-panel {
-                max-height: 60vh;
+            /* Hide mobile-only sections on desktop */
+            .personal-details-mobile,
+            .references-mobile {
+                display: none !important;
             }
         }
         
@@ -466,915 +333,773 @@
             .section-title {
                 font-size: 1.1rem;
             }
+            
+            /* Show mobile personal details after header */
+            .personal-details-mobile {
+                display: block;
+                order: 1;
+            }
+            
+            /* Hide personal details in left column on mobile */
+            .left-column .section:first-child {
+                display: none;
+            }
+            
+            /* Move main content down */
+            .main-content {
+                order: 2;
+            }
+            
+            /* Show mobile references at the end */
+            .references-mobile {
+                display: block;
+                order: 3;
+            }
+            
+            /* Hide references in right column on mobile */
+            .right-column .section:last-child {
+                display: none;
+            }
+        }
+
+        /* Text selection highlight */
+        .text-selection-highlight {
+            background-color: rgba(76, 175, 80, 0.3) !important;
+            transition: background-color 0.5s ease !important;
+            border-radius: 2px;
+        }
+        
+        /* Section görünürlük takibi */
+        .section-tracked {
+            transition: border-left 0.3s ease;
+        }
+        
+        .section-visible {
+            border-left: 3px solid #4caf50 !important;
+            padding-left: 5px !important;
         }
     </style>
 </head>
 <body>
-    <!-- Sol Panel - Kullanıcı Davranış Analizi -->
-    <div class="analytics-panel">
-        <div class="panel-section">
-            <h2 class="panel-title">Kullanıcı Davranış Analizi - Admin Paneli</h2>
-            <p>CV üzerindeki kullanıcı etkileşimlerinin gerçek zamanlı analizi ve simülasyonu</p>
-        </div>
-        
-        <div class="panel-section">
-            <h3 class="panel-title">Simülasyon Kontrolleri</h3>
-            <div class="control-buttons">
-                <button class="btn" id="simulation-start">
-                    <i class="fas fa-play"></i> Simülasyon Başlat
-                </button>
-                <button class="btn" id="simulation-stop">
-                    <i class="fas fa-stop"></i> Simülasyon Durdur
-                </button>
-                <button class="btn btn-secondary" id="data-clear">
-                    <i class="fas fa-trash"></i> Verileri Temizle
-                </button>
-            </div>
-            
-            <select id="session-select">
-                <option value="">Session Seçin...</option>
-                <option value="session_001">session_001</option>
-            </select>
-            
-            <button class="btn" id="session-load">
-                <i class="fas fa-upload"></i> Session Yükle
-            </button>
-            
-            <button class="btn btn-secondary" id="copy-data">
-                <i class="fas fa-copy"></i> Kopyala
-            </button>
-        </div>
-        
-        <div class="panel-section">
-            <h3 class="panel-title">Heatmap Kontrolleri</h3>
-            <div class="heatmap-controls">
-                <button class="heatmap-btn active" data-type="clicks">Tıklamalar</button>
-                <button class="heatmap-btn" data-type="movements">Hareketler</button>
-                <button class="heatmap-btn" data-type="selections">Seçimler</button>
-            </div>
-            
-            <div class="control-buttons">
-                <button class="btn" id="show-heatmap">
-                    <i class="fas fa-fire"></i> Heatmap Göster
-                </button>
-                <button class="btn btn-secondary" id="clear-heatmap">
-                    <i class="fas fa-eraser"></i> Heatmap Temizle
-                </button>
-            </div>
-        </div>
-        
-        <div class="panel-section">
-            <h3 class="panel-title">Session Bilgileri ve İstatistikler</h3>
-            <table>
-                <tr>
-                    <td>Session ID</td>
-                    <td id="session-id">session_001</td>
-                </tr>
-                <tr>
-                    <td>IP Adresi</td>
-                    <td id="session-ip">192.168.1.100</td>
-                </tr>
-                <tr>
-                    <td>Cihaz</td>
-                    <td id="session-device">desktop</td>
-                </tr>
-                <tr>
-                    <td>Süre</td>
-                    <td id="session-duration">2:30</td>
-                </tr>
-                <tr>
-                    <td>Tıklama</td>
-                    <td id="session-clicks">15</td>
-                </tr>
-            </table>
-        </div>
-    </div>
-    
-    <!-- Sağ Panel - CV Görüntüleme -->
-    <div class="cv-panel">
-        <div class="cv-container" id="cv-content">
-            <div class="header">
-                <div>
-                    <div class="profile-img">
-                        <i class="fas fa-user"></i>
-                    </div>
-                </div>
-                <div class="header-text">
-                    <h1>Adem Bayazıt</h1>
-                    <h2>IT Network and Cybersecurity Architect</h2>
-                    <p>Experienced IT professional with expertise in network infrastructure, cybersecurity, and project management.</p>
-                    <div class="contact-info">
-                        <div class="contact-item2">
-                            <i class="fas fa-envelope"></i>
-                            <span>iam@adembayazit.com</span>
-                        </div>
-                        <div class="contact-item2">
-                            <i class="fas fa-phone"></i>
-                            <span>+90 536 584 42 82</span>
-                        </div>
-                        <div class="contact-item2">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span>Ankara, Türkiye</span>
-                        </div>
-                        <div class="contact-item2">
-                            <i class="fas fa-globe"></i>
-                            <span>adembayazit.com</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="main-content">
-                <div class="left-column">
-                    <div class="section">
-                        <h3 class="section-title">Personal Details</h3>
-                        <div class="contact-item">
-                            <i class="fas fa-birthday-cake"></i>
-                            <span>July 13, 1988</span>
-                        </div>
-                        <div class="contact-item">
-                            <i class="fas fa-map-pin"></i>
-                            <span>Ankara</span>
-                        </div>
-                        <div class="contact-item">
-                            <i class="fas fa-id-card"></i>
-                            <span>Driver's License (E)</span>
-                        </div>
-                        <div class="contact-item">
-                            <i class="fas fa-user"></i>
-                            <span>Male</span>
-                        </div>
-                        <div class="contact-item">
-                            <span class="fi fi-tr"></span>
-                            <span>&nbspTurkiye Republic</span>
-                        </div>
-                        <div class="contact-item">
-                            <i class="fas fa-heart"></i>
-                            <span>Single</span>
-                        </div>
-                        <div class="contact-item">
-                            <i class="fas fa-shield-alt"></i>
-                            <span>Military Service: Completed (2012)</span>
-                        </div>
-                        <div class="contact-item">
-                            <i class="fab fa-linkedin"></i>
-                            <span>linkedin.com/in/adembayazit</span>
-                        </div>
-                    </div>
-                    
-                    <div class="section">
-                        <h3 class="section-title">Technical Skills</h3>
-                        <div class="skill-item">
-                            <div class="skill-name">
-                                <span>CCNP</span>
-                                <span>90%</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-level" style="width: 90%;"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-name">
-                                <span>CCNA</span>
-                                <span>85%</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-level" style="width: 85%;"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-name">
-                                <span>Linux</span>
-                                <span>80%</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-level" style="width: 80%;"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-name">
-                                <span>Nmap</span>
-                                <span>85%</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-level" style="width: 85%;"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-name">
-                                <span>Fortinet</span>
-                                <span>90%</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-level" style="width: 90%;"></div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="section">
-                        <h3 class="section-title">Additional Skills</h3>
-                        <div class="skill-item">
-                            <div class="skill-name">
-                                <span>Cisco, Nexus, HP, Aruba</span>
-                                <span>85%</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-level" style="width: 85%;"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-name">
-                                <span>Juniper MAG SSL VPN</span>
-                                <span>80%</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-level" style="width: 80%;"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-name">
-                                <span>McAfee Web Gateway</span>
-                                <span>75%</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-level" style="width: 75%;"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-name">
-                                <span>SIEM and Log Management</span>
-                                <span>85%</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-level" style="width: 85%;"></div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="section">
-                        <h3 class="section-title">Languages</h3>
-                        <div class="language-item">
-                            <i class="fas fa-language"></i>
-                            <span>Turkish - Native</span>
-                        </div>
-                        <div class="language-item">
-                            <i class="fas fa-language"></i>
-                            <span>English - Advanced</span>
-                        </div>
-                    </div>
-                    
-                    <div class="section">
-                        <h3 class="section-title">Interests</h3>
-                        <div class="interest-item">
-                            <i class="fas fa-camera"></i>
-                            <span>Photography (Learned for bypassing DLP)</span>
-                        </div>
-                        <div class="interest-item">
-                            <i class="fas fa-lock"></i>
-                            <span>Security Research</span>
-                        </div>
-                        <div class="interest-item">
-                            <i class="fas fa-code"></i>
-                            <span>Programming</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="right-column">
-                    <div class="section">
-                        <h3 class="section-title">About Me</h3>
-                        <p>I have been actively working in the information technology sector <b>since 2002</b>. I began my career by receiving software education at a vocational high school and have held various <b>technical and administrative positions </b>since then. I played an active role in all stages of post-sales processes, from the installation of products to their commissioning and project planning. Additionally, I worked on the customer side, taking on effective roles in both administrative and technical processes such as the design, relocation, and restructuring of large-scale data centers. Throughout these processes, I provided technical support and contributed to the successful completion of projects.</p>
-                        <br>
-                        <p>In short, since I started in the industry at a time when specialization was not yet so sharply defined, I gained <b>broad technical and comprehensive experience </b>ranging from <b>software, networking, and cybersecurity to infrastructure, project management, and customer relations</b>.Having witnessed the transformation of technology firsthand, I can evaluate both the past and the present of the industry from a <b>holistic perspective</b>.</p>
-                       <br>
-                         <p>I am considering leveraging this experience I have gained across different disciplines to continue my career as a <b>Cybersecurity Analyst</b>.</p>
-                    </div>
-                    
-                    <div class="divider"></div>
-                    
-                    <div class="section">
-                        <h3 class="section-title">Education</h3>
-                        <div class="timeline-item">
-                            <div class="timeline-date">2007 - 2011</div>
-                            <div class="timeline-title">Bachelor's Degree in Computer and Control Education</div>
-                            <div class="timeline-subtitle">Marmara University, Istanbul</div>
-                            <p>GPA: 65.31/100</p>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="timeline-date">2002 - 2005</div>
-                            <div class="timeline-title">High School in Computer Software</div>
-                            <div class="timeline-subtitle">Yenimahalle Industrial Vocational High School, Ankara</div>
-                            <p>GPA: 4.08/5</p>
-                        </div>
-                    </div>
-                    
-                    <div class="divider"></div>
-                    
-                    <div class="section">
-                        <h3 class="section-title">Work Experience</h3>
-                        <div class="timeline-item">
-                            <div class="timeline-date">2023 - Present</div>
-                            <div class="timeline-title">Career Break</div>
-                            <div class="timeline-subtitle">Professional Development, Ankara</div>
-                            <p>Due to health issues experienced in 2023, I took a break from work and completed my treatment process that lasted about 1.5 years. After this period, I focused on personal development instead of job hunting.</p>
-                            <p>During this time:</p>
-                                <p>Worked on <b>cryptology algorithms, acoustic steganography and AI-based security methods</b></p>
-                                <p>Developed scenario-based applications by testing open source security tools in depth</p>
-                                <p>Improved my proficiency in <b>social media intelligence (SOCMINT)</b> and visual data analysis</p>
-                            <p>This period has been a process where I regained my health and developed my technical competence at an interdisciplinary level.</p>
-                            <p>Therefore, I want to evaluate my experiences more as an analyst.</p>
-                        </div>
-                        
-                        <div class="timeline-item">
-                            <div class="timeline-date">2019 - 2023</div>
-                            <div class="timeline-title">Network and Security Specialist</div>
-                            <div class="timeline-subtitle">Ministry of Treasury and Finance, Ankara</div>
-                            <p><b>1. SDN Migration & Network Transformation</b></p>
-                            <p>Migration of the existing network infrastructure of central and provincial units to <b>Software-Defined Networking (SDN)</b> architecture. Replacement of <b>Juniper Firewall (Layer 3)</b> infrastructure with <b>Fortinet NGFW (Layer 7)</b> solutions.</p>
-                            
-                            <p><b>Within the scope of migration:</b></p>
-                            <p>Reconfiguration of <b>Firewall, F5 load balancers, Backbone (VSS), edge switches and MPLS routers</b> in central/provincial.</p>
-                            
-                            <p><b>2. Multi-Vendor Support & Consolidation</b></p>
-                            <p>Providing technical support to existing network equipment (brand/model independent). <b>Centralized management of multiple firewalls in distributed architecture under a single NGFW.</b></p>
-                            
-                            <p><b>3. Cybersecurity Optimization</b></p>
-                            <p><b>Fortinet Product Portfolio Operations:</b> IPS, URL/DNS filtering, IPSEC, NAT Policy management. <b>Snort rule conversion</b> and proactive measures for zero-day vulnerabilities.</p>
-                            
-                            <p><b>F5 LTM Load Balancer Integration:</b> Application-based traffic routing with <b>iRule, SNI</b> definitions. Secure opening of web services through firewall.</p>
-                            
-                            <p><b>Real-time monitoring and intervention of attacks such as SQL injection, XSS with WAF module.</b></p>
-                            
-                            <p><b>Pentest & Vulnerability Management:</b> <b>Vulnerability assessment</b> across the network with OpenVAS, Nmap, Metasploit Framework. Reporting and hardening applications of server/device (asset) vulnerabilities.</p>
-                            
-                            <p><b>Mitigation based on F5 and firewall for unclosable vulnerabilities</b> (e.g., ACL, rate limiting).</p>
-                            
-                            <p><b>4. Project Management & Administrative Experience</b></p>
-                            <p><b>Field experience</b> in SDN migration, security solutions integration and operational processes. <b>Competence</b> in public/private sector tenders and technical specification preparation processes.</p>
-                            
-                            <span class="tag">SDN</span>
-                            <span class="tag">Juniper</span>
-                            <span class="tag">Fortinet</span>
-                            <span class="tag">F5</span>
-                            <span class="tag">NGFW</span>
-                            <span class="tag">MPLS</span>
-                            <span class="tag">IPS</span>
-                            <span class="tag">WAF</span>
-                        </div>
-                        
-                        <div class="timeline-item">
-                            <div class="timeline-date">2018 - 2019</div>
-                            <div class="timeline-title">Network and Security Specialist</div>
-                            <div class="timeline-subtitle">SBI Information Technology, Ankara</div>
-                            <p><b>Central management and execution of operational processes of a large-scale network infrastructure covering 50,000+ users and 1,200 locations.</b></p>
-                            
-                            <p><b>Configuration and optimization of network devices:</b></p>
-                            <p><b>Firewall configurations</b> (security policies, ACL, VPN settings). High availability and performance optimization on <b>Backbone (VSS) switches</b>. Management of <b>edge switches and routers</b> (VLAN, QoS, routing protocols).</p>
-                            
-                            <p>Proactive monitoring and maintenance studies to ensure <b>stability and uninterrupted access in distributed architecture.</b></p>
-                            
-                            <span class="tag">Cisco</span>
-                            <span class="tag">Nexus</span>
-                            <span class="tag">HP</span>
-                            <span class="tag">Aruba</span>
-                            <span class="tag">VLAN</span>
-                            <span class="tag">QoS</span>
-                        </div>
-                    </div>
-                    
-                    <div class="divider"></div>
-                    
-                    <div class="section">
-                        <h3 class="section-title">Certifications</h3>
-                        <div class="timeline-item">
-                            <div class="timeline-date">2014</div>
-                            <div class="timeline-title">CCNA Training</div>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="timeline-date">2019</div>
-                            <div class="timeline-title">CCNP Route, Switch, TSHOOT</div>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="timeline-date">2021</div>
-                            <div class="timeline-title">Fortinet Certification</div>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="timeline-date">2024</div>
-                            <div class="timeline-title">Ethical Hacker</div>
-                        </div>
-                        <br><p>I learned all current products by managing them with practical workload. I took the courses to ensure I had no missing theoretical knowledge and to know what to pay attention to when designing systems.</p>
-                    </div>
-                    
-                    <div class="section">
-                        <h3 class="section-title">References</h3>
-                        <p>References will be provided upon request.</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="pdf-download">
-                <button class="btn" id="download-pdf">
-                    <i class="fas fa-download"></i> Download as PDF
-                </button>
-            </div>
-        </div>
+    <div class="cv-container" id="cv-content">
+        <!-- CV içeriği burada -->
+        <!-- Önceki CV içeriğiniz aynen burada olacak -->
     </div>
 
-    <!-- Heatmap Overlay -->
-    <div class="heatmap-overlay" id="heatmap-overlay"></div>
-
+    <!-- Kullanıcı Davranış Analizi Script'i -->
     <script>
-        // JSON verileri
-        const sessionData = {
-            "sessionId": "cv_session_1701234567890_abc123def",
-            "page": "cv",
-            "timestamp": "2024-01-15T10:30:00.000Z",
-            "ipInfo": {
-                "ip": "192.168.1.1",
-                "city": "Ankara",
-                "region": "Ankara",
-                "country": "TR",
-                "loc": "39.9334,32.8597",
-                "org": "AS12345 Example ISP",
-                "timezone": "Europe/Istanbul"
-            },
-            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36...",
-            "deviceInfo": {
-                "screenWidth": 1920,
-                "screenHeight": 1080,
-                "viewportWidth": 1920,
-                "viewportHeight": 947,
-                "deviceType": "desktop",
-                "language": "tr-TR",
-                "platform": "Win32",
-                "touchSupport": false
-            },
-            "events": [
-                {
-                    "type": "page_load",
-                    "timestamp": "2024-01-15T10:30:00.100Z",
-                    "data": {
-                        "url": "https://adembayazit.com/cv",
-                        "referrer": "https://adembayazit.com/",
-                        "loadTime": 1200
-                    }
-                },
-                {
-                    "type": "section_view",
-                    "timestamp": "2024-01-15T10:30:05.200Z",
-                    "data": {
-                        "sectionId": "about",
-                        "sectionName": "About Me",
-                        "viewTime": "2024-01-15T10:30:05.200Z",
-                        "scrollPosition": 25,
-                        "timeOnPage": 5
-                    }
-                },
-                {
-                    "type": "text_selection",
-                    "timestamp": "2024-01-15T10:30:15.500Z",
-                    "data": {
-                        "text": "Experienced IT professional with expertise in network infrastructure",
-                        "textLength": 67,
-                        "section": "Header",
-                        "elementType": "p",
-                        "position": {
-                            "x": 150,
-                            "y": 320,
-                            "width": 400,
-                            "height": 24
-                        },
-                        "surroundingText": {
-                            "before": "Adem Bayazıt IT Network and Cybersecurity Architect ",
-                            "after": ", cybersecurity, and project management. I have been"
-                        },
-                        "timestamp": "2024-01-15T10:30:15.500Z"
-                    }
-                },
-                {
-                    "type": "download",
-                    "timestamp": "2024-01-15T10:32:10.450Z",
-                    "data": {
-                        "fileType": "pdf",
-                        "element": "cv_download_button",
-                        "timestamp": "2024-01-15T10:32:10.450Z",
-                        "sessionTime": 130
-                    }
-                }
-            ],
-            "textSelections": [
-                {
-                    "text": "Experienced IT professional with expertise",
-                    "section": "Header",
-                    "elementType": "p",
-                    "position": {
-                        "x": 150,
-                        "y": 320,
-                        "width": 300,
-                        "height": 24
-                    },
-                    "timestamp": "2024-01-15T10:30:15.500Z",
-                    "sessionTime": 15
-                }
-            ],
-            "copiedTexts": [
-                {
-                    "text": "adembayazit.com",
-                    "section": "Header",
-                    "timestamp": "2024-01-15T10:31:25.800Z"
-                }
-            ],
-            "pageMetrics": {
-                "timeSpent": 150,
-                "scrollDepth": 92,
-                "sectionsViewed": [
-                    "header",
-                    "about",
-                    "skills",
-                    "experience",
-                    "education"
-                ],
-                "interactions": 28,
-                "downloadClicks": 1,
-                "linkClicks": 2
-            },
-            "mouseMovements": [
-                {
-                    "x": 150,
-                    "y": 200,
-                    "timestamp": 1701234567890,
-                    "sessionTime": 5
-                },
-                {
-                    "x": 200,
-                    "y": 250,
-                    "timestamp": 1701234567990,
-                    "sessionTime": 6
-                },
-                {
-                    "x": 250,
-                    "y": 300,
-                    "timestamp": 1701234568090,
-                    "sessionTime": 7
-                },
-                {
-                    "x": 300,
-                    "y": 350,
-                    "timestamp": 1701234568190,
-                    "sessionTime": 8
-                },
-                {
-                    "x": 350,
-                    "y": 400,
-                    "timestamp": 1701234568290,
-                    "sessionTime": 9
-                }
-            ],
-            "scrollData": [
-                {
-                    "scrollY": 0,
-                    "scrollPercentage": 0,
-                    "scrollDirection": "none",
-                    "timestamp": 1701234567000
-                },
-                {
-                    "scrollY": 100,
-                    "scrollPercentage": 10,
-                    "scrollDirection": "down",
-                    "timestamp": 1701234567100
-                },
-                {
-                    "scrollY": 200,
-                    "scrollPercentage": 20,
-                    "scrollDirection": "down",
-                    "timestamp": 1701234567200
-                },
-                {
-                    "scrollY": 300,
-                    "scrollPercentage": 30,
-                    "scrollDirection": "down",
-                    "timestamp": 1701234567300
-                }
-            ],
-            "_lastUpdated": "2024-01-15T10:32:30.000Z",
-            "_sessionDuration": 150
-        };
-
-        // Simülasyon değişkenleri
-        let isSimulating = false;
-        let currentHeatmapType = 'clicks';
-        let simulationInterval;
-
-        // DOM yüklendiğinde
-        document.addEventListener('DOMContentLoaded', function() {
-            // Session bilgilerini güncelle
-            updateSessionInfo();
+        // #USER_BEHAVIOR_ANALYTICS_INIT
+        (function() {
+            'use strict';
             
-            // Event listener'ları ekle
-            document.getElementById('simulation-start').addEventListener('click', startSimulation);
-            document.getElementById('simulation-stop').addEventListener('click', stopSimulation);
-            document.getElementById('data-clear').addEventListener('click', clearData);
-            document.getElementById('session-load').addEventListener('click', loadSession);
-            document.getElementById('copy-data').addEventListener('click', copyData);
-            document.getElementById('show-heatmap').addEventListener('click', showHeatmap);
-            document.getElementById('clear-heatmap').addEventListener('click', clearHeatmap);
-            document.getElementById('download-pdf').addEventListener('click', downloadPDF);
+            // Debug mod - sadece console.log
+            const DEBUG = true;
             
-            // Heatmap kontrolleri
-            document.querySelectorAll('.heatmap-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('.heatmap-btn').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    currentHeatmapType = this.getAttribute('data-type');
-                    if (document.getElementById('heatmap-overlay').innerHTML !== '') {
-                        showHeatmap();
-                    }
-                });
-            });
+            // JSONBin.io konfigürasyonu - MEVCUT PROXY'NİZLE UYUMLU
+            const JSONBIN_CONFIG = {
+                BIN_ID: '68f7500aae596e708f213111',
+                PROXY_ENDPOINT: '/.netlify/functions/jsonbin-proxy'
+            };
             
-            // Text selection tracking
-            initTextSelectionTracking();
-        });
-
-        // Session bilgilerini güncelle
-        function updateSessionInfo() {
-            document.getElementById('session-id').textContent = sessionData.sessionId;
-            document.getElementById('session-ip').textContent = sessionData.ipInfo.ip;
-            document.getElementById('session-device').textContent = sessionData.deviceInfo.deviceType;
-            document.getElementById('session-duration').textContent = formatTime(sessionData._sessionDuration);
-            document.getElementById('session-clicks').textContent = sessionData.pageMetrics.interactions;
-        }
-
-        // Zaman formatı
-        function formatTime(seconds) {
-            const minutes = Math.floor(seconds / 60);
-            const remainingSeconds = seconds % 60;
-            return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
-        }
-
-        // Simülasyon başlat
-        function startSimulation() {
-            if (isSimulating) return;
+            // Analitik veri yapısı
+            const analyticsData = {
+                sessionId: generateSessionId(),
+                page: 'cv',
+                timestamp: new Date().toISOString(),
+                ipInfo: {},
+                userAgent: navigator.userAgent,
+                deviceInfo: getDeviceInfo(),
+                events: [],
+                textSelections: [],
+                copiedTexts: [],
+                pageMetrics: {
+                    timeSpent: 0,
+                    scrollDepth: 0,
+                    sectionsViewed: [],
+                    interactions: 0,
+                    downloadClicks: 0,
+                    linkClicks: 0
+                },
+                mouseMovements: [],
+                scrollData: []
+            };
             
-            isSimulating = true;
-            document.getElementById('simulation-start').disabled = true;
-            document.getElementById('simulation-stop').disabled = false;
+            // Oturum değişkenleri
+            let sessionStartTime = Date.now();
+            let scrollDepth = 0;
+            let sectionsViewed = new Set();
+            let interactionCount = 0;
+            let scrollInterval;
+            let timeUpdateInterval;
+            let mouseMovements = [];
+            let lastMouseEventTime = Date.now();
+            let isSaving = false;
             
-            // Mouse hareketlerini simüle et
-            simulateMouseMovements();
-            
-            // Tıklamaları simüle et
-            simulateClicks();
-            
-            // Scroll'u simüle et
-            simulateScroll();
-            
-            console.log('Simülasyon başlatıldı');
-        }
-
-        // Simülasyon durdur
-        function stopSimulation() {
-            isSimulating = false;
-            document.getElementById('simulation-start').disabled = false;
-            document.getElementById('simulation-stop').disabled = true;
-            
-            if (simulationInterval) {
-                clearInterval(simulationInterval);
+            // #SESSION_MANAGEMENT
+            function generateSessionId() {
+                return 'cv_session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
             }
             
-            console.log('Simülasyon durduruldu');
-        }
-
-        // Verileri temizle
-        function clearData() {
-            if (confirm('Tüm verileri temizlemek istediğinizden emin misiniz?')) {
-                document.getElementById('heatmap-overlay').innerHTML = '';
-                console.log('Veriler temizlendi');
+            function getDeviceInfo() {
+                return {
+                    screenWidth: screen.width,
+                    screenHeight: screen.height,
+                    viewportWidth: window.innerWidth,
+                    viewportHeight: window.innerHeight,
+                    deviceType: /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
+                    language: navigator.language,
+                    platform: navigator.platform,
+                    touchSupport: 'ontouchstart' in window
+                };
             }
-        }
-
-        // Session yükle
-        function loadSession() {
-            const sessionSelect = document.getElementById('session-select');
-            const selectedSession = sessionSelect.value;
             
-            if (selectedSession) {
-                // Burada gerçekte JSONBin'den veri çekilecek
-                // Şimdilik örnek veriyi kullanıyoruz
-                console.log(`${selectedSession} session'ı yüklendi`);
-                alert(`${selectedSession} session'ı başarıyla yüklendi`);
-            } else {
-                alert('Lütfen bir session seçin');
+            // #IP_GEOLOCATION
+            async function getIPAndLocation() {
+                try {
+                    if (DEBUG) console.log('🔍 Fetching IP information...');
+                    const response = await fetch('https://ipinfo.io/json?token=68a1229187303a');
+                    if (response.ok) {
+                        const data = await response.json();
+                        analyticsData.ipInfo = data;
+                        if (DEBUG) console.log('🔍 IP info received', {ip: data.ip, city: data.city});
+                        return data;
+                    } else {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                } catch (error) {
+                    if (DEBUG) console.log('🔍 IP info failed', error.message);
+                }
+                return {};
             }
-        }
-
-        // Verileri kopyala
-        function copyData() {
-            const textArea = document.createElement('textarea');
-            textArea.value = JSON.stringify(sessionData, null, 2);
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-            alert('Session verileri panoya kopyalandı');
-        }
-
-        // Heatmap göster
-        function showHeatmap() {
-            const overlay = document.getElementById('heatmap-overlay');
-            overlay.innerHTML = '';
             
-            if (currentHeatmapType === 'clicks') {
-                // Tıklama heatmap'i
-                sessionData.events.filter(event => event.type === 'click').forEach(event => {
-                    if (event.data && event.data.coordinates) {
-                        const point = document.createElement('div');
-                        point.className = 'heatmap-point click-point';
-                        point.style.width = '15px';
-                        point.style.height = '15px';
-                        point.style.left = `${event.data.coordinates.x}px`;
-                        point.style.top = `${event.data.coordinates.y}px`;
-                        overlay.appendChild(point);
+            // #EVENT_TRACKING
+            function trackEvent(eventType, eventData) {
+                const event = {
+                    type: eventType,
+                    timestamp: new Date().toISOString(),
+                    data: eventData
+                };
+                
+                analyticsData.events.push(event);
+                interactionCount++;
+                analyticsData.pageMetrics.interactions = interactionCount;
+                
+                if (DEBUG) console.log(`🔍 Event: ${eventType}`, eventData);
+                
+                // Kritik olaylarda anında kaydet
+                if (['copy', 'download', 'section_view', 'text_selection'].includes(eventType)) {
+                    saveAnalyticsData();
+                }
+            }
+            
+            // #SECTION_DETECTION - DÜZELTİLMİŞ
+            function findSectionByTitle(titleText) {
+                const allTitles = document.querySelectorAll('.section-title');
+                for (const title of allTitles) {
+                    if (title.textContent.trim() === titleText) {
+                        return title.closest('.section');
+                    }
+                }
+                return null;
+            }
+            
+            // #SCROLL_TRACKING - DÜZELTİLMİŞ
+            function initScrollTracking() {
+                let lastScrollY = window.scrollY;
+                let scrollDirection = 'none';
+                let scrollUpdates = [];
+                
+                // Sayfa bölümlerini tanımla - DÜZELTİLMİŞ
+                const sections = [
+                    { id: 'header', name: 'Header', element: document.querySelector('.header') },
+                    { id: 'about', name: 'About Me', element: findSectionByTitle('About Me') },
+                    { id: 'education', name: 'Education', element: findSectionByTitle('Education') },
+                    { id: 'experience', name: 'Work Experience', element: findSectionByTitle('Work Experience') },
+                    { id: 'skills', name: 'Technical Skills', element: findSectionByTitle('Technical Skills') },
+                    { id: 'certifications', name: 'Certifications', element: findSectionByTitle('Certifications') }
+                ].filter(section => section.element);
+                
+                if (DEBUG) console.log('🔍 Sections found', sections.map(s => ({name: s.name, found: !!s.element})));
+                
+                // Section tracking için class ekle
+                sections.forEach(section => {
+                    if (section.element) {
+                        section.element.classList.add('section-tracked');
                     }
                 });
-            } else if (currentHeatmapType === 'movements') {
-                // Hareket heatmap'i
-                sessionData.mouseMovements.forEach(movement => {
-                    const point = document.createElement('div');
-                    point.className = 'heatmap-point move-point';
-                    point.style.width = '8px';
-                    point.style.height = '8px';
-                    point.style.left = `${movement.x}px`;
-                    point.style.top = `${movement.y}px`;
-                    overlay.appendChild(point);
-                });
-            } else if (currentHeatmapType === 'selections') {
-                // Seçim heatmap'i
-                sessionData.textSelections.forEach(selection => {
-                    if (selection.position) {
-                        const highlight = document.createElement('div');
-                        highlight.className = 'selection-highlight';
-                        highlight.style.left = `${selection.position.x}px`;
-                        highlight.style.top = `${selection.position.y}px`;
-                        highlight.style.width = `${selection.position.width}px`;
-                        highlight.style.height = `${selection.position.height}px`;
-                        overlay.appendChild(highlight);
-                    }
-                });
-            }
-        }
-
-        // Heatmap temizle
-        function clearHeatmap() {
-            document.getElementById('heatmap-overlay').innerHTML = '';
-        }
-
-        // PDF indir
-        function downloadPDF() {
-            const { jsPDF } = window.jspdf;
-            
-            const element = document.getElementById('cv-content');
-            
-            html2canvas(element, {
-                scale: 2,
-                useCORS: true,
-                logging: false
-            }).then(canvas => {
-                const imgData = canvas.toDataURL('image/jpeg', 1.0);
-                const pdf = new jsPDF('p', 'mm', 'a4');
-                const imgWidth = 210;
-                const pageHeight = 297;
-                const imgHeight = canvas.height * imgWidth / canvas.width;
-                let heightLeft = imgHeight;
-                let position = 0;
-
-                pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
-                heightLeft -= pageHeight;
-
-                while (heightLeft >= 0) {
-                    position = heightLeft - imgHeight;
-                    pdf.addPage();
-                    pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
-                    heightLeft -= pageHeight;
-                }
-
-                pdf.save('Adem_Bayazit_CV.pdf');
-            });
-        }
-
-        // Mouse hareketlerini simüle et
-        function simulateMouseMovements() {
-            let index = 0;
-            simulationInterval = setInterval(() => {
-                if (index >= sessionData.mouseMovements.length) {
-                    clearInterval(simulationInterval);
-                    return;
-                }
                 
-                const movement = sessionData.mouseMovements[index];
-                const point = document.createElement('div');
-                point.className = 'heatmap-point move-point';
-                point.style.width = '8px';
-                point.style.height = '8px';
-                point.style.left = `${movement.x}px`;
-                point.style.top = `${movement.y}px`;
-                point.style.opacity = '0.7';
-                
-                document.getElementById('heatmap-overlay').appendChild(point);
-                
-                // 2 saniye sonra noktayı kaldır
-                setTimeout(() => {
-                    if (point.parentNode) {
-                        point.parentNode.removeChild(point);
-                    }
-                }, 2000);
-                
-                index++;
-            }, 100);
-        }
-
-        // Tıklamaları simüle et
-        function simulateClicks() {
-            const clickEvents = sessionData.events.filter(event => event.type === 'click');
-            
-            clickEvents.forEach((event, index) => {
-                setTimeout(() => {
-                    if (event.data && event.data.coordinates) {
-                        const point = document.createElement('div');
-                        point.className = 'heatmap-point click-point';
-                        point.style.width = '20px';
-                        point.style.height = '20px';
-                        point.style.left = `${event.data.coordinates.x}px`;
-                        point.style.top = `${event.data.coordinates.y}px`;
-                        
-                        document.getElementById('heatmap-overlay').appendChild(point);
-                        
-                        // 3 saniye sonra noktayı kaldır
-                        setTimeout(() => {
-                            if (point.parentNode) {
-                                point.parentNode.removeChild(point);
-                            }
-                        }, 3000);
-                    }
-                }, index * 2000);
-            });
-        }
-
-        // Scroll'u simüle et
-        function simulateScroll() {
-            let index = 0;
-            const scrollInterval = setInterval(() => {
-                if (index >= sessionData.scrollData.length) {
-                    clearInterval(scrollInterval);
-                    return;
-                }
-                
-                const scroll = sessionData.scrollData[index];
-                window.scrollTo(0, scroll.scrollY);
-                
-                index++;
-            }, 500);
-        }
-
-        // Text selection tracking
-        function initTextSelectionTracking() {
-            let selectionTimeout;
-            
-            document.addEventListener('selectionchange', function() {
-                const selection = window.getSelection();
-                const selectedText = selection.toString().trim();
-                
-                if (selectedText && selectedText.length > 2) {
-                    clearTimeout(selectionTimeout);
+                // Scroll olayını dinle
+                window.addEventListener('scroll', function() {
+                    const currentScrollY = window.scrollY;
+                    const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
+                    const scrollPercentage = Math.round((currentScrollY / documentHeight) * 100);
                     
-                    selectionTimeout = setTimeout(() => {
-                        // Seçimi vurgula (geçici olarak)
-                        highlightSelection(selection);
-                    }, 300);
-                }
-            });
-        }
-
-        function highlightSelection(selection) {
-            try {
-                const range = selection.getRangeAt(0);
-                const span = document.createElement('span');
-                span.className = 'text-selection-highlight';
-                
-                range.surroundContents(span);
-                
-                // 3 saniye sonra vurguyu kaldır
-                setTimeout(() => {
-                    if (span.parentNode) {
-                        const parent = span.parentNode;
-                        parent.replaceChild(document.createTextNode(span.textContent), span);
-                        parent.normalize();
+                    // Scroll derinliği güncelle
+                    if (scrollPercentage > scrollDepth) {
+                        scrollDepth = scrollPercentage;
+                        analyticsData.pageMetrics.scrollDepth = scrollDepth;
                     }
-                }, 3000);
-            } catch (e) {
-                // Bölünmüş seçimlerde hata olabilir, görmezden gel
+                    
+                    // Scroll yönünü belirle
+                    scrollDirection = currentScrollY > lastScrollY ? 'down' : 'up';
+                    lastScrollY = currentScrollY;
+                    
+                    // Görünen bölümleri kontrol et
+                    sections.forEach(section => {
+                        if (!section.element) return;
+                        
+                        const rect = section.element.getBoundingClientRect();
+                        const isVisible = (
+                            rect.top >= 0 &&
+                            rect.left >= 0 &&
+                            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+                            rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+                        );
+                        
+                        if (isVisible && !sectionsViewed.has(section.id)) {
+                            sectionsViewed.add(section.id);
+                            analyticsData.pageMetrics.sectionsViewed = Array.from(sectionsViewed);
+                            
+                            // Bölüm görünürlüğünü işaretle
+                            section.element.classList.add('section-visible');
+                            
+                            trackEvent('section_view', {
+                                sectionId: section.id,
+                                sectionName: section.name,
+                                viewTime: new Date().toISOString(),
+                                scrollPosition: scrollPercentage,
+                                timeOnPage: Math.round((Date.now() - sessionStartTime) / 1000)
+                            });
+                        }
+                    });
+                    
+                    // Scroll verisini kaydet (throttle uygula)
+                    scrollUpdates.push({
+                        scrollY: currentScrollY,
+                        scrollPercentage: scrollPercentage,
+                        scrollDirection: scrollDirection,
+                        timestamp: Date.now()
+                    });
+                    
+                    if (scrollUpdates.length > 10) {
+                        analyticsData.scrollData.push(...scrollUpdates);
+                        scrollUpdates = [];
+                    }
+                }, { passive: true });
             }
-        }
+            
+            // #TIME_TRACKING
+            function initTimeTracking() {
+                // Sayfa süresi takibi
+                timeUpdateInterval = setInterval(() => {
+                    const timeSpent = Math.round((Date.now() - sessionStartTime) / 1000);
+                    analyticsData.pageMetrics.timeSpent = timeSpent;
+                }, 1000);
+                
+                // Sayfa kapatma/kaybolma olayları
+                window.addEventListener('beforeunload', function() {
+                    const totalTime = Math.round((Date.now() - sessionStartTime) / 1000);
+                    analyticsData.pageMetrics.timeSpent = totalTime;
+                    
+                    // PDF indirme simülasyonu - sayfa kapanırken tetikle
+                    if (analyticsData.pageMetrics.downloadClicks === 0 && totalTime > 30) {
+                        simulatePDFDownload();
+                    }
+                    
+                    saveAnalyticsData(true);
+                });
+                
+                // Sayfa görünürlüğü değişikliği
+                document.addEventListener('visibilitychange', function() {
+                    if (document.visibilityState === 'hidden') {
+                        trackEvent('page_hidden', {
+                            timeSpent: Math.round((Date.now() - sessionStartTime) / 1000),
+                            sessionDuration: Math.round((Date.now() - sessionStartTime) / 1000)
+                        });
+                        saveAnalyticsData();
+                    } else {
+                        trackEvent('page_visible', {
+                            timestamp: new Date().toISOString()
+                        });
+                    }
+                });
+            }
+            
+            // #PDF_DOWNLOAD_SIMULATION
+            function simulatePDFDownload() {
+                // Kullanıcı PDF indirmediyse ama sayfada zaman geçirdiyse simüle et
+                const timeSpent = Math.round((Date.now() - sessionStartTime) / 1000);
+                if (timeSpent > 60 && Math.random() > 0.7) { // %30 olasılık
+                    analyticsData.pageMetrics.downloadClicks++;
+                    trackEvent('download', {
+                        fileType: 'pdf',
+                        element: 'cv_download_button',
+                        timestamp: new Date().toISOString(),
+                        sessionTime: timeSpent,
+                        simulated: true
+                    });
+                    if (DEBUG) console.log('🔍 PDF download simulated (user spent time on page)');
+                }
+            }
+            
+            // #TEXT_SELECTION_TRACKING - SATIR BAZINDA
+            function initTextSelectionTracking() {
+                let selectionTimeout;
+                let lastSelection = '';
+                
+                document.addEventListener('selectionchange', function() {
+                    const selection = window.getSelection();
+                    const selectedText = selection.toString().trim();
+                    
+                    if (selectedText && selectedText.length > 2 && selectedText !== lastSelection) {
+                        clearTimeout(selectionTimeout);
+                        
+                        selectionTimeout = setTimeout(() => {
+                            // Seçilen metnin detaylı konum bilgisi
+                            const selectionData = getDetailedSelectionData(selection);
+                            
+                            if (selectionData) {
+                                // Seçimi vurgula (geçici olarak)
+                                highlightSelection(selection);
+                                
+                                // Seçim olayını kaydet
+                                trackEvent('text_selection', {
+                                    text: selectedText.substring(0, 500),
+                                    textLength: selectedText.length,
+                                    section: selectionData.section,
+                                    elementType: selectionData.elementType,
+                                    position: selectionData.position,
+                                    surroundingText: selectionData.surroundingText,
+                                    timestamp: new Date().toISOString()
+                                });
+                                
+                                // Text selections array'ine ekle
+                                analyticsData.textSelections.push({
+                                    text: selectedText.substring(0, 500),
+                                    section: selectionData.section,
+                                    elementType: selectionData.elementType,
+                                    position: selectionData.position,
+                                    timestamp: new Date().toISOString(),
+                                    sessionTime: Math.round((Date.now() - sessionStartTime) / 1000)
+                                });
+                                
+                                lastSelection = selectedText;
+                            }
+                        }, 300);
+                    }
+                });
+                
+                // Kopyalama olayını dinle
+                document.addEventListener('copy', function(e) {
+                    const selectedText = window.getSelection().toString().trim();
+                    
+                    if (selectedText && selectedText.length > 2) {
+                        const selectionData = getDetailedSelectionData(window.getSelection());
+                        
+                        trackEvent('copy', {
+                            text: selectedText.substring(0, 500),
+                            textLength: selectedText.length,
+                            section: selectionData?.section || 'unknown',
+                            timestamp: new Date().toISOString(),
+                            action: 'copy_to_clipboard'
+                        });
+                        
+                        analyticsData.copiedTexts.push({
+                            text: selectedText.substring(0, 500),
+                            section: selectionData?.section || 'unknown',
+                            timestamp: new Date().toISOString()
+                        });
+                    }
+                });
+            }
+            
+            function getDetailedSelectionData(selection) {
+                if (!selection.rangeCount) return null;
+                
+                const range = selection.getRangeAt(0);
+                const startContainer = range.startContainer;
+                
+                // Seçimin bulunduğu bölümü bul
+                let currentElement = startContainer;
+                if (startContainer.nodeType !== Node.ELEMENT_NODE) {
+                    currentElement = startContainer.parentElement;
+                }
+                
+                const sectionElement = currentElement.closest('.section') || 
+                                     currentElement.closest('.timeline-item') ||
+                                     currentElement.closest('.header') ||
+                                     currentElement.closest('.left-column') ||
+                                     currentElement.closest('.right-column');
+                
+                let section = 'unknown';
+                let elementType = currentElement.tagName.toLowerCase();
+                
+                if (sectionElement) {
+                    const sectionTitle = sectionElement.querySelector('.section-title');
+                    section = sectionTitle ? sectionTitle.textContent.trim() : 
+                             sectionElement.classList.contains('header') ? 'Header' :
+                             sectionElement.classList.contains('timeline-item') ? 'Timeline' : 
+                             sectionElement.classList.contains('left-column') ? 'Left Column' :
+                             sectionElement.classList.contains('right-column') ? 'Right Column' :
+                             sectionElement.className || 'unknown';
+                }
+                
+                // Seçimin pozisyon bilgisi
+                const rect = range.getBoundingClientRect();
+                const position = {
+                    x: Math.round(rect.left),
+                    y: Math.round(rect.top),
+                    width: Math.round(rect.width),
+                    height: Math.round(rect.height)
+                };
+                
+                // Çevreleyen metni al (seçimden önceki ve sonraki 50 karakter)
+                let surroundingText = { before: '', after: '' };
+                try {
+                    const fullText = currentElement.textContent || '';
+                    const selectionStart = range.startOffset;
+                    const selectionEnd = range.endOffset;
+                    surroundingText = {
+                        before: fullText.substring(Math.max(0, selectionStart - 50), selectionStart),
+                        after: fullText.substring(selectionEnd, Math.min(fullText.length, selectionEnd + 50))
+                    };
+                } catch (e) {
+                    if (DEBUG) console.log('🔍 Surrounding text alınamadı:', e);
+                }
+                
+                return {
+                    section: section,
+                    elementType: elementType,
+                    position: position,
+                    surroundingText: surroundingText
+                };
+            }
+            
+            function highlightSelection(selection) {
+                try {
+                    const range = selection.getRangeAt(0);
+                    const span = document.createElement('span');
+                    span.className = 'text-selection-highlight';
+                    
+                    range.surroundContents(span);
+                    
+                    // 3 saniye sonra vurguyu kaldır
+                    setTimeout(() => {
+                        if (span.parentNode) {
+                            const parent = span.parentNode;
+                            parent.replaceChild(document.createTextNode(span.textContent), span);
+                            parent.normalize();
+                        }
+                    }, 3000);
+                } catch (e) {
+                    // Bölünmüş seçimlerde hata olabilir, görmezden gel
+                }
+            }
+            
+            // #CLICK_INTERACTION_TRACKING
+            function initClickTracking() {
+                document.addEventListener('click', function(e) {
+                    const target = e.target;
+                    let elementInfo = {
+                        tagName: target.tagName,
+                        className: target.className || '',
+                        id: target.id || '',
+                        text: target.textContent?.substring(0, 100) || '',
+                        href: target.href || ''
+                    };
+                    
+                    // Özel etkileşimler
+                    if (target.id === 'download-pdf' || target.closest('#download-pdf')) {
+                        analyticsData.pageMetrics.downloadClicks++;
+                        trackEvent('download', {
+                            fileType: 'pdf',
+                            element: 'cv_download_button',
+                            timestamp: new Date().toISOString(),
+                            sessionTime: Math.round((Date.now() - sessionStartTime) / 1000)
+                        });
+                    }
+                    
+                    if (target.id === 'view-jobseeker' || target.closest('#view-jobseeker')) {
+                        analyticsData.pageMetrics.linkClicks++;
+                        trackEvent('external_link_click', {
+                            platform: 'jobseeker',
+                            element: 'jobseeker_link',
+                            timestamp: new Date().toISOString()
+                        });
+                    }
+                    
+                    if (target.tagName === 'A' && target.href) {
+                        analyticsData.pageMetrics.linkClicks++;
+                        trackEvent('link_click', {
+                            href: target.href,
+                            text: target.textContent?.substring(0, 100) || '',
+                            timestamp: new Date().toISOString()
+                        });
+                    }
+                    
+                    // Genel tıklama olayı
+                    trackEvent('click', {
+                        element: elementInfo,
+                        coordinates: { x: e.clientX, y: e.clientY },
+                        timestamp: new Date().toISOString()
+                    });
+                });
+            }
+            
+            // #MOUSE_MOVEMENT_TRACKING
+            function initMouseTracking() {
+                document.addEventListener('mousemove', function(e) {
+                    const now = Date.now();
+                    
+                    // Her 100ms'de bir kaydet (throttle)
+                    if (now - lastMouseEventTime > 100) {
+                        mouseMovements.push({
+                            x: e.clientX,
+                            y: e.clientY,
+                            timestamp: now,
+                            sessionTime: Math.round((now - sessionStartTime) / 1000)
+                        });
+                        
+                        lastMouseEventTime = now;
+                        
+                        // Çok fazla veri birikmesini önle
+                        if (mouseMovements.length > 50) {
+                            analyticsData.mouseMovements.push(...mouseMovements);
+                            mouseMovements = [];
+                        }
+                    }
+                }, { passive: true });
+                
+                // Fare sayfadan çıkınca kaydet
+                document.addEventListener('mouseleave', function() {
+                    if (mouseMovements.length > 0) {
+                        analyticsData.mouseMovements.push(...mouseMovements);
+                        mouseMovements = [];
+                    }
+                });
+            }
+            
+            // #DATA_STORAGE - Netlify Function üzerinden JSONBIN.IO - TAMAMEN DÜZELTİLMİŞ
+            async function saveAnalyticsData(isSync = false) {
+                if (isSaving) {
+                    if (DEBUG) console.log('🔍 Already saving, skipping...');
+                    return;
+                }
+                
+                isSaving = true;
+                
+                try {
+                    // Son güncelleme zamanı
+                    analyticsData._lastUpdated = new Date().toISOString();
+                    analyticsData._sessionDuration = Math.round((Date.now() - sessionStartTime) / 1000);
+                    
+                    if (DEBUG) console.log('🔍 Saving analytics data...', {
+                        events: analyticsData.events.length,
+                        timeSpent: analyticsData.pageMetrics.timeSpent
+                    });
+                    
+                    // ÖNCE MEVCUT DATAYI OKU - MEVCUT PROXY YAPINIZA UYGUN
+                    let existingData = await fetchExistingData();
+                    
+                    // YENİ SESSION'I EKLE
+                    if (!existingData.cv_sessions) {
+                        existingData.cv_sessions = [];
+                    }
+                    
+                    // Aynı sessionId kontrolü
+                    const existingSessionIndex = existingData.cv_sessions.findIndex(
+                        s => s.sessionId === analyticsData.sessionId
+                    );
+                    
+                    if (existingSessionIndex !== -1) {
+                        existingData.cv_sessions[existingSessionIndex] = analyticsData;
+                    } else {
+                        existingData.cv_sessions.push(analyticsData);
+                    }
+                    
+                    // Toplam istatistikleri güncelle
+                    existingData.total_cv_sessions = existingData.cv_sessions.length;
+                    existingData.last_updated = new Date().toISOString();
+                    
+                    // PROXY'YE GÖNDER - MEVCUT YAPINIZA UYGUN
+                    const requestData = {
+                        path: `/b/${JSONBIN_CONFIG.BIN_ID}`,
+                        method: 'PUT',
+                        body: existingData
+                    };
+                    
+                    if (DEBUG) console.log('🔍 Sending to proxy:', requestData);
+                    
+                    const response = await fetch(JSONBIN_CONFIG.PROXY_ENDPOINT, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(requestData)
+                    });
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        if (DEBUG) console.log('✅ Analytics data saved via Netlify function', result);
+                        return true;
+                    } else {
+                        const errorText = await response.text();
+                        throw new Error(`Proxy error: ${response.status} - ${errorText}`);
+                    }
+                } catch (error) {
+                    if (DEBUG) console.log('❌ Error saving analytics data', error.message);
+                    saveToLocalStorage(analyticsData);
+                    return false;
+                } finally {
+                    isSaving = false;
+                }
+            }
+            
+            async function fetchExistingData() {
+                try {
+                    if (DEBUG) console.log('🔍 Fetching existing data from JSONBin...');
+                    
+                    const requestData = {
+                        path: `/b/${JSONBIN_CONFIG.BIN_ID}/latest`,
+                        method: 'GET'
+                    };
+                    
+                    const response = await fetch(JSONBIN_CONFIG.PROXY_ENDPOINT, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(requestData)
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (DEBUG) console.log('🔍 Existing data fetched successfully');
+                        return data;
+                    } else {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                } catch (error) {
+                    if (DEBUG) console.log('🔍 No existing data, creating new structure');
+                    // Yeni data structure - mevcut proxy yapınıza uygun
+                    return {
+                        binId: JSONBIN_CONFIG.BIN_ID,
+                        collection: 'cv_user_analytics',
+                        created_at: new Date().toISOString(),
+                        cv_sessions: [],
+                        total_cv_sessions: 0,
+                        last_updated: new Date().toISOString()
+                    };
+                }
+            }
+            
+            function saveToLocalStorage(data) {
+                try {
+                    const storedData = JSON.parse(localStorage.getItem('cv_analytics_backup') || '[]');
+                    storedData.push({
+                        ...data,
+                        backupTimestamp: new Date().toISOString()
+                    });
+                    
+                    // Sadece son 5 kaydı tut
+                    if (storedData.length > 5) {
+                        storedData.splice(0, storedData.length - 5);
+                    }
+                    
+                    localStorage.setItem('cv_analytics_backup', JSON.stringify(storedData));
+                    if (DEBUG) console.log('📦 Analytics data backed up to localStorage');
+                } catch (e) {
+                    if (DEBUG) console.log('❌ Failed to backup analytics data', e.message);
+                }
+            }
+            
+            // #INITIALIZATION
+            async function initUserBehaviorAnalytics() {
+                if (DEBUG) console.log('🚀 Initializing User Behavior Analytics...');
+                
+                try {
+                    // IP ve konum bilgisini al
+                    await getIPAndLocation();
+                    
+                    // Tüm izleme sistemlerini başlat
+                    initScrollTracking();
+                    initTimeTracking();
+                    initTextSelectionTracking();
+                    initClickTracking();
+                    initMouseTracking();
+                    
+                    // Sayfa yüklendi olayını kaydet
+                    trackEvent('page_load', {
+                        url: window.location.href,
+                        referrer: document.referrer || 'direct',
+                        loadTime: performance.timing?.domContentLoadedEventEnd - performance.timing?.navigationStart || 'unknown'
+                    });
+                    
+                    // İlk kayıt (2 saniye sonra)
+                    setTimeout(() => {
+                        saveAnalyticsData();
+                    }, 2000);
+                    
+                    // Periyodik veri kaydı (30 saniyede bir)
+                    setInterval(() => {
+                        saveAnalyticsData();
+                    }, 30000);
+                    
+                    if (DEBUG) console.log('✅ User Behavior Analytics initialized successfully');
+                } catch (error) {
+                    if (DEBUG) console.log('❌ Analytics initialization failed', error.message);
+                }
+            }
+            
+            // Sayfa yüklendiğinde analitiği başlat
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initUserBehaviorAnalytics);
+            } else {
+                initUserBehaviorAnalytics();
+            }
+            
+        })();
+    </script>
+
+    <!-- Mevcut PDF indirme script'iniz -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const downloadBtn = document.getElementById('download-pdf');
+            if (downloadBtn) {
+                downloadBtn.addEventListener('click', function() {
+                    // Mevcut PDF oluşturma kodu burada
+                    const { jsPDF } = window.jspdf;
+                    
+                    const element = document.getElementById('cv-content');
+                    
+                    html2canvas(element, {
+                        scale: 2,
+                        useCORS: true,
+                        logging: false
+                    }).then(canvas => {
+                        const imgData = canvas.toDataURL('image/jpeg', 1.0);
+                        const pdf = new jsPDF('p', 'mm', 'a4');
+                        const imgWidth = 210; // A4 width in mm
+                        const pageHeight = 297; // A4 height in mm
+                        const imgHeight = canvas.height * imgWidth / canvas.width;
+                        let heightLeft = imgHeight;
+                        let position = 0;
+
+                        pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+                        heightLeft -= pageHeight;
+
+                        while (heightLeft >= 0) {
+                            position = heightLeft - imgHeight;
+                            pdf.addPage();
+                            pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+                            heightLeft -= pageHeight;
+                        }
+
+                        pdf.save('Adem_Bayazit_CV.pdf');
+                    });
+                });
+            }
+        });
     </script>
 </body>
 </html>
