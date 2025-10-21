@@ -817,7 +817,7 @@
                 addLog('JSONBin\'den tüm session verileri yükleniyor...', 'info');
                 
                 // Netlify function üzerinden JSONBin'den veri çek
-                const response = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
+                const response = await fetch('/.netlify/functions/jsonbin-proxy', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -833,22 +833,75 @@
                 }
                 
                 const data = await response.json();
+                console.log('JSONBin\'den gelen veri:', data); // Debug için
                 
-                // JSON yapısını işle - cv_analytics dizisinden session'ları çek
-                if (data.record && data.record.cv_analytics) {
-                    allSessions = {};
-                    
-                    data.record.cv_analytics.forEach(item => {
+                // JSON yapısını işle - farklı olası yapıları kontrol et
+                allSessions = {};
+                
+                if (data.record) {
+                    // Eğer record içinde cv_analytics varsa
+                    if (data.record.cv_analytics && Array.isArray(data.record.cv_analytics)) {
+                        data.record.cv_analytics.forEach(item => {
+                            if (item.session && item.session.sessionId) {
+                                allSessions[item.session.sessionId] = item.session;
+                            }
+                        });
+                    } 
+                    // Eğer record doğrudan cv_analytics ise
+                    else if (data.record.totalSessions && Array.isArray(data.record.cv_analytics)) {
+                        data.record.cv_analytics.forEach(item => {
+                            if (item.session && item.session.sessionId) {
+                                allSessions[item.session.sessionId] = item.session;
+                            }
+                        });
+                    }
+                    // Eğer record doğrudan session array'i ise
+                    else if (Array.isArray(data.record)) {
+                        data.record.forEach(item => {
+                            if (item.session && item.session.sessionId) {
+                                allSessions[item.session.sessionId] = item.session;
+                            } else if (item.sessionId) {
+                                allSessions[item.sessionId] = item;
+                            }
+                        });
+                    }
+                } 
+                // Eğer doğrudan cv_analytics array'i ise
+                else if (data.cv_analytics && Array.isArray(data.cv_analytics)) {
+                    data.cv_analytics.forEach(item => {
                         if (item.session && item.session.sessionId) {
-                            // Her session'ı sessionId ile eşleştir
                             allSessions[item.session.sessionId] = item.session;
                         }
                     });
-                    
-                    addLog(`${Object.keys(allSessions).length} session yüklendi`, 'info');
-                } else {
-                    throw new Error('JSON yapısı beklenen formatta değil');
                 }
+                // Eğer doğrudan session array'i ise
+                else if (Array.isArray(data)) {
+                    data.forEach(item => {
+                        if (item.session && item.session.sessionId) {
+                            allSessions[item.session.sessionId] = item.session;
+                        } else if (item.sessionId) {
+                            allSessions[item.sessionId] = item;
+                        }
+                    });
+                }
+                // Eğer hiçbiri değilse, veriyi olduğu gibi kabul et
+                else if (typeof data === 'object') {
+                    // Tüm anahtarları session olarak kabul et
+                    for (const key in data) {
+                        if (data[key] && data[key].sessionId) {
+                            allSessions[data[key].sessionId] = data[key];
+                        }
+                    }
+                }
+                else {
+                    throw new Error('JSON yapısı beklenen formatta değil: ' + JSON.stringify(data).substring(0, 200));
+                }
+                
+                if (Object.keys(allSessions).length === 0) {
+                    throw new Error('Hiç session verisi bulunamadı');
+                }
+                
+                addLog(`${Object.keys(allSessions).length} session yüklendi`, 'info');
                 
                 // Session selector'ı güncelle
                 updateSessionSelector();
@@ -874,8 +927,8 @@
             
             // Session'ları tarihe göre sırala (en yeni en üstte)
             const sortedSessions = Object.keys(allSessions).sort((a, b) => {
-                const timeA = allSessions[a].pageLoadTime || 0;
-                const timeB = allSessions[b].pageLoadTime || 0;
+                const timeA = allSessions[a].pageLoadTime || allSessions[a].timestamp || 0;
+                const timeB = allSessions[b].pageLoadTime || allSessions[b].timestamp || 0;
                 return timeB - timeA;
             });
             
@@ -885,16 +938,25 @@
                 option.value = sessionId;
                 
                 // Tarih formatı
-                const date = session.pageLoadTime ? new Date(session.pageLoadTime) : new Date();
+                let date;
+                if (session.pageLoadTime) {
+                    date = new Date(session.pageLoadTime);
+                } else if (session.timestamp) {
+                    date = new Date(session.timestamp);
+                } else {
+                    date = new Date();
+                }
                 const dateStr = date.toLocaleDateString('tr-TR') + ' ' + date.toLocaleTimeString('tr-TR');
                 
                 // Konum bilgisi
-                const location = session.ipInfo ? `${session.ipInfo.city}, ${session.ipInfo.country}` : 'Bilinmiyor';
+                const location = session.ipInfo ? `${session.ipInfo.city || 'Bilinmiyor'}, ${session.ipInfo.country || 'Bilinmiyor'}` : 'Bilinmiyor';
                 
                 // Etkileşim sayısı
                 const interactionCount = session.interactions ? session.interactions.length : 0;
+                const clickCount = session.clicks ? session.clicks.length : 0;
+                const totalInteractions = interactionCount + clickCount;
                 
-                option.textContent = `${sessionId.substring(0, 15)}... - ${location} - ${dateStr} (${interactionCount} etkileşim)`;
+                option.textContent = `${sessionId.substring(0, 12)}... - ${location} - ${dateStr} (${totalInteractions} etkileşim)`;
                 sessionSelector.appendChild(option);
             });
             
@@ -1011,7 +1073,7 @@
             document.getElementById('displayIp').textContent = currentSessionData.ipInfo ? currentSessionData.ipInfo.ip : "-";
             document.getElementById('displayDevice').textContent = currentSessionData.deviceInfo ? currentSessionData.deviceInfo.deviceType : "-";
             document.getElementById('displayLocation').textContent = currentSessionData.ipInfo ? 
-                `${currentSessionData.ipInfo.city}, ${currentSessionData.ipInfo.country}` : "-";
+                `${currentSessionData.ipInfo.city || 'Bilinmiyor'}, ${currentSessionData.ipInfo.country || 'Bilinmiyor'}` : "-";
             document.getElementById('displayStartTime').textContent = currentSessionData.pageLoadTime ? 
                 new Date(currentSessionData.pageLoadTime).toLocaleString() : "-";
             document.getElementById('displayPdfDownload').textContent = currentSessionData.pdfDownload ? 'Evet' : 'Hayır';
