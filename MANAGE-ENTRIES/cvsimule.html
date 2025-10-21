@@ -137,7 +137,7 @@
             border-radius: 10px;
         }
 
-        #cv-preview {
+        #cv-content {
             width: 100%;
             min-height: 100%;
             background: white;
@@ -145,6 +145,9 @@
             padding: 20px;
             font-family: Arial, sans-serif;
             position: relative;
+            transform: scale(0.8);
+            transform-origin: top left;
+            width: 125%;
         }
 
         #mouse-pointer {
@@ -183,6 +186,14 @@
             z-index: 800;
         }
 
+        .copy-highlight {
+            position: absolute;
+            background-color: rgba(255, 165, 0, 0.3);
+            border: 1px dashed #ff9900;
+            pointer-events: none;
+            z-index: 800;
+        }
+
         .heatmap-overlay {
             position: absolute;
             top: 0;
@@ -197,6 +208,13 @@
             position: absolute;
             border-radius: 50%;
             background: radial-gradient(circle, rgba(255,0,0,0.6) 0%, rgba(255,0,0,0) 70%);
+            transform: translate(-50%, -50%);
+        }
+
+        .movement-point {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0,255,0,0.3) 0%, rgba(0,255,0,0) 70%);
             transform: translate(-50%, -50%);
         }
 
@@ -400,21 +418,6 @@
             display: none;
         }
 
-        .cv-section {
-            margin-bottom: 20px;
-            padding: 15px;
-            border: 1px solid #eee;
-            border-radius: 8px;
-            position: relative;
-        }
-
-        .cv-section h3 {
-            color: #2e7d32;
-            margin-bottom: 10px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
-        }
-
         .heatmap-controls {
             display: flex;
             gap: 10px;
@@ -458,6 +461,31 @@
         .tooltip.show {
             opacity: 1;
         }
+
+        .session-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .session-stat {
+            text-align: center;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .session-stat-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .session-stat-label {
+            font-size: 0.7rem;
+            color: #cccccc;
+        }
     </style>
 </head>
 <body>
@@ -496,9 +524,10 @@
         </div>
 
         <div class="heatmap-controls">
-            <button class="btn" onclick="toggleHeatmap('clicks')">Tıklama Heatmap</button>
-            <button class="btn" onclick="toggleHeatmap('movements')">Hareket Heatmap</button>
-            <button class="btn" onclick="toggleHeatmap('selections')">Seçimleri Göster</button>
+            <button class="btn" id="heatmap-clicks" onclick="toggleHeatmap('clicks')">Tıklama Heatmap</button>
+            <button class="btn" id="heatmap-movements" onclick="toggleHeatmap('movements')">Hareket Heatmap</button>
+            <button class="btn" id="heatmap-selections" onclick="toggleHeatmap('selections')">Seçimleri Göster</button>
+            <button class="btn" id="heatmap-copies" onclick="toggleHeatmap('copies')">Kopyalamaları Göster</button>
             <button class="btn secondary" onclick="clearHeatmap()">Heatmap Temizle</button>
             
             <div class="heatmap-legend">
@@ -514,6 +543,10 @@
                     <div class="legend-color" style="background: rgba(255,255,0,0.3);"></div>
                     <span>Seçimler</span>
                 </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: rgba(255,165,0,0.3);"></div>
+                    <span>Kopyalamalar</span>
+                </div>
             </div>
         </div>
 
@@ -522,49 +555,8 @@
                 <h2>CV Önizleme ve Simülasyon</h2>
                 <div class="simulation-area">
                     <div id="cv-preview-container">
-                        <div id="cv-preview">
-                            <!-- CV içeriği buraya eklenecek -->
-                            <div class="cv-section">
-                                <h3>Adem Bayazıt</h3>
-                                <p><strong>IT Network and Cybersecurity Architect</strong></p>
-                                <p>Experienced IT professional with expertise in network infrastructure, cybersecurity, and project management.</p>
-                            </div>
-                            
-                            <div class="cv-section">
-                                <h3>İletişim Bilgileri</h3>
-                                <p>Email: iam@adembayazit.com</p>
-                                <p>Telefon: +90 536 584 42 82</p>
-                                <p>Konum: Ankara, Türkiye</p>
-                                <p>Web: adembayazit.com</p>
-                            </div>
-                            
-                            <div class="cv-section">
-                                <h3>Teknik Beceriler</h3>
-                                <p>CCNP, CCNA, Linux, Nmap, Fortinet, Juniper SRX Firewall, F5 LTM Load Balancer, OpenVAS, Metasploit Framework</p>
-                            </div>
-                            
-                            <div class="cv-section">
-                                <h3>İş Deneyimi</h3>
-                                <p><strong>Network and Security Specialist</strong> - Ministry of Treasury and Finance (2019-2023)</p>
-                                <p>SDN Migration, Network Transformation, Cybersecurity Optimization</p>
-                                
-                                <p><strong>Network and Security Specialist</strong> - SBI Information Technology (2018-2019)</p>
-                                <p>Central management of large-scale network infrastructure</p>
-                                
-                                <p><strong>Information Security Specialist</strong> - Barikat Information Security (2016-2017)</p>
-                                <p>SIEM and Log Management, ArcSight FlexConnector</p>
-                            </div>
-                            
-                            <div class="cv-section">
-                                <h3>Eğitim</h3>
-                                <p><strong>Bachelor's Degree in Computer and Control Education</strong> - Marmara University (2007-2011)</p>
-                                <p><strong>High School in Computer Software</strong> - Yenimahalle Industrial Vocational High School (2002-2005)</p>
-                            </div>
-                            
-                            <div class="cv-section">
-                                <h3>Sertifikalar</h3>
-                                <p>CCNA Training (2014), CCNP Route, Switch, TSHOOT (2019), Fortinet Certification (2021), Ethical Hacker (2024)</p>
-                            </div>
+                        <div id="cv-content">
+                            <!-- CV içeriği buraya dinamik olarak eklenecek -->
                         </div>
                         <div id="mouse-pointer"></div>
                         <div class="heatmap-overlay" id="heatmap"></div>
@@ -598,30 +590,30 @@
                     </div>
                 </div>
 
-                <div class="stat-grid">
-                    <div class="stat-item">
-                        <div class="stat-number" id="clickCount">0</div>
-                        <div class="stat-label">Tıklama</div>
+                <div class="session-stats">
+                    <div class="session-stat">
+                        <div class="session-stat-value" id="clickCount">0</div>
+                        <div class="session-stat-label">Tıklama</div>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-number" id="moveCount">0</div>
-                        <div class="stat-label">Fare Hareketi</div>
+                    <div class="session-stat">
+                        <div class="session-stat-value" id="moveCount">0</div>
+                        <div class="session-stat-label">Fare Hareketi</div>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-number" id="scrollCount">0</div>
-                        <div class="stat-label">Kaydırma</div>
+                    <div class="session-stat">
+                        <div class="session-stat-value" id="scrollCount">0</div>
+                        <div class="session-stat-label">Kaydırma</div>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-number" id="keyCount">0</div>
-                        <div class="stat-label">Klavye</div>
+                    <div class="session-stat">
+                        <div class="session-stat-value" id="keyCount">0</div>
+                        <div class="session-stat-label">Klavye</div>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-number" id="selectionCount">0</div>
-                        <div class="stat-label">Metin Seçimi</div>
+                    <div class="session-stat">
+                        <div class="session-stat-value" id="selectionCount">0</div>
+                        <div class="session-stat-label">Metin Seçimi</div>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-number" id="copyCount">0</div>
-                        <div class="stat-label">Kopyalama</div>
+                    <div class="session-stat">
+                        <div class="session-stat-value" id="copyCount">0</div>
+                        <div class="session-stat-label">Kopyalama</div>
                     </div>
                 </div>
             </div>
@@ -664,52 +656,144 @@
         let heatmapLayers = {
             clicks: false,
             movements: false,
-            selections: false
+            selections: false,
+            copies: false
         };
 
         // DOM elementleri
         const mousePointer = document.getElementById('mouse-pointer');
         const heatmap = document.getElementById('heatmap');
-        const cvPreview = document.getElementById('cv-preview');
+        const cvContent = document.getElementById('cv-content');
 
         // Örnek session verileri (gerçek uygulamada JSONBin'den çekilecek)
-        const sampleSessions = {
-            "session_001": {
-                sessionId: "session_001",
-                ipInfo: { ip: '192.168.1.100', city: 'Ankara', country: 'TR' },
-                deviceInfo: { deviceType: 'desktop', browser: 'Chrome' },
-                interactions: [
-                    { type: 'click', timestamp: 1000, x: 150, y: 200, element: 'H3' },
-                    { type: 'mouse_move', timestamp: 1500, x: 200, y: 250 },
-                    { type: 'selection', timestamp: 2000, text: 'Network and Cybersecurity', startX: 120, startY: 180, endX: 320, endY: 180 },
-                    { type: 'click', timestamp: 3000, x: 180, y: 400, element: 'P' },
-                    { type: 'scroll', timestamp: 3500, position: 150 },
-                    { type: 'copy', timestamp: 4000, text: 'Network and Cybersecurity' },
-                    { type: 'mouse_move', timestamp: 4500, x: 250, y: 500 },
-                    { type: 'click', timestamp: 5000, x: 300, y: 600, element: 'H3' },
-                    { type: 'selection', timestamp: 5500, text: 'Technical Skills', startX: 100, startY: 350, endX: 250, endY: 350 },
-                    { type: 'keypress', timestamp: 6000, key: 'Tab' },
-                    { type: 'mouse_move', timestamp: 6500, x: 400, y: 700 },
-                    { type: 'click', timestamp: 7000, x: 350, y: 800, element: 'P' }
-                ],
-                startTime: Date.now() - 3600000
-            },
-            "session_002": {
-                sessionId: "session_002",
-                ipInfo: { ip: '192.168.1.101', city: 'İstanbul', country: 'TR' },
-                deviceInfo: { deviceType: 'mobile', browser: 'Safari' },
-                interactions: [
-                    { type: 'click', timestamp: 1000, x: 100, y: 150, element: 'H3' },
-                    { type: 'scroll', timestamp: 2000, position: 100 },
-                    { type: 'selection', timestamp: 3000, text: 'Experience', startX: 80, startY: 200, endX: 200, endY: 200 },
-                    { type: 'click', timestamp: 4000, x: 120, y: 300, element: 'P' },
-                    { type: 'mouse_move', timestamp: 5000, x: 180, y: 350 },
-                    { type: 'copy', timestamp: 6000, text: 'Experience' },
-                    { type: 'click', timestamp: 7000, x: 200, y: 450, element: 'H3' }
-                ],
-                startTime: Date.now() - 7200000
-            }
-        };
+        let sampleSessions = {};
+
+        // CV HTML içeriği
+        const cvHtml = `
+            <div class="cv-container">
+                <div class="header">
+                    <div>
+                        <img src="https://ik.imagekit.io/adembayazit/IMG_9413_de_JlqWTa.jpeg" alt="Profil Resmi" class="profile-img">
+                    </div>
+                    <div class="header-text">
+                        <h1>Adem Bayazıt</h1>
+                        <h2>IT Network and Cybersecurity Architect</h2>
+                        <p>Experienced IT professional with expertise in network infrastructure, cybersecurity, and project management.</p>
+                        <div class="contact-info">
+                            <div class="contact-item2">
+                                <i class="fas fa-envelope"></i>
+                                <span>iam@adembayazit.com</span>
+                            </div>
+                            <div class="contact-item2">
+                                <i class="fas fa-phone"></i>
+                                <span>+90 536 584 42 82</span>
+                            </div>
+                            <div class="contact-item2">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Ankara, Turkiye</span>
+                            </div>
+                            <div class="contact-item2">
+                                <i class="fas fa-globe"></i>
+                                <span>adembayazit.com</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="main-content">
+                    <div class="left-column">
+                        <div class="section">
+                            <h3 class="section-title">Personal Details</h3>
+                            <div class="contact-item">
+                                <i class="fas fa-birthday-cake"></i>
+                                <span>July 13, 1988</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-map-pin"></i>
+                                <span>Ankara</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-id-card"></i>
+                                <span>Driver's License (E)</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-user"></i>
+                                <span>Male</span>
+                            </div>
+                        </div>
+                        
+                        <div class="section">
+                            <h3 class="section-title">Technical Skills</h3>
+                            <div class="skill-item">
+                                <div class="skill-name">
+                                    <span>CCNP</span>
+                                    <span>90%</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-level" style="width: 90%;"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <div class="skill-name">
+                                    <span>CCNA</span>
+                                    <span>85%</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-level" style="width: 85%;"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <div class="skill-name">
+                                    <span>Linux</span>
+                                    <span>80%</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-level" style="width: 80%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="right-column">
+                        <div class="section">
+                            <h3 class="section-title">About Me</h3>
+                            <p>I have been actively working in the information technology sector <b>since 2002</b>. I began my career by receiving software education at a vocational high school and have held various <b>technical and administrative positions </b>since then. I played an active role in all stages of post-sales processes, from the installation of products to their commissioning and project planning. Additionally, I worked on the customer side, taking on effective roles in both administrative and technical processes such as the design, relocation, and restructuring of large-scale data centers. Throughout these processes, I provided technical support and contributed to the successful completion of projects.</p>
+                            <br>
+                            <p>In short, since I started in the industry at a time when specialization was not yet so sharply defined, I gained <b>broad technical and comprehensive experience </b>ranging from <b>software, networking, and cybersecurity to infrastructure, project management, and customer relations</b>.Having witnessed the transformation of technology firsthand, I can evaluate both the past and the present of the industry from a <b>holistic perspective</b>.</p>
+                            <br>
+                            <p>I am considering leveraging this experience I have gained across different disciplines to continue my career as a <b>Cybersecurity Analyst</b>.</p>
+                        </div>
+                        
+                        <div class="divider"></div>
+                        
+                        <div class="section">
+                            <h3 class="section-title">Work Experience</h3>
+                            <div class="timeline-item">
+                                <div class="timeline-date">2023 - Present</div>
+                                <div class="timeline-title">Career Break</div>
+                                <div class="timeline-subtitle">Professional Development, Ankara</div>
+                                <p>Due to health issues experienced in 2023, I took a break from work and completed my treatment process that lasted about 1.5 years. After this period, I focused on personal development instead of job hunting.</p>
+                            </div>
+                            
+                            <div class="timeline-item">
+                                <div class="timeline-date">2019 - 2023</div>
+                                <div class="timeline-title">Network and Security Specialist</div>
+                                <div class="timeline-subtitle">Ministry of Treasury and Finance, Ankara</div>
+                                <p><b>1. SDN Migration & Network Transformation</b></p>
+                                <p>Migration of the existing network infrastructure of central and provincial units to <b>Software-Defined Networking (SDN)</b> architecture. Replacement of <b>Juniper Firewall (Layer 3)</b> infrastructure with <b>Fortinet NGFW (Layer 7)</b> solutions.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="pdf-download">
+                    <button class="btn" id="download-pdf">
+                        <i class="fas fa-download"></i> Download as PDF
+                    </button>
+                    <a id="view-jobseeker" href="https://www.jobseeker.com/d/6lC0jFnRrJm6mZliwFGSBx/view" class="btn">View Jobseeker</a>
+                </div>
+            </div>
+        `;
 
         // Session ID oluşturma
         function generateSessionId() {
@@ -718,29 +802,185 @@
 
         // Admin panelini başlat
         function initializeAdminPanel() {
-            document.getElementById('sessionId').value = "session_001";
-            document.getElementById('displaySessionId').textContent = "session_001";
-            document.getElementById('displayIp').textContent = "192.168.1.100";
-            document.getElementById('displayDevice').textContent = "desktop";
+            // CV içeriğini yükle
+            cvContent.innerHTML = cvHtml;
+            
+            document.getElementById('sessionId').value = "";
+            document.getElementById('displaySessionId').textContent = "-";
+            document.getElementById('displayIp').textContent = "-";
+            document.getElementById('displayDevice').textContent = "-";
             
             addLog('Admin paneli başlatıldı', 'info');
-            updateStats();
         }
 
-        // JSONBin'den session verilerini yükle (simülasyon)
-        function loadSessionsFromJsonBin() {
+        // JSONBin'den session verilerini yükle
+        async function loadSessionsFromJsonBin() {
+            try {
+                addLog('JSONBin\'den session verileri yükleniyor...', 'info');
+                
+                const response = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        path: '/b/68f7500aae596e708f213111/latest',
+                        method: 'GET'
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                // Örnek verileri kullan (gerçek JSONBin yapısına göre düzenle)
+                sampleSessions = processJsonBinData(data);
+                
+                const sessionSelector = document.getElementById('sessionSelector');
+                sessionSelector.innerHTML = '<option value="">Session Seçin...</option>';
+                
+                // Session'ları ekle
+                for (const sessionId in sampleSessions) {
+                    const session = sampleSessions[sessionId];
+                    const option = document.createElement('option');
+                    option.value = sessionId;
+                    option.textContent = `${sessionId} - ${session.ipInfo.ip} - ${new Date(session.timestamp).toLocaleString()}`;
+                    sessionSelector.appendChild(option);
+                }
+                
+                addLog(`${Object.keys(sampleSessions).length} session yüklendi`, 'info');
+            } catch (error) {
+                console.error('Session yükleme hatası:', error);
+                addLog('Session verileri yüklenirken hata oluştu: ' + error.message, 'error');
+                
+                // Fallback: Örnek veriler
+                loadFallbackSessions();
+            }
+        }
+
+        // JSONBin verilerini işle
+        function processJsonBinData(data) {
+            const sessions = {};
+            
+            // JSONBin yapısına göre verileri işle
+            if (data.cv_analytics && Array.isArray(data.cv_analytics)) {
+                data.cv_analytics.forEach((item, index) => {
+                    if (item.session && item.session.sessionId) {
+                        const sessionId = item.session.sessionId;
+                        sessions[sessionId] = {
+                            ...item.session,
+                            timestamp: item.timestamp || new Date().toISOString()
+                        };
+                    } else {
+                        // Eğer sessionId yoksa, otomatik oluştur
+                        const sessionId = `session_${Date.now()}_${index}`;
+                        sessions[sessionId] = {
+                            ...item.session,
+                            sessionId: sessionId,
+                            timestamp: item.timestamp || new Date().toISOString()
+                        };
+                    }
+                });
+            }
+            
+            return sessions;
+        }
+
+        // Fallback session verileri
+        function loadFallbackSessions() {
+            sampleSessions = {
+                "session_1761045465323_i7x3w9zs0": {
+                    sessionId: "session_1761045465323_i7x3w9zs0",
+                    ipInfo: {
+                        ip: "88.227.76.219",
+                        hostname: "88.227.76.219.dynamic.ttnet.com.tr",
+                        city: "Ankara",
+                        region: "Ankara",
+                        country: "TR",
+                        loc: "39.9199,32.8543",
+                        org: "AS47331 TTNet A.S.",
+                        postal: "06420",
+                        timezone: "Europe/Istanbul"
+                    },
+                    deviceInfo: {
+                        userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+                        platform: "Win32",
+                        language: "tr-TR",
+                        screenWidth: 1536,
+                        screenHeight: 864,
+                        viewportWidth: 1536,
+                        viewportHeight: 695,
+                        deviceType: "desktop"
+                    },
+                    interactions: [
+                        { type: "page_load", timestamp: 1761045465345 },
+                        { type: "click", tag: "P", className: "none", timestamp: 1761045467776, x: 300, y: 200 },
+                        { type: "click", tag: "DIV", className: "right-column", timestamp: 1761045470759, x: 400, y: 300 },
+                        { type: "scroll", position: 4817, timestamp: 1761045483992 },
+                        { type: "pdf_download_click", timestamp: 1761045484732 },
+                        { type: "click", tag: "BUTTON", id: "download-pdf", className: "btn", timestamp: 1761045484732, x: 500, y: 600 }
+                    ],
+                    mouseMovements: [
+                        { x: 250, y: 409, timestamp: 1761045465714 },
+                        { x: 300, y: 408, timestamp: 1761045465886 },
+                        { x: 350, y: 407, timestamp: 1761045466028 },
+                        { x: 400, y: 371, timestamp: 1761045466725 }
+                    ],
+                    textSelections: [
+                        { text: "been actively working in the information technology sector since 2002", timestamp: 1761045471957, length: 81 },
+                        { text: "technical and administrative positions", timestamp: 1761045473358, length: 38 }
+                    ],
+                    clicks: [
+                        { type: "click", tag: "P", timestamp: 1761045467776, x: 300, y: 200 },
+                        { type: "click", tag: "DIV", timestamp: 1761045470759, x: 400, y: 300 },
+                        { type: "click", tag: "BUTTON", timestamp: 1761045484732, x: 500, y: 600 }
+                    ],
+                    timestamp: "2025-10-21T11:18:08.521Z"
+                },
+                "session_1761045424027_m1tz1z97e": {
+                    sessionId: "session_1761045424027_m1tz1z97e",
+                    ipInfo: {
+                        ip: "192.168.1.100",
+                        city: "Ankara",
+                        country: "TR"
+                    },
+                    deviceInfo: {
+                        deviceType: "desktop"
+                    },
+                    interactions: [
+                        { type: "page_load", timestamp: 1761045424071 },
+                        { type: "click", tag: "H1", timestamp: 1761045425000, x: 350, y: 150 },
+                        { type: "scroll", position: 1200, timestamp: 1761045426000 }
+                    ],
+                    mouseMovements: [
+                        { x: 200, y: 300, timestamp: 1761045424500 },
+                        { x: 250, y: 320, timestamp: 1761045424600 },
+                        { x: 300, y: 340, timestamp: 1761045424700 }
+                    ],
+                    textSelections: [
+                        { text: "Network and Cybersecurity Architect", timestamp: 1761045425500, length: 34 }
+                    ],
+                    clicks: [
+                        { type: "click", tag: "H1", timestamp: 1761045425000, x: 350, y: 150 }
+                    ],
+                    timestamp: "2025-10-21T11:17:35.187Z"
+                }
+            };
+
             const sessionSelector = document.getElementById('sessionSelector');
             sessionSelector.innerHTML = '<option value="">Session Seçin...</option>';
             
-            // Örnek session'ları ekle
             for (const sessionId in sampleSessions) {
+                const session = sampleSessions[sessionId];
                 const option = document.createElement('option');
                 option.value = sessionId;
-                option.textContent = sessionId + ' - ' + sampleSessions[sessionId].ipInfo.ip;
+                option.textContent = `${sessionId} - ${session.ipInfo.ip} - ${new Date(session.timestamp).toLocaleString()}`;
                 sessionSelector.appendChild(option);
             }
             
-            addLog('Session listesi yüklendi', 'info');
+            addLog('Fallback session verileri yüklendi', 'warning');
         }
 
         // Session verilerini yükle
@@ -763,12 +1003,7 @@
             document.getElementById('displayDevice').textContent = currentSessionData.deviceInfo.deviceType;
             
             // İstatistikleri sıfırla
-            document.getElementById('clickCount').textContent = '0';
-            document.getElementById('moveCount').textContent = '0';
-            document.getElementById('scrollCount').textContent = '0';
-            document.getElementById('keyCount').textContent = '0';
-            document.getElementById('selectionCount').textContent = '0';
-            document.getElementById('copyCount').textContent = '0';
+            resetStats();
             
             // Interaction listesini temizle
             document.getElementById('interactionList').innerHTML = '';
@@ -776,7 +1011,21 @@
             // Heatmap'i temizle
             clearHeatmap();
             
+            // Mevcut heatmap ayarlarını uygula
+            applyCurrentHeatmap();
+            
             addLog('Session verileri yüklendi: ' + sessionId, 'info');
+        }
+
+        // İstatistikleri sıfırla
+        function resetStats() {
+            document.getElementById('clickCount').textContent = '0';
+            document.getElementById('moveCount').textContent = '0';
+            document.getElementById('scrollCount').textContent = '0';
+            document.getElementById('keyCount').textContent = '0';
+            document.getElementById('selectionCount').textContent = '0';
+            document.getElementById('copyCount').textContent = '0';
+            document.getElementById('displayDuration').textContent = '0sn';
         }
 
         // Simülasyonu başlat
@@ -798,26 +1047,30 @@
             
             // İnterval ile simülasyonu çalıştır
             let interactionIndex = 0;
-            const totalInteractions = currentSessionData.interactions.length;
+            const totalInteractions = currentSessionData.interactions ? currentSessionData.interactions.length : 0;
+            const mouseMovements = currentSessionData.mouseMovements || [];
+            const textSelections = currentSessionData.textSelections || [];
             
             simulationInterval = setInterval(() => {
-                if (!simulationActive || interactionIndex >= totalInteractions) {
-                    stopSimulation();
+                if (!simulationActive) {
+                    clearInterval(simulationInterval);
                     return;
                 }
                 
-                const interaction = currentSessionData.interactions[interactionIndex];
-                const elapsedTime = Date.now() - startTime;
-                const interactionTime = interaction.timestamp;
-                
                 // Zamanlayıcıyı güncelle
-                const progress = (interactionIndex / totalInteractions) * 100;
+                const progress = ((interactionIndex + 1) / totalInteractions) * 100;
                 document.getElementById('timelineProgress').style.width = progress + '%';
                 
-                // Etkileşimi işle
-                processInteraction(interaction);
-                
-                interactionIndex++;
+                // Tüm etkileşimleri işle
+                if (interactionIndex < totalInteractions) {
+                    const interaction = currentSessionData.interactions[interactionIndex];
+                    processInteraction(interaction);
+                    interactionIndex++;
+                } else {
+                    // Tüm etkileşimler tamamlandı
+                    stopSimulation();
+                    addLog('Simülasyon tamamlandı', 'info');
+                }
             }, 500); // Her yarım saniyede bir etkileşim
         }
 
@@ -828,62 +1081,83 @@
                 clearInterval(simulationInterval);
             }
             addLog('Simülasyon durduruldu', 'warning');
-            document.getElementById('timelineProgress').style.width = '100%';
         }
 
         // Etkileşimi işle
         function processInteraction(interaction) {
             // Fareyi hareket ettir
             if (interaction.x && interaction.y) {
-                mousePointer.style.left = interaction.x + 'px';
-                mousePointer.style.top = interaction.y + 'px';
+                // CV içeriğinin scale'ine göre koordinatları ayarla
+                const scale = 0.8;
+                const scaledX = interaction.x * scale;
+                const scaledY = interaction.y * scale;
+                
+                mousePointer.style.left = scaledX + 'px';
+                mousePointer.style.top = scaledY + 'px';
             }
             
             // Etkileşim türüne göre işlem yap
             switch(interaction.type) {
                 case 'click':
                     simulateClick(interaction.x, interaction.y);
-                    document.getElementById('clickCount').textContent = parseInt(document.getElementById('clickCount').textContent) + 1;
+                    updateStat('clickCount');
+                    if (heatmapLayers.clicks) {
+                        addHeatmapPoint(interaction.x, interaction.y, 'clicks');
+                    }
                     break;
                 case 'mouse_move':
-                    document.getElementById('moveCount').textContent = parseInt(document.getElementById('moveCount').textContent) + 1;
+                    updateStat('moveCount');
                     if (heatmapLayers.movements) {
                         addHeatmapPoint(interaction.x, interaction.y, 'movements');
                     }
                     break;
                 case 'scroll':
-                    document.getElementById('scrollCount').textContent = parseInt(document.getElementById('scrollCount').textContent) + 1;
+                    updateStat('scrollCount');
                     break;
                 case 'keypress':
-                    document.getElementById('keyCount').textContent = parseInt(document.getElementById('keyCount').textContent) + 1;
+                    updateStat('keyCount');
                     break;
-                case 'selection':
-                    document.getElementById('selectionCount').textContent = parseInt(document.getElementById('selectionCount').textContent) + 1;
-                    if (heatmapLayers.selections) {
-                        highlightSelection(interaction);
+                case 'text_selection':
+                    updateStat('selectionCount');
+                    if (heatmapLayers.selections && interaction.data) {
+                        highlightSelection(interaction.data);
                     }
                     break;
                 case 'copy':
-                    document.getElementById('copyCount').textContent = parseInt(document.getElementById('copyCount').textContent) + 1;
+                    updateStat('copyCount');
+                    if (heatmapLayers.copies && interaction.data) {
+                        highlightCopy(interaction.data);
+                    }
+                    break;
+                case 'pdf_download_click':
+                    addLog('PDF indirme butonuna tıklandı', 'info');
+                    break;
+                case 'pdf_download_completed':
+                    addLog('PDF indirme tamamlandı', 'info');
                     break;
             }
             
             // Interaction listesine ekle
             addInteractionToList(interaction);
-            
-            // Heatmap için tıklamaları işle
-            if (interaction.type === 'click' && heatmapLayers.clicks) {
-                addHeatmapPoint(interaction.x, interaction.y, 'clicks');
-            }
+        }
+
+        // İstatistik güncelle
+        function updateStat(statId) {
+            const element = document.getElementById(statId);
+            element.textContent = parseInt(element.textContent) + 1;
         }
 
         // Tıklama simülasyonu
         function simulateClick(x, y) {
+            const scale = 0.8;
+            const scaledX = x * scale;
+            const scaledY = y * scale;
+            
             const clickEffect = document.createElement('div');
             clickEffect.className = 'click-effect';
-            clickEffect.style.left = x + 'px';
-            clickEffect.style.top = y + 'px';
-            cvPreview.appendChild(clickEffect);
+            clickEffect.style.left = scaledX + 'px';
+            clickEffect.style.top = scaledY + 'px';
+            cvContent.appendChild(clickEffect);
             
             // Efekti temizle
             setTimeout(() => {
@@ -895,51 +1169,63 @@
 
         // Heatmap noktası ekle
         function addHeatmapPoint(x, y, type) {
+            const scale = 0.8;
+            const scaledX = x * scale;
+            const scaledY = y * scale;
+            
             const point = document.createElement('div');
-            point.className = 'heatmap-point';
-            point.style.left = x + 'px';
-            point.style.top = y + 'px';
             
             if (type === 'clicks') {
+                point.className = 'heatmap-point';
                 point.style.background = 'radial-gradient(circle, rgba(255,0,0,0.6) 0%, rgba(255,0,0,0) 70%)';
                 point.style.width = '30px';
                 point.style.height = '30px';
             } else if (type === 'movements') {
-                point.style.background = 'radial-gradient(circle, rgba(0,255,0,0.4) 0%, rgba(0,255,0,0) 70%)';
+                point.className = 'movement-point';
+                point.style.background = 'radial-gradient(circle, rgba(0,255,0,0.3) 0%, rgba(0,255,0,0) 70%)';
                 point.style.width = '20px';
                 point.style.height = '20px';
             }
             
+            point.style.left = scaledX + 'px';
+            point.style.top = scaledY + 'px';
+            
             heatmap.appendChild(point);
-            
-            // Noktayı yavaşça kaybet
-            setTimeout(() => {
-                point.style.opacity = '0.5';
-            }, 1000);
-            
-            // Noktayı temizle
-            setTimeout(() => {
-                if (point.parentNode) {
-                    point.remove();
-                }
-            }, 5000);
         }
 
         // Metin seçimini vurgula
-        function highlightSelection(interaction) {
+        function highlightSelection(selectionData) {
+            // Basit bir seçim vurgulama - gerçek uygulamada daha gelişmiş olmalı
             const highlight = document.createElement('div');
             highlight.className = 'selection-highlight';
-            highlight.style.left = interaction.startX + 'px';
-            highlight.style.top = interaction.startY + 'px';
-            highlight.style.width = (interaction.endX - interaction.startX) + 'px';
+            highlight.style.left = '100px';
+            highlight.style.top = '300px';
+            highlight.style.width = '400px';
             highlight.style.height = '20px';
             
             // Tooltip ekle
-            highlight.setAttribute('data-text', interaction.text);
+            highlight.setAttribute('data-text', selectionData.text || 'Seçilen metin');
             highlight.addEventListener('mouseenter', showTooltip);
             highlight.addEventListener('mouseleave', hideTooltip);
             
-            cvPreview.appendChild(highlight);
+            cvContent.appendChild(highlight);
+        }
+
+        // Kopyalama vurgula
+        function highlightCopy(copyData) {
+            const highlight = document.createElement('div');
+            highlight.className = 'copy-highlight';
+            highlight.style.left = '100px';
+            highlight.style.top = '350px';
+            highlight.style.width = '400px';
+            highlight.style.height = '20px';
+            
+            // Tooltip ekle
+            highlight.setAttribute('data-text', copyData.text || 'Kopyalanan metin');
+            highlight.addEventListener('mouseenter', showTooltip);
+            highlight.addEventListener('mouseleave', hideTooltip);
+            
+            cvContent.appendChild(highlight);
         }
 
         // Tooltip göster
@@ -968,21 +1254,40 @@
         // Heatmap katmanlarını aç/kapa
         function toggleHeatmap(type) {
             heatmapLayers[type] = !heatmapLayers[type];
+            
+            // Buton durumunu güncelle
+            const button = document.getElementById(`heatmap-${type}`);
+            if (heatmapLayers[type]) {
+                button.style.background = '#008800';
+            } else {
+                button.style.background = '';
+            }
+            
             addLog(`${type} heatmap ${heatmapLayers[type] ? 'açıldı' : 'kapandı'}`, 'info');
             
             // Eğer açıksa ve session verisi varsa, mevcut verileri göster
             if (heatmapLayers[type] && currentSessionData) {
-                currentSessionData.interactions.forEach(interaction => {
-                    if ((type === 'clicks' && interaction.type === 'click') ||
-                        (type === 'movements' && interaction.type === 'mouse_move') ||
-                        (type === 'selections' && interaction.type === 'selection')) {
-                        if (type === 'selections') {
-                            highlightSelection(interaction);
-                        } else {
-                            addHeatmapPoint(interaction.x, interaction.y, type);
-                        }
-                    }
-                });
+                if (type === 'clicks' && currentSessionData.clicks) {
+                    currentSessionData.clicks.forEach(click => {
+                        addHeatmapPoint(click.x, click.y, 'clicks');
+                    });
+                }
+                if (type === 'movements' && currentSessionData.mouseMovements) {
+                    currentSessionData.mouseMovements.forEach(move => {
+                        addHeatmapPoint(move.x, move.y, 'movements');
+                    });
+                }
+            }
+        }
+
+        // Mevcut heatmap ayarlarını uygula
+        function applyCurrentHeatmap() {
+            if (!currentSessionData) return;
+            
+            for (const type in heatmapLayers) {
+                if (heatmapLayers[type]) {
+                    toggleHeatmap(type);
+                }
             }
         }
 
@@ -990,8 +1295,8 @@
         function clearHeatmap() {
             heatmap.innerHTML = '';
             
-            // Seçim vurgularını temizle
-            const highlights = document.querySelectorAll('.selection-highlight');
+            // Seçim ve kopyalama vurgularını temizle
+            const highlights = document.querySelectorAll('.selection-highlight, .copy-highlight');
             highlights.forEach(highlight => {
                 highlight.remove();
             });
@@ -1005,21 +1310,25 @@
             const item = document.createElement('div');
             item.className = 'interaction-item';
             
-            const time = new Date().toLocaleTimeString();
+            const time = new Date(interaction.timestamp).toLocaleTimeString();
             let details = '';
             
-            if (interaction.type === 'selection') {
-                details = `"${interaction.text}"`;
-            } else if (interaction.type === 'copy') {
-                details = `"${interaction.text}" kopyalandı`;
+            if (interaction.type === 'text_selection' && interaction.data) {
+                details = `"${interaction.data.text}"`;
+            } else if (interaction.type === 'copy' && interaction.data) {
+                details = `"${interaction.data.text}" kopyalandı`;
             } else if (interaction.type === 'click') {
-                details = `(${interaction.x}, ${interaction.y}) - ${interaction.element}`;
+                details = `(${interaction.x}, ${interaction.y}) - ${interaction.tag}`;
             } else if (interaction.type === 'mouse_move') {
                 details = `(${interaction.x}, ${interaction.y})`;
             } else if (interaction.type === 'scroll') {
                 details = `Pozisyon: ${interaction.position}`;
             } else if (interaction.type === 'keypress') {
                 details = `Tuş: ${interaction.key}`;
+            } else if (interaction.type === 'pdf_download_click') {
+                details = `PDF indirme başlatıldı`;
+            } else if (interaction.type === 'pdf_download_completed') {
+                details = `PDF indirme tamamlandı`;
             }
             
             item.innerHTML = `
@@ -1049,21 +1358,6 @@
             logs.scrollTop = logs.scrollHeight;
         }
 
-        // İstatistikleri güncelle
-        function updateStats() {
-            // İstatistikler zaten canlı olarak güncelleniyor
-        }
-
-        // IP güncelle
-        function updateIp() {
-            const newIp = document.getElementById('ipInput').value;
-            if (newIp) {
-                currentSessionData.ipInfo.ip = newIp;
-                document.getElementById('displayIp').textContent = newIp;
-                addLog(`IP adresi güncellendi: ${newIp}`, 'info');
-            }
-        }
-
         // Session ID kopyala
         function copySessionId() {
             const sessionIdInput = document.getElementById('sessionId');
@@ -1076,16 +1370,13 @@
         function clearData() {
             if (currentSessionData) {
                 currentSessionData.interactions = [];
+                currentSessionData.mouseMovements = [];
+                currentSessionData.clicks = [];
+                currentSessionData.textSelections = [];
             }
             
             document.getElementById('interactionList').innerHTML = '';
-            document.getElementById('clickCount').textContent = '0';
-            document.getElementById('moveCount').textContent = '0';
-            document.getElementById('scrollCount').textContent = '0';
-            document.getElementById('keyCount').textContent = '0';
-            document.getElementById('selectionCount').textContent = '0';
-            document.getElementById('copyCount').textContent = '0';
-            document.getElementById('displayDuration').textContent = '0sn';
+            resetStats();
             
             clearHeatmap();
             
