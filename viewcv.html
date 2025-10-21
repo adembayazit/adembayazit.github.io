@@ -903,8 +903,339 @@
     </div>
 
     <script>
+        // Kullanıcı davranış analizi için değişkenler
+        let userBehaviorData = {
+            sessionId: generateSessionId(),
+            ipInfo: {},
+            deviceInfo: getDeviceInfo(),
+            pageLoadTime: Date.now(),
+            interactions: [],
+            mouseMovements: [],
+            textSelections: [],
+            clicks: [],
+            keyStrokes: [],
+            performance: {},
+            pdfDownload: false
+        };
+
+        // Session ID oluşturma
+        function generateSessionId() {
+            return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        // Cihaz bilgilerini alma
+        function getDeviceInfo() {
+            return {
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                language: navigator.language,
+                screenWidth: screen.width,
+                screenHeight: screen.height,
+                viewportWidth: window.innerWidth,
+                viewportHeight: window.innerHeight,
+                deviceType: /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop'
+            };
+        }
+
+        // Performans verilerini topla
+        function collectPerformanceData() {
+            if (window.performance) {
+                const perf = window.performance;
+                const timing = perf.timing;
+                
+                userBehaviorData.performance = {
+                    loadTime: timing.loadEventEnd - timing.navigationStart,
+                    domReadyTime: timing.domContentLoadedEventEnd - timing.navigationStart,
+                    readyStart: timing.fetchStart - timing.navigationStart,
+                    redirectTime: timing.redirectEnd - timing.redirectStart,
+                    appcacheTime: timing.domainLookupStart - timing.fetchStart,
+                    unloadEventTime: timing.unloadEventEnd - timing.unloadEventStart,
+                    lookupDomainTime: timing.domainLookupEnd - timing.domainLookupStart,
+                    connectTime: timing.connectEnd - timing.connectStart,
+                    requestTime: timing.responseEnd - timing.requestStart,
+                    initDomTreeTime: timing.domInteractive - timing.responseEnd,
+                    loadEventTime: timing.loadEventEnd - timing.loadEventStart
+                };
+            }
+        }
+
+        // IP ve konum bilgilerini al
+        async function getIpInfo() {
+            try {
+                const response = await fetch('https://ipinfo.io/json?token=68a1229187303a');
+                const data = await response.json();
+                userBehaviorData.ipInfo = data;
+            } catch (error) {
+                console.error('IP bilgisi alınamadı:', error);
+            }
+        }
+
+        // Fare hareketlerini takip et
+        let mouseMoveTimeout;
+        function trackMouseMovements(event) {
+            clearTimeout(mouseMoveTimeout);
+            
+            mouseMoveTimeout = setTimeout(() => {
+                userBehaviorData.mouseMovements.push({
+                    x: event.clientX,
+                    y: event.clientY,
+                    timestamp: Date.now(),
+                    element: event.target.tagName
+                });
+
+                // Fare hareketlerini belli bir sayıda tut (performans için)
+                if (userBehaviorData.mouseMovements.length > 100) {
+                    userBehaviorData.mouseMovements = userBehaviorData.mouseMovements.slice(-50);
+                }
+            }, 100);
+        }
+
+        // Metin seçimlerini takip et
+        function trackTextSelections() {
+            document.addEventListener('selectionchange', function() {
+                const selection = window.getSelection();
+                const selectedText = selection.toString().trim();
+                
+                if (selectedText.length > 0) {
+                    userBehaviorData.textSelections.push({
+                        text: selectedText,
+                        timestamp: Date.now(),
+                        length: selectedText.length
+                    });
+                }
+            });
+        }
+
+        // Kopyalama işlemlerini takip et
+        function trackCopyEvents() {
+            document.addEventListener('copy', function() {
+                const selection = window.getSelection();
+                const copiedText = selection.toString().trim();
+                
+                if (copiedText.length > 0) {
+                    userBehaviorData.interactions.push({
+                        type: 'copy',
+                        text: copiedText,
+                        timestamp: Date.now(),
+                        length: copiedText.length
+                    });
+                }
+            });
+        }
+
+        // Tıklama olaylarını takip et
+        function trackClicks(event) {
+            const target = event.target;
+            const clickData = {
+                type: 'click',
+                tag: target.tagName,
+                id: target.id || 'none',
+                className: target.className || 'none',
+                timestamp: Date.now(),
+                x: event.clientX,
+                y: event.clientY
+            };
+
+            userBehaviorData.clicks.push(clickData);
+            userBehaviorData.interactions.push(clickData);
+        }
+
+        // Klavye etkileşimlerini takip et
+        function trackKeyStrokes(event) {
+            // Sadece özel tuş kombinasyonlarını ve kısayol tuşlarını kaydet
+            if (event.ctrlKey || event.altKey || event.metaKey || event.key === 'Escape' || event.key === 'F1') {
+                userBehaviorData.keyStrokes.push({
+                    key: event.key,
+                    code: event.code,
+                    ctrlKey: event.ctrlKey,
+                    altKey: event.altKey,
+                    shiftKey: event.shiftKey,
+                    metaKey: event.metaKey,
+                    timestamp: Date.now()
+                });
+            }
+        }
+
+        // Sayfa görünürlüğünü takip et
+        function trackVisibility() {
+            document.addEventListener('visibilitychange', function() {
+                userBehaviorData.interactions.push({
+                    type: 'visibility_change',
+                    state: document.visibilityState,
+                    timestamp: Date.now()
+                });
+            });
+        }
+
+        // Kaydırma davranışını takip et
+        let scrollTimeout;
+        function trackScroll() {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                userBehaviorData.interactions.push({
+                    type: 'scroll',
+                    position: window.scrollY,
+                    maxScroll: document.documentElement.scrollHeight - window.innerHeight,
+                    timestamp: Date.now()
+                });
+            }, 500);
+        }
+
+        // PDF indirme takibi
+        function trackPdfDownload() {
+            const pdfButton = document.getElementById('download-pdf');
+            if (pdfButton) {
+                pdfButton.addEventListener('click', function() {
+                    userBehaviorData.pdfDownload = true;
+                    userBehaviorData.interactions.push({
+                        type: 'pdf_download_click',
+                        timestamp: Date.now()
+                    });
+                    
+                    // PDF indirildikten sonra ek event
+                    setTimeout(() => {
+                        userBehaviorData.interactions.push({
+                            type: 'pdf_download_completed',
+                            timestamp: Date.now()
+                        });
+                        saveBehaviorData();
+                    }, 3000);
+                });
+            }
+        }
+
+        // Jobseeker link takibi
+        function trackJobseekerClick() {
+            const jobseekerLink = document.getElementById('view-jobseeker');
+            if (jobseekerLink) {
+                jobseekerLink.addEventListener('click', function() {
+                    userBehaviorData.interactions.push({
+                        type: 'jobseeker_link_click',
+                        timestamp: Date.now()
+                    });
+                    saveBehaviorData();
+                });
+            }
+        }
+
+        // Verileri JSONBin'e kaydet
+        async function saveBehaviorData() {
+            try {
+                // Önce mevcut veriyi al
+                const getResponse = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        path: '/b/68f7500aae596e708f213111/latest',
+                        method: 'GET'
+                    })
+                });
+
+                let existingData = { 
+                    cv_analytics: [],
+                    total_sessions: 0,
+                    last_updated: new Date().toISOString()
+                };
+                
+                if (getResponse.ok) {
+                    const result = await getResponse.json();
+                    existingData = result;
+                    
+                    if (!existingData.cv_analytics) {
+                        existingData.cv_analytics = [];
+                    }
+                    if (typeof existingData.total_sessions !== 'number') {
+                        existingData.total_sessions = 0;
+                    }
+                }
+
+                // Yeni session'ı ekle
+                existingData.cv_analytics.push({
+                    session: userBehaviorData,
+                    timestamp: new Date().toISOString()
+                });
+                
+                existingData.total_sessions = (existingData.total_sessions || 0) + 1;
+                existingData.last_updated = new Date().toISOString();
+
+                // Güncellenmiş veriyi kaydet
+                const putResponse = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        path: '/b/68f7500aae596e708f213111',
+                        method: 'PUT',
+                        body: existingData
+                    })
+                });
+
+                if (putResponse.ok) {
+                    console.log('Kullanıcı davranış verileri kaydedildi');
+                }
+            } catch (error) {
+                console.error('Veri kaydetme hatası:', error);
+            }
+        }
+
+        // Sayfa kapatıldığında verileri kaydet
+        function setupBeforeUnload() {
+            window.addEventListener('beforeunload', function() {
+                userBehaviorData.interactions.push({
+                    type: 'page_unload',
+                    timestamp: Date.now(),
+                    sessionDuration: Date.now() - userBehaviorData.pageLoadTime
+                });
+                
+                // Verileri senkron olarak göndermeye çalış
+                navigator.sendBeacon || saveBehaviorData();
+            });
+        }
+
+        // Periyodik olarak verileri kaydet
+        function setupPeriodicSave() {
+            setInterval(() => {
+                if (userBehaviorData.interactions.length > 0) {
+                    saveBehaviorData();
+                }
+            }, 30000); // 30 saniyede bir
+        }
+
+        // Tüm event listener'ları başlat
+        function initializeTracking() {
+            // IP ve performans verilerini topla
+            getIpInfo();
+            collectPerformanceData();
+            
+            // Event listener'ları ekle
+            document.addEventListener('mousemove', trackMouseMovements);
+            document.addEventListener('click', trackClicks);
+            document.addEventListener('keydown', trackKeyStrokes);
+            window.addEventListener('scroll', trackScroll);
+            
+            // Diğer takip fonksiyonları
+            trackTextSelections();
+            trackCopyEvents();
+            trackVisibility();
+            trackPdfDownload();
+            trackJobseekerClick();
+            
+            // Sayfa kapatma ve periyodik kayıt
+            setupBeforeUnload();
+            setupPeriodicSave();
+            
+            // Sayfa yüklendi event'ini kaydet
+            userBehaviorData.interactions.push({
+                type: 'page_load',
+                timestamp: Date.now()
+            });
+        }
+
+        // Mevcut PDF indirme kodunu koru
         document.getElementById('download-pdf').addEventListener('click', function() {
-            // Use html2canvas and jsPDF to generate PDF
             const { jsPDF } = window.jspdf;
             
             const element = document.getElementById('cv-content');
@@ -916,8 +1247,8 @@
             }).then(canvas => {
                 const imgData = canvas.toDataURL('image/jpeg', 1.0);
                 const pdf = new jsPDF('p', 'mm', 'a4');
-                const imgWidth = 210; // A4 width in mm
-                const pageHeight = 297; // A4 height in mm
+                const imgWidth = 210;
+                const pageHeight = 297;
                 const imgHeight = canvas.height * imgWidth / canvas.width;
                 let heightLeft = imgHeight;
                 let position = 0;
@@ -935,6 +1266,12 @@
                 pdf.save('Adem_Bayazit_CV.pdf');
             });
         });
+
+        // Sayfa yüklendiğinde takibi başlat
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTracking();
+        });
+
     </script>
 </body>
 </html>
