@@ -562,6 +562,11 @@
         .session-selector {
             min-width: 300px;
         }
+        
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -811,24 +816,43 @@
             try {
                 addLog('JSONBin\'den tüm session verileri yükleniyor...', 'info');
                 
-                const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}/latest`, {
-                    method: 'GET',
+                // Netlify function üzerinden JSONBin'den veri çek
+                const response = await fetch('/.netlify/functions/jsonbin-proxy', {
+                    method: 'POST',
                     headers: {
-                        'X-Master-Key': '$2a$10$Z1B5L.wkU.xcJWq2O.5YlO6.5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5'
-                    }
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        path: `/b/${JSONBIN_ID}/latest`,
+                        method: 'GET'
+                    })
                 });
                 
                 if (!response.ok) {
-                    throw new Error('JSONBin bağlantı hatası');
+                    throw new Error('JSONBin bağlantı hatası: ' + response.status);
                 }
                 
                 const data = await response.json();
-                allSessions = data.record || {};
+                
+                // JSON yapısını işle - cv_analytics dizisinden session'ları çek
+                if (data.record && data.record.cv_analytics) {
+                    allSessions = {};
+                    
+                    data.record.cv_analytics.forEach(item => {
+                        if (item.session && item.session.sessionId) {
+                            // Her session'ı sessionId ile eşleştir
+                            allSessions[item.session.sessionId] = item.session;
+                        }
+                    });
+                    
+                    addLog(`${Object.keys(allSessions).length} session yüklendi`, 'info');
+                } else {
+                    throw new Error('JSON yapısı beklenen formatta değil');
+                }
                 
                 // Session selector'ı güncelle
                 updateSessionSelector();
                 
-                addLog(`${Object.keys(allSessions).length} session yüklendi`, 'info');
             } catch (error) {
                 console.error('Session yükleme hatası:', error);
                 addLog('Session verileri yüklenirken hata oluştu: ' + error.message, 'error');
@@ -843,9 +867,16 @@
             const sessionSelector = document.getElementById('sessionSelector');
             sessionSelector.innerHTML = '<option value="">Session Seçin...</option>';
             
+            if (Object.keys(allSessions).length === 0) {
+                addLog('Yüklenecek session bulunamadı', 'warning');
+                return;
+            }
+            
             // Session'ları tarihe göre sırala (en yeni en üstte)
             const sortedSessions = Object.keys(allSessions).sort((a, b) => {
-                return new Date(allSessions[b].timestamp || 0) - new Date(allSessions[a].timestamp || 0);
+                const timeA = allSessions[a].pageLoadTime || 0;
+                const timeB = allSessions[b].pageLoadTime || 0;
+                return timeB - timeA;
             });
             
             sortedSessions.forEach(sessionId => {
@@ -854,13 +885,16 @@
                 option.value = sessionId;
                 
                 // Tarih formatı
-                const date = session.timestamp ? new Date(session.timestamp) : new Date();
+                const date = session.pageLoadTime ? new Date(session.pageLoadTime) : new Date();
                 const dateStr = date.toLocaleDateString('tr-TR') + ' ' + date.toLocaleTimeString('tr-TR');
                 
                 // Konum bilgisi
                 const location = session.ipInfo ? `${session.ipInfo.city}, ${session.ipInfo.country}` : 'Bilinmiyor';
                 
-                option.textContent = `${sessionId} - ${location} - ${dateStr}`;
+                // Etkileşim sayısı
+                const interactionCount = session.interactions ? session.interactions.length : 0;
+                
+                option.textContent = `${sessionId.substring(0, 15)}... - ${location} - ${dateStr} (${interactionCount} etkileşim)`;
                 sessionSelector.appendChild(option);
             });
             
@@ -871,8 +905,8 @@
         function loadFallbackSessions() {
             // Örnek session verileri oluştur
             allSessions = {
-                "session_1761045465323_i7x3w9zs0": {
-                    sessionId: "session_1761045465323_i7x3w9zs0",
+                "session_1761064989590_gxn0ewtff": {
+                    sessionId: "session_1761064989590_gxn0ewtff",
                     ipInfo: {
                         ip: "88.227.76.219",
                         hostname: "88.227.76.219.dynamic.ttnet.com.tr",
@@ -885,7 +919,7 @@
                         timezone: "Europe/Istanbul"
                     },
                     deviceInfo: {
-                        userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+                        userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
                         platform: "Win32",
                         language: "tr-TR",
                         screenWidth: 1536,
@@ -894,152 +928,63 @@
                         viewportHeight: 695,
                         deviceType: "desktop"
                     },
-                    pageLoadTime: 1761045465323,
+                    pageLoadTime: 1761064989607,
                     interactions: [
-                        { type: "page_load", timestamp: 1761045465345 },
-                        { type: "click", tag: "P", className: "none", timestamp: 1761045467776, x: 1216, y: 351 },
-                        { type: "click", tag: "DIV", className: "right-column", timestamp: 1761045470759, x: 367, y: 391 },
-                        { type: "scroll", position: 4817.60009765625, maxScroll: 4818, timestamp: 1761045483992 },
-                        { type: "pdf_download_click", timestamp: 1761045484732 },
-                        { type: "click", tag: "BUTTON", id: "download-pdf", className: "btn", timestamp: 1761045484732, x: 426, y: 623 },
-                        { type: "pdf_download_completed", timestamp: 1761045487741 }
+                        {
+                            "type": "page_load",
+                            "timestamp": 1761064989618
+                        },
+                        {
+                            "type": "click",
+                            "tag": "H1",
+                            "id": "none",
+                            "className": "none",
+                            "timestamp": 1761064994493,
+                            "x": 655,
+                            "y": 75
+                        }
                     ],
                     mouseMovements: [
-                        { x: 250, y: 409, timestamp: 1761045465714, element: "BODY" },
-                        { x: 250, y: 408, timestamp: 1761045465886, element: "BODY" },
-                        { x: 249, y: 407, timestamp: 1761045466028, element: "BODY" },
-                        { x: 1170, y: 371, timestamp: 1761045466725, element: "P" },
-                        { x: 1216, y: 351, timestamp: 1761045467848, element: "P" },
-                        { x: 367, y: 391, timestamp: 1761045470773, element: "DIV" },
-                        { x: 379, y: 315, timestamp: 1761045471470, element: "P" },
-                        { x: 374, y: 318, timestamp: 1761045471722, element: "DIV" },
-                        { x: 475, y: 375, timestamp: 1761045473815, element: "P" },
-                        { x: 504, y: 411, timestamp: 1761045474258, element: "P" },
-                        { x: 689, y: 366, timestamp: 1761045475657, element: "B" },
-                        { x: 964, y: 228, timestamp: 1761045476836, element: "HTML" },
-                        { x: 655, y: 347, timestamp: 1761045479344, element: "P" },
-                        { x: 491, y: 392, timestamp: 1761045480229, element: "P" },
-                        { x: 465, y: 408, timestamp: 1761045480730, element: "P" },
-                        { x: 426, y: 623, timestamp: 1761045484637, element: "BUTTON" },
-                        { x: 648, y: 264, timestamp: 1761045486014, element: "DIV" }
+                        {
+                            "x": 290,
+                            "y": 356,
+                            "timestamp": 1761064990100,
+                            "element": "I"
+                        }
                     ],
                     textSelections: [
-                        { text: "played", timestamp: 1761045470809, length: 6 },
-                        { text: "I", timestamp: 1761045471800, length: 1 },
-                        { text: "I", timestamp: 1761045471815, length: 1 },
-                        { text: "I h", timestamp: 1761045471831, length: 3 },
-                        { text: "I ha", timestamp: 1761045471839, length: 4 },
-                        { text: "I hav", timestamp: 1761045471864, length: 5 },
-                        { text: "b", timestamp: 1761045471885, length: 1 },
-                        { text: "be", timestamp: 1761045471909, length: 2 },
-                        { text: "been actively working in the information technology sector since 2002. I began my", timestamp: 1761045471957, length: 81 },
-                        { text: "been actively working in the information technology sector since 2002. I began my", timestamp: 1761045471971, length: 81 },
-                        { text: "been actively working in the information technology sector since 2002. I began my c", timestamp: 1761045471979, length: 83 },
-                        { text: "been actively working in the information technology sector since 2002. I began my ca", timestamp: 1761045471987, length: 84 },
-                        { text: "been actively working in the information technology sector since 2002. I began my car", timestamp: 1761045472003, length: 85 },
-                        { text: "been actively working in the information technology sector since 2002. I began my career by receiving software education at a vocational high school and have held", timestamp: 1761045472019, length: 162 },
-                        { text: "been actively working in the information technology sector since 2002. I began my career by receiving software education at a vocational high school and have held v", timestamp: 1761045472027, length: 164 },
-                        { text: "been actively working in the information technology sector since 2002. I began my career by receiving software education at a vocational high school and have held va", timestamp: 1761045472048, length: 165 },
-                        { text: "ive roles in both administrative and technical processes such as the design, reloc", timestamp: 1761045473358, length: 82 },
-                        { text: "tive roles in both administrative and technical processes such as the design, reloc", timestamp: 1761045473364, length: 83 },
-                        { text: "ctive roles in both administrative and technical processes such as the design, reloc", timestamp: 1761045473371, length: 84 },
-                        { text: "ective roles in both administrative and technical processes such as the design, reloc", timestamp: 1761045473380, length: 85 },
-                        { text: "ng and project planning. Additionally, I worked on the customer side, taking on effective roles in both administrative and technical processes such as the design, reloc", timestamp: 1761045473387, length: 168 },
-                        { text: "ning and project planning. Additionally, I worked on the customer side, taking on effective roles in both administrative and technical processes such as the design, reloc", timestamp: 1761045473395, length: 170 },
-                        { text: "ssioning and project planning. Additionally, I worked on the customer side, taking on effective roles in both administrative and technical processes such as the design, reloc", timestamp: 1761045473403, length: 174 },
-                        { text: "issioning and project planning. Additionally, I worked on the customer side, taking on effective roles in both administrative and technical processes such as the design, reloc", timestamp: 1761045473411, length: 175 },
-                        { text: "in all stages of post-sales processes, from the installation of products to their commissioning and project planning. Additionally, I worked on the customer side, taking on effective roles in both administrative and technical processes such as the design, reloc", timestamp: 1761045473419, length: 261 },
-                        { text: "e in all stages of post-sales processes, from the installation of products to their commissioning and project planning. Additionally, I worked on the customer side, taking on effective roles in both administrative and technical processes such as the design, reloc", timestamp: 1761045473427, length: 263 },
-                        { text: "le in all stages of post-sales processes, from the installation of products to their commissioning and project planning. Additionally, I worked on the customer side, taking on effective roles in both administrative and technical processes such as the design, reloc", timestamp: 1761045473435, length: 264 },
-                        { text: "ole in all stages of post-sales processes, from the installation of products to their commissioning and project planning. Additionally, I worked on the customer side, taking on effective roles in both administrative and technical processes such as the design, reloc", timestamp: 1761045473443, length: 265 },
-                        { text: "role in all stages of post-sales processes, from the installation of products to their commissioning and project planning. Additionally, I worked on the customer side, taking on effective roles in both administrative and technical processes such as the design, reloc", timestamp: 1761045473449, length: 266 },
-                        { text: "role in all stages of post-sales processes, from the installation of products to their commissioning and project planning. Additionally, I worked on the customer side, taking on effective roles in both administrative and technical processes such as the design, reloc", timestamp: 1761045473457, length: 266 },
-                        { text: "e role in all stages of post-sales processes, from the installation of products to their commissioning and project planning. Additionally, I worked on the customer side, taking on effective roles in both administrative and technical processes such as the design, reloc", timestamp: 1761045473515, length: 268 }
+                        {
+                            "text": "Adem Bayazıt",
+                            "timestamp": 1761064993987,
+                            "length": 12
+                        }
                     ],
                     clicks: [
-                        { type: "click", tag: "P", id: "none", className: "none", timestamp: 1761045467776, x: 1216, y: 351 },
-                        { type: "click", tag: "DIV", id: "none", className: "right-column", timestamp: 1761045470759, x: 367, y: 391 },
-                        { type: "click", tag: "DIV", id: "none", className: "right-column", timestamp: 1761045470876, x: 367, y: 391 },
-                        { type: "click", tag: "DIV", id: "none", className: "right-column", timestamp: 1761045471856, x: 404, y: 327 },
-                        { type: "click", tag: "P", id: "none", className: "none", timestamp: 1761045472035, x: 485, y: 365 },
-                        { type: "click", tag: "DIV", id: "none", className: "section", timestamp: 1761045472575, x: 620, y: 502 },
-                        { type: "click", tag: "P", id: "none", className: "none", timestamp: 1761045473685, x: 476, y: 378 },
-                        { type: "click", tag: "P", id: "none", className: "none", timestamp: 1761045474467, x: 504, y: 411 },
-                        { type: "click", tag: "P", id: "none", className: "none", timestamp: 1761045479489, x: 655, y: 347 },
-                        { type: "click", tag: "BUTTON", id: "download-pdf", className: "btn", timestamp: 1761045484732, x: 426, y: 623 }
+                        {
+                            "type": "click",
+                            "tag": "H1",
+                            "id": "none",
+                            "className": "none",
+                            "timestamp": 1761064994493,
+                            "x": 655,
+                            "y": 75
+                        }
                     ],
                     keyStrokes: [],
                     performance: {
-                        loadTime: -1761045464835,
-                        domReadyTime: -1761045464835,
-                        readyStart: 10,
-                        redirectTime: 0,
-                        appcacheTime: 0,
-                        unloadEventTime: 0,
-                        lookupDomainTime: 0,
-                        connectTime: 0,
-                        requestTime: 192,
-                        initDomTreeTime: 305,
-                        loadEventTime: 0
+                        "loadTime": -1761064989115,
+                        "domReadyTime": -1761064989115,
+                        "readyStart": 11,
+                        "redirectTime": 0,
+                        "appcacheTime": 0,
+                        "unloadEventTime": 0,
+                        "lookupDomainTime": 0,
+                        "connectTime": 0,
+                        "requestTime": 399,
+                        "initDomTreeTime": 89,
+                        "loadEventTime": 0
                     },
-                    pdfDownload: true,
-                    timestamp: "2025-10-21T11:18:08.521Z"
-                },
-                "session_1761045465324_i7x3w9zs1": {
-                    sessionId: "session_1761045465324_i7x3w9zs1",
-                    ipInfo: {
-                        ip: "95.70.123.45",
-                        hostname: "95.70.123.45.dynamic.ttnet.com.tr",
-                        city: "İstanbul",
-                        region: "İstanbul",
-                        country: "TR",
-                        loc: "41.0082,28.9784",
-                        org: "AS47331 TTNet A.S.",
-                        postal: "34000",
-                        timezone: "Europe/Istanbul"
-                    },
-                    deviceInfo: {
-                        userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15",
-                        platform: "iPhone",
-                        language: "tr-TR",
-                        screenWidth: 375,
-                        screenHeight: 667,
-                        viewportWidth: 375,
-                        viewportHeight: 553,
-                        deviceType: "mobile"
-                    },
-                    pageLoadTime: 1761045465324,
-                    interactions: [
-                        { type: "page_load", timestamp: 1761045465346 },
-                        { type: "click", tag: "A", className: "contact-link", timestamp: 1761045467777, x: 120, y: 450 },
-                        { type: "scroll", position: 1200, maxScroll: 4818, timestamp: 1761045473993 }
-                    ],
-                    mouseMovements: [
-                        { x: 120, y: 450, timestamp: 1761045467777, element: "A" },
-                        { x: 125, y: 455, timestamp: 1761045467888, element: "A" }
-                    ],
-                    textSelections: [
-                        { text: "contact", timestamp: 1761045467888, length: 7 }
-                    ],
-                    clicks: [
-                        { type: "click", tag: "A", id: "none", className: "contact-link", timestamp: 1761045467777, x: 120, y: 450 }
-                    ],
-                    keyStrokes: [],
-                    performance: {
-                        loadTime: -1761045464836,
-                        domReadyTime: -1761045464836,
-                        readyStart: 15,
-                        redirectTime: 0,
-                        appcacheTime: 0,
-                        unloadEventTime: 0,
-                        lookupDomainTime: 0,
-                        connectTime: 0,
-                        requestTime: 200,
-                        initDomTreeTime: 310,
-                        loadEventTime: 0
-                    },
-                    pdfDownload: false,
-                    timestamp: "2025-10-21T12:22:15.123Z"
+                    pdfDownload: true
                 }
             };
             
@@ -1102,7 +1047,12 @@
             document.getElementById('scrollCount').textContent = currentSessionData.interactions ? currentSessionData.interactions.filter(i => i.type === 'scroll').length : 0;
             document.getElementById('keyCount').textContent = currentSessionData.keyStrokes ? currentSessionData.keyStrokes.length : 0;
             document.getElementById('selectionCount').textContent = currentSessionData.textSelections ? currentSessionData.textSelections.length : 0;
-            document.getElementById('copyCount').textContent = currentSessionData.textSelections ? currentSessionData.textSelections.length : 0;
+            
+            // Copy etkileşimlerini say
+            const copyCount = currentSessionData.interactions ? 
+                currentSessionData.interactions.filter(i => i.type === 'copy').length : 0;
+            document.getElementById('copyCount').textContent = copyCount;
+            
             document.getElementById('displayDuration').textContent = calculateSessionDuration() + 'sn';
         }
 
@@ -1125,7 +1075,15 @@
             
             // Seçimleri göster
             if (currentSessionData.textSelections && currentSessionData.textSelections.length > 0) {
+                // Benzersiz seçimleri göster (son seçimleri)
+                const uniqueSelections = {};
                 currentSessionData.textSelections.forEach(selection => {
+                    if (selection.text && selection.text.length > 1) {
+                        uniqueSelections[selection.text] = selection;
+                    }
+                });
+                
+                Object.values(uniqueSelections).forEach(selection => {
                     const item = document.createElement('div');
                     item.className = 'selection-item';
                     item.innerHTML = `
@@ -1138,17 +1096,22 @@
                 selectionsList.innerHTML = '<div class="selection-item">Seçim verisi bulunamadı</div>';
             }
             
-            // Kopyalamaları göster
-            if (currentSessionData.textSelections && currentSessionData.textSelections.length > 0) {
-                currentSessionData.textSelections.forEach(copy => {
-                    const item = document.createElement('div');
-                    item.className = 'copy-item';
-                    item.innerHTML = `
-                        <div><strong>Zaman:</strong> ${new Date(copy.timestamp).toLocaleTimeString()}</div>
-                        <div class="text-content">"${copy.text}"</div>
-                    `;
-                    copiesList.appendChild(item);
-                });
+            // Kopyalamaları göster (copy etkileşimlerinden)
+            if (currentSessionData.interactions) {
+                const copyInteractions = currentSessionData.interactions.filter(i => i.type === 'copy');
+                if (copyInteractions.length > 0) {
+                    copyInteractions.forEach(copy => {
+                        const item = document.createElement('div');
+                        item.className = 'copy-item';
+                        item.innerHTML = `
+                            <div><strong>Zaman:</strong> ${new Date(copy.timestamp).toLocaleTimeString()}</div>
+                            <div class="text-content">"${copy.text}"</div>
+                        `;
+                        copiesList.appendChild(item);
+                    });
+                } else {
+                    copiesList.innerHTML = '<div class="copy-item">Kopyalama verisi bulunamadı</div>';
+                }
             } else {
                 copiesList.innerHTML = '<div class="copy-item">Kopyalama verisi bulunamadı</div>';
             }
@@ -1288,8 +1251,10 @@
             if (event.data.x && event.data.y) {
                 // CV iframe'inin boyutuna göre koordinatları ayarla
                 const cvContainer = document.getElementById('cv-preview-container');
-                const scaleX = cvContainer.offsetWidth / (currentSessionData.deviceInfo.viewportWidth || 1536);
-                const scaleY = cvContainer.offsetHeight / (currentSessionData.deviceInfo.viewportHeight || 695);
+                const viewportWidth = currentSessionData.deviceInfo.viewportWidth || 1536;
+                const viewportHeight = currentSessionData.deviceInfo.viewportHeight || 695;
+                const scaleX = cvContainer.offsetWidth / viewportWidth;
+                const scaleY = cvContainer.offsetHeight / viewportHeight;
                 const scaledX = event.data.x * scaleX;
                 const scaledY = event.data.y * scaleY;
                 
@@ -1350,6 +1315,9 @@
                 case 'pdf_download_completed':
                     addLog('PDF indirme tamamlandı', 'info');
                     break;
+                case 'visibility_change':
+                    addLog(`Sayfa ${interaction.state === 'hidden' ? 'gizlendi' : 'görünür oldu'}`, 'info');
+                    break;
             }
             
             // Interaction listesine ekle
@@ -1360,8 +1328,10 @@
         function simulateClick(x, y) {
             // CV iframe'inin boyutuna göre koordinatları ayarla
             const cvContainer = document.getElementById('cv-preview-container');
-            const scaleX = cvContainer.offsetWidth / (currentSessionData.deviceInfo.viewportWidth || 1536);
-            const scaleY = cvContainer.offsetHeight / (currentSessionData.deviceInfo.viewportHeight || 695);
+            const viewportWidth = currentSessionData.deviceInfo.viewportWidth || 1536;
+            const viewportHeight = currentSessionData.deviceInfo.viewportHeight || 695;
+            const scaleX = cvContainer.offsetWidth / viewportWidth;
+            const scaleY = cvContainer.offsetHeight / viewportHeight;
             const scaledX = x * scaleX;
             const scaledY = y * scaleY;
             
@@ -1383,8 +1353,10 @@
         function addHeatmapPoint(x, y, type) {
             // CV iframe'inin boyutuna göre koordinatları ayarla
             const cvContainer = document.getElementById('cv-preview-container');
-            const scaleX = cvContainer.offsetWidth / (currentSessionData.deviceInfo.viewportWidth || 1536);
-            const scaleY = cvContainer.offsetHeight / (currentSessionData.deviceInfo.viewportHeight || 695);
+            const viewportWidth = currentSessionData.deviceInfo.viewportWidth || 1536;
+            const viewportHeight = currentSessionData.deviceInfo.viewportHeight || 695;
+            const scaleX = cvContainer.offsetWidth / viewportWidth;
+            const scaleY = cvContainer.offsetHeight / viewportHeight;
             const scaledX = x * scaleX;
             const scaledY = y * scaleY;
             
@@ -1436,7 +1408,7 @@
             // Rastgele bir konum ve boyut
             highlight.style.left = (Math.random() * 500 + 100) + 'px';
             highlight.style.top = (Math.random() * 400 + 150) + 'px';
-            highlight.style.width = ((copyData.length || 10) * 5) + 'px';
+            highlight.style.width = ((copyData.text ? copyData.text.length : 10) * 5) + 'px';
             highlight.style.height = '20px';
             
             // Tooltip ekle
@@ -1501,8 +1473,9 @@
                         highlightSelection(selection);
                     });
                 }
-                if (type === 'copies' && currentSessionData.textSelections) {
-                    currentSessionData.textSelections.forEach(copy => {
+                if (type === 'copies' && currentSessionData.interactions) {
+                    const copyInteractions = currentSessionData.interactions.filter(i => i.type === 'copy');
+                    copyInteractions.forEach(copy => {
                         highlightCopy(copy);
                     });
                 }
@@ -1558,6 +1531,10 @@
                 details = `PDF indirme başlatıldı`;
             } else if (interaction.type === 'pdf_download_completed') {
                 details = `PDF indirme tamamlandı`;
+            } else if (interaction.type === 'visibility_change') {
+                details = `Sayfa ${interaction.state === 'hidden' ? 'gizlendi' : 'görünür oldu'}`;
+            } else if (interaction.type === 'page_load') {
+                details = `Sayfa yüklendi`;
             }
             
             item.innerHTML = `
