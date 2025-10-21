@@ -137,18 +137,6 @@
             border-radius: 10px;
         }
 
-        #cv-content {
-            width: 100%;
-            min-height: 100%;
-            background: white;
-            color: black;
-            padding: 20px;
-            font-family: Arial, sans-serif;
-            position: relative;
-            transform-origin: top left;
-            width: 100%;
-        }
-
         #cv-iframe {
             width: 100%;
             height: 100%;
@@ -541,6 +529,53 @@
             border-radius: 3px;
             cursor: pointer;
         }
+        
+        .selections-container {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+        
+        .selection-item {
+            padding: 10px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 0, 0.1);
+            border-radius: 6px;
+            border-left: 3px solid #ffcc00;
+            font-size: 0.85rem;
+        }
+        
+        .copy-item {
+            padding: 10px;
+            margin-bottom: 8px;
+            background: rgba(255, 165, 0, 0.1);
+            border-radius: 6px;
+            border-left: 3px solid #ff9900;
+            font-size: 0.85rem;
+        }
+        
+        .text-content {
+            color: #cccccc;
+            margin-top: 5px;
+            font-style: italic;
+        }
+        
+        .stats-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .stats-refresh {
+            background: var(--primary-color);
+            color: black;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -556,7 +591,7 @@
 
     <div class="admin-container">
         <div class="header">
-            <h1>Kullanıcı Davranış Analizi - Admin Paneli</h1>
+            <h1>CV Analytics Admin Paneli</h1>
             <p>CV üzerindeki kullanıcı etkileşimlerinin gerçek zamanlı analizi ve simülasyonu</p>
         </div>
 
@@ -579,10 +614,10 @@
         </div>
 
         <div class="heatmap-controls">
-            <button class="btn" id="heatmap-clicks" onclick="toggleHeatmap('clicks')">Tıklama Heatmap</button>
-            <button class="btn" id="heatmap-movements" onclick="toggleHeatmap('movements')">Hareket Heatmap</button>
-            <button class="btn" id="heatmap-selections" onclick="toggleHeatmap('selections')">Seçimleri Göster</button>
-            <button class="btn" id="heatmap-copies" onclick="toggleHeatmap('copies')">Kopyalamaları Göster</button>
+            <button class="btn active" id="heatmap-clicks" onclick="toggleHeatmap('clicks')">Tıklama Heatmap</button>
+            <button class="btn active" id="heatmap-movements" onclick="toggleHeatmap('movements')">Hareket Heatmap</button>
+            <button class="btn active" id="heatmap-selections" onclick="toggleHeatmap('selections')">Seçimleri Göster</button>
+            <button class="btn active" id="heatmap-copies" onclick="toggleHeatmap('copies')">Kopyalamaları Göster</button>
             <button class="btn secondary" onclick="clearHeatmap()">Heatmap Temizle</button>
             
             <div class="heatmap-legend">
@@ -627,7 +662,10 @@
             </div>
 
             <div class="card">
-                <h2>Session Bilgileri ve İstatistikler</h2>
+                <div class="stats-header">
+                    <h2>Session Bilgileri ve İstatistikler</h2>
+                    <button class="stats-refresh" onclick="loadSessionData()">Yenile</button>
+                </div>
                 <div class="session-info">
                     <div class="info-item">
                         <div>Session ID</div>
@@ -642,8 +680,8 @@
                         <div class="info-value" id="displayDevice">-</div>
                     </div>
                     <div class="info-item">
-                        <div>Süre</div>
-                        <div class="info-value" id="displayDuration">0sn</div>
+                        <div>Konum</div>
+                        <div class="info-value" id="displayLocation">-</div>
                     </div>
                 </div>
 
@@ -672,6 +710,37 @@
                         <div class="session-stat-value" id="copyCount">0</div>
                         <div class="session-stat-label">Kopyalama</div>
                     </div>
+                </div>
+                
+                <div class="session-info" style="margin-top: 15px;">
+                    <div class="info-item">
+                        <div>Başlangıç Zamanı</div>
+                        <div class="info-value" id="displayStartTime">-</div>
+                    </div>
+                    <div class="info-item">
+                        <div>Toplam Süre</div>
+                        <div class="info-value" id="displayDuration">0sn</div>
+                    </div>
+                    <div class="info-item">
+                        <div>PDF İndirme</div>
+                        <div class="info-value" id="displayPdfDownload">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard">
+            <div class="card">
+                <h2>Seçilen Metinler</h2>
+                <div class="selections-container" id="selectionsList">
+                    <!-- Seçilen metinler buraya eklenecek -->
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Kopyalanan Metinler</h2>
+                <div class="selections-container" id="copiesList">
+                    <!-- Kopyalanan metinler buraya eklenecek -->
                 </div>
             </div>
         </div>
@@ -725,10 +794,8 @@
         // Örnek session verileri
         let sampleSessions = {};
 
-        // Session ID oluşturma
-        function generateSessionId() {
-            return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        }
+        // JSONBin ID'si
+        const JSONBIN_ID = '68f7500aae596e708f213111';
 
         // Admin panelini başlat
         function initializeAdminPanel() {
@@ -736,6 +803,9 @@
             document.getElementById('displaySessionId').textContent = "-";
             document.getElementById('displayIp').textContent = "-";
             document.getElementById('displayDevice').textContent = "-";
+            document.getElementById('displayLocation').textContent = "-";
+            document.getElementById('displayStartTime').textContent = "-";
+            document.getElementById('displayPdfDownload').textContent = "-";
             
             addLog('Admin paneli başlatıldı', 'info');
         }
@@ -745,20 +815,35 @@
             try {
                 addLog('JSONBin\'den session verileri yükleniyor...', 'info');
                 
-                // Örnek verileri kullan (gerçek JSONBin yapısına göre düzenle)
-                sampleSessions = getSampleSessions();
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}/latest`, {
+                    method: 'GET',
+                    headers: {
+                        'X-Master-Key': '$2a$10$Z9ve3j8hJXjO6lZ7b8Y6B.Ka8V9n8YJ8vZ9b8Y6B.Ka8V9n8YJ8vZ'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                sampleSessions = processJsonBinData(data.record);
                 
                 const sessionSelector = document.getElementById('sessionSelector');
                 sessionSelector.innerHTML = '<option value="">Session Seçin...</option>';
                 
-                // Session'ları ekle
-                for (const sessionId in sampleSessions) {
+                // Session'ları ekle (sırayla)
+                const sortedSessions = Object.keys(sampleSessions).sort((a, b) => {
+                    return new Date(sampleSessions[a].timestamp) - new Date(sampleSessions[b].timestamp);
+                });
+                
+                sortedSessions.forEach(sessionId => {
                     const session = sampleSessions[sessionId];
                     const option = document.createElement('option');
                     option.value = sessionId;
-                    option.textContent = `${sessionId} - ${session.ipInfo.ip} - ${new Date(session.timestamp).toLocaleString()}`;
+                    option.textContent = `${sessionId} - ${session.ipInfo.city}, ${session.ipInfo.country} - ${new Date(session.timestamp).toLocaleString()}`;
                     sessionSelector.appendChild(option);
-                }
+                });
                 
                 addLog(`${Object.keys(sampleSessions).length} session yüklendi`, 'info');
             } catch (error) {
@@ -768,6 +853,43 @@
                 // Fallback: Örnek veriler
                 loadFallbackSessions();
             }
+        }
+
+        // JSONBin verilerini işle
+        function processJsonBinData(data) {
+            const sessions = {};
+            
+            if (data.cv_analytics && Array.isArray(data.cv_analytics)) {
+                data.cv_analytics.forEach(item => {
+                    if (item.session && item.session.sessionId) {
+                        const sessionId = item.session.sessionId;
+                        sessions[sessionId] = {
+                            ...item.session,
+                            timestamp: item.timestamp || new Date().toISOString()
+                        };
+                    }
+                });
+            }
+            
+            return sessions;
+        }
+
+        // Fallback session verileri
+        function loadFallbackSessions() {
+            sampleSessions = getSampleSessions();
+
+            const sessionSelector = document.getElementById('sessionSelector');
+            sessionSelector.innerHTML = '<option value="">Session Seçin...</option>';
+            
+            for (const sessionId in sampleSessions) {
+                const session = sampleSessions[sessionId];
+                const option = document.createElement('option');
+                option.value = sessionId;
+                option.textContent = `${sessionId} - ${session.ipInfo.city}, ${session.ipInfo.country} - ${new Date(session.timestamp).toLocaleString()}`;
+                sessionSelector.appendChild(option);
+            }
+            
+            addLog('Fallback session verileri yüklendi', 'warning');
         }
 
         // Örnek session verileri
@@ -943,24 +1065,6 @@
             };
         }
 
-        // Fallback session verileri
-        function loadFallbackSessions() {
-            sampleSessions = getSampleSessions();
-
-            const sessionSelector = document.getElementById('sessionSelector');
-            sessionSelector.innerHTML = '<option value="">Session Seçin...</option>';
-            
-            for (const sessionId in sampleSessions) {
-                const session = sampleSessions[sessionId];
-                const option = document.createElement('option');
-                option.value = sessionId;
-                option.textContent = `${sessionId} - ${session.ipInfo.ip} - ${new Date(session.timestamp).toLocaleString()}`;
-                sessionSelector.appendChild(option);
-            }
-            
-            addLog('Fallback session verileri yüklendi', 'warning');
-        }
-
         // Session verilerini yükle
         function loadSessionData() {
             const sessionId = document.getElementById('sessionSelector').value;
@@ -979,12 +1083,19 @@
             document.getElementById('displaySessionId').textContent = sessionId;
             document.getElementById('displayIp').textContent = currentSessionData.ipInfo.ip;
             document.getElementById('displayDevice').textContent = currentSessionData.deviceInfo.deviceType;
+            document.getElementById('displayLocation').textContent = `${currentSessionData.ipInfo.city}, ${currentSessionData.ipInfo.country}`;
+            document.getElementById('displayStartTime').textContent = new Date(currentSessionData.pageLoadTime).toLocaleString();
+            document.getElementById('displayPdfDownload').textContent = currentSessionData.pdfDownload ? 'Evet' : 'Hayır';
             
-            // İstatistikleri sıfırla
-            resetStats();
+            // İstatistikleri güncelle
+            updateStats();
             
             // Interaction listesini temizle
             document.getElementById('interactionList').innerHTML = '';
+            
+            // Seçim ve kopyalama listelerini temizle
+            document.getElementById('selectionsList').innerHTML = '';
+            document.getElementById('copiesList').innerHTML = '';
             
             // Heatmap'i temizle
             clearHeatmap();
@@ -992,18 +1103,71 @@
             // Mevcut heatmap ayarlarını uygula
             applyCurrentHeatmap();
             
+            // Seçim ve kopyalama verilerini göster
+            displaySelectionsAndCopies();
+            
             addLog('Session verileri yüklendi: ' + sessionId, 'info');
         }
 
-        // İstatistikleri sıfırla
-        function resetStats() {
-            document.getElementById('clickCount').textContent = '0';
-            document.getElementById('moveCount').textContent = '0';
-            document.getElementById('scrollCount').textContent = '0';
-            document.getElementById('keyCount').textContent = '0';
-            document.getElementById('selectionCount').textContent = '0';
-            document.getElementById('copyCount').textContent = '0';
-            document.getElementById('displayDuration').textContent = '0sn';
+        // İstatistikleri güncelle
+        function updateStats() {
+            if (!currentSessionData) return;
+            
+            document.getElementById('clickCount').textContent = currentSessionData.clicks ? currentSessionData.clicks.length : 0;
+            document.getElementById('moveCount').textContent = currentSessionData.mouseMovements ? currentSessionData.mouseMovements.length : 0;
+            document.getElementById('scrollCount').textContent = currentSessionData.interactions ? currentSessionData.interactions.filter(i => i.type === 'scroll').length : 0;
+            document.getElementById('keyCount').textContent = currentSessionData.keyStrokes ? currentSessionData.keyStrokes.length : 0;
+            document.getElementById('selectionCount').textContent = currentSessionData.textSelections ? currentSessionData.textSelections.length : 0;
+            document.getElementById('copyCount').textContent = currentSessionData.textSelections ? currentSessionData.textSelections.length : 0; // Örnekte kopyalama için ayrı veri yok
+            document.getElementById('displayDuration').textContent = calculateSessionDuration() + 'sn';
+        }
+
+        // Session süresini hesapla
+        function calculateSessionDuration() {
+            if (!currentSessionData || !currentSessionData.interactions || currentSessionData.interactions.length === 0) return 0;
+            
+            const firstInteraction = currentSessionData.interactions[0];
+            const lastInteraction = currentSessionData.interactions[currentSessionData.interactions.length - 1];
+            
+            return Math.floor((lastInteraction.timestamp - firstInteraction.timestamp) / 1000);
+        }
+
+        // Seçim ve kopyalama verilerini göster
+        function displaySelectionsAndCopies() {
+            if (!currentSessionData) return;
+            
+            const selectionsList = document.getElementById('selectionsList');
+            const copiesList = document.getElementById('copiesList');
+            
+            // Seçimleri göster
+            if (currentSessionData.textSelections && currentSessionData.textSelections.length > 0) {
+                currentSessionData.textSelections.forEach(selection => {
+                    const item = document.createElement('div');
+                    item.className = 'selection-item';
+                    item.innerHTML = `
+                        <div><strong>Zaman:</strong> ${new Date(selection.timestamp).toLocaleTimeString()}</div>
+                        <div class="text-content">"${selection.text}"</div>
+                    `;
+                    selectionsList.appendChild(item);
+                });
+            } else {
+                selectionsList.innerHTML = '<div class="selection-item">Seçim verisi bulunamadı</div>';
+            }
+            
+            // Kopyalamaları göster (örnekte ayrı bir kopyalama verisi yok, textSelections kullanıyoruz)
+            if (currentSessionData.textSelections && currentSessionData.textSelections.length > 0) {
+                currentSessionData.textSelections.forEach(copy => {
+                    const item = document.createElement('div');
+                    item.className = 'copy-item';
+                    item.innerHTML = `
+                        <div><strong>Zaman:</strong> ${new Date(copy.timestamp).toLocaleTimeString()}</div>
+                        <div class="text-content">"${copy.text}"</div>
+                    `;
+                    copiesList.appendChild(item);
+                });
+            } else {
+                copiesList.innerHTML = '<div class="copy-item">Kopyalama verisi bulunamadı</div>';
+            }
         }
 
         // Simülasyonu başlat
@@ -1161,13 +1325,11 @@
                     break;
                 case 'click':
                     simulateClick(event.data.x, event.data.y);
-                    updateStat('clickCount');
                     if (heatmapLayers.clicks) {
                         addHeatmapPoint(event.data.x, event.data.y, 'clicks');
                     }
                     break;
                 case 'selection':
-                    updateStat('selectionCount');
                     if (heatmapLayers.selections) {
                         highlightSelection(event.data);
                     }
@@ -1180,25 +1342,20 @@
             // Etkileşim türüne göre işlem yap
             switch(interaction.type) {
                 case 'click':
-                    updateStat('clickCount');
                     if (heatmapLayers.clicks) {
                         addHeatmapPoint(interaction.x, interaction.y, 'clicks');
                     }
                     break;
                 case 'scroll':
-                    updateStat('scrollCount');
                     break;
                 case 'keypress':
-                    updateStat('keyCount');
                     break;
                 case 'text_selection':
-                    updateStat('selectionCount');
                     if (heatmapLayers.selections) {
                         highlightSelection(interaction);
                     }
                     break;
                 case 'copy':
-                    updateStat('copyCount');
                     if (heatmapLayers.copies) {
                         highlightCopy(interaction);
                     }
@@ -1213,12 +1370,6 @@
             
             // Interaction listesine ekle
             addInteractionToList(interaction);
-        }
-
-        // İstatistik güncelle
-        function updateStat(statId) {
-            const element = document.getElementById(statId);
-            element.textContent = parseInt(element.textContent) + 1;
         }
 
         // Tıklama simülasyonu
@@ -1366,6 +1517,11 @@
                         highlightSelection(selection);
                     });
                 }
+                if (type === 'copies' && currentSessionData.textSelections) {
+                    currentSessionData.textSelections.forEach(copy => {
+                        highlightCopy(copy);
+                    });
+                }
             }
         }
 
@@ -1457,15 +1613,9 @@
 
         // Verileri temizle
         function clearData() {
-            if (currentSessionData) {
-                currentSessionData.interactions = [];
-                currentSessionData.mouseMovements = [];
-                currentSessionData.clicks = [];
-                currentSessionData.textSelections = [];
-            }
-            
             document.getElementById('interactionList').innerHTML = '';
-            resetStats();
+            document.getElementById('selectionsList').innerHTML = '';
+            document.getElementById('copiesList').innerHTML = '';
             
             clearHeatmap();
             
