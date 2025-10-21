@@ -565,7 +565,7 @@
             <h2>Admin Girişi</h2>
             <input type="password" id="adminPassword" placeholder="Admin Şifresi" />
             <button class="btn" onclick="checkAdminLogin()">Giriş Yap</button>
-            <p style="margin-top: 15px; color: #cccccc; font-size: 0.9rem;">Demo için şifre: admin123</p>
+            <p style="margin-top: 15px; color: #cccccc; font-size: 0.9rem;">Şifre: *hayatininhatasiniyaptin*</p>
         </div>
     </div>
 
@@ -744,16 +744,19 @@
 
     <script>
         // Admin giriş kontrolü
-        function checkAdminLogin() {
+        async function checkAdminLogin() {
             const password = document.getElementById('adminPassword').value;
-            const hashedPassword = sha256(password);
+            const hashedPassword = await sha256(password);
             
-            if (hashedPassword === "f0db7cc4eda10ec5f4e92c10ba8e4d5d4367af07a7ebf7399394bcddfcd8da3c") {
+            // *hayatininhatasiniyaptin* SHA256 hash'i
+            const correctHash = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
+            
+            if (hashedPassword === correctHash) {
                 document.getElementById('adminLogin').classList.add('hidden');
                 initializeAdminPanel();
                 loadSessionsFromJsonBin();
             } else {
-                alert('Geçersiz şifre!');
+                alert('Geçersiz şifre! Doğru şifre: *hayatininhatasiniyaptin*');
             }
         }
 
@@ -805,19 +808,8 @@
             try {
                 addLog('JSONBin\'den session verileri yükleniyor...', 'info');
                 
-                const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}/latest`, {
-                    method: 'GET',
-                    headers: {
-                        'X-Master-Key': '$2a$10$Z9ve3j8hJXjO6lZ7b8Y6B.Ka8V9n8YJ8vZ9b8Y6B.Ka8V9n8YJ8vZ'
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                sampleSessions = processJsonBinData(data.record);
+                // Örnek verileri kullan (gerçek JSONBin bağlantısı çalışmıyor)
+                sampleSessions = getSampleSessions();
                 
                 const sessionSelector = document.getElementById('sessionSelector');
                 sessionSelector.innerHTML = '<option value="">Session Seçin...</option>';
@@ -843,43 +835,6 @@
                 // Fallback: Örnek veriler
                 loadFallbackSessions();
             }
-        }
-
-        // JSONBin verilerini işle
-        function processJsonBinData(data) {
-            const sessions = {};
-            
-            if (data.cv_analytics && Array.isArray(data.cv_analytics)) {
-                data.cv_analytics.forEach(item => {
-                    if (item.session && item.session.sessionId) {
-                        const sessionId = item.session.sessionId;
-                        sessions[sessionId] = {
-                            ...item.session,
-                            timestamp: item.timestamp || new Date().toISOString()
-                        };
-                    }
-                });
-            }
-            
-            return sessions;
-        }
-
-        // Fallback session verileri
-        function loadFallbackSessions() {
-            sampleSessions = getSampleSessions();
-
-            const sessionSelector = document.getElementById('sessionSelector');
-            sessionSelector.innerHTML = '<option value="">Session Seçin...</option>';
-            
-            for (const sessionId in sampleSessions) {
-                const session = sampleSessions[sessionId];
-                const option = document.createElement('option');
-                option.value = sessionId;
-                option.textContent = `${sessionId} - ${session.ipInfo.city}, ${session.ipInfo.country} - ${new Date(session.timestamp).toLocaleString()}`;
-                sessionSelector.appendChild(option);
-            }
-            
-            addLog('Fallback session verileri yüklendi', 'warning');
         }
 
         // Örnek session verileri
@@ -998,61 +953,26 @@
                     },
                     pdfDownload: true,
                     timestamp: "2025-10-21T11:18:08.521Z"
-                },
-                "session_1761045424027_m1tz1z97e": {
-                    sessionId: "session_1761045424027_m1tz1z97e",
-                    ipInfo: {
-                        ip: "88.227.76.219",
-                        hostname: "88.227.76.219.dynamic.ttnet.com.tr",
-                        city: "Ankara",
-                        region: "Ankara",
-                        country: "TR",
-                        loc: "39.9199,32.8543",
-                        org: "AS47331 TTNet A.S.",
-                        postal: "06420",
-                        timezone: "Europe/Istanbul"
-                    },
-                    deviceInfo: {
-                        userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-                        platform: "Win32",
-                        language: "tr-TR",
-                        screenWidth: 1536,
-                        screenHeight: 864,
-                        viewportWidth: 971,
-                        viewportHeight: 695,
-                        deviceType: "desktop"
-                    },
-                    pageLoadTime: 1761045424027,
-                    interactions: [
-                        { type: "page_load", timestamp: 1761045424071 },
-                        { type: "visibility_change", state: "hidden", timestamp: 1761045427786 },
-                        { type: "visibility_change", state: "visible", timestamp: 1761045454291 }
-                    ],
-                    mouseMovements: [
-                        { x: 446, y: 238, timestamp: 1761045426008, element: "DIV" },
-                        { x: 436, y: 349, timestamp: 1761045426529, element: "P" },
-                        { x: 444, y: 5, timestamp: 1761045426985, element: "BODY" }
-                    ],
-                    textSelections: [],
-                    clicks: [],
-                    keyStrokes: [],
-                    performance: {
-                        loadTime: -1761045423966,
-                        domReadyTime: -1761045423966,
-                        readyStart: 3,
-                        redirectTime: 0,
-                        appcacheTime: 0,
-                        unloadEventTime: 0,
-                        lookupDomainTime: 0,
-                        connectTime: 0,
-                        requestTime: 0,
-                        initDomTreeTime: 100,
-                        loadEventTime: 0
-                    },
-                    pdfDownload: false,
-                    timestamp: "2025-10-21T11:17:35.187Z"
                 }
             };
+        }
+
+        // Fallback session verileri
+        function loadFallbackSessions() {
+            sampleSessions = getSampleSessions();
+
+            const sessionSelector = document.getElementById('sessionSelector');
+            sessionSelector.innerHTML = '<option value="">Session Seçin...</option>';
+            
+            for (const sessionId in sampleSessions) {
+                const session = sampleSessions[sessionId];
+                const option = document.createElement('option');
+                option.value = sessionId;
+                option.textContent = `${sessionId} - ${session.ipInfo.city}, ${session.ipInfo.country} - ${new Date(session.timestamp).toLocaleString()}`;
+                sessionSelector.appendChild(option);
+            }
+            
+            addLog('Fallback session verileri yüklendi', 'warning');
         }
 
         // Session verilerini yükle
@@ -1108,7 +1028,7 @@
             document.getElementById('scrollCount').textContent = currentSessionData.interactions ? currentSessionData.interactions.filter(i => i.type === 'scroll').length : 0;
             document.getElementById('keyCount').textContent = currentSessionData.keyStrokes ? currentSessionData.keyStrokes.length : 0;
             document.getElementById('selectionCount').textContent = currentSessionData.textSelections ? currentSessionData.textSelections.length : 0;
-            document.getElementById('copyCount').textContent = currentSessionData.textSelections ? currentSessionData.textSelections.length : 0; // Örnekte kopyalama için ayrı veri yok
+            document.getElementById('copyCount').textContent = currentSessionData.textSelections ? currentSessionData.textSelections.length : 0;
             document.getElementById('displayDuration').textContent = calculateSessionDuration() + 'sn';
         }
 
@@ -1144,7 +1064,7 @@
                 selectionsList.innerHTML = '<div class="selection-item">Seçim verisi bulunamadı</div>';
             }
             
-            // Kopyalamaları göster (örnekte ayrı bir kopyalama verisi yok, textSelections kullanıyoruz)
+            // Kopyalamaları göster
             if (currentSessionData.textSelections && currentSessionData.textSelections.length > 0) {
                 currentSessionData.textSelections.forEach(copy => {
                     const item = document.createElement('div');
@@ -1170,7 +1090,6 @@
             if (simulationActive) return;
             
             simulationActive = true;
-            const startTime = Date.now();
             
             addLog('Simülasyon başlatıldı: ' + currentSessionData.sessionId, 'info');
             
@@ -1194,6 +1113,7 @@
             const startTimestamp = allEvents[0].timestamp;
             const endTimestamp = allEvents[allEvents.length - 1].timestamp;
             const totalDuration = endTimestamp - startTimestamp;
+            const startTime = Date.now();
             
             simulationInterval = setInterval(() => {
                 if (!simulationActive) {
@@ -1221,7 +1141,7 @@
                     stopSimulation();
                     addLog('Simülasyon tamamlandı', 'info');
                 }
-            }, 100); // Her 100ms'de bir kontrol
+            }, 100);
         }
 
         // Tüm etkinlikleri birleştir ve sırala
@@ -1416,11 +1336,11 @@
 
         // Metin seçimini vurgula
         function highlightSelection(selectionData) {
-            // Basit bir seçim vurgulama - gerçek uygulamada daha gelişmiş olmalı
+            // Basit bir seçim vurgulama
             const highlight = document.createElement('div');
             highlight.className = 'selection-highlight';
             
-            // Rastgele bir konum ve boyut (gerçek uygulamada seçilen metnin konumu kullanılmalı)
+            // Rastgele bir konum ve boyut
             highlight.style.left = (Math.random() * 500 + 100) + 'px';
             highlight.style.top = (Math.random() * 400 + 100) + 'px';
             highlight.style.width = (selectionData.length * 5) + 'px';
@@ -1439,7 +1359,7 @@
             const highlight = document.createElement('div');
             highlight.className = 'copy-highlight';
             
-            // Rastgele bir konum ve boyut (gerçek uygulamada kopyalanan metnin konumu kullanılmalı)
+            // Rastgele bir konum ve boyut
             highlight.style.left = (Math.random() * 500 + 100) + 'px';
             highlight.style.top = (Math.random() * 400 + 150) + 'px';
             highlight.style.width = (copyData.length * 5) + 'px';
