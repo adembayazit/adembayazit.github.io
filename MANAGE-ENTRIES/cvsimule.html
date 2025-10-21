@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CV Analytics Admin Paneli</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
         :root {
             --primary-color: #00FF00;
@@ -565,11 +567,11 @@
             <h2>Admin Girişi</h2>
             <input type="password" id="adminPassword" placeholder="Admin Şifresi" />
             <button class="btn" onclick="checkAdminLogin()">Giriş Yap</button>
-            <p style="margin-top: 15px; color: #cccccc; font-size: 0.9rem;">Şifre: *hayatininhatasiniyaptin*</p>
+            <p style="margin-top: 15px; color: #cccccc; font-size: 0.9rem;">Şifre: dunyakimseyekalmaz</p>
         </div>
     </div>
 
-    <div class="admin-container">
+    <div class="admin-container hidden" id="adminPanel">
         <div class="header">
             <h1>CV Analytics Admin Paneli</h1>
             <p>CV üzerindeki kullanıcı etkileşimlerinin gerçek zamanlı analizi ve simülasyonu</p>
@@ -744,28 +746,25 @@
 
     <script>
         // Admin giriş kontrolü
-        async function checkAdminLogin() {
+        function checkAdminLogin() {
             const password = document.getElementById('adminPassword').value;
-            const hashedPassword = await sha256(password);
             
-            // *hayatininhatasiniyaptin* SHA256 hash'i
-            const correctHash = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
+            // SHA256 hash fonksiyonu
+            function hashPassword(password) {
+                return CryptoJS.SHA256(password).toString(CryptoJS.enc.Hex);
+            }
             
-            if (hashedPassword === correctHash) {
+            // "dunyakimseyekalmaz" şifresinin hash'i
+            const CORRECT_HASH = "be408a40a5c6c0df48e0004b217dec97519da5e73876598203ec53bbe3ece5f7";
+            
+            if (hashPassword(password) === CORRECT_HASH) {
                 document.getElementById('adminLogin').classList.add('hidden');
+                document.getElementById('adminPanel').classList.remove('hidden');
                 initializeAdminPanel();
                 loadSessionsFromJsonBin();
             } else {
-                alert('Geçersiz şifre! Doğru şifre: *hayatininhatasiniyaptin*');
+                alert('Geçersiz şifre! Doğru şifre: dunyakimseyekalmaz');
             }
-        }
-
-        // SHA256 hash fonksiyonu
-        async function sha256(message) {
-            const msgBuffer = new TextEncoder().encode(message);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
         // Simülasyon değişkenleri
