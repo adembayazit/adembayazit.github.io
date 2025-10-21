@@ -558,6 +558,10 @@
             font-size: 0.9rem;
             color: #cccccc;
         }
+        
+        .session-selector {
+            min-width: 300px;
+        }
     </style>
 </head>
 <body>
@@ -583,7 +587,7 @@
             <button class="btn" onclick="clearData()">Verileri Temizle</button>
             
             <div class="input-group">
-                <select id="sessionSelector">
+                <select id="sessionSelector" class="session-selector">
                     <option value="">Session Seçin...</option>
                 </select>
                 <button class="btn" onclick="loadSessionData()">Session Yükle</button>
@@ -593,6 +597,8 @@
                 <input type="text" id="sessionId" placeholder="Session ID" readonly>
                 <button class="btn" onclick="copySessionId()">Kopyala</button>
             </div>
+            
+            <button class="btn" onclick="loadAllSessions()">Tüm Session'ları Yenile</button>
         </div>
 
         <div class="heatmap-controls">
@@ -761,7 +767,7 @@
                 document.getElementById('adminLogin').classList.add('hidden');
                 document.getElementById('adminPanel').classList.remove('hidden');
                 initializeAdminPanel();
-                loadSessionsFromJsonBin();
+                loadAllSessions();
             } else {
                 alert('Geçersiz şifre! Doğru şifre: dunyakimseyekalmaz');
             }
@@ -771,6 +777,7 @@
         let simulationActive = false;
         let simulationInterval;
         let currentSessionData = null;
+        let allSessions = {};
         let heatmapLayers = {
             clicks: true,
             movements: true,
@@ -782,9 +789,6 @@
         const mousePointer = document.getElementById('mouse-pointer');
         const heatmap = document.getElementById('heatmap');
         const cvIframe = document.getElementById('cv-iframe');
-
-        // Örnek session verileri
-        let sampleSessions = {};
 
         // JSONBin ID'si
         const JSONBIN_ID = '68f7500aae596e708f213111';
@@ -802,31 +806,29 @@
             addLog('Admin paneli başlatıldı', 'info');
         }
 
-        // JSONBin'den session verilerini yükle
-        async function loadSessionsFromJsonBin() {
+        // JSONBin'den TÜM session verilerini yükle
+        async function loadAllSessions() {
             try {
-                addLog('JSONBin\'den session verileri yükleniyor...', 'info');
+                addLog('JSONBin\'den tüm session verileri yükleniyor...', 'info');
                 
-                // Örnek verileri kullan (gerçek JSONBin bağlantısı çalışmıyor)
-                sampleSessions = getSampleSessions();
-                
-                const sessionSelector = document.getElementById('sessionSelector');
-                sessionSelector.innerHTML = '<option value="">Session Seçin...</option>';
-                
-                // Session'ları ekle (sırayla)
-                const sortedSessions = Object.keys(sampleSessions).sort((a, b) => {
-                    return new Date(sampleSessions[a].timestamp) - new Date(sampleSessions[b].timestamp);
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}/latest`, {
+                    method: 'GET',
+                    headers: {
+                        'X-Master-Key': '$2a$10$Z1B5L.wkU.xcJWq2O.5YlO6.5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5'
+                    }
                 });
                 
-                sortedSessions.forEach(sessionId => {
-                    const session = sampleSessions[sessionId];
-                    const option = document.createElement('option');
-                    option.value = sessionId;
-                    option.textContent = `${sessionId} - ${session.ipInfo.city}, ${session.ipInfo.country} - ${new Date(session.timestamp).toLocaleString()}`;
-                    sessionSelector.appendChild(option);
-                });
+                if (!response.ok) {
+                    throw new Error('JSONBin bağlantı hatası');
+                }
                 
-                addLog(`${Object.keys(sampleSessions).length} session yüklendi`, 'info');
+                const data = await response.json();
+                allSessions = data.record || {};
+                
+                // Session selector'ı güncelle
+                updateSessionSelector();
+                
+                addLog(`${Object.keys(allSessions).length} session yüklendi`, 'info');
             } catch (error) {
                 console.error('Session yükleme hatası:', error);
                 addLog('Session verileri yüklenirken hata oluştu: ' + error.message, 'error');
@@ -836,9 +838,39 @@
             }
         }
 
-        // Örnek session verileri
-        function getSampleSessions() {
-            return {
+        // Session selector'ı güncelle
+        function updateSessionSelector() {
+            const sessionSelector = document.getElementById('sessionSelector');
+            sessionSelector.innerHTML = '<option value="">Session Seçin...</option>';
+            
+            // Session'ları tarihe göre sırala (en yeni en üstte)
+            const sortedSessions = Object.keys(allSessions).sort((a, b) => {
+                return new Date(allSessions[b].timestamp || 0) - new Date(allSessions[a].timestamp || 0);
+            });
+            
+            sortedSessions.forEach(sessionId => {
+                const session = allSessions[sessionId];
+                const option = document.createElement('option');
+                option.value = sessionId;
+                
+                // Tarih formatı
+                const date = session.timestamp ? new Date(session.timestamp) : new Date();
+                const dateStr = date.toLocaleDateString('tr-TR') + ' ' + date.toLocaleTimeString('tr-TR');
+                
+                // Konum bilgisi
+                const location = session.ipInfo ? `${session.ipInfo.city}, ${session.ipInfo.country}` : 'Bilinmiyor';
+                
+                option.textContent = `${sessionId} - ${location} - ${dateStr}`;
+                sessionSelector.appendChild(option);
+            });
+            
+            addLog(`${Object.keys(allSessions).length} session listelendi`, 'info');
+        }
+
+        // Fallback session verileri
+        function loadFallbackSessions() {
+            // Örnek session verileri oluştur
+            allSessions = {
                 "session_1761045465323_i7x3w9zs0": {
                     sessionId: "session_1761045465323_i7x3w9zs0",
                     ipInfo: {
@@ -952,25 +984,66 @@
                     },
                     pdfDownload: true,
                     timestamp: "2025-10-21T11:18:08.521Z"
+                },
+                "session_1761045465324_i7x3w9zs1": {
+                    sessionId: "session_1761045465324_i7x3w9zs1",
+                    ipInfo: {
+                        ip: "95.70.123.45",
+                        hostname: "95.70.123.45.dynamic.ttnet.com.tr",
+                        city: "İstanbul",
+                        region: "İstanbul",
+                        country: "TR",
+                        loc: "41.0082,28.9784",
+                        org: "AS47331 TTNet A.S.",
+                        postal: "34000",
+                        timezone: "Europe/Istanbul"
+                    },
+                    deviceInfo: {
+                        userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15",
+                        platform: "iPhone",
+                        language: "tr-TR",
+                        screenWidth: 375,
+                        screenHeight: 667,
+                        viewportWidth: 375,
+                        viewportHeight: 553,
+                        deviceType: "mobile"
+                    },
+                    pageLoadTime: 1761045465324,
+                    interactions: [
+                        { type: "page_load", timestamp: 1761045465346 },
+                        { type: "click", tag: "A", className: "contact-link", timestamp: 1761045467777, x: 120, y: 450 },
+                        { type: "scroll", position: 1200, maxScroll: 4818, timestamp: 1761045473993 }
+                    ],
+                    mouseMovements: [
+                        { x: 120, y: 450, timestamp: 1761045467777, element: "A" },
+                        { x: 125, y: 455, timestamp: 1761045467888, element: "A" }
+                    ],
+                    textSelections: [
+                        { text: "contact", timestamp: 1761045467888, length: 7 }
+                    ],
+                    clicks: [
+                        { type: "click", tag: "A", id: "none", className: "contact-link", timestamp: 1761045467777, x: 120, y: 450 }
+                    ],
+                    keyStrokes: [],
+                    performance: {
+                        loadTime: -1761045464836,
+                        domReadyTime: -1761045464836,
+                        readyStart: 15,
+                        redirectTime: 0,
+                        appcacheTime: 0,
+                        unloadEventTime: 0,
+                        lookupDomainTime: 0,
+                        connectTime: 0,
+                        requestTime: 200,
+                        initDomTreeTime: 310,
+                        loadEventTime: 0
+                    },
+                    pdfDownload: false,
+                    timestamp: "2025-10-21T12:22:15.123Z"
                 }
             };
-        }
-
-        // Fallback session verileri
-        function loadFallbackSessions() {
-            sampleSessions = getSampleSessions();
-
-            const sessionSelector = document.getElementById('sessionSelector');
-            sessionSelector.innerHTML = '<option value="">Session Seçin...</option>';
             
-            for (const sessionId in sampleSessions) {
-                const session = sampleSessions[sessionId];
-                const option = document.createElement('option');
-                option.value = sessionId;
-                option.textContent = `${sessionId} - ${session.ipInfo.city}, ${session.ipInfo.country} - ${new Date(session.timestamp).toLocaleString()}`;
-                sessionSelector.appendChild(option);
-            }
-            
+            updateSessionSelector();
             addLog('Fallback session verileri yüklendi', 'warning');
         }
 
@@ -982,7 +1055,7 @@
                 return;
             }
             
-            currentSessionData = sampleSessions[sessionId];
+            currentSessionData = allSessions[sessionId];
             if (!currentSessionData) {
                 addLog('Session verileri bulunamadı: ' + sessionId, 'error');
                 return;
@@ -990,10 +1063,12 @@
             
             document.getElementById('sessionId').value = sessionId;
             document.getElementById('displaySessionId').textContent = sessionId;
-            document.getElementById('displayIp').textContent = currentSessionData.ipInfo.ip;
-            document.getElementById('displayDevice').textContent = currentSessionData.deviceInfo.deviceType;
-            document.getElementById('displayLocation').textContent = `${currentSessionData.ipInfo.city}, ${currentSessionData.ipInfo.country}`;
-            document.getElementById('displayStartTime').textContent = new Date(currentSessionData.pageLoadTime).toLocaleString();
+            document.getElementById('displayIp').textContent = currentSessionData.ipInfo ? currentSessionData.ipInfo.ip : "-";
+            document.getElementById('displayDevice').textContent = currentSessionData.deviceInfo ? currentSessionData.deviceInfo.deviceType : "-";
+            document.getElementById('displayLocation').textContent = currentSessionData.ipInfo ? 
+                `${currentSessionData.ipInfo.city}, ${currentSessionData.ipInfo.country}` : "-";
+            document.getElementById('displayStartTime').textContent = currentSessionData.pageLoadTime ? 
+                new Date(currentSessionData.pageLoadTime).toLocaleString() : "-";
             document.getElementById('displayPdfDownload').textContent = currentSessionData.pdfDownload ? 'Evet' : 'Hayır';
             
             // İstatistikleri güncelle
@@ -1213,8 +1288,8 @@
             if (event.data.x && event.data.y) {
                 // CV iframe'inin boyutuna göre koordinatları ayarla
                 const cvContainer = document.getElementById('cv-preview-container');
-                const scaleX = cvContainer.offsetWidth / currentSessionData.deviceInfo.viewportWidth;
-                const scaleY = cvContainer.offsetHeight / currentSessionData.deviceInfo.viewportHeight;
+                const scaleX = cvContainer.offsetWidth / (currentSessionData.deviceInfo.viewportWidth || 1536);
+                const scaleY = cvContainer.offsetHeight / (currentSessionData.deviceInfo.viewportHeight || 695);
                 const scaledX = event.data.x * scaleX;
                 const scaledY = event.data.y * scaleY;
                 
@@ -1285,8 +1360,8 @@
         function simulateClick(x, y) {
             // CV iframe'inin boyutuna göre koordinatları ayarla
             const cvContainer = document.getElementById('cv-preview-container');
-            const scaleX = cvContainer.offsetWidth / currentSessionData.deviceInfo.viewportWidth;
-            const scaleY = cvContainer.offsetHeight / currentSessionData.deviceInfo.viewportHeight;
+            const scaleX = cvContainer.offsetWidth / (currentSessionData.deviceInfo.viewportWidth || 1536);
+            const scaleY = cvContainer.offsetHeight / (currentSessionData.deviceInfo.viewportHeight || 695);
             const scaledX = x * scaleX;
             const scaledY = y * scaleY;
             
@@ -1308,8 +1383,8 @@
         function addHeatmapPoint(x, y, type) {
             // CV iframe'inin boyutuna göre koordinatları ayarla
             const cvContainer = document.getElementById('cv-preview-container');
-            const scaleX = cvContainer.offsetWidth / currentSessionData.deviceInfo.viewportWidth;
-            const scaleY = cvContainer.offsetHeight / currentSessionData.deviceInfo.viewportHeight;
+            const scaleX = cvContainer.offsetWidth / (currentSessionData.deviceInfo.viewportWidth || 1536);
+            const scaleY = cvContainer.offsetHeight / (currentSessionData.deviceInfo.viewportHeight || 695);
             const scaledX = x * scaleX;
             const scaledY = y * scaleY;
             
@@ -1342,7 +1417,7 @@
             // Rastgele bir konum ve boyut
             highlight.style.left = (Math.random() * 500 + 100) + 'px';
             highlight.style.top = (Math.random() * 400 + 100) + 'px';
-            highlight.style.width = (selectionData.length * 5) + 'px';
+            highlight.style.width = ((selectionData.length || 10) * 5) + 'px';
             highlight.style.height = '20px';
             
             // Tooltip ekle
@@ -1361,7 +1436,7 @@
             // Rastgele bir konum ve boyut
             highlight.style.left = (Math.random() * 500 + 100) + 'px';
             highlight.style.top = (Math.random() * 400 + 150) + 'px';
-            highlight.style.width = (copyData.length * 5) + 'px';
+            highlight.style.width = ((copyData.length || 10) * 5) + 'px';
             highlight.style.height = '20px';
             
             // Tooltip ekle
@@ -1472,7 +1547,7 @@
             } else if (interaction.type === 'copy' && interaction.text) {
                 details = `"${interaction.text}" kopyalandı`;
             } else if (interaction.type === 'click') {
-                details = `(${interaction.x}, ${interaction.y}) - ${interaction.tag}`;
+                details = `(${interaction.x}, ${interaction.y}) - ${interaction.tag || ''}`;
             } else if (interaction.type === 'mouse_move') {
                 details = `(${interaction.x}, ${interaction.y})`;
             } else if (interaction.type === 'scroll') {
