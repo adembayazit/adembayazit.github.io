@@ -1,1 +1,739 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Kullanıcı Davranış Analizi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
+        body {
+            background: linear-gradient(135deg, #1a2f3a, #0d1b23);
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #00ff88, #00ccff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            color: #ccc;
+            font-size: 1.1rem;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .card h2 {
+            color: #00ff88;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+            border-bottom: 2px solid #00ff88;
+            padding-bottom: 8px;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #00ff88;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+
+        .simulation-area {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        #simulation-screen {
+            width: 100%;
+            height: 100%;
+            background: white;
+            position: relative;
+        }
+
+        #mouse-pointer {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #ff4444;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1000;
+            transition: all 0.1s ease;
+            box-shadow: 0 0 10px rgba(255, 68, 68, 0.8);
+        }
+
+        .click-effect {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 2px solid #00ff88;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 999;
+            animation: clickPulse 0.6s ease-out;
+        }
+
+        @keyframes clickPulse {
+            0% { transform: scale(0.5); opacity: 1; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #00ff88, #00ccff);
+            border: none;
+            border-radius: 8px;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+        }
+
+        .btn.secondary {
+            background: linear-gradient(45deg, #ff6b6b, #ffa500);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .input-group input {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            min-width: 200px;
+        }
+
+        .input-group input::placeholder {
+            color: #ccc;
+        }
+
+        .data-logs {
+            max-height: 400px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .log-entry {
+            padding: 10px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border-left: 4px solid #00ff88;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .log-entry.error {
+            border-left-color: #ff4444;
+        }
+
+        .log-entry.warning {
+            border-left-color: #ffa500;
+        }
+
+        .log-entry.info {
+            border-left-color: #00ccff;
+        }
+
+        .session-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .info-item {
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .info-value {
+            font-weight: bold;
+            color: #00ff88;
+            margin-top: 5px;
+        }
+
+        .heatmap-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .heatmap-point {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,0,0,0.8) 0%, rgba(255,0,0,0) 70%);
+            transform: translate(-50%, -50%);
+        }
+
+        .timeline {
+            margin-top: 20px;
+        }
+
+        .timeline-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .timeline-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #00ccff);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .interaction-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .interaction-item {
+            padding: 8px 12px;
+            margin-bottom: 5px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            border-left: 3px solid #00ccff;
+        }
+
+        .interaction-time {
+            color: #00ff88;
+            font-weight: bold;
+        }
+
+        .interaction-type {
+            color: #ffa500;
+            margin: 0 5px;
+        }
+
+        .admin-login {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .login-form {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            min-width: 300px;
+        }
+
+        .login-form h2 {
+            margin-bottom: 20px;
+            color: #00ff88;
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Admin Giriş Modal -->
+    <div id="adminLogin" class="admin-login">
+        <div class="login-form">
+            <h2>Admin Girişi</h2>
+            <input type="password" id="adminPassword" placeholder="Admin Şifresi" />
+            <button class="btn" onclick="checkAdminLogin()">Giriş Yap</button>
+            <p style="margin-top: 15px; color: #ccc; font-size: 0.9rem;">Demo için şifre: admin123</p>
+        </div>
+    </div>
+
+    <div class="admin-container">
+        <div class="header">
+            <h1>Kullanıcı Davranış Analizi - Admin Paneli</h1>
+            <p>Gerçek zamanlı kullanıcı etkileşimleri ve davranış analizi</p>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="startSimulation()">Simülasyon Başlat</button>
+            <button class="btn secondary" onclick="stopSimulation()">Simülasyon Durdur</button>
+            <button class="btn" onclick="clearData()">Verileri Temizle</button>
+            
+            <div class="input-group">
+                <input type="text" id="ipInput" placeholder="IP Adresi (örn: 192.168.1.100)" value="192.168.1.100">
+                <button class="btn" onclick="updateIp()">IP Güncelle</button>
+            </div>
+
+            <div class="input-group">
+                <input type="text" id="sessionId" placeholder="Session ID" readonly>
+                <button class="btn" onclick="copySessionId()">Kopyala</button>
+            </div>
+        </div>
+
+        <div class="dashboard">
+            <div class="card">
+                <h2>Canlı Simülasyon</h2>
+                <div class="simulation-area">
+                    <div id="simulation-screen">
+                        <div id="mouse-pointer"></div>
+                        <div class="heatmap-overlay" id="heatmap"></div>
+                    </div>
+                </div>
+                <div class="timeline">
+                    <div class="timeline-bar">
+                        <div class="timeline-progress" id="timelineProgress"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Session Bilgileri</h2>
+                <div class="session-info">
+                    <div class="info-item">
+                        <div>Session ID</div>
+                        <div class="info-value" id="displaySessionId">-</div>
+                    </div>
+                    <div class="info-item">
+                        <div>IP Adresi</div>
+                        <div class="info-value" id="displayIp">-</div>
+                    </div>
+                    <div class="info-item">
+                        <div>Cihaz</div>
+                        <div class="info-value" id="displayDevice">-</div>
+                    </div>
+                    <div class="info-item">
+                        <div>Süre</div>
+                        <div class="info-value" id="displayDuration">0sn</div>
+                    </div>
+                </div>
+
+                <div class="stat-grid">
+                    <div class="stat-item">
+                        <div class="stat-number" id="clickCount">0</div>
+                        <div class="stat-label">Tıklama</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="moveCount">0</div>
+                        <div class="stat-label">Fare Hareketi</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="scrollCount">0</div>
+                        <div class="stat-label">Kaydırma</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="keyCount">0</div>
+                        <div class="stat-label">Klavye</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard">
+            <div class="card">
+                <h2>Gerçek Zamanlı Etkileşimler</h2>
+                <div class="interaction-list" id="interactionList">
+                    <!-- Etkileşimler buraya eklenecek -->
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Sistem Logları</h2>
+                <div class="data-logs" id="dataLogs">
+                    <div class="log-entry info">Sistem başlatıldı. Simülasyonu başlatmak için butona tıklayın.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Admin giriş kontrolü
+        function checkAdminLogin() {
+            const password = document.getElementById('adminPassword').value;
+            if (password === 'admin123') {
+                document.getElementById('adminLogin').classList.add('hidden');
+                initializeAdminPanel();
+            } else {
+                alert('Geçersiz şifre! Demo şifresi: admin123');
+            }
+        }
+
+        // Simülasyon değişkenleri
+        let simulationActive = false;
+        let simulationInterval;
+        let sessionData = {
+            sessionId: generateSessionId(),
+            ipInfo: { ip: '192.168.1.100', city: 'Ankara', country: 'TR' },
+            deviceInfo: { deviceType: 'desktop' },
+            interactions: [],
+            mouseMovements: [],
+            clicks: [],
+            startTime: Date.now()
+        };
+
+        // DOM elementleri
+        const mousePointer = document.getElementById('mouse-pointer');
+        const heatmap = document.getElementById('heatmap');
+        const simulationScreen = document.getElementById('simulation-screen');
+
+        // Session ID oluşturma
+        function generateSessionId() {
+            return 'sim_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        // Admin panelini başlat
+        function initializeAdminPanel() {
+            document.getElementById('sessionId').value = sessionData.sessionId;
+            document.getElementById('displaySessionId').textContent = sessionData.sessionId.substring(0, 15) + '...';
+            document.getElementById('displayIp').textContent = sessionData.ipInfo.ip;
+            document.getElementById('displayDevice').textContent = sessionData.deviceInfo.deviceType;
+            
+            addLog('Admin paneli başlatıldı', 'info');
+            updateStats();
+        }
+
+        // Simülasyonu başlat
+        function startSimulation() {
+            if (simulationActive) return;
+            
+            simulationActive = true;
+            sessionData.startTime = Date.now();
+            
+            addLog('Simülasyon başlatıldı', 'info');
+            
+            // Fare hareketi simülasyonu
+            simulationInterval = setInterval(() => {
+                if (!simulationActive) return;
+                
+                simulateMouseMovement();
+                simulateRandomInteractions();
+                updateDuration();
+            }, 100);
+            
+            document.getElementById('timelineProgress').style.width = '100%';
+        }
+
+        // Simülasyonu durdur
+        function stopSimulation() {
+            simulationActive = false;
+            clearInterval(simulationInterval);
+            addLog('Simülasyon durduruldu', 'warning');
+            document.getElementById('timelineProgress').style.width = '0%';
+        }
+
+        // Fare hareketi simülasyonu
+        function simulateMouseMovement() {
+            const screenRect = simulationScreen.getBoundingClientRect();
+            const x = Math.random() * (screenRect.width - 40) + 20;
+            const y = Math.random() * (screenRect.height - 40) + 20;
+            
+            // Fare pointer'ını hareket ettir
+            mousePointer.style.left = x + 'px';
+            mousePointer.style.top = y + 'px';
+            
+            // Heatmap noktası ekle
+            addHeatmapPoint(x, y);
+            
+            // Veri kaydet
+            sessionData.mouseMovements.push({
+                x: x,
+                y: y,
+                timestamp: Date.now()
+            });
+            
+            document.getElementById('moveCount').textContent = sessionData.mouseMovements.length;
+        }
+
+        // Rastgele etkileşimler simüle et
+        function simulateRandomInteractions() {
+            const interactions = ['click', 'scroll', 'keypress', 'hover', 'focus'];
+            const randomInteraction = interactions[Math.floor(Math.random() * interactions.length)];
+            
+            const interactionData = {
+                type: randomInteraction,
+                timestamp: Date.now(),
+                details: {}
+            };
+            
+            switch(randomInteraction) {
+                case 'click':
+                    interactionData.details = { x: mousePointer.style.left, y: mousePointer.style.top };
+                    simulateClick();
+                    document.getElementById('clickCount').textContent = sessionData.clicks.length;
+                    break;
+                case 'scroll':
+                    interactionData.details = { direction: Math.random() > 0.5 ? 'down' : 'up' };
+                    document.getElementById('scrollCount').textContent = parseInt(document.getElementById('scrollCount').textContent) + 1;
+                    break;
+                case 'keypress':
+                    const keys = ['Enter', 'Space', 'Tab', 'Escape'];
+                    interactionData.details = { key: keys[Math.floor(Math.random() * keys.length)] };
+                    document.getElementById('keyCount').textContent = parseInt(document.getElementById('keyCount').textContent) + 1;
+                    break;
+            }
+            
+            sessionData.interactions.push(interactionData);
+            addInteractionToList(interactionData);
+        }
+
+        // Tıklama simülasyonu
+        function simulateClick() {
+            const clickEffect = document.createElement('div');
+            clickEffect.className = 'click-effect';
+            clickEffect.style.left = mousePointer.style.left;
+            clickEffect.style.top = mousePointer.style.top;
+            simulationScreen.appendChild(clickEffect);
+            
+            // Tıklama verisini kaydet
+            sessionData.clicks.push({
+                x: parseInt(mousePointer.style.left),
+                y: parseInt(mousePointer.style.top),
+                timestamp: Date.now()
+            });
+            
+            // Efekti temizle
+            setTimeout(() => {
+                clickEffect.remove();
+            }, 600);
+        }
+
+        // Heatmap noktası ekle
+        function addHeatmapPoint(x, y) {
+            const point = document.createElement('div');
+            point.className = 'heatmap-point';
+            point.style.left = x + 'px';
+            point.style.top = y + 'px';
+            point.style.width = '20px';
+            point.style.height = '20px';
+            
+            heatmap.appendChild(point);
+            
+            // Noktayı yavaşça kaybet
+            setTimeout(() => {
+                point.style.opacity = '0';
+                point.style.transition = 'opacity 2s ease';
+            }, 1000);
+            
+            // Noktayı temizle
+            setTimeout(() => {
+                point.remove();
+            }, 3000);
+        }
+
+        // Etkileşim listesine ekle
+        function addInteractionToList(interaction) {
+            const list = document.getElementById('interactionList');
+            const item = document.createElement('div');
+            item.className = 'interaction-item';
+            
+            const time = new Date(interaction.timestamp).toLocaleTimeString();
+            item.innerHTML = `
+                <span class="interaction-time">${time}</span>
+                <span class="interaction-type">${interaction.type}</span>
+                <span>${JSON.stringify(interaction.details)}</span>
+            `;
+            
+            list.insertBefore(item, list.firstChild);
+            
+            // Listeyi sınırla
+            if (list.children.length > 20) {
+                list.removeChild(list.lastChild);
+            }
+        }
+
+        // Log ekle
+        function addLog(message, type = 'info') {
+            const logs = document.getElementById('dataLogs');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            
+            const time = new Date().toLocaleTimeString();
+            logEntry.textContent = `[${time}] ${message}`;
+            
+            logs.appendChild(logEntry);
+            logs.scrollTop = logs.scrollHeight;
+        }
+
+        // İstatistikleri güncelle
+        function updateStats() {
+            // İstatistikler zaten canlı olarak güncelleniyor
+        }
+
+        // Süreyi güncelle
+        function updateDuration() {
+            const duration = Math.floor((Date.now() - sessionData.startTime) / 1000);
+            document.getElementById('displayDuration').textContent = duration + 'sn';
+        }
+
+        // IP güncelle
+        function updateIp() {
+            const newIp = document.getElementById('ipInput').value;
+            if (newIp) {
+                sessionData.ipInfo.ip = newIp;
+                document.getElementById('displayIp').textContent = newIp;
+                addLog(`IP adresi güncellendi: ${newIp}`, 'info');
+            }
+        }
+
+        // Session ID kopyala
+        function copySessionId() {
+            const sessionIdInput = document.getElementById('sessionId');
+            sessionIdInput.select();
+            document.execCommand('copy');
+            addLog('Session ID panoya kopyalandı', 'info');
+        }
+
+        // Verileri temizle
+        function clearData() {
+            sessionData.interactions = [];
+            sessionData.mouseMovements = [];
+            sessionData.clicks = [];
+            
+            document.getElementById('interactionList').innerHTML = '';
+            document.getElementById('heatmap').innerHTML = '';
+            document.getElementById('clickCount').textContent = '0';
+            document.getElementById('moveCount').textContent = '0';
+            document.getElementById('scrollCount').textContent = '0';
+            document.getElementById('keyCount').textContent = '0';
+            document.getElementById('displayDuration').textContent = '0sn';
+            
+            addLog('Tüm veriler temizlendi', 'warning');
+        }
+
+        // Sayfa kapatıldığında simülasyonu durdur
+        window.addEventListener('beforeunload', () => {
+            if (simulationActive) {
+                stopSimulation();
+            }
+        });
+
+        // Enter tuşu ile giriş
+        document.getElementById('adminPassword').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkAdminLogin();
+            }
+        });
+    </script>
+</body>
+</html>
