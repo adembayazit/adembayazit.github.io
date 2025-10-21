@@ -833,69 +833,49 @@
                 }
                 
                 const data = await response.json();
-                console.log('JSONBin\'den gelen veri:', data); // Debug için
+                console.log('JSONBin\'den gelen veri:', data);
                 
-                // JSON yapısını işle - farklı olası yapıları kontrol et
+                // JSON yapısını işle - daha güvenli bir yaklaşım
                 allSessions = {};
                 
-                if (data.record) {
-                    // Eğer record içinde cv_analytics varsa
-                    if (data.record.cv_analytics && Array.isArray(data.record.cv_analytics)) {
-                        data.record.cv_analytics.forEach(item => {
-                            if (item.session && item.session.sessionId) {
-                                allSessions[item.session.sessionId] = item.session;
-                            }
-                        });
-                    } 
-                    // Eğer record doğrudan cv_analytics ise
-                    else if (data.record.totalSessions && Array.isArray(data.record.cv_analytics)) {
-                        data.record.cv_analytics.forEach(item => {
-                            if (item.session && item.session.sessionId) {
-                                allSessions[item.session.sessionId] = item.session;
-                            }
-                        });
-                    }
-                    // Eğer record doğrudan session array'i ise
-                    else if (Array.isArray(data.record)) {
-                        data.record.forEach(item => {
-                            if (item.session && item.session.sessionId) {
-                                allSessions[item.session.sessionId] = item.session;
-                            } else if (item.sessionId) {
-                                allSessions[item.sessionId] = item;
-                            }
-                        });
-                    }
-                } 
-                // Eğer doğrudan cv_analytics array'i ise
-                else if (data.cv_analytics && Array.isArray(data.cv_analytics)) {
-                    data.cv_analytics.forEach(item => {
-                        if (item.session && item.session.sessionId) {
-                            allSessions[item.session.sessionId] = item.session;
-                        }
-                    });
+                // Veriyi normalize et
+                let sessionsArray = [];
+                
+                // Farklı JSON yapılarını işle
+                if (data.record && data.record.cv_analytics) {
+                    sessionsArray = data.record.cv_analytics;
+                } else if (data.cv_analytics) {
+                    sessionsArray = data.cv_analytics;
+                } else if (Array.isArray(data)) {
+                    sessionsArray = data;
+                } else if (data.record && Array.isArray(data.record)) {
+                    sessionsArray = data.record;
+                } else {
+                    // Hiçbiri değilse, veriyi olduğu gibi kullan
+                    sessionsArray = [data];
                 }
-                // Eğer doğrudan session array'i ise
-                else if (Array.isArray(data)) {
-                    data.forEach(item => {
+                
+                // Session verilerini işle
+                sessionsArray.forEach(item => {
+                    try {
+                        let session = null;
+                        
+                        // Farklı veri yapılarını işle
                         if (item.session && item.session.sessionId) {
-                            allSessions[item.session.sessionId] = item.session;
+                            session = item.session;
                         } else if (item.sessionId) {
-                            allSessions[item.sessionId] = item;
+                            session = item;
+                        } else if (typeof item === 'object') {
+                            session = item;
                         }
-                    });
-                }
-                // Eğer hiçbiri değilse, veriyi olduğu gibi kabul et
-                else if (typeof data === 'object') {
-                    // Tüm anahtarları session olarak kabul et
-                    for (const key in data) {
-                        if (data[key] && data[key].sessionId) {
-                            allSessions[data[key].sessionId] = data[key];
+                        
+                        if (session && session.sessionId) {
+                            allSessions[session.sessionId] = session;
                         }
+                    } catch (e) {
+                        console.error('Session işleme hatası:', e, item);
                     }
-                }
-                else {
-                    throw new Error('JSON yapısı beklenen formatta değil: ' + JSON.stringify(data).substring(0, 200));
-                }
+                });
                 
                 if (Object.keys(allSessions).length === 0) {
                     throw new Error('Hiç session verisi bulunamadı');
@@ -1379,6 +1359,9 @@
                     break;
                 case 'visibility_change':
                     addLog(`Sayfa ${interaction.state === 'hidden' ? 'gizlendi' : 'görünür oldu'}`, 'info');
+                    break;
+                case 'page_load':
+                    addLog('Sayfa yüklendi', 'info');
                     break;
             }
             
