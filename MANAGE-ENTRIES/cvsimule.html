@@ -1067,7 +1067,7 @@
                 const data = await response.json();
                 console.log('JSONBin\'den gelen veri:', data);
                 
-                // JSON yapısını işle - daha güvenli bir yaklaşım
+                // JSON yapısını işle - cv_analytics dizisi içinde session objeleri
                 allSessions = {};
                 
                 // Veriyi normalize et
@@ -1087,12 +1087,12 @@
                     sessionsArray = [data];
                 }
                 
-                // Session verilerini işle
+                // Session verilerini işle - cv_analytics içindeki session objeleri
                 sessionsArray.forEach(item => {
                     try {
                         let session = null;
                         
-                        // Farklı veri yapılarını işle
+                        // cv_analytics dizisindeki item'lar session objesi içeriyor
                         if (item.session && item.session.sessionId) {
                             session = item.session;
                         } else if (item.sessionId) {
@@ -1135,7 +1135,7 @@
 
         // JSON boyutunu güncelle
         function updateJsonSize() {
-            const jsonString = JSON.stringify(allSessions);
+            const jsonString = JSON.stringify({cv_analytics: Object.values(allSessions)});
             const sizeInKB = (new Blob([jsonString]).size / 1024).toFixed(2);
             document.getElementById('jsonSize').textContent = `${sizeInKB} KB`;
             
@@ -1148,7 +1148,14 @@
 
         // JSON verilerini indir
         function downloadJsonData() {
-            const jsonString = JSON.stringify(allSessions, null, 2);
+            const jsonData = {
+                cv_analytics: Object.values(allSessions).map(session => ({
+                    session: session,
+                    timestamp: new Date().toISOString()
+                }))
+            };
+            
+            const jsonString = JSON.stringify(jsonData, null, 2);
             const blob = new Blob([jsonString], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             
@@ -1163,13 +1170,45 @@
             addLog('JSON verileri indirildi', 'info');
         }
 
-        // JSON verilerini temizle
-        function clearJsonData() {
-            if (confirm('Tüm JSON verilerini temizlemek istediğinizden emin misiniz? Bu işlem geri alınamaz!')) {
-                allSessions = {};
-                updateSessionSelector();
-                updateJsonSize();
-                addLog('Tüm JSON verileri temizlendi', 'warning');
+        // JSON verilerini temizle (JSONBin'de de temizle)
+        async function clearJsonData() {
+            if (confirm('Tüm JSON verilerini temizlemek istediğinizden emin misiniz? Bu işlem geri alınamaz! JSONBin\'deki veriler de silinecek.')) {
+                try {
+                    addLog('JSONBin verileri temizleniyor...', 'info');
+                    
+                    // JSONBin'i temizlemek için boş cv_analytics dizisi gönder
+                    const response = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            path: `/b/${JSONBIN_ID}`,
+                            method: 'PUT',
+                            body: { cv_analytics: [] }
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('JSONBin temizleme hatası: ' + response.status);
+                    }
+                    
+                    // Yerel state'i de temizle
+                    allSessions = {};
+                    updateSessionSelector();
+                    updateJsonSize();
+                    addLog('JSONBin ve yerel veriler temizlendi', 'warning');
+                    
+                } catch (error) {
+                    console.error('Temizleme hatası:', error);
+                    addLog('JSONBin temizlenirken hata oluştu: ' + error.message, 'error');
+                    
+                    // Sadece yerel temizlik yap
+                    allSessions = {};
+                    updateSessionSelector();
+                    updateJsonSize();
+                    addLog('Yerel veriler temizlendi (JSONBin temizlenemedi)', 'warning');
+                }
             }
         }
 
@@ -1275,9 +1314,6 @@
                 applyCurrentHeatmap();
             }
         }
-
-        // Geri kalan kodlar aynı kalacak, sadece yukarıdaki fonksiyonları ekledik
-        // Önceki kodun devamı...
 
         // Session selector'ı güncelle
         function updateSessionSelector() {
