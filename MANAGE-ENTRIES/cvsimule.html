@@ -70,6 +70,104 @@
             }
         }
 
+        /* Mobil Tasarım */
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .header p {
+                font-size: 0.9rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .btn {
+                width: 100%;
+                padding: 15px;
+                font-size: 1.1rem;
+            }
+            
+            .input-group {
+                width: 100%;
+                flex-direction: column;
+            }
+            
+            .input-group input, .input-group select {
+                min-width: 100%;
+                padding: 15px;
+                font-size: 1rem;
+            }
+            
+            .session-selector {
+                min-width: 100% !important;
+            }
+            
+            .heatmap-controls {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .heatmap-legend {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .simulation-area {
+                height: 500px;
+            }
+            
+            .stat-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 10px;
+            }
+            
+            .stat-item {
+                padding: 10px;
+            }
+            
+            .stat-number {
+                font-size: 1.5rem !important;
+            }
+            
+            .session-info {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .card h2 {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stat-grid {
+                grid-template-columns: 1fr 1fr !important;
+            }
+            
+            .session-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .simulation-area {
+                height: 400px;
+            }
+            
+            .header {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+        }
+
         .card {
             background: var(--card-bg);
             border-radius: 15px;
@@ -117,6 +215,56 @@
             height: 100%;
             border: none;
             border-radius: 10px;
+        }
+
+        /* Mobil CV Simülasyonu için özel stiller */
+        .mobile-simulation {
+            width: 375px !important;
+            height: 667px !important;
+            margin: 0 auto;
+            border: 2px solid #444;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            background: white;
+        }
+
+        .mobile-simulation .cv-frame-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .mobile-simulation #cv-iframe {
+            width: 100%;
+            height: 100%;
+        }
+
+        .mobile-simulation #mouse-pointer {
+            width: 15px;
+            height: 15px;
+        }
+
+        .device-toggle {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
+
+        .device-btn {
+            padding: 10px 20px;
+            background: #333;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .device-btn.active {
+            background: var(--primary-color);
+            color: black;
         }
 
         #mouse-pointer {
@@ -205,6 +353,9 @@
             cursor: pointer;
             transition: all 0.3s ease;
             font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .btn:hover {
@@ -236,7 +387,7 @@
             padding: 12px;
             border: none;
             border-radius: 8px;
-            background: #ff4444;
+            background: #222222;
             color: white;
             font-size: 1rem;
             min-width: 200px;
@@ -567,6 +718,59 @@
             opacity: 0.7;
             pointer-events: none;
         }
+        
+        .json-management {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: rgba(0, 255, 0, 0.05);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 0, 0.2);
+        }
+        
+        .json-info {
+            flex-grow: 1;
+        }
+        
+        .json-size {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .fingerprint-section {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 0, 0.05);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 0, 0.2);
+        }
+        
+        .fingerprint-list {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+        
+        .fingerprint-item {
+            padding: 10px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            border-left: 3px solid #00ccff;
+        }
+        
+        .fingerprint-sessions {
+            margin-top: 5px;
+            font-size: 0.8rem;
+            color: #cccccc;
+        }
+        
+        .fingerprint-count {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
     </style>
 </head>
 <body>
@@ -586,32 +790,41 @@
             <p>CV üzerindeki kullanıcı etkileşimlerinin gerçek zamanlı analizi ve simülasyonu</p>
         </div>
 
+        <div class="json-management">
+            <div class="json-info">
+                <div>JSON Boyutu: <span class="json-size" id="jsonSize">0 KB</span></div>
+                <div id="jsonStatus">Veri yükleniyor...</div>
+            </div>
+            <button class="btn" onclick="downloadJsonData()"><i class="fas fa-download"></i> JSON İndir</button>
+            <button class="btn secondary" onclick="clearJsonData()"><i class="fas fa-trash"></i> JSON Temizle</button>
+        </div>
+
         <div class="controls">
-            <button class="btn" onclick="startSimulation()">Simülasyon Başlat</button>
-            <button class="btn secondary" onclick="stopSimulation()">Simülasyon Durdur</button>
-            <button class="btn" onclick="clearData()">Verileri Temizle</button>
+            <button class="btn" onclick="startSimulation()"><i class="fas fa-play"></i> Simülasyon Başlat</button>
+            <button class="btn secondary" onclick="stopSimulation()"><i class="fas fa-stop"></i> Simülasyon Durdur</button>
+            <button class="btn" onclick="clearData()"><i class="fas fa-broom"></i> Verileri Temizle</button>
             
             <div class="input-group">
                 <select id="sessionSelector" class="session-selector">
                     <option value="">Session Seçin...</option>
                 </select>
-                <button class="btn" onclick="loadSessionData()">Session Yükle</button>
+                <button class="btn" onclick="loadSessionData()"><i class="fas fa-sync"></i> Session Yükle</button>
             </div>
 
             <div class="input-group">
                 <input type="text" id="sessionId" placeholder="Session ID" readonly>
-                <button class="btn" onclick="copySessionId()">Kopyala</button>
+                <button class="btn" onclick="copySessionId()"><i class="fas fa-copy"></i> Kopyala</button>
             </div>
             
-            <button class="btn" onclick="loadAllSessions()">Tüm Session'ları Yenile</button>
+            <button class="btn" onclick="loadAllSessions()"><i class="fas fa-redo"></i> Tüm Session'ları Yenile</button>
         </div>
 
         <div class="heatmap-controls">
-            <button class="btn active" id="heatmap-clicks" onclick="toggleHeatmap('clicks')">Tıklama Heatmap</button>
-            <button class="btn active" id="heatmap-movements" onclick="toggleHeatmap('movements')">Hareket Heatmap</button>
-            <button class="btn active" id="heatmap-selections" onclick="toggleHeatmap('selections')">Seçimleri Göster</button>
-            <button class="btn active" id="heatmap-copies" onclick="toggleHeatmap('copies')">Kopyalamaları Göster</button>
-            <button class="btn secondary" onclick="clearHeatmap()">Heatmap Temizle</button>
+            <button class="btn active" id="heatmap-clicks" onclick="toggleHeatmap('clicks')"><i class="fas fa-mouse-pointer"></i> Tıklama Heatmap</button>
+            <button class="btn active" id="heatmap-movements" onclick="toggleHeatmap('movements')"><i class="fas fa-arrows-alt"></i> Hareket Heatmap</button>
+            <button class="btn active" id="heatmap-selections" onclick="toggleHeatmap('selections')"><i class="fas fa-highlighter"></i> Seçimleri Göster</button>
+            <button class="btn active" id="heatmap-copies" onclick="toggleHeatmap('copies')"><i class="fas fa-copy"></i> Kopyalamaları Göster</button>
+            <button class="btn secondary" onclick="clearHeatmap()"><i class="fas fa-trash"></i> Heatmap Temizle</button>
             
             <div class="heatmap-legend">
                 <div class="legend-item">
@@ -633,10 +846,15 @@
             </div>
         </div>
 
+        <div class="device-toggle">
+            <button class="device-btn active" id="desktop-btn" onclick="setDeviceType('desktop')"><i class="fas fa-desktop"></i> Masaüstü</button>
+            <button class="device-btn" id="mobile-btn" onclick="setDeviceType('mobile')"><i class="fas fa-mobile-alt"></i> Mobil</button>
+        </div>
+
         <div class="dashboard">
             <div class="card">
                 <h2>CV Önizleme ve Simülasyon</h2>
-                <div class="simulation-area">
+                <div class="simulation-area" id="simulation-area">
                     <div id="cv-preview-container">
                         <div class="cv-frame-container">
                             <iframe id="cv-iframe" src="https://adembayazit.com/viewcv.html"></iframe>
@@ -657,7 +875,7 @@
             <div class="card">
                 <div class="stats-header">
                     <h2>Session Bilgileri ve İstatistikler</h2>
-                    <button class="stats-refresh" onclick="loadSessionData()">Yenile</button>
+                    <button class="stats-refresh" onclick="loadSessionData()"><i class="fas fa-sync"></i> Yenile</button>
                 </div>
                 <div class="session-info">
                     <div class="info-item">
@@ -738,6 +956,14 @@
             </div>
         </div>
 
+        <div class="fingerprint-section">
+            <h2>Fingerprint Tespiti</h2>
+            <p>Aynı fingerprint ile gelen kullanıcıların tespiti</p>
+            <div class="fingerprint-list" id="fingerprintList">
+                <!-- Fingerprint verileri buraya eklenecek -->
+            </div>
+        </div>
+
         <div class="dashboard">
             <div class="card">
                 <h2>Gerçek Zamanlı Etkileşimler</h2>
@@ -789,11 +1015,14 @@
             selections: true,
             copies: true
         };
+        let currentDeviceType = 'desktop';
+        let userFingerprints = {};
 
         // DOM elementleri
         const mousePointer = document.getElementById('mouse-pointer');
         const heatmap = document.getElementById('heatmap');
         const cvIframe = document.getElementById('cv-iframe');
+        const simulationArea = document.getElementById('simulation-area');
 
         // JSONBin ID'si
         const JSONBIN_ID = '68f7500aae596e708f213111';
@@ -809,6 +1038,9 @@
             document.getElementById('displayPdfDownload').textContent = "-";
             
             addLog('Admin paneli başlatıldı', 'info');
+            
+            // JSON boyutunu güncelle
+            updateJsonSize();
         }
 
         // JSONBin'den TÜM session verilerini yükle
@@ -886,6 +1118,12 @@
                 // Session selector'ı güncelle
                 updateSessionSelector();
                 
+                // Fingerprint analizini yap
+                analyzeFingerprints();
+                
+                // JSON boyutunu güncelle
+                updateJsonSize();
+                
             } catch (error) {
                 console.error('Session yükleme hatası:', error);
                 addLog('Session verileri yüklenirken hata oluştu: ' + error.message, 'error');
@@ -894,6 +1132,152 @@
                 loadFallbackSessions();
             }
         }
+
+        // JSON boyutunu güncelle
+        function updateJsonSize() {
+            const jsonString = JSON.stringify(allSessions);
+            const sizeInKB = (new Blob([jsonString]).size / 1024).toFixed(2);
+            document.getElementById('jsonSize').textContent = `${sizeInKB} KB`;
+            
+            if (sizeInKB > 100) {
+                document.getElementById('jsonStatus').innerHTML = '<span style="color: #ff4444;">JSON boyutu 100 KB\'yi aştı! Lütfen indirin ve temizleyin.</span>';
+            } else {
+                document.getElementById('jsonStatus').textContent = 'JSON boyutu normal';
+            }
+        }
+
+        // JSON verilerini indir
+        function downloadJsonData() {
+            const jsonString = JSON.stringify(allSessions, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `cv_analytics_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            addLog('JSON verileri indirildi', 'info');
+        }
+
+        // JSON verilerini temizle
+        function clearJsonData() {
+            if (confirm('Tüm JSON verilerini temizlemek istediğinizden emin misiniz? Bu işlem geri alınamaz!')) {
+                allSessions = {};
+                updateSessionSelector();
+                updateJsonSize();
+                addLog('Tüm JSON verileri temizlendi', 'warning');
+            }
+        }
+
+        // Fingerprint analizi yap
+        function analyzeFingerprints() {
+            userFingerprints = {};
+            
+            Object.values(allSessions).forEach(session => {
+                // Fingerprint oluştur (IP + User Agent + Ek bilgiler)
+                const fingerprintData = [
+                    session.ipInfo?.ip || 'unknown',
+                    session.deviceInfo?.userAgent || 'unknown',
+                    session.deviceInfo?.platform || 'unknown',
+                    session.deviceInfo?.language || 'unknown'
+                ].join('|');
+                
+                const fingerprint = CryptoJS.SHA256(fingerprintData).toString().substring(0, 16);
+                
+                if (!userFingerprints[fingerprint]) {
+                    userFingerprints[fingerprint] = {
+                        sessions: [],
+                        firstSeen: session.pageLoadTime || session.timestamp,
+                        lastSeen: session.pageLoadTime || session.timestamp,
+                        location: session.ipInfo ? `${session.ipInfo.city || 'Bilinmiyor'}, ${session.ipInfo.country || 'Bilinmiyor'}` : 'Bilinmiyor'
+                    };
+                }
+                
+                userFingerprints[fingerprint].sessions.push({
+                    id: session.sessionId,
+                    time: session.pageLoadTime || session.timestamp,
+                    device: session.deviceInfo?.deviceType || 'Bilinmiyor'
+                });
+                
+                // Tarihleri güncelle
+                const sessionTime = session.pageLoadTime || session.timestamp;
+                if (sessionTime < userFingerprints[fingerprint].firstSeen) {
+                    userFingerprints[fingerprint].firstSeen = sessionTime;
+                }
+                if (sessionTime > userFingerprints[fingerprint].lastSeen) {
+                    userFingerprints[fingerprint].lastSeen = sessionTime;
+                }
+            });
+            
+            // Fingerprint listesini güncelle
+            updateFingerprintList();
+        }
+
+        // Fingerprint listesini güncelle
+        function updateFingerprintList() {
+            const fingerprintList = document.getElementById('fingerprintList');
+            fingerprintList.innerHTML = '';
+            
+            const fingerprints = Object.entries(userFingerprints)
+                .sort((a, b) => b[1].sessions.length - a[1].sessions.length);
+            
+            if (fingerprints.length === 0) {
+                fingerprintList.innerHTML = '<div class="fingerprint-item">Fingerprint verisi bulunamadı</div>';
+                return;
+            }
+            
+            fingerprints.forEach(([fingerprint, data]) => {
+                const item = document.createElement('div');
+                item.className = 'fingerprint-item';
+                
+                const firstSeen = new Date(data.firstSeen).toLocaleDateString('tr-TR');
+                const lastSeen = new Date(data.lastSeen).toLocaleDateString('tr-TR');
+                
+                item.innerHTML = `
+                    <div><strong>Fingerprint:</strong> ${fingerprint}</div>
+                    <div><strong>Konum:</strong> ${data.location}</div>
+                    <div class="fingerprint-sessions">
+                        <span class="fingerprint-count">${data.sessions.length} session</span> | 
+                        İlk: ${firstSeen} | Son: ${lastSeen}
+                    </div>
+                `;
+                
+                fingerprintList.appendChild(item);
+            });
+            
+            addLog(`${fingerprints.length} farklı fingerprint tespit edildi`, 'info');
+        }
+
+        // Cihaz tipini ayarla
+        function setDeviceType(deviceType) {
+            currentDeviceType = deviceType;
+            
+            // Butonları güncelle
+            document.getElementById('desktop-btn').classList.toggle('active', deviceType === 'desktop');
+            document.getElementById('mobile-btn').classList.toggle('active', deviceType === 'mobile');
+            
+            // Simülasyon alanını güncelle
+            if (deviceType === 'mobile') {
+                simulationArea.classList.add('mobile-simulation');
+            } else {
+                simulationArea.classList.remove('mobile-simulation');
+            }
+            
+            addLog(`Cihaz tipi ${deviceType} olarak ayarlandı`, 'info');
+            
+            // Eğer session yüklüyse, simülasyonu yeniden başlat
+            if (currentSessionData) {
+                clearHeatmap();
+                applyCurrentHeatmap();
+            }
+        }
+
+        // Geri kalan kodlar aynı kalacak, sadece yukarıdaki fonksiyonları ekledik
+        // Önceki kodun devamı...
 
         // Session selector'ı güncelle
         function updateSessionSelector() {
@@ -1031,6 +1415,8 @@
             };
             
             updateSessionSelector();
+            analyzeFingerprints();
+            updateJsonSize();
             addLog('Fallback session verileri yüklendi', 'warning');
         }
 
@@ -1057,6 +1443,10 @@
             document.getElementById('displayStartTime').textContent = currentSessionData.pageLoadTime ? 
                 new Date(currentSessionData.pageLoadTime).toLocaleString() : "-";
             document.getElementById('displayPdfDownload').textContent = currentSessionData.pdfDownload ? 'Evet' : 'Hayır';
+            
+            // Cihaz tipini otomatik ayarla
+            const deviceType = currentSessionData.deviceInfo?.deviceType === 'mobile' ? 'mobile' : 'desktop';
+            setDeviceType(deviceType);
             
             // İstatistikleri güncelle
             updateStats();
@@ -1293,8 +1683,8 @@
             if (event.data.x && event.data.y) {
                 // CV iframe'inin boyutuna göre koordinatları ayarla
                 const cvContainer = document.getElementById('cv-preview-container');
-                const viewportWidth = currentSessionData.deviceInfo.viewportWidth || 1536;
-                const viewportHeight = currentSessionData.deviceInfo.viewportHeight || 695;
+                const viewportWidth = currentDeviceType === 'mobile' ? 375 : (currentSessionData.deviceInfo.viewportWidth || 1536);
+                const viewportHeight = currentDeviceType === 'mobile' ? 667 : (currentSessionData.deviceInfo.viewportHeight || 695);
                 const scaleX = cvContainer.offsetWidth / viewportWidth;
                 const scaleY = cvContainer.offsetHeight / viewportHeight;
                 const scaledX = event.data.x * scaleX;
@@ -1373,8 +1763,8 @@
         function simulateClick(x, y) {
             // CV iframe'inin boyutuna göre koordinatları ayarla
             const cvContainer = document.getElementById('cv-preview-container');
-            const viewportWidth = currentSessionData.deviceInfo.viewportWidth || 1536;
-            const viewportHeight = currentSessionData.deviceInfo.viewportHeight || 695;
+            const viewportWidth = currentDeviceType === 'mobile' ? 375 : (currentSessionData.deviceInfo.viewportWidth || 1536);
+            const viewportHeight = currentDeviceType === 'mobile' ? 667 : (currentSessionData.deviceInfo.viewportHeight || 695);
             const scaleX = cvContainer.offsetWidth / viewportWidth;
             const scaleY = cvContainer.offsetHeight / viewportHeight;
             const scaledX = x * scaleX;
@@ -1398,8 +1788,8 @@
         function addHeatmapPoint(x, y, type) {
             // CV iframe'inin boyutuna göre koordinatları ayarla
             const cvContainer = document.getElementById('cv-preview-container');
-            const viewportWidth = currentSessionData.deviceInfo.viewportWidth || 1536;
-            const viewportHeight = currentSessionData.deviceInfo.viewportHeight || 695;
+            const viewportWidth = currentDeviceType === 'mobile' ? 375 : (currentSessionData.deviceInfo.viewportWidth || 1536);
+            const viewportHeight = currentDeviceType === 'mobile' ? 667 : (currentSessionData.deviceInfo.viewportHeight || 695);
             const scaleX = cvContainer.offsetWidth / viewportWidth;
             const scaleY = cvContainer.offsetHeight / viewportHeight;
             const scaledX = x * scaleX;
