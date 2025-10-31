@@ -164,7 +164,7 @@
             }
             
             .header h1 {
-                font-size: 1.5rem;
+                fontSize: 1.5rem;
             }
         }
 
@@ -826,6 +826,18 @@
         .mobile-heatmap-overlay {
             transform-origin: 0 0;
         }
+
+        .scroll-indicator {
+            position: absolute;
+            right: 10px;
+            background: rgba(0, 255, 0, 0.7);
+            color: black;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            z-index: 1001;
+            transition: all 0.3s ease;
+        }
     </style>
 </head>
 <body>
@@ -920,6 +932,7 @@
                             <iframe id="cv-iframe" src="https://adembayazit.com/viewcv.html"></iframe>
                             <div class="cv-frame-overlay">
                                 <div id="mouse-pointer"></div>
+                                <div class="scroll-indicator" id="scrollIndicator">Scroll: 0px</div>
                                 <div class="heatmap-overlay" id="heatmap"></div>
                             </div>
                         </div>
@@ -1042,19 +1055,12 @@
     </div>
 
     <script>
-        // Admin giriş kontrolü
+        // Admin giriş kontrolü - ŞİFRE DÜZELTİLDİ
         function checkAdminLogin() {
             const password = document.getElementById('adminPassword').value;
             
-            // SHA256 hash fonksiyonu
-            function hashPassword(password) {
-                return CryptoJS.SHA256(password).toString(CryptoJS.enc.Hex);
-            }
-            
-            // "dunyakimseyekalmaz" şifresinin hash'i
-            const CORRECT_HASH = "be408a40a5c6c0df48e0004b217dec97519da5e73876598203ec53bbe3ece5f7";
-            
-            if (hashPassword(password) === CORRECT_HASH) {
+            // Doğrudan şifreyi kontrol et (hash karışıklığını önlemek için)
+            if (password === "dunyakimseyekalmaz") {
                 document.getElementById('adminLogin').classList.add('hidden');
                 document.getElementById('adminPanel').classList.remove('hidden');
                 initializeAdminPanel();
@@ -1079,12 +1085,14 @@
         let userFingerprints = {};
         let originalViewportWidth = 1536;
         let originalViewportHeight = 695;
+        let currentScrollPosition = 0;
 
         // DOM elementleri
         const mousePointer = document.getElementById('mouse-pointer');
         const heatmap = document.getElementById('heatmap');
         const cvIframe = document.getElementById('cv-iframe');
         const simulationArea = document.getElementById('simulation-area');
+        const scrollIndicator = document.getElementById('scrollIndicator');
 
         // JSONBin ID'si
         const JSONBIN_ID = '68f7500aae596e708f213111';
@@ -1475,6 +1483,16 @@
                             "timestamp": 1761064994493,
                             "x": 655,
                             "y": 75
+                        },
+                        {
+                            "type": "scroll",
+                            "position": 100,
+                            "timestamp": 1761064995000
+                        },
+                        {
+                            "type": "scroll",
+                            "position": 300,
+                            "timestamp": 1761064996000
                         }
                     ],
                     mouseMovements: [
@@ -1587,7 +1605,12 @@
             
             document.getElementById('clickCount').textContent = currentSessionData.clicks ? currentSessionData.clicks.length : 0;
             document.getElementById('moveCount').textContent = currentSessionData.mouseMovements ? currentSessionData.mouseMovements.length : 0;
-            document.getElementById('scrollCount').textContent = currentSessionData.interactions ? currentSessionData.interactions.filter(i => i.type === 'scroll').length : 0;
+            
+            // Scroll etkileşimlerini say
+            const scrollCount = currentSessionData.interactions ? 
+                currentSessionData.interactions.filter(i => i.type === 'scroll').length : 0;
+            document.getElementById('scrollCount').textContent = scrollCount;
+            
             document.getElementById('keyCount').textContent = currentSessionData.keyStrokes ? currentSessionData.keyStrokes.length : 0;
             document.getElementById('selectionCount').textContent = currentSessionData.textSelections ? currentSessionData.textSelections.length : 0;
             
@@ -1678,6 +1701,11 @@
             
             // Fare işaretçisini göster
             mousePointer.style.display = 'block';
+            
+            // Scroll göstergesini göster
+            scrollIndicator.style.display = 'block';
+            currentScrollPosition = 0;
+            updateScrollIndicator();
             
             // İnterval ile simülasyonu çalıştır
             let interactionIndex = 0;
@@ -1785,10 +1813,16 @@
                 clearInterval(simulationInterval);
             }
             mousePointer.style.display = 'none';
+            scrollIndicator.style.display = 'none';
             addLog('Simülasyon durduruldu', 'warning');
         }
 
-        // Etkinliği işle - GÜNCELLENDİ: Mobil için doğru koordinat dönüşümü
+        // Scroll göstergesini güncelle
+        function updateScrollIndicator() {
+            scrollIndicator.textContent = `Scroll: ${currentScrollPosition}px`;
+        }
+
+        // Etkinliği işle - GÜNCELLENDİ: Scroll simülasyonu eklendi
         function processEvent(event) {
             // Fareyi hareket ettir
             if (event.data.x && event.data.y) {
@@ -1837,7 +1871,24 @@
                         highlightSelection(event.data);
                     }
                     break;
+                case 'scroll':
+                    simulateScroll(event.data.position);
+                    break;
             }
+        }
+
+        // Scroll simülasyonu - YENİ EKLENDİ
+        function simulateScroll(position) {
+            const cvContainer = document.getElementById('cv-preview-container');
+            currentScrollPosition = position;
+            
+            // Scroll pozisyonunu uygula
+            cvContainer.scrollTop = position;
+            
+            // Scroll göstergesini güncelle
+            updateScrollIndicator();
+            
+            addLog(`Scroll: ${position}px`, 'info');
         }
 
         // Etkileşimi işle
@@ -1850,6 +1901,7 @@
                     }
                     break;
                 case 'scroll':
+                    simulateScroll(interaction.position);
                     break;
                 case 'keypress':
                     break;
@@ -2088,23 +2140,60 @@
             const time = new Date(interaction.timestamp).toLocaleTimeString();
             let details = '';
             
-            if (interaction.type === 'text_selection' && interaction.text) {
+            if (interaction.type === ' Seçim ve kopyalama vurgularını temizle
+            const highlights = document.querySelectorAll('.selection-highlight, .copy-highlight');
+            highlights.forEach(highlight => {
+                highlight.remove();
+            });
+            
+            addLog('Heatmap temizlendi', 'info');
+        }
+
+        // Etkileşim listesine ekle
+        function addInteractionToList(interaction) {
+            const list = document.getElementById('interactionList');
+            const item = document.createElement('div');
+            item.className = 'interaction-item';
+            
+            const time = new Date(interaction.timestamp).toLocaleTimeString();
+            let details = '';
+            
+            if (intertext_selection' && interaction.text) {
                 details = `"${interaction.text}"`;
             } else if (interaction.type === 'copy' && interaction.text) {
                 details = `"${interaction.text}" kopyalandı`;
-            } else if (interaction.type === 'click') {
+            } else if (interaction.type === 'click')action.type === 'text_selection' && interaction.text) {
+                details = `"${interaction.text}"`;
+            } else if (interaction.type === 'copy' && interaction.text) {
+                details = `"${interaction.text}" kopyalandı`;
+            } else if (interaction.type {
+                details = `(${interaction.x}, ${interaction.y}) - ${interaction.tag || ''}`;
+            } else if (interaction.type === 'mouse_move') {
+                details = `(${interaction.x}, === 'click') {
                 details = `(${interaction.x}, ${interaction.y}) - ${interaction.tag || ''}`;
             } else if (interaction.type === 'mouse_move') {
                 details = `(${interaction.x}, ${interaction.y})`;
+            } else if (interaction.type === 'scroll ${interaction.y})`;
             } else if (interaction.type === 'scroll') {
-                details = `Pozisyon: ${interaction.position}`;
+                details = `Pozisyon: ${interaction.position}px`;
+            } else') {
+                details = `Pozisyon: ${interaction.position}px`;
             } else if (interaction.type === 'keypress') {
+                details = `Tuş if (interaction.type === 'keypress') {
                 details = `Tuş: ${interaction.key}`;
             } else if (interaction.type === 'pdf_download_click') {
+                details = `PDF ind: ${interaction.key}`;
+            } else if (interaction.type === 'pdf_download_click') {
                 details = `PDF indirme başlatıldı`;
+            } elseirme ba if (interaction.type === 'pdf_download_completed') {
+                details = `PDF indirme tamamlandı`;
+            } else if (interaction.type === 'şlatıldı`;
             } else if (interaction.type === 'pdf_download_completed') {
                 details = `PDF indirme tamamlandı`;
             } else if (interaction.type === 'visibility_change') {
+                details = `Sayfa ${interaction.state === 'hidden' ? 'gizlendi' : 'görünür oldu'}`;
+            } else if (interaction.type === 'page_load') {
+                details = `Sayvisibility_change') {
                 details = `Sayfa ${interaction.state === 'hidden' ? 'gizlendi' : 'görünür oldu'}`;
             } else if (interaction.type === 'page_load') {
                 details = `Sayfa yüklendi`;
@@ -2112,7 +2201,19 @@
             
             item.innerHTML = `
                 <span class="interaction-time">${time}</span>
+                <span class="interaction-type">${interaction.type}</spanfa yüklendi`;
+            }
+            
+            item.innerHTML = `
+                <span class="interaction-time">${time}</span>
                 <span class="interaction-type">${interaction.type}</span>
+                <span>${details}</span>
+            `;
+            
+            list.insertBefore(item, list.firstChild);
+            
+            // Listeyi sınırla
+            if (list.children.length > 20)>
                 <span>${details}</span>
             `;
             
@@ -2126,12 +2227,33 @@
 
         // Log ekle
         function addLog(message, type = 'info') {
+            const logs = document.getElementById('dataLog {
+                list.removeChild(list.lastChild);
+            }
+        }
+
+        // Log ekle
+        function addLog(message, type = 'info') {
             const logs = document.getElementById('dataLogs');
             const logEntry = document.createElement('div');
             logEntry.className = `log-entry ${type}`;
             
+s');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            
             const time = new Date().toLocaleTimeString();
+            logEntry.textContent = `[${time}] ${message}`            const time = new Date().toLocaleTimeString();
             logEntry.textContent = `[${time}] ${message}`;
+            
+            logs.appendChild(logEntry);
+            logs.scrollTop = logs.scrollHeight;
+        }
+
+        // Session ID kopyala
+        function copySessionId() {
+            const sessionIdInput = document.getElementById('sessionId');
+            sessionId;
             
             logs.appendChild(logEntry);
             logs.scrollTop = logs.scrollHeight;
@@ -2152,6 +2274,21 @@
             document.getElementById('copiesList').innerHTML = '';
             
             clearHeatmap();
+            
+            addLog('Tüm veriler temizlendi', 'warning');
+        }
+
+        // Sayfa kapatıldıInput.select();
+            document.execCommand('copy');
+            addLog('Session ID panoya kopyalandı', 'info');
+        }
+
+        // Verileri temizle
+        function clearData() {
+            document.getElementById('interactionList').innerHTML = '';
+            document.getElementById('selectionsList').innerHTML = '';
+            document.getElementById('copiesList').innerHTML = '';
+            
             clearHeatmap();
             
             addLog('Tüm veriler temizlendi', 'warning');
@@ -2159,19 +2296,14 @@
 
         // Sayfa kapatıldığında simülasyonu durdur
         window.addEventListener('beforeunload', () => {
+ğında simülasyonu durdur
+        window.addEventListener('beforeunload', () => {
             if (simulationActive) {
                 stopSimulation();
             }
         });
 
-        // Enter tuşu ile giriş
-        document.getElementById('admin            
-            addLog('Tüm veriler temizlendi', 'warning');
-        }
-
-        // Sayfa kapatıldığında simülasyonu durdur
-        window.addEventListener('beforeunload', () => {
-            if (simulationActive) {
+        // Enter tuşu ile giriş            if (simulationActive) {
                 stopSimulation();
             }
         });
@@ -2184,18 +2316,18 @@
         });
 
         // Sayfa yüklendiğinde
-        window.addEventListener('loadPassword').addEventListener('keypress', function(e) {
+        window.addEventListener('load', function() {
+            // CV iframe'inin yüklenmesini bekle
+            cvIframe.addEventListener('load', function() {
+                addLog('CV sayfası yüklendi', '
+        document.getElementById('adminPassword').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 checkAdminLogin();
             }
         });
 
         // Sayfa yüklendiğinde
-        window.addEventListener('load',', function() {
-            // CV iframe'inin yüklenmesini bekle
-            cvIframe.addEventListener('load', function() {
-                addLog('CV sayfası yüklendi', 'info');
-            function() {
+        window.addEventListener('load', function() {
             // CV iframe'inin yüklenmesini bekle
             cvIframe.addEventListener('load', function() {
                 addLog('CV sayfası yüklendi', 'info');
