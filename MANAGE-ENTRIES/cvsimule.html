@@ -771,6 +771,61 @@
             font-weight: bold;
             color: var(--primary-color);
         }
+
+        /* Gelişmiş mobil simülasyon için */
+        .mobile-frame {
+            width: 375px;
+            height: 667px;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border: 12px solid #333;
+        }
+
+        .mobile-frame iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .mobile-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40%;
+            height: 20px;
+            background: #333;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            z-index: 10;
+        }
+
+        .simulation-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .viewport-info {
+            text-align: center;
+            margin-top: 10px;
+            color: #cccccc;
+            font-size: 0.9rem;
+        }
+
+        /* Mobil için özel heatmap ayarları */
+        .mobile-heatmap-point {
+            width: 20px !important;
+            height: 20px !important;
+        }
+
+        .mobile-heatmap-overlay {
+            transform-origin: 0 0;
+        }
     </style>
 </head>
 <body>
@@ -853,7 +908,12 @@
 
         <div class="dashboard">
             <div class="card">
-                <h2>CV Önizleme ve Simülasyon</h2>
+                <div class="stats-header">
+                    <h2>CV Önizleme ve Simülasyon</h2>
+                    <div class="viewport-info" id="viewportInfo">
+                        Görünüm: Masaüstü (1536x695)
+                    </div>
+                </div>
                 <div class="simulation-area" id="simulation-area">
                     <div id="cv-preview-container">
                         <div class="cv-frame-container">
@@ -1017,6 +1077,8 @@
         };
         let currentDeviceType = 'desktop';
         let userFingerprints = {};
+        let originalViewportWidth = 1536;
+        let originalViewportHeight = 695;
 
         // DOM elementleri
         const mousePointer = document.getElementById('mouse-pointer');
@@ -1300,10 +1362,19 @@
             document.getElementById('mobile-btn').classList.toggle('active', deviceType === 'mobile');
             
             // Simülasyon alanını güncelle
+            const cvContainer = document.getElementById('cv-preview-container');
             if (deviceType === 'mobile') {
                 simulationArea.classList.add('mobile-simulation');
+                cvContainer.style.width = '375px';
+                cvContainer.style.height = '667px';
+                cvContainer.style.margin = '0 auto';
+                document.getElementById('viewportInfo').textContent = 'Görünüm: Mobil (375x667)';
             } else {
                 simulationArea.classList.remove('mobile-simulation');
+                cvContainer.style.width = '100%';
+                cvContainer.style.height = '100%';
+                cvContainer.style.margin = '0';
+                document.getElementById('viewportInfo').textContent = 'Görünüm: Masaüstü (1536x695)';
             }
             
             addLog(`Cihaz tipi ${deviceType} olarak ayarlandı`, 'info');
@@ -1480,9 +1551,13 @@
                 new Date(currentSessionData.pageLoadTime).toLocaleString() : "-";
             document.getElementById('displayPdfDownload').textContent = currentSessionData.pdfDownload ? 'Evet' : 'Hayır';
             
-            // Cihaz tipini otomatik ayarla
+            // Cihaz tipini otomatik ayarla ve viewport bilgilerini güncelle
             const deviceType = currentSessionData.deviceInfo?.deviceType === 'mobile' ? 'mobile' : 'desktop';
             setDeviceType(deviceType);
+            
+            // Orijinal viewport boyutlarını kaydet
+            originalViewportWidth = currentSessionData.deviceInfo?.viewportWidth || 1536;
+            originalViewportHeight = currentSessionData.deviceInfo?.viewportHeight || 695;
             
             // İstatistikleri güncelle
             updateStats();
@@ -1713,14 +1788,25 @@
             addLog('Simülasyon durduruldu', 'warning');
         }
 
-        // Etkinliği işle
+        // Etkinliği işle - GÜNCELLENDİ: Mobil için doğru koordinat dönüşümü
         function processEvent(event) {
             // Fareyi hareket ettir
             if (event.data.x && event.data.y) {
-                // CV iframe'inin boyutuna göre koordinatları ayarla
                 const cvContainer = document.getElementById('cv-preview-container');
-                const viewportWidth = currentDeviceType === 'mobile' ? 375 : (currentSessionData.deviceInfo.viewportWidth || 1536);
-                const viewportHeight = currentDeviceType === 'mobile' ? 667 : (currentSessionData.deviceInfo.viewportHeight || 695);
+                
+                let viewportWidth, viewportHeight;
+                
+                if (currentDeviceType === 'mobile') {
+                    // Mobil modda sabit viewport boyutları
+                    viewportWidth = 375;
+                    viewportHeight = 667;
+                } else {
+                    // Masaüstü modda orijinal viewport boyutları
+                    viewportWidth = originalViewportWidth || 1536;
+                    viewportHeight = originalViewportHeight || 695;
+                }
+                
+                // Koordinatları ölçeklendir
                 const scaleX = cvContainer.offsetWidth / viewportWidth;
                 const scaleY = cvContainer.offsetHeight / viewportHeight;
                 const scaledX = event.data.x * scaleX;
@@ -1795,12 +1881,20 @@
             addInteractionToList(interaction);
         }
 
-        // Tıklama simülasyonu
+        // Tıklama simülasyonu - GÜNCELLENDİ: Mobil için doğru koordinat dönüşümü
         function simulateClick(x, y) {
-            // CV iframe'inin boyutuna göre koordinatları ayarla
             const cvContainer = document.getElementById('cv-preview-container');
-            const viewportWidth = currentDeviceType === 'mobile' ? 375 : (currentSessionData.deviceInfo.viewportWidth || 1536);
-            const viewportHeight = currentDeviceType === 'mobile' ? 667 : (currentSessionData.deviceInfo.viewportHeight || 695);
+            
+            let viewportWidth, viewportHeight;
+            
+            if (currentDeviceType === 'mobile') {
+                viewportWidth = 375;
+                viewportHeight = 667;
+            } else {
+                viewportWidth = originalViewportWidth || 1536;
+                viewportHeight = originalViewportHeight || 695;
+            }
+            
             const scaleX = cvContainer.offsetWidth / viewportWidth;
             const scaleY = cvContainer.offsetHeight / viewportHeight;
             const scaledX = x * scaleX;
@@ -1820,12 +1914,20 @@
             }, 600);
         }
 
-        // Heatmap noktası ekle
+        // Heatmap noktası ekle - GÜNCELLENDİ: Mobil için doğru koordinat dönüşümü
         function addHeatmapPoint(x, y, type) {
-            // CV iframe'inin boyutuna göre koordinatları ayarla
             const cvContainer = document.getElementById('cv-preview-container');
-            const viewportWidth = currentDeviceType === 'mobile' ? 375 : (currentSessionData.deviceInfo.viewportWidth || 1536);
-            const viewportHeight = currentDeviceType === 'mobile' ? 667 : (currentSessionData.deviceInfo.viewportHeight || 695);
+            
+            let viewportWidth, viewportHeight;
+            
+            if (currentDeviceType === 'mobile') {
+                viewportWidth = 375;
+                viewportHeight = 667;
+            } else {
+                viewportWidth = originalViewportWidth || 1536;
+                viewportHeight = originalViewportHeight || 695;
+            }
+            
             const scaleX = cvContainer.offsetWidth / viewportWidth;
             const scaleY = cvContainer.offsetHeight / viewportHeight;
             const scaledX = x * scaleX;
@@ -1836,13 +1938,13 @@
             if (type === 'clicks') {
                 point.className = 'heatmap-point';
                 point.style.background = 'radial-gradient(circle, rgba(255,0,0,0.6) 0%, rgba(255,0,0,0) 70%)';
-                point.style.width = '30px';
-                point.style.height = '30px';
+                point.style.width = currentDeviceType === 'mobile' ? '20px' : '30px';
+                point.style.height = currentDeviceType === 'mobile' ? '20px' : '30px';
             } else if (type === 'movements') {
                 point.className = 'movement-point';
                 point.style.background = 'radial-gradient(circle, rgba(0,255,0,0.3) 0%, rgba(0,255,0,0) 70%)';
-                point.style.width = '20px';
-                point.style.height = '20px';
+                point.style.width = currentDeviceType === 'mobile' ? '15px' : '20px';
+                point.style.height = currentDeviceType === 'mobile' ? '15px' : '20px';
             }
             
             point.style.left = scaledX + 'px';
@@ -2050,7 +2152,20 @@
             document.getElementById('copiesList').innerHTML = '';
             
             clearHeatmap();
+            clearHeatmap();
             
+            addLog('Tüm veriler temizlendi', 'warning');
+        }
+
+        // Sayfa kapatıldığında simülasyonu durdur
+        window.addEventListener('beforeunload', () => {
+            if (simulationActive) {
+                stopSimulation();
+            }
+        });
+
+        // Enter tuşu ile giriş
+        document.getElementById('admin            
             addLog('Tüm veriler temizlendi', 'warning');
         }
 
@@ -2069,7 +2184,18 @@
         });
 
         // Sayfa yüklendiğinde
-        window.addEventListener('load', function() {
+        window.addEventListener('loadPassword').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkAdminLogin();
+            }
+        });
+
+        // Sayfa yüklendiğinde
+        window.addEventListener('load',', function() {
+            // CV iframe'inin yüklenmesini bekle
+            cvIframe.addEventListener('load', function() {
+                addLog('CV sayfası yüklendi', 'info');
+            function() {
             // CV iframe'inin yüklenmesini bekle
             cvIframe.addEventListener('load', function() {
                 addLog('CV sayfası yüklendi', 'info');
