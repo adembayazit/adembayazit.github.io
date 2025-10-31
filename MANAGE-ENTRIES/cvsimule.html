@@ -164,7 +164,7 @@
             }
             
             .header h1 {
-                fontSize: 1.5rem;
+                font-size: 1.5rem;
             }
         }
 
@@ -1055,12 +1055,19 @@
     </div>
 
     <script>
-        // Admin giriş kontrolü - ŞİFRE DÜZELTİLDİ
+        // Admin giriş kontrolü - ORİJİNAL HASH ile
         function checkAdminLogin() {
             const password = document.getElementById('adminPassword').value;
             
-            // Doğrudan şifreyi kontrol et (hash karışıklığını önlemek için)
-            if (password === "dunyakimseyekalmaz") {
+            // SHA256 hash fonksiyonu
+            function hashPassword(password) {
+                return CryptoJS.SHA256(password).toString(CryptoJS.enc.Hex);
+            }
+            
+            // "dunyakimseyekalmaz" şifresinin hash'i (orijinal)
+            const CORRECT_HASH = "be408a40a5c6c0df48e0004b217dec97519da5e73876598203ec53bbe3ece5f7";
+            
+            if (hashPassword(password) === CORRECT_HASH) {
                 document.getElementById('adminLogin').classList.add('hidden');
                 document.getElementById('adminPanel').classList.remove('hidden');
                 initializeAdminPanel();
@@ -2140,60 +2147,23 @@
             const time = new Date(interaction.timestamp).toLocaleTimeString();
             let details = '';
             
-            if (interaction.type === ' Seçim ve kopyalama vurgularını temizle
-            const highlights = document.querySelectorAll('.selection-highlight, .copy-highlight');
-            highlights.forEach(highlight => {
-                highlight.remove();
-            });
-            
-            addLog('Heatmap temizlendi', 'info');
-        }
-
-        // Etkileşim listesine ekle
-        function addInteractionToList(interaction) {
-            const list = document.getElementById('interactionList');
-            const item = document.createElement('div');
-            item.className = 'interaction-item';
-            
-            const time = new Date(interaction.timestamp).toLocaleTimeString();
-            let details = '';
-            
-            if (intertext_selection' && interaction.text) {
+            if (interaction.type === 'text_selection' && interaction.text) {
                 details = `"${interaction.text}"`;
             } else if (interaction.type === 'copy' && interaction.text) {
                 details = `"${interaction.text}" kopyalandı`;
-            } else if (interaction.type === 'click')action.type === 'text_selection' && interaction.text) {
-                details = `"${interaction.text}"`;
-            } else if (interaction.type === 'copy' && interaction.text) {
-                details = `"${interaction.text}" kopyalandı`;
-            } else if (interaction.type {
-                details = `(${interaction.x}, ${interaction.y}) - ${interaction.tag || ''}`;
-            } else if (interaction.type === 'mouse_move') {
-                details = `(${interaction.x}, === 'click') {
+            } else if (interaction.type === 'click') {
                 details = `(${interaction.x}, ${interaction.y}) - ${interaction.tag || ''}`;
             } else if (interaction.type === 'mouse_move') {
                 details = `(${interaction.x}, ${interaction.y})`;
-            } else if (interaction.type === 'scroll ${interaction.y})`;
             } else if (interaction.type === 'scroll') {
                 details = `Pozisyon: ${interaction.position}px`;
-            } else') {
-                details = `Pozisyon: ${interaction.position}px`;
             } else if (interaction.type === 'keypress') {
-                details = `Tuş if (interaction.type === 'keypress') {
                 details = `Tuş: ${interaction.key}`;
             } else if (interaction.type === 'pdf_download_click') {
-                details = `PDF ind: ${interaction.key}`;
-            } else if (interaction.type === 'pdf_download_click') {
                 details = `PDF indirme başlatıldı`;
-            } elseirme ba if (interaction.type === 'pdf_download_completed') {
-                details = `PDF indirme tamamlandı`;
-            } else if (interaction.type === 'şlatıldı`;
             } else if (interaction.type === 'pdf_download_completed') {
                 details = `PDF indirme tamamlandı`;
             } else if (interaction.type === 'visibility_change') {
-                details = `Sayfa ${interaction.state === 'hidden' ? 'gizlendi' : 'görünür oldu'}`;
-            } else if (interaction.type === 'page_load') {
-                details = `Sayvisibility_change') {
                 details = `Sayfa ${interaction.state === 'hidden' ? 'gizlendi' : 'görünür oldu'}`;
             } else if (interaction.type === 'page_load') {
                 details = `Sayfa yüklendi`;
@@ -2201,19 +2171,7 @@
             
             item.innerHTML = `
                 <span class="interaction-time">${time}</span>
-                <span class="interaction-type">${interaction.type}</spanfa yüklendi`;
-            }
-            
-            item.innerHTML = `
-                <span class="interaction-time">${time}</span>
                 <span class="interaction-type">${interaction.type}</span>
-                <span>${details}</span>
-            `;
-            
-            list.insertBefore(item, list.firstChild);
-            
-            // Listeyi sınırla
-            if (list.children.length > 20)>
                 <span>${details}</span>
             `;
             
@@ -2227,33 +2185,12 @@
 
         // Log ekle
         function addLog(message, type = 'info') {
-            const logs = document.getElementById('dataLog {
-                list.removeChild(list.lastChild);
-            }
-        }
-
-        // Log ekle
-        function addLog(message, type = 'info') {
             const logs = document.getElementById('dataLogs');
             const logEntry = document.createElement('div');
             logEntry.className = `log-entry ${type}`;
             
-s');
-            const logEntry = document.createElement('div');
-            logEntry.className = `log-entry ${type}`;
-            
             const time = new Date().toLocaleTimeString();
-            logEntry.textContent = `[${time}] ${message}`            const time = new Date().toLocaleTimeString();
             logEntry.textContent = `[${time}] ${message}`;
-            
-            logs.appendChild(logEntry);
-            logs.scrollTop = logs.scrollHeight;
-        }
-
-        // Session ID kopyala
-        function copySessionId() {
-            const sessionIdInput = document.getElementById('sessionId');
-            sessionId;
             
             logs.appendChild(logEntry);
             logs.scrollTop = logs.scrollHeight;
@@ -2278,48 +2215,14 @@ s');
             addLog('Tüm veriler temizlendi', 'warning');
         }
 
-        // Sayfa kapatıldıInput.select();
-            document.execCommand('copy');
-            addLog('Session ID panoya kopyalandı', 'info');
-        }
-
-        // Verileri temizle
-        function clearData() {
-            document.getElementById('interactionList').innerHTML = '';
-            document.getElementById('selectionsList').innerHTML = '';
-            document.getElementById('copiesList').innerHTML = '';
-            
-            clearHeatmap();
-            
-            addLog('Tüm veriler temizlendi', 'warning');
-        }
-
         // Sayfa kapatıldığında simülasyonu durdur
-        window.addEventListener('beforeunload', () => {
-ğında simülasyonu durdur
         window.addEventListener('beforeunload', () => {
             if (simulationActive) {
                 stopSimulation();
             }
         });
 
-        // Enter tuşu ile giriş            if (simulationActive) {
-                stopSimulation();
-            }
-        });
-
         // Enter tuşu ile giriş
-        document.getElementById('adminPassword').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                checkAdminLogin();
-            }
-        });
-
-        // Sayfa yüklendiğinde
-        window.addEventListener('load', function() {
-            // CV iframe'inin yüklenmesini bekle
-            cvIframe.addEventListener('load', function() {
-                addLog('CV sayfası yüklendi', '
         document.getElementById('adminPassword').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 checkAdminLogin();
