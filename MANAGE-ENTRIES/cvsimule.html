@@ -838,28 +838,6 @@
             z-index: 1001;
             transition: all 0.3s ease;
         }
-
-        /* Yeni eklenen stiller */
-        .selection-text, .copy-text {
-            font-size: 12px;
-            color: #333;
-            font-weight: bold;
-            display: block;
-            text-align: center;
-        }
-
-        .mobile-simulation #cv-preview-container {
-            transform-origin: 0 0;
-            overflow: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .mobile-simulation .scroll-indicator {
-            font-size: 12px;
-            padding: 3px 8px;
-            right: 5px;
-            top: 5px;
-        }
     </style>
 </head>
 <body>
@@ -1390,40 +1368,7 @@
             addLog(`${fingerprints.length} farklı fingerprint tespit edildi`, 'info');
         }
 
-        // Koordinat dönüşüm fonksiyonunu iyileştir
-        function getScaledCoordinates(x, y) {
-            const cvContainer = document.getElementById('cv-preview-container');
-            const containerRect = cvContainer.getBoundingClientRect();
-            
-            let viewportWidth, viewportHeight;
-            
-            if (currentDeviceType === 'mobile') {
-                viewportWidth = 375;
-                viewportHeight = 667;
-                
-                // Mobil için container içindeki pozisyonu hesapla
-                const scaleX = containerRect.width / viewportWidth;
-                const scaleY = containerRect.height / viewportHeight;
-                
-                // Container'ın sol üst köşesine göre konum
-                const scaledX = x * scaleX;
-                const scaledY = y * scaleY;
-                
-                return { x: scaledX, y: scaledY };
-            } else {
-                viewportWidth = originalViewportWidth || 1536;
-                viewportHeight = originalViewportHeight || 695;
-                
-                const scaleX = containerRect.width / viewportWidth;
-                const scaleY = containerRect.height / viewportHeight;
-                const scaledX = x * scaleX;
-                const scaledY = y * scaleY;
-                
-                return { x: scaledX, y: scaledY };
-            }
-        }
-
-        // Cihaz tipini ayarla - GÜNCELLENMİŞ
+        // Cihaz tipini ayarla
         function setDeviceType(deviceType) {
             currentDeviceType = deviceType;
             
@@ -1433,32 +1378,23 @@
             
             // Simülasyon alanını güncelle
             const cvContainer = document.getElementById('cv-preview-container');
-            const simulationArea = document.getElementById('simulation-area');
-            
             if (deviceType === 'mobile') {
                 simulationArea.classList.add('mobile-simulation');
                 cvContainer.style.width = '375px';
                 cvContainer.style.height = '667px';
                 cvContainer.style.margin = '0 auto';
-                cvContainer.style.transform = 'none';
                 document.getElementById('viewportInfo').textContent = 'Görünüm: Mobil (375x667)';
-                
-                // Mobil için scroll'u sıfırla
-                cvContainer.scrollTop = 0;
-                currentScrollPosition = 0;
-                updateScrollIndicator();
             } else {
                 simulationArea.classList.remove('mobile-simulation');
                 cvContainer.style.width = '100%';
                 cvContainer.style.height = '100%';
                 cvContainer.style.margin = '0';
-                cvContainer.style.transform = 'none';
-                document.getElementById('viewportInfo').textContent = `Görünüm: Masaüstü (${originalViewportWidth || 1536}x${originalViewportHeight || 695})`;
+                document.getElementById('viewportInfo').textContent = 'Görünüm: Masaüstü (1536x695)';
             }
             
             addLog(`Cihaz tipi ${deviceType} olarak ayarlandı`, 'info');
             
-            // Eğer session yüklüyse, heatmap'i yeniden uygula
+            // Eğer session yüklüyse, simülasyonu yeniden başlat
             if (currentSessionData) {
                 clearHeatmap();
                 applyCurrentHeatmap();
@@ -1888,44 +1824,37 @@
             addLog('Simülasyon durduruldu', 'warning');
         }
 
-        // Scroll simülasyonu - GÜNCELLENDİ
-        function simulateScroll(position) {
-            const cvContainer = document.getElementById('cv-preview-container');
-            
-            // Mobil ve masaüstü için farklı scroll hesaplama
-            let maxScrollHeight;
-            if (currentDeviceType === 'mobile') {
-                maxScrollHeight = cvContainer.scrollHeight - 667; // Mobil viewport yüksekliği
-            } else {
-                maxScrollHeight = cvContainer.scrollHeight - cvContainer.clientHeight;
-            }
-            
-            // Scroll pozisyonunu sınırla
-            const safePosition = Math.min(position, maxScrollHeight);
-            currentScrollPosition = Math.max(0, safePosition);
-            
-            // Scroll uygula
-            cvContainer.scrollTop = currentScrollPosition;
-            
-            // Scroll göstergesini güncelle
-            updateScrollIndicator();
-            
-            addLog(`Scroll: ${currentScrollPosition}px`, 'info');
-        }
-
         // Scroll göstergesini güncelle
         function updateScrollIndicator() {
             scrollIndicator.textContent = `Scroll: ${currentScrollPosition}px`;
         }
 
-        // Etkinliği işle - GÜNCELLENDİ
+        // Etkinliği işle - GÜNCELLENDİ: Scroll simülasyonu eklendi
         function processEvent(event) {
             // Fareyi hareket ettir
-            if (event.data.x !== undefined && event.data.y !== undefined) {
-                const coords = getScaledCoordinates(event.data.x, event.data.y);
+            if (event.data.x && event.data.y) {
+                const cvContainer = document.getElementById('cv-preview-container');
                 
-                mousePointer.style.left = coords.x + 'px';
-                mousePointer.style.top = coords.y + 'px';
+                let viewportWidth, viewportHeight;
+                
+                if (currentDeviceType === 'mobile') {
+                    // Mobil modda sabit viewport boyutları
+                    viewportWidth = 375;
+                    viewportHeight = 667;
+                } else {
+                    // Masaüstü modda orijinal viewport boyutları
+                    viewportWidth = originalViewportWidth || 1536;
+                    viewportHeight = originalViewportHeight || 695;
+                }
+                
+                // Koordinatları ölçeklendir
+                const scaleX = cvContainer.offsetWidth / viewportWidth;
+                const scaleY = cvContainer.offsetHeight / viewportHeight;
+                const scaledX = event.data.x * scaleX;
+                const scaledY = event.data.y * scaleY;
+                
+                mousePointer.style.left = scaledX + 'px';
+                mousePointer.style.top = scaledY + 'px';
             }
             
             // Etkinlik türüne göre işlem yap
@@ -1934,18 +1863,14 @@
                     processInteraction(event.data);
                     break;
                 case 'movement':
-                    if (heatmapLayers.movements && event.data.x && event.data.y) {
-                        const coords = getScaledCoordinates(event.data.x, event.data.y);
-                        addHeatmapPoint(coords.x, coords.y, 'movements');
+                    if (heatmapLayers.movements) {
+                        addHeatmapPoint(event.data.x, event.data.y, 'movements');
                     }
                     break;
                 case 'click':
-                    if (event.data.x && event.data.y) {
-                        const coords = getScaledCoordinates(event.data.x, event.data.y);
-                        simulateClick(coords.x, coords.y);
-                        if (heatmapLayers.clicks) {
-                            addHeatmapPoint(coords.x, coords.y, 'clicks');
-                        }
+                    simulateClick(event.data.x, event.data.y);
+                    if (heatmapLayers.clicks) {
+                        addHeatmapPoint(event.data.x, event.data.y, 'clicks');
                     }
                     break;
                 case 'selection':
@@ -1954,11 +1879,23 @@
                     }
                     break;
                 case 'scroll':
-                    if (event.data.position !== undefined) {
-                        simulateScroll(event.data.position);
-                    }
+                    simulateScroll(event.data.position);
                     break;
             }
+        }
+
+        // Scroll simülasyonu - YENİ EKLENDİ
+        function simulateScroll(position) {
+            const cvContainer = document.getElementById('cv-preview-container');
+            currentScrollPosition = position;
+            
+            // Scroll pozisyonunu uygula
+            cvContainer.scrollTop = position;
+            
+            // Scroll göstergesini güncelle
+            updateScrollIndicator();
+            
+            addLog(`Scroll: ${position}px`, 'info');
         }
 
         // Etkileşimi işle
@@ -1967,8 +1904,7 @@
             switch(interaction.type) {
                 case 'click':
                     if (heatmapLayers.clicks) {
-                        const coords = getScaledCoordinates(interaction.x, interaction.y);
-                        addHeatmapPoint(coords.x, coords.y, 'clicks');
+                        addHeatmapPoint(interaction.x, interaction.y, 'clicks');
                     }
                     break;
                 case 'scroll':
@@ -2004,12 +1940,29 @@
             addInteractionToList(interaction);
         }
 
-        // Tıklama simülasyonu
+        // Tıklama simülasyonu - GÜNCELLENDİ: Mobil için doğru koordinat dönüşümü
         function simulateClick(x, y) {
+            const cvContainer = document.getElementById('cv-preview-container');
+            
+            let viewportWidth, viewportHeight;
+            
+            if (currentDeviceType === 'mobile') {
+                viewportWidth = 375;
+                viewportHeight = 667;
+            } else {
+                viewportWidth = originalViewportWidth || 1536;
+                viewportHeight = originalViewportHeight || 695;
+            }
+            
+            const scaleX = cvContainer.offsetWidth / viewportWidth;
+            const scaleY = cvContainer.offsetHeight / viewportHeight;
+            const scaledX = x * scaleX;
+            const scaledY = y * scaleY;
+            
             const clickEffect = document.createElement('div');
             clickEffect.className = 'click-effect';
-            clickEffect.style.left = (x - 15) + 'px';
-            clickEffect.style.top = (y - 15) + 'px';
+            clickEffect.style.left = scaledX + 'px';
+            clickEffect.style.top = scaledY + 'px';
             document.querySelector('.cv-frame-overlay').appendChild(clickEffect);
             
             // Efekti temizle
@@ -2020,78 +1973,82 @@
             }, 600);
         }
 
-        // Seçim ve kopyalama vurgularını iyileştir
-        function highlightSelection(selectionData) {
-            if (!selectionData.text || selectionData.text.length < 2) return;
-            
-            const highlight = document.createElement('div');
-            highlight.className = 'selection-highlight';
-            highlight.innerHTML = `<span class="selection-text">Seçim: "${selectionData.text.substring(0, 50)}${selectionData.text.length > 50 ? '...' : ''}"</span>`;
-            
-            // Mobil için farklı konumlandırma
-            if (currentDeviceType === 'mobile') {
-                highlight.style.left = '10px';
-                highlight.style.top = (100 + (Math.random() * 200)) + 'px';
-                highlight.style.width = '355px';
-            } else {
-                highlight.style.left = (Math.random() * 500 + 100) + 'px';
-                highlight.style.top = (Math.random() * 400 + 100) + 'px';
-                highlight.style.width = '300px';
-            }
-            
-            highlight.style.height = 'auto';
-            highlight.style.padding = '8px';
-            highlight.style.zIndex = '801';
-            
-            document.querySelector('.cv-frame-overlay').appendChild(highlight);
-        }
-
-        function highlightCopy(copyData) {
-            if (!copyData.text || copyData.text.length < 2) return;
-            
-            const highlight = document.createElement('div');
-            highlight.className = 'copy-highlight';
-            highlight.innerHTML = `<span class="copy-text">Kopyalandı: "${copyData.text.substring(0, 50)}${copyData.text.length > 50 ? '...' : ''}"</span>`;
-            
-            // Mobil için farklı konumlandırma
-            if (currentDeviceType === 'mobile') {
-                highlight.style.left = '10px';
-                highlight.style.top = (150 + (Math.random() * 200)) + 'px';
-                highlight.style.width = '355px';
-            } else {
-                highlight.style.left = (Math.random() * 500 + 100) + 'px';
-                highlight.style.top = (Math.random() * 400 + 150) + 'px';
-                highlight.style.width = '300px';
-            }
-            
-            highlight.style.height = 'auto';
-            highlight.style.padding = '8px';
-            highlight.style.zIndex = '801';
-            
-            document.querySelector('.cv-frame-overlay').appendChild(highlight);
-        }
-
-        // Heatmap noktası ekle - MOBİL UYUMLU
+        // Heatmap noktası ekle - GÜNCELLENDİ: Mobil için doğru koordinat dönüşümü
         function addHeatmapPoint(x, y, type) {
+            const cvContainer = document.getElementById('cv-preview-container');
+            
+            let viewportWidth, viewportHeight;
+            
+            if (currentDeviceType === 'mobile') {
+                viewportWidth = 375;
+                viewportHeight = 667;
+            } else {
+                viewportWidth = originalViewportWidth || 1536;
+                viewportHeight = originalViewportHeight || 695;
+            }
+            
+            const scaleX = cvContainer.offsetWidth / viewportWidth;
+            const scaleY = cvContainer.offsetHeight / viewportHeight;
+            const scaledX = x * scaleX;
+            const scaledY = y * scaleY;
+            
             const point = document.createElement('div');
             
             if (type === 'clicks') {
-                point.className = currentDeviceType === 'mobile' ? 'mobile-heatmap-point heatmap-point' : 'heatmap-point';
+                point.className = 'heatmap-point';
                 point.style.background = 'radial-gradient(circle, rgba(255,0,0,0.6) 0%, rgba(255,0,0,0) 70%)';
                 point.style.width = currentDeviceType === 'mobile' ? '20px' : '30px';
                 point.style.height = currentDeviceType === 'mobile' ? '20px' : '30px';
             } else if (type === 'movements') {
-                point.className = currentDeviceType === 'mobile' ? 'mobile-heatmap-point movement-point' : 'movement-point';
+                point.className = 'movement-point';
                 point.style.background = 'radial-gradient(circle, rgba(0,255,0,0.3) 0%, rgba(0,255,0,0) 70%)';
                 point.style.width = currentDeviceType === 'mobile' ? '15px' : '20px';
                 point.style.height = currentDeviceType === 'mobile' ? '15px' : '20px';
             }
             
-            point.style.left = x + 'px';
-            point.style.top = y + 'px';
-            point.style.transform = 'translate(-50%, -50%)';
+            point.style.left = scaledX + 'px';
+            point.style.top = scaledY + 'px';
             
             heatmap.appendChild(point);
+        }
+
+        // Metin seçimini vurgula
+        function highlightSelection(selectionData) {
+            // Basit bir seçim vurgulama
+            const highlight = document.createElement('div');
+            highlight.className = 'selection-highlight';
+            
+            // Rastgele bir konum ve boyut
+            highlight.style.left = (Math.random() * 500 + 100) + 'px';
+            highlight.style.top = (Math.random() * 400 + 100) + 'px';
+            highlight.style.width = ((selectionData.length || 10) * 5) + 'px';
+            highlight.style.height = '20px';
+            
+            // Tooltip ekle
+            highlight.setAttribute('data-text', selectionData.text || 'Seçilen metin');
+            highlight.addEventListener('mouseenter', showTooltip);
+            highlight.addEventListener('mouseleave', hideTooltip);
+            
+            document.querySelector('.cv-frame-overlay').appendChild(highlight);
+        }
+
+        // Kopyalama vurgula
+        function highlightCopy(copyData) {
+            const highlight = document.createElement('div');
+            highlight.className = 'copy-highlight';
+            
+            // Rastgele bir konum ve boyut
+            highlight.style.left = (Math.random() * 500 + 100) + 'px';
+            highlight.style.top = (Math.random() * 400 + 150) + 'px';
+            highlight.style.width = ((copyData.text ? copyData.text.length : 10) * 5) + 'px';
+            highlight.style.height = '20px';
+            
+            // Tooltip ekle
+            highlight.setAttribute('data-text', copyData.text || 'Kopyalanan metin');
+            highlight.addEventListener('mouseenter', showTooltip);
+            highlight.addEventListener('mouseleave', hideTooltip);
+            
+            document.querySelector('.cv-frame-overlay').appendChild(highlight);
         }
 
         // Tooltip göster
@@ -2135,14 +2092,12 @@
             if (heatmapLayers[type] && currentSessionData) {
                 if (type === 'clicks' && currentSessionData.clicks) {
                     currentSessionData.clicks.forEach(click => {
-                        const coords = getScaledCoordinates(click.x, click.y);
-                        addHeatmapPoint(coords.x, coords.y, 'clicks');
+                        addHeatmapPoint(click.x, click.y, 'clicks');
                     });
                 }
                 if (type === 'movements' && currentSessionData.mouseMovements) {
                     currentSessionData.mouseMovements.forEach(move => {
-                        const coords = getScaledCoordinates(move.x, move.y);
-                        addHeatmapPoint(coords.x, coords.y, 'movements');
+                        addHeatmapPoint(move.x, move.y, 'movements');
                     });
                 }
                 if (type === 'selections' && currentSessionData.textSelections) {
