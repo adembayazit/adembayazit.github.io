@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photographic Cryptology | Adem Bayazıt</title>
+    <meta property="og:title" content="Adem Bayazıt | Photographic Cryptology" />
+    <meta property="og:description" content="Visual analysis and interpretation of photographic compositions." />
+    <meta property="og:image" content="https://adembayazit.com/IMAGES/preview.png" />
+    <meta property="og:url" content="https://adembayazit.com/photographic-cryptology" />
+    <meta property="og:type" content="website" />
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Adem Bayazıt - Photographic Cryptology">
+    <meta name="twitter:description" content="Visual analysis and interpretation of photographic compositions.">
+    <meta name="twitter:image" content="https://adembayazit.com/IMAGES/preview.png">
+    <meta name="twitter:image:alt" content="Adem Bayazıt">
+    
+    <link rel="icon" type="png|image" href="/IMAGES/ab.png">
+    <link rel="stylesheet" href="/CSS/style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href='https://cdn.boxicons.com/fonts/basic/boxicons.min.css' rel='stylesheet'>
+    <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
+    <style>
+        :root {
+            --primary-color: #00ff00;
+            --primary-dark: #00cc00;
+            --primary-light: #33ff33;
+            --bg-color: #0a1916;
+            --card-bg: rgba(10, 25, 20, 0.7);
+            --text-color: #ffffff;
+            --text-muted: #cccccc;
+            --border-color: #00aa00;
+            --highlight-color: #99ff99;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Logo ve slogan için stil */
+      .logo-container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+      }
+      
+      .logo-slogan {
+        font-size: 10px;
+        color: white;
+        margin-top: 2px;
+        font-style: italic;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+        text-align: right;
+        width: 100%;
+        padding-right: 5px;
+      }
+      
+      /* Navbar için responsive ayarlar */
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 5%;
+      }
+        
+        .content-wrapper {
+            margin-top: 160px;
+            position: relative;
+            z-index: 2;
+            padding: 0 20px;
+        }
+        .backto {
+            text-align: center;
+        }
+        
+        .back-to-home {
+            display: inline-block;
+            margin: 0 0 30px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-to-home:hover {
+            text-decoration: underline;
+            color: var(--highlight-color);
+        }
+        
+        .page-title {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 1.7rem;
+            color: white;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+            position: relative;
+            filter: drop-shadow(0 0 5px limegreen);
+        }
+        
+        .page-title::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 3px;
+        }
+        
+        .section {
+            margin-bottom: 60px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            filter: drop-shadow(0 0 5px limegreen);
+        }
+        
+        .section-title i {
+            margin-right: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .section p {
+            font-size: 0.9rem;
+        }
+        
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 25px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 255, 0, 0.2);
+            border-color: var(--primary-color);
+        }
+        
+        .card-title {
+            font-size: 0.9rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-title i {
+            margin-right: 10px;
+            font-size: 0.8rem;
+        }
+        
+        .card-content {
+            color: var(--text-color);
+            line-height: 1.6;
+            flex-grow: 1;
+        }
+        
+        .term-highlight {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .checklist {
+            list-style-type: none;
+            margin-top: 15px;
+        }
+        
+        .checklist li {
+            margin-bottom: 10px;
+            padding-left: 30px;
+            position: relative;
+        }
+        
+        .checklist li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .image-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .content-image {
+            max-width: 40%;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .image-caption {
+            margin-top: 10px;
+            font-style: italic;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        .quote {
+            border-left: 4px solid var(--primary-color);
+            padding: 15px 20px;
+            margin: 25px 0;
+            background: rgba(0, 100, 0, 0.1);
+            font-style: italic;
+        }
+        
+        .quote-author {
+            display: block;
+            margin-top: 10px;
+            text-align: right;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        /* Photographic Cryptology specific styles */
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .photo-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .photo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 255, 0, 0.2);
+            border-color: var(--primary-color);
+        }
+        
+        .photo-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .photo-image:hover {
+            transform: scale(1.03);
+        }
+        
+        .photo-info {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .photo-title {
+            font-size: 1rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .photo-title i {
+            margin-right: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .photo-description {
+            color: var(--text-color);
+            line-height: 1.6;
+            font-size: 0.9rem;
+            flex-grow: 1;
+        }
+        
+        .photo-meta {
+            margin-top: 15px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 10px;
+        }
+        
+        /* Modal for enlarged photo */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            overflow: auto;
+            padding: 20px;
+        }
+        
+        .modal-content {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 80%;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 0 25px rgba(0, 255, 0, 0.3);
+        }
+        
+        .modal-description {
+            text-align: center;
+            color: white;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .close-modal:hover {
+            color: var(--primary-color);
+            transform: scale(1.1);
+        }
+        
+        /* Analysis section */
+        .analysis-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .analysis-item {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 25px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .analysis-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 255, 0, 0.2);
+        }
+        
+        .analysis-icon {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+        
+        .analysis-title {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .content-wrapper {
+                margin-top: 160px;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+            }
+            
+            .section-title {
+                font-size: 1rem;
+            }
+            
+            .photo-gallery {
+                grid-template-columns: 1fr;
+            }
+            
+            .analysis-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                max-width: 95%;
+                max-height: 70%;
+            }
+            
+            .close-modal {
+                top: 10px;
+                right: 20px;
+                font-size: 30px;
+            }
+        }
+        
+        /* Matrix Canvas Styles */
+        #matrixCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TFN7XD9Z"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header class="header">
+        <div class="logo-container">
+            <a href="https://adembayazit.com" class="logo"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">{adembayazit} </a>
+            <span class="logo-slogan">One step further every day…</span>
+        </div>
+        <nav class="navbar">
+            <div class="dropdown">
+                <a href="#" style="--i:5;" class="dropbtn"> <img src="IMAGES/Ata.svg" alt="Ata Icon" class="ata-icon"><span class="fi fi-tr"></span> <span class='bx bx-code-alt'></span> Ethical Hacker <span class='bx bx-chevron-down'></span></a>
+                <div class="dropdown-content">
+                    <a href="#tools"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hacker-icon"> What is an Ethical Hacker?</a>
+                    <a href="/cybersecurityglossary"><img src="IMAGES/glossary.svg" alt="Glossary" class="glossary-icon"> Cybersecurity Glossary</a>
+                    <a href="/whatissoc"><img src="IMAGES/soc.svg" alt="Soc" class="soc-icon"> What is a SOC ?</a>
+                    <a href="/vulnerabilities"><img src="IMAGES/vulnerabilities.svg" alt="Vulnerabilities" class="vulnerabilities-icon"> Vulnerabilities</a>
+                    <a href="/steganography"><img src="IMAGES/steganography.svg" alt="Steganography" class="steganography-icon"> Steganography</a>
+                    <a href="/cryptography"><img src="IMAGES/cryptography.svg" alt="Cryptography" class="cryptography-icon"> Cryptography</a>    
+                    <a href="/cybersecurityeducationprompt"><img src="IMAGES/education.svg" alt="Education" class="education-icon"> Cybersecurity Education Prompts</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+    
+    <div class="content-wrapper">
+        <div class="backto"><a href="/" class="back-to-home"><i class="bx bx-arrow-back"></i> Back to Home</a></div>
+        
+        <h2 class="page-title"><i class="bx bx-camera"></i> Photographic Cryptology</h2>
+        
+        <section class="section" id="introduction">
+            <h2 class="section-title"><i class="bx bx-info-circle"></i> What is Photographic Cryptology?</h2>
+            <div class="card">
+                <div class="card-content">
+                    <p>Photographic Cryptology is the art and science of analyzing and interpreting visual compositions in photography. It involves deciphering the hidden messages, emotions, and narratives embedded within photographic works.</p>
+                    
+                    <div class="image-container">
+                        <img src="https://adembayazit.com/IMAGES/photographic-cryptology.jpg" alt="Photographic Cryptology" class="content-image">
+                        <div class="image-caption">Every photograph tells a story, if you know how to read it</div>
+                    </div>
+                    
+                    <p>Just as cryptography reveals hidden messages in text, photographic cryptology uncovers the deeper meanings, cultural contexts, and artistic intentions concealed within visual imagery. This practice combines elements of art criticism, semiotics, and visual analysis.</p>
+                    
+                    <div class="quote">
+                        "Photography is the art of frozen time... the ability to store emotion and feelings within a frame."
+                        <span class="quote-author">- Adem Bayazıt</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section" id="gallery">
+            <h2 class="section-title"><i class="bx bx-images"></i> Photographic Analysis Gallery</h2>
+            
+            <div class="photo-gallery">
+                <div class="photo-card">
+                    <img src="https://adembayazit.com/IMAGES/photo1.jpg" alt="Urban Solitude" class="photo-image" data-enlarged="https://adembayazit.com/IMAGES/photo1-large.jpg">
+                    <div class="photo-info">
+                        <h3 class="photo-title"><i class="bx bx-building"></i> Urban Solitude</h3>
+                        <p class="photo-description">This composition captures the contrast between human isolation and the density of urban environments. The single figure positioned against the vast architectural landscape creates a powerful statement about modern existence.</p>
+                        <div class="photo-meta">
+                            <span><i class="bx bx-time"></i> 2023</span> | 
+                            <span><i class="bx bx-camera"></i> Digital</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="photo-card">
+                    <img src="https://adembayazit.com/IMAGES/photo2.jpg" alt="Nature's Resilience" class="photo-image" data-enlarged="https://adembayazit.com/IMAGES/photo2-large.jpg">
+                    <div class="photo-info">
+                        <h3 class="photo-title"><i class="bx bx-leaf"></i> Nature's Resilience</h3>
+                        <p class="photo-description">A study in persistence, this image shows life thriving in seemingly inhospitable conditions. The composition uses natural framing to draw attention to the central subject while maintaining a balanced asymmetry.</p>
+                        <div class="photo-meta">
+                            <span><i class="bx bx-time"></i> 2023</span> | 
+                            <span><i class="bx bx-camera"></i> Film</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="photo-card">
+                    <img src="https://adembayazit.com/IMAGES/photo3.jpg" alt="Industrial Poetry" class="photo-image" data-enlarged="https://adembayazit.com/IMAGES/photo3-large.jpg">
+                    <div class="photo-info">
+                        <h3 class="photo-title"><i class="bx bx-cog"></i> Industrial Poetry</h3>
+                        <p class="photo-description">This photograph transforms mundane industrial elements into abstract art through careful framing and lighting. The repetition of geometric shapes creates rhythm, while selective focus guides the viewer's attention.</p>
+                        <div class="photo-meta">
+                            <span><i class="bx bx-time"></i> 2022</span> | 
+                            <span><i class="bx bx-camera"></i> Digital</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="photo-card">
+                    <img src="https://adembayazit.com/IMAGES/photo4.jpg" alt="Human Connection" class="photo-image" data-enlarged="https://adembayazit.com/IMAGES/photo4-large.jpg">
+                    <div class="photo-info">
+                        <h3 class="photo-title"><i class="bx bx-user"></i> Human Connection</h3>
+                        <p class="photo-description">A candid moment captured with remarkable sensitivity. The composition uses the rule of thirds to create visual harmony, while the shallow depth of field isolates the subjects from their environment.</p>
+                        <div class="photo-meta">
+                            <span><i class="bx bx-time"></i> 2023</span> | 
+                            <span><i class="bx bx-camera"></i> Digital</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="photo-card">
+                    <img src="https://adembayazit.com/IMAGES/photo5.jpg" alt="Architectural Harmony" class="photo-image" data-enlarged="https://adembayazit.com/IMAGES/photo5-large.jpg">
+                    <div class="photo-info">
+                        <h3 class="photo-title"><i class="bx bx-building-house"></i> Architectural Harmony</h3>
+                        <p class="photo-description">This image explores the relationship between historical and contemporary architecture. The strong leading lines draw the eye through the frame, while the contrast in textures adds visual interest.</p>
+                        <div class="photo-meta">
+                            <span><i class="bx bx-time"></i> 2022</span> | 
+                            <span><i class="bx bx-camera"></i> Medium Format</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="photo-card">
+                    <img src="https://adembayazit.com/IMAGES/photo6.jpg" alt="Abstract Emotions" class="photo-image" data-enlarged="https://adembayazit.com/IMAGES/photo6-large.jpg">
+                    <div class="photo-info">
+                        <h3 class="photo-title"><i class="bx bx-palette"></i> Abstract Emotions</h3>
+                        <p class="photo-description">An experimental approach to photography that focuses on color, texture, and form rather than recognizable subjects. The composition creates a visual language that speaks directly to emotions.</p>
+                        <div class="photo-meta">
+                            <span><i class="bx bx-time"></i> 2023</span> | 
+                            <span><i class="bx bx-camera"></i> Digital Composite</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Modal for enlarged images -->
+        <div id="imageModal" class="modal">
+            <span class="close-modal">&times;</span>
+            <img class="modal-content" id="enlargedImage">
+            <div id="modalDescription" class="modal-description"></div>
+        </div>
+        
+        <section class="section" id="analysis">
+            <h2 class="section-title"><i class="bx bx-search-alt"></i> Analytical Framework</h2>
+            
+            <div class="analysis-container">
+                <div class="analysis-item">
+                    <div class="analysis-icon"><i class="bx bx-palette"></i></div>
+                    <h3 class="analysis-title">Composition</h3>
+                    <p>Analysis of visual arrangement, balance, and structural elements within the frame.</p>
+                </div>
+                
+                <div class="analysis-item">
+                    <div class="analysis-icon"><i class="bx bx-sun"></i></div>
+                    <h3 class="analysis-title">Light & Shadow</h3>
+                    <p>Examination of lighting techniques, contrast, and how illumination shapes the narrative.</p>
+                </div>
+                
+                <div class="analysis-item">
+                    <div class="analysis-icon"><i class="bx bx-color"></i></div>
+                    <h3 class="analysis-title">Color Theory</h3>
+                    <p>Interpretation of color palettes, harmonies, and psychological impact of color choices.</p>
+                </div>
+                
+                <div class="analysis-item">
+                    <div class="analysis-icon"><i class="bx bx-time"></i></div>
+                    <h3 class="analysis-title">Temporal Context</h3>
+                    <p>Understanding the historical, cultural, and personal contexts that influence the image.</p>
+                </div>
+                
+                <div class="analysis-item">
+                    <div class="analysis-icon"><i class="bx bx-message-alt"></i></div>
+                    <h3 class="analysis-title">Symbolic Language</h3>
+                    <p>Decoding visual metaphors, symbols, and implied narratives within the photograph.</p>
+                </div>
+                
+                <div class="analysis-item">
+                    <div class="analysis-icon"><i class="bx bx-slider-alt"></i></div>
+                    <h3 class="analysis-title">Technical Execution</h3>
+                    <p>Assessment of camera techniques, focus, exposure, and post-processing decisions.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section" id="interpretation">
+            <h2 class="section-title"><i class="bx bx-book-open"></i> Interpretation Methodology</h2>
+            
+            <div class="card">
+                <div class="card-content">
+                    <p>Photographic cryptology employs a systematic approach to visual analysis:</p>
+                    
+                    <ul class="checklist">
+                        <li><span class="term-highlight">Initial Observation</span> - First impressions and emotional responses to the image</li>
+                        <li><span class="term-highlight">Formal Analysis</span> - Examination of composition, color, light, and technical elements</li>
+                        <li><span class="term-highlight">Contextual Research</span> - Understanding the historical, cultural, and personal background</li>
+                        <li><span class="term-highlight">Symbolic Interpretation</span> - Identifying and interpreting visual symbols and metaphors</li>
+                        <li><span class="term-highlight">Comparative Analysis</span> - Relating the image to other works and artistic movements</li>
+                        <li><span class="term-highlight">Synthesis</span> - Integrating all elements to form a coherent interpretation</li>
+                    </ul>
+                    
+                    <div class="quote">
+                        "A photograph is a secret about a secret. The more it tells you, the less you know."
+                        <span class="quote-author">- Diane Arbus</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section" id="techniques">
+            <h2 class="section-title"><i class="bx bx-wrench"></i> Analytical Techniques</h2>
+            
+            <div class="card-container">
+                <div class="card">
+                    <h3 class="card-title"><i class="bx bx-grid"></i> Rule of Thirds</h3>
+                    <div class="card-content">
+                        <p>Analysis of how subjects are positioned within the frame according to the rule of thirds grid, and how this affects visual balance and focus.</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title"><i class="bx bx-line-chart"></i> Leading Lines</h3>
+                    <div class="card-content">
+                        <p>Examination of how lines within the composition guide the viewer's eye and create visual pathways through the image.</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title"><i class="bx bx-layer"></i> Depth & Perspective</h3>
+                    <div class="card-content">
+                        <p>Analysis of foreground, midground, and background elements and how they create a sense of depth and spatial relationships.</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title"><i class="bx bx-contrast"></i> Contrast Analysis</h3>
+                    <div class="card-content">
+                        <p>Study of tonal contrast, color contrast, and conceptual contrasts that create visual interest and meaning.</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title"><i class="bx bx-crop"></i> Framing & Cropping</h3>
+                    <div class="card-content">
+                        <p>Analysis of how the photographer has chosen to frame the subject and what has been included or excluded from the composition.</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title"><i class="bx bx-time-five"></i> Temporal Elements</h3>
+                    <div class="card-content">
+                        <p>Interpretation of how time is represented through motion blur, long exposures, or the capturing of decisive moments.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer style="text-align: center; padding: 20px; font-size: 14px; color: white; margin-top: 50px;">
+        <hr style="margin-bottom: 10px; border-color: limegreen;" />
+        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.2 | July 2025</p>
+    </footer>
+
+    <script src="/JAVASCRIPT/monitor.js"></script>
+    <canvas id="matrixCanvas"></canvas>
+    <script src="/JAVASCRIPT/matrix.js"></script>
+    
+    <script>
+        // Modal functionality for enlarged images
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById("imageModal");
+            const modalImg = document.getElementById("enlargedImage");
+            const modalDesc = document.getElementById("modalDescription");
+            const closeBtn = document.getElementsByClassName("close-modal")[0];
+            
+            // Get all photo images
+            const photoImages = document.querySelectorAll('.photo-image');
+            
+            photoImages.forEach(img => {
+                img.addEventListener('click', function() {
+                    modal.style.display = "block";
+                    modalImg.src = this.getAttribute('data-enlarged');
+                    
+                    // Get the description from the parent card
+                    const description = this.closest('.photo-card').querySelector('.photo-description').textContent;
+                    modalDesc.textContent = description;
+                });
+            });
+            
+            // Close modal when clicking the X
+            closeBtn.addEventListener('click', function() {
+                modal.style.display = "none";
+            });
+            
+            // Close modal when clicking outside the image
+            window.addEventListener('click', function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            });
+        });
+    </script>
+</body>
+</html>
