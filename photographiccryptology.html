@@ -323,6 +323,8 @@
             color: var(--text-muted);
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             padding-top: 10px;
+            display: flex;
+            justify-content: space-between;
         }
         
         /* Modal for enlarged photo */
@@ -333,17 +335,17 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
+            background-color: rgba(0, 0, 0, 0.95);
             z-index: 1000;
             overflow: auto;
             padding: 20px;
         }
         
         .modal-content {
-            margin: auto;
+            margin: 50px auto 20px;
             display: block;
             max-width: 90%;
-            max-height: 80%;
+            max-height: 70vh;
             object-fit: contain;
             border-radius: 8px;
             box-shadow: 0 0 25px rgba(0, 255, 0, 0.3);
@@ -360,19 +362,57 @@
         }
         
         .close-modal {
-            position: absolute;
+            position: fixed;
             top: 20px;
-            right: 35px;
+            right: 30px;
             color: white;
             font-size: 40px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
+            z-index: 1001;
         }
         
         .close-modal:hover {
             color: var(--primary-color);
             transform: scale(1.1);
+        }
+        
+        /* Modal navigation */
+        .modal-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            font-size: 30px;
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+        
+        .modal-nav:hover {
+            background-color: rgba(0, 255, 0, 0.3);
+            color: var(--primary-color);
+        }
+        
+        .prev {
+            left: 20px;
+        }
+        
+        .next {
+            right: 20px;
+        }
+        
+        .modal-counter {
+            position: absolute;
+            top: 20px;
+            left: 30px;
+            color: white;
+            font-size: 18px;
+            z-index: 1001;
         }
         
         /* Analysis section */
@@ -409,6 +449,49 @@
             color: var(--primary-color);
         }
         
+        /* Photographers section */
+        .photographer-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .photographer-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 25px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .photographer-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 255, 0, 0.2);
+        }
+        
+        .photographer-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 15px;
+            border: 2px solid var(--primary-color);
+        }
+        
+        .photographer-name {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .photographer-period {
+            font-style: italic;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+        
         /* Responsive Design */
         @media (max-width: 768px) {
             .content-wrapper {
@@ -431,15 +514,39 @@
                 grid-template-columns: 1fr;
             }
             
+            .photographer-cards {
+                grid-template-columns: 1fr;
+            }
+            
             .modal-content {
                 max-width: 95%;
-                max-height: 70%;
+                max-height: 60vh;
+                margin-top: 70px;
             }
             
             .close-modal {
-                top: 10px;
+                top: 15px;
                 right: 20px;
-                font-size: 30px;
+                font-size: 35px;
+            }
+            
+            .modal-nav {
+                font-size: 24px;
+                padding: 8px 12px;
+            }
+            
+            .prev {
+                left: 10px;
+            }
+            
+            .next {
+                right: 10px;
+            }
+            
+            .modal-counter {
+                top: 15px;
+                left: 20px;
+                font-size: 16px;
             }
         }
         
@@ -507,85 +614,18 @@
         <section class="section" id="gallery">
             <h2 class="section-title"><i class="bx bx-images"></i> Photographic Analysis Gallery</h2>
             
-            <div class="photo-gallery">
-                <div class="photo-card">
-                    <img src="https://adembayazit.com/IMAGES/photo1.jpg" alt="Urban Solitude" class="photo-image" data-enlarged="https://adembayazit.com/IMAGES/photo1-large.jpg">
-                    <div class="photo-info">
-                        <h3 class="photo-title"><i class="bx bx-building"></i> Urban Solitude</h3>
-                        <p class="photo-description">This composition captures the contrast between human isolation and the density of urban environments. The single figure positioned against the vast architectural landscape creates a powerful statement about modern existence.</p>
-                        <div class="photo-meta">
-                            <span><i class="bx bx-time"></i> 2023</span> | 
-                            <span><i class="bx bx-camera"></i> Digital</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="photo-card">
-                    <img src="https://adembayazit.com/IMAGES/photo2.jpg" alt="Nature's Resilience" class="photo-image" data-enlarged="https://adembayazit.com/IMAGES/photo2-large.jpg">
-                    <div class="photo-info">
-                        <h3 class="photo-title"><i class="bx bx-leaf"></i> Nature's Resilience</h3>
-                        <p class="photo-description">A study in persistence, this image shows life thriving in seemingly inhospitable conditions. The composition uses natural framing to draw attention to the central subject while maintaining a balanced asymmetry.</p>
-                        <div class="photo-meta">
-                            <span><i class="bx bx-time"></i> 2023</span> | 
-                            <span><i class="bx bx-camera"></i> Film</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="photo-card">
-                    <img src="https://adembayazit.com/IMAGES/photo3.jpg" alt="Industrial Poetry" class="photo-image" data-enlarged="https://adembayazit.com/IMAGES/photo3-large.jpg">
-                    <div class="photo-info">
-                        <h3 class="photo-title"><i class="bx bx-cog"></i> Industrial Poetry</h3>
-                        <p class="photo-description">This photograph transforms mundane industrial elements into abstract art through careful framing and lighting. The repetition of geometric shapes creates rhythm, while selective focus guides the viewer's attention.</p>
-                        <div class="photo-meta">
-                            <span><i class="bx bx-time"></i> 2022</span> | 
-                            <span><i class="bx bx-camera"></i> Digital</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="photo-card">
-                    <img src="https://adembayazit.com/IMAGES/photo4.jpg" alt="Human Connection" class="photo-image" data-enlarged="https://adembayazit.com/IMAGES/photo4-large.jpg">
-                    <div class="photo-info">
-                        <h3 class="photo-title"><i class="bx bx-user"></i> Human Connection</h3>
-                        <p class="photo-description">A candid moment captured with remarkable sensitivity. The composition uses the rule of thirds to create visual harmony, while the shallow depth of field isolates the subjects from their environment.</p>
-                        <div class="photo-meta">
-                            <span><i class="bx bx-time"></i> 2023</span> | 
-                            <span><i class="bx bx-camera"></i> Digital</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="photo-card">
-                    <img src="https://adembayazit.com/IMAGES/photo5.jpg" alt="Architectural Harmony" class="photo-image" data-enlarged="https://adembayazit.com/IMAGES/photo5-large.jpg">
-                    <div class="photo-info">
-                        <h3 class="photo-title"><i class="bx bx-building-house"></i> Architectural Harmony</h3>
-                        <p class="photo-description">This image explores the relationship between historical and contemporary architecture. The strong leading lines draw the eye through the frame, while the contrast in textures adds visual interest.</p>
-                        <div class="photo-meta">
-                            <span><i class="bx bx-time"></i> 2022</span> | 
-                            <span><i class="bx bx-camera"></i> Medium Format</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="photo-card">
-                    <img src="https://adembayazit.com/IMAGES/photo6.jpg" alt="Abstract Emotions" class="photo-image" data-enlarged="https://adembayazit.com/IMAGES/photo6-large.jpg">
-                    <div class="photo-info">
-                        <h3 class="photo-title"><i class="bx bx-palette"></i> Abstract Emotions</h3>
-                        <p class="photo-description">An experimental approach to photography that focuses on color, texture, and form rather than recognizable subjects. The composition creates a visual language that speaks directly to emotions.</p>
-                        <div class="photo-meta">
-                            <span><i class="bx bx-time"></i> 2023</span> | 
-                            <span><i class="bx bx-camera"></i> Digital Composite</span>
-                        </div>
-                    </div>
-                </div>
+            <div class="photo-gallery" id="photoGallery">
+                <!-- Photo cards will be dynamically loaded here -->
             </div>
         </section>
         
         <!-- Modal for enlarged images -->
         <div id="imageModal" class="modal">
             <span class="close-modal">&times;</span>
+            <div class="modal-counter" id="modalCounter">1 / 5</div>
+            <button class="modal-nav prev">&lt;</button>
             <img class="modal-content" id="enlargedImage">
+            <button class="modal-nav next">&gt;</button>
             <div id="modalDescription" class="modal-description"></div>
         </div>
         
@@ -631,6 +671,88 @@
             </div>
         </section>
         
+        <section class="section" id="photographers">
+            <h2 class="section-title"><i class="bx bx-user-circle"></i> Influential Photographers & Artists</h2>
+            
+            <div class="photographer-cards">
+                <div class="photographer-card">
+                    <img src="https://adembayazit.com/IMAGES/ansel-adams.jpg" alt="Ansel Adams" class="photographer-image">
+                    <h3 class="photographer-name">Ansel Adams</h3>
+                    <p class="photographer-period">1902-1984</p>
+                    <p>Master of landscape photography and the zone system. Known for his dramatic black and white images of the American West.</p>
+                </div>
+                
+                <div class="photographer-card">
+                    <img src="https://adembayazit.com/IMAGES/henri-cartier-bresson.jpg" alt="Henri Cartier-Bresson" class="photographer-image">
+                    <h3 class="photographer-name">Henri Cartier-Bresson</h3>
+                    <p class="photographer-period">1908-2004</p>
+                    <p>Pioneer of street photography and the concept of "the decisive moment" - capturing an event that is ephemeral and significant.</p>
+                </div>
+                
+                <div class="photographer-card">
+                    <img src="https://adembayazit.com/IMAGES/dorothea-lange.jpg" alt="Dorothea Lange" class="photographer-image">
+                    <h3 class="photographer-name">Dorothea Lange</h3>
+                    <p class="photographer-period">1895-1965</p>
+                    <p>Documentary photographer known for her Depression-era work, particularly "Migrant Mother," which became an icon of the era.</p>
+                </div>
+                
+                <div class="photographer-card">
+                    <img src="https://adembayazit.com/IMAGES/robert-capa.jpg" alt="Robert Capa" class="photographer-image">
+                    <h3 class="photographer-name">Robert Capa</h3>
+                    <p class="photographer-period">1913-1954</p>
+                    <p>War photographer and photojournalist who covered five different wars. Co-founded Magnum Photos, the first cooperative agency for freelance photographers.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section" id="techniques">
+            <h2 class="section-title"><i class="bx bx-wrench"></i> Advanced Photographic Techniques</h2>
+            
+            <div class="card-container">
+                <div class="card">
+                    <h3 class="card-title"><i class="bx bx-grid"></i> Golden Ratio & Fibonacci Spiral</h3>
+                    <div class="card-content">
+                        <p>The golden ratio (approximately 1.618) creates aesthetically pleasing compositions. The Fibonacci spiral, derived from this ratio, guides the viewer's eye through the image in a natural, flowing manner.</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title"><i class="bx bx-line-chart"></i> Leading Lines</h3>
+                    <div class="card-content">
+                        <p>Using natural or man-made lines to direct the viewer's attention toward the main subject. Roads, fences, rivers, and architectural elements can all serve as effective leading lines.</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title"><i class="bx bx-layer"></i> Forced Perspective</h3>
+                    <div class="card-content">
+                        <p>Manipulating visual perception through the arrangement of subjects relative to the camera to create optical illusions, making objects appear larger, smaller, closer, or farther than they actually are.</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title"><i class="bx bx-contrast"></i> Chiaroscuro</h3>
+                    <div class="card-content">
+                        <p>An Italian term meaning "light-dark," this technique uses strong contrasts between light and dark to create dramatic, three-dimensional effects. Popularized by Renaissance painters like Caravaggio.</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title"><i class="bx bx-crop"></i> Negative Space</h3>
+                    <div class="card-content">
+                        <p>Using empty or minimal areas in a composition to emphasize the main subject, create balance, and evoke specific emotions. Negative space can be as powerful as the subject itself.</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title"><i class="bx bx-time-five"></i> Long Exposure</h3>
+                    <div class="card-content">
+                        <p>Using slow shutter speeds to capture the passage of time, creating effects like light trails, silky water, or ghostly apparitions of moving subjects against a static background.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
         <section class="section" id="interpretation">
             <h2 class="section-title"><i class="bx bx-book-open"></i> Interpretation Methodology</h2>
             
@@ -651,53 +773,10 @@
                         "A photograph is a secret about a secret. The more it tells you, the less you know."
                         <span class="quote-author">- Diane Arbus</span>
                     </div>
-                </div>
-            </div>
-        </section>
-        
-        <section class="section" id="techniques">
-            <h2 class="section-title"><i class="bx bx-wrench"></i> Analytical Techniques</h2>
-            
-            <div class="card-container">
-                <div class="card">
-                    <h3 class="card-title"><i class="bx bx-grid"></i> Rule of Thirds</h3>
-                    <div class="card-content">
-                        <p>Analysis of how subjects are positioned within the frame according to the rule of thirds grid, and how this affects visual balance and focus.</p>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <h3 class="card-title"><i class="bx bx-line-chart"></i> Leading Lines</h3>
-                    <div class="card-content">
-                        <p>Examination of how lines within the composition guide the viewer's eye and create visual pathways through the image.</p>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <h3 class="card-title"><i class="bx bx-layer"></i> Depth & Perspective</h3>
-                    <div class="card-content">
-                        <p>Analysis of foreground, midground, and background elements and how they create a sense of depth and spatial relationships.</p>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <h3 class="card-title"><i class="bx bx-contrast"></i> Contrast Analysis</h3>
-                    <div class="card-content">
-                        <p>Study of tonal contrast, color contrast, and conceptual contrasts that create visual interest and meaning.</p>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <h3 class="card-title"><i class="bx bx-crop"></i> Framing & Cropping</h3>
-                    <div class="card-content">
-                        <p>Analysis of how the photographer has chosen to frame the subject and what has been included or excluded from the composition.</p>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <h3 class="card-title"><i class="bx bx-time-five"></i> Temporal Elements</h3>
-                    <div class="card-content">
-                        <p>Interpretation of how time is represented through motion blur, long exposures, or the capturing of decisive moments.</p>
+                    
+                    <div class="quote">
+                        "You don't take a photograph, you make it."
+                        <span class="quote-author">- Ansel Adams</span>
                     </div>
                 </div>
             </div>
@@ -714,24 +793,188 @@
     <script src="/JAVASCRIPT/matrix.js"></script>
     
     <script>
+        // Sample photo data - this would come from JSON in production
+        const photoData = [
+            {
+                id: 1,
+                title: "Urban Solitude",
+                images: [
+                    {
+                        url: "https://adembayazit.com/IMAGES/photo1.jpg",
+                        description: "This composition captures the contrast between human isolation and the density of urban environments. The single figure positioned against the vast architectural landscape creates a powerful statement about modern existence."
+                    },
+                    {
+                        url: "https://adembayazit.com/IMAGES/photo1-detail1.jpg",
+                        description: "Close-up view showing the texture and details of the architectural elements. The play of light and shadow creates a dramatic contrast that emphasizes the geometric patterns."
+                    },
+                    {
+                        url: "https://adembayazit.com/IMAGES/photo1-detail2.jpg",
+                        description: "Alternative angle showing the relationship between the human figure and the urban landscape. The composition follows the rule of thirds, placing the subject at an intersection point for visual balance."
+                    }
+                ],
+                date: "2023-06-15",
+                time: "17:30",
+                location: "Istanbul, Turkey",
+                camera: "Digital"
+            },
+            {
+                id: 2,
+                title: "Nature's Resilience",
+                images: [
+                    {
+                        url: "https://adembayazit.com/IMAGES/photo2.jpg",
+                        description: "A study in persistence, this image shows life thriving in seemingly inhospitable conditions. The composition uses natural framing to draw attention to the central subject while maintaining a balanced asymmetry."
+                    },
+                    {
+                        url: "https://adembayazit.com/IMAGES/photo2-detail1.jpg",
+                        description: "Macro detail revealing the intricate patterns and textures of the plant. The shallow depth of field isolates the subject from the background, creating a dreamlike quality."
+                    }
+                ],
+                date: "2023-04-22",
+                time: "11:15",
+                location: "Cappadocia, Turkey",
+                camera: "Film"
+            },
+            {
+                id: 3,
+                title: "Industrial Poetry",
+                images: [
+                    {
+                        url: "https://adembayazit.com/IMAGES/photo3.jpg",
+                        description: "This photograph transforms mundane industrial elements into abstract art through careful framing and lighting. The repetition of geometric shapes creates rhythm, while selective focus guides the viewer's attention."
+                    },
+                    {
+                        url: "https://adembayazit.com/IMAGES/photo3-detail1.jpg",
+                        description: "Close-up view highlighting the textures and patterns created by rust and weathering. The warm tones contrast with the cool metallic surfaces, creating visual interest."
+                    },
+                    {
+                        url: "https://adembayazit.com/IMAGES/photo3-detail2.jpg",
+                        description: "Wide-angle perspective showing the scale and context of the industrial environment. The converging lines create a sense of depth and draw the eye into the frame."
+                    },
+                    {
+                        url: "https://adembayazit.com/IMAGES/photo3-detail3.jpg",
+                        description: "Detail shot focusing on the interplay of light and shadow across the metallic surfaces. The high contrast creates a graphic, almost abstract quality."
+                    }
+                ],
+                date: "2022-11-08",
+                time: "14:45",
+                location: "Berlin, Germany",
+                camera: "Digital"
+            },
+            {
+                id: 4,
+                title: "Human Connection",
+                images: [
+                    {
+                        url: "https://adembayazit.com/IMAGES/photo4.jpg",
+                        description: "A candid moment captured with remarkable sensitivity. The composition uses the rule of thirds to create visual harmony, while the shallow depth of field isolates the subjects from their environment."
+                    },
+                    {
+                        url: "https://adembayazit.com/IMAGES/photo4-detail1.jpg",
+                        description: "Close-up emphasizing the emotional connection between the subjects. The natural lighting enhances the warmth and intimacy of the moment."
+                    }
+                ],
+                date: "2023-08-03",
+                time: "16:20",
+                location: "Paris, France",
+                camera: "Digital"
+            },
+            {
+                id: 5,
+                title: "Architectural Harmony",
+                images: [
+                    {
+                        url: "https://adembayazit.com/IMAGES/photo5.jpg",
+                        description: "This image explores the relationship between historical and contemporary architecture. The strong leading lines draw the eye through the frame, while the contrast in textures adds visual interest."
+                    },
+                    {
+                        url: "https://adembayazit.com/IMAGES/photo5-detail1.jpg",
+                        description: "Detail view showing the intricate craftsmanship of the historical building. The play of light across the surfaces reveals the depth and complexity of the architectural details."
+                    },
+                    {
+                        url: "https://adembayazit.com/IMAGES/photo5-detail2.jpg",
+                        description: "Perspective shot emphasizing the scale difference between the historical and modern structures. The composition creates a dialogue between different eras of architectural design."
+                    }
+                ],
+                date: "2022-09-17",
+                time: "10:05",
+                location: "Barcelona, Spain",
+                camera: "Medium Format"
+            },
+            {
+                id: 6,
+                title: "Abstract Emotions",
+                images: [
+                    {
+                        url: "https://adembayazit.com/IMAGES/photo6.jpg",
+                        description: "An experimental approach to photography that focuses on color, texture, and form rather than recognizable subjects. The composition creates a visual language that speaks directly to emotions."
+                    },
+                    {
+                        url: "https://adembayazit.com/IMAGES/photo6-detail1.jpg",
+                        description: "Close-up revealing the intricate layers and textures created through multiple exposure techniques. The blending of colors creates a dreamlike, ethereal quality."
+                    },
+                    {
+                        url: "https://adembayazit.com/IMAGES/photo6-detail2.jpg",
+                        description: "Alternative composition focusing on the interaction between different color fields. The balance between warm and cool tones creates visual tension and harmony simultaneously."
+                    }
+                ],
+                date: "2023-01-25",
+                time: "13:50",
+                location: "Studio",
+                camera: "Digital Composite"
+            }
+        ];
+
         // Modal functionality for enlarged images
+        let currentPhotoIndex = 0;
+        let currentImageIndex = 0;
+        let currentPhotoData = null;
+
         document.addEventListener('DOMContentLoaded', function() {
             const modal = document.getElementById("imageModal");
             const modalImg = document.getElementById("enlargedImage");
             const modalDesc = document.getElementById("modalDescription");
+            const modalCounter = document.getElementById("modalCounter");
             const closeBtn = document.getElementsByClassName("close-modal")[0];
+            const prevBtn = document.querySelector(".modal-nav.prev");
+            const nextBtn = document.querySelector(".modal-nav.next");
             
-            // Get all photo images
-            const photoImages = document.querySelectorAll('.photo-image');
+            // Generate photo gallery from data
+            const photoGallery = document.getElementById("photoGallery");
             
-            photoImages.forEach(img => {
-                img.addEventListener('click', function() {
-                    modal.style.display = "block";
-                    modalImg.src = this.getAttribute('data-enlarged');
+            photoData.forEach(photo => {
+                const photoCard = document.createElement('div');
+                photoCard.className = 'photo-card';
+                photoCard.setAttribute('data-id', photo.id);
+                
+                photoCard.innerHTML = `
+                    <img src="${photo.images[0].url}" alt="${photo.title}" class="photo-image">
+                    <div class="photo-info">
+                        <h3 class="photo-title"><i class="bx bx-camera"></i> ${photo.title}</h3>
+                        <p class="photo-description">${photo.images[0].description.substring(0, 150)}...</p>
+                        <div class="photo-meta">
+                            <span><i class="bx bx-calendar"></i> ${photo.date}</span>
+                            <span><i class="bx bx-time"></i> ${photo.time}</span>
+                            <span><i class="bx bx-map"></i> ${photo.location}</span>
+                        </div>
+                    </div>
+                `;
+                
+                photoGallery.appendChild(photoCard);
+                
+                // Add click event to photo card
+                photoCard.querySelector('.photo-image').addEventListener('click', function() {
+                    currentPhotoIndex = photo.id - 1;
+                    currentImageIndex = 0;
+                    currentPhotoData = photo;
                     
-                    // Get the description from the parent card
-                    const description = this.closest('.photo-card').querySelector('.photo-description').textContent;
-                    modalDesc.textContent = description;
+                    modal.style.display = "block";
+                    modalImg.src = photo.images[0].url;
+                    modalDesc.textContent = photo.images[0].description;
+                    modalCounter.textContent = `1 / ${photo.images.length}`;
+                    
+                    // Update navigation buttons visibility
+                    updateNavButtons();
                 });
             });
             
@@ -746,6 +989,44 @@
                     modal.style.display = "none";
                 }
             });
+            
+            // Previous image button
+            prevBtn.addEventListener('click', function() {
+                if (currentPhotoData && currentImageIndex > 0) {
+                    currentImageIndex--;
+                    modalImg.src = currentPhotoData.images[currentImageIndex].url;
+                    modalDesc.textContent = currentPhotoData.images[currentImageIndex].description;
+                    modalCounter.textContent = `${currentImageIndex + 1} / ${currentPhotoData.images.length}`;
+                    updateNavButtons();
+                }
+            });
+            
+            // Next image button
+            nextBtn.addEventListener('click', function() {
+                if (currentPhotoData && currentImageIndex < currentPhotoData.images.length - 1) {
+                    currentImageIndex++;
+                    modalImg.src = currentPhotoData.images[currentImageIndex].url;
+                    modalDesc.textContent = currentPhotoData.images[currentImageIndex].description;
+                    modalCounter.textContent = `${currentImageIndex + 1} / ${currentPhotoData.images.length}`;
+                    updateNavButtons();
+                }
+            });
+            
+            function updateNavButtons() {
+                // Hide/show prev button
+                if (currentImageIndex === 0) {
+                    prevBtn.style.visibility = 'hidden';
+                } else {
+                    prevBtn.style.visibility = 'visible';
+                }
+                
+                // Hide/show next button
+                if (currentImageIndex === currentPhotoData.images.length - 1) {
+                    nextBtn.style.visibility = 'hidden';
+                } else {
+                    nextBtn.style.visibility = 'visible';
+                }
+            }
         });
     </script>
 </body>
