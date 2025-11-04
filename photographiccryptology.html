@@ -76,6 +76,8 @@
         justify-content: space-between;
         align-items: center;
         padding: 10px 5%;
+        position: relative;
+        z-index: 100;
       }
         
         .content-wrapper {
@@ -278,9 +280,19 @@
             border-color: var(--primary-color);
         }
         
-        .photo-image {
+        .photo-image-container {
             width: 100%;
             height: 250px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #0a0a0a;
+        }
+        
+        .photo-image {
+            width: 100%;
+            height: 100%;
             object-fit: cover;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -336,13 +348,13 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.95);
-            z-index: 1000;
+            z-index: 10000;
             overflow: auto;
             padding: 20px;
         }
         
         .modal-content {
-            margin: 50px auto 20px;
+            margin: 80px auto 20px;
             display: block;
             max-width: 90%;
             max-height: 70vh;
@@ -363,34 +375,43 @@
         
         .close-modal {
             position: fixed;
-            top: 20px;
-            right: 30px;
+            top: 30px;
+            right: 35px;
             color: white;
             font-size: 40px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
-            z-index: 1001;
+            z-index: 10001;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .close-modal:hover {
             color: var(--primary-color);
             transform: scale(1.1);
+            background: rgba(0, 0, 0, 0.7);
         }
         
         /* Modal navigation */
         .modal-nav {
-            position: absolute;
+            position: fixed;
             top: 50%;
             transform: translateY(-50%);
             background-color: rgba(0, 0, 0, 0.5);
             color: white;
             border: none;
             font-size: 30px;
-            padding: 10px 15px;
+            padding: 15px 20px;
             cursor: pointer;
             transition: all 0.3s ease;
-            z-index: 1001;
+            z-index: 10001;
+            border-radius: 5px;
         }
         
         .modal-nav:hover {
@@ -399,20 +420,23 @@
         }
         
         .prev {
-            left: 20px;
+            left: 30px;
         }
         
         .next {
-            right: 20px;
+            right: 30px;
         }
         
         .modal-counter {
-            position: absolute;
-            top: 20px;
-            left: 30px;
+            position: fixed;
+            top: 30px;
+            left: 35px;
             color: white;
             font-size: 18px;
-            z-index: 1001;
+            z-index: 10001;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 5px 15px;
+            border-radius: 20px;
         }
         
         /* Analysis section */
@@ -521,30 +545,32 @@
             .modal-content {
                 max-width: 95%;
                 max-height: 60vh;
-                margin-top: 70px;
+                margin-top: 100px;
             }
             
             .close-modal {
-                top: 15px;
+                top: 20px;
                 right: 20px;
                 font-size: 35px;
+                width: 45px;
+                height: 45px;
             }
             
             .modal-nav {
                 font-size: 24px;
-                padding: 8px 12px;
+                padding: 12px 16px;
             }
             
             .prev {
-                left: 10px;
+                left: 15px;
             }
             
             .next {
-                right: 10px;
+                right: 15px;
             }
             
             .modal-counter {
-                top: 15px;
+                top: 25px;
                 left: 20px;
                 font-size: 16px;
             }
@@ -676,28 +702,28 @@
             
             <div class="photographer-cards">
                 <div class="photographer-card">
-                    <img src="https://adembayazit.com/IMAGES/ansel-adams.jpg" alt="Ansel Adams" class="photographer-image">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Ansel_Adams_and_camera.jpg/220px-Ansel_Adams_and_camera.jpg" alt="Ansel Adams" class="photographer-image">
                     <h3 class="photographer-name">Ansel Adams</h3>
                     <p class="photographer-period">1902-1984</p>
                     <p>Master of landscape photography and the zone system. Known for his dramatic black and white images of the American West.</p>
                 </div>
                 
                 <div class="photographer-card">
-                    <img src="https://adembayazit.com/IMAGES/henri-cartier-bresson.jpg" alt="Henri Cartier-Bresson" class="photographer-image">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Henri_Cartier-Bresson_%281908-2004%29_by_Erling_Mandelmann_-_CH_BE_0327.tif/lossy-page1-220px-Henri_Cartier-Bresson_%281908-2004%29_by_Erling_Mandelmann_-_CH_BE_0327.tif.jpg" alt="Henri Cartier-Bresson" class="photographer-image">
                     <h3 class="photographer-name">Henri Cartier-Bresson</h3>
                     <p class="photographer-period">1908-2004</p>
                     <p>Pioneer of street photography and the concept of "the decisive moment" - capturing an event that is ephemeral and significant.</p>
                 </div>
                 
                 <div class="photographer-card">
-                    <img src="https://adembayazit.com/IMAGES/dorothea-lange.jpg" alt="Dorothea Lange" class="photographer-image">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Dorothea_Lange_1936.jpg/220px-Dorothea_Lange_1936.jpg" alt="Dorothea Lange" class="photographer-image">
                     <h3 class="photographer-name">Dorothea Lange</h3>
                     <p class="photographer-period">1895-1965</p>
                     <p>Documentary photographer known for her Depression-era work, particularly "Migrant Mother," which became an icon of the era.</p>
                 </div>
                 
                 <div class="photographer-card">
-                    <img src="https://adembayazit.com/IMAGES/robert-capa.jpg" alt="Robert Capa" class="photographer-image">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Robert_Capa_%281910-1954%29.jpg/220px-Robert_Capa_%281910-1954%29.jpg" alt="Robert Capa" class="photographer-image">
                     <h3 class="photographer-name">Robert Capa</h3>
                     <p class="photographer-period">1913-1954</p>
                     <p>War photographer and photojournalist who covered five different wars. Co-founded Magnum Photos, the first cooperative agency for freelance photographers.</p>
@@ -800,15 +826,15 @@
                 title: "Urban Solitude",
                 images: [
                     {
-                        url: "PHOTO/photo1.JPG",
+                        url: "https://images.unsplash.com/photo-1541336032412-2048a678540d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
                         description: "This composition captures the contrast between human isolation and the density of urban environments. The single figure positioned against the vast architectural landscape creates a powerful statement about modern existence."
                     },
                     {
-                        url: "https://adembayazit.com/IMAGES/photo1-detail1.jpg",
+                        url: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
                         description: "Close-up view showing the texture and details of the architectural elements. The play of light and shadow creates a dramatic contrast that emphasizes the geometric patterns."
                     },
                     {
-                        url: "https://adembayazit.com/IMAGES/photo1-detail2.jpg",
+                        url: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
                         description: "Alternative angle showing the relationship between the human figure and the urban landscape. The composition follows the rule of thirds, placing the subject at an intersection point for visual balance."
                     }
                 ],
@@ -822,11 +848,11 @@
                 title: "Nature's Resilience",
                 images: [
                     {
-                        url: "PHOTO/photo2.JPG",
+                        url: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
                         description: "A study in persistence, this image shows life thriving in seemingly inhospitable conditions. The composition uses natural framing to draw attention to the central subject while maintaining a balanced asymmetry."
                     },
                     {
-                        url: "https://adembayazit.com/IMAGES/photo2-detail1.jpg",
+                        url: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
                         description: "Macro detail revealing the intricate patterns and textures of the plant. The shallow depth of field isolates the subject from the background, creating a dreamlike quality."
                     }
                 ],
@@ -840,19 +866,19 @@
                 title: "Industrial Poetry",
                 images: [
                     {
-                        url: "PHOTO/photo3.JPG",
+                        url: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
                         description: "This photograph transforms mundane industrial elements into abstract art through careful framing and lighting. The repetition of geometric shapes creates rhythm, while selective focus guides the viewer's attention."
                     },
                     {
-                        url: "https://adembayazit.com/IMAGES/photo3-detail1.jpg",
+                        url: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
                         description: "Close-up view highlighting the textures and patterns created by rust and weathering. The warm tones contrast with the cool metallic surfaces, creating visual interest."
                     },
                     {
-                        url: "https://adembayazit.com/IMAGES/photo3-detail2.jpg",
+                        url: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
                         description: "Wide-angle perspective showing the scale and context of the industrial environment. The converging lines create a sense of depth and draw the eye into the frame."
                     },
                     {
-                        url: "https://adembayazit.com/IMAGES/photo3-detail3.jpg",
+                        url: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
                         description: "Detail shot focusing on the interplay of light and shadow across the metallic surfaces. The high contrast creates a graphic, almost abstract quality."
                     }
                 ],
@@ -866,11 +892,11 @@
                 title: "Human Connection",
                 images: [
                     {
-                        url: "https://adembayazit.com/IMAGES/photo4.jpg",
+                        url: "https://images.unsplash.com/photo-1516487106395-f3d579a6c7b5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
                         description: "A candid moment captured with remarkable sensitivity. The composition uses the rule of thirds to create visual harmony, while the shallow depth of field isolates the subjects from their environment."
                     },
                     {
-                        url: "https://adembayazit.com/IMAGES/photo4-detail1.jpg",
+                        url: "https://images.unsplash.com/photo-1516487106395-f3d579a6c7b5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
                         description: "Close-up emphasizing the emotional connection between the subjects. The natural lighting enhances the warmth and intimacy of the moment."
                     }
                 ],
@@ -884,15 +910,15 @@
                 title: "Architectural Harmony",
                 images: [
                     {
-                        url: "https://adembayazit.com/IMAGES/photo5.jpg",
+                        url: "https://images.unsplash.com/photo-1496568816309-51d7c20e3b21?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
                         description: "This image explores the relationship between historical and contemporary architecture. The strong leading lines draw the eye through the frame, while the contrast in textures adds visual interest."
                     },
                     {
-                        url: "https://adembayazit.com/IMAGES/photo5-detail1.jpg",
+                        url: "https://images.unsplash.com/photo-1496568816309-51d7c20e3b21?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
                         description: "Detail view showing the intricate craftsmanship of the historical building. The play of light across the surfaces reveals the depth and complexity of the architectural details."
                     },
                     {
-                        url: "https://adembayazit.com/IMAGES/photo5-detail2.jpg",
+                        url: "https://images.unsplash.com/photo-1496568816309-51d7c20e3b21?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
                         description: "Perspective shot emphasizing the scale difference between the historical and modern structures. The composition creates a dialogue between different eras of architectural design."
                     }
                 ],
@@ -906,15 +932,15 @@
                 title: "Abstract Emotions",
                 images: [
                     {
-                        url: "https://adembayazit.com/IMAGES/photo6.jpg",
+                        url: "https://images.unsplash.com/photo-1543857778-c4a1a569eebe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
                         description: "An experimental approach to photography that focuses on color, texture, and form rather than recognizable subjects. The composition creates a visual language that speaks directly to emotions."
                     },
                     {
-                        url: "https://adembayazit.com/IMAGES/photo6-detail1.jpg",
+                        url: "https://images.unsplash.com/photo-1543857778-c4a1a569eebe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
                         description: "Close-up revealing the intricate layers and textures created through multiple exposure techniques. The blending of colors creates a dreamlike, ethereal quality."
                     },
                     {
-                        url: "https://adembayazit.com/IMAGES/photo6-detail2.jpg",
+                        url: "https://images.unsplash.com/photo-1543857778-c4a1a569eebe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
                         description: "Alternative composition focusing on the interaction between different color fields. The balance between warm and cool tones creates visual tension and harmony simultaneously."
                     }
                 ],
@@ -948,7 +974,9 @@
                 photoCard.setAttribute('data-id', photo.id);
                 
                 photoCard.innerHTML = `
-                    <img src="${photo.images[0].url}" alt="${photo.title}" class="photo-image">
+                    <div class="photo-image-container">
+                        <img src="${photo.images[0].url}" alt="${photo.title}" class="photo-image">
+                    </div>
                     <div class="photo-info">
                         <h3 class="photo-title"><i class="bx bx-camera"></i> ${photo.title}</h3>
                         <p class="photo-description">${photo.images[0].description.substring(0, 150)}...</p>
