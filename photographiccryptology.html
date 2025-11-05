@@ -272,6 +272,7 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
             display: flex;
             flex-direction: column;
+            cursor: pointer;
         }
         
         .photo-card:hover {
@@ -339,7 +340,7 @@
             justify-content: space-between;
         }
         
-        /* Modal for enlarged photo */
+        /* Modal for enlarged photo - IMPROVED */
         .modal {
             display: none;
             position: fixed;
@@ -347,20 +348,33 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.95);
+            background-color: rgba(0, 0, 0, 0.98);
             z-index: 10000;
             overflow: auto;
-            padding: 20px;
+            padding: 0;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         
         .modal-content {
-            margin: 80px auto 20px;
+            margin: 0 auto;
             display: block;
-            max-width: 90%;
-            max-height: 70vh;
+            max-width: 95%;
+            max-height: 85vh;
             object-fit: contain;
             border-radius: 8px;
             box-shadow: 0 0 25px rgba(0, 255, 0, 0.3);
+            transition: transform 0.3s ease;
+            cursor: zoom-in;
+        }
+        
+        .modal-content.zoomed {
+            cursor: zoom-out;
+            transform: scale(1.5);
         }
         
         .modal-description {
@@ -375,8 +389,8 @@
         
         .close-modal {
             position: fixed;
-            top: 30px;
-            right: 35px;
+            top: 20px;
+            right: 30px;
             color: white;
             font-size: 40px;
             font-weight: bold;
@@ -437,6 +451,18 @@
             background: rgba(0, 0, 0, 0.5);
             padding: 5px 15px;
             border-radius: 20px;
+        }
+        
+        /* Loading indicator */
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 20px;
+            z-index: 10002;
+            display: none;
         }
         
         /* Analysis section */
@@ -543,14 +569,14 @@
             }
             
             .modal-content {
-                max-width: 95%;
-                max-height: 60vh;
-                margin-top: 100px;
+                max-width: 98%;
+                max-height: 70vh;
+                margin-top: 60px;
             }
             
             .close-modal {
-                top: 20px;
-                right: 20px;
+                top: 15px;
+                right: 15px;
                 font-size: 35px;
                 width: 45px;
                 height: 45px;
@@ -562,16 +588,16 @@
             }
             
             .prev {
-                left: 15px;
+                left: 10px;
             }
             
             .next {
-                right: 15px;
+                right: 10px;
             }
             
             .modal-counter {
-                top: 25px;
-                left: 20px;
+                top: 20px;
+                left: 15px;
                 font-size: 16px;
             }
         }
@@ -643,7 +669,7 @@
             </div>
         </section>
         
-        <!-- Modal for enlarged images -->
+        <!-- Modal for enlarged images - IMPROVED -->
         <div id="imageModal" class="modal">
             <span class="close-modal">&times;</span>
             <div class="modal-counter" id="modalCounter">1 / 5</div>
@@ -651,6 +677,11 @@
             <img class="modal-content" id="enlargedImage">
             <button class="modal-nav next">&gt;</button>
             <div id="modalDescription" class="modal-description"></div>
+        </div>
+        
+        <!-- Loading indicator -->
+        <div class="loading" id="loadingIndicator">
+            <i class="bx bx-loader-alt bx-spin"></i> Loading...
         </div>
         
         <section class="section" id="analysis">
@@ -997,12 +1028,14 @@
         let currentPhotoIndex = 0;
         let currentImageIndex = 0;
         let currentPhotoData = null;
+        let isZoomed = false;
 
         document.addEventListener('DOMContentLoaded', function() {
             const modal = document.getElementById("imageModal");
             const modalImg = document.getElementById("enlargedImage");
             const modalDesc = document.getElementById("modalDescription");
             const modalCounter = document.getElementById("modalCounter");
+            const loadingIndicator = document.getElementById("loadingIndicator");
             const closeBtn = document.getElementsByClassName("close-modal")[0];
             const prevBtn = document.querySelector(".modal-nav.prev");
             const nextBtn = document.querySelector(".modal-nav.next");
@@ -1039,48 +1072,116 @@
                     currentPhotoData = photo;
                     
                     modal.style.display = "block";
-                    modalImg.src = photo.images[0].url;
-                    modalDesc.textContent = photo.images[0].description;
-                    modalCounter.textContent = `1 / ${photo.images.length}`;
+                    loadingIndicator.style.display = "block";
                     
-                    // Update navigation buttons visibility
-                    updateNavButtons();
+                    // Preload image for better UX
+                    const img = new Image();
+                    img.onload = function() {
+                        modalImg.src = photo.images[0].url;
+                        modalDesc.innerHTML = photo.images[0].description; // Use innerHTML to render HTML tags
+                        modalCounter.textContent = `1 / ${photo.images.length}`;
+                        loadingIndicator.style.display = "none";
+                        updateNavButtons();
+                    };
+                    img.src = photo.images[0].url;
                 });
             });
             
             // Close modal when clicking the X
             closeBtn.addEventListener('click', function() {
-                modal.style.display = "none";
+                closeModal();
             });
             
             // Close modal when clicking outside the image
             window.addEventListener('click', function(event) {
                 if (event.target == modal) {
-                    modal.style.display = "none";
+                    closeModal();
+                }
+            });
+            
+            // Keyboard navigation
+            document.addEventListener('keydown', function(event) {
+                if (modal.style.display === "block") {
+                    switch(event.key) {
+                        case 'Escape':
+                            closeModal();
+                            break;
+                        case 'ArrowLeft':
+                            navigatePrev();
+                            break;
+                        case 'ArrowRight':
+                            navigateNext();
+                            break;
+                    }
                 }
             });
             
             // Previous image button
             prevBtn.addEventListener('click', function() {
-                if (currentPhotoData && currentImageIndex > 0) {
-                    currentImageIndex--;
-                    modalImg.src = currentPhotoData.images[currentImageIndex].url;
-                    modalDesc.textContent = currentPhotoData.images[currentImageIndex].description;
-                    modalCounter.textContent = `${currentImageIndex + 1} / ${currentPhotoData.images.length}`;
-                    updateNavButtons();
-                }
+                navigatePrev();
             });
             
             // Next image button
             nextBtn.addEventListener('click', function() {
-                if (currentPhotoData && currentImageIndex < currentPhotoData.images.length - 1) {
-                    currentImageIndex++;
-                    modalImg.src = currentPhotoData.images[currentImageIndex].url;
-                    modalDesc.textContent = currentPhotoData.images[currentImageIndex].description;
-                    modalCounter.textContent = `${currentImageIndex + 1} / ${currentPhotoData.images.length}`;
-                    updateNavButtons();
+                navigateNext();
+            });
+            
+            // Zoom functionality
+            modalImg.addEventListener('click', function() {
+                if (isZoomed) {
+                    modalImg.classList.remove('zoomed');
+                    isZoomed = false;
+                } else {
+                    modalImg.classList.add('zoomed');
+                    isZoomed = true;
                 }
             });
+            
+            function navigatePrev() {
+                if (currentPhotoData && currentImageIndex > 0) {
+                    currentImageIndex--;
+                    loadingIndicator.style.display = "block";
+                    
+                    const img = new Image();
+                    img.onload = function() {
+                        modalImg.src = currentPhotoData.images[currentImageIndex].url;
+                        modalDesc.innerHTML = currentPhotoData.images[currentImageIndex].description; // Use innerHTML
+                        modalCounter.textContent = `${currentImageIndex + 1} / ${currentPhotoData.images.length}`;
+                        loadingIndicator.style.display = "none";
+                        updateNavButtons();
+                        resetZoom();
+                    };
+                    img.src = currentPhotoData.images[currentImageIndex].url;
+                }
+            }
+            
+            function navigateNext() {
+                if (currentPhotoData && currentImageIndex < currentPhotoData.images.length - 1) {
+                    currentImageIndex++;
+                    loadingIndicator.style.display = "block";
+                    
+                    const img = new Image();
+                    img.onload = function() {
+                        modalImg.src = currentPhotoData.images[currentImageIndex].url;
+                        modalDesc.innerHTML = currentPhotoData.images[currentImageIndex].description; // Use innerHTML
+                        modalCounter.textContent = `${currentImageIndex + 1} / ${currentPhotoData.images.length}`;
+                        loadingIndicator.style.display = "none";
+                        updateNavButtons();
+                        resetZoom();
+                    };
+                    img.src = currentPhotoData.images[currentImageIndex].url;
+                }
+            }
+            
+            function closeModal() {
+                modal.style.display = "none";
+                resetZoom();
+            }
+            
+            function resetZoom() {
+                modalImg.classList.remove('zoomed');
+                isZoomed = false;
+            }
             
             function updateNavButtons() {
                 // Hide/show prev button
