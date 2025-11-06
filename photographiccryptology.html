@@ -451,7 +451,7 @@
             margin-right: 8px;
         }
         
-        /* YENİ MODAL STİLLERİ - GELİŞMİŞ FOTOĞRAF GALERİSİ */
+        /* YENİ MODAL STİLLERİ - TAM EKRAN FOTOĞRAF GALERİSİ */
         .modal {
             display: none;
             position: fixed;
@@ -530,41 +530,39 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 0;
             overflow: hidden;
             position: relative;
             touch-action: pan-x pan-y;
         }
         
         .modal-image-container {
-            max-width: 100%;
-            max-height: 100%;
+            width: 100%;
+            height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
             position: relative;
-            overflow: auto;
-            cursor: grab;
-        }
-        
-        .modal-image-container:active {
-            cursor: grabbing;
+            overflow: hidden;
         }
         
         .modal-content {
-            max-width: none;
-            max-height: none;
+            max-width: 100%;
+            max-height: 100%;
             object-fit: contain;
-            border-radius: 8px;
-            box-shadow: 0 0 25px rgba(0, 255, 0, 0.2);
-            cursor: zoom-in;
             transition: transform 0.3s ease;
-            transform-origin: center center;
+            cursor: zoom-in;
         }
         
         .modal-content.zoomed {
-            cursor: zoom-out;
+            cursor: grab;
             transform: scale(2);
+            max-width: none;
+            max-height: none;
+        }
+        
+        .modal-content.zoomed:active {
+            cursor: grabbing;
         }
         
         .modal-nav {
@@ -648,6 +646,35 @@
             font-size: 20px;
             z-index: 5;
             display: none;
+        }
+        
+        .zoom-controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+        
+        .zoom-btn {
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+        
+        .zoom-btn:hover {
+            background: rgba(0, 255, 0, 0.5);
+            color: var(--primary-color);
         }
         
         /* Analysis section */
@@ -792,14 +819,10 @@
                 font-size: 25px;
             }
             
-            .modal-content-area {
-                padding: 10px;
-            }
-            
             .modal-nav {
                 position: fixed;
                 top: auto;
-                bottom: 20px;
+                bottom: 80px;
                 transform: none;
                 font-size: 20px;
                 padding: 12px 15px;
@@ -834,6 +857,17 @@
                 min-width: 0;
                 justify-content: center;
             }
+            
+            .zoom-controls {
+                bottom: 80px;
+                right: 15px;
+            }
+            
+            .zoom-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 16px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -844,7 +878,7 @@
             .modal-nav {
                 padding: 10px 12px;
                 font-size: 18px;
-                bottom: 15px;
+                bottom: 70px;
             }
             
             .prev {
@@ -864,6 +898,10 @@
             .modal-meta-item {
                 flex: 0 0 calc(50% - 5px);
                 justify-content: flex-start;
+            }
+            
+            .zoom-controls {
+                bottom: 70px;
             }
         }
         
@@ -965,6 +1003,12 @@
                     </div>
                     
                     <button class="modal-nav next">&gt;</button>
+                    
+                    <div class="zoom-controls">
+                        <button class="zoom-btn" id="zoomIn">+</button>
+                        <button class="zoom-btn" id="zoomOut">-</button>
+                        <button class="zoom-btn" id="resetZoom">↺</button>
+                    </div>
                 </div>
                 
                 <div class="modal-footer">
@@ -1210,7 +1254,7 @@
     <script src="/JAVASCRIPT/matrix.js"></script>
     
     <script>
-        // Sample photo data - this would come from JSON in production
+        // Sample photo data
         const photoData = [
             {
                 id: 1,
@@ -1219,14 +1263,6 @@
                     {
                         url: "PHOTO/photo1.JPG",
                         description: "This composition captures the contrast between human isolation and the density of urban environments. The single figure positioned against the vast architectural landscape creates a powerful statement about modern existence."
-                    },
-                    {
-                        url: "https://ik.imagekit.io/adembayazit/IMG_1630_22PJyDVnI.jpeg",
-                        description: "Close-up view showing the texture and details of the architectural elements. The play of light and shadow creates a dramatic contrast that emphasizes the geometric patterns."
-                    },
-                    {
-                        url: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-                        description: "Alternative angle showing the relationship between the human figure and the urban landscape. The composition follows the rule of thirds, placing the subject at an intersection point for visual balance."
                     }
                 ],
                 date: "2017-05-24",
@@ -1241,10 +1277,6 @@
                     {
                         url: "PHOTO/photo2.JPG",
                         description: "A study in persistence, this image shows life thriving in seemingly inhospitable conditions. The composition uses natural framing to draw attention to the central subject while maintaining a balanced asymmetry."
-                    },
-                    {
-                        url: "https://ik.imagekit.io/adembayazit/IMG_1630_22PJyDVnI.jpeg",
-                        description: "Macro detail revealing the intricate patterns and textures of the plant. The shallow depth of field isolates the subject from the background, creating a dreamlike quality."
                     }
                 ],
                 date: "2017-05-30",
@@ -1259,18 +1291,6 @@
                     {
                         url: "PHOTO/photo3.JPG",
                         description: "This photograph transforms mundane industrial elements into abstract art through careful framing and lighting. The repetition of geometric shapes creates rhythm, while selective focus guides the viewer's attention."
-                    },
-                    {
-                        url: "https://ik.imagekit.io/adembayazit/IMG_1630_22PJyDVnI.jpeg",
-                        description: "Close-up view highlighting the textures and patterns created by rust and weathering. The warm tones contrast with the cool metallic surfaces, creating visual interest."
-                    },
-                    {
-                        url: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-                        description: "Wide-angle perspective showing the scale and context of the industrial environment. The converging lines create a sense of depth and draw the eye into the frame."
-                    },
-                    {
-                        url: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-                        description: "Detail shot focusing on the interplay of light and shadow across the metallic surfaces. The high contrast creates a graphic, almost abstract quality."
                     }
                 ],
                 date: "2017-05-11",
@@ -1285,10 +1305,6 @@
                     {
                         url: "PHOTO/photo4.jpeg",
                         description: "A candid moment captured with remarkable sensitivity. The composition uses the rule of thirds to create visual harmony, while the shallow depth of field isolates the subjects from their environment."
-                    },
-                    {
-                        url: "https://images.unsplash.com/photo-1516487106395-f3d579a6c7b5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-                        description: "Close-up emphasizing the emotional connection between the subjects. The natural lighting enhances the warmth and intimacy of the moment."
                     }
                 ],
                 date: "2017-04-01",
@@ -1303,14 +1319,6 @@
                     {
                         url: "PHOTO/photo5.jpeg",
                         description: "This image explores the relationship between historical and contemporary architecture. The strong leading lines draw the eye through the frame, while the contrast in textures adds visual interest."
-                    },
-                    {
-                        url: "https://images.unsplash.com/photo-1496568816309-51d7c20e3b21?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-                        description: "Detail view showing the intricate craftsmanship of the historical building. The play of light across the surfaces reveals the depth and complexity of the architectural details."
-                    },
-                    {
-                        url: "https://images.unsplash.com/photo-1496568816309-51d7c20e3b21?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-                        description: "Perspective shot emphasizing the scale difference between the historical and modern structures. The composition creates a dialogue between different eras of architectural design."
                     }
                 ],
                 date: "2017-04-29",
@@ -1325,14 +1333,6 @@
                     {
                         url: "PHOTO/photo6.jpeg",
                         description: "An experimental approach to photography that focuses on color, texture, and form rather than recognizable subjects. The composition creates a visual language that speaks directly to emotions."
-                    },
-                    {
-                        url: "https://ik.imagekit.io/adembayazit/IMG_2127_HNpa8hyG4.jpeg",
-                        description: "Close-up revealing the intricate layers and textures created through multiple exposure techniques. The blending of colors creates a dreamlike, ethereal quality."
-                    },
-                    {
-                        url: "https://images.unsplash.com/photo-1543857778-c4a1a569eebe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-                        description: "Alternative composition focusing on the interaction between different color fields. The balance between warm and cool tones creates visual tension and harmony simultaneously."
                     }
                 ],
                 date: "2023-06-29",
@@ -1347,14 +1347,6 @@
                     {
                         url: "PHOTO/photo7.webp",
                         description: "An experimental approach to photography that focuses on color, texture, and form rather than recognizable subjects. The composition creates a visual language that speaks directly to emotions."
-                    },
-                    {
-                        url: "https://ik.imagekit.io/adembayazit/IMG_2126_aVDHlLCEb.jpeg",
-                        description: "Close-up revealing the intricate layers and textures created through multiple exposure techniques. The blending of colors creates a dreamlike, ethereal quality."
-                    },
-                    {
-                        url: "https://images.unsplash.com/photo-1543857778-c4a1a569eebe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-                        description: "Alternative composition focusing on the interaction between different color fields. The balance between warm and cool tones creates visual tension and harmony simultaneously."
                     }
                 ],
                 date: "2022-05-17",
@@ -1369,14 +1361,6 @@
                     {
                         url: "https://ik.imagekit.io/adembayazit/IMG_2025-10-05-223252_mdmst6NM4.jpeg",
                         description: "Composition Used!!‎ <br>✓ الله ✓ Mihrab ✓ Minaret ✓ Courtyard <br>✓ Prayer Rug <br>Subject of the photo: Habitat Mosque (not specifically designed. This moment has been evaluated) Photographed by me!!"
-                    },
-                    {
-                        url: "https://ik.imagekit.io/adembayazit/IMG_2067_7yOT0B9SP.jpeg",
-                        description: "The first emigrants who came to Quba had turned a date-drying yard belonging to the sons of Amr bin Awf into a mosque. The Prophet expanded this place and built the Quba Mosque. The original state of Masjid al-Quba consisted of four walls surrounding a square area"
-                    },
-                    {
-                        url: "https://images.unsplash.com/photo-1543857778-c4a1a569eebe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-                        description: "Alternative composition focusing on the interaction between different color fields. The balance between warm and cool tones creates visual tension and harmony simultaneously."
                     }
                 ],
                 date: "2016-08-02",
@@ -1386,13 +1370,13 @@
             }
         ];
 
-        // Modal functionality for enlarged images - GELİŞMİŞ VERSİYON
+        // Modal functionality for enlarged images
         let currentPhotoIndex = 0;
         let currentImageIndex = 0;
         let currentPhotoData = null;
-        let isZoomed = false;
-        let startX, startY, scrollLeft, scrollTop;
+        let currentScale = 1;
         let isDragging = false;
+        let startX, startY, scrollLeft, scrollTop;
 
         document.addEventListener('DOMContentLoaded', function() {
             const modal = document.getElementById("imageModal");
@@ -1409,6 +1393,9 @@
             const closeBtn = document.getElementsByClassName("close-modal")[0];
             const prevBtn = document.querySelector(".modal-nav.prev");
             const nextBtn = document.querySelector(".modal-nav.next");
+            const zoomInBtn = document.getElementById("zoomIn");
+            const zoomOutBtn = document.getElementById("zoomOut");
+            const resetZoomBtn = document.getElementById("resetZoom");
             
             // Generate photo gallery from data
             const photoGallery = document.getElementById("photoGallery");
@@ -1466,10 +1453,6 @@
                         case 'ArrowRight':
                             navigateNext();
                             break;
-                        case ' ':
-                            event.preventDefault();
-                            toggleZoom();
-                            break;
                     }
                 }
             });
@@ -1485,10 +1468,24 @@
             });
             
             // Zoom functionality
-            modalImg.addEventListener('click', function(e) {
-                // Only toggle zoom if not dragging
-                if (!isDragging) {
-                    toggleZoom();
+            zoomInBtn.addEventListener('click', function() {
+                zoomIn();
+            });
+            
+            zoomOutBtn.addEventListener('click', function() {
+                zoomOut();
+            });
+            
+            resetZoomBtn.addEventListener('click', function() {
+                resetZoom();
+            });
+            
+            // Double click to zoom
+            modalImg.addEventListener('dblclick', function() {
+                if (currentScale === 1) {
+                    zoomIn();
+                } else {
+                    resetZoom();
                 }
             });
             
@@ -1504,12 +1501,11 @@
             modalImgContainer.addEventListener('touchmove', drag);
             
             function startDrag(e) {
-                if (!isZoomed) return;
+                if (currentScale === 1) return;
                 
                 isDragging = true;
-                modalImgContainer.style.cursor = 'grabbing';
+                modalImg.style.cursor = 'grabbing';
                 
-                // Get initial position
                 startX = (e.pageX || e.touches[0].pageX) - modalImgContainer.offsetLeft;
                 startY = (e.pageY || e.touches[0].pageY) - modalImgContainer.offsetTop;
                 scrollLeft = modalImgContainer.scrollLeft;
@@ -1533,7 +1529,7 @@
             
             function endDrag() {
                 isDragging = false;
-                modalImgContainer.style.cursor = isZoomed ? 'grab' : 'zoom-in';
+                modalImg.style.cursor = currentScale === 1 ? 'zoom-in' : 'grab';
             }
             
             function openModal(photoIndex, imageIndex) {
@@ -1612,29 +1608,40 @@
                 resetZoom();
             }
             
-            function toggleZoom() {
-                if (isZoomed) {
-                    modalImg.classList.remove('zoomed');
-                    modalImgContainer.style.cursor = 'zoom-in';
-                    modalImgContainer.style.overflow = 'hidden';
-                    // Reset scroll position when zooming out
-                    modalImgContainer.scrollLeft = 0;
-                    modalImgContainer.scrollTop = 0;
-                } else {
-                    modalImg.classList.add('zoomed');
-                    modalImgContainer.style.cursor = 'grab';
-                    modalImgContainer.style.overflow = 'auto';
+            function zoomIn() {
+                if (currentScale < 3) {
+                    currentScale += 0.5;
+                    updateZoom();
                 }
-                isZoomed = !isZoomed;
+            }
+            
+            function zoomOut() {
+                if (currentScale > 1) {
+                    currentScale -= 0.5;
+                    updateZoom();
+                }
             }
             
             function resetZoom() {
-                modalImg.classList.remove('zoomed');
-                modalImgContainer.style.cursor = 'zoom-in';
-                modalImgContainer.style.overflow = 'hidden';
+                currentScale = 1;
+                updateZoom();
                 modalImgContainer.scrollLeft = 0;
                 modalImgContainer.scrollTop = 0;
-                isZoomed = false;
+            }
+            
+            function updateZoom() {
+                modalImg.style.transform = `scale(${currentScale})`;
+                
+                if (currentScale > 1) {
+                    modalImg.classList.add('zoomed');
+                    modalImg.style.cursor = 'grab';
+                    modalImgContainer.style.overflow = 'auto';
+                } else {
+                    modalImg.classList.remove('zoomed');
+                    modalImg.style.cursor = 'zoom-in';
+                    modalImgContainer.style.overflow = 'hidden';
+                }
+                
                 isDragging = false;
             }
             
