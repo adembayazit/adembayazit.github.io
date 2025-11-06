@@ -52,33 +52,33 @@
         }
         
         /* Logo ve slogan için stil */
-      .logo-container {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-      }
-      
-      .logo-slogan {
-        font-size: 10px;
-        color: white;
-        margin-top: 2px;
-        font-style: italic;
-        letter-spacing: 0.5px;
-        white-space: nowrap;
-        text-align: right;
-        width: 100%;
-        padding-right: 5px;
-      }
-      
-      /* Navbar için responsive ayarlar */
-      .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 5%;
-        position:relative;
-        z-index: 100;
-      }
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        
+        .logo-slogan {
+            font-size: 10px;
+            color: white;
+            margin-top: 2px;
+            font-style: italic;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            text-align: right;
+            width: 100%;
+            padding-right: 5px;
+        }
+        
+        /* Navbar için responsive ayarlar */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 5%;
+            position: relative;
+            z-index: 100;
+        }
         
         .content-wrapper {
             margin-top: 60px;
@@ -86,6 +86,7 @@
             z-index: 2;
             padding: 0 20px;
         }
+        
         .backto {
             text-align: center;
         }
@@ -171,10 +172,6 @@
         .section-title i {
             margin-right: 15px;
             font-size: 1.2rem;
-        }
-        
-        .section p {
-            font-size: 0.9rem;
         }
         
         .card-container {
@@ -451,7 +448,7 @@
             margin-right: 8px;
         }
         
-        /* YENİ MODAL STİLLERİ - TAM İSTENİLEN ŞEKİL */
+        /* SADE VE TEMİZ MODAL */
         .modal {
             display: none;
             position: fixed;
@@ -459,137 +456,102 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.98);
+            background-color: rgba(0, 0, 0, 0.95);
             z-index: 10000;
-            overflow: hidden;
-            animation: fadeIn 0.3s ease;
+            overflow: auto;
         }
         
-        .modal-container {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            width: 100%;
+        .modal-content {
+            position: relative;
+            background-color: var(--bg-color);
+            margin: 2% auto;
+            padding: 0;
+            width: 90%;
+            max-width: 1200px;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+            animation: modalFadeIn 0.3s;
+        }
+        
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
         }
         
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 15px;
-            background: rgba(0, 0, 0, 0.9);
-            border-bottom: 1px solid rgba(0, 255, 0, 0.3);
-            flex-shrink: 0;
-            min-height: 50px;
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
         }
         
         .modal-title {
             color: var(--primary-color);
-            font-size: 1rem;
+            font-size: 1.2rem;
             margin: 0;
-            font-weight: 600;
-            flex: 1;
-            text-align: left;
-        }
-        
-        .modal-counter {
-            color: white;
-            font-size: 0.9rem;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 3px 10px;
-            border-radius: 20px;
-            margin: 0 10px;
-            white-space: nowrap;
         }
         
         .close-modal {
             color: white;
-            font-size: 24px;
+            font-size: 28px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            line-height: 1;
-            flex-shrink: 0;
         }
         
         .close-modal:hover {
             color: var(--primary-color);
             transform: scale(1.1);
-            background: rgba(0, 0, 0, 0.7);
+        }
+        
+        .modal-body {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .modal-image-container {
+            text-align: center;
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .modal-image {
+            max-width: 100%;
+            max-height: 70vh;
+            object-fit: contain;
+        }
+        
+        .modal-description {
+            color: white;
+            line-height: 1.6;
+            text-align: center;
+            font-size: 1rem;
         }
         
         .modal-meta {
             display: flex;
             justify-content: center;
-            gap: 15px;
-            margin-top: 8px;
-            font-size: 0.7rem;
+            gap: 25px;
+            flex-wrap: wrap;
             color: var(--text-muted);
-            flex-wrap: nowrap;
-            overflow: hidden;
-            width: 100%;
+            font-size: 0.9rem;
+            padding: 15px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .modal-meta-item {
             display: flex;
             align-items: center;
-            gap: 4px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            gap: 5px;
         }
         
         .modal-meta-item i {
             color: var(--primary-color);
-            flex-shrink: 0;
-            font-size: 0.8rem;
-        }
-        
-        .modal-content-area {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 0;
-            overflow: hidden;
-            position: relative;
-            touch-action: pan-x pan-y;
-        }
-        
-        .modal-image-container {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .modal-content {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            transition: transform 0.3s ease;
-            cursor: zoom-in;
-        }
-        
-        .modal-content.zoomed {
-            cursor: grab;
-            transform: scale(2);
-            max-width: none;
-            max-height: none;
-        }
-        
-        .modal-content.zoomed:active {
-            cursor: grabbing;
         }
         
         .modal-nav {
@@ -599,15 +561,12 @@
             background-color: rgba(0, 0, 0, 0.7);
             color: white;
             border: none;
-            font-size: 20px;
-            padding: 12px 15px;
+            font-size: 24px;
+            padding: 15px;
             cursor: pointer;
             transition: all 0.3s ease;
             z-index: 10;
             border-radius: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
         
         .modal-nav:hover {
@@ -616,69 +575,113 @@
         }
         
         .prev {
-            left: 15px;
+            left: 10px;
         }
         
         .next {
-            right: 15px;
+            right: 10px;
         }
         
-        .modal-footer {
-            padding: 12px 15px;
-            background: rgba(0, 0, 0, 0.9);
-            border-top: 1px solid rgba(0, 255, 0, 0.3);
-            flex-shrink: 0;
-        }
-        
-        .modal-description {
-            text-align: center;
+        .modal-counter {
+            position: absolute;
+            top: 20px;
+            left: 20px;
             color: white;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 5px 15px;
+            border-radius: 20px;
             font-size: 0.9rem;
-            line-height: 1.6;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .loading {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            font-size: 18px;
-            z-index: 5;
-            display: none;
-        }
-        
-        .zoom-controls {
-            position: absolute;
-            bottom: 70px;
-            right: 15px;
-            display: flex;
-            gap: 8px;
             z-index: 10;
         }
         
-        .zoom-btn {
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            border: none;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.3s ease;
+        /* Responsive */
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                margin: 5% auto;
+            }
+            
+            .modal-header {
+                padding: 12px 15px;
+            }
+            
+            .modal-title {
+                font-size: 1rem;
+            }
+            
+            .modal-body {
+                padding: 15px;
+                gap: 15px;
+            }
+            
+            .modal-image {
+                max-height: 60vh;
+            }
+            
+            .modal-nav {
+                font-size: 20px;
+                padding: 12px;
+            }
+            
+            .prev {
+                left: 5px;
+            }
+            
+            .next {
+                right: 5px;
+            }
+            
+            .modal-meta {
+                gap: 15px;
+                font-size: 0.8rem;
+            }
+            
+            .modal-counter {
+                top: 15px;
+                left: 15px;
+                font-size: 0.8rem;
+            }
         }
         
-        .zoom-btn:hover {
-            background: rgba(0, 255, 0, 0.5);
-            color: var(--primary-color);
+        @media (max-width: 480px) {
+            .modal-content {
+                width: 98%;
+                margin: 2% auto;
+            }
+            
+            .modal-header {
+                padding: 10px 12px;
+            }
+            
+            .modal-title {
+                font-size: 0.9rem;
+            }
+            
+            .modal-body {
+                padding: 12px;
+                gap: 12px;
+            }
+            
+            .modal-image {
+                max-height: 50vh;
+            }
+            
+            .modal-nav {
+                font-size: 18px;
+                padding: 10px;
+            }
+            
+            .modal-meta {
+                flex-direction: column;
+                gap: 8px;
+                align-items: center;
+            }
+            
+            .modal-description {
+                font-size: 0.9rem;
+            }
         }
-        
+
         /* Analysis section */
         .analysis-container {
             display: grid;
@@ -756,184 +759,6 @@
             margin-bottom: 15px;
         }
         
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .content-wrapper {
-                margin-top: 60px;
-            }
-            
-            .page-title {
-                font-size: 1.5rem;
-            }
-            
-            .section-title {
-                font-size: 1rem;
-            }
-            
-            .photo-gallery {
-                grid-template-columns: 1fr;
-            }
-            
-            .artist-works-gallery {
-                grid-template-columns: 1fr;
-            }
-            
-            .analysis-container {
-                grid-template-columns: 1fr;
-            }
-            
-            .photographer-cards {
-                grid-template-columns: 1fr;
-            }
-            
-            .artist-statement {
-                padding: 20px;
-                margin: 20px auto 30px;
-            }
-            
-            .artist-statement p {
-                font-size: 0.9rem;
-            }
-            
-            .artist-work-image-container {
-                height: 200px;
-            }
-            
-            /* Mobile responsive improvements for modal */
-            .modal-header {
-                padding: 8px 12px;
-                min-height: 45px;
-                flex-wrap: wrap;
-            }
-            
-            .modal-title {
-                font-size: 0.9rem;
-                order: 1;
-                flex: 0 0 60%;
-            }
-            
-            .modal-counter {
-                font-size: 0.8rem;
-                margin: 0 8px;
-                padding: 2px 8px;
-                order: 2;
-            }
-            
-            .close-modal {
-                width: 28px;
-                height: 28px;
-                font-size: 18px;
-                order: 3;
-            }
-            
-            .modal-meta {
-                order: 4;
-                flex: 0 0 100%;
-                margin-top: 6px;
-                gap: 10px;
-                font-size: 0.65rem;
-                justify-content: space-between;
-            }
-            
-            .modal-meta-item {
-                flex: 1;
-                min-width: 0;
-                justify-content: center;
-            }
-            
-            .modal-meta-item i {
-                font-size: 0.7rem;
-            }
-            
-            .modal-nav {
-                position: fixed;
-                top: auto;
-                bottom: 60px;
-                transform: none;
-                font-size: 16px;
-                padding: 10px 12px;
-                background-color: rgba(0, 0, 0, 0.8);
-            }
-            
-            .prev {
-                left: 10px;
-            }
-            
-            .next {
-                right: 10px;
-            }
-            
-            .modal-footer {
-                padding: 10px 12px;
-            }
-            
-            .modal-description {
-                font-size: 0.8rem;
-            }
-            
-            .zoom-controls {
-                bottom: 60px;
-                right: 10px;
-            }
-            
-            .zoom-btn {
-                width: 30px;
-                height: 30px;
-                font-size: 14px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .modal-title {
-                font-size: 0.8rem;
-                flex: 0 0 50%;
-            }
-            
-            .modal-nav {
-                padding: 8px 10px;
-                font-size: 14px;
-                bottom: 50px;
-            }
-            
-            .prev {
-                left: 8px;
-            }
-            
-            .next {
-                right: 8px;
-            }
-            
-            .modal-meta {
-                font-size: 0.6rem;
-                gap: 5px;
-            }
-            
-            .modal-meta-item {
-                flex: 0 0 calc(25% - 5px);
-                justify-content: center;
-                text-align: center;
-            }
-            
-            .zoom-controls {
-                bottom: 50px;
-            }
-        }
-        
-        @media (max-width: 360px) {
-            .modal-meta {
-                font-size: 0.55rem;
-            }
-            
-            .modal-meta-item {
-                flex-direction: column;
-                gap: 2px;
-            }
-            
-            .modal-meta-item i {
-                font-size: 0.6rem;
-            }
-        }
-        
         /* Matrix Canvas Styles */
         #matrixCanvas {
             position: fixed;
@@ -973,7 +798,6 @@
         <div class="backto"><a href="/" class="back-to-home"><i class="bx bx-arrow-back"></i> Back to Home</a></div>
         <h2 class="page-title"><i class="fa-solid fa-images"></i> Photographic Cryptology</h2>
        
-        
         <section class="section" id="introduction">
             <h2 class="section-title"><i class="bx bx-info-circle"></i> What is Photographic Cryptology?</h2>
             <div class="card">
@@ -995,7 +819,7 @@
             </div>
         </section>
         
-        <!-- Sanatçı Mesajı - Photographic Cryptology başlığının hemen altında -->
+        <!-- Sanatçı Mesajı -->
         <div class="artist-statement">
             <h3><i class="bx bx-message-alt-dots"></i> Artist's Statement</h3>
             <p>The artistic approach in my photography also corresponds to the method of <strong>Ambiguous Imagery </strong>. I transform these techniques by blending them with my own cultural and traditional reflections, infused with my personal identity, into a deeply personal and meaningful language of photographic composition.</p>
@@ -1011,13 +835,27 @@
             </div>
         </section>
         
-        <!-- YENİ MODAL YAPISI -->
+        <!-- SADE MODAL YAPISI -->
         <div id="imageModal" class="modal">
-            <div class="modal-container">
+            <div class="modal-content">
+                <div class="modal-counter" id="modalCounter">1 / 5</div>
+                
                 <div class="modal-header">
                     <h3 class="modal-title" id="modalTitle">Photo Title</h3>
-                    <div class="modal-counter" id="modalCounter">1 / 5</div>
                     <span class="close-modal">&times;</span>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="modal-image-container">
+                        <button class="modal-nav prev">&lt;</button>
+                        <img class="modal-image" id="enlargedImage" alt="Enlarged view">
+                        <button class="modal-nav next">&gt;</button>
+                    </div>
+                    
+                    <div class="modal-description" id="modalDescription">
+                        Fotoğraf açıklaması burada görünecek.
+                    </div>
+                    
                     <div class="modal-meta" id="modalMeta">
                         <div class="modal-meta-item">
                             <i class="bx bx-calendar"></i>
@@ -1037,40 +875,14 @@
                         </div>
                     </div>
                 </div>
-                
-                <div class="modal-content-area">
-                    <div class="loading" id="loadingIndicator">
-                        <i class="bx bx-loader-alt bx-spin"></i> Loading...
-                    </div>
-                    
-                    <button class="modal-nav prev">&lt;</button>
-                    
-                    <div class="modal-image-container">
-                        <img class="modal-content" id="enlargedImage" alt="Enlarged view">
-                    </div>
-                    
-                    <button class="modal-nav next">&gt;</button>
-                    
-                    <div class="zoom-controls">
-                        <button class="zoom-btn" id="zoomIn">+</button>
-                        <button class="zoom-btn" id="zoomOut">-</button>
-                        <button class="zoom-btn" id="resetZoom">↺</button>
-                    </div>
-                </div>
-                
-                <div class="modal-footer">
-                    <div id="modalDescription" class="modal-description"></div>
-                </div>
             </div>
         </div>
         
-        <!-- YENİ BÖLÜM: Ambiguous Imagery Sanatçıları ve Eserleri -->
+        <!-- Ambiguous Imagery Sanatçıları ve Eserleri -->
         <section class="section" id="ambiguous-artists">
             <h2 class="section-title"><i class="bx bx-shape-triangle"></i> Masters of Ambiguous Imagery & Their Works</h2>
             
             <div class="artist-works-gallery">
-    
-                <!-- Salvador Dali - İkinci Eser -->
                 <div class="artist-work-card">
                     <div class="artist-work-image-container">
                         <img src="https://ik.imagekit.io/adembayazit/IMG_2091_p9WyKe-si.jpeg" alt="The Great Paranoiac" class="artist-work-image">
@@ -1086,7 +898,6 @@
                     </div>
                 </div>
                 
-                <!-- Salvador Dali Eseri -->
                 <div class="artist-work-card">
                     <div class="artist-work-image-container">
                         <img src="https://ik.imagekit.io/adembayazit/IMG_2093_9w4XufkPr.jpeg" alt="The Metamorphosis of Narcissus" class="artist-work-image">
@@ -1104,15 +915,15 @@
                
                 <div class="artist-work-card">
                     <div class="artist-work-image-container">
-                    <img src="https://ik.imagekit.io/adembayazit/IMG_2095_2ivYmYIc7.jpeg" alt="Sky and Water I" class="artist-work-image">
+                        <img src="https://ik.imagekit.io/adembayazit/IMG_2095_2ivYmYIc7.jpeg" alt="Sky and Water I" class="artist-work-image">
                     </div>
                     <div class="artist-work-info">
                         <h3 class="artist-work-title"><i class="bx bx-palette"></i> Sky and Water I</h3>
                         <p class="artist-work-artist">By M. C. Escher</p>
                         <p class="artist-work-description">In this woodcut print, birds gradually become more abstract as they move downward, simultaneously transforming into fish. The transition between the white section (sky) and the dark section (water) is so masterful that at one point your eyes cannot distinguish what is a bird and what is a fish. This represents a kind of perfect ambiguity.</p>
-                    <div class="artist-work-technique">
-                         <div class="technique-title"><i class="bx bx-cog"></i> Technical Mastery</div>
-                    <p>Escher creates a seamless visual metamorphosis where positive and negative spaces interlock perfectly. The composition demonstrates his genius in tessellation and optical illusion, making two distinct creatures emerge from the same visual elements depending on how you focus your perception.</p>
+                        <div class="artist-work-technique">
+                            <div class="technique-title"><i class="bx bx-cog"></i> Technical Mastery</div>
+                            <p>Escher creates a seamless visual metamorphosis where positive and negative spaces interlock perfectly. The composition demonstrates his genius in tessellation and optical illusion, making two distinct creatures emerge from the same visual elements depending on how you focus your perception.</p>
                         </div>
                     </div>
                 </div>
@@ -1283,7 +1094,7 @@
     <script src="/JAVASCRIPT/matrix.js"></script>
     
     <script>
-        // Sample photo data - with multiple images for testing navigation
+        // Fotoğraf verisi
         const photoData = [
             {
                 id: 1,
@@ -1292,10 +1103,6 @@
                     {
                         url: "PHOTO/photo1.JPG",
                         description: "This composition captures the contrast between human isolation and the density of urban environments. The single figure positioned against the vast architectural landscape creates a powerful statement about modern existence."
-                    },
-                    {
-                        url: "https://ik.imagekit.io/adembayazit/IMG_1630_22PJyDVnI.jpeg",
-                        description: "Close-up view showing the texture and details of the architectural elements. The play of light and shadow creates a dramatic contrast that emphasizes the geometric patterns."
                     }
                 ],
                 date: "2017-05-24",
@@ -1310,10 +1117,6 @@
                     {
                         url: "PHOTO/photo2.JPG",
                         description: "A study in persistence, this image shows life thriving in seemingly inhospitable conditions. The composition uses natural framing to draw attention to the central subject while maintaining a balanced asymmetry."
-                    },
-                    {
-                        url: "https://ik.imagekit.io/adembayazit/IMG_1630_22PJyDVnI.jpeg",
-                        description: "Macro detail revealing the intricate patterns and textures of the plant. The shallow depth of field isolates the subject from the background, creating a dreamlike quality."
                     }
                 ],
                 date: "2017-05-30",
@@ -1328,14 +1131,6 @@
                     {
                         url: "PHOTO/photo3.JPG",
                         description: "This photograph transforms mundane industrial elements into abstract art through careful framing and lighting. The repetition of geometric shapes creates rhythm, while selective focus guides the viewer's attention."
-                    },
-                    {
-                        url: "https://ik.imagekit.io/adembayazit/IMG_1630_22PJyDVnI.jpeg",
-                        description: "Close-up view highlighting the textures and patterns created by rust and weathering. The warm tones contrast with the cool metallic surfaces, creating visual interest."
-                    },
-                    {
-                        url: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-                        description: "Wide-angle perspective showing the scale and context of the industrial environment. The converging lines create a sense of depth and draw the eye into the frame."
                     }
                 ],
                 date: "2017-05-11",
@@ -1415,18 +1210,10 @@
             }
         ];
 
-        // Modal functionality for enlarged images
-        let currentPhotoIndex = 0;
-        let currentImageIndex = 0;
-        let currentPhotoData = null;
-        let currentScale = 1;
-        let isDragging = false;
-        let startX, startY, scrollLeft, scrollTop;
-
+        // Basit ve temiz modal fonksiyonelliği
         document.addEventListener('DOMContentLoaded', function() {
             const modal = document.getElementById("imageModal");
             const modalImg = document.getElementById("enlargedImage");
-            const modalImgContainer = document.querySelector(".modal-image-container");
             const modalDesc = document.getElementById("modalDescription");
             const modalTitle = document.getElementById("modalTitle");
             const modalCounter = document.getElementById("modalCounter");
@@ -1434,21 +1221,20 @@
             const modalTime = document.getElementById("modalTime");
             const modalLocation = document.getElementById("modalLocation");
             const modalCamera = document.getElementById("modalCamera");
-            const loadingIndicator = document.getElementById("loadingIndicator");
             const closeBtn = document.getElementsByClassName("close-modal")[0];
             const prevBtn = document.querySelector(".modal-nav.prev");
             const nextBtn = document.querySelector(".modal-nav.next");
-            const zoomInBtn = document.getElementById("zoomIn");
-            const zoomOutBtn = document.getElementById("zoomOut");
-            const resetZoomBtn = document.getElementById("resetZoom");
             
-            // Generate photo gallery from data
+            let currentPhotoIndex = 0;
+            let currentImageIndex = 0;
+            let currentPhotoData = null;
+            
+            // Fotoğraf galerisini oluştur
             const photoGallery = document.getElementById("photoGallery");
             
             photoData.forEach(photo => {
                 const photoCard = document.createElement('div');
                 photoCard.className = 'photo-card';
-                photoCard.setAttribute('data-id', photo.id);
                 
                 photoCard.innerHTML = `
                     <div class="photo-image-container">
@@ -1456,290 +1242,102 @@
                     </div>
                     <div class="photo-info">
                         <h3 class="photo-title"><i class="bx bx-camera"></i> ${photo.title}</h3>
-                        <p class="photo-description">${photo.images[0].description.substring(0, 150)}...</p>
+                        <p class="photo-description">${photo.images[0].description.substring(0, 120)}...</p>
                         <div class="photo-meta">
                             <span><i class="bx bx-calendar"></i> ${photo.date}</span>
                             <span><i class="bx bx-time"></i> ${photo.time}</span>
-                            <span><i class="bx bx-map"></i> ${photo.location}</span>
                         </div>
                     </div>
                 `;
                 
                 photoGallery.appendChild(photoCard);
                 
-                // Add click event to photo card
-                photoCard.querySelector('.photo-image').addEventListener('click', function() {
-                    openModal(photo.id - 1, 0);
+                // Tıklama olayını ekle
+                photoCard.addEventListener('click', () => {
+                    openModal(photoData.indexOf(photo), 0);
                 });
             });
             
-            // Close modal when clicking the X
-            closeBtn.addEventListener('click', function() {
-                closeModal();
-            });
-            
-            // Close modal when clicking outside the image
-            modal.addEventListener('click', function(event) {
-                if (event.target === modal) {
-                    closeModal();
-                }
-            });
-            
-            // Keyboard navigation
-            document.addEventListener('keydown', function(event) {
-                if (modal.style.display === "block") {
-                    switch(event.key) {
-                        case 'Escape':
-                            closeModal();
-                            break;
-                        case 'ArrowLeft':
-                            navigatePrev();
-                            break;
-                        case 'ArrowRight':
-                            navigateNext();
-                            break;
-                    }
-                }
-            });
-            
-            // Previous image button
-            prevBtn.addEventListener('click', function() {
-                navigatePrev();
-            });
-            
-            // Next image button
-            nextBtn.addEventListener('click', function() {
-                navigateNext();
-            });
-            
-            // Zoom functionality
-            zoomInBtn.addEventListener('click', function() {
-                zoomIn();
-            });
-            
-            zoomOutBtn.addEventListener('click', function() {
-                zoomOut();
-            });
-            
-            resetZoomBtn.addEventListener('click', function() {
-                resetZoom();
-            });
-            
-            // Double click to zoom
-            modalImg.addEventListener('dblclick', function() {
-                if (currentScale === 1) {
-                    zoomIn();
-                } else {
-                    resetZoom();
-                }
-            });
-            
-            // Drag to pan functionality when zoomed
-            modalImgContainer.addEventListener('mousedown', startDrag);
-            modalImgContainer.addEventListener('touchstart', startDrag);
-            
-            modalImgContainer.addEventListener('mouseleave', endDrag);
-            modalImgContainer.addEventListener('mouseup', endDrag);
-            modalImgContainer.addEventListener('touchend', endDrag);
-            
-            modalImgContainer.addEventListener('mousemove', drag);
-            modalImgContainer.addEventListener('touchmove', drag);
-            
-            function startDrag(e) {
-                if (currentScale === 1) return;
-                
-                isDragging = true;
-                modalImg.style.cursor = 'grabbing';
-                
-                startX = (e.pageX || e.touches[0].pageX) - modalImgContainer.offsetLeft;
-                startY = (e.pageY || e.touches[0].pageY) - modalImgContainer.offsetTop;
-                scrollLeft = modalImgContainer.scrollLeft;
-                scrollTop = modalImgContainer.scrollTop;
-                
-                e.preventDefault();
-            }
-            
-            function drag(e) {
-                if (!isDragging) return;
-                
-                e.preventDefault();
-                const x = (e.pageX || e.touches[0].pageX) - modalImgContainer.offsetLeft;
-                const y = (e.pageY || e.touches[0].pageY) - modalImgContainer.offsetTop;
-                const walkX = (x - startX) * 2;
-                const walkY = (y - startY) * 2;
-                
-                modalImgContainer.scrollLeft = scrollLeft - walkX;
-                modalImgContainer.scrollTop = scrollTop - walkY;
-            }
-            
-            function endDrag() {
-                isDragging = false;
-                modalImg.style.cursor = currentScale === 1 ? 'zoom-in' : 'grab';
-            }
-            
+            // Modal'ı aç
             function openModal(photoIndex, imageIndex) {
                 currentPhotoIndex = photoIndex;
                 currentImageIndex = imageIndex;
                 currentPhotoData = photoData[photoIndex];
                 
-                modal.style.display = "block";
-                document.body.style.overflow = "hidden";
-                loadingIndicator.style.display = "block";
-                
-                // Reset zoom state
-                resetZoom();
-                
-                // Preload image for better UX
-                const img = new Image();
-                img.onload = function() {
-                    updateModalContent();
-                    loadingIndicator.style.display = "none";
-                };
-                img.onerror = function() {
-                    modalImg.src = "https://ik.imagekit.io/adembayazit/IMG_1630_22PJyDVnI.jpeg";
-                    loadingIndicator.style.display = "none";
-                };
-                img.src = currentPhotoData.images[imageIndex].url;
+                updateModalContent();
+                modal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
             }
             
+            // Modal içeriğini güncelle
             function updateModalContent() {
-                const currentImage = currentPhotoData.images[currentImageIndex];
+                const image = currentPhotoData.images[currentImageIndex];
                 
-                modalImg.src = currentImage.url;
+                modalImg.src = image.url;
                 modalTitle.textContent = currentPhotoData.title;
-                modalDesc.innerHTML = currentImage.description;
+                modalDesc.innerHTML = image.description;
                 modalCounter.textContent = `${currentImageIndex + 1} / ${currentPhotoData.images.length}`;
                 modalDate.textContent = currentPhotoData.date;
                 modalTime.textContent = currentPhotoData.time;
                 modalLocation.textContent = currentPhotoData.location;
                 modalCamera.textContent = currentPhotoData.camera;
                 
-                updateNavButtons();
+                // Navigasyon butonlarını güncelle
+                prevBtn.style.display = (currentImageIndex === 0 && currentPhotoIndex === 0) ? 'none' : 'block';
+                nextBtn.style.display = (currentImageIndex === currentPhotoData.images.length - 1 && 
+                                       currentPhotoIndex === photoData.length - 1) ? 'none' : 'block';
             }
             
-            function navigatePrev() {
-                if (currentPhotoData && currentImageIndex > 0) {
+            // Önceki resim
+            function showPrevImage() {
+                if (currentImageIndex > 0) {
                     currentImageIndex--;
-                    loadingIndicator.style.display = "block";
-                    
-                    const img = new Image();
-                    img.onload = function() {
-                        updateModalContent();
-                        loadingIndicator.style.display = "none";
-                        resetZoom();
-                    };
-                    img.src = currentPhotoData.images[currentImageIndex].url;
                 } else if (currentPhotoIndex > 0) {
-                    // Go to previous photo
                     currentPhotoIndex--;
                     currentPhotoData = photoData[currentPhotoIndex];
                     currentImageIndex = currentPhotoData.images.length - 1;
-                    loadingIndicator.style.display = "block";
-                    
-                    const img = new Image();
-                    img.onload = function() {
-                        updateModalContent();
-                        loadingIndicator.style.display = "none";
-                        resetZoom();
-                    };
-                    img.src = currentPhotoData.images[currentImageIndex].url;
                 }
+                updateModalContent();
             }
             
-            function navigateNext() {
-                if (currentPhotoData && currentImageIndex < currentPhotoData.images.length - 1) {
+            // Sonraki resim
+            function showNextImage() {
+                if (currentImageIndex < currentPhotoData.images.length - 1) {
                     currentImageIndex++;
-                    loadingIndicator.style.display = "block";
-                    
-                    const img = new Image();
-                    img.onload = function() {
-                        updateModalContent();
-                        loadingIndicator.style.display = "none";
-                        resetZoom();
-                    };
-                    img.src = currentPhotoData.images[currentImageIndex].url;
                 } else if (currentPhotoIndex < photoData.length - 1) {
-                    // Go to next photo
                     currentPhotoIndex++;
                     currentPhotoData = photoData[currentPhotoIndex];
                     currentImageIndex = 0;
-                    loadingIndicator.style.display = "block";
-                    
-                    const img = new Image();
-                    img.onload = function() {
-                        updateModalContent();
-                        loadingIndicator.style.display = "none";
-                        resetZoom();
-                    };
-                    img.src = currentPhotoData.images[currentImageIndex].url;
                 }
+                updateModalContent();
             }
             
+            // Modal'ı kapat
             function closeModal() {
-                modal.style.display = "none";
-                document.body.style.overflow = "";
-                resetZoom();
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
             }
             
-            function zoomIn() {
-                if (currentScale < 3) {
-                    currentScale += 0.5;
-                    updateZoom();
-                }
-            }
+            // Event listeners
+            closeBtn.addEventListener('click', closeModal);
+            prevBtn.addEventListener('click', showPrevImage);
+            nextBtn.addEventListener('click', showNextImage);
             
-            function zoomOut() {
-                if (currentScale > 1) {
-                    currentScale -= 0.5;
-                    updateZoom();
+            // Modal dışına tıklayarak kapat
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
                 }
-            }
+            });
             
-            function resetZoom() {
-                currentScale = 1;
-                updateZoom();
-                modalImgContainer.scrollLeft = 0;
-                modalImgContainer.scrollTop = 0;
-            }
-            
-            function updateZoom() {
-                modalImg.style.transform = `scale(${currentScale})`;
-                
-                if (currentScale > 1) {
-                    modalImg.classList.add('zoomed');
-                    modalImg.style.cursor = 'grab';
-                    modalImgContainer.style.overflow = 'auto';
-                } else {
-                    modalImg.classList.remove('zoomed');
-                    modalImg.style.cursor = 'zoom-in';
-                    modalImgContainer.style.overflow = 'hidden';
+            // Klavye navigasyonu
+            document.addEventListener('keydown', (e) => {
+                if (modal.style.display === 'block') {
+                    if (e.key === 'Escape') closeModal();
+                    if (e.key === 'ArrowLeft') showPrevImage();
+                    if (e.key === 'ArrowRight') showNextImage();
                 }
-                
-                isDragging = false;
-            }
-            
-            function updateNavButtons() {
-                // Always show navigation buttons, but disable when at boundaries
-                prevBtn.style.display = 'flex';
-                nextBtn.style.display = 'flex';
-                
-                // Update button states based on current position
-                if (currentImageIndex === 0 && currentPhotoIndex === 0) {
-                    prevBtn.style.opacity = '0.5';
-                    prevBtn.style.cursor = 'not-allowed';
-                } else {
-                    prevBtn.style.opacity = '1';
-                    prevBtn.style.cursor = 'pointer';
-                }
-                
-                if (currentImageIndex === currentPhotoData.images.length - 1 && currentPhotoIndex === photoData.length - 1) {
-                    nextBtn.style.opacity = '0.5';
-                    nextBtn.style.cursor = 'not-allowed';
-                } else {
-                    nextBtn.style.opacity = '1';
-                    nextBtn.style.cursor = 'pointer';
-                }
-            }
+            });
         });
     </script>
 </body>
