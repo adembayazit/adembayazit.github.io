@@ -488,8 +488,8 @@
         }
         
         .modal-content {
-            max-width: 85%;
-            max-height: 65vh;
+            max-width: 90%;
+            max-height: 75vh;
             object-fit: contain;
             border-radius: 12px;
             box-shadow: 0 0 40px rgba(0, 255, 0, 0.4);
@@ -530,27 +530,6 @@
             line-height: 1.7;
             font-size: 1rem;
             margin-bottom: 15px;
-        }
-        
-        .photo-interpretation {
-            background: rgba(0, 100, 0, 0.2);
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            border-left: 3px solid var(--primary-color);
-            font-style: italic;
-        }
-        
-        .interpretation-title {
-            color: var(--primary-color);
-            font-weight: bold;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-        }
-        
-        .interpretation-title i {
-            margin-right: 8px;
         }
         
         .modal-meta {
@@ -746,6 +725,33 @@
             transform: scale(1.1);
         }
         
+        /* Download Button */
+        .download-btn {
+            position: fixed;
+            top: 30px;
+            right: 90px;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10001;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .download-btn:hover {
+            color: var(--primary-color);
+            transform: scale(1.1);
+            background: rgba(0, 0, 0, 0.8);
+            border-color: var(--primary-color);
+        }
+        
         /* Responsive improvements */
         @media (max-width: 768px) {
             .content-wrapper {
@@ -770,7 +776,7 @@
             
             .modal-content {
                 max-width: 95%;
-                max-height: 55vh;
+                max-height: 60vh;
                 margin-top: 20px;
             }
             
@@ -793,6 +799,14 @@
                 font-size: 30px;
                 width: 45px;
                 height: 45px;
+            }
+            
+            .download-btn {
+                top: 15px;
+                right: 70px;
+                width: 45px;
+                height: 45px;
+                font-size: 20px;
             }
             
             .modal-nav {
@@ -1015,10 +1029,6 @@
                     <span class="image-index" id="imageIndex">1/3</span>
                 </h3>
                 <div class="modal-description" id="modalDescription"></div>
-                <div class="photo-interpretation" id="photoInterpretation">
-                    <div class="interpretation-title"><i class="bx bx-comment-detail"></i> Photographic Interpretation</div>
-                    <div id="interpretationText"></div>
-                </div>
                 <div class="modal-meta">
                     <div class="meta-item">
                         <i class="bx bx-calendar"></i>
@@ -1265,7 +1275,7 @@
     <script src="/JAVASCRIPT/matrix.js"></script>
     
     <script>
-        // Enhanced photo data with interpretations
+        // Sample photo data - this would come from JSON in production
         const photoData = [
             {
                 id: 1,
@@ -1273,13 +1283,15 @@
                 images: [
                     {
                         url: "PHOTO/photo1.JPG",
-                        description: "This composition captures the contrast between human isolation and the density of urban environments.",
-                        interpretation: "The single figure positioned against the vast architectural landscape creates a powerful statement about modern existence - our simultaneous connection and isolation within urban spaces."
+                        description: "This composition captures the contrast between human isolation and the density of urban environments. The single figure positioned against the vast architectural landscape creates a powerful statement about modern existence."
                     },
                     {
                         url: "https://ik.imagekit.io/adembayazit/IMG_1630_22PJyDVnI.jpeg",
-                        description: "Close-up view showing the texture and details of the architectural elements.",
-                        interpretation: "The play of light and shadow creates a dramatic contrast that emphasizes the geometric patterns, transforming ordinary architecture into abstract art."
+                        description: "Close-up view showing the texture and details of the architectural elements. The play of light and shadow creates a dramatic contrast that emphasizes the geometric patterns."
+                    },
+                    {
+                        url: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+                        description: "Alternative angle showing the relationship between the human figure and the urban landscape. The composition follows the rule of thirds, placing the subject at an intersection point for visual balance."
                     }
                 ],
                 date: "2017-05-24",
@@ -1293,8 +1305,11 @@
                 images: [
                     {
                         url: "PHOTO/photo2.JPG",
-                        description: "A study in persistence, this image shows life thriving in seemingly inhospitable conditions.",
-                        interpretation: "The composition uses natural framing to draw attention to the central subject while maintaining a balanced asymmetry, symbolizing resilience in challenging environments."
+                        description: "A study in persistence, this image shows life thriving in seemingly inhospitable conditions. The composition uses natural framing to draw attention to the central subject while maintaining a balanced asymmetry."
+                    },
+                    {
+                        url: "https://ik.imagekit.io/adembayazit/IMG_1630_22PJyDVnI.jpeg",
+                        description: "Macro detail revealing the intricate patterns and textures of the plant. The shallow depth of field isolates the subject from the background, creating a dreamlike quality."
                     }
                 ],
                 date: "2017-05-30",
@@ -1308,8 +1323,19 @@
                 images: [
                     {
                         url: "PHOTO/photo3.JPG",
-                        description: "This photograph transforms mundane industrial elements into abstract art through careful framing and lighting.",
-                        interpretation: "The repetition of geometric shapes creates rhythm, while selective focus guides the viewer's attention, revealing the hidden beauty in industrial landscapes."
+                        description: "This photograph transforms mundane industrial elements into abstract art through careful framing and lighting. The repetition of geometric shapes creates rhythm, while selective focus guides the viewer's attention."
+                    },
+                    {
+                        url: "https://ik.imagekit.io/adembayazit/IMG_1630_22PJyDVnI.jpeg",
+                        description: "Close-up view highlighting the textures and patterns created by rust and weathering. The warm tones contrast with the cool metallic surfaces, creating visual interest."
+                    },
+                    {
+                        url: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+                        description: "Wide-angle perspective showing the scale and context of the industrial environment. The converging lines create a sense of depth and draw the eye into the frame."
+                    },
+                    {
+                        url: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+                        description: "Detail shot focusing on the interplay of light and shadow across the metallic surfaces. The high contrast creates a graphic, almost abstract quality."
                     }
                 ],
                 date: "2017-05-11",
@@ -1323,8 +1349,11 @@
                 images: [
                     {
                         url: "PHOTO/photo4.jpeg",
-                        description: "A candid moment captured with remarkable sensitivity.",
-                        interpretation: "The composition uses the rule of thirds to create visual harmony, while the shallow depth of field isolates the subjects from their environment, emphasizing human connection."
+                        description: "A candid moment captured with remarkable sensitivity. The composition uses the rule of thirds to create visual harmony, while the shallow depth of field isolates the subjects from their environment."
+                    },
+                    {
+                        url: "https://images.unsplash.com/photo-1516487106395-f3d579a6c7b5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+                        description: "Close-up emphasizing the emotional connection between the subjects. The natural lighting enhances the warmth and intimacy of the moment."
                     }
                 ],
                 date: "2017-04-01",
@@ -1338,8 +1367,15 @@
                 images: [
                     {
                         url: "PHOTO/photo5.jpeg",
-                        description: "This image explores the relationship between historical and contemporary architecture.",
-                        interpretation: "The strong leading lines draw the eye through the frame, while the contrast in textures adds visual interest, creating a dialogue between different eras of design."
+                        description: "This image explores the relationship between historical and contemporary architecture. The strong leading lines draw the eye through the frame, while the contrast in textures adds visual interest."
+                    },
+                    {
+                        url: "https://images.unsplash.com/photo-1496568816309-51d7c20e3b21?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+                        description: "Detail view showing the intricate craftsmanship of the historical building. The play of light across the surfaces reveals the depth and complexity of the architectural details."
+                    },
+                    {
+                        url: "https://images.unsplash.com/photo-1496568816309-51d7c20e3b21?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+                        description: "Perspective shot emphasizing the scale difference between the historical and modern structures. The composition creates a dialogue between different eras of architectural design."
                     }
                 ],
                 date: "2017-04-29",
@@ -1353,8 +1389,15 @@
                 images: [
                     {
                         url: "PHOTO/photo6.jpeg",
-                        description: "An experimental approach to photography that focuses on color, texture, and form.",
-                        interpretation: "The composition creates a visual language that speaks directly to emotions, using color fields and textures to evoke feelings rather than represent reality."
+                        description: "An experimental approach to photography that focuses on color, texture, and form rather than recognizable subjects. The composition creates a visual language that speaks directly to emotions."
+                    },
+                    {
+                        url: "https://ik.imagekit.io/adembayazit/IMG_2127_HNpa8hyG4.jpeg",
+                        description: "Close-up revealing the intricate layers and textures created through multiple exposure techniques. The blending of colors creates a dreamlike, ethereal quality."
+                    },
+                    {
+                        url: "https://images.unsplash.com/photo-1543857778-c4a1a569eebe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+                        description: "Alternative composition focusing on the interaction between different color fields. The balance between warm and cool tones creates visual tension and harmony simultaneously."
                     }
                 ],
                 date: "2023-06-29",
@@ -1368,8 +1411,15 @@
                 images: [
                     {
                         url: "PHOTO/photo7.webp",
-                        description: "An experimental approach to photography that focuses on color, texture, and form.",
-                        interpretation: "The blending of colors creates a dreamlike, ethereal quality, transforming photographic reality into abstract emotional expression."
+                        description: "An experimental approach to photography that focuses on color, texture, and form rather than recognizable subjects. The composition creates a visual language that speaks directly to emotions."
+                    },
+                    {
+                        url: "https://ik.imagekit.io/adembayazit/IMG_2126_aVDHlLCEb.jpeg",
+                        description: "Close-up revealing the intricate layers and textures created through multiple exposure techniques. The blending of colors creates a dreamlike, ethereal quality."
+                    },
+                    {
+                        url: "https://images.unsplash.com/photo-1543857778-c4a1a569eebe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+                        description: "Alternative composition focusing on the interaction between different color fields. The balance between warm and cool tones creates visual tension and harmony simultaneously."
                     }
                 ],
                 date: "2022-05-17",
@@ -1383,8 +1433,15 @@
                 images: [
                     {
                         url: "https://ik.imagekit.io/adembayazit/IMG_2025-10-05-223252_mdmst6NM4.jpeg",
-                        description: "Composition Used!!‎ <br>✓ الله ✓ Mihrab ✓ Minaret ✓ Courtyard <br>✓ Prayer Rug",
-                        interpretation: "This spontaneous composition reveals how natural elements can form sacred geometry, demonstrating that spiritual spaces exist beyond man-made structures."
+                        description: "Composition Used!!‎ <br>✓ الله ✓ Mihrab ✓ Minaret ✓ Courtyard <br>✓ Prayer Rug <br>Subject of the photo: Habitat Mosque (not specifically designed. This moment has been evaluated) Photographed by me!!"
+                    },
+                    {
+                        url: "https://ik.imagekit.io/adembayazit/IMG_2067_7yOT0B9SP.jpeg",
+                        description: "The first emigrants who came to Quba had turned a date-drying yard belonging to the sons of Amr bin Awf into a mosque. The Prophet expanded this place and built the Quba Mosque. The original state of Masjid al-Quba consisted of four walls surrounding a square area"
+                    },
+                    {
+                        url: "https://images.unsplash.com/photo-1543857778-c4a1a569eebe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+                        description: "Alternative composition focusing on the interaction between different color fields. The balance between warm and cool tones creates visual tension and harmony simultaneously."
                     }
                 ],
                 date: "2016-08-02",
@@ -1405,7 +1462,6 @@
             const modal = document.getElementById("imageModal");
             const modalImg = document.getElementById("enlargedImage");
             const modalDesc = document.getElementById("modalDescription");
-            const interpretationText = document.getElementById("interpretationText");
             const modalCounter = document.getElementById("modalCounter");
             const modalTitle = document.getElementById("modalTitleText");
             const imageIndex = document.getElementById("imageIndex");
@@ -1416,6 +1472,7 @@
             const thumbnailStrip = document.getElementById("thumbnailStrip");
             const loadingIndicator = document.getElementById("loadingIndicator");
             const closeBtn = document.getElementsByClassName("close-modal")[0];
+            const downloadBtn = document.getElementById("downloadBtn");
             const prevBtn = document.querySelector(".modal-nav.prev");
             const nextBtn = document.querySelector(".modal-nav.next");
             const zoomInBtn = document.getElementById("zoomInBtn");
@@ -1457,6 +1514,18 @@
             // Close modal when clicking the X
             closeBtn.addEventListener('click', function() {
                 closeModal();
+            });
+            
+            // Download image
+            downloadBtn.addEventListener('click', function() {
+                if (currentPhotoData) {
+                    const link = document.createElement('a');
+                    link.href = currentPhotoData.images[currentImageIndex].url;
+                    link.download = `${currentPhotoData.title}_${currentImageIndex + 1}.jpg`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
             });
             
             // Close modal when clicking outside the image
@@ -1637,7 +1706,6 @@
             function updateModalInfo() {
                 modalTitle.textContent = currentPhotoData.title;
                 modalDesc.innerHTML = currentPhotoData.images[currentImageIndex].description;
-                interpretationText.innerHTML = currentPhotoData.images[currentImageIndex].interpretation;
                 modalCounter.textContent = `${currentImageIndex + 1} / ${currentPhotoData.images.length}`;
                 imageIndex.textContent = `${currentImageIndex + 1}/${currentPhotoData.images.length}`;
                 modalDate.textContent = currentPhotoData.date;
