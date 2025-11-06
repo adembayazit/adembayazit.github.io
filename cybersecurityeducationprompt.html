@@ -44,13 +44,11 @@
             font-family: 'Poppins', sans-serif;
         }
         
-        html, body {
+        body {
             background-color: var(--bg-color);
             color: var(--text-color);
             overflow-x: hidden;
             position: relative;
-            width: 100%;
-            max-width: 100%;
         }
         
         /* Logo ve slogan için stil */
@@ -78,10 +76,8 @@
         justify-content: space-between;
         align-items: center;
         padding: 10px 5%;
-        position: relative;
+        position:relative;
         z-index: 100;
-        width: 100%;
-        max-width: 100%;
       }
         
         .content-wrapper {
@@ -89,9 +85,6 @@
             position: relative;
             z-index: 2;
             padding: 0 20px;
-            width: 100%;
-            max-width: 100%;
-            overflow-x: hidden;
         }
         .backto {
             text-align: center;
@@ -162,7 +155,6 @@
             max-width: 1200px;
             margin-left: auto;
             margin-right: auto;
-            width: 100%;
         }
         
         .section-title {
@@ -459,7 +451,7 @@
             margin-right: 8px;
         }
         
-        /* IMPROVED Modal Styles */
+        /* Modal for enlarged photo - IMPROVED */
         .modal {
             display: none;
             position: fixed;
@@ -467,12 +459,11 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.95);
+            background-color: rgba(0, 0, 0, 0.98);
             z-index: 10000;
-            overflow: hidden;
+            overflow: auto;
             padding: 0;
-            animation: fadeIn 0.4s ease;
-            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease;
         }
         
         @keyframes fadeIn {
@@ -480,157 +471,77 @@
             to { opacity: 1; }
         }
         
-        @keyframes zoomIn {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-        
-        .modal-content-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100%;
-            padding: 20px;
-        }
-        
         .modal-content {
-            max-width: 85%;
-            max-height: 65vh;
+            margin: 0 auto;
+            display: block;
+            max-width: 95%;
+            max-height: 85vh;
             object-fit: contain;
-            border-radius: 12px;
-            box-shadow: 0 0 40px rgba(0, 255, 0, 0.4);
-            transition: all 0.3s ease;
+            border-radius: 8px;
+            box-shadow: 0 0 25px rgba(0, 255, 0, 0.3);
+            transition: transform 0.3s ease;
             cursor: zoom-in;
-            animation: zoomIn 0.3s ease;
         }
         
         .modal-content.zoomed {
             cursor: zoom-out;
-            transform: scale(1.8);
-            max-width: none;
-            max-height: none;
-        }
-        
-        .modal-info-panel {
-            background: rgba(10, 25, 20, 0.9);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 20px;
-            margin-top: 20px;
-            max-width: 800px;
-            width: 90%;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
-        }
-        
-        .modal-title {
-            color: var(--primary-color);
-            font-size: 1.4rem;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            transform: scale(1.5);
         }
         
         .modal-description {
+            text-align: center;
             color: white;
-            line-height: 1.7;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
             font-size: 1rem;
-            margin-bottom: 15px;
-        }
-        
-        .photo-interpretation {
-            background: rgba(0, 100, 0, 0.2);
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            border-left: 3px solid var(--primary-color);
-            font-style: italic;
-        }
-        
-        .interpretation-title {
-            color: var(--primary-color);
-            font-weight: bold;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-        }
-        
-        .interpretation-title i {
-            margin-right: 8px;
-        }
-        
-        .modal-meta {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 15px;
-            padding-top: 15px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 0.9rem;
-            color: var(--text-muted);
-        }
-        
-        .meta-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            line-height: 1.6;
         }
         
         .close-modal {
             position: fixed;
-            top: 25px;
+            top: 20px;
             right: 30px;
             color: white;
-            font-size: 36px;
+            font-size: 40px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
             z-index: 10001;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.5);
             border-radius: 50%;
             width: 50px;
             height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 2px solid rgba(255, 255, 255, 0.3);
         }
         
         .close-modal:hover {
             color: var(--primary-color);
             transform: scale(1.1);
-            background: rgba(0, 0, 0, 0.8);
-            border-color: var(--primary-color);
+            background: rgba(0, 0, 0, 0.7);
         }
         
-        /* Improved Modal Navigation */
+        /* Modal navigation */
         .modal-nav {
             position: fixed;
             top: 50%;
             transform: translateY(-50%);
-            background-color: rgba(0, 0, 0, 0.7);
+            background-color: rgba(0, 0, 0, 0.5);
             color: white;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            font-size: 28px;
-            padding: 18px 22px;
+            border: none;
+            font-size: 30px;
+            padding: 15px 20px;
             cursor: pointer;
             transition: all 0.3s ease;
             z-index: 10001;
-            border-radius: 50%;
-            width: 70px;
-            height: 70px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            border-radius: 5px;
         }
         
         .modal-nav:hover {
             background-color: rgba(0, 255, 0, 0.3);
             color: var(--primary-color);
-            border-color: var(--primary-color);
-            transform: translateY(-50%) scale(1.1);
         }
         
         .prev {
@@ -644,121 +555,108 @@
         .modal-counter {
             position: fixed;
             top: 30px;
-            left: 30px;
+            left: 35px;
             color: white;
             font-size: 18px;
             z-index: 10001;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 8px 20px;
-            border-radius: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            font-weight: 500;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 5px 15px;
+            border-radius: 20px;
         }
         
-        /* Enhanced Loading Indicator */
+        /* Loading indicator */
         .loading {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            color: var(--primary-color);
-            font-size: 24px;
+            color: white;
+            font-size: 20px;
             z-index: 10002;
             display: none;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 30px 40px;
-            border-radius: 15px;
+        }
+        
+        /* Analysis section */
+        .analysis-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .analysis-item {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 25px;
             border: 1px solid var(--border-color);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .analysis-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 255, 0, 0.2);
+        }
+        
+        .analysis-icon {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+        
+        .analysis-title {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+        
+        /* Photographers section */
+        .photographer-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .photographer-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 25px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
             text-align: center;
         }
         
-        .loading i {
-            display: block;
-            margin-bottom: 15px;
-            font-size: 32px;
+        .photographer-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 255, 0, 0.2);
         }
         
-        /* Image Controls */
-        .image-controls {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 15px;
-            z-index: 10001;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 15px 25px;
-            border-radius: 50px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .control-btn {
-            background: transparent;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            width: 50px;
-            height: 50px;
+        .photographer-image {
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 20px;
-        }
-        
-        .control-btn:hover {
-            background: rgba(0, 255, 0, 0.2);
-            color: var(--primary-color);
-            border-color: var(--primary-color);
-            transform: scale(1.1);
-        }
-        
-        /* Thumbnail Strip */
-        .thumbnail-strip {
-            position: fixed;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 10px;
-            z-index: 10001;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 15px;
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            max-width: 80%;
-            overflow-x: auto;
-        }
-        
-        .thumbnail {
-            width: 60px;
-            height: 60px;
-            border-radius: 8px;
             object-fit: cover;
-            cursor: pointer;
-            opacity: 0.6;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-        
-        .thumbnail:hover {
-            opacity: 0.8;
-            transform: scale(1.05);
-        }
-        
-        .thumbnail.active {
-            opacity: 1;
+            margin: 0 auto 15px;
             border: 2px solid var(--primary-color);
-            transform: scale(1.1);
         }
         
-        /* Responsive improvements */
+        .photographer-name {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .photographer-period {
+            font-style: italic;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+        
+        /* Responsive Design */
         @media (max-width: 768px) {
             .content-wrapper {
                 margin-top: 60px;
-                padding: 0 15px;
             }
             
             .page-title {
@@ -777,38 +675,31 @@
                 grid-template-columns: 1fr;
             }
             
+            .analysis-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .photographer-cards {
+                grid-template-columns: 1fr;
+            }
+            
             .modal-content {
-                max-width: 95%;
-                max-height: 55vh;
-                margin-top: 20px;
-            }
-            
-            .modal-info-panel {
-                padding: 15px;
-                margin-top: 15px;
-            }
-            
-            .modal-title {
-                font-size: 1.2rem;
-            }
-            
-            .modal-description {
-                font-size: 0.9rem;
+                max-width: 98%;
+                max-height: 70vh;
+                margin-top: 60px;
             }
             
             .close-modal {
                 top: 15px;
                 right: 15px;
-                font-size: 30px;
+                font-size: 35px;
                 width: 45px;
                 height: 45px;
             }
             
             .modal-nav {
-                font-size: 20px;
+                font-size: 24px;
                 padding: 12px 16px;
-                width: 55px;
-                height: 55px;
             }
             
             .prev {
@@ -823,33 +714,6 @@
                 top: 20px;
                 left: 15px;
                 font-size: 16px;
-                padding: 6px 15px;
-            }
-            
-            .image-controls {
-                bottom: 20px;
-                padding: 12px 20px;
-            }
-            
-            .control-btn {
-                width: 45px;
-                height: 45px;
-                font-size: 18px;
-            }
-            
-            .thumbnail-strip {
-                bottom: 80px;
-                padding: 12px;
-            }
-            
-            .thumbnail {
-                width: 50px;
-                height: 50px;
-            }
-            
-            .modal-meta {
-                flex-direction: column;
-                gap: 10px;
             }
             
             .artist-statement {
@@ -864,51 +728,6 @@
             .artist-work-image-container {
                 height: 200px;
             }
-        }
-        
-        @media (max-width: 480px) {
-            .modal-content-container {
-                padding: 10px;
-            }
-            
-            .modal-content {
-                max-height: 50vh;
-            }
-            
-            .modal-nav {
-                width: 45px;
-                height: 45px;
-                font-size: 18px;
-            }
-            
-            .image-controls {
-                padding: 10px 15px;
-            }
-            
-            .control-btn {
-                width: 40px;
-                height: 40px;
-                font-size: 16px;
-            }
-            
-            .thumbnail-strip {
-                bottom: 70px;
-            }
-            
-            .thumbnail {
-                width: 40px;
-                height: 40px;
-            }
-        }
-        
-        /* Animation for image change */
-        .fade-out {
-            animation: fadeOut 0.3s ease;
-        }
-        
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; }
         }
         
         /* Matrix Canvas Styles */
@@ -988,71 +807,19 @@
             </div>
         </section>
         
-        <!-- IMPROVED Modal for enlarged images -->
+        <!-- Modal for enlarged images - IMPROVED -->
         <div id="imageModal" class="modal">
             <span class="close-modal">&times;</span>
             <div class="modal-counter" id="modalCounter">1 / 5</div>
             <button class="modal-nav prev">&lt;</button>
+            <img class="modal-content" id="enlargedImage">
             <button class="modal-nav next">&gt;</button>
-            
-            <div class="modal-content-container">
-                <img class="modal-content" id="enlargedImage">
-            </div>
-            
-            <div class="thumbnail-strip" id="thumbnailStrip">
-                <!-- Thumbnails will be dynamically added here -->
-            </div>
-            
-            <div class="image-controls">
-                <button class="control-btn" id="zoomInBtn" title="Zoom In">
-                    <i class="bx bx-zoom-in"></i>
-                </button>
-                <button class="control-btn" id="zoomOutBtn" title="Zoom Out">
-                    <i class="bx bx-zoom-out"></i>
-                </button>
-                <button class="control-btn" id="resetZoomBtn" title="Reset Zoom">
-                    <i class="bx bx-reset"></i>
-                </button>
-                <button class="control-btn" id="rotateBtn" title="Rotate">
-                    <i class="bx bx-rotate-right"></i>
-                </button>
-            </div>
-            
-            <div class="modal-info-panel">
-                <h3 class="modal-title" id="modalImageTitle">
-                    <span id="modalTitleText">Image Title</span>
-                    <span class="image-index" id="imageIndex">1/3</span>
-                </h3>
-                <div class="modal-description" id="modalDescription"></div>
-                <div class="photo-interpretation" id="photoInterpretation">
-                    <div class="interpretation-title"><i class="bx bx-comment-detail"></i> Photographic Interpretation</div>
-                    <div id="interpretationText"></div>
-                </div>
-                <div class="modal-meta">
-                    <div class="meta-item">
-                        <i class="bx bx-calendar"></i>
-                        <span id="modalDate">2023-01-01</span>
-                    </div>
-                    <div class="meta-item">
-                        <i class="bx bx-time"></i>
-                        <span id="modalTime">12:00</span>
-                    </div>
-                    <div class="meta-item">
-                        <i class="bx bx-map"></i>
-                        <span id="modalLocation">Location</span>
-                    </div>
-                    <div class="meta-item">
-                        <i class="bx bx-camera"></i>
-                        <span id="modalCamera">Camera Type</span>
-                    </div>
-                </div>
-            </div>
+            <div id="modalDescription" class="modal-description"></div>
         </div>
         
-        <!-- Enhanced Loading indicator -->
+        <!-- Loading indicator -->
         <div class="loading" id="loadingIndicator">
-            <i class="bx bx-loader-alt bx-spin"></i>
-            <div>Loading Image...</div>
+            <i class="bx bx-loader-alt bx-spin"></i> Loading...
         </div>
         
         <!-- YENİ BÖLÜM: Ambiguous Imagery Sanatçıları ve Eserleri -->
@@ -1274,7 +1041,7 @@
     <script src="/JAVASCRIPT/matrix.js"></script>
     
     <script>
-        // Enhanced photo data with interpretations
+        // Sample photo data - this would come from JSON in production
         const photoData = [
             {
                 id: 1,
@@ -1282,13 +1049,15 @@
                 images: [
                     {
                         url: "PHOTO/photo1.JPG",
-                        description: "This composition captures the contrast between human isolation and the density of urban environments.",
-                        interpretation: "The single figure positioned against the vast architectural landscape creates a powerful statement about modern existence - our simultaneous connection and isolation within urban spaces."
+                        description: "This composition captures the contrast between human isolation and the density of urban environments. The single figure positioned against the vast architectural landscape creates a powerful statement about modern existence."
                     },
                     {
                         url: "https://ik.imagekit.io/adembayazit/IMG_1630_22PJyDVnI.jpeg",
-                        description: "Close-up view showing the texture and details of the architectural elements.",
-                        interpretation: "The play of light and shadow creates a dramatic contrast that emphasizes the geometric patterns, transforming ordinary architecture into abstract art."
+                        description: "Close-up view showing the texture and details of the architectural elements. The play of light and shadow creates a dramatic contrast that emphasizes the geometric patterns."
+                    },
+                    {
+                        url: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+                        description: "Alternative angle showing the relationship between the human figure and the urban landscape. The composition follows the rule of thirds, placing the subject at an intersection point for visual balance."
                     }
                 ],
                 date: "2017-05-24",
@@ -1302,8 +1071,11 @@
                 images: [
                     {
                         url: "PHOTO/photo2.JPG",
-                        description: "A study in persistence, this image shows life thriving in seemingly inhospitable conditions.",
-                        interpretation: "The composition uses natural framing to draw attention to the central subject while maintaining a balanced asymmetry, symbolizing resilience in challenging environments."
+                        description: "A study in persistence, this image shows life thriving in seemingly inhospitable conditions. The composition uses natural framing to draw attention to the central subject while maintaining a balanced asymmetry."
+                    },
+                    {
+                        url: "https://ik.imagekit.io/adembayazit/IMG_1630_22PJyDVnI.jpeg",
+                        description: "Macro detail revealing the intricate patterns and textures of the plant. The shallow depth of field isolates the subject from the background, creating a dreamlike quality."
                     }
                 ],
                 date: "2017-05-30",
@@ -1317,8 +1089,19 @@
                 images: [
                     {
                         url: "PHOTO/photo3.JPG",
-                        description: "This photograph transforms mundane industrial elements into abstract art through careful framing and lighting.",
-                        interpretation: "The repetition of geometric shapes creates rhythm, while selective focus guides the viewer's attention, revealing the hidden beauty in industrial landscapes."
+                        description: "This photograph transforms mundane industrial elements into abstract art through careful framing and lighting. The repetition of geometric shapes creates rhythm, while selective focus guides the viewer's attention."
+                    },
+                    {
+                        url: "https://ik.imagekit.io/adembayazit/IMG_1630_22PJyDVnI.jpeg",
+                        description: "Close-up view highlighting the textures and patterns created by rust and weathering. The warm tones contrast with the cool metallic surfaces, creating visual interest."
+                    },
+                    {
+                        url: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+                        description: "Wide-angle perspective showing the scale and context of the industrial environment. The converging lines create a sense of depth and draw the eye into the frame."
+                    },
+                    {
+                        url: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+                        description: "Detail shot focusing on the interplay of light and shadow across the metallic surfaces. The high contrast creates a graphic, almost abstract quality."
                     }
                 ],
                 date: "2017-05-11",
@@ -1332,8 +1115,11 @@
                 images: [
                     {
                         url: "PHOTO/photo4.jpeg",
-                        description: "A candid moment captured with remarkable sensitivity.",
-                        interpretation: "The composition uses the rule of thirds to create visual harmony, while the shallow depth of field isolates the subjects from their environment, emphasizing human connection."
+                        description: "A candid moment captured with remarkable sensitivity. The composition uses the rule of thirds to create visual harmony, while the shallow depth of field isolates the subjects from their environment."
+                    },
+                    {
+                        url: "https://images.unsplash.com/photo-1516487106395-f3d579a6c7b5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+                        description: "Close-up emphasizing the emotional connection between the subjects. The natural lighting enhances the warmth and intimacy of the moment."
                     }
                 ],
                 date: "2017-04-01",
@@ -1347,8 +1133,15 @@
                 images: [
                     {
                         url: "PHOTO/photo5.jpeg",
-                        description: "This image explores the relationship between historical and contemporary architecture.",
-                        interpretation: "The strong leading lines draw the eye through the frame, while the contrast in textures adds visual interest, creating a dialogue between different eras of design."
+                        description: "This image explores the relationship between historical and contemporary architecture. The strong leading lines draw the eye through the frame, while the contrast in textures adds visual interest."
+                    },
+                    {
+                        url: "https://images.unsplash.com/photo-1496568816309-51d7c20e3b21?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+                        description: "Detail view showing the intricate craftsmanship of the historical building. The play of light across the surfaces reveals the depth and complexity of the architectural details."
+                    },
+                    {
+                        url: "https://images.unsplash.com/photo-1496568816309-51d7c20e3b21?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+                        description: "Perspective shot emphasizing the scale difference between the historical and modern structures. The composition creates a dialogue between different eras of architectural design."
                     }
                 ],
                 date: "2017-04-29",
@@ -1362,8 +1155,15 @@
                 images: [
                     {
                         url: "PHOTO/photo6.jpeg",
-                        description: "An experimental approach to photography that focuses on color, texture, and form.",
-                        interpretation: "The composition creates a visual language that speaks directly to emotions, using color fields and textures to evoke feelings rather than represent reality."
+                        description: "An experimental approach to photography that focuses on color, texture, and form rather than recognizable subjects. The composition creates a visual language that speaks directly to emotions."
+                    },
+                    {
+                        url: "https://ik.imagekit.io/adembayazit/IMG_2127_HNpa8hyG4.jpeg",
+                        description: "Close-up revealing the intricate layers and textures created through multiple exposure techniques. The blending of colors creates a dreamlike, ethereal quality."
+                    },
+                    {
+                        url: "https://images.unsplash.com/photo-1543857778-c4a1a569eebe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+                        description: "Alternative composition focusing on the interaction between different color fields. The balance between warm and cool tones creates visual tension and harmony simultaneously."
                     }
                 ],
                 date: "2023-06-29",
@@ -1377,8 +1177,15 @@
                 images: [
                     {
                         url: "PHOTO/photo7.webp",
-                        description: "An experimental approach to photography that focuses on color, texture, and form.",
-                        interpretation: "The blending of colors creates a dreamlike, ethereal quality, transforming photographic reality into abstract emotional expression."
+                        description: "An experimental approach to photography that focuses on color, texture, and form rather than recognizable subjects. The composition creates a visual language that speaks directly to emotions."
+                    },
+                    {
+                        url: "https://ik.imagekit.io/adembayazit/IMG_2126_aVDHlLCEb.jpeg",
+                        description: "Close-up revealing the intricate layers and textures created through multiple exposure techniques. The blending of colors creates a dreamlike, ethereal quality."
+                    },
+                    {
+                        url: "https://images.unsplash.com/photo-1543857778-c4a1a569eebe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+                        description: "Alternative composition focusing on the interaction between different color fields. The balance between warm and cool tones creates visual tension and harmony simultaneously."
                     }
                 ],
                 date: "2022-05-17",
@@ -1392,8 +1199,15 @@
                 images: [
                     {
                         url: "https://ik.imagekit.io/adembayazit/IMG_2025-10-05-223252_mdmst6NM4.jpeg",
-                        description: "Composition Used!!‎ <br>✓ الله ✓ Mihrab ✓ Minaret ✓ Courtyard <br>✓ Prayer Rug",
-                        interpretation: "This spontaneous composition reveals how natural elements can form sacred geometry, demonstrating that spiritual spaces exist beyond man-made structures."
+                        description: "Composition Used!!‎ <br>✓ الله ✓ Mihrab ✓ Minaret ✓ Courtyard <br>✓ Prayer Rug <br>Subject of the photo: Habitat Mosque (not specifically designed. This moment has been evaluated) Photographed by me!!"
+                    },
+                    {
+                        url: "https://ik.imagekit.io/adembayazit/IMG_2067_7yOT0B9SP.jpeg",
+                        description: "The first emigrants who came to Quba had turned a date-drying yard belonging to the sons of Amr bin Awf into a mosque. The Prophet expanded this place and built the Quba Mosque. The original state of Masjid al-Quba consisted of four walls surrounding a square area"
+                    },
+                    {
+                        url: "https://images.unsplash.com/photo-1543857778-c4a1a569eebe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+                        description: "Alternative composition focusing on the interaction between different color fields. The balance between warm and cool tones creates visual tension and harmony simultaneously."
                     }
                 ],
                 date: "2016-08-02",
@@ -1403,34 +1217,21 @@
             }
         ];
 
-        // Enhanced Modal functionality
+        // Modal functionality for enlarged images
         let currentPhotoIndex = 0;
         let currentImageIndex = 0;
         let currentPhotoData = null;
-        let currentScale = 1;
-        let currentRotation = 0;
+        let isZoomed = false;
 
         document.addEventListener('DOMContentLoaded', function() {
             const modal = document.getElementById("imageModal");
             const modalImg = document.getElementById("enlargedImage");
             const modalDesc = document.getElementById("modalDescription");
-            const interpretationText = document.getElementById("interpretationText");
             const modalCounter = document.getElementById("modalCounter");
-            const modalTitle = document.getElementById("modalTitleText");
-            const imageIndex = document.getElementById("imageIndex");
-            const modalDate = document.getElementById("modalDate");
-            const modalTime = document.getElementById("modalTime");
-            const modalLocation = document.getElementById("modalLocation");
-            const modalCamera = document.getElementById("modalCamera");
-            const thumbnailStrip = document.getElementById("thumbnailStrip");
             const loadingIndicator = document.getElementById("loadingIndicator");
             const closeBtn = document.getElementsByClassName("close-modal")[0];
             const prevBtn = document.querySelector(".modal-nav.prev");
             const nextBtn = document.querySelector(".modal-nav.next");
-            const zoomInBtn = document.getElementById("zoomInBtn");
-            const zoomOutBtn = document.getElementById("zoomOutBtn");
-            const resetZoomBtn = document.getElementById("resetZoomBtn");
-            const rotateBtn = document.getElementById("rotateBtn");
             
             // Generate photo gallery from data
             const photoGallery = document.getElementById("photoGallery");
@@ -1442,7 +1243,7 @@
                 
                 photoCard.innerHTML = `
                     <div class="photo-image-container">
-                        <img src="${photo.images[0].url}" alt="${photo.title}" class="photo-image" loading="lazy">
+                        <img src="${photo.images[0].url}" alt="${photo.title}" class="photo-image">
                     </div>
                     <div class="photo-info">
                         <h3 class="photo-title"><i class="bx bx-camera"></i> ${photo.title}</h3>
@@ -1459,7 +1260,23 @@
                 
                 // Add click event to photo card
                 photoCard.querySelector('.photo-image').addEventListener('click', function() {
-                    openModal(photo.id - 1, 0);
+                    currentPhotoIndex = photo.id - 1;
+                    currentImageIndex = 0;
+                    currentPhotoData = photo;
+                    
+                    modal.style.display = "block";
+                    loadingIndicator.style.display = "block";
+                    
+                    // Preload image for better UX
+                    const img = new Image();
+                    img.onload = function() {
+                        modalImg.src = photo.images[0].url;
+                        modalDesc.innerHTML = photo.images[0].description; // Use innerHTML to render HTML tags
+                        modalCounter.textContent = `1 / ${photo.images.length}`;
+                        loadingIndicator.style.display = "none";
+                        updateNavButtons();
+                    };
+                    img.src = photo.images[0].url;
                 });
             });
             
@@ -1488,20 +1305,6 @@
                         case 'ArrowRight':
                             navigateNext();
                             break;
-                        case '+':
-                        case '=':
-                            zoomIn();
-                            break;
-                        case '-':
-                            zoomOut();
-                            break;
-                        case '0':
-                            resetZoom();
-                            break;
-                        case 'r':
-                        case 'R':
-                            rotateImage();
-                            break;
                     }
                 }
             });
@@ -1516,255 +1319,73 @@
                 navigateNext();
             });
             
-            // Zoom in button
-            zoomInBtn.addEventListener('click', function() {
-                zoomIn();
-            });
-            
-            // Zoom out button
-            zoomOutBtn.addEventListener('click', function() {
-                zoomOut();
-            });
-            
-            // Reset zoom button
-            resetZoomBtn.addEventListener('click', function() {
-                resetZoom();
-            });
-            
-            // Rotate button
-            rotateBtn.addEventListener('click', function() {
-                rotateImage();
-            });
-            
-            // Zoom functionality on image click
-            modalImg.addEventListener('click', function(event) {
-                // Only zoom if not clicking on navigation buttons or controls
-                if (!event.target.closest('.modal-nav') && !event.target.closest('.control-btn')) {
-                    if (currentScale === 1) {
-                        zoomIn();
-                    } else {
-                        resetZoom();
-                    }
+            // Zoom functionality
+            modalImg.addEventListener('click', function() {
+                if (isZoomed) {
+                    modalImg.classList.remove('zoomed');
+                    isZoomed = false;
+                } else {
+                    modalImg.classList.add('zoomed');
+                    isZoomed = true;
                 }
             });
-            
-            // Touch events for mobile swipe
-            let touchStartX = 0;
-            let touchEndX = 0;
-            
-            modalImg.addEventListener('touchstart', function(event) {
-                touchStartX = event.changedTouches[0].screenX;
-            });
-            
-            modalImg.addEventListener('touchend', function(event) {
-                touchEndX = event.changedTouches[0].screenX;
-                handleSwipe();
-            });
-            
-            function handleSwipe() {
-                const swipeThreshold = 50;
-                
-                if (touchEndX < touchStartX - swipeThreshold) {
-                    // Swipe left - next image
-                    navigateNext();
-                }
-                
-                if (touchEndX > touchStartX + swipeThreshold) {
-                    // Swipe right - previous image
-                    navigatePrev();
-                }
-            }
-            
-            function openModal(photoIndex, imageIndex) {
-                currentPhotoIndex = photoIndex;
-                currentImageIndex = imageIndex;
-                currentPhotoData = photoData[photoIndex];
-                
-                modal.style.display = "block";
-                document.body.style.overflow = "hidden"; // Prevent scrolling
-                loadingIndicator.style.display = "block";
-                
-                // Reset zoom and rotation
-                resetZoom();
-                currentRotation = 0;
-                modalImg.style.transform = `scale(${currentScale}) rotate(${currentRotation}deg)`;
-                
-                // Preload image for better UX
-                const img = new Image();
-                img.onload = function() {
-                    modalImg.src = currentPhotoData.images[currentImageIndex].url;
-                    updateModalInfo();
-                    loadingIndicator.style.display = "none";
-                    updateNavButtons();
-                    generateThumbnails();
-                    
-                    // Preload adjacent images
-                    preloadAdjacentImages();
-                };
-                img.src = currentPhotoData.images[currentImageIndex].url;
-            }
             
             function navigatePrev() {
                 if (currentPhotoData && currentImageIndex > 0) {
                     currentImageIndex--;
-                    changeImage();
-                } else if (currentPhotoIndex > 0) {
-                    // Go to previous photo
-                    currentPhotoIndex--;
-                    currentPhotoData = photoData[currentPhotoIndex];
-                    currentImageIndex = currentPhotoData.images.length - 1;
-                    changeImage();
+                    loadingIndicator.style.display = "block";
+                    
+                    const img = new Image();
+                    img.onload = function() {
+                        modalImg.src = currentPhotoData.images[currentImageIndex].url;
+                        modalDesc.innerHTML = currentPhotoData.images[currentImageIndex].description; // Use innerHTML
+                        modalCounter.textContent = `${currentImageIndex + 1} / ${currentPhotoData.images.length}`;
+                        loadingIndicator.style.display = "none";
+                        updateNavButtons();
+                        resetZoom();
+                    };
+                    img.src = currentPhotoData.images[currentImageIndex].url;
                 }
             }
             
             function navigateNext() {
                 if (currentPhotoData && currentImageIndex < currentPhotoData.images.length - 1) {
                     currentImageIndex++;
-                    changeImage();
-                } else if (currentPhotoIndex < photoData.length - 1) {
-                    // Go to next photo
-                    currentPhotoIndex++;
-                    currentPhotoData = photoData[currentPhotoIndex];
-                    currentImageIndex = 0;
-                    changeImage();
-                }
-            }
-            
-            function changeImage() {
-                loadingIndicator.style.display = "block";
-                resetZoom();
-                currentRotation = 0;
-                
-                // Add fade-out animation
-                modalImg.classList.add('fade-out');
-                
-                setTimeout(() => {
+                    loadingIndicator.style.display = "block";
+                    
                     const img = new Image();
                     img.onload = function() {
                         modalImg.src = currentPhotoData.images[currentImageIndex].url;
-                        modalImg.classList.remove('fade-out');
-                        updateModalInfo();
+                        modalDesc.innerHTML = currentPhotoData.images[currentImageIndex].description; // Use innerHTML
+                        modalCounter.textContent = `${currentImageIndex + 1} / ${currentPhotoData.images.length}`;
                         loadingIndicator.style.display = "none";
                         updateNavButtons();
-                        updateThumbnails();
-                        
-                        // Preload adjacent images
-                        preloadAdjacentImages();
+                        resetZoom();
                     };
                     img.src = currentPhotoData.images[currentImageIndex].url;
-                }, 150);
-            }
-            
-            function updateModalInfo() {
-                modalTitle.textContent = currentPhotoData.title;
-                modalDesc.innerHTML = currentPhotoData.images[currentImageIndex].description;
-                interpretationText.innerHTML = currentPhotoData.images[currentImageIndex].interpretation;
-                modalCounter.textContent = `${currentImageIndex + 1} / ${currentPhotoData.images.length}`;
-                imageIndex.textContent = `${currentImageIndex + 1}/${currentPhotoData.images.length}`;
-                modalDate.textContent = currentPhotoData.date;
-                modalTime.textContent = currentPhotoData.time;
-                modalLocation.textContent = currentPhotoData.location;
-                modalCamera.textContent = currentPhotoData.camera;
-            }
-            
-            function generateThumbnails() {
-                thumbnailStrip.innerHTML = '';
-                
-                currentPhotoData.images.forEach((image, index) => {
-                    const thumbnail = document.createElement('img');
-                    thumbnail.src = image.url;
-                    thumbnail.alt = `Thumbnail ${index + 1}`;
-                    thumbnail.className = 'thumbnail';
-                    if (index === currentImageIndex) {
-                        thumbnail.classList.add('active');
-                    }
-                    
-                    thumbnail.addEventListener('click', function() {
-                        if (index !== currentImageIndex) {
-                            currentImageIndex = index;
-                            changeImage();
-                        }
-                    });
-                    
-                    thumbnailStrip.appendChild(thumbnail);
-                });
-            }
-            
-            function updateThumbnails() {
-                const thumbnails = thumbnailStrip.querySelectorAll('.thumbnail');
-                thumbnails.forEach((thumb, index) => {
-                    if (index === currentImageIndex) {
-                        thumb.classList.add('active');
-                    } else {
-                        thumb.classList.remove('active');
-                    }
-                });
-            }
-            
-            function preloadAdjacentImages() {
-                // Preload next image if exists
-                if (currentImageIndex < currentPhotoData.images.length - 1) {
-                    const nextImg = new Image();
-                    nextImg.src = currentPhotoData.images[currentImageIndex + 1].url;
                 }
-                
-                // Preload previous image if exists
-                if (currentImageIndex > 0) {
-                    const prevImg = new Image();
-                    prevImg.src = currentPhotoData.images[currentImageIndex - 1].url;
-                }
-            }
-            
-            function zoomIn() {
-                if (currentScale < 3) {
-                    currentScale += 0.5;
-                    modalImg.style.transform = `scale(${currentScale}) rotate(${currentRotation}deg)`;
-                    modalImg.classList.add('zoomed');
-                }
-            }
-            
-            function zoomOut() {
-                if (currentScale > 0.5) {
-                    currentScale -= 0.5;
-                    modalImg.style.transform = `scale(${currentScale}) rotate(${currentRotation}deg)`;
-                    
-                    if (currentScale === 1) {
-                        modalImg.classList.remove('zoomed');
-                    }
-                }
-            }
-            
-            function resetZoom() {
-                currentScale = 1;
-                modalImg.style.transform = `scale(${currentScale}) rotate(${currentRotation}deg)`;
-                modalImg.classList.remove('zoomed');
-            }
-            
-            function rotateImage() {
-                currentRotation += 90;
-                if (currentRotation >= 360) {
-                    currentRotation = 0;
-                }
-                modalImg.style.transform = `scale(${currentScale}) rotate(${currentRotation}deg)`;
             }
             
             function closeModal() {
                 modal.style.display = "none";
-                document.body.style.overflow = "auto"; // Re-enable scrolling
                 resetZoom();
-                currentRotation = 0;
+            }
+            
+            function resetZoom() {
+                modalImg.classList.remove('zoomed');
+                isZoomed = false;
             }
             
             function updateNavButtons() {
                 // Hide/show prev button
-                if (currentImageIndex === 0 && currentPhotoIndex === 0) {
+                if (currentImageIndex === 0) {
                     prevBtn.style.visibility = 'hidden';
                 } else {
                     prevBtn.style.visibility = 'visible';
                 }
                 
                 // Hide/show next button
-                if (currentImageIndex === currentPhotoData.images.length - 1 && currentPhotoIndex === photoData.length - 1) {
+                if (currentImageIndex === currentPhotoData.images.length - 1) {
                     nextBtn.style.visibility = 'hidden';
                 } else {
                     nextBtn.style.visibility = 'visible';
