@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyber Security Resources | Adem Bayazıt</title>
-    <meta property="og:title" content="Adem Bayazıt | Cyber Security Resources" />
-    <meta property="og:description" content="Comprehensive Cyber Security Resource with 40 Core Prompts and 20 Advanced Modules." />
+    <title>Photographic Cryptology | Adem Bayazıt</title>
+    <meta property="og:title" content="Adem Bayazıt | Photographic Cryptology" />
+    <meta property="og:description" content="Visual analysis and interpretation of photographic compositions." />
     <meta property="og:image" content="https://adembayazit.com/IMAGES/preview.png" />
-    <meta property="og:url" content="https://adembayazit.com/" />
+    <meta property="og:url" content="https://adembayazit.com/photographic-cryptology" />
     <meta property="og:type" content="website" />
 
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Adem Bayazıt - Cyber Security Resources">
-    <meta name="twitter:description" content="Comprehensive Cyber Security Resource with 40 Core Prompts and 20 Advanced Modules.">
+    <meta name="twitter:title" content="Adem Bayazıt - Photographic Cryptology">
+    <meta name="twitter:description" content="Visual analysis and interpretation of photographic compositions.">
     <meta name="twitter:image" content="https://adembayazit.com/IMAGES/preview.png">
     <meta name="twitter:image:alt" content="Adem Bayazıt">
     
@@ -35,10 +35,6 @@
             --text-muted: #cccccc;
             --border-color: #00aa00;
             --highlight-color: #99ff99;
-            --beginner-color: #4caf50;
-            --intermediate-color: limegreen;
-            --advanced-color: green;
-            --expert-color: red;
         }
         
         * {
@@ -48,14 +44,16 @@
             font-family: 'Poppins', sans-serif;
         }
         
-        body {
+        html, body {
             background-color: var(--bg-color);
             color: var(--text-color);
             overflow-x: hidden;
             position: relative;
+            width: 100%;
+            max-width: 100%;
         }
         
-        /* Logo and slogan styling */
+        /* Logo ve slogan için stil */
       .logo-container {
         display: flex;
         flex-direction: column;
@@ -74,19 +72,26 @@
         padding-right: 5px;
       }
       
-      /* Navbar responsive settings */
+      /* Navbar için responsive ayarlar */
       .header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 10px 5%;
+        position: relative;
+        z-index: 100;
+        width: 100%;
+        max-width: 100%;
       }
         
         .content-wrapper {
-            margin-top: 160px;
+            margin-top: 60px;
             position: relative;
             z-index: 2;
             padding: 0 20px;
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
         }
         .backto {
             text-align: center;
@@ -109,7 +114,7 @@
         
         .page-title {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
             font-size: 1.7rem;
             color: white;
             text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
@@ -129,11 +134,35 @@
             border-radius: 3px;
         }
         
+        /* Artist Statement Styles */
+        .artist-statement {
+            background: linear-gradient(135deg, rgba(0, 100, 0, 0.2), rgba(0, 150, 0, 0.1));
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px auto 40px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            max-width: 800px;
+        }
+        
+        .artist-statement h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .artist-statement p {
+            font-style: italic;
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+        
         .section {
             margin-bottom: 60px;
             max-width: 1200px;
             margin-left: auto;
             margin-right: auto;
+            width: 100%;
         }
         
         .section-title {
@@ -172,8 +201,6 @@
             height: 100%;
             display: flex;
             flex-direction: column;
-            position: relative;
-            overflow: hidden;
         }
         
         .card:hover {
@@ -201,200 +228,537 @@
             flex-grow: 1;
         }
         
-        .prompt-text {
-            font-style: italic;
-            margin-bottom: 15px;
-            padding: 10px;
-            background: rgba(0, 100, 0, 0.1);
-            border-left: 3px solid var(--primary-color);
-            font-size: 0.85rem;
+        .term-highlight {
+            color: var(--primary-color);
+            font-weight: bold;
         }
         
-        .skills-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
+        .checklist {
+            list-style-type: none;
             margin-top: 15px;
         }
         
-        .skill-tag {
-            background: rgba(0, 150, 0, 0.2);
-            color: var(--highlight-color);
-            padding: 4px 10px;
-            border-radius: 15px;
-            font-size: 0.7rem;
-            border: 1px solid rgba(0, 255, 0, 0.3);
+        .checklist li {
+            margin-bottom: 10px;
+            padding-left: 30px;
+            position: relative;
         }
         
-        .card-badge {
+        .checklist li:before {
+            content: "✓";
             position: absolute;
-            top: 5px;
-            right: 5px;
-            padding: 5px 5px;
-            border-radius: 13px;
-            font-size: 0.6rem;
+            left: 0;
+            color: var(--primary-color);
             font-weight: bold;
-            text-transform: uppercase;
         }
         
-        .badge-beginner {
-            background: var(--beginner-color);
-            color: white;
-        }
-        
-        .badge-intermediate {
-            background: var(--intermediate-color);
-            color: white;
-        }
-        
-        .badge-advanced {
-            background: var(--advanced-color);
-            color: white;
-        }
-        
-        .badge-expert {
-            background: var(--expert-color);
-            color: white;
-        }
-        
-        .resource-intro {
-            text-align: center;
-            margin-bottom: 40px;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-            font-size: 1rem;
-            line-height: 1.6;
-        }
-        
-        .resource-levels {
-            margin-bottom: 30px;
+        .image-container {
+            margin: 20px 0;
             text-align: center;
         }
         
-        .level-tabs {
-            display: inline-flex;
-            background: rgba(0, 50, 0, 0.3);
-            border-radius: 30px;
-            padding: 5px;
-            border: 1px solid var(--border-color);
+        .content-image {
+            max-width: 60%;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
         
-        .level-tab {
-            padding: 8px 20px;
-            border: none;
-            background: transparent;
-            color: var(--text-color);
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
+        .image-caption {
+            margin-top: 10px;
+            font-style: italic;
+            color: var(--text-muted);
             font-size: 0.9rem;
         }
         
-        .level-tab.active {
-            background: var(--primary-color);
-            color: var(--bg-color);
+        .quote {
+            border-left: 4px solid var(--primary-color);
+            padding: 15px 20px;
+            margin: 25px 0;
+            background: rgba(0, 100, 0, 0.1);
+            font-style: italic;
+        }
+        
+        .quote-author {
+            display: block;
+            margin-top: 10px;
+            text-align: right;
+            color: var(--primary-color);
             font-weight: bold;
         }
         
-        .level-tab:hover:not(.active) {
-            background: rgba(0, 255, 0, 0.2);
+        /* Photographic Cryptology specific styles */
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
         }
         
-        .prompts-section-title {
-            font-size: 1.3rem;
-            margin-bottom: 25px;
-            color: var(--primary-color);
-            text-align: center;
-            position: relative;
-            padding-bottom: 10px;
-        }
-        
-        .prompts-section-title::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 150px;
-            height: 2px;
-            background: var(--primary-color);
-        }
-        
-        .outcomes-container {
+        .photo-card {
             background: var(--card-bg);
             border-radius: 10px;
-            padding: 30px;
+            overflow: hidden;
             border: 1px solid var(--border-color);
-            margin-top: 40px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
         }
         
-        .outcomes-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
+        .photo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 255, 0, 0.2);
+            border-color: var(--primary-color);
         }
         
-        .outcome-item {
-            background: rgba(0, 100, 0, 0.1);
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 4px solid var(--primary-color);
+        .photo-image-container {
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #0a0a0a;
         }
         
-        .outcome-item h4 {
+        .photo-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .photo-image:hover {
+            transform: scale(1.03);
+        }
+        
+        .photo-info {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .photo-title {
+            font-size: 1rem;
             color: var(--primary-color);
             margin-bottom: 10px;
-            font-size: 1rem;
-        }
-        
-        .certifications {
             display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-top: 20px;
+            align-items: center;
+        }
+        
+        .photo-title i {
+            margin-right: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .photo-description {
+            color: var(--text-color);
+            line-height: 1.6;
+            font-size: 0.9rem;
+            flex-grow: 1;
+        }
+        
+        .photo-meta {
+            margin-top: 15px;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        /* Artist Works Gallery Styles */
+        .artist-works-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .artist-work-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+        
+        .artist-work-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 255, 0, 0.2);
+            border-color: var(--primary-color);
+        }
+        
+        .artist-work-image-container {
+            width: 100%;
+            height: 300px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
             justify-content: center;
+            background-color: #0a0a0a;
         }
         
-        .cert-badge {
-            background: rgba(0, 150, 0, 0.2);
-            padding: 10px 15px;
-            border-radius: 20px;
-            border: 1px solid rgba(0, 255, 0, 0.3);
-            font-size: 0.8rem;
+        .artist-work-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         
-        .capstone-list {
-            list-style-type: none;
-            margin-top: 20px;
+        .artist-work-info {
+            padding: 25px;
         }
         
-        .capstone-list li {
+        .artist-work-title {
+            font-size: 1.2rem;
+            color: var(--primary-color);
             margin-bottom: 10px;
-            padding-left: 25px;
-            position: relative;
+            display: flex;
+            align-items: center;
         }
         
-        .capstone-list li:before {
-            position: absolute;
-            left: 0;
+        .artist-work-title i {
+            margin-right: 10px;
         }
         
-        /* Matrix Canvas Styles */
-        #matrixCanvas {
+        .artist-work-artist {
+            font-size: 1rem;
+            color: var(--highlight-color);
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+        
+        .artist-work-description {
+            color: var(--text-color);
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .artist-work-technique {
+            background: rgba(0, 100, 0, 0.2);
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        .technique-title {
+            color: var(--primary-color);
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .technique-title i {
+            margin-right: 8px;
+        }
+        
+        /* IMPROVED Modal Styles */
+        .modal {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1;
+            background-color: rgba(0, 0, 0, 0.95);
+            z-index: 10000;
+            overflow: hidden;
+            padding: 0;
+            animation: fadeIn 0.4s ease;
+            backdrop-filter: blur(5px);
         }
         
-        /* Responsive Design */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        .modal-content-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+        }
+        
+        .modal-content {
+            max-width: 85%;
+            max-height: 65vh;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 0 40px rgba(0, 255, 0, 0.4);
+            transition: all 0.3s ease;
+            cursor: zoom-in;
+            animation: zoomIn 0.3s ease;
+        }
+        
+        .modal-content.zoomed {
+            cursor: zoom-out;
+            transform: scale(1.8);
+            max-width: none;
+            max-height: none;
+        }
+        
+        .modal-info-panel {
+            background: rgba(10, 25, 20, 0.9);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            max-width: 800px;
+            width: 90%;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-title {
+            color: var(--primary-color);
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .modal-description {
+            color: white;
+            line-height: 1.7;
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
+        
+        .photo-interpretation {
+            background: rgba(0, 100, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 3px solid var(--primary-color);
+            font-style: italic;
+        }
+        
+        .interpretation-title {
+            color: var(--primary-color);
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .interpretation-title i {
+            margin-right: 8px;
+        }
+        
+        .modal-meta {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .close-modal {
+            position: fixed;
+            top: 25px;
+            right: 30px;
+            color: white;
+            font-size: 36px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10001;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .close-modal:hover {
+            color: var(--primary-color);
+            transform: scale(1.1);
+            background: rgba(0, 0, 0, 0.8);
+            border-color: var(--primary-color);
+        }
+        
+        /* Improved Modal Navigation */
+        .modal-nav {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            font-size: 28px;
+            padding: 18px 22px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10001;
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-nav:hover {
+            background-color: rgba(0, 255, 0, 0.3);
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        .prev {
+            left: 30px;
+        }
+        
+        .next {
+            right: 30px;
+        }
+        
+        .modal-counter {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            color: white;
+            font-size: 18px;
+            z-index: 10001;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 8px 20px;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            font-weight: 500;
+        }
+        
+        /* Enhanced Loading Indicator */
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--primary-color);
+            font-size: 24px;
+            z-index: 10002;
+            display: none;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 30px 40px;
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+        
+        .loading i {
+            display: block;
+            margin-bottom: 15px;
+            font-size: 32px;
+        }
+        
+        /* Image Controls */
+        .image-controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 10001;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px 25px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .control-btn {
+            background: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 20px;
+        }
+        
+        .control-btn:hover {
+            background: rgba(0, 255, 0, 0.2);
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+            transform: scale(1.1);
+        }
+        
+        /* Thumbnail Strip */
+        .thumbnail-strip {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 10001;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 80%;
+            overflow-x: auto;
+        }
+        
+        .thumbnail {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .thumbnail:hover {
+            opacity: 0.8;
+            transform: scale(1.05);
+        }
+        
+        .thumbnail.active {
+            opacity: 1;
+            border: 2px solid var(--primary-color);
+            transform: scale(1.1);
+        }
+        
+        /* Responsive improvements */
         @media (max-width: 768px) {
             .content-wrapper {
-                margin-top: 160px;
+                margin-top: 60px;
+                padding: 0 15px;
             }
             
             .page-title {
@@ -405,19 +769,156 @@
                 font-size: 1rem;
             }
             
-            .card-container {
+            .photo-gallery {
                 grid-template-columns: 1fr;
             }
             
-            .level-tabs {
-                flex-wrap: wrap;
-                gap: 5px;
+            .artist-works-gallery {
+                grid-template-columns: 1fr;
             }
             
-            .level-tab {
-                flex: 1;
-                min-width: 120px;
+            .modal-content {
+                max-width: 95%;
+                max-height: 55vh;
+                margin-top: 20px;
             }
+            
+            .modal-info-panel {
+                padding: 15px;
+                margin-top: 15px;
+            }
+            
+            .modal-title {
+                font-size: 1.2rem;
+            }
+            
+            .modal-description {
+                font-size: 0.9rem;
+            }
+            
+            .close-modal {
+                top: 15px;
+                right: 15px;
+                font-size: 30px;
+                width: 45px;
+                height: 45px;
+            }
+            
+            .modal-nav {
+                font-size: 20px;
+                padding: 12px 16px;
+                width: 55px;
+                height: 55px;
+            }
+            
+            .prev {
+                left: 10px;
+            }
+            
+            .next {
+                right: 10px;
+            }
+            
+            .modal-counter {
+                top: 20px;
+                left: 15px;
+                font-size: 16px;
+                padding: 6px 15px;
+            }
+            
+            .image-controls {
+                bottom: 20px;
+                padding: 12px 20px;
+            }
+            
+            .control-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 18px;
+            }
+            
+            .thumbnail-strip {
+                bottom: 80px;
+                padding: 12px;
+            }
+            
+            .thumbnail {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .modal-meta {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .artist-statement {
+                padding: 20px;
+                margin: 20px auto 30px;
+            }
+            
+            .artist-statement p {
+                font-size: 0.9rem;
+            }
+            
+            .artist-work-image-container {
+                height: 200px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .modal-content-container {
+                padding: 10px;
+            }
+            
+            .modal-content {
+                max-height: 50vh;
+            }
+            
+            .modal-nav {
+                width: 45px;
+                height: 45px;
+                font-size: 18px;
+            }
+            
+            .image-controls {
+                padding: 10px 15px;
+            }
+            
+            .control-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+            
+            .thumbnail-strip {
+                bottom: 70px;
+            }
+            
+            .thumbnail {
+                width: 40px;
+                height: 40px;
+            }
+        }
+        
+        /* Animation for image change */
+        .fade-out {
+            animation: fadeOut 0.3s ease;
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        
+        /* Matrix Canvas Styles */
+        #matrixCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
         }
     </style>
 </head>
@@ -439,7 +940,7 @@
                     <a href="/vulnerabilities"><img src="IMAGES/vulnerabilities.svg" alt="Vulnerabilities" class="vulnerabilities-icon"> Vulnerabilities</a>
                     <a href="/steganography"><img src="IMAGES/steganography.svg" alt="Steganography" class="steganography-icon"> Steganography</a>
                     <a href="/cryptography"><img src="IMAGES/cryptography.svg" alt="Cryptography" class="cryptography-icon"> Cryptography</a>    
-                    <a href="#payloads"><img src="IMAGES/education.svg" alt="Education" class="education-icon"> Cybersecurity Education Prompts</a>
+                    <a href="/cybersecurityeducationprompt"><img src="IMAGES/education.svg" alt="Education" class="education-icon"> Cybersecurity Education Prompts</a>
                 </div>
             </div>
         </nav>
@@ -447,949 +948,318 @@
     
     <div class="content-wrapper">
         <div class="backto"><a href="/" class="back-to-home"><i class="bx bx-arrow-back"></i> Back to Home</a></div>
+        <h2 class="page-title"><i class="fa-solid fa-images"></i> Photographic Cryptology</h2>
+       
         
-        <h2 class="page-title"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hacker-icon">Cyber Security Resource — 40 Core Prompts & 20 Advanced Modules</h2>
+        <section class="section" id="introduction">
+            <h2 class="section-title"><i class="bx bx-info-circle"></i> What is Photographic Cryptology?</h2>
+            <div class="card">
+                <div class="card-content">
+                    <p>Photographic Cryptology is the art and science of analyzing and interpreting visual compositions in photography. It involves deciphering the hidden messages, emotions, and narratives embedded within photographic works.</p>
+                    
+                    <div class="image-container">
+                        <img src="https://ik.imagekit.io/adembayazit/IMG_2129_uND4ijgvH.jpeg" alt="Photographic Cryptology" class="content-image">
+                        <div class="image-caption">Every photograph tells a story, if you know how to read it</div>
+                    </div>
+                    
+                    <p>Just as cryptography reveals hidden messages in text, photographic cryptology uncovers the deeper meanings, cultural contexts, and artistic intentions concealed within visual imagery. This practice combines elements of art criticism, semiotics, and visual analysis.</p>
+                    
+                    <div class="quote">
+                        "Photography is the art of frozen time... the ability to store emotion and feelings within a frame."
+                        <span class="quote-author">- Adem Bayazıt</span>
+                    </div>
+                </div>
+            </div>
+        </section>
         
-        <section class="section" id="resource-intro">
-            <div class="resource-intro">
-                <p>This comprehensive resource contains 40 core prompts and 20 advanced modules to help you develop your skills in the cybersecurity field. Each prompt is designed to help you learn a specific topic in depth. You can create your own learning path by filtering by levels.</p>
+        <!-- Sanatçı Mesajı - Photographic Cryptology başlığının hemen altında -->
+        <div class="artist-statement">
+            <h3><i class="bx bx-message-alt-dots"></i> Artist's Statement</h3>
+            <p>The artistic approach in my photography also corresponds to the method of <strong>Ambiguous Imagery </strong>. I transform these techniques by blending them with my own cultural and traditional reflections, infused with my personal identity, into a deeply personal and meaningful language of photographic composition.</p>
+            <br>
+            <p>I have now explained to you a part of my art's greatest strengths. Whether you choose to follow it or not is up to you.</p>
+        </div>
+
+        <section class="section" id="gallery">
+            <h2 class="section-title"><i class="bx bx-images"></i> Photographic Analysis Gallery</h2>
+            
+            <div class="photo-gallery" id="photoGallery">
+                <!-- Photo cards will be dynamically loaded here -->
+            </div>
+        </section>
+        
+        <!-- IMPROVED Modal for enlarged images -->
+        <div id="imageModal" class="modal">
+            <span class="close-modal">&times;</span>
+            <div class="modal-counter" id="modalCounter">1 / 5</div>
+            <button class="modal-nav prev">&lt;</button>
+            <button class="modal-nav next">&gt;</button>
+            
+            <div class="modal-content-container">
+                <img class="modal-content" id="enlargedImage">
             </div>
             
-            <div class="resource-levels">
-                <div class="level-tabs">
-                    <button class="level-tab active" data-level="all">All</button>
-                    <button class="level-tab" data-level="beginner">Beginner</button>
-                    <button class="level-tab" data-level="intermediate">Intermediate</button>
-                    <button class="level-tab" data-level="advanced">Advanced</button>
-                    <button class="level-tab" data-level="expert">Expert</button>
-                </div>
+            <div class="thumbnail-strip" id="thumbnailStrip">
+                <!-- Thumbnails will be dynamically added here -->
             </div>
-        </section>
-        
-        <section class="section" id="core-prompts">
-            <h3 class="prompts-section-title">40 Core Prompts</h3>
-            <div class="card-container">
-                <!-- Prompt 1 -->
-                <div class="card prompt-card" data-level="beginner">
-                    <div class="card-badge badge-beginner">Beginner</div>
-                    <h3 class="card-title">1. SOC Architecture & Operations</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Describe how a modern SOC collects logs, correlates events, and integrates SIEM and SOAR. Explain which attack types SOCs are best at detecting today.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">SIEM (Splunk/ELK)</span>
-                            <span class="skill-tag">SOAR</span>
-                            <span class="skill-tag">log pipelines</span>
-                            <span class="skill-tag">alert triage</span>
-                            <span class="skill-tag">incident workflows</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 2 -->
-                <div class="card prompt-card" data-level="beginner">
-                    <div class="card-badge badge-beginner">Beginner</div>
-                    <h3 class="card-title">2. Zero Trust Security</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Explain Zero Trust step-by-step and how it differs from traditional perimeter defenses. Show practical technologies used to implement it.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">IAM</span>
-                            <span class="skill-tag">MFA</span>
-                            <span class="skill-tag">ZTNA</span>
-                            <span class="skill-tag">micro-segmentation</span>
-                            <span class="skill-tag">policy engines</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 3 -->
-                <div class="card prompt-card" data-level="intermediate">
-                    <div class="card-badge badge-intermediate">Intermediate</div>
-                    <h3 class="card-title">3. Ransomware Analysis & Response</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Describe common ransomware infection vectors, IOCs, and modern ransomware families with containment steps. Include detection and recovery guidance.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">EDR/XDR</span>
-                            <span class="skill-tag">file system forensics</span>
-                            <span class="skill-tag">backup/restore strategies</span>
-                            <span class="skill-tag">IOC hunting</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 4 -->
-                <div class="card prompt-card" data-level="intermediate">
-                    <div class="card-badge badge-intermediate">Intermediate</div>
-                    <h3 class="card-title">4. Cloud Security Risks (AWS/Azure/GCP)</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">List the most common cloud misconfigurations and show exploitation and mitigation examples. Cover identity, storage, and compute mistakes.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">Cloud IAM</span>
-                            <span class="skill-tag">CloudTrail/CloudWatch</span>
-                            <span class="skill-tag">S3/GCS buckets</span>
-                            <span class="skill-tag">least privilege</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 5 -->
-                <div class="card prompt-card" data-level="intermediate">
-                    <div class="card-badge badge-intermediate">Intermediate</div>
-                    <h3 class="card-title">5. AI in Offensive & Defensive Security</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Explain how attackers use AI (phishing, automation, deepfakes) and how defenders can leverage AI for detection. Include practical defense controls.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">LLM safety</span>
-                            <span class="skill-tag">anomaly detection</span>
-                            <span class="skill-tag">ML ops for security</span>
-                            <span class="skill-tag">adversarial considerations</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 6 -->
-                <div class="card prompt-card" data-level="advanced">
-                    <div class="card-badge badge-advanced">Advanced</div>
-                    <h3 class="card-title">6. ICS/SCADA Security Fundamentals</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Map attack surfaces in industrial control systems and analyze historical incidents like Stuxnet. Provide detection and containment playbooks.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">OT protocols</span>
-                            <span class="skill-tag">PLC analysis</span>
-                            <span class="skill-tag">ICS monitoring tools</span>
-                            <span class="skill-tag">network segmentation</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 7 -->
-                <div class="card prompt-card" data-level="advanced">
-                    <div class="card-badge badge-advanced">Advanced</div>
-                    <h3 class="card-title">7. DNS-over-HTTPS (DoH) as C2 Channel</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Explain how DoH can be abused for command-and-control and techniques defenders use to detect it. Include network and TLS-based indicators.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">DNS/DoH mechanics</span>
-                            <span class="skill-tag">TLS fingerprinting</span>
-                            <span class="skill-tag">Zeek/Suricata rules</span>
-                            <span class="skill-tag">proxy logs</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 8 -->
-                <div class="card prompt-card" data-level="intermediate">
-                    <div class="card-badge badge-intermediate">Intermediate</div>
-                    <h3 class="card-title">8. Phishing Kits & Detection</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Describe current phishing kit workflows and outline OSINT and tooling approaches to find and takedown campaigns.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">URL analysis</span>
-                            <span class="skill-tag">domain hunting</span>
-                            <span class="skill-tag">mail headers</span>
-                            <span class="skill-tag">phishing simulation</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 9 -->
-                <div class="card prompt-card" data-level="advanced">
-                    <div class="card-badge badge-advanced">Advanced</div>
-                    <h3 class="card-title">9. Threat Hunting Playbook</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Walk through a threat hunting engagement: hypotheses, data sources, tooling and how to validate IOCs. Give an example workflow.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">EDR/ELK</span>
-                            <span class="skill-tag">Velociraptor</span>
-                            <span class="skill-tag">hunters' queries</span>
-                            <span class="skill-tag">hypothesis-driven hunting</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 10 -->
-                <div class="card prompt-card" data-level="advanced">
-                    <div class="card-badge badge-advanced">Advanced</div>
-                    <h3 class="card-title">10. Dark Web Intelligence Collection</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Show how to safely collect threat intel from dark web sources and how to verify and operationalize it. Address privacy and safety.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">Tor</span>
-                            <span class="skill-tag">OSINT tooling</span>
-                            <span class="skill-tag">forum monitoring</span>
-                            <span class="skill-tag">CI/CTI pipelines</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 11 -->
-                <div class="card prompt-card" data-level="intermediate">
-                    <div class="card-badge badge-intermediate">Intermediate</div>
-                    <h3 class="card-title">11. MITRE ATT&CK in Practice</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Explain how to map observed telemetry to ATT&CK techniques and use the matrix for detection engineering. Provide mapping examples.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">ATT&CK mapping</span>
-                            <span class="skill-tag">TTP correlation</span>
-                            <span class="skill-tag">detection playbooks</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 12 -->
-                <div class="card prompt-card" data-level="intermediate">
-                    <div class="card-badge badge-intermediate">Intermediate</div>
-                    <h3 class="card-title">12. Packet Forensics with Wireshark</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Walk through analyzing a pcap for C2, data exfiltration, or suspicious lateral movement. Provide key filters and markers.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">Wireshark</span>
-                            <span class="skill-tag">tcpdump</span>
-                            <span class="skill-tag">protocol analysis</span>
-                            <span class="skill-tag">pcap triage</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 13 -->
-                <div class="card prompt-card" data-level="advanced">
-                    <div class="card-badge badge-advanced">Advanced</div>
-                    <h3 class="card-title">13. Malware Sandbox Analysis</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Outline steps to analyze malware in a sandbox safely: static, dynamic, and behavioral analysis. Provide reporting essentials.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">Cuckoo</span>
-                            <span class="skill-tag">yara</span>
-                            <span class="skill-tag">sandbox orchestration</span>
-                            <span class="skill-tag">behavior IOC extraction</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 14 -->
-                <div class="card prompt-card" data-level="intermediate">
-                    <div class="card-badge badge-intermediate">Intermediate</div>
-                    <h3 class="card-title">14. Incident Response (IR) Process</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Describe an IR lifecycle for a ransomware or breach incident: containment, eradication, recovery and lessons learned.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">IR playbooks</span>
-                            <span class="skill-tag">forensics</span>
-                            <span class="skill-tag">legal/communication coordination</span>
-                            <span class="skill-tag">post-incident reporting</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 15 -->
-                <div class="card prompt-card" data-level="intermediate">
-                    <div class="card-badge badge-intermediate">Intermediate</div>
-                    <h3 class="card-title">15. Web Application Pentesting Basics</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Explain how to identify and exploit OWASP Top 10 issues (SQLi, XSS, CSRF) and how to recommend mitigations.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">Burp Suite</span>
-                            <span class="skill-tag">payload crafting</span>
-                            <span class="skill-tag">secure coding guidance</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 16 -->
-                <div class="card prompt-card" data-level="intermediate">
-                    <div class="card-badge badge-intermediate">Intermediate</div>
-                    <h3 class="card-title">16. Red Team vs Blue Team & Purple Team</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Describe Red Team tactics and how Blue Team detection verifies coverage; explain Purple Team collaboration practices.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">Adversary simulation</span>
-                            <span class="skill-tag">detection validation</span>
-                            <span class="skill-tag">tabletop exercises</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 17 -->
-                <div class="card prompt-card" data-level="intermediate">
-                    <div class="card-badge badge-intermediate">Intermediate</div>
-                    <h3 class="card-title">17. Cyber Threat Intelligence (CTI) Workflows</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Explain CTI collection, enrichment, and sharing (STIX/TAXII) and how to operationalize feeds into detection rules.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">MISP</span>
-                            <span class="skill-tag">STIX/TAXII</span>
-                            <span class="skill-tag">feed ingestion</span>
-                            <span class="skill-tag">enrichment pipelines</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 18 -->
-                <div class="card prompt-card" data-level="intermediate">
-                    <div class="card-badge badge-intermediate">Intermediate</div>
-                    <h3 class="card-title">18. API Security Assessment</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Identify common API risks and how to test authentication, authorization, rate limiting and data exposure.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">OWASP API Top 10</span>
-                            <span class="skill-tag">JWT/Token handling</span>
-                            <span class="skill-tag">API gateway rules</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 19 -->
-                <div class="card prompt-card" data-level="beginner">
-                    <div class="card-badge badge-beginner">Beginner</div>
-                    <h3 class="card-title">19. SOC Analyst Daily Routine</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Document the daily tasks, dashboards, alerts and prioritization steps of a SOC analyst. Include escalation rules.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">SIEM dashboards</span>
-                            <span class="skill-tag">triage workflows</span>
-                            <span class="skill-tag">alert tuning</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 20 -->
-                <div class="card prompt-card" data-level="intermediate">
-                    <div class="card-badge badge-intermediate">Intermediate</div>
-                    <h3 class="card-title">20. Insider Threat Detection</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Explain user behavior analytics (UBA/UEBA) and methods to detect and mitigate insider threats without violating privacy.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">UEBA</span>
-                            <span class="skill-tag">DLP</span>
-                            <span class="skill-tag">behavioral baselining</span>
-                            <span class="skill-tag">policy & governance</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 21 -->
-                <div class="card prompt-card" data-level="advanced">
-                    <div class="card-badge badge-advanced">Advanced</div>
-                    <h3 class="card-title">21. Zero-Day Discovery Methods (Defensive View)</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Explain techniques used in vulnerability research (fuzzing, code review) and safe disclosure practices for defenders.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">Fuzzers (AFL)</span>
-                            <span class="skill-tag">static analysis</span>
-                            <span class="skill-tag">responsible disclosure</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 22 -->
-                <div class="card prompt-card" data-level="intermediate">
-                    <div class="card-badge badge-intermediate">Intermediate</div>
-                    <h3 class="card-title">22. Password Cracking & Hardening</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Describe password cracking processes (hashcat/John) and list effective password policies and mitigations.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">Hash algorithms</span>
-                            <span class="skill-tag">salting</span>
-                            <span class="skill-tag">rate limiting</span>
-                            <span class="skill-tag">passwordless options</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 23 -->
-                <div class="card prompt-card" data-level="intermediate">
-                    <div class="card-badge badge-intermediate">Intermediate</div>
-                    <h3 class="card-title">23. Custom SIEM Rule Development</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Show how to write and validate a custom correlation/detection rule in a SIEM for a realistic threat.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">SIEM query languages</span>
-                            <span class="skill-tag">regex</span>
-                            <span class="skill-tag">correlation logic</span>
-                            <span class="skill-tag">testing</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 24 -->
-                <div class="card prompt-card" data-level="intermediate">
-                    <div class="card-badge badge-intermediate">Intermediate</div>
-                    <h3 class="card-title">24. DevSecOps & CI/CD Security</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Explain how to integrate SAST/DAST and container scanning into CI/CD pipelines and remediate findings.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">SAST/DAST</span>
-                            <span class="skill-tag">SBOM</span>
-                            <span class="skill-tag">container scanning</span>
-                            <span class="skill-tag">policy-as-code</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 25 -->
-                <div class="card prompt-card" data-level="intermediate">
-                    <div class="card-badge badge-intermediate">Intermediate</div>
-                    <h3 class="card-title">25. Supply Chain Attacks & Defenses</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Describe how software supply chain attacks operate and defenses like SBOM, code signing and provenance validation.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">Sigstore</span>
-                            <span class="skill-tag">SCA tools</span>
-                            <span class="skill-tag">code signing</span>
-                            <span class="skill-tag">SBOM practices</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 26 -->
-                <div class="card prompt-card" data-level="intermediate">
-                    <div class="card-badge badge-intermediate">Intermediate</div>
-                    <h3 class="card-title">26. Wireless Network Attacks & Defenses</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Explain common Wi-Fi attacks (Evil Twin, WPA2 cracking) and practical defenses for enterprise wireless.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">Aircrack-ng concepts</span>
-                            <span class="skill-tag">enterprise WPA2/WPA3</span>
-                            <span class="skill-tag">rogue AP detection</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 27 -->
-                <div class="card prompt-card" data-level="advanced">
-                    <div class="card-badge badge-advanced">Advanced</div>
-                    <h3 class="card-title">27. IoT Security & Firmware Analysis</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Show how to analyze firmware, extract credentials and assess IoT device attack surface.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">Binwalk</span>
-                            <span class="skill-tag">firmware extraction</span>
-                            <span class="skill-tag">OpenOCD</span>
-                            <span class="skill-tag">secure boot checks</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 28 -->
-                <div class="card prompt-card" data-level="intermediate">
-                    <div class="card-badge badge-intermediate">Intermediate</div>
-                    <h3 class="card-title">28. SIEM vs XDR — Selection Guide</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Compare SIEM and XDR capabilities and explain when to use each approach. Provide integration considerations.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">SIEM architectures</span>
-                            <span class="skill-tag">XDR telemetry</span>
-                            <span class="skill-tag">use-case mapping</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 29 -->
-                <div class="card prompt-card" data-level="advanced">
-                    <div class="card-badge badge-advanced">Advanced</div>
-                    <h3 class="card-title">29. APT Profiling & TTP Analysis</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Describe how to profile advanced persistent threat groups and map their TTPs to detection coverage.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">CTI analysis</span>
-                            <span class="skill-tag">ATT&CK mapping</span>
-                            <span class="skill-tag">attribution limits</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 30 -->
-                <div class="card prompt-card" data-level="intermediate">
-                    <div class="card-badge badge-intermediate">Intermediate</div>
-                    <h3 class="card-title">30. Forensic Investigation Fundamentals</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Explain disk imaging, timeline creation, RAM capture and common forensic artifacts to collect.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">Autopsy</span>
-                            <span class="skill-tag">FTK</span>
-                            <span class="skill-tag">volatility</span>
-                            <span class="skill-tag">chain of custody</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 31 -->
-                <div class="card prompt-card" data-level="advanced">
-                    <div class="card-badge badge-advanced">Advanced</div>
-                    <h3 class="card-title">31. Kubernetes Security Hardening</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Explain Pod Security, RBAC, network policies, and runtime detection for Kubernetes clusters.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">K8s RBAC</span>
-                            <span class="skill-tag">Falco</span>
-                            <span class="skill-tag">network policies</span>
-                            <span class="skill-tag">kube-bench</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 32 -->
-                <div class="card prompt-card" data-level="advanced">
-                    <div class="card-badge badge-advanced">Advanced</div>
-                    <h3 class="card-title">32. Data Exfiltration Detection Techniques</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Describe signs of data exfiltration and design detection rules to catch staged and covert exfil.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">DLP</span>
-                            <span class="skill-tag">anomaly detection</span>
-                            <span class="skill-tag">egress monitoring</span>
-                            <span class="skill-tag">steganography awareness</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 33 -->
-                <div class="card prompt-card" data-level="intermediate">
-                    <div class="card-badge badge-intermediate">Intermediate</div>
-                    <h3 class="card-title">33. OSINT for Digital Footprinting</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Show how to build a target profile using OSINT tools while following legal and ethical boundaries.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">Maltego</span>
-                            <span class="skill-tag">recon-ng</span>
-                            <span class="skill-tag">theHarvester</span>
-                            <span class="skill-tag">privacy-respecting methods</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 34 -->
-                <div class="card prompt-card" data-level="advanced">
-                    <div class="card-badge badge-advanced">Advanced</div>
-                    <h3 class="card-title">34. Blockchain & Smart Contract Security</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Explain smart contract vulnerabilities and how to perform an audit or exploit analysis.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">Solidity security</span>
-                            <span class="skill-tag">static analyzers</span>
-                            <span class="skill-tag">DeFi-specific risks</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 35 -->
-                <div class="card prompt-card" data-level="advanced">
-                    <div class="card-badge badge-advanced">Advanced</div>
-                    <h3 class="card-title">35. AI-Powered SOC Architectures</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Describe how ML models can augment SOC workflows for triage and anomaly detection and practical challenges.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">ML pipelines</span>
-                            <span class="skill-tag">feature engineering</span>
-                            <span class="skill-tag">model validation</span>
-                            <span class="skill-tag">drift monitoring</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 36 -->
-                <div class="card prompt-card" data-level="intermediate">
-                    <div class="card-badge badge-intermediate">Intermediate</div>
-                    <h3 class="card-title">36. Building SIEM Use Cases (Banking Example)</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Design a SIEM use case to detect anomalous wire transfers including data sources and thresholds.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">Detection engineering</span>
-                            <span class="skill-tag">financial telemetry</span>
-                            <span class="skill-tag">rule testing</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 37 -->
-                <div class="card prompt-card" data-level="intermediate">
-                    <div class="card-badge badge-intermediate">Intermediate</div>
-                    <h3 class="card-title">37. Data Loss Prevention (DLP) Systems</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Explain DLP approaches for endpoint, network and cloud — when to use each and tuning suggestions.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">DLP policies</span>
-                            <span class="skill-tag">content inspection</span>
-                            <span class="skill-tag">endpoint controls</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 38 -->
-                <div class="card prompt-card" data-level="intermediate">
-                    <div class="card-badge badge-intermediate">Intermediate</div>
-                    <h3 class="card-title">38. Bug Bounty Hunting Workflow</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Describe a structured bug bounty approach: recon, triage, PoC development and reporting.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">Burp Suite</span>
-                            <span class="skill-tag">disclosure etiquette</span>
-                            <span class="skill-tag">program selection</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 39 -->
-                <div class="card prompt-card" data-level="intermediate">
-                    <div class="card-badge badge-intermediate">Intermediate</div>
-                    <h3 class="card-title">39. Cyber Kill Chain Applied</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Explain the Cyber Kill Chain stages and demonstrate mapping a real attack to the chain for detection opportunities.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">Kill Chain modeling</span>
-                            <span class="skill-tag">detection points</span>
-                            <span class="skill-tag">playbook alignment</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Prompt 40 -->
-                <div class="card prompt-card" data-level="beginner">
-                    <div class="card-badge badge-beginner">Beginner</div>
-                    <h3 class="card-title">40. Career Paths: Red / Blue / Purple</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Outline career paths and skill ladders for Red, Blue and Purple team roles and suggested learning milestones.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">Role skills matrix</span>
-                            <span class="skill-tag">certifications</span>
-                            <span class="skill-tag">portfolio project ideas</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <section class="section" id="advanced-modules">
-            <h3 class="prompts-section-title">20 Advanced Modules</h3>
-            <div class="card-container">
-                <!-- Advanced Module 1 -->
-                <div class="card prompt-card advanced" data-level="expert">
-                    <div class="card-badge badge-expert">Expert</div>
-                    <h3 class="card-title">1. Kernel-Level Security & Rootkit Analysis</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Explain methods to detect kernel implants, syscall hooking and kernel-mode persistence; propose mitigation plans.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">WinDbg</span>
-                            <span class="skill-tag">eBPF</span>
-                            <span class="skill-tag">kernel reverse-engineering</span>
-                            <span class="skill-tag">kernel hardening</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Advanced Module 2 -->
-                <div class="card prompt-card advanced" data-level="expert">
-                    <div class="card-badge badge-expert">Expert</div>
-                    <h3 class="card-title">2. EDR/XDR Mechanics & Detection Engineering</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Break down agent telemetry, API hooking and behavior modeling; design rules to reduce false positives.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">EDR internals</span>
-                            <span class="skill-tag">Sysmon tuning</span>
-                            <span class="skill-tag">detection engineering</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Advanced Module 3 -->
-                <div class="card prompt-card advanced" data-level="expert">
-                    <div class="card-badge badge-expert">Expert</div>
-                    <h3 class="card-title">3. Memory Forensics & Live Response</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Detail RAM dump analysis, volatile artifact extraction and building live-response playbooks.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">Volatility3</span>
-                            <span class="skill-tag">Rekall</span>
-                            <span class="skill-tag">LiME</span>
-                            <span class="skill-tag">timeline creation</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Advanced Module 4 -->
-                <div class="card prompt-card advanced" data-level="expert">
-                    <div class="card-badge badge-expert">Expert</div>
-                    <h3 class="card-title">4. Exploit Mitigations & Defensive Testing</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Explain ASLR/DEP/CFG and how to validate their effectiveness without creating exploits.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">Fuzzing</span>
-                            <span class="skill-tag">mitigation testing</span>
-                            <span class="skill-tag">exploit hardening checks</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Advanced Module 5 -->
-                <div class="card prompt-card advanced" data-level="expert">
-                    <div class="card-badge badge-expert">Expert</div>
-                    <h3 class="card-title">5. Complex Web Vulnerability Chains</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Map multi-step exploitation chains (deserialization → SSRF → RCE) and detection strategies.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">Burp Suite</span>
-                            <span class="skill-tag">WAF tuning</span>
-                            <span class="skill-tag">application logging</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Advanced Module 6 -->
-                <div class="card prompt-card advanced" data-level="expert">
-                    <div class="card-badge badge-expert">Expert</div>
-                    <h3 class="card-title">6. Supply Chain Compromise Detection & Resilience</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Design mitigations around CI/CD, package repositories and dependency attacks with SBOMs.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">Sigstore</span>
-                            <span class="skill-tag">SCA</span>
-                            <span class="skill-tag">pipeline integrity</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Advanced Module 7 -->
-                <div class="card prompt-card advanced" data-level="expert">
-                    <div class="card-badge badge-expert">Expert</div>
-                    <h3 class="card-title">7. Firmware & Hardware Security Assessment</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Show hardware reverse-engineering, JTAG/SPI analysis and secure-boot validation methods.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">Binwalk</span>
-                            <span class="skill-tag">radare2</span>
-                            <span class="skill-tag">OpenOCD</span>
-                            <span class="skill-tag">hardware debugging</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Advanced Module 8 -->
-                <div class="card prompt-card advanced" data-level="expert">
-                    <div class="card-badge badge-expert">Expert</div>
-                    <h3 class="card-title">8. Telemetry-Driven ML for Threat Hunting</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Create a pipeline from telemetry to ML features and deploy anomaly detectors for SOC integration.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">Feature engineering</span>
-                            <span class="skill-tag">XGBoost/scikit-learn</span>
-                            <span class="skill-tag">model ops</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Advanced Module 9 -->
-                <div class="card prompt-card advanced" data-level="expert">
-                    <div class="card-badge badge-expert">Expert</div>
-                    <h3 class="card-title">9. ICS/OT Deep Detection & Response</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Develop ICS-specific detection signatures, network baselining and safe response playbooks.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">OPC/Modbus analysis</span>
-                            <span class="skill-tag">Zeek/Suricata ICS rules</span>
-                            <span class="skill-tag">incident playbooks</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Advanced Module 10 -->
-                <div class="card prompt-card advanced" data-level="expert">
-                    <div class="card-badge badge-expert">Expert</div>
-                    <h3 class="card-title">10. Encrypted DNS Abuse Detection (DoH/DoT)</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Design detection based on TLS fingerprints, traffic patterns and proxy telemetry for DoH abuse.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">TLS fingerprinting</span>
-                            <span class="skill-tag">Zeek scripting</span>
-                            <span class="skill-tag">DoH proxy analysis</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Advanced Module 11 -->
-                <div class="card prompt-card advanced" data-level="expert">
-                    <div class="card-badge badge-expert">Expert</div>
-                    <h3 class="card-title">11. Kubernetes Attack Surface & Escape Detection</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Create detection strategies for host escapes, misconfigured kubelets and RBAC abuse.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">Falco</span>
-                            <span class="skill-tag">kube-hunter</span>
-                            <span class="skill-tag">seccomp/AppArmor</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Advanced Module 12 -->
-                <div class="card prompt-card advanced" data-level="expert">
-                    <div class="card-badge badge-expert">Expert</div>
-                    <h3 class="card-title">12. Cloud Privilege Escalation (IAM Abuse)</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Simulate role chaining, metadata abuse and cross-account movement and propose detection controls.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">CloudTrail analysis</span>
-                            <span class="skill-tag">GuardDuty</span>
-                            <span class="skill-tag">IAM policy review</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Advanced Module 13 -->
-                <div class="card prompt-card advanced" data-level="expert">
-                    <div class="card-badge badge-expert">Expert</div>
-                    <h3 class="card-title">13. Advanced Binary RE & Deobfuscation</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Show techniques to unpack packers, remove anti-debugging and automate deobfuscation.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">Ghidra/IDA</span>
-                            <span class="skill-tag">Capstone</span>
-                            <span class="skill-tag">Unicorn</span>
-                            <span class="skill-tag">scripting</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Advanced Module 14 -->
-                <div class="card prompt-card advanced" data-level="expert">
-                    <div class="card-badge badge-expert">Expert</div>
-                    <h3 class="card-title">14. Active Directory: Kerberos & ACL Abuse</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Analyze Kerberos tickets, DCSync, and ACL attack paths and defensive controls.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">BloodHound</span>
-                            <span class="skill-tag">Rubeus</span>
-                            <span class="skill-tag">AD hardening practices</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Advanced Module 15 -->
-                <div class="card prompt-card advanced" data-level="expert">
-                    <div class="card-badge badge-expert">Expert</div>
-                    <h3 class="card-title">15. Secure Code Review for Concurrency & Race Conditions</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Detect logic/time-of-check-to-time-of-use bugs and write remediation guidance.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">Semgrep</span>
-                            <span class="skill-tag">manual review patterns</span>
-                            <span class="skill-tag">concurrency debugging</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Advanced Module 16 -->
-                <div class="card prompt-card advanced" data-level="expert">
-                    <div class="card-badge badge-expert">Expert</div>
-                    <h3 class="card-title">16. AI-Enabled Social Engineering Campaigns</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Model multi-stage AI-enhanced social engineering and create detection & training strategies.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">Phishing simulation</span>
-                            <span class="skill-tag">MTA rules</span>
-                            <span class="skill-tag">behavior indicators</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Advanced Module 17 -->
-                <div class="card prompt-card advanced" data-level="expert">
-                    <div class="card-badge badge-expert">Expert</div>
-                    <h3 class="card-title">17. Post-Exploitation Detection & Remediation</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Map LOLbins, persistence patterns and lateral movement techniques to detection signatures.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">Sysinternals</span>
-                            <span class="skill-tag">endpoint forensics</span>
-                            <span class="skill-tag">persistence hunting</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Advanced Module 18 -->
-                <div class="card prompt-card advanced" data-level="expert">
-                    <div class="card-badge badge-expert">Expert</div>
-                    <h3 class="card-title">18. Cryptography Misuse & Protocol Analysis</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Audit TLS/PKI usage and key-management pitfalls with remediation steps.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">OpenSSL</span>
-                            <span class="skill-tag">cert-management</span>
-                            <span class="skill-tag">crypto threat modeling</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Advanced Module 19 -->
-                <div class="card prompt-card advanced" data-level="expert">
-                    <div class="card-badge badge-expert">Expert</div>
-                    <h3 class="card-title">19. Red Team C2 Design (Defenders' Perspective)</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Analyze C2 behaviors to build detection signatures and defensive playbooks.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">C2 analysis</span>
-                            <span class="skill-tag">traffic profiling</span>
-                            <span class="skill-tag">detection engineering</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Advanced Module 20 -->
-                <div class="card prompt-card advanced" data-level="expert">
-                    <div class="card-badge badge-expert">Expert</div>
-                    <h3 class="card-title">20. Tabletop Exercises & Purple Team Metrics</h3>
-                    <div class="card-content">
-                        <p class="prompt-text">Design tabletop scenarios, measure MTTD/MTTR and iterate playbooks based on metrics.</p>
-                        <div class="skills-container">
-                            <span class="skill-tag">SOAR/SIEM integration</span>
-                            <span class="skill-tag">KPI design</span>
-                            <span class="skill-tag">educational facilitation</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <section class="section" id="outcomes">
-            <h2 class="section-title"><i class='bx bx-trophy'></i> Training Outcomes</h2>
             
-            <div class="outcomes-container">
-                <h3>What happens when you complete these trainings?</h3>
-                <p>Short answer: You become a highly capable, versatile cybersecurity professional — close to expert-level in many domains — but "expert" depends on depth, experience, and context.</p>
-                
-                <div class="outcomes-grid">
-                    <div class="outcome-item">
-                        <h4>Seniority / Titles</h4>
-                        <p>Senior Security Engineer, Senior SOC Analyst, Senior Threat Hunter, Senior Cloud Security Engineer</p>
+            <div class="image-controls">
+                <button class="control-btn" id="zoomInBtn" title="Zoom In">
+                    <i class="bx bx-zoom-in"></i>
+                </button>
+                <button class="control-btn" id="zoomOutBtn" title="Zoom Out">
+                    <i class="bx bx-zoom-out"></i>
+                </button>
+                <button class="control-btn" id="resetZoomBtn" title="Reset Zoom">
+                    <i class="bx bx-reset"></i>
+                </button>
+                <button class="control-btn" id="rotateBtn" title="Rotate">
+                    <i class="bx bx-rotate-right"></i>
+                </button>
+            </div>
+            
+            <div class="modal-info-panel">
+                <h3 class="modal-title" id="modalImageTitle">
+                    <span id="modalTitleText">Image Title</span>
+                    <span class="image-index" id="imageIndex">1/3</span>
+                </h3>
+                <div class="modal-description" id="modalDescription"></div>
+                <div class="photo-interpretation" id="photoInterpretation">
+                    <div class="interpretation-title"><i class="bx bx-comment-detail"></i> Photographic Interpretation</div>
+                    <div id="interpretationText"></div>
+                </div>
+                <div class="modal-meta">
+                    <div class="meta-item">
+                        <i class="bx bx-calendar"></i>
+                        <span id="modalDate">2023-01-01</span>
                     </div>
-                    
-                    <div class="outcome-item">
-                        <h4>Ethical Hacker Jargon</h4>
-                        <p>Pentester / Red Team Operator / Purple Team Member, Threat Hunter / Incident Responder / Security Researcher</p>
+                    <div class="meta-item">
+                        <i class="bx bx-time"></i>
+                        <span id="modalTime">12:00</span>
                     </div>
-                    
-                    <div class="outcome-item">
-                        <h4>Certifications</h4>
-                        <div class="certifications">
-                            <span class="cert-badge">OSCP</span>
-                            <span class="cert-badge">OSCE</span>
-                            <span class="cert-badge">GCFE/GCFA</span>
-                            <span class="cert-badge">GCIH</span>
-                            <span class="cert-badge">CISSP</span>
+                    <div class="meta-item">
+                        <i class="bx bx-map"></i>
+                        <span id="modalLocation">Location</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="bx bx-camera"></i>
+                        <span id="modalCamera">Camera Type</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Enhanced Loading indicator -->
+        <div class="loading" id="loadingIndicator">
+            <i class="bx bx-loader-alt bx-spin"></i>
+            <div>Loading Image...</div>
+        </div>
+        
+        <!-- YENİ BÖLÜM: Ambiguous Imagery Sanatçıları ve Eserleri -->
+        <section class="section" id="ambiguous-artists">
+            <h2 class="section-title"><i class="bx bx-shape-triangle"></i> Masters of Ambiguous Imagery & Their Works</h2>
+            
+            <div class="artist-works-gallery">
+    
+                <!-- Salvador Dali - İkinci Eser -->
+                <div class="artist-work-card">
+                    <div class="artist-work-image-container">
+                        <img src="https://ik.imagekit.io/adembayazit/IMG_2091_p9WyKe-si.jpeg" alt="The Great Paranoiac" class="artist-work-image">
+                    </div>
+                    <div class="artist-work-info">
+                        <h3 class="artist-work-title"><i class="bx bx-palette"></i> The Great Paranoiac</h3>
+                        <p class="artist-work-artist">By Salvador Dali</p>
+                        <p class="artist-work-description">In this masterpiece, Dali creates a landscape that, when viewed from a distance, forms a human face. The painting challenges perception by presenting two distinct images within the same composition.</p>
+                        <div class="artist-work-technique">
+                            <div class="technique-title"><i class="bx bx-cog"></i> Notable Feature</div>
+                            <p>In "The Great Paranoiac", a landscape forms a human face when viewed from afar, demonstrating Dali's ability to create double images that transform based on the viewer's perspective and distance.</p>
                         </div>
-                    </div>
-                    
-                    <div class="outcome-item">
-                        <h4>Practical Outcomes</h4>
-                        <p>Design and operate production-ready SOC playbooks, run full red-team engagements, perform IR and forensic investigations, harden cloud and container environments.</p>
                     </div>
                 </div>
                 
-                <h4 style="margin-top: 30px; color: var(--primary-color);">Suggested Capstone Portfolio</h4>
-                <ul class="capstone-list">
-                    <li><i class="fa-solid fa-lock"></i>&nbsp;3 full incident response reports (with timelines, evidence, remediation)</li>
-                    <li><i class="fa-solid fa-lock"></i>&nbsp;2 Purple Team case studies: Red playbook, Blue detection changes, measurable improvements</li>
-                    <li><i class="fa-solid fa-lock"></i>&nbsp;1 cloud compromise simulation and remediation guide (with scripts)</li>
-                    <li><i class="fa-solid fa-lock"></i>&nbsp;1 kernel or memory forensics writeup (artifact extraction + analysis)</li>
-                    <li><i class="fa-solid fa-lock"></i>&nbsp;GitHub repo with detection rules (Sigma), yara rules, and reproducible lab containers</li>
-                </ul>
+                <!-- Salvador Dali Eseri -->
+                <div class="artist-work-card">
+                    <div class="artist-work-image-container">
+                        <img src="https://ik.imagekit.io/adembayazit/IMG_2093_9w4XufkPr.jpeg" alt="The Metamorphosis of Narcissus" class="artist-work-image">
+                    </div>
+                    <div class="artist-work-info">
+                        <h3 class="artist-work-title"><i class="bx bx-palette"></i> The Metamorphosis of Narcissus</h3>
+                        <p class="artist-work-artist">By Salvador Dali</p>
+                        <p class="artist-work-description">This iconic painting demonstrates Dali's mastery of ambiguous imagery. The composition simultaneously depicts a kneeling human form and a hand emerging from an egg, creating multiple visual interpretations within a single frame.</p>
+                        <div class="artist-work-technique">
+                            <div class="technique-title"><i class="bx bx-cog"></i> Technique & Approach</div>
+                            <p>Dali, the master of surrealism, frequently uses "ambiguous images" in his paintings. A mountain range can also be an elephant's back; cloud shapes can transform into animals. He plays with viewers' perception by transforming natural forms into other objects or living beings.</p>
+                        </div>
+                    </div>
+                </div>
+               
+                <div class="artist-work-card">
+                    <div class="artist-work-image-container">
+                    <img src="https://ik.imagekit.io/adembayazit/IMG_2095_2ivYmYIc7.jpeg" alt="Sky and Water I" class="artist-work-image">
+                    </div>
+                    <div class="artist-work-info">
+                        <h3 class="artist-work-title"><i class="bx bx-palette"></i> Sky and Water I</h3>
+                        <p class="artist-work-artist">By M. C. Escher</p>
+                        <p class="artist-work-description">In this woodcut print, birds gradually become more abstract as they move downward, simultaneously transforming into fish. The transition between the white section (sky) and the dark section (water) is so masterful that at one point your eyes cannot distinguish what is a bird and what is a fish. This represents a kind of perfect ambiguity.</p>
+                    <div class="artist-work-technique">
+                         <div class="technique-title"><i class="bx bx-cog"></i> Technical Mastery</div>
+                    <p>Escher creates a seamless visual metamorphosis where positive and negative spaces interlock perfectly. The composition demonstrates his genius in tessellation and optical illusion, making two distinct creatures emerge from the same visual elements depending on how you focus your perception.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section" id="analysis">
+            <h2 class="section-title"><i class="bx bx-search-alt"></i> Analytical Framework</h2>
+            
+            <div class="analysis-container">
+                <div class="analysis-item">
+                    <div class="analysis-icon"><i class="bx bx-palette"></i></div>
+                    <h3 class="analysis-title">Composition</h3>
+                    <p>Analysis of visual arrangement, balance, and structural elements within the frame.</p>
+                </div>
+                
+                <div class="analysis-item">
+                    <div class="analysis-icon"><i class="bx bx-sun"></i></div>
+                    <h3 class="analysis-title">Light & Shadow</h3>
+                    <p>Examination of lighting techniques, contrast, and how illumination shapes the narrative.</p>
+                </div>
+                
+                <div class="analysis-item">
+                    <div class="analysis-icon"><i class="bx bx-color"></i></div>
+                    <h3 class="analysis-title">Color Theory</h3>
+                    <p>Interpretation of color palettes, harmonies, and psychological impact of color choices.</p>
+                </div>
+                
+                <div class="analysis-item">
+                    <div class="analysis-icon"><i class="bx bx-time"></i></div>
+                    <h3 class="analysis-title">Temporal Context</h3>
+                    <p>Understanding the historical, cultural, and personal contexts that influence the image.</p>
+                </div>
+                
+                <div class="analysis-item">
+                    <div class="analysis-icon"><i class="bx bx-message-alt"></i></div>
+                    <h3 class="analysis-title">Symbolic Language</h3>
+                    <p>Decoding visual metaphors, symbols, and implied narratives within the photograph.</p>
+                </div>
+                
+                <div class="analysis-item">
+                    <div class="analysis-icon"><i class="bx bx-slider-alt"></i></div>
+                    <h3 class="analysis-title">Technical Execution</h3>
+                    <p>Assessment of camera techniques, focus, exposure, and post-processing decisions.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section" id="photographers">
+            <h2 class="section-title"><i class="bx bx-user-circle"></i> Influential Photographers & Artists</h2>
+            
+            <div class="photographer-cards">
+                <div class="photographer-card">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Ansel_Adams_and_camera.jpg/250px-Ansel_Adams_and_camera.jpg" alt="Ansel Adams" class="photographer-image">
+                    <h3 class="photographer-name">Ansel Adams</h3>
+                    <p class="photographer-period">1902-1984</p>
+                    <p>Master of landscape photography and the zone system. Known for his dramatic black and white images of the American West.</p>
+                </div>
+                
+                <div class="photographer-card">
+                    <img src="https://upload.wikimedia.org/wikipedia/tr/4/43/HenriCartier-Bresson-Magnum.JPG" alt="Henri Cartier-Bresson" class="photographer-image">
+                    <h3 class="photographer-name">Henri Cartier-Bresson</h3>
+                    <p class="photographer-period">1908-2004</p>
+                    <p>Pioneer of street photography and the concept of "the decisive moment" - capturing an event that is ephemeral and significant.</p>
+                </div>
+                
+                <div class="photographer-card">
+                    <img src="https://www.nevadaart.org/wp-content/uploads/2024/10/Dorthea_Lange_HERO.jpg" alt="Dorothea Lange" class="photographer-image">
+                    <h3 class="photographer-name">Dorothea Lange</h3>
+                    <p class="photographer-period">1895-1965</p>
+                    <p>Documentary photographer known for her Depression-era work, particularly "Migrant Mother," which became an icon of the era.</p>
+                </div>
+                
+                <div class="photographer-card">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLHcYtXORD5nzUMxsE6MI0mV_Y7AxxuwH6JYt64kWh4g&s" alt="Robert Capa" class="photographer-image">
+                    <h3 class="photographer-name">Robert Capa</h3>
+                    <p class="photographer-period">1913-1954</p>
+                    <p>War photographer and photojournalist who covered five different wars. Co-founded Magnum Photos, the first cooperative agency for freelance photographers.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section" id="techniques">
+            <h2 class="section-title"><i class="bx bx-wrench"></i> Advanced Photographic Techniques</h2>
+            
+            <div class="card-container">
+                <div class="card">
+                    <h3 class="card-title"><i class="bx bx-grid"></i> Golden Ratio & Fibonacci Spiral</h3>
+                    <div class="card-content">
+                        <p>The golden ratio (approximately 1.618) creates aesthetically pleasing compositions. The Fibonacci spiral, derived from this ratio, guides the viewer's eye through the image in a natural, flowing manner.</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title"><i class="bx bx-line-chart"></i> Leading Lines</h3>
+                    <div class="card-content">
+                        <p>Using natural or man-made lines to direct the viewer's attention toward the main subject. Roads, fences, rivers, and architectural elements can all serve as effective leading lines.</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title"><i class="bx bx-layer"></i> Forced Perspective</h3>
+                    <div class="card-content">
+                        <p>Manipulating visual perception through the arrangement of subjects relative to the camera to create optical illusions, making objects appear larger, smaller, closer, or farther than they actually are.</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title"><i class="bx bx-contrast"></i> Chiaroscuro</h3>
+                    <div class="card-content">
+                        <p>An Italian term meaning "light-dark," this technique uses strong contrasts between light and dark to create dramatic, three-dimensional effects. Popularized by Renaissance painters like Caravaggio.</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title"><i class="bx bx-crop"></i> Negative Space</h3>
+                    <div class="card-content">
+                        <p>Using empty or minimal areas in a composition to emphasize the main subject, create balance, and evoke specific emotions. Negative space can be as powerful as the subject itself.</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title"><i class="bx bx-time-five"></i> Long Exposure</h3>
+                    <div class="card-content">
+                        <p>Using slow shutter speeds to capture the passage of time, creating effects like light trails, silky water, or ghostly apparitions of moving subjects against a static background.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section" id="interpretation">
+            <h2 class="section-title"><i class="bx bx-book-open"></i> Interpretation Methodology</h2>
+            
+            <div class="card">
+                <div class="card-content">
+                    <p>Photographic cryptology employs a systematic approach to visual analysis:</p>
+                    
+                    <ul class="checklist">
+                        <li><span class="term-highlight">Initial Observation</span> - First impressions and emotional responses to the image</li>
+                        <li><span class="term-highlight">Formal Analysis</span> - Examination of composition, color, light, and technical elements</li>
+                        <li><span class="term-highlight">Contextual Research</span> - Understanding the historical, cultural, and personal background</li>
+                        <li><span class="term-highlight">Symbolic Interpretation</span> - Identifying and interpreting visual symbols and metaphors</li>
+                        <li><span class="term-highlight">Comparative Analysis</span> - Relating the image to other works and artistic movements</li>
+                        <li><span class="term-highlight">Synthesis</span> - Integrating all elements to form a coherent interpretation</li>
+                    </ul>
+                    
+                    <div class="quote">
+                        "A photograph is a secret about a secret. The more it tells you, the less you know."
+                        <span class="quote-author">- Diane Arbus</span>
+                    </div>
+                    
+                    <div class="quote">
+                        "You don't take a photograph, you make it."
+                        <span class="quote-author">- Ansel Adams</span>
+                    </div>
+                </div>
             </div>
         </section>
     </div>
@@ -1404,52 +1274,502 @@
     <script src="/JAVASCRIPT/matrix.js"></script>
     
     <script>
-        // Level filtering functionality
+        // Enhanced photo data with interpretations
+        const photoData = [
+            {
+                id: 1,
+                title: "Tulip (Lale)",
+                images: [
+                    {
+                        url: "PHOTO/photo1.JPG",
+                        description: "This composition captures the contrast between human isolation and the density of urban environments.",
+                        interpretation: "The single figure positioned against the vast architectural landscape creates a powerful statement about modern existence - our simultaneous connection and isolation within urban spaces."
+                    },
+                    {
+                        url: "https://ik.imagekit.io/adembayazit/IMG_1630_22PJyDVnI.jpeg",
+                        description: "Close-up view showing the texture and details of the architectural elements.",
+                        interpretation: "The play of light and shadow creates a dramatic contrast that emphasizes the geometric patterns, transforming ordinary architecture into abstract art."
+                    }
+                ],
+                date: "2017-05-24",
+                time: "17:12",
+                location: "Eymir, Ankara, Turkey",
+                camera: "Digital"
+            },
+            {
+                id: 2,
+                title: "Daisy (Papatya)",
+                images: [
+                    {
+                        url: "PHOTO/photo2.JPG",
+                        description: "A study in persistence, this image shows life thriving in seemingly inhospitable conditions.",
+                        interpretation: "The composition uses natural framing to draw attention to the central subject while maintaining a balanced asymmetry, symbolizing resilience in challenging environments."
+                    }
+                ],
+                date: "2017-05-30",
+                time: "14:57",
+                location: "Eymir, Ankara, Turkey",
+                camera: "Film"
+            },
+            {
+                id: 3,
+                title: "Pine (Çam)",
+                images: [
+                    {
+                        url: "PHOTO/photo3.JPG",
+                        description: "This photograph transforms mundane industrial elements into abstract art through careful framing and lighting.",
+                        interpretation: "The repetition of geometric shapes creates rhythm, while selective focus guides the viewer's attention, revealing the hidden beauty in industrial landscapes."
+                    }
+                ],
+                date: "2017-05-11",
+                time: "14:41",
+                location: "Eymir, Ankara , Turkey",
+                camera: "Digital"
+            },
+            {
+                id: 4,
+                title: "Bosphorus Bridge (Boğaz)",
+                images: [
+                    {
+                        url: "PHOTO/photo4.jpeg",
+                        description: "A candid moment captured with remarkable sensitivity.",
+                        interpretation: "The composition uses the rule of thirds to create visual harmony, while the shallow depth of field isolates the subjects from their environment, emphasizing human connection."
+                    }
+                ],
+                date: "2017-04-01",
+                time: "10:57",
+                location: "Kuleli, İstanbul, Turkey",
+                camera: "Digital"
+            },
+            {
+                id: 5,
+                title: "Sun (Güneş)",
+                images: [
+                    {
+                        url: "PHOTO/photo5.jpeg",
+                        description: "This image explores the relationship between historical and contemporary architecture.",
+                        interpretation: "The strong leading lines draw the eye through the frame, while the contrast in textures adds visual interest, creating a dialogue between different eras of design."
+                    }
+                ],
+                date: "2017-04-29",
+                time: "19:18",
+                location: "Alıntepe, İstanbul, Turkey",
+                camera: "Medium Format"
+            },
+            {
+                id: 6,
+                title: "Crescent Star (Hilal Yıldız)",
+                images: [
+                    {
+                        url: "PHOTO/photo6.jpeg",
+                        description: "An experimental approach to photography that focuses on color, texture, and form.",
+                        interpretation: "The composition creates a visual language that speaks directly to emotions, using color fields and textures to evoke feelings rather than represent reality."
+                    }
+                ],
+                date: "2023-06-29",
+                time: "19:22",
+                location: "Hacettepe Üniversi, Ankara, Turkey",
+                camera: "Digital Composite"
+            },
+            {
+                id: 7,
+                title: "Crescent Star (Hilal Yıldız)",
+                images: [
+                    {
+                        url: "PHOTO/photo7.webp",
+                        description: "An experimental approach to photography that focuses on color, texture, and form.",
+                        interpretation: "The blending of colors creates a dreamlike, ethereal quality, transforming photographic reality into abstract emotional expression."
+                    }
+                ],
+                date: "2022-05-17",
+                time: "18:18",
+                location: "Zıhrı Birlikler, Ankara, Turkey",
+                camera: "Digital Composite"
+            },
+            {
+                id: 8,
+                title: "Habitat Mosque (Doğal Camii)",
+                images: [
+                    {
+                        url: "https://ik.imagekit.io/adembayazit/IMG_2025-10-05-223252_mdmst6NM4.jpeg",
+                        description: "Composition Used!!‎ <br>✓ الله ✓ Mihrab ✓ Minaret ✓ Courtyard <br>✓ Prayer Rug",
+                        interpretation: "This spontaneous composition reveals how natural elements can form sacred geometry, demonstrating that spiritual spaces exist beyond man-made structures."
+                    }
+                ],
+                date: "2016-08-02",
+                time: "18:52",
+                location: "Evri, Kahramanmaraş, Turkey",
+                camera: "Digital Composite"
+            }
+        ];
+
+        // Enhanced Modal functionality
+        let currentPhotoIndex = 0;
+        let currentImageIndex = 0;
+        let currentPhotoData = null;
+        let currentScale = 1;
+        let currentRotation = 0;
+
         document.addEventListener('DOMContentLoaded', function() {
-            const levelTabs = document.querySelectorAll('.level-tab');
-            const promptCards = document.querySelectorAll('.prompt-card');
+            const modal = document.getElementById("imageModal");
+            const modalImg = document.getElementById("enlargedImage");
+            const modalDesc = document.getElementById("modalDescription");
+            const interpretationText = document.getElementById("interpretationText");
+            const modalCounter = document.getElementById("modalCounter");
+            const modalTitle = document.getElementById("modalTitleText");
+            const imageIndex = document.getElementById("imageIndex");
+            const modalDate = document.getElementById("modalDate");
+            const modalTime = document.getElementById("modalTime");
+            const modalLocation = document.getElementById("modalLocation");
+            const modalCamera = document.getElementById("modalCamera");
+            const thumbnailStrip = document.getElementById("thumbnailStrip");
+            const loadingIndicator = document.getElementById("loadingIndicator");
+            const closeBtn = document.getElementsByClassName("close-modal")[0];
+            const prevBtn = document.querySelector(".modal-nav.prev");
+            const nextBtn = document.querySelector(".modal-nav.next");
+            const zoomInBtn = document.getElementById("zoomInBtn");
+            const zoomOutBtn = document.getElementById("zoomOutBtn");
+            const resetZoomBtn = document.getElementById("resetZoomBtn");
+            const rotateBtn = document.getElementById("rotateBtn");
             
-            levelTabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    // Update active tab style
-                    levelTabs.forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
+            // Generate photo gallery from data
+            const photoGallery = document.getElementById("photoGallery");
+            
+            photoData.forEach(photo => {
+                const photoCard = document.createElement('div');
+                photoCard.className = 'photo-card';
+                photoCard.setAttribute('data-id', photo.id);
+                
+                photoCard.innerHTML = `
+                    <div class="photo-image-container">
+                        <img src="${photo.images[0].url}" alt="${photo.title}" class="photo-image" loading="lazy">
+                    </div>
+                    <div class="photo-info">
+                        <h3 class="photo-title"><i class="bx bx-camera"></i> ${photo.title}</h3>
+                        <p class="photo-description">${photo.images[0].description.substring(0, 150)}...</p>
+                        <div class="photo-meta">
+                            <span><i class="bx bx-calendar"></i> ${photo.date}</span>
+                            <span><i class="bx bx-time"></i> ${photo.time}</span>
+                            <span><i class="bx bx-map"></i> ${photo.location}</span>
+                        </div>
+                    </div>
+                `;
+                
+                photoGallery.appendChild(photoCard);
+                
+                // Add click event to photo card
+                photoCard.querySelector('.photo-image').addEventListener('click', function() {
+                    openModal(photo.id - 1, 0);
+                });
+            });
+            
+            // Close modal when clicking the X
+            closeBtn.addEventListener('click', function() {
+                closeModal();
+            });
+            
+            // Close modal when clicking outside the image
+            window.addEventListener('click', function(event) {
+                if (event.target == modal) {
+                    closeModal();
+                }
+            });
+            
+            // Keyboard navigation
+            document.addEventListener('keydown', function(event) {
+                if (modal.style.display === "block") {
+                    switch(event.key) {
+                        case 'Escape':
+                            closeModal();
+                            break;
+                        case 'ArrowLeft':
+                            navigatePrev();
+                            break;
+                        case 'ArrowRight':
+                            navigateNext();
+                            break;
+                        case '+':
+                        case '=':
+                            zoomIn();
+                            break;
+                        case '-':
+                            zoomOut();
+                            break;
+                        case '0':
+                            resetZoom();
+                            break;
+                        case 'r':
+                        case 'R':
+                            rotateImage();
+                            break;
+                    }
+                }
+            });
+            
+            // Previous image button
+            prevBtn.addEventListener('click', function() {
+                navigatePrev();
+            });
+            
+            // Next image button
+            nextBtn.addEventListener('click', function() {
+                navigateNext();
+            });
+            
+            // Zoom in button
+            zoomInBtn.addEventListener('click', function() {
+                zoomIn();
+            });
+            
+            // Zoom out button
+            zoomOutBtn.addEventListener('click', function() {
+                zoomOut();
+            });
+            
+            // Reset zoom button
+            resetZoomBtn.addEventListener('click', function() {
+                resetZoom();
+            });
+            
+            // Rotate button
+            rotateBtn.addEventListener('click', function() {
+                rotateImage();
+            });
+            
+            // Zoom functionality on image click
+            modalImg.addEventListener('click', function(event) {
+                // Only zoom if not clicking on navigation buttons or controls
+                if (!event.target.closest('.modal-nav') && !event.target.closest('.control-btn')) {
+                    if (currentScale === 1) {
+                        zoomIn();
+                    } else {
+                        resetZoom();
+                    }
+                }
+            });
+            
+            // Touch events for mobile swipe
+            let touchStartX = 0;
+            let touchEndX = 0;
+            
+            modalImg.addEventListener('touchstart', function(event) {
+                touchStartX = event.changedTouches[0].screenX;
+            });
+            
+            modalImg.addEventListener('touchend', function(event) {
+                touchEndX = event.changedTouches[0].screenX;
+                handleSwipe();
+            });
+            
+            function handleSwipe() {
+                const swipeThreshold = 50;
+                
+                if (touchEndX < touchStartX - swipeThreshold) {
+                    // Swipe left - next image
+                    navigateNext();
+                }
+                
+                if (touchEndX > touchStartX + swipeThreshold) {
+                    // Swipe right - previous image
+                    navigatePrev();
+                }
+            }
+            
+            function openModal(photoIndex, imageIndex) {
+                currentPhotoIndex = photoIndex;
+                currentImageIndex = imageIndex;
+                currentPhotoData = photoData[photoIndex];
+                
+                modal.style.display = "block";
+                document.body.style.overflow = "hidden"; // Prevent scrolling
+                loadingIndicator.style.display = "block";
+                
+                // Reset zoom and rotation
+                resetZoom();
+                currentRotation = 0;
+                modalImg.style.transform = `scale(${currentScale}) rotate(${currentRotation}deg)`;
+                
+                // Preload image for better UX
+                const img = new Image();
+                img.onload = function() {
+                    modalImg.src = currentPhotoData.images[currentImageIndex].url;
+                    updateModalInfo();
+                    loadingIndicator.style.display = "none";
+                    updateNavButtons();
+                    generateThumbnails();
                     
-                    const selectedLevel = this.getAttribute('data-level');
+                    // Preload adjacent images
+                    preloadAdjacentImages();
+                };
+                img.src = currentPhotoData.images[currentImageIndex].url;
+            }
+            
+            function navigatePrev() {
+                if (currentPhotoData && currentImageIndex > 0) {
+                    currentImageIndex--;
+                    changeImage();
+                } else if (currentPhotoIndex > 0) {
+                    // Go to previous photo
+                    currentPhotoIndex--;
+                    currentPhotoData = photoData[currentPhotoIndex];
+                    currentImageIndex = currentPhotoData.images.length - 1;
+                    changeImage();
+                }
+            }
+            
+            function navigateNext() {
+                if (currentPhotoData && currentImageIndex < currentPhotoData.images.length - 1) {
+                    currentImageIndex++;
+                    changeImage();
+                } else if (currentPhotoIndex < photoData.length - 1) {
+                    // Go to next photo
+                    currentPhotoIndex++;
+                    currentPhotoData = photoData[currentPhotoIndex];
+                    currentImageIndex = 0;
+                    changeImage();
+                }
+            }
+            
+            function changeImage() {
+                loadingIndicator.style.display = "block";
+                resetZoom();
+                currentRotation = 0;
+                
+                // Add fade-out animation
+                modalImg.classList.add('fade-out');
+                
+                setTimeout(() => {
+                    const img = new Image();
+                    img.onload = function() {
+                        modalImg.src = currentPhotoData.images[currentImageIndex].url;
+                        modalImg.classList.remove('fade-out');
+                        updateModalInfo();
+                        loadingIndicator.style.display = "none";
+                        updateNavButtons();
+                        updateThumbnails();
+                        
+                        // Preload adjacent images
+                        preloadAdjacentImages();
+                    };
+                    img.src = currentPhotoData.images[currentImageIndex].url;
+                }, 150);
+            }
+            
+            function updateModalInfo() {
+                modalTitle.textContent = currentPhotoData.title;
+                modalDesc.innerHTML = currentPhotoData.images[currentImageIndex].description;
+                interpretationText.innerHTML = currentPhotoData.images[currentImageIndex].interpretation;
+                modalCounter.textContent = `${currentImageIndex + 1} / ${currentPhotoData.images.length}`;
+                imageIndex.textContent = `${currentImageIndex + 1}/${currentPhotoData.images.length}`;
+                modalDate.textContent = currentPhotoData.date;
+                modalTime.textContent = currentPhotoData.time;
+                modalLocation.textContent = currentPhotoData.location;
+                modalCamera.textContent = currentPhotoData.camera;
+            }
+            
+            function generateThumbnails() {
+                thumbnailStrip.innerHTML = '';
+                
+                currentPhotoData.images.forEach((image, index) => {
+                    const thumbnail = document.createElement('img');
+                    thumbnail.src = image.url;
+                    thumbnail.alt = `Thumbnail ${index + 1}`;
+                    thumbnail.className = 'thumbnail';
+                    if (index === currentImageIndex) {
+                        thumbnail.classList.add('active');
+                    }
                     
-                    // Filter cards
-                    promptCards.forEach(card => {
-                        if (selectedLevel === 'all' || card.getAttribute('data-level') === selectedLevel) {
-                            card.style.display = 'flex';
-                        } else {
-                            card.style.display = 'none';
+                    thumbnail.addEventListener('click', function() {
+                        if (index !== currentImageIndex) {
+                            currentImageIndex = index;
+                            changeImage();
                         }
                     });
+                    
+                    thumbnailStrip.appendChild(thumbnail);
                 });
-            });
+            }
             
-            // For animation effect
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            };
-            
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
+            function updateThumbnails() {
+                const thumbnails = thumbnailStrip.querySelectorAll('.thumbnail');
+                thumbnails.forEach((thumb, index) => {
+                    if (index === currentImageIndex) {
+                        thumb.classList.add('active');
+                    } else {
+                        thumb.classList.remove('active');
                     }
                 });
-            }, observerOptions);
+            }
             
-            // Add observer to cards
-            promptCards.forEach(card => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(20px)';
-                card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-                observer.observe(card);
-            });
+            function preloadAdjacentImages() {
+                // Preload next image if exists
+                if (currentImageIndex < currentPhotoData.images.length - 1) {
+                    const nextImg = new Image();
+                    nextImg.src = currentPhotoData.images[currentImageIndex + 1].url;
+                }
+                
+                // Preload previous image if exists
+                if (currentImageIndex > 0) {
+                    const prevImg = new Image();
+                    prevImg.src = currentPhotoData.images[currentImageIndex - 1].url;
+                }
+            }
+            
+            function zoomIn() {
+                if (currentScale < 3) {
+                    currentScale += 0.5;
+                    modalImg.style.transform = `scale(${currentScale}) rotate(${currentRotation}deg)`;
+                    modalImg.classList.add('zoomed');
+                }
+            }
+            
+            function zoomOut() {
+                if (currentScale > 0.5) {
+                    currentScale -= 0.5;
+                    modalImg.style.transform = `scale(${currentScale}) rotate(${currentRotation}deg)`;
+                    
+                    if (currentScale === 1) {
+                        modalImg.classList.remove('zoomed');
+                    }
+                }
+            }
+            
+            function resetZoom() {
+                currentScale = 1;
+                modalImg.style.transform = `scale(${currentScale}) rotate(${currentRotation}deg)`;
+                modalImg.classList.remove('zoomed');
+            }
+            
+            function rotateImage() {
+                currentRotation += 90;
+                if (currentRotation >= 360) {
+                    currentRotation = 0;
+                }
+                modalImg.style.transform = `scale(${currentScale}) rotate(${currentRotation}deg)`;
+            }
+            
+            function closeModal() {
+                modal.style.display = "none";
+                document.body.style.overflow = "auto"; // Re-enable scrolling
+                resetZoom();
+                currentRotation = 0;
+            }
+            
+            function updateNavButtons() {
+                // Hide/show prev button
+                if (currentImageIndex === 0 && currentPhotoIndex === 0) {
+                    prevBtn.style.visibility = 'hidden';
+                } else {
+                    prevBtn.style.visibility = 'visible';
+                }
+                
+                // Hide/show next button
+                if (currentImageIndex === currentPhotoData.images.length - 1 && currentPhotoIndex === photoData.length - 1) {
+                    nextBtn.style.visibility = 'hidden';
+                } else {
+                    nextBtn.style.visibility = 'visible';
+                }
+            }
         });
     </script>
 </body>
