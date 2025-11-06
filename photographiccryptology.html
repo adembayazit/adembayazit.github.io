@@ -451,7 +451,7 @@
             margin-right: 8px;
         }
         
-        /* YENİ MODAL STİLLERİ - TAM EKRAN FOTOĞRAF GALERİSİ */
+        /* YENİ MODAL STİLLERİ - GÜNCELLENMİŞ */
         .modal {
             display: none;
             position: fixed;
@@ -615,9 +615,9 @@
         .modal-meta {
             display: flex;
             justify-content: center;
-            gap: 25px;
+            gap: 20px;
             margin-top: 10px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--text-muted);
             flex-wrap: nowrap;
             overflow: hidden;
@@ -635,6 +635,7 @@
         .modal-meta-item i {
             color: var(--primary-color);
             flex-shrink: 0;
+            font-size: 0.9rem;
         }
         
         .loading {
@@ -799,56 +800,37 @@
             
             /* Mobile responsive improvements for modal */
             .modal-header {
-                padding: 12px 15px;
-                min-height: 60px;
+                padding: 10px 15px;
+                min-height: 50px;
+                flex-wrap: wrap;
             }
             
             .modal-title {
-                font-size: 1rem;
+                font-size: 0.9rem;
+                order: 1;
+                flex: 0 0 60%;
             }
             
             .modal-counter {
-                font-size: 0.9rem;
-                margin: 0 10px;
-                padding: 4px 12px;
+                font-size: 0.8rem;
+                margin: 0 8px;
+                padding: 3px 10px;
+                order: 2;
             }
             
             .close-modal {
-                width: 35px;
-                height: 35px;
-                font-size: 25px;
-            }
-            
-            .modal-nav {
-                position: fixed;
-                top: auto;
-                bottom: 80px;
-                transform: none;
+                width: 30px;
+                height: 30px;
                 font-size: 20px;
-                padding: 12px 15px;
-                background-color: rgba(0, 0, 0, 0.8);
-            }
-            
-            .prev {
-                left: 15px;
-            }
-            
-            .next {
-                right: 15px;
-            }
-            
-            .modal-footer {
-                padding: 12px 15px;
-            }
-            
-            .modal-description {
-                font-size: 0.9rem;
-                margin-bottom: 12px;
+                order: 3;
             }
             
             .modal-meta {
-                gap: 15px;
-                font-size: 0.75rem;
+                order: 4;
+                flex: 0 0 100%;
+                margin-top: 8px;
+                gap: 10px;
+                font-size: 0.7rem;
                 justify-content: space-between;
             }
             
@@ -858,27 +840,22 @@
                 justify-content: center;
             }
             
-            .zoom-controls {
-                bottom: 80px;
-                right: 15px;
+            .modal-meta-item i {
+                font-size: 0.8rem;
             }
             
-            .zoom-btn {
-                width: 35px;
-                height: 35px;
-                font-size: 16px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .modal-title {
-                font-size: 0.9rem;
+            .modal-content-area {
+                padding: 0;
             }
             
             .modal-nav {
-                padding: 10px 12px;
-                font-size: 18px;
+                position: fixed;
+                top: auto;
                 bottom: 70px;
+                transform: none;
+                font-size: 18px;
+                padding: 10px 12px;
+                background-color: rgba(0, 0, 0, 0.8);
             }
             
             .prev {
@@ -889,19 +866,75 @@
                 right: 10px;
             }
             
-            .modal-meta {
-                flex-direction: row;
-                gap: 10px;
-                flex-wrap: wrap;
+            .modal-footer {
+                padding: 10px 15px;
             }
             
-            .modal-meta-item {
-                flex: 0 0 calc(50% - 5px);
-                justify-content: flex-start;
+            .modal-description {
+                font-size: 0.8rem;
+                margin-bottom: 10px;
             }
             
             .zoom-controls {
                 bottom: 70px;
+                right: 10px;
+            }
+            
+            .zoom-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .modal-title {
+                font-size: 0.8rem;
+                flex: 0 0 50%;
+            }
+            
+            .modal-nav {
+                padding: 8px 10px;
+                font-size: 16px;
+                bottom: 60px;
+            }
+            
+            .prev {
+                left: 8px;
+            }
+            
+            .next {
+                right: 8px;
+            }
+            
+            .modal-meta {
+                font-size: 0.65rem;
+                gap: 5px;
+            }
+            
+            .modal-meta-item {
+                flex: 0 0 calc(25% - 5px);
+                justify-content: center;
+                text-align: center;
+            }
+            
+            .zoom-controls {
+                bottom: 60px;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            .modal-meta {
+                font-size: 0.6rem;
+            }
+            
+            .modal-meta-item {
+                flex-direction: column;
+                gap: 2px;
+            }
+            
+            .modal-meta-item i {
+                font-size: 0.7rem;
             }
         }
         
@@ -989,6 +1022,24 @@
                     <h3 class="modal-title" id="modalTitle">Photo Title</h3>
                     <div class="modal-counter" id="modalCounter">1 / 5</div>
                     <span class="close-modal">&times;</span>
+                    <div class="modal-meta" id="modalMeta">
+                        <div class="modal-meta-item">
+                            <i class="bx bx-calendar"></i>
+                            <span id="modalDate">2023-01-01</span>
+                        </div>
+                        <div class="modal-meta-item">
+                            <i class="bx bx-time"></i>
+                            <span id="modalTime">12:00</span>
+                        </div>
+                        <div class="modal-meta-item">
+                            <i class="bx bx-map"></i>
+                            <span id="modalLocation">Location</span>
+                        </div>
+                        <div class="modal-meta-item">
+                            <i class="bx bx-camera"></i>
+                            <span id="modalCamera">Camera</span>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="modal-content-area">
@@ -1013,24 +1064,6 @@
                 
                 <div class="modal-footer">
                     <div id="modalDescription" class="modal-description"></div>
-                    <div class="modal-meta" id="modalMeta">
-                        <div class="modal-meta-item">
-                            <i class="bx bx-calendar"></i>
-                            <span id="modalDate">2023-01-01</span>
-                        </div>
-                        <div class="modal-meta-item">
-                            <i class="bx bx-time"></i>
-                            <span id="modalTime">12:00</span>
-                        </div>
-                        <div class="modal-meta-item">
-                            <i class="bx bx-map"></i>
-                            <span id="modalLocation">Location</span>
-                        </div>
-                        <div class="modal-meta-item">
-                            <i class="bx bx-camera"></i>
-                            <span id="modalCamera">Camera</span>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -1254,7 +1287,7 @@
     <script src="/JAVASCRIPT/matrix.js"></script>
     
     <script>
-        // Sample photo data
+        // Sample photo data - with multiple images for testing navigation
         const photoData = [
             {
                 id: 1,
@@ -1263,6 +1296,10 @@
                     {
                         url: "PHOTO/photo1.JPG",
                         description: "This composition captures the contrast between human isolation and the density of urban environments. The single figure positioned against the vast architectural landscape creates a powerful statement about modern existence."
+                    },
+                    {
+                        url: "https://ik.imagekit.io/adembayazit/IMG_1630_22PJyDVnI.jpeg",
+                        description: "Close-up view showing the texture and details of the architectural elements. The play of light and shadow creates a dramatic contrast that emphasizes the geometric patterns."
                     }
                 ],
                 date: "2017-05-24",
@@ -1277,6 +1314,10 @@
                     {
                         url: "PHOTO/photo2.JPG",
                         description: "A study in persistence, this image shows life thriving in seemingly inhospitable conditions. The composition uses natural framing to draw attention to the central subject while maintaining a balanced asymmetry."
+                    },
+                    {
+                        url: "https://ik.imagekit.io/adembayazit/IMG_1630_22PJyDVnI.jpeg",
+                        description: "Macro detail revealing the intricate patterns and textures of the plant. The shallow depth of field isolates the subject from the background, creating a dreamlike quality."
                     }
                 ],
                 date: "2017-05-30",
@@ -1291,6 +1332,14 @@
                     {
                         url: "PHOTO/photo3.JPG",
                         description: "This photograph transforms mundane industrial elements into abstract art through careful framing and lighting. The repetition of geometric shapes creates rhythm, while selective focus guides the viewer's attention."
+                    },
+                    {
+                        url: "https://ik.imagekit.io/adembayazit/IMG_1630_22PJyDVnI.jpeg",
+                        description: "Close-up view highlighting the textures and patterns created by rust and weathering. The warm tones contrast with the cool metallic surfaces, creating visual interest."
+                    },
+                    {
+                        url: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+                        description: "Wide-angle perspective showing the scale and context of the industrial environment. The converging lines create a sense of depth and draw the eye into the frame."
                     }
                 ],
                 date: "2017-05-11",
@@ -1584,12 +1633,40 @@
                         resetZoom();
                     };
                     img.src = currentPhotoData.images[currentImageIndex].url;
+                } else if (currentPhotoIndex > 0) {
+                    // Go to previous photo
+                    currentPhotoIndex--;
+                    currentPhotoData = photoData[currentPhotoIndex];
+                    currentImageIndex = currentPhotoData.images.length - 1;
+                    loadingIndicator.style.display = "block";
+                    
+                    const img = new Image();
+                    img.onload = function() {
+                        updateModalContent();
+                        loadingIndicator.style.display = "none";
+                        resetZoom();
+                    };
+                    img.src = currentPhotoData.images[currentImageIndex].url;
                 }
             }
             
             function navigateNext() {
                 if (currentPhotoData && currentImageIndex < currentPhotoData.images.length - 1) {
                     currentImageIndex++;
+                    loadingIndicator.style.display = "block";
+                    
+                    const img = new Image();
+                    img.onload = function() {
+                        updateModalContent();
+                        loadingIndicator.style.display = "none";
+                        resetZoom();
+                    };
+                    img.src = currentPhotoData.images[currentImageIndex].url;
+                } else if (currentPhotoIndex < photoData.length - 1) {
+                    // Go to next photo
+                    currentPhotoIndex++;
+                    currentPhotoData = photoData[currentPhotoIndex];
+                    currentImageIndex = 0;
                     loadingIndicator.style.display = "block";
                     
                     const img = new Image();
@@ -1646,18 +1723,25 @@
             }
             
             function updateNavButtons() {
-                // Hide/show prev button
-                if (currentImageIndex === 0) {
-                    prevBtn.style.display = 'none';
+                // Always show navigation buttons, but disable when at boundaries
+                prevBtn.style.display = 'flex';
+                nextBtn.style.display = 'flex';
+                
+                // Update button states based on current position
+                if (currentImageIndex === 0 && currentPhotoIndex === 0) {
+                    prevBtn.style.opacity = '0.5';
+                    prevBtn.style.cursor = 'not-allowed';
                 } else {
-                    prevBtn.style.display = 'flex';
+                    prevBtn.style.opacity = '1';
+                    prevBtn.style.cursor = 'pointer';
                 }
                 
-                // Hide/show next button
-                if (currentImageIndex === currentPhotoData.images.length - 1) {
-                    nextBtn.style.display = 'none';
+                if (currentImageIndex === currentPhotoData.images.length - 1 && currentPhotoIndex === photoData.length - 1) {
+                    nextBtn.style.opacity = '0.5';
+                    nextBtn.style.cursor = 'not-allowed';
                 } else {
-                    nextBtn.style.display = 'flex';
+                    nextBtn.style.opacity = '1';
+                    nextBtn.style.cursor = 'pointer';
                 }
             }
         });
