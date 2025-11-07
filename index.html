@@ -118,7 +118,7 @@
         background: rgba(0, 100, 0, 0.7);
       }
 
-      /* YENİ MODAL STİLLERİ - GELİŞMİŞ VE YARATICI */
+      /* YENİ MODAL STİLLERİ - FOTOĞRAF BÜYÜK, NAVBAR YATAY VE KÜÇÜK */
       .modal {
         display: none;
         position: fixed;
@@ -143,12 +143,12 @@
         left: 50%;
         transform: translate(-50%, -50%) scale(0.95);
         max-width: 90%;
-        max-height: 80vh;
+        max-height: 90vh;
         transition: transform 0.4s ease;
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 20px;
+        gap: 15px;
       }
 
       .modal.show .modal-content-container {
@@ -161,14 +161,15 @@
         align-items: center;
         justify-content: center;
         max-width: 100%;
-        max-height: 65vh;
+        max-height: 75vh;
+        flex: 1;
       }
 
       .modal-content {
         max-width: 100%;
-        max-height: 65vh;
+        max-height: 75vh;
         object-fit: contain;
-        border-radius: 12px;
+        border-radius: 8px;
         box-shadow: 0 0 40px rgba(0, 255, 128, 0.2);
         border: 1px solid rgba(0, 255, 128, 0.1);
         transition: all 0.3s ease;
@@ -215,80 +216,41 @@
         transform: rotate(90deg);
       }
 
-      /* YENİ MODAL NAVBAR - FOTOĞRAFIN HEMEN ALTINDA */
+      /* YENİ MODAL NAVBAR - YATAY VE KOMPAKT */
       .modal-navbar {
         background: linear-gradient(135deg, rgba(15, 35, 25, 0.95) 0%, rgba(8, 20, 15, 0.98) 100%);
-        border-radius: 15px;
-        padding: 15px 20px;
+        border-radius: 12px;
+        padding: 12px 20px;
         width: 100%;
         max-width: 800px;
         border: 1px solid rgba(0, 255, 128, 0.2);
         box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
         backdrop-filter: blur(15px);
         display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      .modal-nav-top {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 10px;
-      }
-
-      .modal-info-items {
-        display: flex;
-        gap: 20px;
-        flex-wrap: wrap;
-        flex: 1;
-      }
-
-      .modal-info-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 13px;
-        color: #e0e0e0;
-      }
-
-      .modal-info-item i {
-        color: #f9d71c;
-        font-size: 14px;
-        min-width: 16px;
-      }
-
-      .modal-counter {
-        background: rgba(0, 0, 0, 0.4);
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: bold;
-        color: #f9d71c;
-        border: 1px solid rgba(249, 215, 28, 0.3);
-        white-space: nowrap;
-      }
-
-      .modal-nav-bottom {
-        display: flex;
         justify-content: space-between;
         align-items: center;
         gap: 15px;
+        min-height: 60px;
+      }
+
+      .modal-nav-left {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        flex: 1;
       }
 
       .modal-thumbnails {
         display: flex;
-        gap: 10px;
+        gap: 8px;
         align-items: center;
-        flex: 1;
       }
 
       .modal-thumb {
-        width: 60px;
-        height: 40px;
+        width: 45px;
+        height: 30px;
         object-fit: cover;
-        border-radius: 6px;
+        border-radius: 4px;
         cursor: pointer;
         opacity: 0.7;
         transition: all 0.3s ease;
@@ -303,32 +265,74 @@
       .modal-thumb.active {
         opacity: 1;
         border: 2px solid #f9d71c;
-        box-shadow: 0 0 10px rgba(249, 215, 28, 0.5);
+        box-shadow: 0 0 8px rgba(249, 215, 28, 0.5);
       }
 
-      .thumb-label {
-        font-size: 10px;
-        color: #aaa;
-        margin-top: 2px;
-        text-align: center;
+      .thumb-separator {
+        color: #666;
+        font-size: 12px;
+        margin: 0 5px;
       }
 
-      .modal-nav-buttons {
+      .modal-nav-center {
         display: flex;
-        gap: 10px;
+        align-items: center;
+        gap: 20px;
+        flex: 2;
+        justify-content: center;
+      }
+
+      .modal-info-items {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .modal-info-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        color: #e0e0e0;
+        white-space: nowrap;
+      }
+
+      .modal-info-item i {
+        color: #f9d71c;
+        font-size: 12px;
+        min-width: 14px;
+      }
+
+      .modal-counter {
+        background: rgba(0, 0, 0, 0.4);
+        padding: 4px 10px;
+        border-radius: 15px;
+        font-size: 11px;
+        font-weight: bold;
+        color: #f9d71c;
+        border: 1px solid rgba(249, 215, 28, 0.3);
+        white-space: nowrap;
+      }
+
+      .modal-nav-right {
+        display: flex;
+        gap: 8px;
+        flex: 1;
+        justify-content: flex-end;
       }
 
       .nav-button {
         background: linear-gradient(135deg, rgba(20, 45, 30, 0.9), rgba(10, 25, 15, 0.9));
         color: white;
         border: 1px solid rgba(0, 255, 128, 0.3);
-        padding: 10px 15px;
-        border-radius: 8px;
+        padding: 8px 12px;
+        border-radius: 6px;
         cursor: pointer;
-        font-size: 16px;
+        font-size: 14px;
         font-weight: bold;
         transition: all 0.3s ease;
-        min-width: 45px;
+        min-width: 40px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -338,8 +342,8 @@
       .nav-button:hover {
         background: linear-gradient(135deg, rgba(30, 65, 40, 0.9), rgba(15, 35, 20, 0.9));
         border-color: rgba(0, 255, 128, 0.6);
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0, 255, 128, 0.2);
+        transform: translateY(-1px);
+        box-shadow: 0 3px 10px rgba(0, 255, 128, 0.2);
       }
 
       .nav-button:active {
@@ -494,62 +498,48 @@
         .modal-content-container {
           max-width: 95%;
           max-height: 85vh;
-          gap: 15px;
-        }
-        
-        .modal-image-wrapper {
-          max-height: 55vh;
-        }
-        
-        .modal-content {
-          max-height: 55vh;
-        }
-        
-        .modal-navbar {
-          padding: 12px 15px;
           gap: 10px;
         }
         
-        .modal-nav-top {
+        .modal-image-wrapper {
+          max-height: 70vh;
+        }
+        
+        .modal-content {
+          max-height: 70vh;
+        }
+        
+        .modal-navbar {
+          padding: 10px 15px;
+          gap: 10px;
           flex-direction: column;
-          align-items: center;
-          gap: 8px;
+          min-height: auto;
+        }
+        
+        .modal-nav-left,
+        .modal-nav-center,
+        .modal-nav-right {
+          width: 100%;
+          justify-content: center;
         }
         
         .modal-info-items {
-          justify-content: center;
-          gap: 15px;
+          gap: 10px;
         }
         
         .modal-info-item {
           font-size: 11px;
         }
         
-        .modal-nav-bottom {
-          flex-direction: column;
-          gap: 10px;
-        }
-        
-        .modal-thumbnails {
-          justify-content: center;
-          order: 2;
-        }
-        
         .modal-thumb {
-          width: 50px;
-          height: 35px;
-        }
-        
-        .modal-nav-buttons {
-          order: 1;
-          width: 100%;
-          justify-content: center;
+          width: 40px;
+          height: 28px;
         }
         
         .nav-button {
-          padding: 12px 20px;
-          min-width: 60px;
-          font-size: 18px;
+          padding: 10px 15px;
+          min-width: 50px;
+          font-size: 16px;
         }
         
         .close {
@@ -609,6 +599,10 @@
       }
 
       @media (max-width: 480px) {
+        .modal-navbar {
+          padding: 8px 10px;
+        }
+        
         .modal-info-items {
           flex-direction: column;
           align-items: center;
@@ -616,12 +610,18 @@
         }
         
         .modal-thumbnails {
-          flex-wrap: wrap;
           justify-content: center;
         }
         
-        .thumb-label {
-          font-size: 9px;
+        .modal-thumb {
+          width: 35px;
+          height: 25px;
+        }
+        
+        .nav-button {
+          padding: 8px 12px;
+          min-width: 45px;
+          font-size: 14px;
         }
       }
 
@@ -884,7 +884,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
     </section>
 
-    <!-- YENİ MODAL YAPISI -->
+    <!-- YENİ MODAL YAPISI - FOTOĞRAF BÜYÜK, NAVBAR YATAY VE KÜÇÜK -->
     <div id="modal" class="modal">
         <span class="close">&times;</span>
         <div class="keyboard-shortcuts">
@@ -897,7 +897,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
             
             <div class="modal-navbar">
-                <div class="modal-nav-top">
+                <div class="modal-nav-left">
+                    <div class="modal-thumbnails">
+                        <img class="modal-thumb prev-thumb" src="" alt="Previous Photo">
+                        <span class="thumb-separator">|</span>
+                        <img class="modal-thumb next-thumb" src="" alt="Next Photo">
+                    </div>
+                </div>
+                
+                <div class="modal-nav-center">
                     <div class="modal-info-items">
                         <div class="modal-info-item">
                             <i class="fas fa-map-marker-alt"></i>
@@ -917,22 +925,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     </div>
                 </div>
                 
-                <div class="modal-nav-bottom">
-                    <div class="modal-thumbnails">
-                        <div class="thumb-container">
-                            <img class="modal-thumb prev-thumb" src="" alt="Previous Photo">
-                            <div class="thumb-label">Previous</div>
-                        </div>
-                        <div class="thumb-container">
-                            <img class="modal-thumb next-thumb" src="" alt="Next Photo">
-                            <div class="thumb-label">Next</div>
-                        </div>
-                    </div>
-                    
-                    <div class="modal-nav-buttons">
-                        <button class="nav-button prev-button">&lt;</button>
-                        <button class="nav-button next-button">&gt;</button>
-                    </div>
+                <div class="modal-nav-right">
+                    <button class="nav-button prev-button">&lt;</button>
+                    <button class="nav-button next-button">&gt;</button>
                 </div>
             </div>
         </div>
