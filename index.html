@@ -118,7 +118,7 @@
         background: rgba(0, 100, 0, 0.7);
       }
 
-      /* YENİ MODAL STİLLERİ - FOTOĞRAF BÜYÜK, NAVBAR YATAY VE KÜÇÜK */
+      /* YENİ MODAL STİLLERİ - İNCE UZUN YATAY NAVBAR */
       .modal {
         display: none;
         position: fixed;
@@ -139,35 +139,27 @@
 
       .modal-content-container {
         position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) scale(0.95);
-        max-width: 90%;
-        max-height: 90vh;
-        transition: transform 0.4s ease;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
         display: flex;
         flex-direction: column;
-        align-items: center;
-        gap: 15px;
-      }
-
-      .modal.show .modal-content-container {
-        transform: translate(-50%, -50%) scale(1);
       }
 
       .modal-image-wrapper {
-        position: relative;
+        flex: 1;
         display: flex;
         align-items: center;
         justify-content: center;
-        max-width: 100%;
-        max-height: 75vh;
-        flex: 1;
+        padding: 20px;
+        box-sizing: border-box;
+        max-height: calc(100vh - 120px);
       }
 
       .modal-content {
         max-width: 100%;
-        max-height: 75vh;
+        max-height: 100%;
         object-fit: contain;
         border-radius: 8px;
         box-shadow: 0 0 40px rgba(0, 255, 128, 0.2);
@@ -216,39 +208,35 @@
         transform: rotate(90deg);
       }
 
-      /* YENİ MODAL NAVBAR - YATAY VE KOMPAKT */
+      /* YENİ MODAL NAVBAR - İNCE UZUN YATAY */
       .modal-navbar {
         background: linear-gradient(135deg, rgba(15, 35, 25, 0.95) 0%, rgba(8, 20, 15, 0.98) 100%);
-        border-radius: 12px;
-        padding: 12px 20px;
-        width: 100%;
-        max-width: 800px;
-        border: 1px solid rgba(0, 255, 128, 0.2);
-        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+        border-top: 1px solid rgba(0, 255, 128, 0.2);
+        box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.5);
         backdrop-filter: blur(15px);
+        display: flex;
+        flex-direction: column;
+        padding: 15px 20px;
+        min-height: 120px;
+      }
+
+      .modal-nav-top {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        gap: 15px;
-        min-height: 60px;
-      }
-
-      .modal-nav-left {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        flex: 1;
+        margin-bottom: 15px;
       }
 
       .modal-thumbnails {
         display: flex;
-        gap: 8px;
+        gap: 10px;
         align-items: center;
+        flex: 1;
       }
 
       .modal-thumb {
-        width: 45px;
-        height: 30px;
+        width: 80px;
+        height: 50px;
         object-fit: cover;
         border-radius: 4px;
         cursor: pointer;
@@ -268,56 +256,27 @@
         box-shadow: 0 0 8px rgba(249, 215, 28, 0.5);
       }
 
-      .thumb-separator {
-        color: #666;
-        font-size: 12px;
-        margin: 0 5px;
-      }
-
       .modal-nav-center {
         display: flex;
         align-items: center;
-        gap: 20px;
-        flex: 2;
-        justify-content: center;
-      }
-
-      .modal-info-items {
-        display: flex;
-        gap: 20px;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-
-      .modal-info-item {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 12px;
-        color: #e0e0e0;
-        white-space: nowrap;
-      }
-
-      .modal-info-item i {
-        color: #f9d71c;
-        font-size: 12px;
-        min-width: 14px;
+        gap: 15px;
       }
 
       .modal-counter {
         background: rgba(0, 0, 0, 0.4);
-        padding: 4px 10px;
-        border-radius: 15px;
-        font-size: 11px;
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-size: 16px;
         font-weight: bold;
         color: #f9d71c;
         border: 1px solid rgba(249, 215, 28, 0.3);
-        white-space: nowrap;
+        min-width: 80px;
+        text-align: center;
       }
 
-      .modal-nav-right {
+      .modal-nav-buttons {
         display: flex;
-        gap: 8px;
+        gap: 10px;
         flex: 1;
         justify-content: flex-end;
       }
@@ -326,28 +285,53 @@
         background: linear-gradient(135deg, rgba(20, 45, 30, 0.9), rgba(10, 25, 15, 0.9));
         color: white;
         border: 1px solid rgba(0, 255, 128, 0.3);
-        padding: 8px 12px;
+        padding: 10px 15px;
         border-radius: 6px;
         cursor: pointer;
-        font-size: 14px;
+        font-size: 18px;
         font-weight: bold;
         transition: all 0.3s ease;
-        min-width: 40px;
+        min-width: 50px;
         display: flex;
         align-items: center;
         justify-content: center;
-        backdrop-filter: blur(10px);
       }
 
       .nav-button:hover {
         background: linear-gradient(135deg, rgba(30, 65, 40, 0.9), rgba(15, 35, 20, 0.9));
         border-color: rgba(0, 255, 128, 0.6);
-        transform: translateY(-1px);
-        box-shadow: 0 3px 10px rgba(0, 255, 128, 0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 255, 128, 0.2);
       }
 
       .nav-button:active {
         transform: translateY(0);
+      }
+
+      .modal-nav-bottom {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .modal-info-items {
+        display: flex;
+        gap: 25px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .modal-info-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        color: #e0e0e0;
+      }
+
+      .modal-info-item i {
+        color: #f9d71c;
+        font-size: 14px;
       }
 
       /* Photographic Cryptology için yeni düzen */
@@ -495,51 +479,55 @@
           display: block;
         }
         
-        .modal-content-container {
-          max-width: 95%;
-          max-height: 85vh;
-          gap: 10px;
-        }
-        
         .modal-image-wrapper {
-          max-height: 70vh;
-        }
-        
-        .modal-content {
-          max-height: 70vh;
+          max-height: calc(100vh - 150px);
+          padding: 15px;
         }
         
         .modal-navbar {
-          padding: 10px 15px;
-          gap: 10px;
+          min-height: 150px;
+          padding: 12px 15px;
+        }
+        
+        .modal-nav-top {
           flex-direction: column;
-          min-height: auto;
+          gap: 12px;
+          margin-bottom: 12px;
         }
         
-        .modal-nav-left,
-        .modal-nav-center,
-        .modal-nav-right {
-          width: 100%;
+        .modal-thumbnails {
+          order: 2;
           justify-content: center;
+          width: 100%;
         }
         
-        .modal-info-items {
-          gap: 10px;
+        .modal-nav-center {
+          order: 1;
         }
         
-        .modal-info-item {
-          font-size: 11px;
+        .modal-nav-buttons {
+          order: 3;
+          justify-content: center;
+          width: 100%;
         }
         
         .modal-thumb {
-          width: 40px;
-          height: 28px;
+          width: 60px;
+          height: 40px;
+        }
+        
+        .modal-info-items {
+          gap: 15px;
+        }
+        
+        .modal-info-item {
+          font-size: 12px;
         }
         
         .nav-button {
-          padding: 10px 15px;
-          min-width: 50px;
-          font-size: 16px;
+          padding: 12px 18px;
+          min-width: 60px;
+          font-size: 20px;
         }
         
         .close {
@@ -600,28 +588,30 @@
 
       @media (max-width: 480px) {
         .modal-navbar {
-          padding: 8px 10px;
+          min-height: 160px;
+          padding: 10px 12px;
         }
         
         .modal-info-items {
           flex-direction: column;
           align-items: center;
-          gap: 5px;
-        }
-        
-        .modal-thumbnails {
-          justify-content: center;
+          gap: 8px;
         }
         
         .modal-thumb {
-          width: 35px;
-          height: 25px;
+          width: 50px;
+          height: 35px;
+        }
+        
+        .modal-counter {
+          font-size: 14px;
+          padding: 6px 15px;
         }
         
         .nav-button {
-          padding: 8px 12px;
-          min-width: 45px;
-          font-size: 14px;
+          padding: 10px 15px;
+          min-width: 55px;
+          font-size: 18px;
         }
       }
 
@@ -884,7 +874,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
     </section>
 
-    <!-- YENİ MODAL YAPISI - FOTOĞRAF BÜYÜK, NAVBAR YATAY VE KÜÇÜK -->
+    <!-- YENİ MODAL YAPISI - İNCE UZUN YATAY NAVBAR -->
     <div id="modal" class="modal">
         <span class="close">&times;</span>
         <div class="keyboard-shortcuts">
@@ -897,26 +887,26 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
             
             <div class="modal-navbar">
-                <div class="modal-nav-left">
+                <div class="modal-nav-top">
                     <div class="modal-thumbnails">
                         <img class="modal-thumb prev-thumb" src="" alt="Previous Photo">
-                        <span class="thumb-separator">|</span>
                         <img class="modal-thumb next-thumb" src="" alt="Next Photo">
                     </div>
-                </div>
-                
-                <div class="modal-nav-center">
-                
-                    <div class="modal-counter">
-                        <span id="modal-counter">1/10</span>
+                    
+                    <div class="modal-nav-center">
+                        <div class="modal-counter">
+                            <span id="modal-counter">1/10</span>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-nav-buttons">
+                        <button class="nav-button prev-button">&lt;</button>
+                        <button class="nav-button next-button">&gt;</button>
                     </div>
                 </div>
                 
-                <div class="modal-nav-right">
-                    <button class="nav-button prev-button">&lt;</button>
-                    <button class="nav-button next-button">&gt;</button>
-                </div>
-                <div class="modal-info-items">
+                <div class="modal-nav-bottom">
+                    <div class="modal-info-items">
                         <div class="modal-info-item">
                             <i class="fas fa-map-marker-alt"></i>
                             <span id="modal-location">Unknown Location</span>
@@ -930,6 +920,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                             <span id="modal-time">Unknown Time</span>
                         </div>
                     </div>
+                </div>
             </div>
         </div>
     </div>
