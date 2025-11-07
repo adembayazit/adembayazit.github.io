@@ -118,7 +118,7 @@
         background: rgba(0, 100, 0, 0.7);
       }
 
-      /* Modal için yeni stiller */
+      /* YENİ MODAL STİLLERİ - GELİŞMİŞ VE YARATICI */
       .modal {
         display: none;
         position: fixed;
@@ -127,134 +127,223 @@
         top: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.95);
+        background: radial-gradient(circle at center, rgba(10, 30, 20, 0.95) 0%, rgba(5, 15, 10, 0.98) 100%);
         overflow: hidden;
         opacity: 0;
-        transition: opacity 0.3s ease;
+        transition: opacity 0.4s ease;
       }
 
       .modal.show {
         opacity: 1;
       }
 
-      .modal-content {
+      .modal-content-container {
         position: absolute;
         top: 50%;
         left: 50%;
-        transform: translate(-50%, -50%) scale(0.9);
-        max-width: 95%;
-        max-height: 85vh;
+        transform: translate(-50%, -50%) scale(0.95);
+        max-width: 90%;
+        max-height: 80vh;
+        transition: transform 0.4s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .modal.show .modal-content-container {
+        transform: translate(-50%, -50%) scale(1);
+      }
+
+      .modal-image-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        max-width: 100%;
+        max-height: 65vh;
+      }
+
+      .modal-content {
+        max-width: 100%;
+        max-height: 65vh;
         object-fit: contain;
-        transition: transform 0.3s ease;
-        border-radius: 8px;
-        border: none;
-        box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+        border-radius: 12px;
+        box-shadow: 0 0 40px rgba(0, 255, 128, 0.2);
+        border: 1px solid rgba(0, 255, 128, 0.1);
+        transition: all 0.3s ease;
       }
 
       .modal.show .modal-content {
-        transform: translate(-50%, -50%) scale(1);
+        animation: imageGlow 3s ease-in-out infinite alternate;
+      }
+
+      @keyframes imageGlow {
+        0% {
+          box-shadow: 0 0 30px rgba(0, 255, 128, 0.2);
+        }
+        100% {
+          box-shadow: 0 0 50px rgba(0, 255, 128, 0.4);
+        }
       }
 
       .close {
         position: absolute;
-        top: 25px;
-        right: 30px;
+        top: 20px;
+        right: 25px;
         color: #f1f1f1;
-        font-size: 40px;
+        font-size: 35px;
         font-weight: bold;
         cursor: pointer;
         z-index: 10010;
         opacity: 0.8;
-        transition: opacity 0.2s;
-        background: rgba(0, 0, 0, 0.5);
+        transition: all 0.3s;
+        background: rgba(0, 0, 0, 0.6);
         width: 50px;
         height: 50px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(249, 215, 28, 0.3);
       }
 
       .close:hover {
         opacity: 1;
-        background: rgba(0, 0, 0, 0.7);
+        background: rgba(200, 0, 0, 0.7);
+        transform: rotate(90deg);
       }
 
-      .modal-nav {
-        position: absolute;
-        top: 80%;
+      /* YENİ MODAL NAVBAR - FOTOĞRAFIN HEMEN ALTINDA */
+      .modal-navbar {
+        background: linear-gradient(135deg, rgba(15, 35, 25, 0.95) 0%, rgba(8, 20, 15, 0.98) 100%);
+        border-radius: 15px;
+        padding: 15px 20px;
         width: 100%;
-        display: flex;
-        justify-content: space-between;
-        transform: translateY(-50%);
-        pointer-events: none;
-        z-index: 10005;
-      }
-
-      .nav-button {
-        pointer-events: auto;
-        background: rgba(0, 0, 0, 0.5);
-        color: white;
-        border: none;
-        padding: 20px;
-        font-size: 24px;
-        cursor: pointer;
-        margin: 0 20px;
-        border-radius: 60%;
-        width: 60px;
-        height: 60px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 0.7;
-        transition: opacity 0.3s, background 0.3s;
-      }
-
-      .nav-button:hover {
-        opacity: 1;
-        background: rgba(0, 0, 0, 0.8);
-      }
-
-      .modal-info {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
-        color: white;
-        padding: 20px 10px 10px;
-        text-align: center;
-        z-index: 10006;
-      }
-
-      .modal-info-content {
         max-width: 800px;
-        margin: 0 auto;
+        border: 1px solid rgba(0, 255, 128, 0.2);
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(15px);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .modal-nav-top {
         display: flex;
         justify-content: space-between;
         align-items: center;
         flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .modal-info-items {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        flex: 1;
       }
 
       .modal-info-item {
         display: flex;
         align-items: center;
-        margin: 5px 10px;
-        font-size: 12px;
+        gap: 8px;
+        font-size: 13px;
+        color: #e0e0e0;
       }
 
       .modal-info-item i {
-        margin-right: 10px;
         color: #f9d71c;
+        font-size: 14px;
+        min-width: 16px;
       }
 
       .modal-counter {
-        font-size: 10px;
-        color: #f1f1f1;
-        background: rgba(0, 0, 0, 0.5);
-        padding: 8px 15px;
+        background: rgba(0, 0, 0, 0.4);
+        padding: 6px 12px;
         border-radius: 20px;
-        margin: 0 10px;
+        font-size: 12px;
+        font-weight: bold;
+        color: #f9d71c;
+        border: 1px solid rgba(249, 215, 28, 0.3);
+        white-space: nowrap;
+      }
+
+      .modal-nav-bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .modal-thumbnails {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex: 1;
+      }
+
+      .modal-thumb {
+        width: 60px;
+        height: 40px;
+        object-fit: cover;
+        border-radius: 6px;
+        cursor: pointer;
+        opacity: 0.7;
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+      }
+
+      .modal-thumb:hover {
+        opacity: 1;
+        transform: scale(1.05);
+      }
+
+      .modal-thumb.active {
+        opacity: 1;
+        border: 2px solid #f9d71c;
+        box-shadow: 0 0 10px rgba(249, 215, 28, 0.5);
+      }
+
+      .thumb-label {
+        font-size: 10px;
+        color: #aaa;
+        margin-top: 2px;
+        text-align: center;
+      }
+
+      .modal-nav-buttons {
+        display: flex;
+        gap: 10px;
+      }
+
+      .nav-button {
+        background: linear-gradient(135deg, rgba(20, 45, 30, 0.9), rgba(10, 25, 15, 0.9));
+        color: white;
+        border: 1px solid rgba(0, 255, 128, 0.3);
+        padding: 10px 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        min-width: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(10px);
+      }
+
+      .nav-button:hover {
+        background: linear-gradient(135deg, rgba(30, 65, 40, 0.9), rgba(15, 35, 20, 0.9));
+        border-color: rgba(0, 255, 128, 0.6);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 255, 128, 0.2);
+      }
+
+      .nav-button:active {
+        transform: translateY(0);
       }
 
       /* Photographic Cryptology için yeni düzen */
@@ -366,7 +455,23 @@
         animation: subtleGlow 4s ease-in-out infinite;
       }
 
-      /* Mobil için stil */
+      /* Keyboard shortcuts stil */
+      .keyboard-shortcuts {
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: white;
+        font-size: 12px;
+        background: rgba(0, 0, 0, 0.7);
+        padding: 5px 10px;
+        border-radius: 5px;
+        z-index: 10010;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      /* MOBİL UYUMLULUK */
       @media (max-width: 992px) {
         .microblog-container {
           flex-direction: column;
@@ -386,27 +491,79 @@
           display: block;
         }
         
-        #modal-info {
-          flex-direction: column;
-          gap: 5px;
-          font-size: 12px;
-          padding: 8px 15px;
+        .modal-content-container {
+          max-width: 95%;
+          max-height: 85vh;
+          gap: 15px;
         }
+        
+        .modal-image-wrapper {
+          max-height: 55vh;
+        }
+        
+        .modal-content {
+          max-height: 55vh;
+        }
+        
+        .modal-navbar {
+          padding: 12px 15px;
+          gap: 10px;
+        }
+        
+        .modal-nav-top {
+          flex-direction: column;
+          align-items: center;
+          gap: 8px;
+        }
+        
+        .modal-info-items {
+          justify-content: center;
+          gap: 15px;
+        }
+        
         .modal-info-item {
-          margin: 3px 0;
-          font-size: 12px;
+          font-size: 11px;
+        }
+        
+        .modal-nav-bottom {
+          flex-direction: column;
+          gap: 10px;
+        }
+        
+        .modal-thumbnails {
+          justify-content: center;
+          order: 2;
+        }
+        
+        .modal-thumb {
+          width: 50px;
+          height: 35px;
+        }
+        
+        .modal-nav-buttons {
+          order: 1;
+          width: 100%;
+          justify-content: center;
         }
         
         .nav-button {
-          width: 50px;
-          height: 50px;
-          padding: 15px;
-          margin: 0 10px;
+          padding: 12px 20px;
+          min-width: 60px;
+          font-size: 18px;
         }
+        
         .close {
           top: 10px;
-          right: 20px;
-          font-size: 30px;
+          right: 15px;
+          width: 40px;
+          height: 40px;
+          font-size: 25px;
+        }
+
+        .keyboard-shortcuts {
+          font-size: 10px;
+          top: 15px;
+          padding: 4px 8px;
         }
 
         /* Mobil cihazlarda tıklanabilir alanı büyüt */
@@ -451,6 +608,23 @@
         }
       }
 
+      @media (max-width: 480px) {
+        .modal-info-items {
+          flex-direction: column;
+          align-items: center;
+          gap: 5px;
+        }
+        
+        .modal-thumbnails {
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+        
+        .thumb-label {
+          font-size: 9px;
+        }
+      }
+
       /* Touch device detection ve mobil optimizasyon */
       @media (hover: none) and (pointer: coarse) {
         .photo-analysis-btn {
@@ -467,20 +641,16 @@
           transform: scale(0.95);
           background: linear-gradient(135deg, rgba(20, 35, 30, 0.9), rgba(0, 90, 0, 0.7));
         }
-      }
-
-      /* Keyboard shortcuts stil */
-      .keyboard-shortcuts {
-        position: absolute;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        color: white;
-        font-size: 12px;
-        background: rgba(0, 0, 0, 0.7);
-        padding: 5px 10px;
-        border-radius: 5px;
-        z-index: 10010;
+        
+        .nav-button {
+          -webkit-tap-highlight-color: transparent;
+          min-height: 44px;
+        }
+        
+        .modal-thumb {
+          -webkit-tap-highlight-color: transparent;
+          min-height: 44px;
+        }
       }
     </style>
 </head>
@@ -714,33 +884,58 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
     </section>
 
-    <!-- Modal Büyütme -->
+    <!-- YENİ MODAL YAPISI -->
     <div id="modal" class="modal">
         <span class="close">&times;</span>
         <div class="keyboard-shortcuts">
             <span>← →: Navigate | ESC: Close</span>
         </div>
-        <div class="modal-nav">
-            <button class="nav-button prev-button">&lt;</button>
-            <button class="nav-button next-button">&gt;</button>
-        </div>
         
-        <div class="modal-info">
-            <div class="modal-info-content">
-                <div class="modal-info-item">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <span id="modal-location">Unknown Location</span>
+        <div class="modal-content-container">
+            <div class="modal-image-wrapper">
+                <img class="modal-content" id="modal-img">
+            </div>
+            
+            <div class="modal-navbar">
+                <div class="modal-nav-top">
+                    <div class="modal-info-items">
+                        <div class="modal-info-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span id="modal-location">Unknown Location</span>
+                        </div>
+                        <div class="modal-info-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span id="modal-date">Unknown Date</span>
+                        </div>
+                        <div class="modal-info-item">
+                            <i class="fas fa-clock"></i>
+                            <span id="modal-time">Unknown Time</span>
+                        </div>
+                    </div>
+                    <div class="modal-counter">
+                        <span id="modal-counter">1/10</span>
+                    </div>
                 </div>
-                <div class="modal-info-item">
-                    <i class="fas fa-clock"></i>
-                    <span id="modal-time">Unknown Time</span>
-                </div>
-                <div class="modal-counter">
-                    <span id="modal-counter">1/10</span>
+                
+                <div class="modal-nav-bottom">
+                    <div class="modal-thumbnails">
+                        <div class="thumb-container">
+                            <img class="modal-thumb prev-thumb" src="" alt="Previous Photo">
+                            <div class="thumb-label">Previous</div>
+                        </div>
+                        <div class="thumb-container">
+                            <img class="modal-thumb next-thumb" src="" alt="Next Photo">
+                            <div class="thumb-label">Next</div>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-nav-buttons">
+                        <button class="nav-button prev-button">&lt;</button>
+                        <button class="nav-button next-button">&gt;</button>
+                    </div>
                 </div>
             </div>
         </div>
-        <img class="modal-content" id="modal-img">
     </div>
 
     <footer style="text-align: center; padding: 20px; font-size: 14px; color: white;">
@@ -954,15 +1149,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             }
         }
 
-        // Galeri ve Modal işlevselliği
+        // Galeri ve YENİ Modal işlevselliği
         document.addEventListener("DOMContentLoaded", () => {
             const galleryGrid = document.getElementById("gallery-grid");
             const loadMoreBtn = document.getElementById("load-more");
             const modal = document.getElementById("modal");
             const modalImg = document.getElementById("modal-img");
             const modalLocation = document.getElementById("modal-location");
+            const modalDate = document.getElementById("modal-date");
             const modalTime = document.getElementById("modal-time");
             const modalCounter = document.getElementById("modal-counter");
+            const prevThumb = document.querySelector(".prev-thumb");
+            const nextThumb = document.querySelector(".next-thumb");
             const closeBtn = document.querySelector(".close");
             const prevButton = document.querySelector(".prev-button");
             const nextButton = document.querySelector(".next-button");
@@ -1058,8 +1256,34 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 const photo = allPhotos[currentIndex];
                 if (modalImg) modalImg.src = photo.src;
                 if (modalLocation) modalLocation.textContent = photo.location || 'Unknown Location';
-                if (modalTime) modalTime.textContent = `${photo.date} ${photo.time}` || 'Unknown Time';
+                if (modalDate) modalDate.textContent = photo.date || 'Unknown Date';
+                if (modalTime) modalTime.textContent = photo.time || 'Unknown Time';
                 if (modalCounter) modalCounter.textContent = `${currentIndex + 1} / ${allPhotos.length}`;
+                
+                // Küçük resimleri güncelle
+                updateThumbnails();
+            }
+
+            function updateThumbnails() {
+                const prevIndex = (currentIndex - 1 + allPhotos.length) % allPhotos.length;
+                const nextIndex = (currentIndex + 1) % allPhotos.length;
+                
+                if (prevThumb) {
+                    prevThumb.src = allPhotos[prevIndex].src;
+                    // Küçük resimlere tıklama olayı ekle
+                    prevThumb.onclick = () => {
+                        currentIndex = prevIndex;
+                        updateModal();
+                    };
+                }
+                
+                if (nextThumb) {
+                    nextThumb.src = allPhotos[nextIndex].src;
+                    nextThumb.onclick = () => {
+                        currentIndex = nextIndex;
+                        updateModal();
+                    };
+                }
             }
 
             function nextPhoto() {
