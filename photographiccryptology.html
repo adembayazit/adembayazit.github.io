@@ -510,6 +510,11 @@
             justify-content: center;
             align-items: center;
             margin-bottom: 15px;
+            cursor: grab;
+        }
+        
+        .modal-image-wrapper:active {
+            cursor: grabbing;
         }
         
         .modal-content {
@@ -707,6 +712,54 @@
             display: none;
         }
         
+        /* YENİ: Kaydırma okları - sadece zoom yapıldığında görünecek */
+        .scroll-arrows {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        .modal-content.zoomed ~ .scroll-arrows {
+            display: block;
+        }
+        
+        .scroll-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            pointer-events: auto;
+        }
+        
+        .scroll-arrow:hover {
+            background-color: rgba(0, 255, 0, 0.5);
+            color: var(--primary-color);
+        }
+        
+        .scroll-left {
+            left: 20px;
+        }
+        
+        .scroll-right {
+            right: 20px;
+        }
+        
         /* Analysis section */
         .analysis-container {
             display: grid;
@@ -900,6 +953,20 @@
             .artist-work-image-container {
                 height: 250px;
             }
+            
+            .scroll-arrow {
+                width: 35px;
+                height: 35px;
+                font-size: 20px;
+            }
+            
+            .scroll-left {
+                left: 10px;
+            }
+            
+            .scroll-right {
+                right: 10px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -940,6 +1007,12 @@
                 font-size: 12px;
                 padding: 5px 10px;
                 min-width: 60px;
+            }
+            
+            .scroll-arrow {
+                width: 30px;
+                height: 30px;
+                font-size: 18px;
             }
         }
         
@@ -1028,9 +1101,18 @@
                 <div class="modal-image-section">
                     <div class="modal-image-wrapper">
                         <img class="modal-content" id="enlargedImage">
+                        <!-- YENİ: Kaydırma okları -->
+                        <div class="scroll-arrows">
+                            <button class="scroll-arrow scroll-left" id="scrollLeftBtn">
+                                <i class="bx bx-chevron-left"></i>
+                            </button>
+                            <button class="scroll-arrow scroll-right" id="scrollRightBtn">
+                                <i class="bx bx-chevron-right"></i>
+                            </button>
+                        </div>
                     </div>
                     
-                    <!-- YENİ: Kontroller çubuğu - fotoğrafın hemen altında -->
+                    <!-- Kontroller çubuğu - fotoğrafın hemen altında -->
                     <div class="modal-controls">
                         <button class="modal-nav prev" id="prevBtn">&lt;</button>
                         
@@ -1498,6 +1580,9 @@
             const zoomInBtn = document.getElementById("zoomIn");
             const zoomOutBtn = document.getElementById("zoomOut");
             const resetZoomBtn = document.getElementById("resetZoom");
+            const scrollLeftBtn = document.getElementById("scrollLeftBtn");
+            const scrollRightBtn = document.getElementById("scrollRightBtn");
+            const modalImageWrapper = document.querySelector('.modal-image-wrapper');
             
             // Generate photo gallery from data
             const photoGallery = document.getElementById("photoGallery");
@@ -1574,10 +1659,28 @@
                             closeModal();
                             break;
                         case 'ArrowLeft':
-                            navigatePrev();
+                            if (isZoomed) {
+                                scrollImage(-100, 0);
+                            } else {
+                                navigatePrev();
+                            }
                             break;
                         case 'ArrowRight':
-                            navigateNext();
+                            if (isZoomed) {
+                                scrollImage(100, 0);
+                            } else {
+                                navigateNext();
+                            }
+                            break;
+                        case 'ArrowUp':
+                            if (isZoomed) {
+                                scrollImage(0, -100);
+                            }
+                            break;
+                        case 'ArrowDown':
+                            if (isZoomed) {
+                                scrollImage(0, 100);
+                            }
                             break;
                     }
                 }
@@ -1616,6 +1719,58 @@
                 resetZoom();
             });
             
+            // Scroll functionality
+            scrollLeftBtn.addEventListener('click', function() {
+                scrollImage(-100, 0);
+            });
+            
+            scrollRightBtn.addEventListener('click', function() {
+                scrollImage(100, 0);
+            });
+            
+            // Mouse drag functionality for scrolling zoomed image
+            let isDragging = false;
+            let startX, startY, scrollLeft, scrollTop;
+            
+            modalImageWrapper.addEventListener('mousedown', function(e) {
+                if (isZoomed) {
+                    isDragging = true;
+                    startX = e.pageX - modalImageWrapper.offsetLeft;
+                    startY = e.pageY - modalImageWrapper.offsetTop;
+                    scrollLeft = modalImageWrapper.scrollLeft;
+                    scrollTop = modalImageWrapper.scrollTop;
+                    modalImageWrapper.style.cursor = 'grabbing';
+                }
+            });
+            
+            modalImageWrapper.addEventListener('mouseleave', function() {
+                isDragging = false;
+                modalImageWrapper.style.cursor = 'grab';
+            });
+            
+            modalImageWrapper.addEventListener('mouseup', function() {
+                isDragging = false;
+                modalImageWrapper.style.cursor = 'grab';
+            });
+            
+            modalImageWrapper.addEventListener('mousemove', function(e) {
+                if (!isDragging || !isZoomed) return;
+                e.preventDefault();
+                const x = e.pageX - modalImageWrapper.offsetLeft;
+                const y = e.pageY - modalImageWrapper.offsetTop;
+                const walkX = (x - startX) * 2;
+                const walkY = (y - startY) * 2;
+                modalImageWrapper.scrollLeft = scrollLeft - walkX;
+                modalImageWrapper.scrollTop = scrollTop - walkY;
+            });
+            
+            function scrollImage(x, y) {
+                if (isZoomed) {
+                    modalImageWrapper.scrollLeft += x;
+                    modalImageWrapper.scrollTop += y;
+                }
+            }
+            
             function zoomIn() {
                 if (currentScale < 3) {
                     currentScale += 0.25;
@@ -1645,6 +1800,11 @@
                 if (currentScale > 1) {
                     modalImg.classList.add('zoomed');
                     isZoomed = true;
+                    // Center the image when zooming in
+                    setTimeout(() => {
+                        modalImageWrapper.scrollLeft = (modalImageWrapper.scrollWidth - modalImageWrapper.clientWidth) / 2;
+                        modalImageWrapper.scrollTop = (modalImageWrapper.scrollHeight - modalImageWrapper.clientHeight) / 2;
+                    }, 10);
                 } else {
                     modalImg.classList.remove('zoomed');
                     isZoomed = false;
@@ -1698,6 +1858,8 @@
                 modalImg.style.transform = 'scale(1)';
                 modalImg.classList.remove('zoomed');
                 isZoomed = false;
+                modalImageWrapper.scrollLeft = 0;
+                modalImageWrapper.scrollTop = 0;
             }
             
             function updateNavButtons() {
