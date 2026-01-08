@@ -1085,6 +1085,22 @@
             
             <div class="subscription-message" id="subscriptionMessage"></div>
         </section>
+        
+        <!-- Reset Cache Button -->
+        <div style="text-align: center; margin-top: 20px; padding: 20px;">
+            <button id="resetCacheBtn" style="
+                background: transparent;
+                color: #ff6b6b;
+                border: 1px solid #ff6b6b;
+                padding: 8px 16px;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 0.9rem;
+                transition: all 0.3s ease;
+            ">
+                <i class="fas fa-redo"></i> Reset Cache & Sync
+            </button>
+        </div>
     </div>
 
     <div class="modal" id="verificationModal">
@@ -1114,7 +1130,7 @@
 
     <footer style="text-align: center; padding: 20px; font-size: 14px; color: white; margin-top: 50px;">
         <hr style="margin-bottom: 10px; border-color: limegreen;" />
-        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.4 | January 2026</p>
+        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.5 | January 2026</p>
     </footer>
 
     <script src="/JAVASCRIPT/monitor.js"></script>
@@ -1135,6 +1151,167 @@
             }
         };
         
+        // DataManager Sınıfı
+        class ArticleDataManager {
+            constructor() {
+                this.localData = {
+                    views: JSON.parse(localStorage.getItem('articleViews') || '{}'),
+                    likes: JSON.parse(localStorage.getItem('userLikedArticles') || '{}'),
+                    sessionViews: JSON.parse(sessionStorage.getItem('sessionViewedArticles') || '{}')
+                };
+                this.pendingUpdates = [];
+                this.isSyncing = false;
+                this.lastSyncTime = 0;
+                this.SYNC_INTERVAL = 30000; // 30 saniyede bir sync
+                this.QUEUE_PROCESS_INTERVAL = 5000; // 5 saniyede bir queue işle
+            }
+
+            async syncWithServer() {
+                if (this.isSyncing) return;
+                if (Date.now() - this.lastSyncTime < this.SYNC_INTERVAL) return;
+
+                this.isSyncing = true;
+                
+                try {
+                    // Mevcut sunucu verisini al
+                    const serverData = await fetchViaProxy('/latest', 'GET', null, CONFIG.ARTICLES_BIN_ID);
+                    const serverArticles = serverData.articles || serverData.records || serverData;
+                    
+                    // Yerel değişiklikleri birleştir
+                    const mergedArticles = this.mergeData(serverArticles, articlesData || []);
+                    
+                    // Sunucuya gönder
+                    await fetchViaProxy('', 'PUT', { 
+                        articles: mergedArticles,
+                        lastSynced: new Date().toISOString()
+                    }, CONFIG.ARTICLES_BIN_ID);
+                    
+                    // Yerel veriyi güncelle
+                    articlesData = mergedArticles;
+                    this.lastSyncTime = Date.now();
+                    
+                    console.log('Data sync completed successfully');
+                } catch (error) {
+                    console.error('Sync error:', error);
+                    // Hata durumunda pending updates'i koru
+                } finally {
+                    this.isSyncing = false;
+                }
+            }
+
+            mergeData(serverData, localData) {
+                const merged = [...serverData];
+                
+                // Her makale için birleştirme yap
+                merged.forEach((serverArticle, index) => {
+                    const localArticle = localData.find(a => a.id === serverArticle.id);
+                    if (localArticle) {
+                        // Views: En yüksek değeri al
+                        merged[index].views = Math.max(
+                            serverArticle.views || 0,
+                            localArticle.views || 0,
+                            this.localData.views[serverArticle.id] || 0
+                        );
+                        
+                        // Likes: En yüksek değeri al
+                        merged[index].likes = Math.max(
+                            serverArticle.likes || 0,
+                            localArticle.likes || 0
+                        );
+                    }
+                });
+                
+                return merged;
+            }
+
+            queueUpdate(articleId, type, value) {
+                this.pendingUpdates.push({
+                    articleId,
+                    type,
+                    value,
+                    timestamp: Date.now()
+                });
+                
+                // Queue'yu işle
+                setTimeout(() => this.processQueue(), this.QUEUE_PROCESS_INTERVAL);
+            }
+
+            async processQueue() {
+                if (this.pendingUpdates.length === 0 || this.isSyncing) return;
+                
+                this.isSyncing = true;
+                
+                try {
+                    const updates = [...this.pendingUpdates];
+                    this.pendingUpdates = [];
+                    
+                    // Sunucu verisini al
+                    const serverData = await fetchViaProxy('/latest', 'GET', null, CONFIG.ARTICLES_BIN_ID);
+                    let articles = serverData.articles || serverData.records || serverData;
+                    
+                    // Queue'daki güncellemeleri uygula
+                    updates.forEach(update => {
+                        const articleIndex = articles.findIndex(a => a.id == update.articleId);
+                        if (articleIndex !== -1) {
+                            if (update.type === 'view') {
+                                articles[articleIndex].views = (articles[articleIndex].views || 0) + update.value;
+                            } else if (update.type === 'like') {
+                                articles[articleIndex].likes = (articles[articleIndex].likes || 0) + update.value;
+                            }
+                        }
+                    });
+                    
+                    // Sunucuya gönder
+                    await fetchViaProxy('', 'PUT', { 
+                        articles: articles,
+                        lastUpdated: new Date().toISOString()
+                    }, CONFIG.ARTICLES_BIN_ID);
+                    
+                    // Lokal veriyi güncelle
+                    articlesData = articles;
+                    
+                    console.log('Queue processed successfully:', updates.length, 'updates');
+                } catch (error) {
+                    console.error('Queue processing error:', error);
+                    // Başarısız olanları tekrar queue'ya ekle
+                    this.pendingUpdates.push(...updates);
+                } finally {
+                    this.isSyncing = false;
+                }
+            }
+
+            // Cache temizleme
+            clearStaleCache() {
+                const now = Date.now();
+                const oneWeekAgo = now - (7 * 24 * 60 * 60 * 1000);
+                
+                // Eski session temizle (30 dakikadan eski)
+                Object.keys(sessionStorage).forEach(key => {
+                    if (key.startsWith('viewed_')) {
+                        const timestamp = parseInt(sessionStorage.getItem(key));
+                        if (timestamp && (now - timestamp) > (30 * 60 * 1000)) {
+                            sessionStorage.removeItem(key);
+                        }
+                    }
+                });
+                
+                // Eski rate limit temizle (1 haftadan eski)
+                Object.keys(localStorage).forEach(key => {
+                    if (key.startsWith('liked_')) {
+                        const timestamp = parseInt(localStorage.getItem(key));
+                        if (timestamp && timestamp < oneWeekAgo) {
+                            localStorage.removeItem(key);
+                        }
+                    }
+                });
+                
+                console.log('Cache cleaned');
+            }
+        }
+
+        // DataManager instance'ı oluştur
+        const dataManager = new ArticleDataManager();
+        
         let articlesData = [];
         let currentArticle = null;
         let isTranslated = false;
@@ -1142,10 +1319,6 @@
         let verificationCode = null;
         let countdownTimer = null;
         let carouselCurrentIndex = 0;
-        
-        let userLikedArticles = JSON.parse(localStorage.getItem('userLikedArticles') || '{}');
-        let articleViews = JSON.parse(localStorage.getItem('articleViews') || '{}');
-        let sessionViewedArticles = JSON.parse(sessionStorage.getItem('sessionViewedArticles') || '{}');
         
         async function fetchViaProxy(path, method = 'GET', body = null, binId = null) {
             const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
@@ -1181,65 +1354,79 @@
         
         async function loadArticlesData() {
             try {
-                const result = await fetchViaProxy('/latest', 'GET', null, CONFIG.ARTICLES_BIN_ID);
-                articlesData = result.articles || result.records || result;
-                
-                articlesData.forEach(article => {
-                    if (article.id) {
-                        article.views = article.views || articleViews[article.id] || 0;
-                        article.likes = article.likes || 0;
-                    }
-                });
-                
-                articlesData.sort((a, b) => new Date(b.published_date || b.date) - new Date(a.published_date || a.date));
-                
+                // Önce yerel veriyi göster (hızlı yükleme)
                 renderArticlesList();
                 
+                // Sunucudan veriyi al
+                const result = await fetchViaProxy('/latest', 'GET', null, CONFIG.ARTICLES_BIN_ID);
+                const serverArticles = result.articles || result.records || result;
+                
+                // DataManager ile birleştir
+                articlesData = dataManager.mergeData(serverArticles, articlesData || []);
+                
+                // UI'ı güncelle
+                renderArticlesList();
+                
+                // Aktif makaleyi yükle
                 if (window.location.hash) {
                     const articleId = window.location.hash.substring(1);
                     loadArticleDetail(articleId);
-                } else {
-                    if (articlesData.length > 0) {
-                        const latestArticle = articlesData[0];
-                        loadArticleDetail(latestArticle.id);
-                        
-                        history.replaceState(null, null, `#${latestArticle.id}`);
-                        
-                        setTimeout(() => {
-                            document.querySelectorAll('.article-item').forEach(item => {
-                                item.classList.remove('active');
-                                if (item.dataset.id == latestArticle.id) {
-                                    item.classList.add('active');
-                                }
-                            });
-                        }, 100);
-                    }
+                } else if (articlesData.length > 0) {
+                    const latestArticle = articlesData[0];
+                    loadArticleDetail(latestArticle.id);
+                    history.replaceState(null, null, `#${latestArticle.id}`);
+                    
+                    setTimeout(() => {
+                        document.querySelectorAll('.article-item').forEach(item => {
+                            item.classList.remove('active');
+                            if (item.dataset.id == latestArticle.id) {
+                                item.classList.add('active');
+                            }
+                        });
+                    }, 100);
                 }
+                
+                // İlk sync'i başlat
+                setTimeout(() => dataManager.syncWithServer(), 2000);
+                
             } catch (error) {
                 console.error('Error loading articles data:', error);
-                document.getElementById('articlesList').innerHTML = 
-                    '<li class="article-item">Error loading articles. Please try again later.</li>';
+                
+                // Fallback: Sadece yerel veriyi göster
+                if (articlesData && articlesData.length > 0) {
+                    renderArticlesList();
+                    showToast('Showing cached articles', 3000);
+                } else {
+                    document.getElementById('articlesList').innerHTML = 
+                        '<li class="article-item">Error loading articles. Please try again later.</li>';
+                }
             }
         }
         
         async function updateViewCount(articleId) {
             if (!articleId) return;
             
-            if (sessionViewedArticles[articleId]) {
-                return;
+            // Session kontrolü - 30 dakika timeout
+            const sessionKey = `viewed_${articleId}`;
+            const lastViewed = sessionStorage.getItem(sessionKey);
+            const now = Date.now();
+            
+            if (lastViewed && (now - parseInt(lastViewed)) < 30 * 60 * 1000) {
+                return; // 30 dakika içinde tekrar sayma
             }
             
-            sessionViewedArticles[articleId] = true;
-            sessionStorage.setItem('sessionViewedArticles', JSON.stringify(sessionViewedArticles));
+            sessionStorage.setItem(sessionKey, now.toString());
             
             const article = articlesData.find(a => a.id == articleId);
             if (!article) return;
             
+            // Yerel olarak artır
             article.views = (article.views || 0) + 1;
             
-            articleViews[articleId] = article.views;
-            localStorage.setItem('articleViews', JSON.stringify(articleViews));
+            // DataManager'e ekle (queue'ya al)
+            dataManager.queueUpdate(articleId, 'view', 1);
             
+            // UI güncelle
             const viewElement = document.querySelector(`#views-${articleId}`);
             if (viewElement) {
                 viewElement.innerHTML = `<i class="far fa-eye"></i> ${article.views}`;
@@ -1252,16 +1439,8 @@
                 }
             }
             
-            try {
-                const articleIndex = articlesData.findIndex(a => a.id == articleId);
-                if (articleIndex !== -1) {
-                    await fetchViaProxy('', 'PUT', { 
-                        articles: articlesData 
-                    }, CONFIG.ARTICLES_BIN_ID);
-                }
-            } catch (error) {
-                console.error('Error updating view count in JSONBin:', error);
-            }
+            // Optimistik güncelleme - hemen göster
+            showToast('View counted!', 1000);
         }
         
         async function handleLike(articleId) {
@@ -1270,19 +1449,37 @@
             const article = articlesData.find(a => a.id == articleId);
             if (!article) return;
             
-            if (userLikedArticles[articleId]) {
+            // Rate limiting - 5 saniyede bir like
+            const likeKey = `liked_${articleId}`;
+            const lastLiked = localStorage.getItem(likeKey);
+            const now = Date.now();
+            
+            if (lastLiked && (now - parseInt(lastLiked)) < 5000) {
+                showToast('Please wait before liking again');
+                return;
+            }
+            
+            // Kullanıcı daha önce beğenmiş mi kontrol et
+            const userLikeKey = `user_like_${articleId}`;
+            if (localStorage.getItem(userLikeKey)) {
                 showToast('You already liked this article');
                 return;
             }
             
+            localStorage.setItem(userLikeKey, 'true');
+            localStorage.setItem(likeKey, now.toString());
+            
+            // Yerel olarak artır
             article.likes = (article.likes || 0) + 1;
             
-            userLikedArticles[articleId] = true;
-            localStorage.setItem('userLikedArticles', JSON.stringify(userLikedArticles));
+            // DataManager'e ekle (queue'ya al)
+            dataManager.queueUpdate(articleId, 'like', 1);
             
+            // UI güncelle
             const likeElement = document.querySelector(`#likes-${articleId}`);
             if (likeElement) {
                 likeElement.innerHTML = `<i class="fas fa-heart"></i> ${article.likes}`;
+                likeElement.style.color = '#ff6b6b';
             }
             
             if (currentArticle && currentArticle.id == articleId) {
@@ -1290,22 +1487,22 @@
                 if (detailLikeBtn) {
                     detailLikeBtn.innerHTML = `<i class="fas fa-heart"></i> ${article.likes} likes`;
                     detailLikeBtn.disabled = true;
+                    detailLikeBtn.style.color = '#ff6b6b';
+                    detailLikeBtn.style.cursor = 'default';
                     detailLikeBtn.onclick = null;
                 }
             }
             
-            showToast('Article liked!');
-            
-            try {
-                const articleIndex = articlesData.findIndex(a => a.id == articleId);
-                if (articleIndex !== -1) {
-                    await fetchViaProxy('', 'PUT', { 
-                        articles: articlesData 
-                    }, CONFIG.ARTICLES_BIN_ID);
-                }
-            } catch (error) {
-                console.error('Error updating likes in JSONBin:', error);
+            // Animasyon efekti
+            const heartIcon = document.querySelector(`#likes-${articleId} i`);
+            if (heartIcon) {
+                heartIcon.style.transform = 'scale(1.5)';
+                setTimeout(() => {
+                    heartIcon.style.transform = 'scale(1)';
+                }, 300);
             }
+            
+            showToast('Article liked!');
         }
         
         function createCarousel(images) {
@@ -1353,7 +1550,10 @@
             
             carouselCurrentIndex = (carouselCurrentIndex + 1) % items.length;
             
-            document.getElementById('carouselInner').style.transform = `translateX(-${carouselCurrentIndex * 100}%)`;
+            const carouselInner = document.getElementById('carouselInner');
+            if (carouselInner) {
+                carouselInner.style.transform = `translateX(-${carouselCurrentIndex * 100}%)`;
+            }
             
             items.forEach((item, index) => {
                 item.classList.toggle('active', index === carouselCurrentIndex);
@@ -1371,7 +1571,10 @@
             
             carouselCurrentIndex = (carouselCurrentIndex - 1 + items.length) % items.length;
             
-            document.getElementById('carouselInner').style.transform = `translateX(-${carouselCurrentIndex * 100}%)`;
+            const carouselInner = document.getElementById('carouselInner');
+            if (carouselInner) {
+                carouselInner.style.transform = `translateX(-${carouselCurrentIndex * 100}%)`;
+            }
             
             items.forEach((item, index) => {
                 item.classList.toggle('active', index === carouselCurrentIndex);
@@ -1389,7 +1592,10 @@
             
             carouselCurrentIndex = index;
             
-            document.getElementById('carouselInner').style.transform = `translateX(-${carouselCurrentIndex * 100}%)`;
+            const carouselInner = document.getElementById('carouselInner');
+            if (carouselInner) {
+                carouselInner.style.transform = `translateX(-${carouselCurrentIndex * 100}%)`;
+            }
             
             items.forEach((item, i) => {
                 item.classList.toggle('active', i === carouselCurrentIndex);
@@ -1402,6 +1608,8 @@
         
         function renderArticlesList() {
             const articlesList = document.getElementById('articlesList');
+            if (!articlesList) return;
+            
             articlesList.innerHTML = '';
             
             if (articlesData.length === 0) {
@@ -1427,7 +1635,7 @@
                 
                 const views = article.views || 0;
                 const likes = article.likes || 0;
-                const hasLiked = userLikedArticles[article.id];
+                const hasLiked = localStorage.getItem(`user_like_${article.id}`);
                 
                 let translationIndicator = '';
                 if (article.content_tr) {
@@ -1492,7 +1700,7 @@
             
             const views = article.views || 0;
             const likes = article.likes || 0;
-            const hasLiked = userLikedArticles[article.id];
+            const hasLiked = localStorage.getItem(`user_like_${article.id}`);
             
             let tagsHtml = '';
             if (article.tags && article.tags.length > 0) {
@@ -1550,7 +1758,9 @@
             
             if (article.content_tr) {
                 const translationToggle = document.getElementById('translationToggle');
-                translationToggle.addEventListener('click', toggleTranslation);
+                if (translationToggle) {
+                    translationToggle.addEventListener('click', toggleTranslation);
+                }
             }
             
             document.querySelectorAll('.article-item').forEach(item => {
@@ -1571,6 +1781,8 @@
             const translationToggle = document.getElementById('translationToggle');
             const articleTitle = document.getElementById('articleTitleText');
             const articleBody = document.getElementById('articleBody');
+            
+            if (!translationToggle || !articleTitle || !articleBody) return;
             
             if (!isTranslated) {
                 articleTitle.textContent = currentArticle.title_tr || currentArticle.title;
@@ -1738,7 +1950,13 @@
             const countdownElement = document.getElementById('countdown');
             let timeLeft = 60;
             
+            if (!resendLink || !countdownElement) return;
+            
             resendLink.classList.add('disabled');
+            
+            if (countdownTimer) {
+                clearInterval(countdownTimer);
+            }
             
             countdownTimer = setInterval(() => {
                 countdownElement.textContent = `(${timeLeft}s)`;
@@ -1746,6 +1964,7 @@
                 
                 if (timeLeft < 0) {
                     clearInterval(countdownTimer);
+                    countdownTimer = null;
                     resendLink.classList.remove('disabled');
                     countdownElement.textContent = '';
                 }
@@ -1834,6 +2053,8 @@
         
         function showSubscriptionMessage(message, type) {
             const messageElement = document.getElementById('subscriptionMessage');
+            if (!messageElement) return;
+            
             messageElement.textContent = message;
             messageElement.className = `subscription-message subscription-${type}`;
             messageElement.style.display = 'block';
@@ -1846,6 +2067,8 @@
         async function handleSubscription(email) {
             const messageElement = document.getElementById('subscriptionMessage');
             const subscribeBtn = document.getElementById('subscribeBtn');
+            
+            if (!messageElement || !subscribeBtn) return false;
             
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
@@ -1877,6 +2100,8 @@
             const category = document.getElementById('mobileCategoryFilter').value;
             
             const articlesList = document.getElementById('articlesList');
+            if (!articlesList) return;
+            
             articlesList.innerHTML = '';
             
             const filteredArticles = articlesData.filter(article => {
@@ -1911,7 +2136,7 @@
                 
                 const views = article.views || 0;
                 const likes = article.likes || 0;
-                const hasLiked = userLikedArticles[article.id];
+                const hasLiked = localStorage.getItem(`user_like_${article.id}`);
                 
                 let translationIndicator = '';
                 if (article.content_tr) {
@@ -1949,7 +2174,27 @@
             });
         }
         
+        // Düzenli sync (her 30 saniyede bir)
+        setInterval(() => {
+            dataManager.syncWithServer();
+        }, 30000);
+        
+        // Sayfa görünür olduğunda sync
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                dataManager.syncWithServer();
+            }
+        });
+        
+        // Cache temizleme (her saat)
+        setInterval(() => {
+            dataManager.clearStaleCache();
+        }, 60 * 60 * 1000);
+        
         document.addEventListener('DOMContentLoaded', function() {
+            // İlk cache temizleme
+            dataManager.clearStaleCache();
+            
             loadArticlesData();
             
             window.addEventListener('hashchange', function() {
@@ -2013,11 +2258,52 @@
                 });
             }
             
+            const resetCacheBtn = document.getElementById('resetCacheBtn');
+            if (resetCacheBtn) {
+                resetCacheBtn.addEventListener('click', async function() {
+                    if (confirm('This will reset your local cache and resync with server. Continue?')) {
+                        // Cache temizle
+                        localStorage.removeItem('articleViews');
+                        localStorage.removeItem('userLikedArticles');
+                        sessionStorage.removeItem('sessionViewedArticles');
+                        
+                        // Tüm like kayıtlarını temizle
+                        Object.keys(localStorage).forEach(key => {
+                            if (key.startsWith('user_like_') || key.startsWith('liked_')) {
+                                localStorage.removeItem(key);
+                            }
+                        });
+                        
+                        // Tüm session kayıtlarını temizle
+                        Object.keys(sessionStorage).forEach(key => {
+                            if (key.startsWith('viewed_')) {
+                                sessionStorage.removeItem(key);
+                            }
+                        });
+                        
+                        // Veriyi yeniden yükle
+                        await loadArticlesData();
+                        
+                        showToast('Cache reset and resynced');
+                    }
+                });
+            }
+            
             window.addEventListener('click', function(event) {
                 const modal = document.getElementById('verificationModal');
                 if (event.target === modal) {
                     hideVerificationModal();
                 }
+            });
+            
+            // Online/Offline durumunu izle
+            window.addEventListener('online', function() {
+                showToast('Back online. Syncing data...', 2000);
+                dataManager.syncWithServer();
+            });
+            
+            window.addEventListener('offline', function() {
+                showToast('You are offline. Using cached data.', 3000);
             });
         });
     </script>
