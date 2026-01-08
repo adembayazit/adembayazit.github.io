@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Article Test – Adem Bayazıt</title>
+
+<title>Makale | Adem Bayazıt</title>
+<meta name="description" content="Adem Bayazıt – Siber Güvenlik, SOC, Blue Team teknik makaleleri">
+<meta name="author" content="Adem Bayazıt">
 
 <link rel="icon" type="image/png" href="/IMAGES/ab.png">
 <link rel="stylesheet" href="/CSS/style.css">
@@ -11,134 +14,123 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-:root{
-  --border-color: limegreen;
-  --primary-color: limegreen;
-  --text-color: #fff;
-  --card-bg: rgba(0,0,0,.7);
+/* ===== ARTICLE STYLES ===== */
+.article-header h1{
+  font-size:32px;
+  margin-bottom:6px;
 }
-
-.page-container{
-  display:flex;
-  max-width:1200px;
-  margin:80px auto;
-  padding:0 15px;
-}
-
-.main-content{
-  flex:1;
-  max-width:800px;
-  margin:auto;
-}
-
-.entries-container{
-  background:rgba(10,25,20,.7);
-  border:1px solid var(--border-color);
-  border-radius:20px;
-  padding:20px;
-  box-shadow:0 0 20px rgba(0,255,0,.15);
-}
-
-.article-title{
-  font-size:28px;
-  margin-bottom:5px;
-}
-
 .article-subtitle{
-  font-size:15px;
   color:#90ee90;
-  margin-bottom:15px;
+  margin-bottom:10px;
 }
-
 .article-meta{
-  font-size:12px;
+  font-size:13px;
   color:#90ee90;
   display:flex;
   gap:15px;
+  flex-wrap:wrap;
   margin-bottom:20px;
 }
-
 .article-cover img{
   width:100%;
-  border-radius:10px;
-  margin-bottom:20px;
+  border-radius:12px;
   border:1px solid rgba(0,255,0,.3);
+  margin-bottom:25px;
 }
-
-.content img{
-  max-width:100%;
-  border-radius:8px;
-  margin:10px 0;
-  cursor:pointer;
+.article-content{
+  line-height:1.8;
+  font-size:16px;
 }
-
-.image-slider{
-  position:relative;
-  overflow:hidden;
-  border-radius:8px;
-  aspect-ratio:16/9;
-}
-
-.slider-container{
-  display:flex;
-  transition:.4s;
-}
-
-.slider-item{
-  min-width:100%;
-}
-
-.slider-item img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
-
-.slider-nav{
-  position:absolute;
-  top:50%;
-  width:100%;
-  display:flex;
-  justify-content:space-between;
-  transform:translateY(-50%);
-}
-
-.slider-btn{
-  background:rgba(0,0,0,.7);
-  border:none;
+.article-content h2{
+  margin-top:30px;
   color:lime;
-  font-size:24px;
-  width:40px;
-  height:40px;
-  border-radius:50%;
+}
+.article-content img{
+  width:100%;
+  border-radius:8px;
+  margin:15px 0;
   cursor:pointer;
 }
-
-.tag{
+.article-footer{
+  margin-top:40px;
+  padding-top:20px;
+  border-top:1px solid rgba(0,255,0,.3);
+}
+.article-tags span{
   display:inline-block;
-  margin:5px 5px 0 0;
+  margin:4px;
   padding:4px 10px;
-  border-radius:20px;
   border:1px solid limegreen;
+  border-radius:20px;
   font-size:12px;
   color:#90ee90;
+}
+.share-bar{
+  display:flex;
+  gap:15px;
+  margin-top:20px;
+}
+.share-btn{
+  cursor:pointer;
+  padding:8px 14px;
+  border-radius:20px;
+  border:1px solid limegreen;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.share-btn:hover{
+  background:rgba(0,255,0,.15);
+}
+.author-box{
+  margin-top:30px;
+  padding:15px;
+  border:1px solid rgba(0,255,0,.3);
+  border-radius:12px;
+  display:flex;
+  gap:15px;
+  align-items:center;
+}
+.author-box img{
+  width:60px;
 }
 </style>
 </head>
 
 <body>
 
+<!-- ===== MATRIX BACKGROUND ===== -->
+<canvas id="matrixCanvas"></canvas>
+
+<!-- ===== HEADER (AYNI) ===== -->
 <header class="header">
-  <a href="/" class="logo">
-    <img src="/IMAGES/hackerwhite.svg" style="height:24px"> {adembayazit}
-  </a>
+  <div class="logo-container">
+    <a href="/" class="logo">
+      <img src="/IMAGES/hackerwhite.svg" class="hackerwhite-icon">
+      {adembayazit}
+    </a>
+    <span class="logo-slogan">One step further every day…</span>
+  </div>
 </header>
 
+<!-- ===== PAGE ===== -->
 <div class="page-container">
+
+<!-- LEFT SIDEBAR (AYNI) -->
+<aside class="sidebar">
+  <div class="sidebar-widget">
+    <h3><i class="fas fa-book"></i> Articles</h3>
+    <p style="font-size:14px;color:#90ee90">
+      Uzun soluklu teknik analizler, saha notları ve araştırmalar.
+    </p>
+  </div>
+</aside>
+
+<!-- ===== MAIN ===== -->
 <main class="main-content">
 
-<a href="/" class="back-to-home">
-  <i class="bx bx-arrow-back"></i> Back
+<a href="/articles.html" class="back-to-home">
+  <i class="bx bx-arrow-back"></i> All Articles
 </a>
 
 <article class="entries-container" id="article">
@@ -146,23 +138,37 @@
 </article>
 
 </main>
+
+<!-- RIGHT SIDEBAR -->
+<aside class="right-sidebar">
+  <div class="sidebar-widget">
+    <h3><i class="fas fa-share-alt"></i> Share</h3>
+    <p style="font-size:13px;color:#90ee90">
+      Bu makaleyi paylaş
+    </p>
+  </div>
+</aside>
+
 </div>
 
-<footer style="text-align:center;margin-top:40px">
+<!-- ===== FOOTER ===== -->
+<footer style="text-align:center;padding:25px">
 <hr style="border-color:limegreen">
-<p>Design & Code by <strong>Adem Bayazıt</strong></p>
+<p>© Adem Bayazıt | Independent Researcher</p>
 </footer>
 
-<!-- MODAL -->
+<!-- ===== IMAGE MODAL ===== -->
 <div id="imageModal" class="modal">
-<span class="close">&times;</span>
-<img class="modal-content" id="modalImage">
+  <span class="close">&times;</span>
+  <img class="modal-content" id="modalImage">
 </div>
 
+<script src="/JAVASCRIPT/matrix.js"></script>
+
 <script>
-/* ================== CONFIG ================== */
+/* ================= CONFIG ================= */
 const ARTICLE_BIN_ID = "695f155c43b1c97be920c28d";
-const IMAGEKIT = "https://ik.imagekit.io/YOUR_IMAGEKIT_ID/";
+const IMAGEKIT_BASE = "https://ik.imagekit.io/IMAGEKIT_ID/";
 
 /* ============ JSONBIN PROXY ============ */
 async function fetchViaProxy(path, method="GET", body=null, binId=null){
@@ -176,34 +182,7 @@ async function fetchViaProxy(path, method="GET", body=null, binId=null){
   return r.json();
 }
 
-/* ============ SLIDER ============ */
-function createSlider(images){
-  const id="slider-"+Math.random().toString(36).slice(2);
-  return `
-  <div class="image-slider" id="${id}">
-    <div class="slider-container">
-      ${images.map(i=>`
-        <div class="slider-item">
-          <img src="${IMAGEKIT+i}">
-        </div>`).join("")}
-    </div>
-    <div class="slider-nav">
-      <button class="slider-btn" onclick="slide('${id}',-1)">‹</button>
-      <button class="slider-btn" onclick="slide('${id}',1)">›</button>
-    </div>
-  </div>`;
-}
-
-function slide(id,dir){
-  const s=document.getElementById(id);
-  const c=s.querySelector(".slider-container");
-  let i=s.dataset.i?+s.dataset.i:0;
-  i=(i+dir+c.children.length)%c.children.length;
-  c.style.transform=`translateX(-${i*100}%)`;
-  s.dataset.i=i;
-}
-
-/* ============ MODAL ============ */
+/* ============ IMAGE MODAL ============ */
 document.addEventListener("click",e=>{
   if(e.target.tagName==="IMG"){
     modalImage.src=e.target.src;
@@ -212,39 +191,81 @@ document.addEventListener("click",e=>{
 });
 document.querySelector(".close").onclick=()=>imageModal.style.display="none";
 
-/* ============ ARTICLE LOAD ============ */
+/* ============ SHARE ============ */
+function shareArticle(){
+  if(navigator.share){
+    navigator.share({
+      title:document.title,
+      url:location.href
+    });
+  }else{
+    navigator.clipboard.writeText(location.href);
+    alert("Link kopyalandı");
+  }
+}
+
+/* ============ LOAD ARTICLE ============ */
 async function loadArticle(){
   const slug=new URLSearchParams(location.search).get("slug");
   if(!slug) return;
 
   const data=await fetchViaProxy("/latest","GET",null,ARTICLE_BIN_ID);
   const a=data.articles.find(x=>x.slug===slug);
-  if(!a){article.innerHTML="Not found";return;}
+
+  if(!a){
+    article.innerHTML="Article not found";
+    return;
+  }
+
+  document.title = a.title+" | Adem Bayazıt";
 
   article.innerHTML=`
-    <h1 class="article-title">${a.title}</h1>
+  <div class="article-header">
+    <h1>${a.title}</h1>
     <div class="article-subtitle">${a.subtitle}</div>
     <div class="article-meta">
-      <span>${new Date(a.date).toLocaleDateString("tr-TR")}</span>
-      <span>${a.reading_time}</span>
+      <span><i class="fa fa-calendar"></i> ${new Date(a.date).toLocaleDateString("tr-TR")}</span>
+      <span><i class="fa fa-clock"></i> ${a.reading_time}</span>
+      <span><i class="fa fa-eye"></i> Research Article</span>
     </div>
-    <div class="article-cover">
-      <img src="${IMAGEKIT+a.cover}">
+  </div>
+
+  <div class="article-cover">
+    <img src="${IMAGEKIT_BASE+a.cover}">
+  </div>
+
+  <div class="article-content">
+    ${a.content}
+  </div>
+
+  <div class="article-footer">
+    <div class="article-tags">
+      ${a.tags.map(t=>`<span>#${t}</span>`).join("")}
     </div>
-    <div class="content">
-      ${a.content}
-      ${a.images?.length>1?createSlider(a.images):""}
+
+    <div class="share-bar">
+      <div class="share-btn" onclick="shareArticle()">
+        <i class="fa fa-share"></i> Share
+      </div>
+      <a class="share-btn" href="${a.source.url}" target="_blank">
+        <i class="fa-brands fa-linkedin"></i> LinkedIn
+      </a>
     </div>
-    <div>
-      ${a.tags.map(t=>`<span class="tag">#${t}</span>`).join("")}
+
+    <div class="author-box">
+      <img src="/IMAGES/hackerwhite.svg">
+      <div>
+        <strong>Adem Bayazıt</strong><br>
+        <span style="font-size:13px;color:#90ee90">
+          Cybersecurity Researcher · SOC · Blue Team
+        </span>
+      </div>
     </div>
-    <div style="margin-top:15px;font-size:12px">
-      🟦 İlk olarak <a href="${a.source.url}" target="_blank">LinkedIn</a>'de yayınlandı
-    </div>
+  </div>
   `;
 }
 
-loadArticle();
+document.addEventListener("DOMContentLoaded", loadArticle);
 </script>
 
 </body>
