@@ -193,6 +193,8 @@
             height: fit-content;
             position: sticky;
             top: 100px;
+            max-height: 80vh;
+            overflow-y: auto;
         }
         
         .sidebar-title {
@@ -213,6 +215,8 @@
         
         .articles-list {
             list-style: none;
+            max-height: 300px;
+            overflow-y: auto;
         }
         
         .article-item {
@@ -280,8 +284,9 @@
             position: absolute;
             top: 15px;
             right: 35px;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--border-color);
+            background: #ff4444;
+            color: white;
+            border: 1px solid #ff4444;
             border-radius: 3px;
             padding: 2px 5px;
             cursor: pointer;
@@ -388,19 +393,84 @@
             gap: 5px;
         }
         
-        .article-image-container {
+        .image-carousel {
+            position: relative;
             margin: 25px 0;
             border-radius: 8px;
             overflow: hidden;
             max-height: 400px;
         }
         
-        .article-image {
+        .carousel-inner {
+            display: flex;
+            transition: transform 0.5s ease;
+            height: 400px;
+        }
+        
+        .carousel-item {
+            min-width: 100%;
+            height: 100%;
+        }
+        
+        .carousel-item img {
             width: 100%;
-            height: auto;
-            max-height: 400px;
+            height: 100%;
             object-fit: cover;
-            display: block;
+        }
+        
+        .carousel-control {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        
+        .carousel-control:hover {
+            background: rgba(0, 255, 0, 0.7);
+        }
+        
+        .carousel-control.prev {
+            left: 15px;
+        }
+        
+        .carousel-control.next {
+            right: 15px;
+        }
+        
+        .carousel-indicators {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+        
+        .carousel-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            transition: background 0.3s;
+        }
+        
+        .carousel-indicator.active {
+            background: var(--primary-color);
         }
         
         .detail-body {
@@ -467,8 +537,9 @@
             position: absolute;
             top: 20px;
             right: 20px;
-            background: rgba(0, 255, 0, 0.1);
-            border: 1px solid var(--border-color);
+            background: #ff4444;
+            color: white;
+            border: 1px solid #ff4444;
             border-radius: 5px;
             padding: 8px 12px;
             cursor: pointer;
@@ -480,7 +551,7 @@
         }
         
         .detail-share:hover {
-            background: rgba(0, 255, 0, 0.2);
+            background: #ff2222;
             transform: translateY(-2px);
         }
         
@@ -786,6 +857,26 @@
             cursor: pointer;
         }
         
+        .article-item-stats {
+            display: flex;
+            gap: 10px;
+            margin-top: 5px;
+            font-size: 0.65rem;
+            color: var(--highlight-color);
+        }
+        
+        @media (min-width: 993px) {
+            .articles-sidebar {
+                max-height: 70vh;
+                overflow-y: auto;
+            }
+            
+            .articles-list {
+                max-height: none;
+                overflow-y: visible;
+            }
+        }
+        
         @media (max-width: 992px) {
             .articles-container {
                 flex-direction: column;
@@ -795,6 +886,7 @@
                 width: 100%;
                 position: static;
                 order: 2;
+                max-height: none;
             }
             
             .article-content {
@@ -820,6 +912,11 @@
             
             .article-title {
                 padding-right: 60px;
+            }
+            
+            .articles-list {
+                max-height: 250px;
+                overflow-y: auto;
             }
         }
         
@@ -877,6 +974,14 @@
             .article-share {
                 top: 15px;
                 right: 40px;
+            }
+            
+            .image-carousel {
+                max-height: 300px;
+            }
+            
+            .carousel-inner {
+                height: 300px;
             }
         }
         
@@ -1036,11 +1141,11 @@
         let pendingEmail = null;
         let verificationCode = null;
         let countdownTimer = null;
+        let carouselCurrentIndex = 0;
         
-        // LocalStorage'dan beğeni durumunu yükle
         let userLikedArticles = JSON.parse(localStorage.getItem('userLikedArticles') || '{}');
-        // LocalStorage'dan görüntüleme durumunu yükle (oturum başına değil, kalıcı)
         let articleViews = JSON.parse(localStorage.getItem('articleViews') || '{}');
+        let sessionViewedArticles = JSON.parse(sessionStorage.getItem('sessionViewedArticles') || '{}');
         
         async function fetchViaProxy(path, method = 'GET', body = null, binId = null) {
             const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
@@ -1079,10 +1184,8 @@
                 const result = await fetchViaProxy('/latest', 'GET', null, CONFIG.ARTICLES_BIN_ID);
                 articlesData = result.articles || result.records || result;
                 
-                // Her makaleye görüntüleme ve beğeni sayısını ekle
                 articlesData.forEach(article => {
                     if (article.id) {
-                        // JSONBin'den gelen verileri kullan, yoksa localStorage'dan al
                         article.views = article.views || articleViews[article.id] || 0;
                         article.likes = article.likes || 0;
                     }
@@ -1122,23 +1225,26 @@
         async function updateViewCount(articleId) {
             if (!articleId) return;
             
+            if (sessionViewedArticles[articleId]) {
+                return;
+            }
+            
+            sessionViewedArticles[articleId] = true;
+            sessionStorage.setItem('sessionViewedArticles', JSON.stringify(sessionViewedArticles));
+            
             const article = articlesData.find(a => a.id == articleId);
             if (!article) return;
             
-            // Görüntüleme sayısını artır
             article.views = (article.views || 0) + 1;
             
-            // LocalStorage'a kaydet
             articleViews[articleId] = article.views;
             localStorage.setItem('articleViews', JSON.stringify(articleViews));
             
-            // UI'ı güncelle
             const viewElement = document.querySelector(`#views-${articleId}`);
             if (viewElement) {
                 viewElement.innerHTML = `<i class="far fa-eye"></i> ${article.views}`;
             }
             
-            // Detay sayfasını güncelle
             if (currentArticle && currentArticle.id == articleId) {
                 const detailViewElement = document.querySelector('.article-stats-detail .views');
                 if (detailViewElement) {
@@ -1146,7 +1252,6 @@
                 }
             }
             
-            // JSONBin'e güncellemeyi arka planda yap (hata olsa da önemseme)
             try {
                 const articleIndex = articlesData.findIndex(a => a.id == articleId);
                 if (articleIndex !== -1) {
@@ -1165,26 +1270,21 @@
             const article = articlesData.find(a => a.id == articleId);
             if (!article) return;
             
-            // Kullanıcı zaten beğenmiş mi kontrol et
             if (userLikedArticles[articleId]) {
                 showToast('You already liked this article');
                 return;
             }
             
-            // Beğeni sayısını artır
             article.likes = (article.likes || 0) + 1;
             
-            // Kullanıcının beğenisini kaydet
             userLikedArticles[articleId] = true;
             localStorage.setItem('userLikedArticles', JSON.stringify(userLikedArticles));
             
-            // UI'ı güncelle
             const likeElement = document.querySelector(`#likes-${articleId}`);
             if (likeElement) {
                 likeElement.innerHTML = `<i class="fas fa-heart"></i> ${article.likes}`;
             }
             
-            // Detay sayfasını güncelle
             if (currentArticle && currentArticle.id == articleId) {
                 const detailLikeBtn = document.querySelector('.article-stats-detail .like-btn');
                 if (detailLikeBtn) {
@@ -1196,7 +1296,6 @@
             
             showToast('Article liked!');
             
-            // JSONBin'e güncellemeyi arka planda yap
             try {
                 const articleIndex = articlesData.findIndex(a => a.id == articleId);
                 if (articleIndex !== -1) {
@@ -1207,6 +1306,98 @@
             } catch (error) {
                 console.error('Error updating likes in JSONBin:', error);
             }
+        }
+        
+        function createCarousel(images) {
+            if (!images || images.length === 0) return '';
+            
+            if (images.length === 1) {
+                return `
+                    <div class="image-carousel">
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <img src="${images[0]}" alt="Article image">
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            let indicators = '';
+            for (let i = 0; i < images.length; i++) {
+                indicators += `<button class="carousel-indicator ${i === 0 ? 'active' : ''}" onclick="goToSlide(${i})"></button>`;
+            }
+            
+            return `
+                <div class="image-carousel">
+                    <div class="carousel-inner" id="carouselInner">
+                        ${images.map((img, index) => `
+                            <div class="carousel-item ${index === 0 ? 'active' : ''}">
+                                <img src="${img}" alt="Article image ${index + 1}">
+                            </div>
+                        `).join('')}
+                    </div>
+                    <button class="carousel-control prev" onclick="prevSlide()">❮</button>
+                    <button class="carousel-control next" onclick="nextSlide()">❯</button>
+                    <div class="carousel-indicators" id="carouselIndicators">
+                        ${indicators}
+                    </div>
+                </div>
+            `;
+        }
+        
+        function nextSlide() {
+            const items = document.querySelectorAll('.carousel-item');
+            const indicators = document.querySelectorAll('.carousel-indicator');
+            if (items.length === 0) return;
+            
+            carouselCurrentIndex = (carouselCurrentIndex + 1) % items.length;
+            
+            document.getElementById('carouselInner').style.transform = `translateX(-${carouselCurrentIndex * 100}%)`;
+            
+            items.forEach((item, index) => {
+                item.classList.toggle('active', index === carouselCurrentIndex);
+            });
+            
+            indicators.forEach((indicator, index) => {
+                indicator.classList.toggle('active', index === carouselCurrentIndex);
+            });
+        }
+        
+        function prevSlide() {
+            const items = document.querySelectorAll('.carousel-item');
+            const indicators = document.querySelectorAll('.carousel-indicator');
+            if (items.length === 0) return;
+            
+            carouselCurrentIndex = (carouselCurrentIndex - 1 + items.length) % items.length;
+            
+            document.getElementById('carouselInner').style.transform = `translateX(-${carouselCurrentIndex * 100}%)`;
+            
+            items.forEach((item, index) => {
+                item.classList.toggle('active', index === carouselCurrentIndex);
+            });
+            
+            indicators.forEach((indicator, index) => {
+                indicator.classList.toggle('active', index === carouselCurrentIndex);
+            });
+        }
+        
+        function goToSlide(index) {
+            const items = document.querySelectorAll('.carousel-item');
+            const indicators = document.querySelectorAll('.carousel-indicator');
+            if (items.length === 0 || index < 0 || index >= items.length) return;
+            
+            carouselCurrentIndex = index;
+            
+            document.getElementById('carouselInner').style.transform = `translateX(-${carouselCurrentIndex * 100}%)`;
+            
+            items.forEach((item, i) => {
+                item.classList.toggle('active', i === carouselCurrentIndex);
+            });
+            
+            indicators.forEach((indicator, i) => {
+                indicator.classList.toggle('active', i === carouselCurrentIndex);
+            });
         }
         
         function renderArticlesList() {
@@ -1261,7 +1452,6 @@
                 
                 listItem.addEventListener('click', () => {
                     window.location.hash = article.id;
-                    
                     loadArticleDetail(article.id);
                     
                     document.querySelectorAll('.article-item').forEach(item => {
@@ -1285,6 +1475,7 @@
             
             currentArticle = article;
             isTranslated = false;
+            carouselCurrentIndex = 0;
             
             document.getElementById('contentPlaceholder').style.display = 'none';
             
@@ -1316,6 +1507,13 @@
                 </div>
             ` : '';
             
+            let images = [];
+            if (article.images && Array.isArray(article.images) && article.images.length > 0) {
+                images = article.images;
+            } else if (article.featured_image) {
+                images = [article.featured_image];
+            }
+            
             document.getElementById('articleDetail').innerHTML = `
                 <button class="detail-share" onclick="shareArticle(${article.id})">
                     <i class="fas fa-share-alt"></i> Share This Article
@@ -1333,11 +1531,7 @@
                     ${tagsHtml}
                 </div>
                 
-                ${article.featured_image ? `
-                    <div class="article-image-container">
-                        <img src="${article.featured_image}" alt="${article.title}" class="article-image">
-                    </div>
-                ` : ''}
+                ${createCarousel(images)}
                 
                 <div class="detail-body" id="articleBody">
                     ${formatArticleContent(article.content)}
@@ -1368,7 +1562,6 @@
             
             document.querySelector('.article-content').scrollTop = 0;
             
-            // Görüntüleme sayısını güncelle (hemen artır)
             updateViewCount(articleId);
         }
         
@@ -1416,7 +1609,7 @@
                     
                     const imgMatch = paragraph.match(/!\[(.*?)\]\((.*?)\)/);
                     if (imgMatch) {
-                        return `<div class="article-image-container"><img src="${imgMatch[2]}" alt="${imgMatch[1]}" class="article-image"></div>`;
+                        return `<div class="image-carousel"><div class="carousel-inner"><div class="carousel-item active"><img src="${imgMatch[2]}" alt="${imgMatch[1]}"></div></div></div>`;
                     }
                     
                     paragraph = paragraph.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" style="color: var(--primary-color);">$1</a>');
