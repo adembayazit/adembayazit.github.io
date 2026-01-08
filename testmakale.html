@@ -1032,14 +1032,15 @@
         
         let articlesData = [];
         let currentArticle = null;
-        let articleViews = {};
-        let articleLikes = {};
-        let userLikedArticles = JSON.parse(localStorage.getItem('userLikedArticles') || '{}');
-        let viewedArticlesInSession = JSON.parse(sessionStorage.getItem('viewedArticles') || '{}');
         let isTranslated = false;
         let pendingEmail = null;
         let verificationCode = null;
         let countdownTimer = null;
+        
+        // LocalStorage'dan beğeni durumunu yükle
+        let userLikedArticles = JSON.parse(localStorage.getItem('userLikedArticles') || '{}');
+        // LocalStorage'dan görüntüleme durumunu yükle (oturum başına değil, kalıcı)
+        let articleViews = JSON.parse(localStorage.getItem('articleViews') || '{}');
         
         async function fetchViaProxy(path, method = 'GET', body = null, binId = null) {
             const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
@@ -1078,10 +1079,16 @@
                 const result = await fetchViaProxy('/latest', 'GET', null, CONFIG.ARTICLES_BIN_ID);
                 articlesData = result.articles || result.records || result;
                 
-                articlesData.sort((a, b) => new Date(b.published_date || b.date) - new Date(a.published_date || a.date));
+                // Her makaleye görüntüleme ve beğeni sayısını ekle
+                articlesData.forEach(article => {
+                    if (article.id) {
+                        // JSONBin'den gelen verileri kullan, yoksa localStorage'dan al
+                        article.views = article.views || articleViews[article.id] || 0;
+                        article.likes = article.likes || 0;
+                    }
+                });
                 
-                await loadViewsData();
-                await loadLikesData();
+                articlesData.sort((a, b) => new Date(b.published_date || b.date) - new Date(a.published_date || a.date));
                 
                 renderArticlesList();
                 
@@ -1112,113 +1119,93 @@
             }
         }
         
-        async function loadViewsData() {
-            try {
-                const result = await fetchViaProxy('/latest', 'GET', null, CONFIG.VIEWS_BIN_ID);
-                articleViews = result.views || {};
-            } catch (error) {
-                console.error('Error loading views:', error);
-                articleViews = {};
-            }
-        }
-        
-        async function loadLikesData() {
-            try {
-                const result = await fetchViaProxy('/latest', 'GET', null, CONFIG.LIKES_BIN_ID);
-                const articles = result.articles || result.records || result;
-                
-                articleLikes = {};
-                articles.forEach(article => {
-                    if (article.id) {
-                        articleLikes[article.id] = article.likes || 0;
-                    }
-                });
-            } catch (error) {
-                console.error('Error loading likes:', error);
-                articleLikes = {};
-            }
-        }
-        
         async function updateViewCount(articleId) {
             if (!articleId) return;
             
-            // SessionStorage kontrolü - sadece bir kez artır
-            const sessionKey = `viewed_${articleId}`;
-            if (sessionStorage.getItem(sessionKey)) {
-                // Bu oturumda zaten görüntülenmiş
-                return;
-            }
+            const article = articlesData.find(a => a.id == articleId);
+            if (!article) return;
             
-            // SessionStorage'ı işaretle
-            sessionStorage.setItem(sessionKey, 'true');
+            // Görüntüleme sayısını artır
+            article.views = (article.views || 0) + 1;
             
-            const currentViews = articleViews[articleId] || 0;
-            const newViews = currentViews + 1;
-            articleViews[articleId] = newViews;
+            // LocalStorage'a kaydet
+            articleViews[articleId] = article.views;
+            localStorage.setItem('articleViews', JSON.stringify(articleViews));
             
-            // Listedeki görüntüleme sayısını güncelle
+            // UI'ı güncelle
             const viewElement = document.querySelector(`#views-${articleId}`);
             if (viewElement) {
-                viewElement.innerHTML = `<i class="far fa-eye"></i> ${newViews}`;
+                viewElement.innerHTML = `<i class="far fa-eye"></i> ${article.views}`;
             }
             
-            // Detay sayfasındaki görüntüleme sayısını güncelle
-            const detailViewElement = document.querySelector('.article-stats-detail .views');
-            if (detailViewElement && currentArticle && currentArticle.id == articleId) {
-                detailViewElement.innerHTML = `<i class="far fa-eye"></i> ${newViews} views`;
+            // Detay sayfasını güncelle
+            if (currentArticle && currentArticle.id == articleId) {
+                const detailViewElement = document.querySelector('.article-stats-detail .views');
+                if (detailViewElement) {
+                    detailViewElement.innerHTML = `<i class="far fa-eye"></i> ${article.views} views`;
+                }
             }
             
+            // JSONBin'e güncellemeyi arka planda yap (hata olsa da önemseme)
             try {
-                await fetchViaProxy('', 'PUT', { views: articleViews }, CONFIG.VIEWS_BIN_ID);
+                const articleIndex = articlesData.findIndex(a => a.id == articleId);
+                if (articleIndex !== -1) {
+                    await fetchViaProxy('', 'PUT', { 
+                        articles: articlesData 
+                    }, CONFIG.ARTICLES_BIN_ID);
+                }
             } catch (error) {
-                console.error('Error updating view count:', error);
+                console.error('Error updating view count in JSONBin:', error);
             }
         }
         
         async function handleLike(articleId) {
             if (!articleId) return;
             
-            const hasLiked = userLikedArticles[articleId];
+            const article = articlesData.find(a => a.id == articleId);
+            if (!article) return;
             
-            if (hasLiked) {
+            // Kullanıcı zaten beğenmiş mi kontrol et
+            if (userLikedArticles[articleId]) {
                 showToast('You already liked this article');
                 return;
             }
             
-            const currentLikes = articleLikes[articleId] || 0;
-            const newLikes = currentLikes + 1;
-            articleLikes[articleId] = newLikes;
+            // Beğeni sayısını artır
+            article.likes = (article.likes || 0) + 1;
             
+            // Kullanıcının beğenisini kaydet
             userLikedArticles[articleId] = true;
             localStorage.setItem('userLikedArticles', JSON.stringify(userLikedArticles));
             
-            // Listedeki beğeni sayısını güncelle
+            // UI'ı güncelle
             const likeElement = document.querySelector(`#likes-${articleId}`);
             if (likeElement) {
-                likeElement.innerHTML = `<i class="fas fa-heart"></i> ${newLikes}`;
+                likeElement.innerHTML = `<i class="fas fa-heart"></i> ${article.likes}`;
             }
             
-            // Detay sayfasındaki beğeni butonunu güncelle
-            const detailLikeBtn = document.querySelector('.article-stats-detail .like-btn');
-            if (detailLikeBtn && currentArticle && currentArticle.id == articleId) {
-                detailLikeBtn.innerHTML = `<i class="fas fa-heart"></i> ${newLikes} likes`;
-                detailLikeBtn.disabled = true;
-                detailLikeBtn.onclick = null; // Tekrar tıklanmasın
+            // Detay sayfasını güncelle
+            if (currentArticle && currentArticle.id == articleId) {
+                const detailLikeBtn = document.querySelector('.article-stats-detail .like-btn');
+                if (detailLikeBtn) {
+                    detailLikeBtn.innerHTML = `<i class="fas fa-heart"></i> ${article.likes} likes`;
+                    detailLikeBtn.disabled = true;
+                    detailLikeBtn.onclick = null;
+                }
             }
             
             showToast('Article liked!');
             
+            // JSONBin'e güncellemeyi arka planda yap
             try {
                 const articleIndex = articlesData.findIndex(a => a.id == articleId);
                 if (articleIndex !== -1) {
-                    articlesData[articleIndex].likes = articleLikes[articleId];
-                    
                     await fetchViaProxy('', 'PUT', { 
                         articles: articlesData 
                     }, CONFIG.ARTICLES_BIN_ID);
                 }
             } catch (error) {
-                console.error('Error updating likes:', error);
+                console.error('Error updating likes in JSONBin:', error);
             }
         }
         
@@ -1247,8 +1234,8 @@
                     minute: '2-digit'
                 });
                 
-                const views = articleViews[article.id] || 0;
-                const likes = articleLikes[article.id] || 0;
+                const views = article.views || 0;
+                const likes = article.likes || 0;
                 const hasLiked = userLikedArticles[article.id];
                 
                 let translationIndicator = '';
@@ -1312,9 +1299,9 @@
                 minute: '2-digit'
             });
             
-            const views = articleViews[articleId] || 0;
-            const likes = articleLikes[articleId] || 0;
-            const hasLiked = userLikedArticles[articleId];
+            const views = article.views || 0;
+            const likes = article.likes || 0;
+            const hasLiked = userLikedArticles[article.id];
             
             let tagsHtml = '';
             if (article.tags && article.tags.length > 0) {
@@ -1381,7 +1368,7 @@
             
             document.querySelector('.article-content').scrollTop = 0;
             
-            // Görüntüleme sayısını güncelle
+            // Görüntüleme sayısını güncelle (hemen artır)
             updateViewCount(articleId);
         }
         
@@ -1729,8 +1716,8 @@
                     minute: '2-digit'
                 });
                 
-                const views = articleViews[article.id] || 0;
-                const likes = articleLikes[article.id] || 0;
+                const views = article.views || 0;
+                const likes = article.likes || 0;
                 const hasLiked = userLikedArticles[article.id];
                 
                 let translationIndicator = '';
