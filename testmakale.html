@@ -1085,22 +1085,6 @@
             
             <div class="subscription-message" id="subscriptionMessage"></div>
         </section>
-        
-        <!-- Reset Cache Button -->
-        <div style="text-align: center; margin-top: 20px; padding: 20px;">
-            <button id="resetCacheBtn" style="
-                background: transparent;
-                color: #ff6b6b;
-                border: 1px solid #ff6b6b;
-                padding: 8px 16px;
-                border-radius: 5px;
-                cursor: pointer;
-                font-size: 0.9rem;
-                transition: all 0.3s ease;
-            ">
-                <i class="fas fa-redo"></i> Reset Cache & Sync
-            </button>
-        </div>
     </div>
 
     <div class="modal" id="verificationModal">
@@ -1130,7 +1114,7 @@
 
     <footer style="text-align: center; padding: 20px; font-size: 14px; color: white; margin-top: 50px;">
         <hr style="margin-bottom: 10px; border-color: limegreen;" />
-        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.5 | January 2026</p>
+        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.6 | January 2026</p>
     </footer>
 
     <script src="/JAVASCRIPT/monitor.js"></script>
@@ -1151,7 +1135,7 @@
             }
         };
         
-        // DataManager Sınıfı
+        // DataManager Sınıfı - Geliştirilmiş Cache Temizleme
         class ArticleDataManager {
             constructor() {
                 this.localData = {
@@ -1164,6 +1148,8 @@
                 this.lastSyncTime = 0;
                 this.SYNC_INTERVAL = 30000; // 30 saniyede bir sync
                 this.QUEUE_PROCESS_INTERVAL = 5000; // 5 saniyede bir queue işle
+                this.CACHE_CLEANUP_INTERVAL = 12 * 60 * 60 * 1000; // 12 saatte bir cache temizle
+                this.lastCacheCleanup = parseInt(localStorage.getItem('lastCacheCleanup') || '0');
             }
 
             async syncWithServer() {
@@ -1193,7 +1179,6 @@
                     console.log('Data sync completed successfully');
                 } catch (error) {
                     console.error('Sync error:', error);
-                    // Hata durumunda pending updates'i koru
                 } finally {
                     this.isSyncing = false;
                 }
@@ -1280,12 +1265,31 @@
                 }
             }
 
-            // Cache temizleme
+            // Akıllı Cache Temizleme - Otomatik
             clearStaleCache() {
                 const now = Date.now();
-                const oneWeekAgo = now - (7 * 24 * 60 * 60 * 1000);
                 
-                // Eski session temizle (30 dakikadan eski)
+                // 12 saatten daha eski cache temizleme varsa yap
+                if (now - this.lastCacheCleanup < this.CACHE_CLEANUP_INTERVAL) {
+                    return;
+                }
+                
+                console.log('Performing automatic cache cleanup...');
+                
+                const oneWeekAgo = now - (7 * 24 * 60 * 60 * 1000);
+                const oneDayAgo = now - (24 * 60 * 60 * 1000);
+                
+                // 1. Rate limit kayıtlarını temizle (1 günden eski)
+                Object.keys(localStorage).forEach(key => {
+                    if (key.startsWith('liked_')) {
+                        const timestamp = parseInt(localStorage.getItem(key));
+                        if (timestamp && timestamp < oneDayAgo) {
+                            localStorage.removeItem(key);
+                        }
+                    }
+                });
+                
+                // 2. Eski session view kayıtlarını temizle (30 dakikadan eski)
                 Object.keys(sessionStorage).forEach(key => {
                     if (key.startsWith('viewed_')) {
                         const timestamp = parseInt(sessionStorage.getItem(key));
@@ -1295,17 +1299,67 @@
                     }
                 });
                 
-                // Eski rate limit temizle (1 haftadan eski)
-                Object.keys(localStorage).forEach(key => {
-                    if (key.startsWith('liked_')) {
-                        const timestamp = parseInt(localStorage.getItem(key));
-                        if (timestamp && timestamp < oneWeekAgo) {
-                            localStorage.removeItem(key);
+                // 3. Çok eski pending updates varsa temizle (1 haftadan eski)
+                this.pendingUpdates = this.pendingUpdates.filter(update => {
+                    return (now - update.timestamp) < (7 * 24 * 60 * 60 * 1000);
+                });
+                
+                // 4. Boş article IDs'leri temizle
+                Object.keys(this.localData.views).forEach(articleId => {
+                    if (!articlesData.some(a => a.id == articleId)) {
+                        delete this.localData.views[articleId];
+                    }
+                });
+                
+                // 5. Sync olmayan çok eski view/like verilerini temizle
+                Object.keys(this.localData.likes).forEach(articleId => {
+                    const article = articlesData.find(a => a.id == articleId);
+                    if (article && article.likes) {
+                        // Sunucudaki veriyle aynıysa temizle
+                        if (article.likes >= (this.localData.likes[articleId] || 0)) {
+                            delete this.localData.likes[articleId];
                         }
                     }
                 });
                 
-                console.log('Cache cleaned');
+                // Güncellenen view verilerini localStorage'a kaydet
+                localStorage.setItem('articleViews', JSON.stringify(this.localData.views));
+                localStorage.setItem('userLikedArticles', JSON.stringify(this.localData.likes));
+                
+                // Son cache temizleme zamanını kaydet
+                this.lastCacheCleanup = now;
+                localStorage.setItem('lastCacheCleanup', now.toString());
+                
+                console.log('Automatic cache cleanup completed');
+            }
+            
+            // Gelişmiş Cache Optimizasyonu
+            optimizeCache() {
+                const now = Date.now();
+                const oneHourAgo = now - (60 * 60 * 1000);
+                
+                // Sadece 1 saat içinde aktif olan makalelerin cache'ini tut
+                const activeArticles = articlesData.filter(article => {
+                    const articleDate = new Date(article.published_date || article.date);
+                    return (now - articleDate.getTime()) < (30 * 24 * 60 * 60 * 1000); // 30 gün
+                });
+                
+                // Aktif makalelerin ID'lerini al
+                const activeArticleIds = activeArticles.map(a => a.id.toString());
+                
+                // Eski makalelerin cache'ini temizle
+                Object.keys(this.localData.views).forEach(articleId => {
+                    if (!activeArticleIds.includes(articleId)) {
+                        // 1 haftadan daha eski ve 1 saat içinde erişilmemişse temizle
+                        const lastView = this.localData.views[articleId];
+                        if (lastView && (now - lastView) > (7 * 24 * 60 * 60 * 1000)) {
+                            delete this.localData.views[articleId];
+                        }
+                    }
+                });
+                
+                // localStorage'ı güncelle
+                localStorage.setItem('articleViews', JSON.stringify(this.localData.views));
             }
         }
 
@@ -1363,6 +1417,9 @@
                 
                 // DataManager ile birleştir
                 articlesData = dataManager.mergeData(serverArticles, articlesData || []);
+                
+                // Cache optimizasyonu yap
+                dataManager.optimizeCache();
                 
                 // UI'ı güncelle
                 renderArticlesList();
@@ -1423,6 +1480,10 @@
             // Yerel olarak artır
             article.views = (article.views || 0) + 1;
             
+            // LocalStorage'a kaydet
+            dataManager.localData.views[articleId] = article.views;
+            localStorage.setItem('articleViews', JSON.stringify(dataManager.localData.views));
+            
             // DataManager'e ekle (queue'ya al)
             dataManager.queueUpdate(articleId, 'view', 1);
             
@@ -1471,6 +1532,10 @@
             
             // Yerel olarak artır
             article.likes = (article.likes || 0) + 1;
+            
+            // LocalStorage'a kaydet
+            dataManager.localData.likes[articleId] = true;
+            localStorage.setItem('userLikedArticles', JSON.stringify(dataManager.localData.likes));
             
             // DataManager'e ekle (queue'ya al)
             dataManager.queueUpdate(articleId, 'like', 1);
@@ -2174,29 +2239,14 @@
             });
         }
         
-        // Düzenli sync (her 30 saniyede bir)
-        setInterval(() => {
-            dataManager.syncWithServer();
-        }, 30000);
-        
-        // Sayfa görünür olduğunda sync
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden) {
-                dataManager.syncWithServer();
-            }
-        });
-        
-        // Cache temizleme (her saat)
-        setInterval(() => {
-            dataManager.clearStaleCache();
-        }, 60 * 60 * 1000);
-        
         document.addEventListener('DOMContentLoaded', function() {
             // İlk cache temizleme
             dataManager.clearStaleCache();
             
+            // Verileri yükle
             loadArticlesData();
             
+            // Hash değişikliklerini dinle
             window.addEventListener('hashchange', function() {
                 if (window.location.hash) {
                     const articleId = window.location.hash.substring(1);
@@ -2204,6 +2254,7 @@
                 }
             });
             
+            // Mobile search ve filtreleme
             const mobileArticleSearch = document.getElementById('mobileArticleSearch');
             if (mobileArticleSearch) {
                 mobileArticleSearch.addEventListener('input', filterArticles);
@@ -2214,6 +2265,7 @@
                 mobileCategoryFilter.addEventListener('change', filterArticles);
             }
             
+            // Subscription form
             const subscriptionForm = document.getElementById('subscriptionForm');
             if (subscriptionForm) {
                 subscriptionForm.addEventListener('submit', function(e) {
@@ -2223,6 +2275,7 @@
                 });
             }
             
+            // Verification form
             const verificationForm = document.getElementById('verificationForm');
             if (verificationForm) {
                 verificationForm.addEventListener('submit', function(e) {
@@ -2232,6 +2285,7 @@
                 });
             }
             
+            // Cancel verification
             const cancelVerification = document.getElementById('cancelVerification');
             if (cancelVerification) {
                 cancelVerification.addEventListener('click', function() {
@@ -2239,6 +2293,7 @@
                 });
             }
             
+            // Resend code
             const resendCode = document.getElementById('resendCode');
             if (resendCode) {
                 resendCode.addEventListener('click', function() {
@@ -2258,43 +2313,31 @@
                 });
             }
             
-            const resetCacheBtn = document.getElementById('resetCacheBtn');
-            if (resetCacheBtn) {
-                resetCacheBtn.addEventListener('click', async function() {
-                    if (confirm('This will reset your local cache and resync with server. Continue?')) {
-                        // Cache temizle
-                        localStorage.removeItem('articleViews');
-                        localStorage.removeItem('userLikedArticles');
-                        sessionStorage.removeItem('sessionViewedArticles');
-                        
-                        // Tüm like kayıtlarını temizle
-                        Object.keys(localStorage).forEach(key => {
-                            if (key.startsWith('user_like_') || key.startsWith('liked_')) {
-                                localStorage.removeItem(key);
-                            }
-                        });
-                        
-                        // Tüm session kayıtlarını temizle
-                        Object.keys(sessionStorage).forEach(key => {
-                            if (key.startsWith('viewed_')) {
-                                sessionStorage.removeItem(key);
-                            }
-                        });
-                        
-                        // Veriyi yeniden yükle
-                        await loadArticlesData();
-                        
-                        showToast('Cache reset and resynced');
-                    }
-                });
-            }
-            
+            // Modal kapatma
             window.addEventListener('click', function(event) {
                 const modal = document.getElementById('verificationModal');
                 if (event.target === modal) {
                     hideVerificationModal();
                 }
             });
+            
+            // Düzenli sync (30 saniyede bir)
+            setInterval(() => {
+                dataManager.syncWithServer();
+            }, 30000);
+            
+            // Sayfa görünür olduğunda sync
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden) {
+                    dataManager.syncWithServer();
+                    dataManager.clearStaleCache();
+                }
+            });
+            
+            // Otomatik cache temizleme (12 saatte bir)
+            setInterval(() => {
+                dataManager.clearStaleCache();
+            }, 12 * 60 * 60 * 1000);
             
             // Online/Offline durumunu izle
             window.addEventListener('online', function() {
@@ -2305,6 +2348,19 @@
             window.addEventListener('offline', function() {
                 showToast('You are offline. Using cached data.', 3000);
             });
+            
+            // Sayfa kapanırken son sync yap
+            window.addEventListener('beforeunload', function() {
+                if (dataManager.pendingUpdates.length > 0) {
+                    // Son queue işlemini yap
+                    dataManager.processQueue();
+                }
+            });
+            
+            // Her 5 dakikada bir cache optimizasyonu
+            setInterval(() => {
+                dataManager.optimizeCache();
+            }, 5 * 60 * 1000);
         });
     </script>
 </body>
