@@ -75,11 +75,6 @@
             justify-content: space-between;
             align-items: center;
             padding: 10px 5%;
-            background: #0a1916;
-            border-bottom: 1px solid rgba(0, 255, 0, 0.3);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
         }
         
         .dropdown {
@@ -325,23 +320,17 @@
         
         .article-detail.active {
             display: block;
-            animation: fadeIn 0.5s ease;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .article-header {
+        .detail-header {
             margin-bottom: 25px;
             padding-bottom: 15px;
             border-bottom: 1px solid var(--border-color);
             position: relative;
         }
         
-        .article-detail-title {
-            font-size: 1.8rem;
+        .detail-title {
+            font-size: 1.5rem;
             color: white;
             margin-bottom: 15px;
             line-height: 1.4;
@@ -363,9 +352,6 @@
             border: 1px solid rgba(255, 255, 255, 0.3);
             transition: all 0.3s ease;
             font-size: 0.9rem;
-            position: absolute;
-            top: 0;
-            right: 0;
         }
         
         .translation-toggle:hover {
@@ -378,7 +364,7 @@
             border-color: var(--primary-color);
         }
         
-        .article-detail-meta {
+        .detail-meta {
             display: flex;
             gap: 20px;
             font-size: 0.9rem;
@@ -408,13 +394,13 @@
             display: block;
         }
         
-        .article-body {
+        .detail-body {
             line-height: 1.7;
             font-size: 1.05rem;
             color: #e0e0e0;
         }
         
-        .article-body img {
+        .detail-body img {
             max-width: 100%;
             height: auto;
             border-radius: 8px;
@@ -422,7 +408,7 @@
             border: 1px solid var(--border-color);
         }
         
-        .article-body pre {
+        .detail-body pre {
             background: rgba(0, 0, 0, 0.5);
             padding: 15px;
             border-radius: 5px;
@@ -433,7 +419,7 @@
             font-size: 0.9rem;
         }
         
-        .article-body code {
+        .detail-body code {
             background: rgba(0, 0, 0, 0.5);
             padding: 2px 5px;
             border-radius: 3px;
@@ -441,25 +427,25 @@
             color: #f9d71c;
         }
         
-        .article-body h2, .article-body h3 {
+        .detail-body h2, .detail-body h3 {
             color: var(--primary-color);
             margin: 20px 0 10px;
         }
         
-        .article-body p {
+        .detail-body p {
             margin-bottom: 15px;
         }
         
-        .article-body ul, .article-body ol {
+        .detail-body ul, .detail-body ol {
             margin-left: 20px;
             margin-bottom: 15px;
         }
         
-        .article-body li {
+        .detail-body li {
             margin-bottom: 5px;
         }
         
-        .article-body blockquote {
+        .detail-body blockquote {
             border-left: 3px solid var(--primary-color);
             padding: 10px 20px;
             margin: 20px 0;
@@ -487,6 +473,37 @@
         .detail-share:hover {
             background: rgba(0, 255, 0, 0.2);
             transform: translateY(-2px);
+        }
+        
+        .article-stats {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0,255,0,0.2);
+            display: flex;
+            gap: 20px;
+            color: #90ee90;
+            font-size: 0.9rem;
+            align-items: center;
+        }
+        
+        .like-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: #90ee90;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .like-btn:hover {
+            color: #ff6b6b;
+        }
+        
+        .like-btn i {
+            font-size: 1rem;
         }
         
         .loading {
@@ -617,68 +634,6 @@
             z-index: -1;
         }
         
-        @media (max-width: 992px) {
-            .articles-container {
-                flex-direction: column;
-            }
-            
-            .articles-sidebar {
-                width: 100%;
-                position: static;
-            }
-            
-            .article-content {
-                min-height: auto;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .content-wrapper {
-                margin-top: 140px;
-                padding: 0 10px;
-            }
-            
-            .page-title {
-                font-size: 1.5rem;
-            }
-            
-            .article-content {
-                padding: 20px;
-            }
-            
-            .article-detail-title {
-                font-size: 1.5rem;
-            }
-            
-            .article-detail-meta {
-                flex-direction: column;
-                gap: 5px;
-            }
-            
-            .detail-share {
-                position: static;
-                margin-bottom: 15px;
-                display: inline-flex;
-            }
-            
-            .translation-toggle {
-                position: relative;
-                margin-top: 10px;
-            }
-            
-            .article-share {
-                opacity: 1;
-            }
-            
-            .subscription-form {
-                flex-direction: column;
-            }
-            
-            .subscription-input {
-                min-width: auto;
-            }
-        }
-        
         .modal {
             display: none;
             position: fixed;
@@ -794,6 +749,68 @@
         .countdown {
             color: var(--primary-color);
             font-weight: bold;
+        }
+        
+        @media (max-width: 992px) {
+            .articles-container {
+                flex-direction: column;
+            }
+            
+            .articles-sidebar {
+                width: 100%;
+                position: static;
+            }
+            
+            .article-content {
+                min-height: auto;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .content-wrapper {
+                margin-top: 140px;
+                padding: 0 10px;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+            }
+            
+            .article-content {
+                padding: 20px;
+            }
+            
+            .detail-title {
+                font-size: 1.3rem;
+            }
+            
+            .detail-meta {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .detail-share {
+                position: static;
+                margin-bottom: 15px;
+                display: inline-flex;
+            }
+            
+            .article-share {
+                opacity: 1;
+            }
+            
+            .subscription-form {
+                flex-direction: column;
+            }
+            
+            .subscription-input {
+                min-width: auto;
+            }
+            
+            .article-stats {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -935,6 +952,7 @@
             ARTICLES_BIN_ID: '695f155c43b1c97be920c28d',
             SUBSCRIBERS_BIN_ID: '68d7fc3bae596e708ffdcc6e',
             VIEWS_BIN_ID: '68862fd97b4b8670d8a81945',
+            LIKES_BIN_ID: '695f155c43b1c97be920c28d',
             MAILJET_CONFIG: {
                 apiKey: '4eab53d0383497317f9d58afd0176d9f',
                 secretKey: 'e46dc21f710c911ba855e1eca0675971',
@@ -946,6 +964,8 @@
         let articlesData = [];
         let currentArticle = null;
         let articleViews = {};
+        let articleLikes = {};
+        let userLikedArticles = JSON.parse(localStorage.getItem('userLikedArticles') || '{}');
         let isTranslated = false;
         let pendingEmail = null;
         let verificationCode = null;
@@ -991,6 +1011,7 @@
                 articlesData.sort((a, b) => new Date(b.published_date || b.date) - new Date(a.published_date || a.date));
                 
                 await loadViewsData();
+                await loadLikesData();
                 
                 renderArticlesList();
                 
@@ -1031,6 +1052,23 @@
             }
         }
         
+        async function loadLikesData() {
+            try {
+                const result = await fetchViaProxy('/latest', 'GET', null, CONFIG.LIKES_BIN_ID);
+                const articles = result.articles || result.records || result;
+                
+                articleLikes = {};
+                articles.forEach(article => {
+                    if (article.id) {
+                        articleLikes[article.id] = article.likes || 0;
+                    }
+                });
+            } catch (error) {
+                console.error('Error loading likes:', error);
+                articleLikes = {};
+            }
+        }
+        
         async function updateViewCount(articleId) {
             if (!articleId) return;
             
@@ -1051,6 +1089,48 @@
                 await fetchViaProxy('', 'PUT', { views: articleViews }, CONFIG.VIEWS_BIN_ID);
             } catch (error) {
                 console.error('Error updating view count:', error);
+            }
+        }
+        
+        async function handleLike(articleId) {
+            if (!articleId) return;
+            
+            const hasLiked = userLikedArticles[articleId];
+            
+            if (hasLiked) {
+                showToast('You already liked this article');
+                return;
+            }
+            
+            const currentLikes = articleLikes[articleId] || 0;
+            articleLikes[articleId] = currentLikes + 1;
+            
+            userLikedArticles[articleId] = true;
+            localStorage.setItem('userLikedArticles', JSON.stringify(userLikedArticles));
+            
+            const likeElement = document.querySelector(`#likes-${articleId}`);
+            if (likeElement) {
+                likeElement.textContent = currentLikes + 1;
+            }
+            
+            const detailLikeElement = document.querySelector('.article-stats .likes');
+            if (detailLikeElement && currentArticle && currentArticle.id == articleId) {
+                detailLikeElement.innerHTML = `<i class="fas fa-heart"></i> ${currentLikes + 1} likes`;
+            }
+            
+            showToast('Article liked!');
+            
+            try {
+                const articleIndex = articlesData.findIndex(a => a.id == articleId);
+                if (articleIndex !== -1) {
+                    articlesData[articleIndex].likes = articleLikes[articleId];
+                    
+                    await fetchViaProxy('', 'PUT', { 
+                        articles: articlesData 
+                    }, CONFIG.ARTICLES_BIN_ID);
+                }
+            } catch (error) {
+                console.error('Error updating likes:', error);
             }
         }
         
@@ -1075,6 +1155,8 @@
                 });
                 
                 const views = articleViews[article.id] || 0;
+                const likes = articleLikes[article.id] || 0;
+                const hasLiked = userLikedArticles[article.id];
                 
                 listItem.innerHTML = `
                     <div class="article-title">${article.title || 'Untitled Article'}</div>
@@ -1088,6 +1170,15 @@
                 `;
                 
                 const metaDiv = listItem.querySelector('.article-meta');
+                
+                const likeSpan = document.createElement('span');
+                likeSpan.id = `likes-${article.id}`;
+                likeSpan.style.marginLeft = '5px';
+                likeSpan.style.color = hasLiked ? '#ff6b6b' : '#90ee90';
+                likeSpan.style.fontSize = '0.7rem';
+                likeSpan.innerHTML = `<i class="${hasLiked ? 'fas' : 'far'} fa-heart"></i> ${likes}`;
+                metaDiv.appendChild(likeSpan);
+                
                 const viewSpan = document.createElement('span');
                 viewSpan.id = `views-${article.id}`;
                 viewSpan.style.marginLeft = '5px';
@@ -1134,10 +1225,12 @@
             });
             
             const views = articleViews[articleId] || 0;
+            const likes = articleLikes[articleId] || 0;
+            const hasLiked = userLikedArticles[articleId];
             
             let tagsHtml = '';
             if (article.tags && article.tags.length > 0) {
-                tagsHtml = `<div class="article-tags" style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 5px;">
+                tagsHtml = `<div class="detail-tags" style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 5px;">
                     <strong>Tags:</strong> ${article.tags.map(tag => `<span style="background: rgba(0,255,0,0.2); padding: 2px 8px; border-radius: 12px; margin: 0 2px; font-size: 0.8em;">${tag}</span>`).join('')}
                 </div>`;
             }
@@ -1145,7 +1238,6 @@
             const translationToggleHtml = article.content_tr ? `
                 <div class="translation-toggle" id="translationToggle">
                     <span class="fi fi-tr"></span>
-                    <span id="translationText">Türkçe</span>
                 </div>
             ` : '';
             
@@ -1153,16 +1245,15 @@
                 <button class="detail-share" onclick="shareArticle(${article.id})">
                     <i class="fas fa-share-alt"></i> Share This Article
                 </button>
-                <div class="article-header">
-                    <h1 class="article-detail-title">
+                <div class="detail-header">
+                    <h1 class="detail-title">
                         <span id="articleTitleText">${article.title || 'Untitled Article'}</span>
                         ${translationToggleHtml}
                     </h1>
-                    <div class="article-detail-meta">
+                    <div class="detail-meta">
                         <span class="detail-date"><i class="far fa-calendar"></i> ${articleDate}</span>
                         <span class="detail-category"><i class="fas fa-tag"></i> ${article.category || 'Cybersecurity'}</span>
                         <span class="detail-author"><i class="fas fa-user"></i> ${article.author || 'Adem Bayazıt'}</span>
-                        <span class="detail-views"><i class="far fa-eye"></i> ${views} views</span>
                     </div>
                     ${tagsHtml}
                 </div>
@@ -1173,13 +1264,15 @@
                     </div>
                 ` : ''}
                 
-                <div class="article-body" id="articleBody">
+                <div class="detail-body" id="articleBody">
                     ${formatArticleContent(article.content)}
                 </div>
                 
-                <div class="article-stats" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(0,255,0,0.2); display: flex; gap: 20px; color: #90ee90; font-size: 0.9rem;">
+                <div class="article-stats">
                     <div class="views"><i class="far fa-eye"></i> ${views} views</div>
-                    <div><i class="far fa-heart"></i> ${article.likes || 0} likes</div>
+                    <button class="like-btn" onclick="handleLike(${article.id})" ${hasLiked ? 'disabled' : ''}>
+                        <i class="${hasLiked ? 'fas' : 'far'} fa-heart"></i> ${likes} likes
+                    </button>
                     <div><i class="far fa-clock"></i> ${article.reading_time || '5'} min read</div>
                 </div>
             `;
@@ -1207,7 +1300,6 @@
             if (!currentArticle || !currentArticle.content_tr) return;
             
             const translationToggle = document.getElementById('translationToggle');
-            const translationText = document.getElementById('translationText');
             const articleTitle = document.getElementById('articleTitleText');
             const articleBody = document.getElementById('articleBody');
             
@@ -1215,14 +1307,12 @@
                 articleTitle.textContent = currentArticle.title_tr || currentArticle.title;
                 articleBody.innerHTML = formatArticleContent(currentArticle.content_tr);
                 translationToggle.classList.add('active');
-                translationText.textContent = 'English';
                 isTranslated = true;
                 showToast('Switched to Turkish');
             } else {
                 articleTitle.textContent = currentArticle.title || 'Untitled Article';
                 articleBody.innerHTML = formatArticleContent(currentArticle.content);
                 translationToggle.classList.remove('active');
-                translationText.textContent = 'Türkçe';
                 isTranslated = false;
                 showToast('Switched to English');
             }
