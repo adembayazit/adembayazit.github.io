@@ -124,6 +124,20 @@
             display: block;
         }
         
+        /* Dropdown ikonları için boyut eşitleme */
+        .dropdown-content img {
+            width: 16px !important;
+            height: 16px !important;
+            filter: brightness(0) invert(1);
+        }
+        
+        /* Bayrak ikonu için border kaldırma */
+        .fi {
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+        }
+        
         .content-wrapper {
             margin-top: 160px;
             position: relative;
@@ -163,6 +177,10 @@
             text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
             position: relative;
             filter: drop-shadow(0 0 5px limegreen);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
         
         .page-title::after {
@@ -175,6 +193,13 @@
             height: 3px;
             background: var(--primary-color);
             border-radius: 3px;
+        }
+        
+        /* Newspaper icon boyut eşitleme */
+        .page-title img.articles-icon {
+            width: 20px !important;
+            height: 20px !important;
+            filter: brightness(0) invert(1);
         }
         
         .articles-container {
@@ -211,13 +236,14 @@
         }
         
         .article-item {
-            padding: 15px;
+            padding: 12px;
             border-bottom: 1px solid rgba(0, 255, 0, 0.1);
             cursor: pointer;
             transition: all 0.3s ease;
             border-radius: 5px;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             position: relative;
+            min-height: 80px;
         }
         
         .article-item:hover {
@@ -235,6 +261,7 @@
             margin-bottom: 5px;
             font-size: 0.9rem;
             line-height: 1.3;
+            padding-right: 30px;
         }
         
         .article-meta {
@@ -243,6 +270,9 @@
             align-items: center;
             font-size: 0.7rem;
             color: var(--text-muted);
+            margin-top: 5px;
+            flex-wrap: wrap;
+            gap: 5px;
         }
         
         .article-date {
@@ -257,7 +287,20 @@
             margin-left: 5px;
         }
         
-        .article-item.has-translation::after {
+        .article-stats-small {
+            display: flex;
+            gap: 8px;
+            margin-left: auto;
+        }
+        
+        .article-stats-small span {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 0.6rem;
+        }
+        
+        .article-item.has-translation::before {
             content: "TR";
             position: absolute;
             top: 10px;
@@ -268,6 +311,7 @@
             padding: 2px 5px;
             border-radius: 3px;
             font-weight: bold;
+            z-index: 1;
         }
         
         .article-share {
@@ -282,6 +326,7 @@
             padding: 3px 6px;
             cursor: pointer;
             font-size: 0.6rem;
+            z-index: 2;
         }
         
         .article-item:hover .article-share {
@@ -484,6 +529,7 @@
             color: #90ee90;
             font-size: 0.9rem;
             align-items: center;
+            flex-wrap: wrap;
         }
         
         .like-btn {
@@ -500,6 +546,11 @@
         
         .like-btn:hover {
             color: #ff6b6b;
+        }
+        
+        .like-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
         }
         
         .like-btn i {
@@ -751,6 +802,35 @@
             font-weight: bold;
         }
         
+        /* Optimizasyon: Sayfa yenileme sonrası daha hızlı yükleme için */
+        .article-item.loading-item {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .loading-item .spinner {
+            width: 30px;
+            height: 30px;
+        }
+        
+        /* Scrollbar özelleştirmesi */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+        
         @media (max-width: 992px) {
             .articles-container {
                 flex-direction: column;
@@ -940,12 +1020,10 @@
 
     <footer style="text-align: center; padding: 20px; font-size: 14px; color: white; margin-top: 50px;">
         <hr style="margin-bottom: 10px; border-color: limegreen;" />
-        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.4 | January 2026</p>
+        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.5 | January 2026</p>
     </footer>
 
-    <script src="/JAVASCRIPT/monitor.js"></script>
     <canvas id="matrixCanvas"></canvas>
-    <script src="/JAVASCRIPT/matrix.js"></script>
     
     <script>
         const CONFIG = {
@@ -966,10 +1044,25 @@
         let articleViews = {};
         let articleLikes = {};
         let userLikedArticles = JSON.parse(localStorage.getItem('userLikedArticles') || '{}');
+        let viewedArticles = JSON.parse(sessionStorage.getItem('viewedArticles') || '{}'); // Birden fazla görüntüleme önleme
         let isTranslated = false;
         let pendingEmail = null;
         let verificationCode = null;
         let countdownTimer = null;
+        
+        // Network error handling için retry mekanizması
+        async function fetchWithRetry(url, options = {}, retries = 3, delay = 1000) {
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    return await response.json();
+                } catch (error) {
+                    if (i === retries - 1) throw error;
+                    await new Promise(resolve => setTimeout(resolve, delay * (i + 1)));
+                }
+            }
+        }
         
         async function fetchViaProxy(path, method = 'GET', body = null, binId = null) {
             const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
@@ -977,7 +1070,7 @@
             const actualPath = binId ? `/b/${binId}${path}` : path;
             
             try {
-                const response = await fetch(proxyUrl, {
+                const response = await fetchWithRetry(proxyUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -985,8 +1078,7 @@
                     body: JSON.stringify({ path: actualPath, method, body })
                 });
 
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                return await response.json();
+                return response;
             } catch (error) {
                 console.error('Proxy error:', error);
                 throw error;
@@ -1008,6 +1100,11 @@
                 const result = await fetchViaProxy('/latest', 'GET', null, CONFIG.ARTICLES_BIN_ID);
                 articlesData = result.articles || result.records || result;
                 
+                if (!Array.isArray(articlesData)) {
+                    console.error('Unexpected data format:', articlesData);
+                    articlesData = [];
+                }
+                
                 articlesData.sort((a, b) => new Date(b.published_date || b.date) - new Date(a.published_date || a.date));
                 
                 await loadViewsData();
@@ -1017,23 +1114,13 @@
                 
                 if (window.location.hash) {
                     const articleId = window.location.hash.substring(1);
-                    loadArticleDetail(articleId);
-                } else {
-                    if (articlesData.length > 0) {
-                        const latestArticle = articlesData[0];
+                    setTimeout(() => loadArticleDetail(articleId), 100);
+                } else if (articlesData.length > 0) {
+                    const latestArticle = articlesData[0];
+                    setTimeout(() => {
                         loadArticleDetail(latestArticle.id);
-                        
                         history.replaceState(null, null, `#${latestArticle.id}`);
-                        
-                        setTimeout(() => {
-                            document.querySelectorAll('.article-item').forEach(item => {
-                                item.classList.remove('active');
-                                if (item.dataset.id == latestArticle.id) {
-                                    item.classList.add('active');
-                                }
-                            });
-                        }, 100);
-                    }
+                    }, 100);
                 }
             } catch (error) {
                 console.error('Error loading articles data:', error);
@@ -1058,11 +1145,13 @@
                 const articles = result.articles || result.records || result;
                 
                 articleLikes = {};
-                articles.forEach(article => {
-                    if (article.id) {
-                        articleLikes[article.id] = article.likes || 0;
-                    }
-                });
+                if (Array.isArray(articles)) {
+                    articles.forEach(article => {
+                        if (article.id) {
+                            articleLikes[article.id] = article.likes || 0;
+                        }
+                    });
+                }
             } catch (error) {
                 console.error('Error loading likes:', error);
                 articleLikes = {};
@@ -1072,14 +1161,24 @@
         async function updateViewCount(articleId) {
             if (!articleId) return;
             
+            // Aynı makaleyi aynı session'da birden fazla görüntüleme sayısını artırma
+            if (viewedArticles[articleId]) {
+                return;
+            }
+            
+            viewedArticles[articleId] = true;
+            sessionStorage.setItem('viewedArticles', JSON.stringify(viewedArticles));
+            
             const currentViews = articleViews[articleId] || 0;
             articleViews[articleId] = currentViews + 1;
             
+            // Liste görünümünü güncelle
             const viewElement = document.querySelector(`#views-${articleId}`);
             if (viewElement) {
                 viewElement.textContent = currentViews + 1;
             }
             
+            // Detay görünümünü güncelle
             const detailViewElement = document.querySelector('.article-stats .views');
             if (detailViewElement && currentArticle && currentArticle.id == articleId) {
                 detailViewElement.innerHTML = `<i class="far fa-eye"></i> ${currentViews + 1} views`;
@@ -1095,10 +1194,21 @@
         async function handleLike(articleId) {
             if (!articleId) return;
             
+            // Hızlı tıklamaları önlemek için butonu devre dışı bırak
+            const likeButton = document.querySelector(`button[onclick="handleLike(${articleId})"]`);
+            if (likeButton) {
+                likeButton.disabled = true;
+                likeButton.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Liking...`;
+            }
+            
             const hasLiked = userLikedArticles[articleId];
             
             if (hasLiked) {
                 showToast('You already liked this article');
+                if (likeButton) {
+                    likeButton.disabled = false;
+                    likeButton.innerHTML = `<i class="fas fa-heart"></i> ${articleLikes[articleId] || 0} likes`;
+                }
                 return;
             }
             
@@ -1108,14 +1218,23 @@
             userLikedArticles[articleId] = true;
             localStorage.setItem('userLikedArticles', JSON.stringify(userLikedArticles));
             
+            // Liste görünümünü güncelle
             const likeElement = document.querySelector(`#likes-${articleId}`);
             if (likeElement) {
-                likeElement.textContent = currentLikes + 1;
+                likeElement.innerHTML = `<i class="fas fa-heart"></i> ${currentLikes + 1}`;
+                likeElement.style.color = '#ff6b6b';
             }
             
+            // Detay görünümünü güncelle
             const detailLikeElement = document.querySelector('.article-stats .likes');
             if (detailLikeElement && currentArticle && currentArticle.id == articleId) {
                 detailLikeElement.innerHTML = `<i class="fas fa-heart"></i> ${currentLikes + 1} likes`;
+            }
+            
+            // Butonu güncelle
+            if (likeButton) {
+                likeButton.innerHTML = `<i class="fas fa-heart"></i> ${currentLikes + 1} likes`;
+                likeButton.disabled = true;
             }
             
             showToast('Article liked!');
@@ -1131,6 +1250,13 @@
                 }
             } catch (error) {
                 console.error('Error updating likes:', error);
+                showToast('Error updating like. Please try again.', 5000);
+                
+                // Hata durumunda butonu yeniden etkinleştir
+                if (likeButton) {
+                    likeButton.disabled = false;
+                    likeButton.innerHTML = `<i class="far fa-heart"></i> ${articleLikes[articleId] || 0} likes`;
+                }
             }
         }
         
@@ -1160,32 +1286,22 @@
                 
                 listItem.innerHTML = `
                     <div class="article-title">${article.title || 'Untitled Article'}</div>
-                    <div class="article-meta">
-                        <span class="article-date">${articleDate}</span>
-                        ${article.category ? `<span class="article-category">${article.category}</span>` : ''}
-                    </div>
                     <button class="article-share" onclick="event.stopPropagation(); shareArticle(${article.id})">
                         <i class="fas fa-share-alt"></i>
                     </button>
+                    <div class="article-meta">
+                        <span class="article-date">${articleDate}</span>
+                        ${article.category ? `<span class="article-category">${article.category}</span>` : ''}
+                        <div class="article-stats-small">
+                            <span id="views-${article.id}" style="color: #90ee90;">
+                                <i class="far fa-eye"></i> ${views}
+                            </span>
+                            <span id="likes-${article.id}" style="color: ${hasLiked ? '#ff6b6b' : '#90ee90'}">
+                                <i class="${hasLiked ? 'fas' : 'far'} fa-heart"></i> ${likes}
+                            </span>
+                        </div>
+                    </div>
                 `;
-                
-                const metaDiv = listItem.querySelector('.article-meta');
-                
-                const likeSpan = document.createElement('span');
-                likeSpan.id = `likes-${article.id}`;
-                likeSpan.style.marginLeft = '5px';
-                likeSpan.style.color = hasLiked ? '#ff6b6b' : '#90ee90';
-                likeSpan.style.fontSize = '0.7rem';
-                likeSpan.innerHTML = `<i class="${hasLiked ? 'fas' : 'far'} fa-heart"></i> ${likes}`;
-                metaDiv.appendChild(likeSpan);
-                
-                const viewSpan = document.createElement('span');
-                viewSpan.id = `views-${article.id}`;
-                viewSpan.style.marginLeft = '5px';
-                viewSpan.style.color = '#90ee90';
-                viewSpan.style.fontSize = '0.7rem';
-                viewSpan.innerHTML = `<i class="far fa-eye"></i> ${views}`;
-                metaDiv.appendChild(viewSpan);
                 
                 listItem.addEventListener('click', () => {
                     window.location.hash = article.id;
@@ -1200,6 +1316,18 @@
                 
                 articlesList.appendChild(listItem);
             });
+            
+            // Aktif makaleyi işaretle
+            if (window.location.hash) {
+                const articleId = window.location.hash.substring(1);
+                setTimeout(() => {
+                    document.querySelectorAll('.article-item').forEach(item => {
+                        if (item.dataset.id == articleId) {
+                            item.classList.add('active');
+                        }
+                    });
+                }, 200);
+            }
         }
         
         function loadArticleDetail(articleId) {
@@ -1237,7 +1365,7 @@
             
             const translationToggleHtml = article.content_tr ? `
                 <div class="translation-toggle" id="translationToggle">
-                    <span class="fi fi-tr"></span>
+                    <span class="fi fi-tr"></span> Türkçe
                 </div>
             ` : '';
             
@@ -1307,12 +1435,14 @@
                 articleTitle.textContent = currentArticle.title_tr || currentArticle.title;
                 articleBody.innerHTML = formatArticleContent(currentArticle.content_tr);
                 translationToggle.classList.add('active');
+                translationToggle.innerHTML = '<span class="fi fi-us"></span> English';
                 isTranslated = true;
                 showToast('Switched to Turkish');
             } else {
                 articleTitle.textContent = currentArticle.title || 'Untitled Article';
                 articleBody.innerHTML = formatArticleContent(currentArticle.content);
                 translationToggle.classList.remove('active');
+                translationToggle.innerHTML = '<span class="fi fi-tr"></span> Türkçe';
                 isTranslated = false;
                 showToast('Switched to English');
             }
@@ -1470,6 +1600,8 @@
             let timeLeft = 60;
             
             resendLink.classList.add('disabled');
+            
+            if (countdownTimer) clearInterval(countdownTimer);
             
             countdownTimer = setInterval(() => {
                 countdownElement.textContent = `(${timeLeft}s)`;
@@ -1663,7 +1795,72 @@
                     hideVerificationModal();
                 }
             });
+            
+            // Sayfa yenilendiğinde localStorage'dan beğeni durumunu yükle
+            setTimeout(() => {
+                const likedArticles = JSON.parse(localStorage.getItem('userLikedArticles') || '{}');
+                Object.keys(likedArticles).forEach(articleId => {
+                    const likeElement = document.querySelector(`#likes-${articleId}`);
+                    if (likeElement) {
+                        likeElement.style.color = '#ff6b6b';
+                        likeElement.innerHTML = `<i class="fas fa-heart"></i> ${articleLikes[articleId] || 0}`;
+                    }
+                });
+            }, 500);
         });
+    </script>
+    
+    <!-- Matrix efekti için script -->
+    <script>
+        // Basitleştirilmiş Matrix efekti
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const letters = '01';
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+        const drops = [];
+        
+        for (let i = 0; i < columns; i++) {
+            drops[i] = Math.floor(Math.random() * canvas.height / fontSize) * fontSize;
+        }
+        
+        function draw() {
+            ctx.fillStyle = 'rgba(10, 25, 20, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#0f0';
+            ctx.font = fontSize + 'px monospace';
+            
+            for (let i = 0; i < drops.length; i++) {
+                const text = letters[Math.floor(Math.random() * letters.length)];
+                const opacity = Math.random() * 0.5 + 0.3;
+                ctx.fillStyle = `rgba(0, 255, 0, ${opacity})`;
+                ctx.fillText(text, i * fontSize, drops[i]);
+                
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                
+                drops[i] += fontSize;
+            }
+        }
+        
+        function animate() {
+            draw();
+            requestAnimationFrame(animate);
+        }
+        
+        window.addEventListener('resize', function() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+        
+        // Başlangıçta matrix efektini başlat
+        setTimeout(animate, 1000);
     </script>
 </body>
 </html>
