@@ -240,6 +240,7 @@
             margin-bottom: 5px;
             font-size: 0.9rem;
             line-height: 1.3;
+            padding-right: 30px;
         }
         
         .article-meta {
@@ -262,10 +263,9 @@
             margin-left: 5px;
         }
         
-        .article-item.has-translation::after {
-            content: "TR";
+        .article-translation-indicator {
             position: absolute;
-            top: 10px;
+            top: 15px;
             right: 10px;
             background: rgba(255, 255, 255, 0.2);
             color: white;
@@ -273,24 +273,28 @@
             padding: 2px 5px;
             border-radius: 3px;
             font-weight: bold;
+            z-index: 2;
         }
         
         .article-share {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            top: 15px;
+            right: 35px;
             background: rgba(0, 0, 0, 0.5);
             border: 1px solid var(--border-color);
             border-radius: 3px;
-            padding: 3px 6px;
+            padding: 2px 5px;
             cursor: pointer;
             font-size: 0.6rem;
+            z-index: 2;
         }
         
-        .article-item:hover .article-share {
-            opacity: 1;
+        .article-stats {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+            font-size: 0.65rem;
+            color: var(--highlight-color);
         }
         
         .article-content {
@@ -480,7 +484,7 @@
             transform: translateY(-2px);
         }
         
-        .article-stats {
+        .article-stats-detail {
             margin-top: 30px;
             padding-top: 20px;
             border-top: 1px solid rgba(0,255,0,0.2);
@@ -782,14 +786,6 @@
             cursor: pointer;
         }
         
-        .article-item-stats {
-            display: flex;
-            gap: 10px;
-            margin-top: 5px;
-            font-size: 0.65rem;
-            color: var(--highlight-color);
-        }
-        
         @media (max-width: 992px) {
             .articles-container {
                 flex-direction: column;
@@ -810,6 +806,20 @@
                 display: flex;
                 order: 1;
                 width: 100%;
+            }
+            
+            .article-translation-indicator {
+                top: 15px;
+                right: 10px;
+            }
+            
+            .article-share {
+                top: 15px;
+                right: 40px;
+            }
+            
+            .article-title {
+                padding-right: 60px;
             }
         }
         
@@ -842,10 +852,6 @@
                 display: inline-flex;
             }
             
-            .article-share {
-                opacity: 1;
-            }
-            
             .subscription-form {
                 flex-direction: column;
             }
@@ -854,7 +860,7 @@
                 min-width: auto;
             }
             
-            .article-stats {
+            .article-stats-detail {
                 flex-wrap: wrap;
                 justify-content: center;
             }
@@ -863,13 +869,34 @@
                 flex-direction: column;
             }
             
-            .article-item.has-translation::after {
+            .article-translation-indicator {
                 top: 15px;
-                right: 15px;
+                right: 10px;
             }
             
-            .article-item-stats {
-                justify-content: flex-start;
+            .article-share {
+                top: 15px;
+                right: 40px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .article-translation-indicator {
+                top: 15px;
+                right: 10px;
+                font-size: 0.5rem;
+                padding: 1px 4px;
+            }
+            
+            .article-share {
+                top: 15px;
+                right: 35px;
+                font-size: 0.5rem;
+                padding: 1px 4px;
+            }
+            
+            .article-title {
+                padding-right: 55px;
             }
         }
     </style>
@@ -1130,7 +1157,7 @@
                 viewElement.textContent = currentViews + 1;
             }
             
-            const detailViewElement = document.querySelector('.article-stats .views');
+            const detailViewElement = document.querySelector('.article-stats-detail .views');
             if (detailViewElement && currentArticle && currentArticle.id == articleId) {
                 detailViewElement.innerHTML = `<i class="far fa-eye"></i> ${currentViews + 1} views`;
             }
@@ -1161,9 +1188,10 @@
             const likeElement = document.querySelector(`#likes-${articleId}`);
             if (likeElement) {
                 likeElement.textContent = currentLikes + 1;
+                likeElement.innerHTML = `<i class="fas fa-heart"></i> ${currentLikes + 1}`;
             }
             
-            const detailLikeElement = document.querySelector('.article-stats .likes');
+            const detailLikeElement = document.querySelector('.article-stats-detail .likes');
             if (detailLikeElement && currentArticle && currentArticle.id == articleId) {
                 detailLikeElement.innerHTML = `<i class="fas fa-heart"></i> ${currentLikes + 1} likes`;
             }
@@ -1195,32 +1223,43 @@
             
             articlesData.forEach(article => {
                 const listItem = document.createElement('li');
-                listItem.className = `article-item ${article.content_tr ? 'has-translation' : ''}`;
+                listItem.className = `article-item`;
                 listItem.dataset.id = article.id;
                 
-                const articleDate = new Date(article.published_date || article.date).toLocaleDateString('en-US', {
+                const articleDate = new Date(article.published_date || article.date);
+                const dateStr = articleDate.toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'short',
                     day: 'numeric'
+                });
+                const timeStr = articleDate.toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit'
                 });
                 
                 const views = articleViews[article.id] || 0;
                 const likes = articleLikes[article.id] || 0;
                 const hasLiked = userLikedArticles[article.id];
                 
+                let translationIndicator = '';
+                if (article.content_tr) {
+                    translationIndicator = `<div class="article-translation-indicator">TR</div>`;
+                }
+                
                 listItem.innerHTML = `
-                    <div class="article-title">${article.title || 'Untitled Article'}</div>
-                    <div class="article-meta">
-                        <span class="article-date">${articleDate}</span>
-                        ${article.category ? `<span class="article-category">${article.category}</span>` : ''}
-                    </div>
-                    <div class="article-item-stats">
-                        <span id="views-${article.id}"><i class="far fa-eye"></i> ${views} views</span>
-                        <span id="likes-${article.id}"><i class="${hasLiked ? 'fas' : 'far'} fa-heart"></i> ${likes} likes</span>
-                    </div>
+                    ${translationIndicator}
                     <button class="article-share" onclick="event.stopPropagation(); shareArticle(${article.id})">
                         <i class="fas fa-share-alt"></i>
                     </button>
+                    <div class="article-title">${article.title || 'Untitled Article'}</div>
+                    <div class="article-meta">
+                        <span class="article-date">${dateStr} ${timeStr}</span>
+                        ${article.category ? `<span class="article-category">${article.category}</span>` : ''}
+                    </div>
+                    <div class="article-stats">
+                        <span id="views-${article.id}"><i class="far fa-eye"></i> ${views}</span>
+                        <span id="likes-${article.id}"><i class="${hasLiked ? 'fas' : 'far'} fa-heart"></i> ${likes}</span>
+                    </div>
                 `;
                 
                 listItem.addEventListener('click', () => {
@@ -1252,10 +1291,13 @@
             
             document.getElementById('contentPlaceholder').style.display = 'none';
             
-            const articleDate = new Date(article.published_date || article.date).toLocaleDateString('en-US', {
+            const articleDate = new Date(article.published_date || article.date);
+            const dateStr = articleDate.toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: 'long',
-                day: 'numeric',
+                day: 'numeric'
+            });
+            const timeStr = articleDate.toLocaleTimeString('en-US', {
                 hour: '2-digit',
                 minute: '2-digit'
             });
@@ -1287,7 +1329,7 @@
                         ${translationToggleHtml}
                     </h1>
                     <div class="detail-meta">
-                        <span class="detail-date"><i class="far fa-calendar"></i> ${articleDate}</span>
+                        <span class="detail-date"><i class="far fa-calendar"></i> ${dateStr} <i class="far fa-clock"></i> ${timeStr}</span>
                         <span class="detail-category"><i class="fas fa-tag"></i> ${article.category || 'Cybersecurity'}</span>
                         <span class="detail-author"><i class="fas fa-user"></i> ${article.author || 'Adem Bayazıt'}</span>
                     </div>
@@ -1304,7 +1346,7 @@
                     ${formatArticleContent(article.content)}
                 </div>
                 
-                <div class="article-stats">
+                <div class="article-stats-detail">
                     <div class="views"><i class="far fa-eye"></i> ${views} views</div>
                     <button class="like-btn" onclick="handleLike(${article.id})" ${hasLiked ? 'disabled' : ''}>
                         <i class="${hasLiked ? 'fas' : 'far'} fa-heart"></i> ${likes} likes
@@ -1662,32 +1704,43 @@
             
             filteredArticles.forEach(article => {
                 const listItem = document.createElement('li');
-                listItem.className = `article-item ${article.content_tr ? 'has-translation' : ''}`;
+                listItem.className = `article-item`;
                 listItem.dataset.id = article.id;
                 
-                const articleDate = new Date(article.published_date || article.date).toLocaleDateString('en-US', {
+                const articleDate = new Date(article.published_date || article.date);
+                const dateStr = articleDate.toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'short',
                     day: 'numeric'
+                });
+                const timeStr = articleDate.toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit'
                 });
                 
                 const views = articleViews[article.id] || 0;
                 const likes = articleLikes[article.id] || 0;
                 const hasLiked = userLikedArticles[article.id];
                 
+                let translationIndicator = '';
+                if (article.content_tr) {
+                    translationIndicator = `<div class="article-translation-indicator">TR</div>`;
+                }
+                
                 listItem.innerHTML = `
-                    <div class="article-title">${article.title || 'Untitled Article'}</div>
-                    <div class="article-meta">
-                        <span class="article-date">${articleDate}</span>
-                        ${article.category ? `<span class="article-category">${article.category}</span>` : ''}
-                    </div>
-                    <div class="article-item-stats">
-                        <span id="views-${article.id}"><i class="far fa-eye"></i> ${views} views</span>
-                        <span id="likes-${article.id}"><i class="${hasLiked ? 'fas' : 'far'} fa-heart"></i> ${likes} likes</span>
-                    </div>
+                    ${translationIndicator}
                     <button class="article-share" onclick="event.stopPropagation(); shareArticle(${article.id})">
                         <i class="fas fa-share-alt"></i>
                     </button>
+                    <div class="article-title">${article.title || 'Untitled Article'}</div>
+                    <div class="article-meta">
+                        <span class="article-date">${dateStr} ${timeStr}</span>
+                        ${article.category ? `<span class="article-category">${article.category}</span>` : ''}
+                    </div>
+                    <div class="article-stats">
+                        <span id="views-${article.id}"><i class="far fa-eye"></i> ${views}</span>
+                        <span id="likes-${article.id}"><i class="${hasLiked ? 'fas' : 'far'} fa-heart"></i> ${likes}</span>
+                    </div>
                 `;
                 
                 listItem.addEventListener('click', () => {
