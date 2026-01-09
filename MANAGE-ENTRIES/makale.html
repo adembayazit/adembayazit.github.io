@@ -23,9 +23,6 @@
     <!-- Quill Editor CSS -->
     <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
     
-    <!-- ImageKit SDK -->
-    <script src="https://unpkg.com/imagekit-javascript@1.5.4/dist/imagekit.min.js"></script>
-    
     <style>
         :root {
             --primary-color: #00ff00;
@@ -711,7 +708,6 @@
             cursor: pointer;
             transition: all 0.3s ease;
             margin-bottom: 25px;
-            position: relative;
         }
         
         .image-upload-area:hover {
@@ -731,33 +727,9 @@
         
         .upload-progress {
             display: none;
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            border-radius: 10px;
-            z-index: 10;
-        }
-        
-        .progress-bar {
-            width: 80%;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            margin: 15px 0;
-            overflow: hidden;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: var(--primary-color);
-            width: 0%;
-            transition: width 0.3s ease;
+            margin-top: 15px;
+            color: var(--primary-color);
+            font-size: 0.9rem;
         }
         
         .image-preview {
@@ -1605,19 +1577,15 @@
                             <div class="form-group">
                                 <label class="form-label">Görsel Yükle</label>
                                 <div class="image-upload-area" id="imageUploadArea">
-                                    <div class="upload-progress" id="uploadProgress">
-                                        <div class="spinner"></div>
-                                        <p style="margin-top: 10px;">Yükleniyor...</p>
-                                        <div class="progress-bar">
-                                            <div class="progress-fill" id="progressFill"></div>
-                                        </div>
-                                        <p id="progressText">%0</p>
-                                    </div>
                                     <div class="upload-icon">
                                         <i class="fas fa-cloud-upload-alt"></i>
                                     </div>
                                     <p style="font-weight: 500; margin-bottom: 5px;">Görselleri buraya sürükleyin veya tıklayın</p>
                                     <p class="form-text">PNG, JPG, GIF - Max 2MB</p>
+                                    <div class="upload-progress" id="uploadProgress" style="display: none;">
+                                        <div class="spinner" style="margin: 10px auto;"></div>
+                                        <p>Görsel yükleniyor...</p>
+                                    </div>
                                 </div>
                                 <input type="file" id="imageUpload" multiple accept="image/*" style="display: none;">
                                 
@@ -1912,14 +1880,14 @@
     <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
     
     <script>
-        // Configuration
+        // Configuration - İLK KODDAKİ GİBİ
         const CONFIG = {
             ARTICLES_BIN_ID: '695f155c43b1c97be920c28d',
             SUBSCRIBERS_BIN_ID: '68d7fc3bae596e708ffdcc6e',
             ADMIN_PASSWORD_HASH: 'be408a40a5c6c0df48e0004b217dec97519da5e73876598203ec53bbe3ece5f7', // SHA256 of "admin"
             SESSION_TIMEOUT: 60 * 60 * 1000,
             DRAFT_AUTOSAVE_INTERVAL: 30000,
-            // ImageKit Configuration - BU DEĞERLERİ KENDİ HESABINIZA GÖRE GÜNCELLEYİN
+            JSONBIN_API_KEY: '$2a$10$YOUR_API_KEY_HERE', // JSONBin.io API key
             IMAGEKIT_PUBLIC_KEY: 'public_y0sX6vVpSzh7qK6EdI3HSzZvGX8=',
             IMAGEKIT_URL_ENDPOINT: 'https://ik.imagekit.io/your-account',
             IMAGEKIT_AUTH_ENDPOINT: 'https://adembayazit.netlify.app/.netlify/functions/imagekit-auth'
@@ -1935,9 +1903,8 @@
         let sessionTimer = null;
         let autoSaveTimer = null;
         let currentArticleTags = [];
-        let uploadedImages = []; // Artık URL'ler tutulacak
+        let uploadedImages = []; // Base64 veya URL'ler
         let isSidebarOpen = false;
-        let imagekit = null;
 
         // SHA-256 Hash Function
         async function sha256(message) {
@@ -1945,21 +1912,6 @@
             const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
             const hashArray = Array.from(new Uint8Array(hashBuffer));
             return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
-        // Initialize ImageKit
-        function initImageKit() {
-            try {
-                imagekit = new ImageKit({
-                    publicKey: CONFIG.IMAGEKIT_PUBLIC_KEY,
-                    urlEndpoint: CONFIG.IMAGEKIT_URL_ENDPOINT,
-                    authenticationEndpoint: CONFIG.IMAGEKIT_AUTH_ENDPOINT
-                });
-                console.log('ImageKit initialized successfully');
-            } catch (error) {
-                console.error('ImageKit initialization failed:', error);
-                showToast('ImageKit başlatılamadı. Görsel yükleme devre dışı.', 'warning');
-            }
         }
 
         // Toast Notification System
@@ -2036,7 +1988,7 @@
             isSidebarOpen = false;
         }
 
-        // Proxy Helper Function
+        // Proxy Helper Function - İLK KODDAKİ GİBİ
         async function fetchViaProxy(path, method = 'GET', body = null, binId = null) {
             const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
             
@@ -2061,6 +2013,10 @@
                 }
                 
                 const result = await response.json();
+                
+                // Debug için
+                console.log(`Proxy ${method} ${binId}${path}:`, result);
+                
                 return result;
             } catch (error) {
                 console.error('Proxy fetch error:', error);
@@ -2140,21 +2096,26 @@
 
         // Navigation Functions
         function setupNavigation() {
+            // Sidebar navigation
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.addEventListener('click', function(e) {
                     e.preventDefault();
                     const section = this.dataset.section;
                     
+                    // Update active states
                     document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
                     this.classList.add('active');
                     
+                    // Show selected section
                     document.querySelectorAll('.section-content').forEach(content => content.classList.remove('active'));
                     document.getElementById(section).classList.add('active');
                     
+                    // Close sidebar on mobile
                     if (window.innerWidth <= 992) {
                         closeSidebar();
                     }
                     
+                    // Load section data if needed
                     switch(section) {
                         case 'dashboard':
                             loadDashboard();
@@ -2172,23 +2133,28 @@
                 });
             });
             
+            // Tab navigation
             document.querySelectorAll('.tab-btn').forEach(tab => {
                 tab.addEventListener('click', function() {
                     const tabId = this.dataset.tab;
                     
+                    // Update active tabs
                     document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
                     this.classList.add('active');
                     
+                    // Show selected tab content
                     document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
                     document.getElementById(tabId + 'Tab').classList.add('active');
                 });
             });
             
+            // New article button
             document.getElementById('newArticleBtn')?.addEventListener('click', function() {
                 resetEditor();
                 switchToSection('editor');
             });
             
+            // Hamburger button
             document.getElementById('hamburgerBtn')?.addEventListener('click', toggleSidebar);
             document.getElementById('sidebarOverlay')?.addEventListener('click', closeSidebar);
         }
@@ -2208,32 +2174,36 @@
             }
         }
 
-        // Data Loading Functions - DÜZELTİLDİ
+        // Data Loading Functions - İLK KODDAKİ GİBİ
         async function loadArticles() {
             try {
                 console.log('Loading articles from Bin:', CONFIG.ARTICLES_BIN_ID);
                 const result = await fetchViaProxy('/latest', 'GET', null, CONFIG.ARTICLES_BIN_ID);
+                console.log('Raw articles result:', result);
                 
-                // JSON Bin formatı: {record: {articles: [...]}}
+                // JSON Bin formatını destekle
                 if (result && result.record) {
+                    // JSON Bin formatı: {record: {articles: [...]}}
                     if (Array.isArray(result.record)) {
                         articlesData = result.record;
                     } else if (result.record.articles && Array.isArray(result.record.articles)) {
                         articlesData = result.record.articles;
-                    } else if (Array.isArray(result.record.data)) {
+                    } else if (result.record.data && Array.isArray(result.record.data)) {
                         articlesData = result.record.data;
                     } else {
-                        console.warn('Unexpected data format, initializing empty array');
+                        console.warn('Unexpected data format in record, initializing empty array');
                         articlesData = [];
                     }
                 } else if (Array.isArray(result)) {
                     articlesData = result;
+                } else if (result && result.articles && Array.isArray(result.articles)) {
+                    articlesData = result.articles;
                 } else {
-                    console.warn('No valid data found, initializing empty array');
+                    console.warn('Unexpected data format, initializing empty array');
                     articlesData = [];
                 }
                 
-                console.log('Loaded articles:', articlesData.length);
+                console.log('Parsed articlesData:', articlesData.length, 'articles');
                 
                 // Sort by date (newest first)
                 articlesData.sort((a, b) => {
@@ -2251,38 +2221,43 @@
             }
         }
 
-        // Subscribers Loading Function - DÜZELTİLDİ
+        // Subscribers Loading Function - İLK KODDAKİ GİBİ
         async function loadSubscribers() {
             try {
                 console.log('Loading subscribers from Bin:', CONFIG.SUBSCRIBERS_BIN_ID);
                 const result = await fetchViaProxy('/latest', 'GET', null, CONFIG.SUBSCRIBERS_BIN_ID);
+                console.log('Raw subscribers result:', result);
                 
-                // JSON Bin formatı: {record: {subscribers: [...]}}
+                // JSON Bin formatını destekle
                 if (result && result.record) {
+                    // JSON Bin formatı: {record: {subscribers: [...]}}
                     if (Array.isArray(result.record)) {
                         subscribersData = result.record;
                     } else if (result.record.subscribers && Array.isArray(result.record.subscribers)) {
                         subscribersData = result.record.subscribers;
-                    } else if (Array.isArray(result.record.emails)) {
+                    } else if (result.record.emails && Array.isArray(result.record.emails)) {
                         subscribersData = result.record.emails;
                     } else {
-                        console.warn('Unexpected subscribers format, initializing empty array');
+                        console.warn('Unexpected subscribers format in record, initializing empty array');
                         subscribersData = [];
                     }
                 } else if (Array.isArray(result)) {
                     subscribersData = result;
+                } else if (result && result.subscribers && Array.isArray(result.subscribers)) {
+                    subscribersData = result.subscribers;
                 } else {
-                    console.warn('No valid subscribers data found');
+                    console.warn('Unexpected subscribers format, initializing empty array');
                     subscribersData = [];
                 }
                 
-                console.log('Loaded subscribers:', subscribersData.length);
+                console.log('Parsed subscribersData:', subscribersData.length, 'subscribers');
                 
                 // Update UI
                 document.getElementById('emailStats').textContent = `${subscribersData.length} abone`;
                 document.getElementById('subscribersCount').textContent = `${subscribersData.length} abone`;
                 document.getElementById('totalSubscribers').textContent = subscribersData.length;
                 
+                // Render subscribers table
                 renderSubscribersTable();
                 
                 return true;
@@ -2331,8 +2306,10 @@
         async function removeSubscriber(email) {
             showConfirm(`${email} adresini abonelikten çıkarmak istediğinizden emin misiniz?`, async function() {
                 try {
+                    // Filter out the subscriber
                     subscribersData = subscribersData.filter(e => e !== email);
                     
+                    // Save to JSON Bin
                     const dataToSave = {
                         subscribers: subscribersData,
                         lastUpdated: new Date().toISOString()
@@ -2373,6 +2350,7 @@
             document.getElementById('lastArticleDate').textContent = lastArticleDate;
             document.getElementById('lastUpdateTime').textContent = new Date().toLocaleTimeString('tr-TR');
             
+            // Load recent articles
             loadRecentArticles();
         }
 
@@ -2405,10 +2383,10 @@
                     <td>${article.views || 0}</td>
                     <td>
                         <div class="action-buttons">
-                            <button class="btn btn-info btn-sm" onclick="editArticle('${article.id}')">
+                            <button class="btn btn-info btn-sm" onclick="editArticle(${article.id})">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button class="btn btn-warning btn-sm" onclick="previewArticle('${article.id}')">
+                            <button class="btn btn-warning btn-sm" onclick="previewArticle(${article.id})">
                                 <i class="fas fa-eye"></i>
                             </button>
                         </div>
@@ -2451,13 +2429,13 @@
                     <td>${article.likes || 0}</td>
                     <td>
                         <div class="action-buttons">
-                            <button class="btn btn-info btn-sm" onclick="editArticle('${article.id}')">
+                            <button class="btn btn-info btn-sm" onclick="editArticle(${article.id})">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button class="btn btn-warning btn-sm" onclick="previewArticle('${article.id}')">
+                            <button class="btn btn-warning btn-sm" onclick="previewArticle(${article.id})">
                                 <i class="fas fa-eye"></i>
                             </button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteArticle('${article.id}')">
+                            <button class="btn btn-danger btn-sm" onclick="deleteArticle(${article.id})">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
@@ -2510,7 +2488,7 @@
             // Setup tag system
             setupTagSystem();
             
-            // Setup image upload - YENİ DÜZENLENMİŞ
+            // Setup image upload
             setupImageUpload();
             
             // Setup autosave
@@ -2559,11 +2537,10 @@
             });
         }
 
-        // Image Upload Functions - TAMAMEN YENİLENDİ
+        // Image Upload Functions - İLK KODDAKİ GİBİ DÜZELTİLDİ
         function setupImageUpload() {
             const uploadArea = document.getElementById('imageUploadArea');
             const fileInput = document.getElementById('imageUpload');
-            const uploadProgress = document.getElementById('uploadProgress');
             
             // Tıklama ile dosya seç
             uploadArea.addEventListener('click', (e) => {
@@ -2602,11 +2579,6 @@
         }
 
         async function handleImageUpload(files) {
-            if (!imagekit) {
-                showToast('Görsel yükleme servisi kullanılamıyor', 'error');
-                return;
-            }
-            
             for (let file of files) {
                 if (!file.type.startsWith('image/')) {
                     showToast(`${file.name} bir resim dosyası değil`, 'error');
@@ -2621,43 +2593,24 @@
                 try {
                     // Show progress
                     const uploadProgress = document.getElementById('uploadProgress');
-                    const progressFill = document.getElementById('progressFill');
-                    const progressText = document.getElementById('progressText');
+                    uploadProgress.style.display = 'block';
                     
-                    uploadProgress.style.display = 'flex';
-                    
-                    // Upload to ImageKit
-                    const result = await imagekit.upload({
-                        file: file,
-                        fileName: `article_${Date.now()}_${file.name}`,
-                        folder: "/articles",
-                        tags: ["cybersecurity", "article"],
-                        useUniqueFileName: true
-                    }, function(err, result) {
-                        if (err) {
-                            console.error('ImageKit upload error:', err);
-                            showToast('Görsel yüklenirken hata oluştu', 'error');
-                            uploadProgress.style.display = 'none';
-                        }
+                    // Base64'e çevir
+                    const imageUrl = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = (e) => resolve(e.target.result);
+                        reader.onerror = (e) => reject(new Error('Dosya okuma hatası'));
+                        reader.readAsDataURL(file);
                     });
-                    
-                    // Update progress
-                    progressFill.style.width = '100%';
-                    progressText.textContent = '%100';
-                    
-                    // Add URL to uploaded images
-                    uploadedImages.push(result.url);
+
+                    uploadedImages.push(imageUrl);
                     updateImagePreview();
-                    
-                    // Hide progress after a delay
-                    setTimeout(() => {
-                        uploadProgress.style.display = 'none';
-                        progressFill.style.width = '0%';
-                        progressText.textContent = '%0';
-                    }, 1000);
-                    
                     showToast(`${file.name} başarıyla yüklendi`, 'success');
                     
+                    // Hide progress
+                    setTimeout(() => {
+                        uploadProgress.style.display = 'none';
+                    }, 1000);
                 } catch (error) {
                     console.error('Error uploading image:', error);
                     showToast(`${file.name} yüklenirken hata oluştu`, 'error');
@@ -2686,13 +2639,12 @@
                 const img = document.createElement('img');
                 img.src = url;
                 img.alt = `Preview ${index + 1}`;
-                img.loading = 'lazy';
                 
                 const removeBtn = document.createElement('div');
                 removeBtn.className = 'preview-remove';
                 removeBtn.innerHTML = '&times;';
                 removeBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
+                    e.stopPropagation(); // Prevent triggering the item click
                     removeUploadedImage(index);
                 });
 
@@ -2815,11 +2767,8 @@
         }
 
         function getArticleFormData() {
-            // Generate new ID if not editing
-            const newId = currentArticleId || generateArticleId();
-            
             return {
-                id: newId,
+                id: currentArticleId || (articlesData.length > 0 ? Math.max(...articlesData.map(a => parseInt(a.id) || 0)) + 1 : 1),
                 title: document.getElementById('articleTitle').value.trim(),
                 title_tr: document.getElementById('articleTitleTR').value.trim() || null,
                 content: quillEN?.root.innerHTML || '',
@@ -2836,20 +2785,11 @@
                 images: uploadedImages,
                 views: 0,
                 likes: 0,
-                comments_count: 0,
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString()
+                comments_count: 0
             };
         }
 
-        function generateArticleId() {
-            // Generate a unique ID (timestamp + random string)
-            const timestamp = Date.now().toString(36);
-            const random = Math.random().toString(36).substring(2, 8);
-            return `article_${timestamp}_${random}`;
-        }
-
-        // Save Article Function - DÜZELTİLDİ
+        // Save Article Function - İLK KODDAKİ GİBİ
         async function saveArticle(publish = false) {
             const articleData = getArticleFormData();
             
@@ -2878,42 +2818,29 @@
                 let updatedArticles;
                 if (isEditing && currentArticleId) {
                     // Update existing article
-                    const index = articlesData.findIndex(a => a.id === currentArticleId);
+                    const index = articlesData.findIndex(a => a.id == currentArticleId);
                     if (index !== -1) {
-                        // Keep existing view count, likes, etc.
-                        articleData.views = articlesData[index].views || 0;
-                        articleData.likes = articlesData[index].likes || 0;
-                        articleData.comments_count = articlesData[index].comments_count || 0;
-                        articleData.created_at = articlesData[index].created_at || new Date().toISOString();
-                        articleData.updated_at = new Date().toISOString();
-                        
                         articlesData[index] = { ...articlesData[index], ...articleData };
                         console.log('Updated article:', articlesData[index]);
                     }
                     updatedArticles = articlesData;
                 } else {
-                    // Add new article with new ID
-                    articleData.id = generateArticleId();
-                    articleData.created_at = new Date().toISOString();
-                    articleData.updated_at = new Date().toISOString();
-                    
+                    // Add new article
                     console.log('Adding new article:', articleData);
                     articlesData.unshift(articleData);
                     updatedArticles = articlesData;
                 }
                 
-                // JSON Bin formatı - DÜZELTİLDİ
+                // JSON Bin formatı
                 const dataToSave = {
                     articles: updatedArticles,
-                    lastUpdated: new Date().toISOString(),
-                    total: updatedArticles.length
+                    lastUpdated: new Date().toISOString()
                 };
                 
                 console.log('Saving to JSON Bin:', dataToSave);
                 
                 // Save to JSON Bin
-                const saveResult = await fetchViaProxy('', 'PUT', dataToSave, CONFIG.ARTICLES_BIN_ID);
-                console.log('Save result:', saveResult);
+                await fetchViaProxy('', 'PUT', dataToSave, CONFIG.ARTICLES_BIN_ID);
                 
                 // Clear draft
                 localStorage.removeItem('articleDraft');
@@ -2940,7 +2867,7 @@
         }
 
         function editArticle(id) {
-            const article = articlesData.find(a => a.id === id);
+            const article = articlesData.find(a => a.id == id);
             if (!article) {
                 showToast('Makale bulunamadı', 'error');
                 return;
@@ -2986,12 +2913,11 @@
             showConfirm('Bu makaleyi silmek istediğinizden emin misiniz?', async function() {
                 try {
                     await loadArticles();
-                    articlesData = articlesData.filter(a => a.id !== id);
+                    articlesData = articlesData.filter(a => a.id != id);
                     
                     const dataToSave = {
                         articles: articlesData,
-                        lastUpdated: new Date().toISOString(),
-                        total: articlesData.length
+                        lastUpdated: new Date().toISOString()
                     };
                     
                     await fetchViaProxy('', 'PUT', dataToSave, CONFIG.ARTICLES_BIN_ID);
@@ -3000,7 +2926,7 @@
                     loadArticlesList();
                     
                     // If we're editing this article, reset editor
-                    if (currentArticleId === id) {
+                    if (currentArticleId == id) {
                         resetEditor();
                     }
                 } catch (error) {
@@ -3011,7 +2937,7 @@
         }
 
         function previewArticle(id) {
-            const article = articlesData.find(a => a.id === id);
+            const article = articlesData.find(a => a.id == id);
             if (!article) return;
             
             const modalContent = document.getElementById('previewModalContent');
@@ -3038,7 +2964,7 @@
             articlesData.forEach(article => {
                 const option = document.createElement('option');
                 option.value = article.id;
-                option.textContent = `${article.id.substring(0, 8)} - ${article.title.substring(0, 50)}${article.title.length > 50 ? '...' : ''}`;
+                option.textContent = `${article.id} - ${article.title.substring(0, 50)}${article.title.length > 50 ? '...' : ''}`;
                 select.appendChild(option);
             });
         }
@@ -3068,7 +2994,7 @@
                 return;
             }
             
-            const article = articlesData.find(a => a.id === articleId);
+            const article = articlesData.find(a => a.id == articleId);
             if (!article) {
                 showToast('Makale bulunamadı', 'error');
                 return;
@@ -3157,7 +3083,7 @@
                 return;
             }
             
-            const article = articlesData.find(a => a.id === articleId);
+            const article = articlesData.find(a => a.id == articleId);
             if (!article) return;
             
             const preview = document.getElementById('emailPreviewContent');
@@ -3253,6 +3179,7 @@ Abonelikten çıkmak için: https://adembayazit.com/unsubscribe
 
         // Settings Functions
         async function saveSettings() {
+            // Implementation for saving settings
             showToast('Ayarlar kaydedildi', 'success');
         }
 
@@ -3338,7 +3265,6 @@ Abonelikten çıkmak için: https://adembayazit.com/unsubscribe
             document.getElementById('adminPanel').style.display = 'block';
             
             // Initialize components
-            initImageKit();
             initEditor();
             setupNavigation();
             
