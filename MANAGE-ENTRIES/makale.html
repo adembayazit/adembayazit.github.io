@@ -738,6 +738,14 @@
             overflow: hidden;
             border: 1px solid var(--border-color);
             aspect-ratio: 16/9;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .preview-item:hover {
+            transform: scale(1.05);
+            border-color: var(--primary-color);
+            box-shadow: 0 5px 15px rgba(0, 255, 0, 0.2);
         }
         
         .preview-item img {
@@ -761,6 +769,7 @@
             font-size: 1rem;
             cursor: pointer;
             transition: all 0.3s ease;
+            z-index: 2;
         }
         
         .preview-remove:hover {
@@ -1555,11 +1564,11 @@
                             <div class="form-group">
                                 <label class="form-label">Kapak Görseli URL</label>
                                 <input type="text" id="featuredImage" class="form-control" placeholder="https://example.com/image.jpg">
-                                <span class="form-text">Önerilen boyut: 1200x630 piksel</span>
+                                <span class="form-text">Önerilen boyut: 1200x630 piksel. Görsellere tıklayarak otomatik ekleyebilirsiniz.</span>
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label">Ek Görseller</label>
+                                <label class="form-label">Görsel Yükle</label>
                                 <div class="image-upload-area" id="imageUploadArea">
                                     <div class="upload-icon">
                                         <i class="fas fa-cloud-upload-alt"></i>
@@ -1571,6 +1580,9 @@
                                 
                                 <div class="image-preview" id="imagePreview">
                                     <!-- Uploaded images preview will appear here -->
+                                    <p style="color: var(--text-muted); text-align: center; padding: 20px; grid-column: 1 / -1;">
+                                        Henüz görsel yüklenmedi
+                                    </p>
                                 </div>
                             </div>
 
@@ -1578,7 +1590,7 @@
                                 <label class="form-label">Mevcut Görseller</label>
                                 <div class="image-preview" id="existingImages">
                                     <!-- Existing images will appear here -->
-                                    <p style="color: var(--text-muted); text-align: center; padding: 20px;">
+                                    <p style="color: var(--text-muted); text-align: center; padding: 20px; grid-column: 1 / -1;">
                                         Görsel bulunamadı
                                     </p>
                                 </div>
@@ -1864,10 +1876,7 @@
         const CONFIG = {
             ARTICLES_BIN_ID: '695f155c43b1c97be920c28d',
             SUBSCRIBERS_BIN_ID: '68d7fc3bae596e708ffdcc6e',
-            IMAGEKIT_URL: 'https://ik.imagekit.io/your-imagekit-id',
-            IMAGEKIT_PUBLIC_KEY: 'your_public_key',
-            IMAGEKIT_AUTH_ENDPOINT: 'https://adembayazit.netlify.app/.netlify/functions/imagekit-auth',
-            ADMIN_PASSWORD_HASH: 'be408a40a5c6c0df48e0004b217dec97519da5e73876598203ec53bbe3ece5f7', // SHA256 of "admin"
+            ADMIN_PASSWORD_HASH: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', // SHA256 of "admin"
             SESSION_TIMEOUT: 60 * 60 * 1000,
             DRAFT_AUTOSAVE_INTERVAL: 30000
         };
@@ -1967,22 +1976,39 @@
             isSidebarOpen = false;
         }
 
-        // Proxy Helper Function
+        // Proxy Helper Function - DÜZELTİLDİ
         async function fetchViaProxy(path, method = 'GET', body = null, binId = null) {
             const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
-            const actualPath = binId ? `/b/${binId}${path}` : path;
             
             try {
                 const response = await fetch(proxyUrl, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ path: actualPath, method, body })
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        path: binId ? `/b/${binId}${path}` : path,
+                        method, 
+                        body,
+                        binId: binId
+                    })
                 });
 
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                return await response.json();
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Proxy error response:', errorText);
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                // Debug için
+                console.log(`Proxy ${method} ${binId}${path}:`, result);
+                
+                return result;
             } catch (error) {
-                console.error('Proxy error:', error);
+                console.error('Proxy fetch error:', error);
+                showToast('API bağlantı hatası', 'error');
                 throw error;
             }
         }
@@ -2136,33 +2162,150 @@
             }
         }
 
-        // Data Loading Functions
+        // Data Loading Functions - DÜZELTİLDİ
         async function loadArticles() {
             try {
+                console.log('Loading articles from Bin:', CONFIG.ARTICLES_BIN_ID);
                 const result = await fetchViaProxy('/latest', 'GET', null, CONFIG.ARTICLES_BIN_ID);
-                articlesData = result.articles || result.records || result;
+                console.log('Raw articles result:', result);
+                
+                // Debug için
+                if (result && typeof result === 'object') {
+                    console.log('Result keys:', Object.keys(result));
+                }
+                
+                // Farklı JSON formatlarını destekle
+                if (Array.isArray(result)) {
+                    articlesData = result;
+                } else if (result && result.articles && Array.isArray(result.articles)) {
+                    articlesData = result.articles;
+                } else if (result && result.records && Array.isArray(result.records)) {
+                    articlesData = result.records;
+                } else if (result && result.data && Array.isArray(result.data)) {
+                    articlesData = result.data;
+                } else {
+                    console.warn('Unexpected data format, initializing empty array');
+                    articlesData = [];
+                }
+                
+                console.log('Parsed articlesData:', articlesData);
                 
                 // Sort by date (newest first)
-                articlesData.sort((a, b) => new Date(b.published_date || b.date) - new Date(a.published_date || a.date));
+                articlesData.sort((a, b) => {
+                    const dateA = new Date(a.published_date || a.date || 0);
+                    const dateB = new Date(b.published_date || b.date || 0);
+                    return dateB - dateA;
+                });
                 
                 return true;
             } catch (error) {
                 console.error('Error loading articles:', error);
-                showToast('Makaleler yüklenirken hata oluştu', 'error');
+                showToast('Makaleler yüklenirken hata oluştu. Daha sonra tekrar deneyin.', 'error');
+                articlesData = [];
                 return false;
             }
         }
 
+        // Subscribers Loading Function - DÜZELTİLDİ
         async function loadSubscribers() {
             try {
+                console.log('Loading subscribers from Bin:', CONFIG.SUBSCRIBERS_BIN_ID);
                 const result = await fetchViaProxy('/latest', 'GET', null, CONFIG.SUBSCRIBERS_BIN_ID);
-                subscribersData = result.subscribers || [];
+                console.log('Raw subscribers result:', result);
+                
+                // Debug için
+                if (result && typeof result === 'object') {
+                    console.log('Subscribers result keys:', Object.keys(result));
+                }
+                
+                // Farklı JSON formatlarını destekle
+                if (Array.isArray(result)) {
+                    subscribersData = result;
+                } else if (result && result.subscribers && Array.isArray(result.subscribers)) {
+                    subscribersData = result.subscribers;
+                } else if (result && result.emails && Array.isArray(result.emails)) {
+                    subscribersData = result.emails;
+                } else if (result && result.data && Array.isArray(result.data)) {
+                    subscribersData = result.data;
+                } else {
+                    console.warn('Unexpected subscribers format, initializing empty array');
+                    subscribersData = [];
+                }
+                
+                console.log('Parsed subscribersData:', subscribersData);
+                
+                // Update UI
+                document.getElementById('emailStats').textContent = `${subscribersData.length} abone`;
+                document.getElementById('subscribersCount').textContent = `${subscribersData.length} abone`;
+                document.getElementById('totalSubscribers').textContent = subscribersData.length;
+                
+                // Render subscribers table
+                renderSubscribersTable();
+                
                 return true;
             } catch (error) {
                 console.error('Error loading subscribers:', error);
-                showToast('Aboneler yüklenirken hata oluştu', 'error');
+                showToast('Aboneler yüklenirken hata oluştu. Daha sonra tekrar deneyin.', 'error');
+                subscribersData = [];
                 return false;
             }
+        }
+
+        function renderSubscribersTable() {
+            const tbody = document.getElementById('subscribersTableBody');
+            tbody.innerHTML = '';
+            
+            if (subscribersData.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center" style="padding: 40px; color: var(--text-muted);">
+                            Henüz abone bulunmuyor
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            subscribersData.forEach((email, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${email}</td>
+                    <td>${new Date().toLocaleDateString('tr-TR')}</td>
+                    <td><span class="badge badge-success">Aktif</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-danger btn-sm" onclick="removeSubscriber('${email}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        async function removeSubscriber(email) {
+            showConfirm(`${email} adresini abonelikten çıkarmak istediğinizden emin misiniz?`, async function() {
+                try {
+                    // Filter out the subscriber
+                    subscribersData = subscribersData.filter(e => e !== email);
+                    
+                    // Save to JSON Bin
+                    const dataToSave = {
+                        subscribers: subscribersData,
+                        lastUpdated: new Date().toISOString()
+                    };
+                    
+                    await fetchViaProxy('', 'PUT', dataToSave, CONFIG.SUBSCRIBERS_BIN_ID);
+                    
+                    showToast('Abone kaldırıldı', 'success');
+                    loadSubscribers();
+                } catch (error) {
+                    console.error('Error removing subscriber:', error);
+                    showToast('Abone kaldırılırken hata oluştu', 'error');
+                }
+            });
         }
 
         // Dashboard Functions
@@ -2327,7 +2470,7 @@
             // Setup tag system
             setupTagSystem();
             
-            // Setup image upload
+            // Setup image upload - DÜZELTİLDİ
             setupImageUpload();
             
             // Setup autosave
@@ -2376,12 +2519,18 @@
             });
         }
 
+        // Image Upload Functions - TAMAMEN DÜZELTİLDİ
         function setupImageUpload() {
             const uploadArea = document.getElementById('imageUploadArea');
             const fileInput = document.getElementById('imageUpload');
             
-            uploadArea.addEventListener('click', () => fileInput.click());
+            // Tıklama ile dosya seç
+            uploadArea.addEventListener('click', (e) => {
+                if (e.target !== uploadArea && !uploadArea.contains(e.target)) return;
+                fileInput.click();
+            });
             
+            // Drag and drop
             uploadArea.addEventListener('dragover', (e) => {
                 e.preventDefault();
                 uploadArea.style.borderColor = 'var(--primary-color)';
@@ -2397,11 +2546,17 @@
                 e.preventDefault();
                 uploadArea.style.borderColor = 'var(--border-color)';
                 uploadArea.style.background = '';
-                if (e.dataTransfer.files.length) handleImageUpload(e.dataTransfer.files);
+                
+                if (e.dataTransfer.files.length) {
+                    handleImageUpload(e.dataTransfer.files);
+                }
             });
             
+            // File input change
             fileInput.addEventListener('change', (e) => {
-                if (e.target.files.length) handleImageUpload(e.target.files);
+                if (e.target.files.length) {
+                    handleImageUpload(e.target.files);
+                }
             });
         }
 
@@ -2411,21 +2566,24 @@
                     showToast(`${file.name} bir resim dosyası değil`, 'error');
                     continue;
                 }
-                
+
                 if (file.size > 5 * 1024 * 1024) {
                     showToast(`${file.name} çok büyük (max 5MB)`, 'error');
                     continue;
                 }
-                
+
                 try {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const imageUrl = e.target.result;
-                        uploadedImages.push(imageUrl);
-                        updateImagePreview();
-                        showToast(`${file.name} başarıyla yüklendi`, 'success');
-                    };
-                    reader.readAsDataURL(file);
+                    // Base64'e çevir
+                    const imageUrl = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = (e) => resolve(e.target.result);
+                        reader.onerror = (e) => reject(new Error('Dosya okuma hatası'));
+                        reader.readAsDataURL(file);
+                    });
+
+                    uploadedImages.push(imageUrl);
+                    updateImagePreview();
+                    showToast(`${file.name} başarıyla yüklendi`, 'success');
                 } catch (error) {
                     console.error('Error uploading image:', error);
                     showToast(`${file.name} yüklenirken hata oluştu`, 'error');
@@ -2437,13 +2595,42 @@
             const preview = document.getElementById('imagePreview');
             preview.innerHTML = '';
             
+            if (uploadedImages.length === 0) {
+                preview.innerHTML = `
+                    <p style="color: var(--text-muted); text-align: center; padding: 20px; grid-column: 1 / -1;">
+                        Henüz görsel yüklenmedi
+                    </p>
+                `;
+                return;
+            }
+            
             uploadedImages.forEach((url, index) => {
                 const item = document.createElement('div');
                 item.className = 'preview-item';
-                item.innerHTML = `
-                    <img src="${url}" alt="Preview ${index + 1}">
-                    <div class="preview-remove" onclick="removeUploadedImage(${index})">&times;</div>
-                `;
+                
+                const img = document.createElement('img');
+                img.src = url;
+                img.alt = `Preview ${index + 1}`;
+                
+                const removeBtn = document.createElement('div');
+                removeBtn.className = 'preview-remove';
+                removeBtn.innerHTML = '&times;';
+                removeBtn.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Prevent triggering the item click
+                    removeUploadedImage(index);
+                });
+
+                item.appendChild(img);
+                item.appendChild(removeBtn);
+
+                // Görsele tıklayınca kapak görseli olarak ayarla - DÜZELTİLDİ
+                item.addEventListener('click', (e) => {
+                    if (e.target !== removeBtn && !removeBtn.contains(e.target)) {
+                        document.getElementById('featuredImage').value = url;
+                        showToast('Kapak görseli olarak seçildi', 'info');
+                    }
+                });
+
                 preview.appendChild(item);
             });
         }
@@ -2553,7 +2740,7 @@
 
         function getArticleFormData() {
             return {
-                id: currentArticleId || (articlesData.length > 0 ? Math.max(...articlesData.map(a => a.id)) + 1 : 1),
+                id: currentArticleId || (articlesData.length > 0 ? Math.max(...articlesData.map(a => parseInt(a.id) || 0)) + 1 : 1),
                 title: document.getElementById('articleTitle').value.trim(),
                 title_tr: document.getElementById('articleTitleTR').value.trim() || null,
                 content: quillEN?.root.innerHTML || '',
@@ -2574,6 +2761,7 @@
             };
         }
 
+        // Save Article Function - TAMAMEN DÜZELTİLDİ
         async function saveArticle(publish = false) {
             const articleData = getArticleFormData();
             
@@ -2596,24 +2784,41 @@
             }
             
             try {
+                // Mevcut verileri yükle
                 await loadArticles();
                 
+                let updatedArticles;
                 if (isEditing && currentArticleId) {
                     // Update existing article
                     const index = articlesData.findIndex(a => a.id == currentArticleId);
                     if (index !== -1) {
                         articlesData[index] = { ...articlesData[index], ...articleData };
+                        console.log('Updated article:', articlesData[index]);
                     }
+                    updatedArticles = articlesData;
                 } else {
                     // Add new article
+                    console.log('Adding new article:', articleData);
                     articlesData.unshift(articleData);
+                    updatedArticles = articlesData;
                 }
                 
+                // JSON Bin formatı
+                const dataToSave = {
+                    articles: updatedArticles,
+                    lastUpdated: new Date().toISOString()
+                };
+                
+                console.log('Saving to JSON Bin:', dataToSave);
+                
                 // Save to JSON Bin
-                await fetchViaProxy('', 'PUT', { articles: articlesData }, CONFIG.ARTICLES_BIN_ID);
+                await fetchViaProxy('', 'PUT', dataToSave, CONFIG.ARTICLES_BIN_ID);
                 
                 // Clear draft
                 localStorage.removeItem('articleDraft');
+                
+                // Yerel veriyi güncelle
+                articlesData = updatedArticles;
                 
                 // Show success message
                 showToast(`Makale ${publish ? 'yayınlandı' : 'kaydedildi'}`, 'success');
@@ -2628,14 +2833,17 @@
                 return true;
             } catch (error) {
                 console.error('Error saving article:', error);
-                showToast('Makale kaydedilirken hata oluştu', 'error');
+                showToast('Makale kaydedilirken hata oluştu: ' + error.message, 'error');
                 return false;
             }
         }
 
         function editArticle(id) {
             const article = articlesData.find(a => a.id == id);
-            if (!article) return;
+            if (!article) {
+                showToast('Makale bulunamadı', 'error');
+                return;
+            }
             
             currentArticleId = id;
             isEditing = true;
@@ -2679,7 +2887,12 @@
                     await loadArticles();
                     articlesData = articlesData.filter(a => a.id != id);
                     
-                    await fetchViaProxy('', 'PUT', { articles: articlesData }, CONFIG.ARTICLES_BIN_ID);
+                    const dataToSave = {
+                        articles: articlesData,
+                        lastUpdated: new Date().toISOString()
+                    };
+                    
+                    await fetchViaProxy('', 'PUT', dataToSave, CONFIG.ARTICLES_BIN_ID);
                     
                     showToast('Makale silindi', 'success');
                     loadArticlesList();
@@ -2734,7 +2947,6 @@
             
             updateEmailArticleSelect();
             document.getElementById('emailStats').textContent = `${subscribersData.length} abone`;
-            document.getElementById('subscribersCount').textContent = `${subscribersData.length} abone`;
         }
 
         async function sendEmailToSubscribers(testOnly = false) {
@@ -2779,8 +2991,36 @@
                 btn.disabled = true;
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...';
                 
-                // Simulate email sending (replace with actual API call)
-                await new Promise(resolve => setTimeout(resolve, 2000));
+                // Create email data
+                const emailData = {
+                    Messages: [{
+                        From: {
+                            Email: "fyi@adembayazit.com",
+                            Name: "Adem Bayazıt - Cybersecurity Articles"
+                        },
+                        To: recipients.map(email => ({ Email: email })),
+                        Subject: subject.replace('{article_title}', article.title),
+                        HTMLPart: generateEmailTemplate(article, customMessage, template),
+                        TextPart: generateTextTemplate(article, customMessage)
+                    }]
+                };
+                
+                // Send email via Netlify function
+                const response = await fetch('https://adembayazit.netlify.app/.netlify/functions/send-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        emailData: emailData
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
                 
                 showToast(testOnly 
                     ? `Test email gönderildi: ${testEmail}`
@@ -2794,7 +3034,7 @@
                 
             } catch (error) {
                 console.error('Error sending email:', error);
-                showToast('Email gönderilirken hata oluştu', 'error');
+                showToast('Email gönderilirken hata oluştu: ' + error.message, 'error');
             } finally {
                 const btnId = testOnly ? 'testEmailBtn' : 'sendEmailBtn';
                 const btn = document.getElementById(btnId);
@@ -2888,6 +3128,27 @@
             `;
         }
 
+        function generateTextTemplate(article, customMessage) {
+            return `
+YENİ MAKALE: ${article.title}
+
+${article.title_tr ? `Türkçe Başlık: ${article.title_tr}` : ''}
+
+Kategori: ${article.category}
+Yayın Tarihi: ${new Date(article.published_date || article.date).toLocaleDateString('tr-TR')}
+
+${customMessage ? `Özel Mesaj: ${customMessage}\n\n` : ''}
+
+Özet: ${article.content.substring(0, 200).replace(/<[^>]*>/g, '')}...
+
+Makaleyi okumak için: https://adembayazit.com/articles#${article.id}
+
+---
+Adem Bayazıt - Cybersecurity Articles
+Abonelikten çıkmak için: https://adembayazit.com/unsubscribe
+            `;
+        }
+
         // Settings Functions
         async function saveSettings() {
             // Implementation for saving settings
@@ -2915,7 +3176,7 @@
             
             const hash = await sha256(newPassword);
             
-            // In production, save hash to backend
+            // Update config
             CONFIG.ADMIN_PASSWORD_HASH = hash;
             localStorage.setItem('adminPasswordHash', hash);
             
@@ -3029,7 +3290,13 @@
                     }
                     
                     subscribersData.push(email);
-                    await fetchViaProxy('', 'PUT', { subscribers: subscribersData }, CONFIG.SUBSCRIBERS_BIN_ID);
+                    
+                    const dataToSave = {
+                        subscribers: subscribersData,
+                        lastUpdated: new Date().toISOString()
+                    };
+                    
+                    await fetchViaProxy('', 'PUT', dataToSave, CONFIG.SUBSCRIBERS_BIN_ID);
                     
                     document.getElementById('addSubscriberEmail').value = '';
                     showToast('Abone eklendi', 'success');
@@ -3042,7 +3309,7 @@
             
             // Export subscribers button
             document.getElementById('exportSubscribersBtn').addEventListener('click', function() {
-                const csv = subscribersData.join('\n');
+                const csv = 'Email\n' + subscribersData.join('\n');
                 const blob = new Blob([csv], { type: 'text/csv' });
                 const url = URL.createObjectURL(blob);
                 
