@@ -827,13 +827,11 @@
     <script src="/JAVASCRIPT/matrix.js"></script>
     
     <script>
-        // JSON configuration - İkinci sayfadan alınan Mailjet bilgileri
+        // JSON configuration - API key'ler environment variable'dan alınacak
         const CONFIG = {
             VULNERABILITIES_BIN_ID: '68d78989d0ea881f408cad3f',
             SUBSCRIBERS_BIN_ID: '68d7fc3bae596e708ffdcc6e',
             MAILJET_CONFIG: {
-                apiKey: '4eab53d0383497317f9d58afd0176d9f',
-                secretKey: 'e46dc21f710c911ba855e1eca0675971',
                 senderEmail: 'fyi@adembayazit.com',
                 senderName: 'Adem Bayazıt - Vulnerabilities Research'
             }
@@ -919,17 +917,13 @@
                     ]
                 };
                 
-                // Send email via Netlify function
+                // Send email via Netlify function - API key'ler environment variable'dan alınacak
                 const response = await fetch('https://adembayazit.netlify.app/.netlify/functions/send-email', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        emailData: emailData,
-                        apiKey: CONFIG.MAILJET_CONFIG.apiKey,
-                        secretKey: CONFIG.MAILJET_CONFIG.secretKey
-                    })
+                    body: JSON.stringify({ emailData })
                 });
                 
                 if (!response.ok) {
