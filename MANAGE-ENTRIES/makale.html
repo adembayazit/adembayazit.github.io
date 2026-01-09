@@ -1,0 +1,2665 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cybersecurity Articles Admin | Adem Bayazıt</title>
+    <meta name="description" content="Makale yönetim paneli">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Cybersecurity Articles Admin" />
+    <meta property="og:description" content="Makale yönetim paneli" />
+    <meta property="og:type" content="website" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/IMAGES/ab.png">
+    
+    <!-- CSS Libraries -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Quill Editor CSS -->
+    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #00ff00;
+            --primary-dark: #00cc00;
+            --primary-light: #33ff33;
+            --bg-color: #0a1916;
+            --card-bg: rgba(10, 25, 20, 0.8);
+            --text-color: #ffffff;
+            --text-muted: #cccccc;
+            --border-color: #00aa00;
+            --highlight-color: #99ff99;
+            --sidebar-width: 280px;
+            --danger-color: #ff4444;
+            --warning-color: #ffcc00;
+            --success-color: #00cc66;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        
+        /* Header Styles */
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo-container img {
+            height: 32px;
+        }
+        
+        .logo-container h1 {
+            font-size: 1.4rem;
+            color: var(--primary-color);
+        }
+        
+        .admin-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logout-btn {
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 500;
+        }
+        
+        .logout-btn:hover {
+            background: #ff2222;
+        }
+        
+        /* Main Container */
+        .admin-container {
+            display: flex;
+            margin-top: 70px;
+            min-height: calc(100vh - 70px);
+        }
+        
+        /* Sidebar Styles */
+        .admin-sidebar {
+            width: var(--sidebar-width);
+            background: var(--card-bg);
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            top: 70px;
+            left: 0;
+            bottom: 0;
+            overflow-y: auto;
+            padding: 20px 0;
+        }
+        
+        .admin-nav {
+            list-style: none;
+        }
+        
+        .nav-item {
+            padding: 12px 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        
+        .nav-item:hover {
+            background: rgba(0, 255, 0, 0.1);
+        }
+        
+        .nav-item.active {
+            background: rgba(0, 255, 0, 0.15);
+            border-left: 3px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        .nav-section {
+            margin: 20px 0 10px 25px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* Main Content */
+        .admin-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 30px;
+            min-height: calc(100vh - 70px);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Dashboard Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 255, 0, 0.1);
+        }
+        
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .icon-blue { background: rgba(0, 123, 255, 0.2); color: #007bff; }
+        .icon-green { background: rgba(0, 200, 83, 0.2); color: #00c853; }
+        .icon-orange { background: rgba(255, 152, 0, 0.2); color: #ff9800; }
+        .icon-purple { background: rgba(156, 39, 176, 0.2); color: #9c27b0; }
+        .icon-red { background: rgba(244, 67, 54, 0.2); color: #f44336; }
+        .icon-teal { background: rgba(0, 150, 136, 0.2); color: #009688; }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        /* Table Styles */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+        
+        .data-table th {
+            background: rgba(0, 255, 0, 0.1);
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--primary-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .data-table td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .data-table tr:hover {
+            background: rgba(0, 255, 0, 0.05);
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-sm {
+            padding: 4px 8px;
+            font-size: 0.8rem;
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            color: #000;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid var(--border-color);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #00b359;
+        }
+        
+        .btn-warning {
+            background: var(--warning-color);
+            color: #000;
+        }
+        
+        .btn-warning:hover {
+            background: #e6b800;
+        }
+        
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #ff2222;
+        }
+        
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        .btn-info:hover {
+            background: #138496;
+        }
+        
+        /* Form Styles */
+        .form-container {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 30px;
+            margin-top: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0, 255, 0, 0.2);
+        }
+        
+        .form-control-sm {
+            padding: 8px 12px;
+            font-size: 0.9rem;
+        }
+        
+        .form-text {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: block;
+        }
+        
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        /* Quill Editor Customization */
+        .ql-toolbar {
+            background: rgba(0, 0, 0, 0.3);
+            border-color: var(--border-color) !important;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+        }
+        
+        .ql-container {
+            border-color: var(--border-color) !important;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+            min-height: 300px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        .ql-editor {
+            color: var(--text-color);
+            font-family: inherit;
+            min-height: 300px;
+        }
+        
+        /* Tab Navigation */
+        .nav-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+        
+        .tab-btn {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-btn:hover {
+            color: var(--text-color);
+        }
+        
+        .tab-btn.active {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Tags Input */
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .tag {
+            background: rgba(0, 255, 0, 0.2);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .tag-remove {
+            cursor: pointer;
+            font-size: 1.2rem;
+            line-height: 1;
+        }
+        
+        .tag-input-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .tag-input {
+            flex: 1;
+        }
+        
+        /* Image Upload */
+        .image-upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 10px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .image-upload-area:hover {
+            border-color: var(--primary-color);
+            background: rgba(0, 255, 0, 0.05);
+        }
+        
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--border-color);
+            margin-bottom: 10px;
+        }
+        
+        .image-upload-area:hover .upload-icon {
+            color: var(--primary-color);
+        }
+        
+        .image-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .preview-item {
+            position: relative;
+            width: 150px;
+            height: 100px;
+            border-radius: 5px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+        
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .preview-remove {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: var(--danger-color);
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        
+        /* Email Template */
+        .email-preview {
+            background: white;
+            color: #333;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        /* Toast Notification */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+        
+        .toast {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            padding: 15px 20px;
+            margin-top: 10px;
+            min-width: 300px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        
+        .toast-success {
+            border-left: 4px solid var(--success-color);
+        }
+        
+        .toast-error {
+            border-left: 4px solid var(--danger-color);
+        }
+        
+        .toast-warning {
+            border-left: 4px solid var(--warning-color);
+        }
+        
+        .toast-info {
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            color: var(--primary-color);
+            font-size: 1.3rem;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        /* Login Page */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            background: var(--bg-color);
+        }
+        
+        .login-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        
+        .login-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        
+        .login-title {
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+        }
+        
+        /* Loading Spinner */
+        .spinner {
+            border: 3px solid rgba(0, 255, 0, 0.3);
+            border-radius: 50%;
+            border-top: 3px solid var(--primary-color);
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .admin-sidebar {
+                width: 80px;
+                padding: 20px 0;
+            }
+            
+            .admin-content {
+                margin-left: 80px;
+            }
+            
+            .nav-item span {
+                display: none;
+            }
+            
+            .nav-section {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .admin-content {
+                padding: 20px;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .data-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .admin-header {
+                padding: 15px;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .admin-container {
+                margin-top: 120px;
+            }
+            
+            .admin-sidebar {
+                top: 120px;
+                width: 60px;
+            }
+            
+            .admin-content {
+                margin-left: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-box">
+            <div class="login-icon">
+                <i class="fas fa-lock"></i>
+            </div>
+            <h1 class="login-title">Admin Girişi</h1>
+            <p style="margin-bottom: 30px; color: var(--text-muted);">Yetkili erişim için giriş yapın</p>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <input type="password" id="adminPassword" class="form-control" placeholder="Admin Şifresi" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px;">
+                    <i class="fas fa-sign-in-alt"></i> Giriş Yap
+                </button>
+            </form>
+            
+            <div id="loginError" style="color: var(--danger-color); margin-top: 15px; display: none;">
+                Hatalı şifre!
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="adminPanel" style="display: none;">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="logo-container">
+                <img src="/IMAGES/hackerwhite.svg" alt="Logo">
+                <h1>Makale Yönetim Paneli</h1>
+            </div>
+            
+            <div class="admin-user">
+                <span id="currentUser">Admin</span>
+                <button class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Çıkış
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Container -->
+        <div class="admin-container">
+            <!-- Sidebar -->
+            <aside class="admin-sidebar">
+                <ul class="admin-nav">
+                    <div class="nav-section">Ana Sayfa</div>
+                    <li class="nav-item active" data-section="dashboard">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </li>
+                    
+                    <div class="nav-section">Makale Yönetimi</div>
+                    <li class="nav-item" data-section="articles">
+                        <i class="fas fa-newspaper"></i>
+                        <span>Tüm Makaleler</span>
+                    </li>
+                    <li class="nav-item" data-section="editor">
+                        <i class="fas fa-edit"></i>
+                        <span>Yeni Makale</span>
+                    </li>
+                    
+                    <div class="nav-section">Abonelik</div>
+                    <li class="nav-item" data-section="subscribers">
+                        <i class="fas fa-users"></i>
+                        <span>Aboneler</span>
+                    </li>
+                    <li class="nav-item" data-section="email">
+                        <i class="fas fa-envelope"></i>
+                        <span>Email Gönder</span>
+                    </li>
+                    
+                    <div class="nav-section">Ayarlar</div>
+                    <li class="nav-item" data-section="settings">
+                        <i class="fas fa-cog"></i>
+                        <span>Ayarlar</span>
+                    </li>
+                </ul>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="admin-content">
+                <!-- Dashboard Section -->
+                <section id="dashboard" class="section-content active">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </h2>
+                        <div class="last-updated">
+                            Son güncelleme: <span id="lastUpdateTime">-</span>
+                        </div>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon icon-blue">
+                                <i class="fas fa-newspaper"></i>
+                            </div>
+                            <div class="stat-value" id="totalArticles">0</div>
+                            <div class="stat-label">Toplam Makale</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon icon-green">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                            <div class="stat-value" id="totalViews">0</div>
+                            <div class="stat-label">Toplam Görüntülenme</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon icon-purple">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <div class="stat-value" id="totalLikes">0</div>
+                            <div class="stat-label">Toplam Beğeni</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon icon-orange">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-value" id="totalSubscribers">0</div>
+                            <div class="stat-label">Abone Sayısı</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon icon-teal">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                            <div class="stat-value" id="avgReadingTime">0</div>
+                            <div class="stat-label">Ort. Okuma Süresi (dk)</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon icon-red">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div class="stat-value" id="lastArticleDate">-</div>
+                            <div class="stat-label">Son Makale Tarihi</div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Articles -->
+                    <div class="section-header">
+                        <h3 class="section-title">
+                            <i class="fas fa-history"></i> Son Makaleler
+                        </h3>
+                    </div>
+                    
+                    <div id="recentArticles">
+                        <!-- Recent articles will be loaded here -->
+                    </div>
+                </section>
+
+                <!-- Articles List Section -->
+                <section id="articles" class="section-content">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-newspaper"></i> Tüm Makaleler
+                        </h2>
+                        <button class="btn btn-primary" id="newArticleBtn">
+                            <i class="fas fa-plus"></i> Yeni Makale
+                        </button>
+                    </div>
+
+                    <table class="data-table" id="articlesTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Başlık</th>
+                                <th>Kategori</th>
+                                <th>Tarih</th>
+                                <th>Görüntülenme</th>
+                                <th>Beğeni</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="articlesTableBody">
+                            <!-- Articles will be loaded here -->
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- Article Editor Section -->
+                <section id="editor" class="section-content">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-edit"></i> Makale Editörü
+                        </h2>
+                        <div>
+                            <button class="btn btn-secondary" id="saveDraftBtn">
+                                <i class="fas fa-save"></i> Taslak Kaydet
+                            </button>
+                            <button class="btn btn-success" id="publishArticleBtn">
+                                <i class="fas fa-paper-plane"></i> Yayınla
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="nav-tabs">
+                        <button class="tab-btn active" data-tab="content">İçerik</button>
+                        <button class="tab-btn" data-tab="seo">SEO & Ayarlar</button>
+                        <button class="tab-btn" data-tab="images">Görseller</button>
+                        <button class="tab-btn" data-tab="preview">Önizleme</button>
+                    </div>
+
+                    <div class="form-container">
+                        <!-- Content Tab -->
+                        <div id="contentTab" class="tab-content active">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Makale Başlığı (EN) *</label>
+                                    <input type="text" id="articleTitle" class="form-control" placeholder="Makale başlığını girin">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Makale Başlığı (TR)</label>
+                                    <input type="text" id="articleTitleTR" class="form-control" placeholder="Türkçe başlık (isteğe bağlı)">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Kategori *</label>
+                                    <select id="articleCategory" class="form-control">
+                                        <option value="">Kategori seçin</option>
+                                        <option value="Malware Analysis">Malware Analysis</option>
+                                        <option value="Network Security">Network Security</option>
+                                        <option value="Web Security">Web Security</option>
+                                        <option value="Cryptography">Cryptography</option>
+                                        <option value="Social Engineering">Social Engineering</option>
+                                        <option value="Threat Intelligence">Threat Intelligence</option>
+                                        <option value="Penetration Testing">Penetration Testing</option>
+                                        <option value="Incident Response">Incident Response</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Yazar *</label>
+                                    <input type="text" id="articleAuthor" class="form-control" value="Adem Bayazıt">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">İçerik (EN) *</label>
+                                <div id="editorEN"></div>
+                                <span class="form-text">Markdown veya HTML kullanabilirsiniz. Kod blokları için ``` kullanın.</span>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">İçerik (TR)</label>
+                                <div id="editorTR"></div>
+                                <span class="form-text">Türkçe çeviri (isteğe bağlı)</span>
+                            </div>
+                        </div>
+
+                        <!-- SEO & Settings Tab -->
+                        <div id="seoTab" class="tab-content">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">SEO Başlık</label>
+                                    <input type="text" id="seoTitle" class="form-control" placeholder="Google'da görünecek başlık">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">SEO Açıklama</label>
+                                    <textarea id="seoDescription" class="form-control" placeholder="Meta açıklaması (max 160 karakter)" maxlength="160"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Etiketler</label>
+                                <div class="tags-container" id="tagsContainer"></div>
+                                <div class="tag-input-container">
+                                    <input type="text" id="tagInput" class="form-control tag-input" placeholder="Etiket ekle">
+                                    <button type="button" class="btn btn-primary" id="addTagBtn">Ekle</button>
+                                </div>
+                                <span class="form-text">Enter tuşu ile hızlı ekleme yapabilirsiniz</span>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Okuma Süresi (dakika)</label>
+                                    <input type="number" id="readingTime" class="form-control" value="5" min="1">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Yayın Tarihi</label>
+                                    <input type="datetime-local" id="publishDate" class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-checkbox">
+                                    <input type="checkbox" id="featuredArticle">
+                                    Öne çıkan makale olarak işaretle
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Images Tab -->
+                        <div id="imagesTab" class="tab-content">
+                            <div class="form-group">
+                                <label class="form-label">Kapak Görseli URL</label>
+                                <input type="text" id="featuredImage" class="form-control" placeholder="https://example.com/image.jpg">
+                                <span class="form-text">Önerilen boyut: 1200x630 piksel</span>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Ek Görseller</label>
+                                <div class="image-upload-area" id="imageUploadArea">
+                                    <div class="upload-icon">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                    </div>
+                                    <p>Görselleri buraya sürükleyin veya tıklayın</p>
+                                    <p class="form-text">PNG, JPG, GIF (max 5MB)</p>
+                                </div>
+                                <input type="file" id="imageUpload" multiple accept="image/*" style="display: none;">
+                                
+                                <div class="image-preview" id="imagePreview"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Mevcut Görseller</label>
+                                <div class="image-preview" id="existingImages"></div>
+                            </div>
+                        </div>
+
+                        <!-- Preview Tab -->
+                        <div id="previewTab" class="tab-content">
+                            <div class="form-group">
+                                <button class="btn btn-primary" id="refreshPreview">
+                                    <i class="fas fa-sync"></i> Önizlemeyi Yenile
+                                </button>
+                            </div>
+                            <div id="articlePreview" class="email-preview">
+                                Makale önizlemesi burada görünecek
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Subscribers Section -->
+                <section id="subscribers" class="section-content">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-users"></i> Abone Listesi
+                        </h2>
+                        <div>
+                            <button class="btn btn-primary" id="exportSubscribersBtn">
+                                <i class="fas fa-download"></i> CSV İndir
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-container">
+                        <div class="form-group">
+                            <div class="form-row">
+                                <input type="email" id="addSubscriberEmail" class="form-control" placeholder="Email adresi">
+                                <button class="btn btn-success" id="addSubscriberBtn">
+                                    <i class="fas fa-plus"></i> Abone Ekle
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>Kayıt Tarihi</th>
+                                <th>Durum</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="subscribersTableBody">
+                            <!-- Subscribers will be loaded here -->
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- Email Section -->
+                <section id="email" class="section-content">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-envelope"></i> Email Gönderimi
+                        </h2>
+                        <div class="email-stats">
+                            <span id="emailStats">0 abone</span>
+                        </div>
+                    </div>
+
+                    <div class="form-container">
+                        <div class="form-group">
+                            <label class="form-label">Gönderilecek Makale</label>
+                            <select id="emailArticleSelect" class="form-control">
+                                <option value="">Makale seçin</option>
+                            </select>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Email Başlığı</label>
+                                <input type="text" id="emailSubject" class="form-control" value="Yeni Makale: {article_title}">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Şablon</label>
+                                <select id="emailTemplate" class="form-control">
+                                    <option value="new_article">Yeni Makale Duyurusu</option>
+                                    <option value="weekly_digest">Haftalık Özet</option>
+                                    <option value="important_alert">Önemli Güncelleme</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Özel Mesaj (isteğe bağlı)</label>
+                            <textarea id="customMessage" class="form-control" rows="3" placeholder="Abonelerinize özel bir mesaj ekleyin..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Test Email (isteğe bağlı)</label>
+                            <input type="email" id="testEmail" class="form-control" placeholder="Test için email adresi">
+                        </div>
+
+                        <div class="form-actions" style="display: flex; gap: 10px; margin-top: 20px;">
+                            <button class="btn btn-warning" id="testEmailBtn">
+                                <i class="fas fa-vial"></i> Test Gönderimi
+                            </button>
+                            <button class="btn btn-success" id="sendEmailBtn">
+                                <i class="fas fa-paper-plane"></i> Tüm Abonelere Gönder
+                            </button>
+                            <button class="btn btn-info" id="previewEmailBtn">
+                                <i class="fas fa-eye"></i> Önizleme
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-container" style="margin-top: 20px;">
+                        <h3>Email Önizleme</h3>
+                        <div id="emailPreviewContent" class="email-preview">
+                            Email önizlemesi burada görünecek
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Settings Section -->
+                <section id="settings" class="section-content">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-cog"></i> Ayarlar
+                        </h2>
+                    </div>
+
+                    <div class="form-container">
+                        <div class="nav-tabs">
+                            <button class="tab-btn active" data-tab="general">Genel</button>
+                            <button class="tab-btn" data-tab="security">Güvenlik</button>
+                            <button class="tab-btn" data-tab="backup">Yedekleme</button>
+                        </div>
+
+                        <!-- General Settings -->
+                        <div id="generalTab" class="tab-content active">
+                            <div class="form-group">
+                                <label class="form-label">Site Başlığı</label>
+                                <input type="text" id="siteTitle" class="form-control" value="Cybersecurity Articles">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Site Açıklaması</label>
+                                <textarea id="siteDescription" class="form-control" rows="3">Cybersecurity articles, research and analysis by Adem Bayazıt</textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Yönetici Email</label>
+                                <input type="email" id="adminEmail" class="form-control" value="fyi@adembayazit.com">
+                            </div>
+                            
+                            <button class="btn btn-primary" id="saveGeneralSettings">
+                                <i class="fas fa-save"></i> Genel Ayarları Kaydet
+                            </button>
+                        </div>
+
+                        <!-- Security Settings -->
+                        <div id="securityTab" class="tab-content">
+                            <div class="form-group">
+                                <label class="form-label">Yeni Şifre</label>
+                                <input type="password" id="newPassword" class="form-control" placeholder="Yeni şifre">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Şifre Tekrar</label>
+                                <input type="password" id="confirmPassword" class="form-control" placeholder="Şifreyi tekrar girin">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-checkbox">
+                                    <input type="checkbox" id="require2FA">
+                                    İki faktörlü kimlik doğrulama gerektir
+                                </label>
+                            </div>
+                            
+                            <button class="btn btn-primary" id="saveSecuritySettings">
+                                <i class="fas fa-save"></i> Güvenlik Ayarlarını Kaydet
+                            </button>
+                        </div>
+
+                        <!-- Backup Settings -->
+                        <div id="backupTab" class="tab-content">
+                            <div class="form-group">
+                                <label class="form-label">Son Yedekleme</label>
+                                <input type="text" id="lastBackup" class="form-control" readonly value="Hiç yedekleme yapılmadı">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Otomatik Yedekleme</label>
+                                <select id="backupFrequency" class="form-control">
+                                    <option value="daily">Günlük</option>
+                                    <option value="weekly" selected>Haftalık</option>
+                                    <option value="monthly">Aylık</option>
+                                    <option value="never">Hiçbir zaman</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-actions" style="display: flex; gap: 10px; margin-top: 20px;">
+                                <button class="btn btn-primary" id="createBackupBtn">
+                                    <i class="fas fa-download"></i> Yedek Oluştur
+                                </button>
+                                <button class="btn btn-secondary" id="restoreBackupBtn">
+                                    <i class="fas fa-upload"></i> Yedekten Geri Yükle
+                                </button>
+                                <button class="btn btn-info" id="exportDataBtn">
+                                    <i class="fas fa-file-export"></i> JSON İndir
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Modal for Article Preview -->
+    <div class="modal" id="previewModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Makale Önizleme</h3>
+                <button class="modal-close" id="closePreview">&times;</button>
+            </div>
+            <div class="modal-body" id="previewModalContent">
+                <!-- Preview content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Confirmations -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="confirmTitle">Onay</h3>
+                <button class="modal-close" id="closeConfirm">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage">Bu işlemi gerçekleştirmek istediğinizden emin misiniz?</p>
+                <div class="form-actions" style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button class="btn btn-secondary" id="cancelConfirm">İptal</button>
+                    <button class="btn btn-danger" id="confirmAction">Onayla</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <!-- Quill Editor -->
+    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+    
+    <!-- Chart.js for Statistics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        // Configuration
+        const CONFIG = {
+            ARTICLES_BIN_ID: '695f155c43b1c97be920c28d',
+            SUBSCRIBERS_BIN_ID: '68d7fc3bae596e708ffdcc6e',
+            IMAGEKIT_URL: 'https://ik.imagekit.io/your-imagekit-id', // Replace with your ImageKit URL
+            IMAGEKIT_PUBLIC_KEY: 'your_public_key', // Replace with your ImageKit public key
+            IMAGEKIT_AUTH_ENDPOINT: 'https://adembayazit.netlify.app/.netlify/functions/imagekit-auth', // Your auth endpoint
+            ADMIN_PASSWORD_HASH: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', // SHA256 of "admin"
+            SESSION_TIMEOUT: 60 * 60 * 1000, // 1 hour
+            DRAFT_AUTOSAVE_INTERVAL: 30000 // 30 seconds
+        };
+
+        // Global Variables
+        let articlesData = [];
+        let subscribersData = [];
+        let currentArticleId = null;
+        let isEditing = false;
+        let quillEN = null;
+        let quillTR = null;
+        let sessionTimer = null;
+        let autoSaveTimer = null;
+        let currentArticleTags = [];
+        let uploadedImages = [];
+
+        // SHA-256 Hash Function
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        // Toast Notification System
+        function showToast(message, type = 'info', duration = 5000) {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
+                <span>${message}</span>
+            `;
+            toastContainer.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (toastContainer.contains(toast)) {
+                        toastContainer.removeChild(toast);
+                    }
+                }, 300);
+            }, duration);
+        }
+
+        // Modal Functions
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function hideModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Confirm Dialog
+        function showConfirm(message, callback) {
+            document.getElementById('confirmMessage').textContent = message;
+            showModal('confirmModal');
+            
+            document.getElementById('confirmAction').onclick = function() {
+                hideModal('confirmModal');
+                callback();
+            };
+            
+            document.getElementById('cancelConfirm').onclick = function() {
+                hideModal('confirmModal');
+            };
+            
+            document.getElementById('closeConfirm').onclick = function() {
+                hideModal('confirmModal');
+            };
+        }
+
+        // Proxy Helper Function
+        async function fetchViaProxy(path, method = 'GET', body = null, binId = null) {
+            const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
+            const actualPath = binId ? `/b/${binId}${path}` : path;
+            
+            try {
+                const response = await fetch(proxyUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ path: actualPath, method, body })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('Proxy error:', error);
+                throw error;
+            }
+        }
+
+        // Authentication Functions
+        function checkAuth() {
+            const auth = sessionStorage.getItem('adminAuth');
+            const authTime = sessionStorage.getItem('adminAuthTime');
+            
+            if (auth && authTime) {
+                const currentTime = new Date().getTime();
+                if (currentTime - parseInt(authTime) < CONFIG.SESSION_TIMEOUT) {
+                    return true;
+                }
+            }
+            
+            return false;
+        }
+
+        function setAuth() {
+            sessionStorage.setItem('adminAuth', 'true');
+            sessionStorage.setItem('adminAuthTime', new Date().getTime().toString());
+            startSessionTimer();
+        }
+
+        function clearAuth() {
+            sessionStorage.removeItem('adminAuth');
+            sessionStorage.removeItem('adminAuthTime');
+            if (sessionTimer) {
+                clearTimeout(sessionTimer);
+            }
+        }
+
+        function startSessionTimer() {
+            if (sessionTimer) {
+                clearTimeout(sessionTimer);
+            }
+            
+            sessionTimer = setTimeout(() => {
+                showToast('Oturum süreniz doldu. Lütfen tekrar giriş yapın.', 'warning');
+                logout();
+            }, CONFIG.SESSION_TIMEOUT);
+        }
+
+        // Login Handler
+        async function handleLogin(event) {
+            event.preventDefault();
+            const password = document.getElementById('adminPassword').value;
+            const errorDiv = document.getElementById('loginError');
+            
+            if (!password) {
+                errorDiv.textContent = 'Lütfen şifre girin';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            const hash = await sha256(password);
+            
+            if (hash === CONFIG.ADMIN_PASSWORD_HASH) {
+                setAuth();
+                showAdminPanel();
+                showToast('Başarıyla giriş yapıldı', 'success');
+            } else {
+                errorDiv.textContent = 'Hatalı şifre!';
+                errorDiv.style.display = 'block';
+                document.getElementById('adminPassword').value = '';
+            }
+        }
+
+        function logout() {
+            clearAuth();
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('adminPanel').style.display = 'none';
+            document.getElementById('adminPassword').value = '';
+            document.getElementById('loginError').style.display = 'none';
+        }
+
+        // Navigation Functions
+        function setupNavigation() {
+            // Sidebar navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const section = this.dataset.section;
+                    
+                    // Update active states
+                    document.querySelectorAll('.nav-item').forEach(nav => {
+                        nav.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Show selected section
+                    document.querySelectorAll('.section-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(section).classList.add('active');
+                    
+                    // Load section data if needed
+                    switch(section) {
+                        case 'dashboard':
+                            loadDashboard();
+                            break;
+                        case 'articles':
+                            loadArticlesList();
+                            break;
+                        case 'subscribers':
+                            loadSubscribers();
+                            break;
+                    }
+                });
+            });
+            
+            // Tab navigation
+            document.querySelectorAll('.tab-btn').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.dataset.tab;
+                    
+                    // Update active tabs
+                    document.querySelectorAll('.tab-btn').forEach(t => {
+                        t.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Show selected tab content
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(tabId + 'Tab').classList.add('active');
+                });
+            });
+            
+            // New article button
+            document.getElementById('newArticleBtn')?.addEventListener('click', function() {
+                resetEditor();
+                document.querySelectorAll('.nav-item').forEach(nav => {
+                    nav.classList.remove('active');
+                    if (nav.dataset.section === 'editor') {
+                        nav.classList.add('active');
+                    }
+                });
+                document.querySelectorAll('.section-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById('editor').classList.add('active');
+            });
+        }
+
+        // Data Loading Functions
+        async function loadArticles() {
+            try {
+                const result = await fetchViaProxy('/latest', 'GET', null, CONFIG.ARTICLES_BIN_ID);
+                articlesData = result.articles || result.records || result;
+                
+                // Sort by date (newest first)
+                articlesData.sort((a, b) => new Date(b.published_date || b.date) - new Date(a.published_date || a.date));
+                
+                return true;
+            } catch (error) {
+                console.error('Error loading articles:', error);
+                showToast('Makaleler yüklenirken hata oluştu', 'error');
+                return false;
+            }
+        }
+
+        async function loadSubscribers() {
+            try {
+                const result = await fetchViaProxy('/latest', 'GET', null, CONFIG.SUBSCRIBERS_BIN_ID);
+                subscribersData = result.subscribers || [];
+                
+                // Update email stats
+                document.getElementById('emailStats').textContent = `${subscribersData.length} abone`;
+                
+                return true;
+            } catch (error) {
+                console.error('Error loading subscribers:', error);
+                showToast('Aboneler yüklenirken hata oluştu', 'error');
+                return false;
+            }
+        }
+
+        // Dashboard Functions
+        async function loadDashboard() {
+            await loadArticles();
+            await loadSubscribers();
+            
+            // Update stats
+            const totalArticles = articlesData.length;
+            const totalViews = articlesData.reduce((sum, article) => sum + (article.views || 0), 0);
+            const totalLikes = articlesData.reduce((sum, article) => sum + (article.likes || 0), 0);
+            const totalSubscribers = subscribersData.length;
+            const avgReadingTime = articlesData.length > 0 
+                ? Math.round(articlesData.reduce((sum, article) => sum + (article.reading_time || 5), 0) / articlesData.length)
+                : 0;
+            const lastArticleDate = articlesData.length > 0 
+                ? new Date(articlesData[0].published_date || articlesData[0].date).toLocaleDateString('tr-TR')
+                : '-';
+            
+            document.getElementById('totalArticles').textContent = totalArticles;
+            document.getElementById('totalViews').textContent = totalViews.toLocaleString();
+            document.getElementById('totalLikes').textContent = totalLikes.toLocaleString();
+            document.getElementById('totalSubscribers').textContent = totalSubscribers.toLocaleString();
+            document.getElementById('avgReadingTime').textContent = avgReadingTime;
+            document.getElementById('lastArticleDate').textContent = lastArticleDate;
+            document.getElementById('lastUpdateTime').textContent = new Date().toLocaleTimeString('tr-TR');
+            
+            // Load recent articles
+            loadRecentArticles();
+        }
+
+        function loadRecentArticles() {
+            const recentArticlesDiv = document.getElementById('recentArticles');
+            const recentArticles = articlesData.slice(0, 5);
+            
+            let html = '<table class="data-table"><thead><tr><th>Başlık</th><th>Kategori</th><th>Tarih</th><th>Görüntülenme</th><th>İşlemler</th></tr></thead><tbody>';
+            
+            recentArticles.forEach(article => {
+                const date = new Date(article.published_date || article.date).toLocaleDateString('tr-TR');
+                html += `
+                    <tr>
+                        <td>${article.title}</td>
+                        <td>${article.category || '-'}</td>
+                        <td>${date}</td>
+                        <td>${article.views || 0}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-sm btn-info" onclick="editArticle(${article.id})">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="previewArticle(${article.id})">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteArticle(${article.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += '</tbody></table>';
+            recentArticlesDiv.innerHTML = html;
+        }
+
+        // Articles List Functions
+        async function loadArticlesList() {
+            await loadArticles();
+            
+            const tbody = document.getElementById('articlesTableBody');
+            tbody.innerHTML = '';
+            
+            if (articlesData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Henüz makale bulunmuyor</td></tr>';
+                return;
+            }
+            
+            articlesData.forEach(article => {
+                const row = document.createElement('tr');
+                const date = new Date(article.published_date || article.date).toLocaleDateString('tr-TR');
+                
+                row.innerHTML = `
+                    <td>${article.id}</td>
+                    <td>${article.title}</td>
+                    <td>${article.category || '-'}</td>
+                    <td>${date}</td>
+                    <td>${article.views || 0}</td>
+                    <td>${article.likes || 0}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-sm btn-info" onclick="editArticle(${article.id})">
+                                <i class="fas fa-edit"></i> Düzenle
+                            </button>
+                            <button class="btn btn-sm btn-warning" onclick="previewArticle(${article.id})">
+                                <i class="fas fa-eye"></i> Önizleme
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteArticle(${article.id})">
+                                <i class="fas fa-trash"></i> Sil
+                            </button>
+                        </div>
+                    </td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+            
+            // Update email article select
+            updateEmailArticleSelect();
+        }
+
+        // Article Editor Functions
+        function initEditor() {
+            // Initialize Quill editors
+            quillEN = new Quill('#editorEN', {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        [{ 'header': [1, 2, 3, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ 'color': [] }, { 'background': [] }],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        ['link', 'image', 'code-block'],
+                        ['clean']
+                    ]
+                },
+                placeholder: 'İngilizce içeriği buraya yazın...'
+            });
+            
+            quillTR = new Quill('#editorTR', {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        [{ 'header': [1, 2, 3, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ 'color': [] }, { 'background': [] }],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        ['link', 'image', 'code-block'],
+                        ['clean']
+                    ]
+                },
+                placeholder: 'Türkçe içeriği buraya yazın...'
+            });
+            
+            // Set default publish date to now
+            const now = new Date();
+            const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+            document.getElementById('publishDate').value = localDateTime;
+            
+            // Setup tag system
+            setupTagSystem();
+            
+            // Setup image upload
+            setupImageUpload();
+            
+            // Setup autosave
+            setupAutoSave();
+        }
+
+        function setupTagSystem() {
+            document.getElementById('addTagBtn').addEventListener('click', addTag);
+            document.getElementById('tagInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addTag();
+                }
+            });
+        }
+
+        function addTag() {
+            const tagInput = document.getElementById('tagInput');
+            const tag = tagInput.value.trim();
+            
+            if (tag && !currentArticleTags.includes(tag)) {
+                currentArticleTags.push(tag);
+                renderTags();
+                tagInput.value = '';
+            }
+        }
+
+        function removeTag(index) {
+            currentArticleTags.splice(index, 1);
+            renderTags();
+        }
+
+        function renderTags() {
+            const container = document.getElementById('tagsContainer');
+            container.innerHTML = '';
+            
+            currentArticleTags.forEach((tag, index) => {
+                const tagElement = document.createElement('span');
+                tagElement.className = 'tag';
+                tagElement.innerHTML = `
+                    ${tag}
+                    <span class="tag-remove" onclick="removeTag(${index})">&times;</span>
+                `;
+                container.appendChild(tagElement);
+            });
+        }
+
+        function setupImageUpload() {
+            const uploadArea = document.getElementById('imageUploadArea');
+            const fileInput = document.getElementById('imageUpload');
+            
+            uploadArea.addEventListener('click', () => fileInput.click());
+            
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = 'var(--primary-color)';
+                uploadArea.style.background = 'rgba(0, 255, 0, 0.1)';
+            });
+            
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.style.borderColor = 'var(--border-color)';
+                uploadArea.style.background = '';
+            });
+            
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = 'var(--border-color)';
+                uploadArea.style.background = '';
+                
+                if (e.dataTransfer.files.length) {
+                    handleImageUpload(e.dataTransfer.files);
+                }
+            });
+            
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length) {
+                    handleImageUpload(e.target.files);
+                }
+            });
+        }
+
+        async function handleImageUpload(files) {
+            for (let file of files) {
+                if (!file.type.startsWith('image/')) {
+                    showToast(`${file.name} bir resim dosyası değil`, 'error');
+                    continue;
+                }
+                
+                if (file.size > 5 * 1024 * 1024) {
+                    showToast(`${file.name} çok büyük (max 5MB)`, 'error');
+                    continue;
+                }
+                
+                try {
+                    // For now, we'll just create a local URL
+                    // In production, upload to ImageKit
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const imageUrl = e.target.result;
+                        uploadedImages.push(imageUrl);
+                        updateImagePreview();
+                    };
+                    reader.readAsDataURL(file);
+                    
+                    showToast(`${file.name} yüklendi`, 'success');
+                } catch (error) {
+                    console.error('Error uploading image:', error);
+                    showToast(`${file.name} yüklenirken hata oluştu`, 'error');
+                }
+            }
+        }
+
+        function updateImagePreview() {
+            const preview = document.getElementById('imagePreview');
+            preview.innerHTML = '';
+            
+            uploadedImages.forEach((url, index) => {
+                const item = document.createElement('div');
+                item.className = 'preview-item';
+                item.innerHTML = `
+                    <img src="${url}" alt="Preview ${index + 1}">
+                    <div class="preview-remove" onclick="removeUploadedImage(${index})">&times;</div>
+                `;
+                preview.appendChild(item);
+            });
+        }
+
+        function removeUploadedImage(index) {
+            uploadedImages.splice(index, 1);
+            updateImagePreview();
+        }
+
+        function setupAutoSave() {
+            // Clear any existing autosave timer
+            if (autoSaveTimer) {
+                clearInterval(autoSaveTimer);
+            }
+            
+            // Save draft every 30 seconds
+            autoSaveTimer = setInterval(saveDraft, CONFIG.DRAFT_AUTOSAVE_INTERVAL);
+            
+            // Also save on page unload
+            window.addEventListener('beforeunload', saveDraft);
+        }
+
+        function saveDraft() {
+            const articleData = getArticleFormData();
+            
+            if (articleData.title || articleData.content) {
+                localStorage.setItem('articleDraft', JSON.stringify({
+                    ...articleData,
+                    tags: currentArticleTags,
+                    uploadedImages: uploadedImages,
+                    savedAt: new Date().toISOString()
+                }));
+                
+                // Update last saved time
+                const saveBtn = document.getElementById('saveDraftBtn');
+                const originalText = saveBtn.innerHTML;
+                saveBtn.innerHTML = '<i class="fas fa-check"></i> Kaydedildi';
+                saveBtn.style.background = 'var(--success-color)';
+                
+                setTimeout(() => {
+                    saveBtn.innerHTML = originalText;
+                    saveBtn.style.background = '';
+                }, 2000);
+            }
+        }
+
+        function loadDraft() {
+            const draft = localStorage.getItem('articleDraft');
+            if (draft) {
+                const draftData = JSON.parse(draft);
+                
+                // Fill form with draft data
+                document.getElementById('articleTitle').value = draftData.title || '';
+                document.getElementById('articleTitleTR').value = draftData.title_tr || '';
+                document.getElementById('articleCategory').value = draftData.category || '';
+                document.getElementById('articleAuthor').value = draftData.author || 'Adem Bayazıt';
+                document.getElementById('featuredImage').value = draftData.featured_image || '';
+                document.getElementById('seoTitle').value = draftData.seo_title || '';
+                document.getElementById('seoDescription').value = draftData.seo_description || '';
+                document.getElementById('readingTime').value = draftData.reading_time || 5;
+                document.getElementById('publishDate').value = draftData.publish_date || '';
+                document.getElementById('featuredArticle').checked = draftData.featured || false;
+                
+                if (quillEN && draftData.content) {
+                    quillEN.root.innerHTML = draftData.content;
+                }
+                
+                if (quillTR && draftData.content_tr) {
+                    quillTR.root.innerHTML = draftData.content_tr;
+                }
+                
+                currentArticleTags = draftData.tags || [];
+                uploadedImages = draftData.uploadedImages || [];
+                
+                renderTags();
+                updateImagePreview();
+                
+                showToast(`Taslak yüklendi (${new Date(draftData.savedAt).toLocaleTimeString('tr-TR')})`, 'info');
+            }
+        }
+
+        function resetEditor() {
+            currentArticleId = null;
+            isEditing = false;
+            currentArticleTags = [];
+            uploadedImages = [];
+            
+            // Reset form
+            document.getElementById('articleTitle').value = '';
+            document.getElementById('articleTitleTR').value = '';
+            document.getElementById('articleCategory').value = '';
+            document.getElementById('articleAuthor').value = 'Adem Bayazıt';
+            document.getElementById('featuredImage').value = '';
+            document.getElementById('seoTitle').value = '';
+            document.getElementById('seoDescription').value = '';
+            document.getElementById('readingTime').value = 5;
+            document.getElementById('publishDate').value = new Date().toISOString().slice(0, 16);
+            document.getElementById('featuredArticle').checked = false;
+            
+            // Reset editors
+            if (quillEN) quillEN.root.innerHTML = '';
+            if (quillTR) quillTR.root.innerHTML = '';
+            
+            // Reset tags and images
+            renderTags();
+            updateImagePreview();
+            
+            // Update UI
+            document.querySelector('.section-title').innerHTML = '<i class="fas fa-edit"></i> Yeni Makale';
+        }
+
+        function getArticleFormData() {
+            return {
+                id: currentArticleId || (articlesData.length > 0 ? Math.max(...articlesData.map(a => a.id)) + 1 : 1),
+                title: document.getElementById('articleTitle').value.trim(),
+                title_tr: document.getElementById('articleTitleTR').value.trim() || null,
+                content: quillEN?.root.innerHTML || '',
+                content_tr: quillTR?.root.innerHTML || null,
+                category: document.getElementById('articleCategory').value,
+                author: document.getElementById('articleAuthor').value.trim(),
+                featured_image: document.getElementById('featuredImage').value.trim() || null,
+                seo_title: document.getElementById('seoTitle').value.trim() || null,
+                seo_description: document.getElementById('seoDescription').value.trim() || null,
+                tags: currentArticleTags,
+                reading_time: parseInt(document.getElementById('readingTime').value) || 5,
+                published_date: document.getElementById('publishDate').value || new Date().toISOString(),
+                featured: document.getElementById('featuredArticle').checked,
+                images: uploadedImages,
+                views: 0,
+                likes: 0,
+                comments_count: 0
+            };
+        }
+
+        async function saveArticle(publish = false) {
+            const articleData = getArticleFormData();
+            
+            // Validate required fields
+            if (!articleData.title) {
+                showToast('Makale başlığı gereklidir', 'error');
+                return false;
+            }
+            
+            if (!articleData.content) {
+                showToast('Makale içeriği gereklidir', 'error');
+                return false;
+            }
+            
+            if (!articleData.category) {
+                showToast('Kategori gereklidir', 'error');
+                return false;
+            }
+            
+            try {
+                // Load existing articles
+                await loadArticles();
+                
+                let updatedArticles;
+                if (isEditing && currentArticleId) {
+                    // Update existing article
+                    const index = articlesData.findIndex(a => a.id == currentArticleId);
+                    if (index !== -1) {
+                        articlesData[index] = { ...articlesData[index], ...articleData };
+                    }
+                    updatedArticles = articlesData;
+                } else {
+                    // Add new article
+                    articlesData.unshift(articleData);
+                    updatedArticles = articlesData;
+                }
+                
+                // Save to JSON Bin
+                await fetchViaProxy('', 'PUT', { articles: updatedArticles }, CONFIG.ARTICLES_BIN_ID);
+                
+                // Clear draft
+                localStorage.removeItem('articleDraft');
+                
+                // Show success message
+                showToast(`Makale ${publish ? 'yayınlandı' : 'kaydedildi'}`, 'success');
+                
+                // Reset editor if publishing
+                if (publish) {
+                    resetEditor();
+                    // Navigate to articles list
+                    document.querySelectorAll('.nav-item').forEach(nav => {
+                        nav.classList.remove('active');
+                        if (nav.dataset.section === 'articles') {
+                            nav.classList.add('active');
+                        }
+                    });
+                    document.querySelectorAll('.section-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById('articles').classList.add('active');
+                    
+                    // Reload articles list
+                    loadArticlesList();
+                }
+                
+                return true;
+            } catch (error) {
+                console.error('Error saving article:', error);
+                showToast('Makale kaydedilirken hata oluştu', 'error');
+                return false;
+            }
+        }
+
+        function editArticle(id) {
+            const article = articlesData.find(a => a.id == id);
+            if (!article) return;
+            
+            currentArticleId = id;
+            isEditing = true;
+            
+            // Fill form with article data
+            document.getElementById('articleTitle').value = article.title || '';
+            document.getElementById('articleTitleTR').value = article.title_tr || '';
+            document.getElementById('articleCategory').value = article.category || '';
+            document.getElementById('articleAuthor').value = article.author || 'Adem Bayazıt';
+            document.getElementById('featuredImage').value = article.featured_image || '';
+            document.getElementById('seoTitle').value = article.seo_title || '';
+            document.getElementById('seoDescription').value = article.seo_description || '';
+            document.getElementById('readingTime').value = article.reading_time || 5;
+            
+            // Format date for datetime-local input
+            const publishDate = new Date(article.published_date || article.date);
+            const localDateTime = new Date(publishDate.getTime() - publishDate.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+            document.getElementById('publishDate').value = localDateTime;
+            
+            document.getElementById('featuredArticle').checked = article.featured || false;
+            
+            // Set editor content
+            if (quillEN) quillEN.root.innerHTML = article.content || '';
+            if (quillTR) quillTR.root.innerHTML = article.content_tr || '';
+            
+            // Set tags and images
+            currentArticleTags = article.tags || [];
+            uploadedImages = article.images || [];
+            
+            renderTags();
+            updateImagePreview();
+            
+            // Navigate to editor
+            document.querySelectorAll('.nav-item').forEach(nav => {
+                nav.classList.remove('active');
+                if (nav.dataset.section === 'editor') {
+                    nav.classList.add('active');
+                }
+            });
+            document.querySelectorAll('.section-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById('editor').classList.add('active');
+            
+            // Update section title
+            document.querySelector('.section-title').innerHTML = `<i class="fas fa-edit"></i> Makaleyi Düzenle: ${article.title}`;
+        }
+
+        function deleteArticle(id) {
+            showConfirm('Bu makaleyi silmek istediğinizden emin misiniz?', async function() {
+                try {
+                    await loadArticles();
+                    articlesData = articlesData.filter(a => a.id != id);
+                    
+                    await fetchViaProxy('', 'PUT', { articles: articlesData }, CONFIG.ARTICLES_BIN_ID);
+                    
+                    showToast('Makale silindi', 'success');
+                    loadArticlesList();
+                    
+                    // If we're editing this article, reset editor
+                    if (currentArticleId == id) {
+                        resetEditor();
+                    }
+                } catch (error) {
+                    console.error('Error deleting article:', error);
+                    showToast('Makale silinirken hata oluştu', 'error');
+                }
+            });
+        }
+
+        function previewArticle(id) {
+            const article = articlesData.find(a => a.id == id);
+            if (!article) return;
+            
+            const modalContent = document.getElementById('previewModalContent');
+            modalContent.innerHTML = `
+                <h2>${article.title}</h2>
+                ${article.title_tr ? `<h3>${article.title_tr}</h3>` : ''}
+                <p><strong>Kategori:</strong> ${article.category}</p>
+                <p><strong>Yazar:</strong> ${article.author}</p>
+                <p><strong>Tarih:</strong> ${new Date(article.published_date || article.date).toLocaleDateString('tr-TR')}</p>
+                <hr>
+                <div>${article.content}</div>
+                ${article.content_tr ? `<hr><h4>Türkçe İçerik:</h4><div>${article.content_tr}</div>` : ''}
+            `;
+            
+            showModal('previewModal');
+        }
+
+        // Email Functions
+        function updateEmailArticleSelect() {
+            const select = document.getElementById('emailArticleSelect');
+            select.innerHTML = '<option value="">Makale seçin</option>';
+            
+            articlesData.forEach(article => {
+                const option = document.createElement('option');
+                option.value = article.id;
+                option.textContent = `${article.id} - ${article.title}`;
+                select.appendChild(option);
+            });
+        }
+
+        async function sendEmailToSubscribers(testOnly = false) {
+            const articleId = document.getElementById('emailArticleSelect').value;
+            const subject = document.getElementById('emailSubject').value;
+            const template = document.getElementById('emailTemplate').value;
+            const customMessage = document.getElementById('customMessage').value;
+            const testEmail = document.getElementById('testEmail').value;
+            
+            if (!articleId) {
+                showToast('Lütfen bir makale seçin', 'error');
+                return;
+            }
+            
+            if (!subject) {
+                showToast('Email başlığı gereklidir', 'error');
+                return;
+            }
+            
+            const article = articlesData.find(a => a.id == articleId);
+            if (!article) {
+                showToast('Makale bulunamadı', 'error');
+                return;
+            }
+            
+            let recipients = testOnly ? [testEmail] : subscribersData;
+            
+            if (recipients.length === 0) {
+                showToast(testOnly ? 'Test email adresi gerekli' : 'Gönderilecek abone bulunamadı', 'error');
+                return;
+            }
+            
+            // Create email data
+            const emailData = {
+                Messages: [{
+                    From: {
+                        Email: "fyi@adembayazit.com",
+                        Name: "Adem Bayazıt - Cybersecurity Articles"
+                    },
+                    To: recipients.map(email => ({ Email: email })),
+                    Subject: subject.replace('{article_title}', article.title),
+                    HTMLPart: generateEmailTemplate(article, customMessage, template),
+                    TextPart: generateTextTemplate(article, customMessage)
+                }]
+            };
+            
+            try {
+                const btnId = testOnly ? 'testEmailBtn' : 'sendEmailBtn';
+                const btn = document.getElementById(btnId);
+                const originalText = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...';
+                
+                const response = await fetch('https://adembayazit.netlify.app/.netlify/functions/send-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        emailData: emailData
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                showToast(testOnly 
+                    ? `Test email gönderildi: ${testEmail}`
+                    : `Email ${recipients.length} aboneye gönderildi`,
+                    'success'
+                );
+                
+                // Clear form if not test
+                if (!testOnly) {
+                    document.getElementById('customMessage').value = '';
+                }
+                
+            } catch (error) {
+                console.error('Error sending email:', error);
+                showToast('Email gönderilirken hata oluştu', 'error');
+            } finally {
+                const btnId = testOnly ? 'testEmailBtn' : 'sendEmailBtn';
+                const btn = document.getElementById(btnId);
+                btn.disabled = false;
+                btn.innerHTML = testOnly 
+                    ? '<i class="fas fa-vial"></i> Test Gönderimi'
+                    : '<i class="fas fa-paper-plane"></i> Tüm Abonelere Gönder';
+            }
+        }
+
+        function generateEmailTemplate(article, customMessage, template) {
+            let templateStyle = '';
+            let titleColor = '#d9534f';
+            
+            if (template === 'weekly_digest') {
+                templateStyle = 'border-left: 4px solid #007bff; background: #f0f8ff;';
+                titleColor = '#007bff';
+            } else if (template === 'important_alert') {
+                templateStyle = 'border-left: 4px solid #ff0000; background: #fff5f5;';
+                titleColor = '#ff0000';
+            }
+            
+            return `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="utf-8">
+                    <style>
+                        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; }
+                        .header { text-align: center; border-bottom: 2px solid #00cc00; padding-bottom: 10px; margin-bottom: 20px; }
+                        .article-card { padding: 20px; border-radius: 10px; margin: 20px 0; ${templateStyle} }
+                        .btn { background: #00cc00; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; }
+                        .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; font-size: 12px; color: #666; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>Adem Bayazıt</h1>
+                        <p>Cybersecurity Articles</p>
+                    </div>
+                    
+                    <h2>Yeni Makale Yayınlandı</h2>
+                    
+                    <div class="article-card">
+                        <h3 style="color: ${titleColor}; margin-top: 0;">${article.title}</h3>
+                        
+                        ${article.title_tr ? `<h4>${article.title_tr}</h4>` : ''}
+                        
+                        <p><strong>Kategori:</strong> ${article.category}</p>
+                        <p><strong>Yayın Tarihi:</strong> ${new Date(article.published_date || article.date).toLocaleDateString('tr-TR')}</p>
+                        
+                        ${customMessage ? `
+                        <div style="background: #e7f3ff; padding: 15px; border-radius: 5px; margin: 15px 0;">
+                            <strong>Özel Mesaj:</strong> ${customMessage}
+                        </div>
+                        ` : ''}
+                        
+                        <p><strong>Özet:</strong> ${article.content.substring(0, 200).replace(/<[^>]*>/g, '')}...</p>
+                        
+                        <a href="https://adembayazit.com/articles#${article.id}" class="btn">
+                            Makaleyi Oku
+                        </a>
+                    </div>
+                    
+                    <div class="footer">
+                        <p>Bu email'i Adem Bayazıt'ın Cybersecurity Articles aboneliğinden aldınız.</p>
+                        <p>
+                            <a href="https://adembayazit.com/unsubscribe" style="color: #666;">Abonelikten Çık</a> | 
+                            <a href="https://adembayazit.com/articles" style="color: #666;">Tüm Makaleler</a>
+                        </p>
+                    </div>
+                </body>
+                </html>
+            `;
+        }
+
+        function generateTextTemplate(article, customMessage) {
+            return `
+YENİ MAKALE: ${article.title}
+
+${article.title_tr ? `Türkçe Başlık: ${article.title_tr}` : ''}
+
+Kategori: ${article.category}
+Yayın Tarihi: ${new Date(article.published_date || article.date).toLocaleDateString('tr-TR')}
+
+${customMessage ? `Özel Mesaj: ${customMessage}\n\n` : ''}
+
+Özet: ${article.content.substring(0, 200).replace(/<[^>]*>/g, '')}...
+
+Makaleyi okumak için: https://adembayazit.com/articles#${article.id}
+
+---
+Adem Bayazıt - Cybersecurity Articles
+Abonelikten çıkmak için: https://adembayazit.com/unsubscribe
+            `;
+        }
+
+        function previewEmail() {
+            const articleId = document.getElementById('emailArticleSelect').value;
+            const customMessage = document.getElementById('customMessage').value;
+            const template = document.getElementById('emailTemplate').value;
+            
+            if (!articleId) {
+                showToast('Önizleme için makale seçin', 'error');
+                return;
+            }
+            
+            const article = articlesData.find(a => a.id == articleId);
+            if (!article) return;
+            
+            const preview = document.getElementById('emailPreviewContent');
+            preview.innerHTML = generateEmailTemplate(article, customMessage, template);
+        }
+
+        // Settings Functions
+        async function saveSettings() {
+            const settings = {
+                siteTitle: document.getElementById('siteTitle').value,
+                siteDescription: document.getElementById('siteDescription').value,
+                adminEmail: document.getElementById('adminEmail').value
+            };
+            
+            // In a real app, save to backend
+            localStorage.setItem('adminSettings', JSON.stringify(settings));
+            
+            showToast('Ayarlar kaydedildi', 'success');
+        }
+
+        async function changePassword() {
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (!newPassword || !confirmPassword) {
+                showToast('Lütfen tüm alanları doldurun', 'error');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                showToast('Şifreler eşleşmiyor', 'error');
+                return;
+            }
+            
+            if (newPassword.length < 6) {
+                showToast('Şifre en az 6 karakter olmalı', 'error');
+                return;
+            }
+            
+            const hash = await sha256(newPassword);
+            
+            // In a real app, save hash to backend
+            localStorage.setItem('adminPasswordHash', hash);
+            
+            // Clear password fields
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+            
+            showToast('Şifre değiştirildi', 'success');
+        }
+
+        function createBackup() {
+            const backup = {
+                articles: articlesData,
+                subscribers: subscribersData,
+                createdAt: new Date().toISOString(),
+                version: '1.0'
+            };
+            
+            const backupStr = JSON.stringify(backup, null, 2);
+            const blob = new Blob([backupStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `backup-${new Date().toISOString().slice(0, 10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            // Update last backup time
+            document.getElementById('lastBackup').value = new Date().toLocaleString('tr-TR');
+            
+            showToast('Yedekleme oluşturuldu', 'success');
+        }
+
+        function exportData() {
+            const data = {
+                articles: articlesData,
+                subscribers: subscribersData
+            };
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'articles-data.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('JSON verisi indirildi', 'success');
+        }
+
+        // Initialize Admin Panel
+        function showAdminPanel() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+            
+            // Initialize components
+            initEditor();
+            setupNavigation();
+            
+            // Load initial data
+            loadDashboard();
+            
+            // Setup event listeners
+            setupEventListeners();
+        }
+
+        function setupEventListeners() {
+            // Save draft button
+            document.getElementById('saveDraftBtn').addEventListener('click', saveDraft);
+            
+            // Publish article button
+            document.getElementById('publishArticleBtn').addEventListener('click', function() {
+                saveArticle(true);
+            });
+            
+            // Refresh preview button
+            document.getElementById('refreshPreview').addEventListener('click', function() {
+                const articleData = getArticleFormData();
+                const preview = document.getElementById('articlePreview');
+                preview.innerHTML = `
+                    <h2>${articleData.title}</h2>
+                    ${articleData.title_tr ? `<h3>${articleData.title_tr}</h3>` : ''}
+                    <p><strong>Kategori:</strong> ${articleData.category}</p>
+                    <p><strong>Yazar:</strong> ${articleData.author}</p>
+                    <p><strong>Okuma Süresi:</strong> ${articleData.reading_time} dakika</p>
+                    <hr>
+                    <div>${articleData.content}</div>
+                    ${articleData.content_tr ? `<hr><h4>Türkçe İçerik:</h4><div>${articleData.content_tr}</div>` : ''}
+                `;
+            });
+            
+            // Add subscriber button
+            document.getElementById('addSubscriberBtn').addEventListener('click', async function() {
+                const email = document.getElementById('addSubscriberEmail').value.trim();
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                
+                if (!emailRegex.test(email)) {
+                    showToast('Geçerli bir email adresi girin', 'error');
+                    return;
+                }
+                
+                if (subscribersData.includes(email)) {
+                    showToast('Bu email zaten abone', 'warning');
+                    return;
+                }
+                
+                try {
+                    subscribersData.push(email);
+                    await fetchViaProxy('', 'PUT', { subscribers: subscribersData }, CONFIG.SUBSCRIBERS_BIN_ID);
+                    
+                    document.getElementById('addSubscriberEmail').value = '';
+                    showToast('Abone eklendi', 'success');
+                    loadSubscribers();
+                } catch (error) {
+                    console.error('Error adding subscriber:', error);
+                    showToast('Abone eklenirken hata oluştu', 'error');
+                }
+            });
+            
+            // Export subscribers button
+            document.getElementById('exportSubscribersBtn').addEventListener('click', function() {
+                const csv = subscribersData.join('\n');
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'subscribers.csv';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showToast('Abone listesi indirildi', 'success');
+            });
+            
+            // Email buttons
+            document.getElementById('testEmailBtn').addEventListener('click', function() {
+                sendEmailToSubscribers(true);
+            });
+            
+            document.getElementById('sendEmailBtn').addEventListener('click', function() {
+                showConfirm('Tüm abonelere email göndermek istediğinizden emin misiniz?', function() {
+                    sendEmailToSubscribers(false);
+                });
+            });
+            
+            document.getElementById('previewEmailBtn').addEventListener('click', previewEmail);
+            
+            // Settings buttons
+            document.getElementById('saveGeneralSettings').addEventListener('click', saveSettings);
+            document.getElementById('saveSecuritySettings').addEventListener('click', changePassword);
+            document.getElementById('createBackupBtn').addEventListener('click', createBackup);
+            document.getElementById('exportDataBtn').addEventListener('click', exportData);
+            
+            // Modal close buttons
+            document.getElementById('closePreview').addEventListener('click', function() {
+                hideModal('previewModal');
+            });
+            
+            // Load draft if available
+            loadDraft();
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is already authenticated
+            if (checkAuth()) {
+                showAdminPanel();
+            } else {
+                document.getElementById('loginScreen').style.display = 'flex';
+            }
+            
+            // Setup login form
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            
+            // Setup logout button
+            document.getElementById('logoutBtn')?.addEventListener('click', function() {
+                showConfirm('Çıkış yapmak istediğinizden emin misiniz?', logout);
+            });
+            
+            // Setup modal close events
+            document.addEventListener('click', function(event) {
+                if (event.target.classList.contains('modal')) {
+                    event.target.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
