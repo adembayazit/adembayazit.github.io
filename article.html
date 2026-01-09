@@ -1190,13 +1190,7 @@
             ARTICLES_BIN_ID: '695f155c43b1c97be920c28d',
             SUBSCRIBERS_BIN_ID: '68d7fc3bae596e708ffdcc6e',
             VIEWS_BIN_ID: '68862fd97b4b8670d8a81945',
-            LIKES_BIN_ID: '695f155c43b1c97be920c28d',
-            MAILJET_CONFIG: {
-                apiKey: '4eab53d0383497317f9d58afd0176d9f',
-                secretKey: 'e46dc21f710c911ba855e1eca0675971',
-                senderEmail: 'fyi@adembayazit.com',
-                senderName: 'Adem Bayazıt - Cybersecurity Articles'
-            }
+            LIKES_BIN_ID: '695f155c43b1c97be920c28d'
         };
         
         // DataManager Sınıfı - Geliştirilmiş Cache Temizleme
@@ -2024,8 +2018,8 @@
                     Messages: [
                         {
                             From: {
-                                Email: CONFIG.MAILJET_CONFIG.senderEmail,
-                                Name: CONFIG.MAILJET_CONFIG.senderName
+                                Email: "fyi@adembayazit.com",
+                                Name: "Adem Bayazıt - Cybersecurity Articles"
                             },
                             To: [{ Email: email }],
                             Subject: 'Verify Your Email - Cybersecurity Articles',
@@ -2057,9 +2051,7 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        emailData: emailData,
-                        apiKey: CONFIG.MAILJET_CONFIG.apiKey,
-                        secretKey: CONFIG.MAILJET_CONFIG.secretKey
+                        emailData: emailData
                     })
                 });
                 
