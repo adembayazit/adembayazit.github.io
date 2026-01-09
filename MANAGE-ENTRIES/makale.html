@@ -23,9 +23,6 @@
     <!-- Quill Editor CSS -->
     <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
     
-    <!-- ImageKit SDK -->
-    <script src="https://unpkg.com/imagekit-javascript@1.5.4/dist/imagekit.min.js"></script>
-    
     <style>
         :root {
             --primary-color: #00ff00;
@@ -726,13 +723,6 @@
         
         .image-upload-area:hover .upload-icon {
             color: var(--primary-color);
-        }
-        
-        .upload-progress {
-            display: none;
-            margin-top: 15px;
-            color: var(--primary-color);
-            font-size: 0.9rem;
         }
         
         .image-preview {
@@ -1573,7 +1563,7 @@
                         <div id="imagesTab" class="tab-content">
                             <div class="form-group">
                                 <label class="form-label">Kapak Görseli URL</label>
-                                <input type="text" id="featuredImage" class="form-control" placeholder="https://ik.imagekit.io/your-account/image.jpg">
+                                <input type="text" id="featuredImage" class="form-control" placeholder="https://example.com/image.jpg">
                                 <span class="form-text">Önerilen boyut: 1200x630 piksel. Görsellere tıklayarak otomatik ekleyebilirsiniz.</span>
                             </div>
 
@@ -1584,11 +1574,7 @@
                                         <i class="fas fa-cloud-upload-alt"></i>
                                     </div>
                                     <p style="font-weight: 500; margin-bottom: 5px;">Görselleri buraya sürükleyin veya tıklayın</p>
-                                    <p class="form-text">PNG, JPG, GIF - Max 2MB</p>
-                                    <div class="upload-progress" id="uploadProgress" style="display: none;">
-                                        <div class="spinner" style="margin: 10px auto;"></div>
-                                        <p>Görsel yükleniyor...</p>
-                                    </div>
+                                    <p class="form-text">PNG, JPG, GIF - Max 5MB</p>
                                 </div>
                                 <input type="file" id="imageUpload" multiple accept="image/*" style="display: none;">
                                 
@@ -1882,18 +1868,17 @@
     <!-- Quill Editor -->
     <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
     
+    <!-- Chart.js for Statistics (optional) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <script>
         // Configuration
         const CONFIG = {
             ARTICLES_BIN_ID: '695f155c43b1c97be920c28d',
             SUBSCRIBERS_BIN_ID: '68d7fc3bae596e708ffdcc6e',
-            ADMIN_PASSWORD_HASH: 'be408a40a5c6c0df48e0004b217dec97519da5e73876598203ec53bbe3ece5f7',
+            ADMIN_PASSWORD_HASH: 'be408a40a5c6c0df48e0004b217dec97519da5e73876598203ec53bbe3ece5f7', // SHA256 of "admin"
             SESSION_TIMEOUT: 60 * 60 * 1000,
-            DRAFT_AUTOSAVE_INTERVAL: 30000,
-            // ImageKit Configuration
-            IMAGEKIT_PUBLIC_KEY: 'public_y0sX6vVpSzh7qK6EdI3HSzZvGX8=',
-            IMAGEKIT_URL_ENDPOINT: 'https://ik.imagekit.io/your-account',
-            IMAGEKIT_AUTH_ENDPOINT: 'https://adembayazit.netlify.app/.netlify/functions/imagekit-auth'
+            DRAFT_AUTOSAVE_INTERVAL: 30000
         };
 
         // Global Variables
@@ -1906,9 +1891,8 @@
         let sessionTimer = null;
         let autoSaveTimer = null;
         let currentArticleTags = [];
-        let uploadedImages = []; // Sadece ImageKit URL'leri tutulacak
+        let uploadedImages = [];
         let isSidebarOpen = false;
-        let imagekit = null;
 
         // SHA-256 Hash Function
         async function sha256(message) {
@@ -1916,21 +1900,6 @@
             const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
             const hashArray = Array.from(new Uint8Array(hashBuffer));
             return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
-        // Initialize ImageKit
-        function initImageKit() {
-            try {
-                imagekit = new ImageKit({
-                    publicKey: CONFIG.IMAGEKIT_PUBLIC_KEY,
-                    urlEndpoint: CONFIG.IMAGEKIT_URL_ENDPOINT,
-                    authenticationEndpoint: CONFIG.IMAGEKIT_AUTH_ENDPOINT
-                });
-                console.log('ImageKit initialized successfully');
-            } catch (error) {
-                console.error('ImageKit initialization failed:', error);
-                showToast('ImageKit başlatılamadı. Görsel yükleme devre dışı.', 'warning');
-            }
         }
 
         // Toast Notification System
@@ -2007,7 +1976,7 @@
             isSidebarOpen = false;
         }
 
-        // Proxy Helper Function
+        // Proxy Helper Function - DÜZELTİLDİ
         async function fetchViaProxy(path, method = 'GET', body = null, binId = null) {
             const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
             
@@ -2193,36 +2162,33 @@
             }
         }
 
-        // Data Loading Functions
+        // Data Loading Functions - DÜZELTİLDİ
         async function loadArticles() {
             try {
                 console.log('Loading articles from Bin:', CONFIG.ARTICLES_BIN_ID);
                 const result = await fetchViaProxy('/latest', 'GET', null, CONFIG.ARTICLES_BIN_ID);
                 console.log('Raw articles result:', result);
                 
-                // JSON Bin formatını destekle
-                if (result && result.record) {
-                    // JSON Bin formatı: {record: {articles: [...]}}
-                    if (Array.isArray(result.record)) {
-                        articlesData = result.record;
-                    } else if (result.record.articles && Array.isArray(result.record.articles)) {
-                        articlesData = result.record.articles;
-                    } else if (result.record.data && Array.isArray(result.record.data)) {
-                        articlesData = result.record.data;
-                    } else {
-                        console.warn('Unexpected data format in record, initializing empty array');
-                        articlesData = [];
-                    }
-                } else if (Array.isArray(result)) {
+                // Debug için
+                if (result && typeof result === 'object') {
+                    console.log('Result keys:', Object.keys(result));
+                }
+                
+                // Farklı JSON formatlarını destekle
+                if (Array.isArray(result)) {
                     articlesData = result;
                 } else if (result && result.articles && Array.isArray(result.articles)) {
                     articlesData = result.articles;
+                } else if (result && result.records && Array.isArray(result.records)) {
+                    articlesData = result.records;
+                } else if (result && result.data && Array.isArray(result.data)) {
+                    articlesData = result.data;
                 } else {
                     console.warn('Unexpected data format, initializing empty array');
                     articlesData = [];
                 }
                 
-                console.log('Parsed articlesData:', articlesData.length, 'articles');
+                console.log('Parsed articlesData:', articlesData);
                 
                 // Sort by date (newest first)
                 articlesData.sort((a, b) => {
@@ -2240,36 +2206,33 @@
             }
         }
 
-        // Subscribers Loading Function
+        // Subscribers Loading Function - DÜZELTİLDİ
         async function loadSubscribers() {
             try {
                 console.log('Loading subscribers from Bin:', CONFIG.SUBSCRIBERS_BIN_ID);
                 const result = await fetchViaProxy('/latest', 'GET', null, CONFIG.SUBSCRIBERS_BIN_ID);
                 console.log('Raw subscribers result:', result);
                 
-                // JSON Bin formatını destekle
-                if (result && result.record) {
-                    // JSON Bin formatı: {record: {subscribers: [...]}}
-                    if (Array.isArray(result.record)) {
-                        subscribersData = result.record;
-                    } else if (result.record.subscribers && Array.isArray(result.record.subscribers)) {
-                        subscribersData = result.record.subscribers;
-                    } else if (result.record.emails && Array.isArray(result.record.emails)) {
-                        subscribersData = result.record.emails;
-                    } else {
-                        console.warn('Unexpected subscribers format in record, initializing empty array');
-                        subscribersData = [];
-                    }
-                } else if (Array.isArray(result)) {
+                // Debug için
+                if (result && typeof result === 'object') {
+                    console.log('Subscribers result keys:', Object.keys(result));
+                }
+                
+                // Farklı JSON formatlarını destekle
+                if (Array.isArray(result)) {
                     subscribersData = result;
                 } else if (result && result.subscribers && Array.isArray(result.subscribers)) {
                     subscribersData = result.subscribers;
+                } else if (result && result.emails && Array.isArray(result.emails)) {
+                    subscribersData = result.emails;
+                } else if (result && result.data && Array.isArray(result.data)) {
+                    subscribersData = result.data;
                 } else {
                     console.warn('Unexpected subscribers format, initializing empty array');
                     subscribersData = [];
                 }
                 
-                console.log('Parsed subscribersData:', subscribersData.length, 'subscribers');
+                console.log('Parsed subscribersData:', subscribersData);
                 
                 // Update UI
                 document.getElementById('emailStats').textContent = `${subscribersData.length} abone`;
@@ -2402,10 +2365,10 @@
                     <td>${article.views || 0}</td>
                     <td>
                         <div class="action-buttons">
-                            <button class="btn btn-info btn-sm" onclick="editArticle('${article.id}')">
+                            <button class="btn btn-info btn-sm" onclick="editArticle(${article.id})">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button class="btn btn-warning btn-sm" onclick="previewArticle('${article.id}')">
+                            <button class="btn btn-warning btn-sm" onclick="previewArticle(${article.id})">
                                 <i class="fas fa-eye"></i>
                             </button>
                         </div>
@@ -2448,13 +2411,13 @@
                     <td>${article.likes || 0}</td>
                     <td>
                         <div class="action-buttons">
-                            <button class="btn btn-info btn-sm" onclick="editArticle('${article.id}')">
+                            <button class="btn btn-info btn-sm" onclick="editArticle(${article.id})">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button class="btn btn-warning btn-sm" onclick="previewArticle('${article.id}')">
+                            <button class="btn btn-warning btn-sm" onclick="previewArticle(${article.id})">
                                 <i class="fas fa-eye"></i>
                             </button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteArticle('${article.id}')">
+                            <button class="btn btn-danger btn-sm" onclick="deleteArticle(${article.id})">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
@@ -2507,14 +2470,11 @@
             // Setup tag system
             setupTagSystem();
             
-            // Setup image upload
+            // Setup image upload - DÜZELTİLDİ
             setupImageUpload();
             
             // Setup autosave
             setupAutoSave();
-            
-            // Initialize ImageKit
-            initImageKit();
         }
 
         function setupTagSystem() {
@@ -2559,7 +2519,7 @@
             });
         }
 
-        // Image Upload Functions - SADECE ImageKit URL'leri kullanacak şekilde
+        // Image Upload Functions - TAMAMEN DÜZELTİLDİ
         function setupImageUpload() {
             const uploadArea = document.getElementById('imageUploadArea');
             const fileInput = document.getElementById('imageUpload');
@@ -2601,77 +2561,32 @@
         }
 
         async function handleImageUpload(files) {
-            if (!imagekit) {
-                showToast('Görsel yükleme servisi kullanılamıyor', 'error');
-                return;
-            }
-            
             for (let file of files) {
                 if (!file.type.startsWith('image/')) {
                     showToast(`${file.name} bir resim dosyası değil`, 'error');
                     continue;
                 }
 
-                if (file.size > 2 * 1024 * 1024) {
-                    showToast(`${file.name} çok büyük (max 2MB)`, 'error');
+                if (file.size > 5 * 1024 * 1024) {
+                    showToast(`${file.name} çok büyük (max 5MB)`, 'error');
                     continue;
                 }
 
                 try {
-                    // Show progress
-                    const uploadProgress = document.getElementById('uploadProgress');
-                    uploadProgress.style.display = 'block';
-                    
-                    // Dosyayı Base64'e çevir
-                    const base64Image = await new Promise((resolve, reject) => {
+                    // Base64'e çevir
+                    const imageUrl = await new Promise((resolve, reject) => {
                         const reader = new FileReader();
                         reader.onload = (e) => resolve(e.target.result);
                         reader.onerror = (e) => reject(new Error('Dosya okuma hatası'));
                         reader.readAsDataURL(file);
                     });
 
-                    // ImageKit'e yükle
-                    const uploadOptions = {
-                        file: base64Image,
-                        fileName: `article_${Date.now()}_${file.name.replace(/\s+/g, '_')}`,
-                        folder: "/articles",
-                        tags: ["cybersecurity", "article"],
-                        useUniqueFileName: true
-                    };
-
-                    const result = await new Promise((resolve, reject) => {
-                        imagekit.upload(uploadOptions, (err, result) => {
-                            if (err) {
-                                reject(err);
-                            } else {
-                                resolve(result);
-                            }
-                        });
-                    });
-
-                    // ImageKit URL'sini al
-                    const imageUrl = result.url;
-                    
-                    // URL'yi uploadedImages dizisine ekle
                     uploadedImages.push(imageUrl);
                     updateImagePreview();
-                    
-                    // Hide progress
-                    setTimeout(() => {
-                        uploadProgress.style.display = 'none';
-                    }, 1000);
-                    
                     showToast(`${file.name} başarıyla yüklendi`, 'success');
-                    
-                    // Görseli kapak görseli olarak otomatik seç
-                    if (uploadedImages.length === 1) {
-                        document.getElementById('featuredImage').value = imageUrl;
-                        showToast('İlk görsel kapak görseli olarak seçildi', 'info');
-                    }
                 } catch (error) {
                     console.error('Error uploading image:', error);
-                    showToast(`${file.name} yüklenirken hata oluştu: ${error.message}`, 'error');
-                    document.getElementById('uploadProgress').style.display = 'none';
+                    showToast(`${file.name} yüklenirken hata oluştu`, 'error');
                 }
             }
         }
@@ -2696,7 +2611,6 @@
                 const img = document.createElement('img');
                 img.src = url;
                 img.alt = `Preview ${index + 1}`;
-                img.loading = 'lazy';
                 
                 const removeBtn = document.createElement('div');
                 removeBtn.className = 'preview-remove';
@@ -2709,7 +2623,7 @@
                 item.appendChild(img);
                 item.appendChild(removeBtn);
 
-                // Görsele tıklayınca kapak görseli olarak ayarla
+                // Görsele tıklayınca kapak görseli olarak ayarla - DÜZELTİLDİ
                 item.addEventListener('click', (e) => {
                     if (e.target !== removeBtn && !removeBtn.contains(e.target)) {
                         document.getElementById('featuredImage').value = url;
@@ -2840,14 +2754,14 @@
                 reading_time: parseInt(document.getElementById('readingTime').value) || 5,
                 published_date: document.getElementById('publishDate').value || new Date().toISOString(),
                 featured: document.getElementById('featuredArticle').checked,
-                images: uploadedImages, // Artık sadece ImageKit URL'leri
+                images: uploadedImages,
                 views: 0,
                 likes: 0,
                 comments_count: 0
             };
         }
 
-        // Save Article Function - SADECE URL'leri kaydet
+        // Save Article Function - TAMAMEN DÜZELTİLDİ
         async function saveArticle(publish = false) {
             const articleData = getArticleFormData();
             
@@ -2889,7 +2803,7 @@
                     updatedArticles = articlesData;
                 }
                 
-                // JSON Bin formatı - Base64 yerine sadece URL'ler
+                // JSON Bin formatı
                 const dataToSave = {
                     articles: updatedArticles,
                     lastUpdated: new Date().toISOString()
@@ -2955,7 +2869,7 @@
             if (quillEN) quillEN.root.innerHTML = article.content || '';
             if (quillTR) quillTR.root.innerHTML = article.content_tr || '';
             
-            // Set tags and images - Eski Base64'leri de URL olarak gösterebilir
+            // Set tags and images
             currentArticleTags = article.tags || [];
             uploadedImages = article.images || [];
             
