@@ -23,6 +23,9 @@
     <!-- Quill Editor CSS -->
     <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
     
+    <!-- ImageKit SDK -->
+    <script src="https://unpkg.com/imagekit-javascript/dist/imagekit.min.js"></script>
+    
     <style>
         :root {
             --primary-color: #00ff00;
@@ -1563,12 +1566,12 @@
                         <div id="imagesTab" class="tab-content">
                             <div class="form-group">
                                 <label class="form-label">Kapak Görseli URL</label>
-                                <input type="text" id="featuredImage" class="form-control" placeholder="https://example.com/image.jpg">
+                                <input type="text" id="featuredImage" class="form-control" placeholder="https://ik.imagekit.io/your-imagekit-id/image.jpg">
                                 <span class="form-text">Önerilen boyut: 1200x630 piksel. Görsellere tıklayarak otomatik ekleyebilirsiniz.</span>
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label">Görsel Yükle</label>
+                                <label class="form-label">Görsel Yükle (ImageKit)</label>
                                 <div class="image-upload-area" id="imageUploadArea">
                                     <div class="upload-icon">
                                         <i class="fas fa-cloud-upload-alt"></i>
@@ -1587,12 +1590,13 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label">Mevcut Görseller</label>
-                                <div class="image-preview" id="existingImages">
-                                    <!-- Existing images will appear here -->
-                                    <p style="color: var(--text-muted); text-align: center; padding: 20px; grid-column: 1 / -1;">
-                                        Görsel bulunamadı
-                                    </p>
+                                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                                    <button class="btn btn-primary" id="uploadImagesBtn">
+                                        <i class="fas fa-upload"></i> Seçili Görselleri Yükle
+                                    </button>
+                                    <button class="btn btn-info" id="clearImagesBtn">
+                                        <i class="fas fa-times"></i> Temizle
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -1766,8 +1770,12 @@
                             </div>
                             
                             <div class="form-group">
-                                <label class="form-label">Yönetici Email</label>
-                                <input type="email" id="adminEmail" class="form-control" value="fyi@adembayazit.com">
+                                <label class="form-label">ImageKit Ayarları</label>
+                                <input type="text" id="imagekitUrl" class="form-control" placeholder="https://ik.imagekit.io/your-id" style="margin-bottom: 10px;">
+                                <input type="text" id="imagekitPublicKey" class="form-control" placeholder="Public Key" style="margin-bottom: 10px;">
+                                <input type="text" id="imagekitPrivateKey" class="form-control" placeholder="Private Key" style="margin-bottom: 10px;">
+                                <input type="text" id="imagekitEndpoint" class="form-control" placeholder="Endpoint URL">
+                                <span class="form-text">ImageKit yapılandırması için gerekli bilgiler</span>
                             </div>
                             
                             <button class="btn btn-primary" id="saveGeneralSettings" style="margin-top: 20px;">
@@ -1878,7 +1886,12 @@
             SUBSCRIBERS_BIN_ID: '68d7fc3bae596e708ffdcc6e',
             ADMIN_PASSWORD_HASH: 'be408a40a5c6c0df48e0004b217dec97519da5e73876598203ec53bbe3ece5f7', // SHA256 of "admin"
             SESSION_TIMEOUT: 60 * 60 * 1000,
-            DRAFT_AUTOSAVE_INTERVAL: 30000
+            DRAFT_AUTOSAVE_INTERVAL: 30000,
+            IMAGEKIT_CONFIG: {
+                publicKey: 'public_',
+                urlEndpoint: 'https://ik.imagekit.io/your-imagekit-id',
+                authenticationEndpoint: 'https://adembayazit.netlify.app/.netlify/functions/imagekit-auth'
+            }
         };
 
         // Global Variables
@@ -1891,8 +1904,10 @@
         let sessionTimer = null;
         let autoSaveTimer = null;
         let currentArticleTags = [];
-        let uploadedImages = [];
+        let uploadedImages = []; // This will now store ImageKit URLs
+        let selectedFiles = []; // Temporary storage for selected files before upload
         let isSidebarOpen = false;
+        let imagekit = null;
 
         // SHA-256 Hash Function
         async function sha256(message) {
@@ -1976,7 +1991,7 @@
             isSidebarOpen = false;
         }
 
-        // Proxy Helper Function - DÜZELTİLDİ
+        // Proxy Helper Function
         async function fetchViaProxy(path, method = 'GET', body = null, binId = null) {
             const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
             
@@ -2162,17 +2177,12 @@
             }
         }
 
-        // Data Loading Functions - DÜZELTİLDİ
+        // Data Loading Functions
         async function loadArticles() {
             try {
                 console.log('Loading articles from Bin:', CONFIG.ARTICLES_BIN_ID);
                 const result = await fetchViaProxy('/latest', 'GET', null, CONFIG.ARTICLES_BIN_ID);
                 console.log('Raw articles result:', result);
-                
-                // Debug için
-                if (result && typeof result === 'object') {
-                    console.log('Result keys:', Object.keys(result));
-                }
                 
                 // Farklı JSON formatlarını destekle
                 if (Array.isArray(result)) {
@@ -2213,25 +2223,44 @@
                 const result = await fetchViaProxy('/latest', 'GET', null, CONFIG.SUBSCRIBERS_BIN_ID);
                 console.log('Raw subscribers result:', result);
                 
-                // Debug için
-                if (result && typeof result === 'object') {
-                    console.log('Subscribers result keys:', Object.keys(result));
-                }
+                let loadedData = [];
                 
                 // Farklı JSON formatlarını destekle
                 if (Array.isArray(result)) {
-                    subscribersData = result;
+                    // Eski format: sadece email string'leri
+                    // Yeni format: nesneler
+                    loadedData = result.map(item => {
+                        if (typeof item === 'string') {
+                            return { 
+                                email: item, 
+                                subscribedAt: new Date().toISOString(),
+                                status: 'active' 
+                            };
+                        }
+                        return item;
+                    });
                 } else if (result && result.subscribers && Array.isArray(result.subscribers)) {
-                    subscribersData = result.subscribers;
+                    loadedData = result.subscribers.map(item => {
+                        if (typeof item === 'string') {
+                            return { 
+                                email: item, 
+                                subscribedAt: new Date().toISOString(),
+                                status: 'active' 
+                            };
+                        }
+                        return item;
+                    });
                 } else if (result && result.emails && Array.isArray(result.emails)) {
-                    subscribersData = result.emails;
+                    loadedData = result.emails.map(item => ({
+                        email: item,
+                        subscribedAt: new Date().toISOString(),
+                        status: 'active'
+                    }));
                 } else if (result && result.data && Array.isArray(result.data)) {
-                    subscribersData = result.data;
-                } else {
-                    console.warn('Unexpected subscribers format, initializing empty array');
-                    subscribersData = [];
+                    loadedData = result.data;
                 }
                 
+                subscribersData = loadedData;
                 console.log('Parsed subscribersData:', subscribersData);
                 
                 // Update UI
@@ -2266,16 +2295,20 @@
                 return;
             }
             
-            subscribersData.forEach((email, index) => {
+            subscribersData.forEach((subscriber, index) => {
                 const row = document.createElement('tr');
+                const date = subscriber.subscribedAt 
+                    ? new Date(subscriber.subscribedAt).toLocaleDateString('tr-TR')
+                    : new Date().toLocaleDateString('tr-TR');
+                
                 row.innerHTML = `
                     <td>${index + 1}</td>
-                    <td>${email}</td>
-                    <td>${new Date().toLocaleDateString('tr-TR')}</td>
-                    <td><span class="badge badge-success">Aktif</span></td>
+                    <td>${subscriber.email}</td>
+                    <td>${date}</td>
+                    <td><span class="badge badge-success">${subscriber.status || 'Aktif'}</span></td>
                     <td>
                         <div class="action-buttons">
-                            <button class="btn btn-danger btn-sm" onclick="removeSubscriber('${email}')">
+                            <button class="btn btn-danger btn-sm" onclick="removeSubscriber('${subscriber.email}')">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
@@ -2289,7 +2322,7 @@
             showConfirm(`${email} adresini abonelikten çıkarmak istediğinizden emin misiniz?`, async function() {
                 try {
                     // Filter out the subscriber
-                    subscribersData = subscribersData.filter(e => e !== email);
+                    subscribersData = subscribersData.filter(s => s.email !== email);
                     
                     // Save to JSON Bin
                     const dataToSave = {
@@ -2429,6 +2462,262 @@
             updateEmailArticleSelect();
         }
 
+        // ImageKit Initialization
+        async function initImageKit() {
+            try {
+                // Try to get config from localStorage
+                const savedConfig = localStorage.getItem('imagekitConfig');
+                let config = CONFIG.IMAGEKIT_CONFIG;
+                
+                if (savedConfig) {
+                    try {
+                        const parsed = JSON.parse(savedConfig);
+                        config = { ...config, ...parsed };
+                    } catch (e) {
+                        console.error('Error parsing saved ImageKit config:', e);
+                    }
+                }
+                
+                // Update form fields if they exist
+                if (document.getElementById('imagekitUrl')) {
+                    document.getElementById('imagekitUrl').value = config.urlEndpoint || '';
+                }
+                if (document.getElementById('imagekitPublicKey')) {
+                    document.getElementById('imagekitPublicKey').value = config.publicKey || '';
+                }
+                
+                // Initialize ImageKit only if we have the minimum required config
+                if (config.publicKey && config.urlEndpoint) {
+                    imagekit = new ImageKit({
+                        publicKey: config.publicKey,
+                        urlEndpoint: config.urlEndpoint,
+                        authenticationEndpoint: config.authenticationEndpoint
+                    });
+                    
+                    console.log('ImageKit initialized successfully');
+                    return true;
+                } else {
+                    console.warn('ImageKit not initialized - missing configuration');
+                    return false;
+                }
+            } catch (error) {
+                console.error('Error initializing ImageKit:', error);
+                return false;
+            }
+        }
+
+        // Image Upload Functions - TAMAMEN DÜZELTİLDİ (ImageKit)
+        function setupImageUpload() {
+            const uploadArea = document.getElementById('imageUploadArea');
+            const fileInput = document.getElementById('imageUpload');
+            
+            // Tıklama ile dosya seç
+            uploadArea.addEventListener('click', (e) => {
+                if (e.target !== uploadArea && !uploadArea.contains(e.target)) return;
+                fileInput.click();
+            });
+            
+            // Drag and drop
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = 'var(--primary-color)';
+                uploadArea.style.background = 'rgba(0, 255, 0, 0.05)';
+            });
+            
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.style.borderColor = 'var(--border-color)';
+                uploadArea.style.background = '';
+            });
+            
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = 'var(--border-color)';
+                uploadArea.style.background = '';
+                
+                if (e.dataTransfer.files.length) {
+                    handleFileSelection(e.dataTransfer.files);
+                }
+            });
+            
+            // File input change
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length) {
+                    handleFileSelection(e.target.files);
+                }
+            });
+            
+            // Upload images button
+            document.getElementById('uploadImagesBtn')?.addEventListener('click', uploadImagesToImageKit);
+            
+            // Clear images button
+            document.getElementById('clearImagesBtn')?.addEventListener('click', clearSelectedImages);
+        }
+
+        function handleFileSelection(files) {
+            for (let file of files) {
+                if (!file.type.startsWith('image/')) {
+                    showToast(`${file.name} bir resim dosyası değil`, 'error');
+                    continue;
+                }
+
+                if (file.size > 5 * 1024 * 1024) {
+                    showToast(`${file.name} çok büyük (max 5MB)`, 'error');
+                    continue;
+                }
+
+                // Create preview
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    selectedFiles.push({
+                        file: file,
+                        preview: e.target.result,
+                        id: Date.now() + Math.random()
+                    });
+                    updateImagePreview();
+                    showToast(`${file.name} seçildi`, 'info');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function updateImagePreview() {
+            const preview = document.getElementById('imagePreview');
+            preview.innerHTML = '';
+            
+            const allImages = [...selectedFiles, ...uploadedImages.map(url => ({ 
+                preview: url, 
+                id: 'uploaded_' + Date.now() + Math.random(),
+                isUploaded: true 
+            }))];
+            
+            if (allImages.length === 0) {
+                preview.innerHTML = `
+                    <p style="color: var(--text-muted); text-align: center; padding: 20px; grid-column: 1 / -1;">
+                        Henüz görsel yüklenmedi
+                    </p>
+                `;
+                return;
+            }
+            
+            allImages.forEach((item, index) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'preview-item';
+                
+                const img = document.createElement('img');
+                img.src = item.preview;
+                img.alt = `Preview ${index + 1}`;
+                
+                const removeBtn = document.createElement('div');
+                removeBtn.className = 'preview-remove';
+                removeBtn.innerHTML = '&times;';
+                removeBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    
+                    if (item.isUploaded) {
+                        // Remove from uploaded images
+                        const urlIndex = uploadedImages.indexOf(item.preview);
+                        if (urlIndex > -1) {
+                            uploadedImages.splice(urlIndex, 1);
+                        }
+                    } else {
+                        // Remove from selected files
+                        const fileIndex = selectedFiles.findIndex(f => f.id === item.id);
+                        if (fileIndex > -1) {
+                            selectedFiles.splice(fileIndex, 1);
+                        }
+                    }
+                    updateImagePreview();
+                    showToast('Görsel kaldırıldı', 'info');
+                });
+
+                itemDiv.appendChild(img);
+                itemDiv.appendChild(removeBtn);
+
+                // Görsele tıklayınca kapak görseli olarak ayarla
+                itemDiv.addEventListener('click', (e) => {
+                    if (e.target !== removeBtn && !removeBtn.contains(e.target)) {
+                        document.getElementById('featuredImage').value = item.preview;
+                        showToast('Kapak görseli olarak seçildi', 'info');
+                    }
+                });
+
+                preview.appendChild(itemDiv);
+            });
+        }
+
+        async function uploadImagesToImageKit() {
+            if (!imagekit) {
+                showToast('ImageKit başlatılamadı. Lütfen ayarlardan yapılandırın.', 'error');
+                return;
+            }
+
+            if (selectedFiles.length === 0) {
+                showToast('Yüklenecek görsel bulunamadı', 'warning');
+                return;
+            }
+
+            const uploadBtn = document.getElementById('uploadImagesBtn');
+            const originalText = uploadBtn.innerHTML;
+            uploadBtn.disabled = true;
+            uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Yükleniyor...';
+
+            let successCount = 0;
+            let errorCount = 0;
+
+            for (const item of selectedFiles) {
+                try {
+                    // Use a unique filename
+                    const timestamp = Date.now();
+                    const randomStr = Math.random().toString(36).substring(7);
+                    const fileName = `image_${timestamp}_${randomStr}.${item.file.name.split('.').pop()}`;
+                    
+                    // Upload to ImageKit
+                    const result = await imagekit.upload({
+                        file: item.file,
+                        fileName: fileName,
+                        folder: '/articles',
+                        tags: ['article', 'uploaded-from-admin']
+                    });
+                    
+                    // Add to uploaded images
+                    uploadedImages.push(result.url);
+                    successCount++;
+                    
+                    showToast(`${item.file.name} başarıyla yüklendi`, 'success');
+                    
+                } catch (error) {
+                    console.error('Error uploading image:', error);
+                    errorCount++;
+                    showToast(`${item.file.name} yüklenirken hata: ${error.message}`, 'error');
+                }
+            }
+
+            // Clear selected files after upload
+            selectedFiles = [];
+            updateImagePreview();
+
+            uploadBtn.disabled = false;
+            uploadBtn.innerHTML = originalText;
+
+            if (successCount > 0) {
+                showToast(`${successCount} görsel başarıyla yüklendi${errorCount > 0 ? `, ${errorCount} başarısız` : ''}`, 
+                         errorCount > 0 ? 'warning' : 'success');
+            }
+        }
+
+        function clearSelectedImages() {
+            if (selectedFiles.length > 0 || uploadedImages.length > 0) {
+                showConfirm('Tüm seçili görselleri temizlemek istediğinizden emin misiniz?', function() {
+                    selectedFiles = [];
+                    uploadedImages = [];
+                    updateImagePreview();
+                    showToast('Görseller temizlendi', 'info');
+                });
+            } else {
+                showToast('Temizlenecek görsel yok', 'info');
+            }
+        }
+
         // Article Editor Functions
         function initEditor() {
             // Initialize Quill editors
@@ -2470,7 +2759,7 @@
             // Setup tag system
             setupTagSystem();
             
-            // Setup image upload - DÜZELTİLDİ
+            // Setup image upload
             setupImageUpload();
             
             // Setup autosave
@@ -2519,128 +2808,6 @@
             });
         }
 
-        // Image Upload Functions - TAMAMEN DÜZELTİLDİ
-        function setupImageUpload() {
-            const uploadArea = document.getElementById('imageUploadArea');
-            const fileInput = document.getElementById('imageUpload');
-            
-            // Tıklama ile dosya seç
-            uploadArea.addEventListener('click', (e) => {
-                if (e.target !== uploadArea && !uploadArea.contains(e.target)) return;
-                fileInput.click();
-            });
-            
-            // Drag and drop
-            uploadArea.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                uploadArea.style.borderColor = 'var(--primary-color)';
-                uploadArea.style.background = 'rgba(0, 255, 0, 0.05)';
-            });
-            
-            uploadArea.addEventListener('dragleave', () => {
-                uploadArea.style.borderColor = 'var(--border-color)';
-                uploadArea.style.background = '';
-            });
-            
-            uploadArea.addEventListener('drop', (e) => {
-                e.preventDefault();
-                uploadArea.style.borderColor = 'var(--border-color)';
-                uploadArea.style.background = '';
-                
-                if (e.dataTransfer.files.length) {
-                    handleImageUpload(e.dataTransfer.files);
-                }
-            });
-            
-            // File input change
-            fileInput.addEventListener('change', (e) => {
-                if (e.target.files.length) {
-                    handleImageUpload(e.target.files);
-                }
-            });
-        }
-
-        async function handleImageUpload(files) {
-            for (let file of files) {
-                if (!file.type.startsWith('image/')) {
-                    showToast(`${file.name} bir resim dosyası değil`, 'error');
-                    continue;
-                }
-
-                if (file.size > 5 * 1024 * 1024) {
-                    showToast(`${file.name} çok büyük (max 5MB)`, 'error');
-                    continue;
-                }
-
-                try {
-                    // Base64'e çevir
-                    const imageUrl = await new Promise((resolve, reject) => {
-                        const reader = new FileReader();
-                        reader.onload = (e) => resolve(e.target.result);
-                        reader.onerror = (e) => reject(new Error('Dosya okuma hatası'));
-                        reader.readAsDataURL(file);
-                    });
-
-                    uploadedImages.push(imageUrl);
-                    updateImagePreview();
-                    showToast(`${file.name} başarıyla yüklendi`, 'success');
-                } catch (error) {
-                    console.error('Error uploading image:', error);
-                    showToast(`${file.name} yüklenirken hata oluştu`, 'error');
-                }
-            }
-        }
-
-        function updateImagePreview() {
-            const preview = document.getElementById('imagePreview');
-            preview.innerHTML = '';
-            
-            if (uploadedImages.length === 0) {
-                preview.innerHTML = `
-                    <p style="color: var(--text-muted); text-align: center; padding: 20px; grid-column: 1 / -1;">
-                        Henüz görsel yüklenmedi
-                    </p>
-                `;
-                return;
-            }
-            
-            uploadedImages.forEach((url, index) => {
-                const item = document.createElement('div');
-                item.className = 'preview-item';
-                
-                const img = document.createElement('img');
-                img.src = url;
-                img.alt = `Preview ${index + 1}`;
-                
-                const removeBtn = document.createElement('div');
-                removeBtn.className = 'preview-remove';
-                removeBtn.innerHTML = '&times;';
-                removeBtn.addEventListener('click', (e) => {
-                    e.stopPropagation(); // Prevent triggering the item click
-                    removeUploadedImage(index);
-                });
-
-                item.appendChild(img);
-                item.appendChild(removeBtn);
-
-                // Görsele tıklayınca kapak görseli olarak ayarla - DÜZELTİLDİ
-                item.addEventListener('click', (e) => {
-                    if (e.target !== removeBtn && !removeBtn.contains(e.target)) {
-                        document.getElementById('featuredImage').value = url;
-                        showToast('Kapak görseli olarak seçildi', 'info');
-                    }
-                });
-
-                preview.appendChild(item);
-            });
-        }
-
-        function removeUploadedImage(index) {
-            uploadedImages.splice(index, 1);
-            updateImagePreview();
-            showToast('Görsel kaldırıldı', 'info');
-        }
-
         function setupAutoSave() {
             if (autoSaveTimer) clearInterval(autoSaveTimer);
             autoSaveTimer = setInterval(saveDraft, CONFIG.DRAFT_AUTOSAVE_INTERVAL);
@@ -2655,6 +2822,12 @@
                     ...articleData,
                     tags: currentArticleTags,
                     uploadedImages: uploadedImages,
+                    selectedFiles: selectedFiles.map(f => ({
+                        name: f.file.name,
+                        size: f.file.size,
+                        type: f.file.type,
+                        preview: f.preview
+                    })),
                     savedAt: new Date().toISOString()
                 }));
                 
@@ -2695,6 +2868,12 @@
                             currentArticleTags = draftData.tags || [];
                             uploadedImages = draftData.uploadedImages || [];
                             
+                            // Note: We can't restore File objects from localStorage
+                            // So we'll just show a message
+                            if (draftData.selectedFiles && draftData.selectedFiles.length > 0) {
+                                showToast(`${draftData.selectedFiles.length} görsel taslakta kayıtlı, lütfen yeniden seçin`, 'info');
+                            }
+                            
                             renderTags();
                             updateImagePreview();
                             
@@ -2713,6 +2892,7 @@
             isEditing = false;
             currentArticleTags = [];
             uploadedImages = [];
+            selectedFiles = [];
             
             // Reset form
             document.getElementById('articleTitle').value = '';
@@ -2754,14 +2934,14 @@
                 reading_time: parseInt(document.getElementById('readingTime').value) || 5,
                 published_date: document.getElementById('publishDate').value || new Date().toISOString(),
                 featured: document.getElementById('featuredArticle').checked,
-                images: uploadedImages,
+                images: uploadedImages, // Now stores ImageKit URLs
                 views: 0,
                 likes: 0,
                 comments_count: 0
             };
         }
 
-        // Save Article Function - TAMAMEN DÜZELTİLDİ
+        // Save Article Function
         async function saveArticle(publish = false) {
             const articleData = getArticleFormData();
             
@@ -2972,7 +3152,7 @@
                 return;
             }
             
-            let recipients = testOnly ? [testEmail] : subscribersData;
+            let recipients = testOnly ? [testEmail] : subscribersData.map(s => s.email);
             
             if (recipients.length === 0) {
                 showToast(testOnly ? 'Test email adresi gerekli' : 'Gönderilecek abone bulunamadı', 'error');
@@ -3151,8 +3331,25 @@ Abonelikten çıkmak için: https://adembayazit.com/unsubscribe
 
         // Settings Functions
         async function saveSettings() {
-            // Implementation for saving settings
-            showToast('Ayarlar kaydedildi', 'success');
+            try {
+                // Save ImageKit configuration
+                const imagekitConfig = {
+                    urlEndpoint: document.getElementById('imagekitUrl').value.trim(),
+                    publicKey: document.getElementById('imagekitPublicKey').value.trim(),
+                    privateKey: document.getElementById('imagekitPrivateKey').value.trim(),
+                    authenticationEndpoint: CONFIG.IMAGEKIT_CONFIG.authenticationEndpoint
+                };
+                
+                localStorage.setItem('imagekitConfig', JSON.stringify(imagekitConfig));
+                
+                // Reinitialize ImageKit with new config
+                await initImageKit();
+                
+                showToast('Ayarlar kaydedildi', 'success');
+            } catch (error) {
+                console.error('Error saving settings:', error);
+                showToast('Ayarlar kaydedilirken hata oluştu', 'error');
+            }
         }
 
         async function changePassword() {
@@ -3232,9 +3429,12 @@ Abonelikten çıkmak için: https://adembayazit.com/unsubscribe
         }
 
         // Initialize Admin Panel
-        function showAdminPanel() {
+        async function showAdminPanel() {
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('adminPanel').style.display = 'block';
+            
+            // Initialize ImageKit
+            await initImageKit();
             
             // Initialize components
             initEditor();
@@ -3284,12 +3484,18 @@ Abonelikten çıkmak için: https://adembayazit.com/unsubscribe
                 try {
                     await loadSubscribers();
                     
-                    if (subscribersData.includes(email)) {
+                    if (subscribersData.some(s => s.email === email)) {
                         showToast('Bu email zaten abone', 'warning');
                         return;
                     }
                     
-                    subscribersData.push(email);
+                    const newSubscriber = {
+                        email: email,
+                        subscribedAt: new Date().toISOString(),
+                        status: 'active'
+                    };
+                    
+                    subscribersData.push(newSubscriber);
                     
                     const dataToSave = {
                         subscribers: subscribersData,
@@ -3309,7 +3515,10 @@ Abonelikten çıkmak için: https://adembayazit.com/unsubscribe
             
             // Export subscribers button
             document.getElementById('exportSubscribersBtn').addEventListener('click', function() {
-                const csv = 'Email\n' + subscribersData.join('\n');
+                const csv = 'Email,Kayıt Tarihi,Durum\n' + 
+                    subscribersData.map(s => 
+                        `${s.email},${s.subscribedAt || new Date().toISOString()},${s.status || 'active'}`
+                    ).join('\n');
                 const blob = new Blob([csv], { type: 'text/csv' });
                 const url = URL.createObjectURL(blob);
                 
