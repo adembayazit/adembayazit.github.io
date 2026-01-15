@@ -480,6 +480,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            display: block;
         }
         
         .carousel-control {
@@ -1584,7 +1585,7 @@
                     <div class="image-carousel">
                         <div class="carousel-inner">
                             <div class="carousel-item active">
-                                <img src="${images[0]}" alt="Article image">
+                                <img src="${images[0]}" alt="Article image" onerror="this.src='https://adembayazit.com/IMAGES/preview.png'">
                             </div>
                         </div>
                     </div>
@@ -1601,7 +1602,7 @@
                     <div class="carousel-inner" id="carouselInner">
                         ${images.map((img, index) => `
                             <div class="carousel-item ${index === 0 ? 'active' : ''}">
-                                <img src="${img}" alt="Article image ${index + 1}">
+                                <img src="${img}" alt="Article image ${index + 1}" onerror="this.src='https://adembayazit.com/IMAGES/preview.png'">
                             </div>
                         `).join('')}
                     </div>
@@ -1786,11 +1787,13 @@
                 </div>
             ` : '';
             
+            // DÜZELTME: Öncelikle featured_image kullan, yoksa images dizisine bak
             let images = [];
-            if (article.images && Array.isArray(article.images) && article.images.length > 0) {
-                images = article.images;
-            } else if (article.featured_image) {
+            if (article.featured_image) {
+                // Eğer featured_image varsa, önce onu kullan
                 images = [article.featured_image];
+            } else if (article.images && Array.isArray(article.images) && article.images.length > 0) {
+                images = article.images;
             }
             
             document.getElementById('articleDetail').innerHTML = `
@@ -1867,6 +1870,9 @@
             } else if (article.images && article.images.length > 0) {
                 coverImage = article.images[0];
             }
+            
+            // URL'yi encode et
+            coverImage = encodeURI(coverImage);
             
             // URL'yi güncelle (hash'li versiyon)
             const currentUrl = window.location.origin + window.location.pathname + '#' + article.id;
@@ -1945,7 +1951,7 @@
                     
                     const imgMatch = paragraph.match(/!\[(.*?)\]\((.*?)\)/);
                     if (imgMatch) {
-                        return `<div class="image-carousel"><div class="carousel-inner"><div class="carousel-item active"><img src="${imgMatch[2]}" alt="${imgMatch[1]}"></div></div></div>`;
+                        return `<div class="image-carousel"><div class="carousel-inner"><div class="carousel-item active"><img src="${imgMatch[2]}" alt="${imgMatch[1]}" onerror="this.src='https://adembayazit.com/IMAGES/preview.png'"></div></div></div>`;
                     }
                     
                     paragraph = paragraph.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" style="color: var(--primary-color);">$1</a>');
