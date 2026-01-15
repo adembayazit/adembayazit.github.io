@@ -348,23 +348,14 @@
             position: absolute;
             top: 15px;
             right: 35px;
-            background: rgba(0, 255, 0, 0.3);
+            background: #ff4444;
             color: white;
-            border: 1px solid rgba(0, 255, 0, 0.5);
+            border: 1px solid #ff4444;
             border-radius: 3px;
             padding: 2px 5px;
             cursor: pointer;
             font-size: 0.6rem;
             z-index: 2;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 2px;
-        }
-        
-        .article-share:hover {
-            background: rgba(0, 255, 0, 0.6);
-            transform: scale(1.05);
         }
         
         .article-stats {
@@ -610,9 +601,9 @@
             position: absolute;
             top: 20px;
             right: 20px;
-            background: rgba(0, 255, 0, 0.3);
+            background: #ff4444;
             color: white;
-            border: 1px solid rgba(0, 255, 0, 0.5);
+            border: 1px solid #ff4444;
             border-radius: 5px;
             padding: 8px 12px;
             cursor: pointer;
@@ -624,7 +615,7 @@
         }
         
         .detail-share:hover {
-            background: rgba(0, 255, 0, 0.6);
+            background: #ff2222;
             transform: translateY(-2px);
         }
         
@@ -1873,11 +1864,11 @@
         function formatArticleContent(content) {
             if (!content) return '<p>No content available for this article.</p>';
             
-            // Özel karakterleri ve boşlukları temizle
+            // Boşlukları ve özel karakterleri düzelt
             content = content.replace(/<br\s*\/?>/gi, '\n')
                              .replace(/&nbsp;/gi, ' ')
-                             .replace(/\s+/g, ' ')
-                             .trim();
+                             .replace(/\r\n/g, '\n')
+                             .replace(/\r/g, '\n');
             
             let formattedContent = content
                 .split('\n')
@@ -1898,15 +1889,15 @@
                         return `<h2>${paragraph.substring(2)}</h2>`;
                     }
                     
-                    // Görsel kontrollerini geliştirdik
+                    // Resim URL'lerini doğrudan img tag'ine çevir
                     const imgMatch = paragraph.match(/!\[(.*?)\]\((.*?)\)/);
                     if (imgMatch) {
                         return `<div class="image-carousel"><div class="carousel-inner"><div class="carousel-item active"><img src="${imgMatch[2]}" alt="${imgMatch[1] || 'Article image'}"></div></div></div>`;
                     }
                     
-                    // URL'leri tespit et ve img tag'ine çevir
-                    const urlRegex = /(https?:\/\/[^\s]+\.(?:jpg|jpeg|png|gif|webp|svg))/gi;
-                    paragraph = paragraph.replace(urlRegex, (url) => {
+                    // Düz resim URL'leri
+                    const imageUrlRegex = /(https?:\/\/[^\s]+\.(?:jpg|jpeg|png|gif|webp|svg|bmp))/gi;
+                    paragraph = paragraph.replace(imageUrlRegex, (url) => {
                         return `<div class="image-carousel"><div class="carousel-inner"><div class="carousel-item active"><img src="${url}" alt="Article image"></div></div></div>`;
                     });
                     
@@ -1918,7 +1909,7 @@
                 })
                 .join('');
             
-            formattedContent = formattedContent.replace(/(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/g, 
+            formattedContent = formattedContent.replace(/(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/gi, 
                 '<div class="video-container" style="position:relative;padding-bottom:56.25%;height:0;margin:15px 0;"><iframe src="https://www.youtube.com/embed/$4" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allowfullscreen></iframe></div>'
             );
             
@@ -1938,26 +1929,31 @@
                 return;
             }
             
-            // Boşlukları temizle
+            // Boşlukları temizle ve düzelt
             const articleTitle = (article.title || 'Cybersecurity Article').replace(/\s+/g, ' ').trim();
             const articleDescription = (article.content || '').substring(0, 150).replace(/\s+/g, ' ').trim() + '...';
             
-            // Kapak fotoğrafını al - öncelik sırası: featured_image > image > ilk resim > varsayılan
+            // Kapak fotoğrafı için direkt makale içeriğindeki ilk resim URL'sini al
             let coverImage = 'https://adembayazit.com/IMAGES/preview.png';
             
+            // Önce makale verisinden resimleri kontrol et
             if (article.featured_image) {
                 coverImage = article.featured_image;
             } else if (article.image) {
                 coverImage = article.image;
             } else if (article.images && article.images.length > 0) {
                 coverImage = article.images[0];
+            } else {
+                // Makale içeriğinden ilk resim URL'sini bul
+                const content = article.content || '';
+                const imageMatch = content.match(/(https?:\/\/[^\s]+\.(?:jpg|jpeg|png|gif|webp|svg|bmp))/i);
+                if (imageMatch) {
+                    coverImage = imageMatch[0];
+                }
             }
             
             // URL'yi temizle
             const shareUrl = `${window.location.origin}${window.location.pathname}#${articleId}`.replace(/\s+/g, '');
-            
-            // Meta tag'leri güncelle (sayfa yenilendiğinde sosyal medya için)
-            updateMetaTags(articleTitle, articleDescription, coverImage, shareUrl);
             
             // Web Share API kullan
             if (navigator.share) {
@@ -1969,56 +1965,30 @@
                     showToast('Article shared successfully!');
                 }).catch((error) => {
                     console.log('Web Share cancelled or failed:', error);
-                    copyToClipboard(shareUrl, articleTitle);
+                    copyShareUrl(shareUrl, articleTitle);
                 });
             } else {
                 // Fallback: clipboard'a kopyala
-                copyToClipboard(shareUrl, articleTitle);
+                copyShareUrl(shareUrl, articleTitle);
             }
         }
         
-        function updateMetaTags(title, description, image, url) {
-            // Open Graph meta tag'lerini güncelle
-            document.querySelector('meta[property="og:title"]')?.setAttribute('content', title);
-            document.querySelector('meta[property="og:description"]')?.setAttribute('content', description);
-            document.querySelector('meta[property="og:image"]')?.setAttribute('content', image);
-            document.querySelector('meta[property="og:url"]')?.setAttribute('content', url);
-            
-            // Twitter meta tag'lerini güncelle
-            document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', title);
-            document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', description);
-            document.querySelector('meta[name="twitter:image"]')?.setAttribute('content', image);
-        }
-        
-        async function copyToClipboard(text, articleTitle) {
-            try {
-                await navigator.clipboard.writeText(text);
-                showToast(`Link for "${articleTitle}" copied to clipboard!`);
-                return true;
-            } catch (err) {
-                console.error('Clipboard API failed:', err);
-                
-                // Fallback method
+        async function copyShareUrl(url, title) {
+            const success = await navigator.clipboard.writeText(url).then(() => true).catch(() => false);
+            if (success) {
+                showToast(`Link for "${title}" copied to clipboard!`);
+            } else {
                 const textArea = document.createElement('textarea');
-                textArea.value = text;
-                textArea.style.position = 'fixed';
-                textArea.style.left = '-999999px';
-                textArea.style.top = '-999999px';
+                textArea.value = url;
                 document.body.appendChild(textArea);
-                textArea.focus();
                 textArea.select();
-                
                 try {
                     document.execCommand('copy');
-                    showToast(`Link for "${articleTitle}" copied to clipboard!`);
-                    document.body.removeChild(textArea);
-                    return true;
+                    showToast(`Link for "${title}" copied to clipboard!`);
                 } catch (err) {
-                    console.error('Fallback copy failed:', err);
-                    showToast('Failed to copy link to clipboard');
-                    document.body.removeChild(textArea);
-                    return false;
+                    showToast('Failed to copy link');
                 }
+                document.body.removeChild(textArea);
             }
         }
         
