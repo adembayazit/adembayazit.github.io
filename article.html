@@ -8,7 +8,7 @@
     <meta property="og:title" content="Adem Bayazıt | Cybersecurity Articles" />
     <meta property="og:description" content="Cybersecurity articles, research and analysis by Adem Bayazıt" />
     <meta property="og:image" content="https://adembayazit.com/IMAGES/preview.png" />
-    <meta property="og:url" content="https://adembayazit.com/article" />
+    <meta property="og:url" content="https://adembayazit.com/articles" />
     <meta property="og:type" content="website" />
 
     <meta name="twitter:card" content="summary_large_image">
@@ -1587,7 +1587,7 @@
                     <div class="image-carousel">
                         <div class="carousel-inner">
                             <div class="carousel-item active">
-                                <img src="https://adembayazit.com/IMAGES/preview.png" alt="Default article image" style="width:100%; height:400px; object-fit:cover; display:block;">
+                                <img src="https://adembayazit.com/IMAGES/preview.png" alt="Default article image">
                             </div>
                         </div>
                     </div>
@@ -1600,7 +1600,7 @@
                     <div class="image-carousel">
                         <div class="carousel-inner">
                             <div class="carousel-item active">
-                                <img src="${images[0]}" alt="Article image" style="width:100%; height:400px; object-fit:cover; display:block;" onerror="this.src='https://adembayazit.com/IMAGES/preview.png'">
+                                <img src="${images[0]}" alt="Article image">
                             </div>
                         </div>
                     </div>
@@ -1619,7 +1619,7 @@
                     <div class="carousel-inner" id="carouselInner">
                         ${images.map((img, index) => `
                             <div class="carousel-item ${index === 0 ? 'active' : ''}">
-                                <img src="${img}" alt="Article image ${index + 1}" style="width:100%; height:400px; object-fit:cover; display:block;" onerror="this.src='https://adembayazit.com/IMAGES/preview.png'">
+                                <img src="${img}" alt="Article image ${index + 1}">
                             </div>
                         `).join('')}
                     </div>
@@ -1804,20 +1804,27 @@
                 </div>
             ` : '';
             
-            // GARANTİ RESİM EKLEME
+            // FIXED: Resimleri doğru şekilde topla
             let images = [];
             
-            // 1. Önce featured_image'ı kontrol et
+            // 1. Önce featured_image'ı kontrol et - PNG/JPG format fark etmez
             if (article.featured_image && article.featured_image.trim() !== '') {
-                console.log('Using featured_image:', article.featured_image);
+                console.log('DEBUG: Found featured_image:', article.featured_image);
                 images.push(article.featured_image);
+                
+                // ImageKit URL'lerini optimize et
+                if (article.featured_image.includes('ik.imagekit.io')) {
+                    console.log('DEBUG: This is an ImageKit URL');
+                }
+            } else {
+                console.log('DEBUG: No featured_image found');
             }
             
             // 2. images dizisini kontrol et
             if (article.images && Array.isArray(article.images) && article.images.length > 0) {
+                console.log('DEBUG: Found images array:', article.images);
                 article.images.forEach(img => {
                     if (img && img.trim() !== '' && !images.includes(img)) {
-                        console.log('Adding image from array:', img);
                         images.push(img);
                     }
                 });
@@ -1825,11 +1832,29 @@
             
             // 3. Eğer hiç resim yoksa varsayılan resmi kullan
             if (images.length === 0) {
-                console.log('No images found, using default');
+                console.log('DEBUG: No images found, using default');
                 images.push('https://adembayazit.com/IMAGES/preview.png');
             }
             
-            console.log('Final images array:', images);
+            console.log('DEBUG: Final images array:', images);
+            
+            // TEST: Resmi hemen test et
+            if (images.length > 0 && images[0] !== 'https://adembayazit.com/IMAGES/preview.png') {
+                console.log('TEST: Trying to load image:', images[0]);
+                
+                // Görünmez bir test resmi oluştur
+                const testImg = new Image();
+                testImg.onload = function() {
+                    console.log('SUCCESS: Image loaded successfully:', images[0]);
+                };
+                testImg.onerror = function() {
+                    console.error('ERROR: Image failed to load:', images[0]);
+                    // Yüklenemezse varsayılan resmi kullan
+                    images[0] = 'https://adembayazit.com/IMAGES/preview.png';
+                    console.log('Using default image instead');
+                };
+                testImg.src = images[0];
+            }
             
             document.getElementById('articleDetail').innerHTML = `
                 <button class="detail-share" onclick="shareArticle(${article.id})">
@@ -1906,7 +1931,7 @@
                 coverImage = article.images[0];
             }
             
-            console.log('Setting cover image to:', coverImage);
+            console.log('DEBUG: Setting cover image to:', coverImage);
             
             // URL'yi güncelle (hash'li versiyon)
             const currentUrl = window.location.origin + window.location.pathname + '#' + article.id;
@@ -1986,7 +2011,7 @@
                     
                     const imgMatch = paragraph.match(/!\[(.*?)\]\((.*?)\)/);
                     if (imgMatch) {
-                        return `<div class="image-carousel"><div class="carousel-inner"><div class="carousel-item active"><img src="${imgMatch[2]}" alt="${imgMatch[1]}" style="width:100%; max-height:400px; object-fit:cover; display:block;" onerror="this.src='https://adembayazit.com/IMAGES/preview.png'"></div></div></div>`;
+                        return `<div class="image-carousel"><div class="carousel-inner"><div class="carousel-item active"><img src="${imgMatch[2]}" alt="${imgMatch[1]}"></div></div></div>`;
                     }
                     
                     paragraph = paragraph.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" style="color: var(--primary-color);">$1</a>');
