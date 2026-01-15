@@ -348,14 +348,23 @@
             position: absolute;
             top: 15px;
             right: 35px;
-            background: #ff4444;
+            background: rgba(0, 255, 0, 0.3);
             color: white;
-            border: 1px solid #ff4444;
+            border: 1px solid rgba(0, 255, 0, 0.5);
             border-radius: 3px;
             padding: 2px 5px;
             cursor: pointer;
             font-size: 0.6rem;
             z-index: 2;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+        
+        .article-share:hover {
+            background: rgba(0, 255, 0, 0.6);
+            transform: scale(1.05);
         }
         
         .article-stats {
@@ -601,9 +610,9 @@
             position: absolute;
             top: 20px;
             right: 20px;
-            background: #ff4444;
+            background: rgba(0, 255, 0, 0.3);
             color: white;
-            border: 1px solid #ff4444;
+            border: 1px solid rgba(0, 255, 0, 0.5);
             border-radius: 5px;
             padding: 8px 12px;
             cursor: pointer;
@@ -615,7 +624,7 @@
         }
         
         .detail-share:hover {
-            background: #ff2222;
+            background: rgba(0, 255, 0, 0.6);
             transform: translateY(-2px);
         }
         
@@ -1193,7 +1202,6 @@
             LIKES_BIN_ID: '695f155c43b1c97be920c28d'
         };
         
-        // DataManager Sınıfı - Geliştirilmiş Cache Temizleme
         class ArticleDataManager {
             constructor() {
                 this.localData = {
@@ -1204,9 +1212,9 @@
                 this.pendingUpdates = [];
                 this.isSyncing = false;
                 this.lastSyncTime = 0;
-                this.SYNC_INTERVAL = 30000; // 30 saniyede bir sync
-                this.QUEUE_PROCESS_INTERVAL = 5000; // 5 saniyede bir queue işle
-                this.CACHE_CLEANUP_INTERVAL = 12 * 60 * 60 * 1000; // 12 saatte bir cache temizle
+                this.SYNC_INTERVAL = 30000;
+                this.QUEUE_PROCESS_INTERVAL = 5000;
+                this.CACHE_CLEANUP_INTERVAL = 12 * 60 * 60 * 1000;
                 this.lastCacheCleanup = parseInt(localStorage.getItem('lastCacheCleanup') || '0');
             }
 
@@ -1217,20 +1225,16 @@
                 this.isSyncing = true;
                 
                 try {
-                    // Mevcut sunucu verisini al
                     const serverData = await fetchViaProxy('/latest', 'GET', null, CONFIG.ARTICLES_BIN_ID);
                     const serverArticles = serverData.articles || serverData.records || serverData;
                     
-                    // Yerel değişiklikleri birleştir
                     const mergedArticles = this.mergeData(serverArticles, articlesData || []);
                     
-                    // Sunucuya gönder
                     await fetchViaProxy('', 'PUT', { 
                         articles: mergedArticles,
                         lastSynced: new Date().toISOString()
                     }, CONFIG.ARTICLES_BIN_ID);
                     
-                    // Yerel veriyi güncelle
                     articlesData = mergedArticles;
                     this.lastSyncTime = Date.now();
                     
@@ -1245,18 +1249,15 @@
             mergeData(serverData, localData) {
                 const merged = [...serverData];
                 
-                // Her makale için birleştirme yap
                 merged.forEach((serverArticle, index) => {
                     const localArticle = localData.find(a => a.id === serverArticle.id);
                     if (localArticle) {
-                        // Views: En yüksek değeri al
                         merged[index].views = Math.max(
                             serverArticle.views || 0,
                             localArticle.views || 0,
                             this.localData.views[serverArticle.id] || 0
                         );
                         
-                        // Likes: En yüksek değeri al
                         merged[index].likes = Math.max(
                             serverArticle.likes || 0,
                             localArticle.likes || 0
@@ -1275,7 +1276,6 @@
                     timestamp: Date.now()
                 });
                 
-                // Queue'yu işle
                 setTimeout(() => this.processQueue(), this.QUEUE_PROCESS_INTERVAL);
             }
 
@@ -1288,11 +1288,9 @@
                     const updates = [...this.pendingUpdates];
                     this.pendingUpdates = [];
                     
-                    // Sunucu verisini al
                     const serverData = await fetchViaProxy('/latest', 'GET', null, CONFIG.ARTICLES_BIN_ID);
                     let articles = serverData.articles || serverData.records || serverData;
                     
-                    // Queue'daki güncellemeleri uygula
                     updates.forEach(update => {
                         const articleIndex = articles.findIndex(a => a.id == update.articleId);
                         if (articleIndex !== -1) {
@@ -1304,40 +1302,33 @@
                         }
                     });
                     
-                    // Sunucuya gönder
                     await fetchViaProxy('', 'PUT', { 
                         articles: articles,
                         lastUpdated: new Date().toISOString()
                     }, CONFIG.ARTICLES_BIN_ID);
                     
-                    // Lokal veriyi güncelle
                     articlesData = articles;
                     
                     console.log('Queue processed successfully:', updates.length, 'updates');
                 } catch (error) {
                     console.error('Queue processing error:', error);
-                    // Başarısız olanları tekrar queue'ya ekle
                     this.pendingUpdates.push(...updates);
                 } finally {
                     this.isSyncing = false;
                 }
             }
 
-            // Akıllı Cache Temizleme - Otomatik
             clearStaleCache() {
                 const now = Date.now();
                 
-                // 12 saatten daha eski cache temizleme varsa yap
                 if (now - this.lastCacheCleanup < this.CACHE_CLEANUP_INTERVAL) {
                     return;
                 }
                 
                 console.log('Performing automatic cache cleanup...');
                 
-                const oneWeekAgo = now - (7 * 24 * 60 * 60 * 1000);
                 const oneDayAgo = now - (24 * 60 * 60 * 1000);
                 
-                // 1. Rate limit kayıtlarını temizle (1 günden eski)
                 Object.keys(localStorage).forEach(key => {
                     if (key.startsWith('liked_')) {
                         const timestamp = parseInt(localStorage.getItem(key));
@@ -1347,68 +1338,46 @@
                     }
                 });
                 
-                // 2. Eski session view kayıtlarını temizle (30 dakikadan eski)
-                Object.keys(sessionStorage).forEach(key => {
-                    if (key.startsWith('viewed_')) {
-                        const timestamp = parseInt(sessionStorage.getItem(key));
-                        if (timestamp && (now - timestamp) > (30 * 60 * 1000)) {
-                            sessionStorage.removeItem(key);
-                        }
-                    }
-                });
-                
-                // 3. Çok eski pending updates varsa temizle (1 haftadan eski)
                 this.pendingUpdates = this.pendingUpdates.filter(update => {
                     return (now - update.timestamp) < (7 * 24 * 60 * 60 * 1000);
                 });
                 
-                // 4. Boş article IDs'leri temizle
                 Object.keys(this.localData.views).forEach(articleId => {
                     if (!articlesData.some(a => a.id == articleId)) {
                         delete this.localData.views[articleId];
                     }
                 });
                 
-                // 5. Sync olmayan çok eski view/like verilerini temizle
                 Object.keys(this.localData.likes).forEach(articleId => {
                     const article = articlesData.find(a => a.id == articleId);
                     if (article && article.likes) {
-                        // Sunucudaki veriyle aynıysa temizle
                         if (article.likes >= (this.localData.likes[articleId] || 0)) {
                             delete this.localData.likes[articleId];
                         }
                     }
                 });
                 
-                // Güncellenen view verilerini localStorage'a kaydet
                 localStorage.setItem('articleViews', JSON.stringify(this.localData.views));
                 localStorage.setItem('userLikedArticles', JSON.stringify(this.localData.likes));
                 
-                // Son cache temizleme zamanını kaydet
                 this.lastCacheCleanup = now;
                 localStorage.setItem('lastCacheCleanup', now.toString());
                 
                 console.log('Automatic cache cleanup completed');
             }
             
-            // Gelişmiş Cache Optimizasyonu
             optimizeCache() {
                 const now = Date.now();
-                const oneHourAgo = now - (60 * 60 * 1000);
                 
-                // Sadece 1 saat içinde aktif olan makalelerin cache'ini tut
                 const activeArticles = articlesData.filter(article => {
                     const articleDate = new Date(article.published_date || article.date);
-                    return (now - articleDate.getTime()) < (30 * 24 * 60 * 60 * 1000); // 30 gün
+                    return (now - articleDate.getTime()) < (30 * 24 * 60 * 60 * 1000);
                 });
                 
-                // Aktif makalelerin ID'lerini al
                 const activeArticleIds = activeArticles.map(a => a.id.toString());
                 
-                // Eski makalelerin cache'ini temizle
                 Object.keys(this.localData.views).forEach(articleId => {
                     if (!activeArticleIds.includes(articleId)) {
-                        // 1 haftadan daha eski ve 1 saat içinde erişilmemişse temizle
                         const lastView = this.localData.views[articleId];
                         if (lastView && (now - lastView) > (7 * 24 * 60 * 60 * 1000)) {
                             delete this.localData.views[articleId];
@@ -1416,12 +1385,10 @@
                     }
                 });
                 
-                // localStorage'ı güncelle
                 localStorage.setItem('articleViews', JSON.stringify(this.localData.views));
             }
         }
 
-        // DataManager instance'ı oluştur
         const dataManager = new ArticleDataManager();
         
         let articlesData = [];
@@ -1466,23 +1433,17 @@
         
         async function loadArticlesData() {
             try {
-                // Önce yerel veriyi göster (hızlı yükleme)
                 renderArticlesList();
                 
-                // Sunucudan veriyi al
                 const result = await fetchViaProxy('/latest', 'GET', null, CONFIG.ARTICLES_BIN_ID);
                 const serverArticles = result.articles || result.records || result;
                 
-                // DataManager ile birleştir
                 articlesData = dataManager.mergeData(serverArticles, articlesData || []);
                 
-                // Cache optimizasyonu yap
                 dataManager.optimizeCache();
                 
-                // UI'ı güncelle
                 renderArticlesList();
                 
-                // Aktif makaleyi yükle
                 if (window.location.hash) {
                     const articleId = window.location.hash.substring(1);
                     loadArticleDetail(articleId);
@@ -1501,13 +1462,11 @@
                     }, 100);
                 }
                 
-                // İlk sync'i başlat
                 setTimeout(() => dataManager.syncWithServer(), 2000);
                 
             } catch (error) {
                 console.error('Error loading articles data:', error);
                 
-                // Fallback: Sadece yerel veriyi göster
                 if (articlesData && articlesData.length > 0) {
                     renderArticlesList();
                     showToast('Showing cached articles', 3000);
@@ -1521,13 +1480,12 @@
         async function updateViewCount(articleId) {
             if (!articleId) return;
             
-            // Session kontrolü - 30 dakika timeout
             const sessionKey = `viewed_${articleId}`;
             const lastViewed = sessionStorage.getItem(sessionKey);
             const now = Date.now();
             
             if (lastViewed && (now - parseInt(lastViewed)) < 30 * 60 * 1000) {
-                return; // 30 dakika içinde tekrar sayma
+                return;
             }
             
             sessionStorage.setItem(sessionKey, now.toString());
@@ -1535,17 +1493,13 @@
             const article = articlesData.find(a => a.id == articleId);
             if (!article) return;
             
-            // Yerel olarak artır
             article.views = (article.views || 0) + 1;
             
-            // LocalStorage'a kaydet
             dataManager.localData.views[articleId] = article.views;
             localStorage.setItem('articleViews', JSON.stringify(dataManager.localData.views));
             
-            // DataManager'e ekle (queue'ya al)
             dataManager.queueUpdate(articleId, 'view', 1);
             
-            // UI güncelle
             const viewElement = document.querySelector(`#views-${articleId}`);
             if (viewElement) {
                 viewElement.innerHTML = `<i class="far fa-eye"></i> ${article.views}`;
@@ -1558,7 +1512,6 @@
                 }
             }
             
-            // Optimistik güncelleme - hemen göster
             showToast('View counted!', 1000);
         }
         
@@ -1568,7 +1521,6 @@
             const article = articlesData.find(a => a.id == articleId);
             if (!article) return;
             
-            // Rate limiting - 5 saniyede bir like
             const likeKey = `liked_${articleId}`;
             const lastLiked = localStorage.getItem(likeKey);
             const now = Date.now();
@@ -1578,7 +1530,6 @@
                 return;
             }
             
-            // Kullanıcı daha önce beğenmiş mi kontrol et
             const userLikeKey = `user_like_${articleId}`;
             if (localStorage.getItem(userLikeKey)) {
                 showToast('You already liked this article');
@@ -1588,17 +1539,13 @@
             localStorage.setItem(userLikeKey, 'true');
             localStorage.setItem(likeKey, now.toString());
             
-            // Yerel olarak artır
             article.likes = (article.likes || 0) + 1;
             
-            // LocalStorage'a kaydet
             dataManager.localData.likes[articleId] = true;
             localStorage.setItem('userLikedArticles', JSON.stringify(dataManager.localData.likes));
             
-            // DataManager'e ekle (queue'ya al)
             dataManager.queueUpdate(articleId, 'like', 1);
             
-            // UI güncelle
             const likeElement = document.querySelector(`#likes-${articleId}`);
             if (likeElement) {
                 likeElement.innerHTML = `<i class="fas fa-heart"></i> ${article.likes}`;
@@ -1616,7 +1563,6 @@
                 }
             }
             
-            // Animasyon efekti
             const heartIcon = document.querySelector(`#likes-${articleId} i`);
             if (heartIcon) {
                 heartIcon.style.transform = 'scale(1.5)';
@@ -1843,6 +1789,8 @@
                 images = article.images;
             } else if (article.featured_image) {
                 images = [article.featured_image];
+            } else if (article.image) {
+                images = [article.image];
             }
             
             document.getElementById('articleDetail').innerHTML = `
@@ -1925,12 +1873,20 @@
         function formatArticleContent(content) {
             if (!content) return '<p>No content available for this article.</p>';
             
+            // Özel karakterleri ve boşlukları temizle
+            content = content.replace(/<br\s*\/?>/gi, '\n')
+                             .replace(/&nbsp;/gi, ' ')
+                             .replace(/\s+/g, ' ')
+                             .trim();
+            
             let formattedContent = content
                 .split('\n')
                 .filter(paragraph => paragraph.trim() !== '')
                 .map(paragraph => {
-                    if (paragraph.trim().startsWith('```') && paragraph.trim().endsWith('```')) {
-                        const code = paragraph.trim().substring(3, paragraph.length - 3);
+                    paragraph = paragraph.trim();
+                    
+                    if (paragraph.startsWith('```') && paragraph.endsWith('```')) {
+                        const code = paragraph.substring(3, paragraph.length - 3);
                         return `<pre><code>${escapeHtml(code)}</code></pre>`;
                     }
                     
@@ -1942,15 +1898,20 @@
                         return `<h2>${paragraph.substring(2)}</h2>`;
                     }
                     
+                    // Görsel kontrollerini geliştirdik
                     const imgMatch = paragraph.match(/!\[(.*?)\]\((.*?)\)/);
                     if (imgMatch) {
-                        return `<div class="image-carousel"><div class="carousel-inner"><div class="carousel-item active"><img src="${imgMatch[2]}" alt="${imgMatch[1]}"></div></div></div>`;
+                        return `<div class="image-carousel"><div class="carousel-inner"><div class="carousel-item active"><img src="${imgMatch[2]}" alt="${imgMatch[1] || 'Article image'}"></div></div></div>`;
                     }
                     
+                    // URL'leri tespit et ve img tag'ine çevir
+                    const urlRegex = /(https?:\/\/[^\s]+\.(?:jpg|jpeg|png|gif|webp|svg))/gi;
+                    paragraph = paragraph.replace(urlRegex, (url) => {
+                        return `<div class="image-carousel"><div class="carousel-inner"><div class="carousel-item active"><img src="${url}" alt="Article image"></div></div></div>`;
+                    });
+                    
                     paragraph = paragraph.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" style="color: var(--primary-color);">$1</a>');
-                    
                     paragraph = paragraph.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                    
                     paragraph = paragraph.replace(/\*(.*?)\*/g, '<em>$1</em>');
                     
                     return `<p>${paragraph}</p>`;
@@ -1972,39 +1933,92 @@
         
         function shareArticle(articleId) {
             const article = articlesData.find(item => item.id == articleId);
-            if (!article) return;
+            if (!article) {
+                showToast('Article not found');
+                return;
+            }
             
-            const shareUrl = `${window.location.origin}${window.location.pathname}#${articleId}`;
+            // Boşlukları temizle
+            const articleTitle = (article.title || 'Cybersecurity Article').replace(/\s+/g, ' ').trim();
+            const articleDescription = (article.content || '').substring(0, 150).replace(/\s+/g, ' ').trim() + '...';
             
+            // Kapak fotoğrafını al - öncelik sırası: featured_image > image > ilk resim > varsayılan
+            let coverImage = 'https://adembayazit.com/IMAGES/preview.png';
+            
+            if (article.featured_image) {
+                coverImage = article.featured_image;
+            } else if (article.image) {
+                coverImage = article.image;
+            } else if (article.images && article.images.length > 0) {
+                coverImage = article.images[0];
+            }
+            
+            // URL'yi temizle
+            const shareUrl = `${window.location.origin}${window.location.pathname}#${articleId}`.replace(/\s+/g, '');
+            
+            // Meta tag'leri güncelle (sayfa yenilendiğinde sosyal medya için)
+            updateMetaTags(articleTitle, articleDescription, coverImage, shareUrl);
+            
+            // Web Share API kullan
             if (navigator.share) {
                 navigator.share({
-                    title: article.title,
-                    text: article.content?.substring(0, 100) + '...',
+                    title: articleTitle,
+                    text: articleDescription,
                     url: shareUrl
-                }).catch(() => {
-                    copyShareUrl(shareUrl, article.title);
+                }).then(() => {
+                    showToast('Article shared successfully!');
+                }).catch((error) => {
+                    console.log('Web Share cancelled or failed:', error);
+                    copyToClipboard(shareUrl, articleTitle);
                 });
             } else {
-                copyShareUrl(shareUrl, article.title);
+                // Fallback: clipboard'a kopyala
+                copyToClipboard(shareUrl, articleTitle);
             }
         }
         
-        async function copyShareUrl(url, title) {
-            const success = await navigator.clipboard.writeText(url).then(() => true).catch(() => false);
-            if (success) {
-                showToast('Link copied to clipboard!');
-            } else {
+        function updateMetaTags(title, description, image, url) {
+            // Open Graph meta tag'lerini güncelle
+            document.querySelector('meta[property="og:title"]')?.setAttribute('content', title);
+            document.querySelector('meta[property="og:description"]')?.setAttribute('content', description);
+            document.querySelector('meta[property="og:image"]')?.setAttribute('content', image);
+            document.querySelector('meta[property="og:url"]')?.setAttribute('content', url);
+            
+            // Twitter meta tag'lerini güncelle
+            document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', title);
+            document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', description);
+            document.querySelector('meta[name="twitter:image"]')?.setAttribute('content', image);
+        }
+        
+        async function copyToClipboard(text, articleTitle) {
+            try {
+                await navigator.clipboard.writeText(text);
+                showToast(`Link for "${articleTitle}" copied to clipboard!`);
+                return true;
+            } catch (err) {
+                console.error('Clipboard API failed:', err);
+                
+                // Fallback method
                 const textArea = document.createElement('textarea');
-                textArea.value = url;
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                textArea.style.top = '-999999px';
                 document.body.appendChild(textArea);
+                textArea.focus();
                 textArea.select();
+                
                 try {
                     document.execCommand('copy');
-                    showToast('Link copied to clipboard!');
+                    showToast(`Link for "${articleTitle}" copied to clipboard!`);
+                    document.body.removeChild(textArea);
+                    return true;
                 } catch (err) {
-                    showToast('Failed to copy link');
+                    console.error('Fallback copy failed:', err);
+                    showToast('Failed to copy link to clipboard');
+                    document.body.removeChild(textArea);
+                    return false;
                 }
-                document.body.removeChild(textArea);
             }
         }
         
@@ -2296,13 +2310,10 @@
         }
         
         document.addEventListener('DOMContentLoaded', function() {
-            // İlk cache temizleme
             dataManager.clearStaleCache();
             
-            // Verileri yükle
             loadArticlesData();
             
-            // Hash değişikliklerini dinle
             window.addEventListener('hashchange', function() {
                 if (window.location.hash) {
                     const articleId = window.location.hash.substring(1);
@@ -2310,7 +2321,6 @@
                 }
             });
             
-            // Mobile search ve filtreleme
             const mobileArticleSearch = document.getElementById('mobileArticleSearch');
             if (mobileArticleSearch) {
                 mobileArticleSearch.addEventListener('input', filterArticles);
@@ -2321,7 +2331,6 @@
                 mobileCategoryFilter.addEventListener('change', filterArticles);
             }
             
-            // Subscription form
             const subscriptionForm = document.getElementById('subscriptionForm');
             if (subscriptionForm) {
                 subscriptionForm.addEventListener('submit', function(e) {
@@ -2331,7 +2340,6 @@
                 });
             }
             
-            // Verification form
             const verificationForm = document.getElementById('verificationForm');
             if (verificationForm) {
                 verificationForm.addEventListener('submit', function(e) {
@@ -2341,7 +2349,6 @@
                 });
             }
             
-            // Cancel verification
             const cancelVerification = document.getElementById('cancelVerification');
             if (cancelVerification) {
                 cancelVerification.addEventListener('click', function() {
@@ -2349,7 +2356,6 @@
                 });
             }
             
-            // Resend code
             const resendCode = document.getElementById('resendCode');
             if (resendCode) {
                 resendCode.addEventListener('click', function() {
@@ -2369,7 +2375,6 @@
                 });
             }
             
-            // Modal kapatma
             window.addEventListener('click', function(event) {
                 const modal = document.getElementById('verificationModal');
                 if (event.target === modal) {
@@ -2377,12 +2382,10 @@
                 }
             });
             
-            // Düzenli sync (30 saniyede bir)
             setInterval(() => {
                 dataManager.syncWithServer();
             }, 30000);
             
-            // Sayfa görünür olduğunda sync
             document.addEventListener('visibilitychange', () => {
                 if (!document.hidden) {
                     dataManager.syncWithServer();
@@ -2390,12 +2393,10 @@
                 }
             });
             
-            // Otomatik cache temizleme (12 saatte bir)
             setInterval(() => {
                 dataManager.clearStaleCache();
             }, 12 * 60 * 60 * 1000);
             
-            // Online/Offline durumunu izle
             window.addEventListener('online', function() {
                 showToast('Back online. Syncing data...', 2000);
                 dataManager.syncWithServer();
@@ -2405,15 +2406,12 @@
                 showToast('You are offline. Using cached data.', 3000);
             });
             
-            // Sayfa kapanırken son sync yap
             window.addEventListener('beforeunload', function() {
                 if (dataManager.pendingUpdates.length > 0) {
-                    // Son queue işlemini yap
                     dataManager.processQueue();
                 }
             });
             
-            // Her 5 dakikada bir cache optimizasyonu
             setInterval(() => {
                 dataManager.optimizeCache();
             }, 5 * 60 * 1000);
