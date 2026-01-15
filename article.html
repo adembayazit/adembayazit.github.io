@@ -1870,7 +1870,7 @@
             let cleanDescription = tempDiv.textContent || tempDiv.innerText || '';
             cleanDescription = cleanDescription.substring(0, 150).replace(/\s+/g, ' ').trim() + '...';
             
-            // Kapak fotoğrafını belirle
+            // Kapak fotoğrafını belirle - İLK ÖNCE featured_image'ı kontrol et
             let coverImage = 'https://adembayazit.com/IMAGES/preview.png';
             if (article.featured_image) {
                 coverImage = article.featured_image;
@@ -1882,15 +1882,22 @@
             const currentUrl = window.location.origin + window.location.pathname + '#' + article.id;
             
             // Open Graph taglerini güncelle
-            if (ogTitle) ogTitle.content = cleanTitle;
+            if (ogTitle) ogTitle.content = cleanTitle + ' | Adem Bayazıt';
             if (ogDescription) ogDescription.content = cleanDescription;
             if (ogImage) ogImage.content = coverImage;
             if (ogUrl) ogUrl.content = currentUrl;
             
             // Twitter taglerini güncelle
-            if (twitterTitle) twitterTitle.content = cleanTitle;
+            if (twitterTitle) twitterTitle.content = cleanTitle + ' | Adem Bayazıt';
             if (twitterDescription) twitterDescription.content = cleanDescription;
             if (twitterImage) twitterImage.content = coverImage;
+            
+            console.log('Meta tags updated for sharing:', {
+                title: cleanTitle,
+                description: cleanDescription.substring(0, 50) + '...',
+                image: coverImage,
+                url: currentUrl
+            });
         }
         
         function toggleTranslation() {
