@@ -5,17 +5,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cybersecurity Articles | Adem Bayazıt</title>
+    <!-- Varsayılan meta tagler -->
     <meta property="og:title" content="Adem Bayazıt | Cybersecurity Articles" />
     <meta property="og:description" content="Cybersecurity articles, research and analysis by Adem Bayazıt" />
     <meta property="og:image" content="https://adembayazit.com/IMAGES/preview.png" />
     <meta property="og:url" content="https://adembayazit.com/articles" />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Adem Bayazıt Cybersecurity" />
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Adem Bayazıt - Cybersecurity Articles">
     <meta name="twitter:description" content="Cybersecurity articles, research and analysis by Adem Bayazıt">
     <meta name="twitter:image" content="https://adembayazit.com/IMAGES/preview.png">
     <meta name="twitter:image:alt" content="Adem Bayazıt">
+    <meta name="twitter:site" content="@adembayazit">
     
     <link rel="icon" type="png|image" href="/IMAGES/ab.png">
     <link rel="stylesheet" href="/CSS/style.css">
@@ -415,7 +418,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            flex-wrap: wrap;
+                flex-wrap: wrap;
             gap: 15px;
         }
         
@@ -1845,52 +1848,47 @@
             
             updateViewCount(articleId);
             
-            // Open Graph meta taglerini güncelle
+            // Meta tagleri güncelle
             updateMetaTagsForSharing(article);
         }
         
         function updateMetaTagsForSharing(article) {
-            // Open Graph taglerini güncelle
-            const ogTitle = document.querySelector('meta[property="og:title"]');
-            const ogDescription = document.querySelector('meta[property="og:description"]');
-            const ogImage = document.querySelector('meta[property="og:image"]');
-            const ogUrl = document.querySelector('meta[property="og:url"]');
-            
-            // Twitter taglerini güncelle
-            const twitterTitle = document.querySelector('meta[name="twitter:title"]');
-            const twitterDescription = document.querySelector('meta[name="twitter:description"]');
-            const twitterImage = document.querySelector('meta[name="twitter:image"]');
-            
-            // Makale başlığını temizle (HTML etiketlerini kaldır)
+            // Makale başlığını temizle
             const cleanTitle = article.title.replace(/<[^>]*>/g, '');
             
-            // Makale açıklamasını oluştur (ilk 150 karakter)
+            // Makale açıklamasını oluştur
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = article.content || '';
             let cleanDescription = tempDiv.textContent || tempDiv.innerText || '';
             cleanDescription = cleanDescription.substring(0, 150).replace(/\s+/g, ' ').trim() + '...';
             
-            // Kapak fotoğrafını belirle - İLK ÖNCE featured_image'ı kontrol et
+            // Kapak fotoğrafını belirle - ÖNCE featured_image'ı kontrol et
             let coverImage = 'https://adembayazit.com/IMAGES/preview.png';
             if (article.featured_image) {
                 coverImage = article.featured_image;
+                console.log('Using featured_image for share:', coverImage);
             } else if (article.images && article.images.length > 0) {
                 coverImage = article.images[0];
+                console.log('Using first image for share:', coverImage);
+            } else {
+                console.log('Using default preview image');
             }
             
-            // URL'yi güncelle
+            // URL'yi güncelle (hash'li versiyon)
             const currentUrl = window.location.origin + window.location.pathname + '#' + article.id;
             
-            // Open Graph taglerini güncelle
-            if (ogTitle) ogTitle.content = cleanTitle + ' | Adem Bayazıt';
-            if (ogDescription) ogDescription.content = cleanDescription;
-            if (ogImage) ogImage.content = coverImage;
-            if (ogUrl) ogUrl.content = currentUrl;
+            // Open Graph meta taglerini güncelle
+            updateMetaTag('og:title', cleanTitle + ' | Adem Bayazıt');
+            updateMetaTag('og:description', cleanDescription);
+            updateMetaTag('og:image', coverImage);
+            updateMetaTag('og:url', currentUrl);
+            updateMetaTag('og:type', 'article');
             
-            // Twitter taglerini güncelle
-            if (twitterTitle) twitterTitle.content = cleanTitle + ' | Adem Bayazıt';
-            if (twitterDescription) twitterDescription.content = cleanDescription;
-            if (twitterImage) twitterImage.content = coverImage;
+            // Twitter meta taglerini güncelle
+            updateMetaTag('twitter:title', cleanTitle + ' | Adem Bayazıt');
+            updateMetaTag('twitter:description', cleanDescription);
+            updateMetaTag('twitter:image', coverImage);
+            updateMetaTag('twitter:card', 'summary_large_image');
             
             console.log('Meta tags updated for sharing:', {
                 title: cleanTitle,
@@ -1898,6 +1896,38 @@
                 image: coverImage,
                 url: currentUrl
             });
+            
+            // Sayfa başlığını da güncelle
+            document.title = cleanTitle + ' | Adem Bayazıt Cybersecurity';
+            
+            // Facebook'un meta tagleri yenilemesi için
+            if (window.FB) {
+                window.FB.XFBML.parse();
+            }
+        }
+        
+        function updateMetaTag(property, content) {
+            let metaTag = document.querySelector(`meta[property="${property}"]`);
+            if (!metaTag) {
+                metaTag = document.querySelector(`meta[name="${property}"]`);
+            }
+            
+            if (metaTag) {
+                metaTag.setAttribute('content', content);
+            } else {
+                // Eğer tag yoksa oluştur
+                if (property.startsWith('og:')) {
+                    metaTag = document.createElement('meta');
+                    metaTag.setAttribute('property', property);
+                    metaTag.setAttribute('content', content);
+                    document.head.appendChild(metaTag);
+                } else if (property.startsWith('twitter:')) {
+                    metaTag = document.createElement('meta');
+                    metaTag.setAttribute('name', property);
+                    metaTag.setAttribute('content', content);
+                    document.head.appendChild(metaTag);
+                }
+            }
         }
         
         function toggleTranslation() {
@@ -1976,26 +2006,27 @@
             const article = articlesData.find(item => item.id == articleId);
             if (!article) return;
             
-            const shareUrl = `${window.location.origin}${window.location.pathname}#${articleId}`;
-            
             // Meta tagleri güncelle
             updateMetaTagsForSharing(article);
             
+            const shareUrl = `${window.location.origin}${window.location.pathname}#${articleId}`;
+            
             if (navigator.share) {
-                // Paylaşım metnini temizle (HTML etiketlerini kaldır)
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = article.content || '';
                 let cleanText = tempDiv.textContent || tempDiv.innerText || '';
                 cleanText = cleanText.substring(0, 100).replace(/\s+/g, ' ').trim() + '...';
                 
-                // Başlığı temizle
                 const cleanTitle = article.title.replace(/<[^>]*>/g, '');
                 
                 navigator.share({
                     title: cleanTitle,
                     text: cleanText,
                     url: shareUrl
-                }).catch(() => {
+                }).then(() => {
+                    console.log('Share successful');
+                }).catch((error) => {
+                    console.log('Share failed or cancelled', error);
                     copyShareUrl(shareUrl, article.title);
                 });
             } else {
@@ -2004,10 +2035,10 @@
         }
         
         async function copyShareUrl(url, title) {
-            const success = await navigator.clipboard.writeText(url).then(() => true).catch(() => false);
-            if (success) {
+            try {
+                await navigator.clipboard.writeText(url);
                 showToast('Link copied to clipboard!');
-            } else {
+            } catch (err) {
                 const textArea = document.createElement('textarea');
                 textArea.value = url;
                 document.body.appendChild(textArea);
