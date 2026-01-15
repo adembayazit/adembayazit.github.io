@@ -8,7 +8,7 @@
     <meta property="og:title" content="Adem Bayazıt | Cybersecurity Articles" />
     <meta property="og:description" content="Cybersecurity articles, research and analysis by Adem Bayazıt" />
     <meta property="og:image" content="https://adembayazit.com/IMAGES/preview.png" />
-    <meta property="og:url" content="https://adembayazit.com/article" />
+    <meta property="og:url" content="https://adembayazit.com/articles" />
     <meta property="og:type" content="website" />
 
     <meta name="twitter:card" content="summary_large_image">
@@ -550,6 +550,7 @@
             border-radius: 8px;
             margin: 15px 0;
             border: 1px solid var(--border-color);
+            display: block;
         }
         
         .detail-body pre {
@@ -1578,19 +1579,35 @@
         }
         
         function createCarousel(images) {
-            if (!images || images.length === 0) return '';
+            console.log('Creating carousel with images:', images);
             
-            if (images.length === 1) {
+            if (!images || images.length === 0) {
+                console.log('No images available, showing default');
                 return `
                     <div class="image-carousel">
                         <div class="carousel-inner">
                             <div class="carousel-item active">
-                                <img src="${images[0]}" alt="Article image" onerror="this.src='https://adembayazit.com/IMAGES/preview.png'">
+                                <img src="https://adembayazit.com/IMAGES/preview.png" alt="Default article image" style="width:100%; height:400px; object-fit:cover; display:block;">
                             </div>
                         </div>
                     </div>
                 `;
             }
+            
+            if (images.length === 1) {
+                console.log('Single image:', images[0]);
+                return `
+                    <div class="image-carousel">
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <img src="${images[0]}" alt="Article image" style="width:100%; height:400px; object-fit:cover; display:block;" onerror="this.src='https://adembayazit.com/IMAGES/preview.png'">
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            console.log('Multiple images:', images.length);
             
             let indicators = '';
             for (let i = 0; i < images.length; i++) {
@@ -1602,7 +1619,7 @@
                     <div class="carousel-inner" id="carouselInner">
                         ${images.map((img, index) => `
                             <div class="carousel-item ${index === 0 ? 'active' : ''}">
-                                <img src="${img}" alt="Article image ${index + 1}" onerror="this.src='https://adembayazit.com/IMAGES/preview.png'">
+                                <img src="${img}" alt="Article image ${index + 1}" style="width:100%; height:400px; object-fit:cover; display:block;" onerror="this.src='https://adembayazit.com/IMAGES/preview.png'">
                             </div>
                         `).join('')}
                     </div>
@@ -1787,14 +1804,32 @@
                 </div>
             ` : '';
             
-            // DÜZELTME: Öncelikle featured_image kullan, yoksa images dizisine bak
+            // GARANTİ RESİM EKLEME
             let images = [];
-            if (article.featured_image) {
-                // Eğer featured_image varsa, önce onu kullan
-                images = [article.featured_image];
-            } else if (article.images && Array.isArray(article.images) && article.images.length > 0) {
-                images = article.images;
+            
+            // 1. Önce featured_image'ı kontrol et
+            if (article.featured_image && article.featured_image.trim() !== '') {
+                console.log('Using featured_image:', article.featured_image);
+                images.push(article.featured_image);
             }
+            
+            // 2. images dizisini kontrol et
+            if (article.images && Array.isArray(article.images) && article.images.length > 0) {
+                article.images.forEach(img => {
+                    if (img && img.trim() !== '' && !images.includes(img)) {
+                        console.log('Adding image from array:', img);
+                        images.push(img);
+                    }
+                });
+            }
+            
+            // 3. Eğer hiç resim yoksa varsayılan resmi kullan
+            if (images.length === 0) {
+                console.log('No images found, using default');
+                images.push('https://adembayazit.com/IMAGES/preview.png');
+            }
+            
+            console.log('Final images array:', images);
             
             document.getElementById('articleDetail').innerHTML = `
                 <button class="detail-share" onclick="shareArticle(${article.id})">
@@ -1864,15 +1899,14 @@
             
             // Kapak fotoğrafını belirle - ÖNCE featured_image'ı kontrol et
             let coverImage = 'https://adembayazit.com/IMAGES/preview.png';
-            if (article.featured_image) {
-                // featured_image varsa, mutlaka kullan
+            
+            if (article.featured_image && article.featured_image.trim() !== '') {
                 coverImage = article.featured_image;
-            } else if (article.images && article.images.length > 0) {
+            } else if (article.images && article.images.length > 0 && article.images[0].trim() !== '') {
                 coverImage = article.images[0];
             }
             
-            // URL'yi encode et
-            coverImage = encodeURI(coverImage);
+            console.log('Setting cover image to:', coverImage);
             
             // URL'yi güncelle (hash'li versiyon)
             const currentUrl = window.location.origin + window.location.pathname + '#' + article.id;
@@ -1902,6 +1936,7 @@
             
             if (metaTag) {
                 metaTag.setAttribute('content', content);
+                console.log(`Updated meta tag ${property}: ${content}`);
             }
         }
         
@@ -1951,7 +1986,7 @@
                     
                     const imgMatch = paragraph.match(/!\[(.*?)\]\((.*?)\)/);
                     if (imgMatch) {
-                        return `<div class="image-carousel"><div class="carousel-inner"><div class="carousel-item active"><img src="${imgMatch[2]}" alt="${imgMatch[1]}" onerror="this.src='https://adembayazit.com/IMAGES/preview.png'"></div></div></div>`;
+                        return `<div class="image-carousel"><div class="carousel-inner"><div class="carousel-item active"><img src="${imgMatch[2]}" alt="${imgMatch[1]}" style="width:100%; max-height:400px; object-fit:cover; display:block;" onerror="this.src='https://adembayazit.com/IMAGES/preview.png'"></div></div></div>`;
                     }
                     
                     paragraph = paragraph.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" style="color: var(--primary-color);">$1</a>');
