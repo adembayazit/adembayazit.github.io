@@ -380,7 +380,6 @@
             border-radius: 10px;
             padding: 30px;
             min-height: 600px;
-            position: relative;
         }
         
         .content-placeholder {
@@ -411,7 +410,6 @@
             margin-bottom: 25px;
             padding-bottom: 15px;
             border-bottom: 1px solid var(--border-color);
-            position: relative;
         }
         
         .detail-title {
@@ -485,72 +483,23 @@
             gap: 5px;
         }
         
-        /* Masaüstü için paylaşım butonu - mobilde gizli */
-        .detail-share-desktop {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: #ff4444;
-            color: white;
-            border: 1px solid #ff4444;
-            border-radius: 5px;
-            padding: 8px 12px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: all 0.3s ease;
-        }
-        
-        .detail-share-desktop:hover {
-            background: #ff2222;
-            transform: translateY(-2px);
-        }
-        
-        /* Mobil için paylaşım butonu - masaüstünde gizli */
-        .detail-share-mobile {
+        /* Mobil butonları */
+        .mobile-meta-buttons {
             display: none;
-            background: #ff4444;
-            color: white;
-            border: 1px solid #ff4444;
-            border-radius: 5px;
-            padding: 8px 12px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: all 0.3s ease;
-            margin-top: 10px;
-            margin-left: auto;
-        }
-        
-        /* Mobil için çeviri butonu - masaüstünde gizli */
-        .translation-toggle-mobile {
-            display: none;
-            padding: 5px 10px;
-            font-size: 0.8rem;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
             gap: 8px;
-            cursor: pointer;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            transition: all 0.3s ease;
-            color: white;
             margin-top: 10px;
+            width: 100%;
         }
         
-        .translation-toggle-mobile:hover {
-            background: rgba(0, 255, 0, 0.1);
-            transform: scale(1.05);
+        .mobile-meta-buttons .meta-share {
+            font-size: 0.75rem;
+            padding: 4px 8px;
         }
         
-        .translation-toggle-mobile.active {
-            background: rgba(0, 255, 0, 0.2);
-            border-color: var(--primary-color);
+        .mobile-meta-buttons .translation-toggle {
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 8px;
         }
         
         .image-carousel {
@@ -1030,14 +979,8 @@
                 display: flex;
             }
             
-            /* Masaüstünde mutlak konumlu paylaşım butonunu gizle */
-            .detail-share-desktop {
-                display: none;
-            }
-            
             /* Masaüstünde mobil butonları gizle */
-            .detail-share-mobile,
-            .translation-toggle-mobile {
+            .mobile-meta-buttons {
                 display: none !important;
             }
             
@@ -1081,18 +1024,8 @@
             }
             
             /* Mobilde mobil butonları göster */
-            .detail-share-mobile,
-            .translation-toggle-mobile {
+            .mobile-meta-buttons {
                 display: flex;
-            }
-            
-            /* Mobil butonlar için düzen */
-            .mobile-buttons-container {
-                display: flex;
-                justify-content: flex-end;
-                gap: 10px;
-                margin-top: 10px;
-                width: 100%;
             }
             
             /* Fotoğraf boyutlarını mobilde küçült */
@@ -1168,8 +1101,8 @@
             }
             
             /* Buton boyutlarını küçült */
-            .detail-share-mobile,
-            .translation-toggle-mobile {
+            .mobile-meta-buttons .meta-share,
+            .mobile-meta-buttons .translation-toggle {
                 font-size: 0.7rem;
                 padding: 6px 10px;
             }
@@ -1198,8 +1131,8 @@
             }
             
             /* Detay sayfasındaki butonlar */
-            .detail-share-mobile,
-            .translation-toggle-mobile {
+            .mobile-meta-buttons .meta-share,
+            .mobile-meta-buttons .translation-toggle {
                 font-size: 0.65rem;
                 padding: 5px 8px;
             }
@@ -1958,13 +1891,6 @@
                 </div>
             ` : '';
             
-            // Mobil için çeviri butonu
-            const translationButtonMobileHtml = article.content_tr ? `
-                <div class="translation-toggle-mobile" id="translationToggleMobile">
-                    <span class="fi fi-tr"></span>
-                </div>
-            ` : '';
-            
             // Paylaşım butonu HTML'i - masaüstü için detail-meta-buttons içinde
             const shareButtonHtml = `
                 <button class="meta-share" onclick="shareArticle(${article.id})">
@@ -1972,11 +1898,22 @@
                 </button>
             `;
             
-            // Mobil için paylaşım butonu
-            const shareButtonMobileHtml = `
-                <button class="detail-share-mobile" onclick="shareArticle(${article.id})">
-                    <i class="fas fa-share-alt"></i> Share
-                </button>
+            // Mobil için butonlar
+            const mobileButtonsHtml = article.content_tr ? `
+                <div class="mobile-meta-buttons">
+                    <div class="translation-toggle" id="translationToggleMobile">
+                        <span class="fi fi-tr"></span>
+                    </div>
+                    <button class="meta-share" onclick="shareArticle(${article.id})">
+                        <i class="fas fa-share-alt"></i> Share
+                    </button>
+                </div>
+            ` : `
+                <div class="mobile-meta-buttons">
+                    <button class="meta-share" onclick="shareArticle(${article.id})">
+                        <i class="fas fa-share-alt"></i> Share
+                    </button>
+                </div>
             `;
             
             // FIXED: Resimleri doğru şekilde topla
@@ -2032,10 +1969,6 @@
             }
             
             document.getElementById('articleDetail').innerHTML = `
-                <!-- Masaüstü için paylaşım butonu - mobilde gizli -->
-                <button class="detail-share-desktop" onclick="shareArticle(${article.id})">
-                    <i class="fas fa-share-alt"></i> Share This Article
-                </button>
                 <div class="detail-header">
                     <h1 class="detail-title">
                         <span id="articleTitleText">${article.title || 'Untitled Article'}</span>
@@ -2049,11 +1982,7 @@
                             ${shareButtonHtml}
                         </span>
                     </div>
-                    <!-- Mobil butonlar - masaüstünde gizli -->
-                    <div class="mobile-buttons-container">
-                        ${translationButtonMobileHtml}
-                        ${shareButtonMobileHtml}
-                    </div>
+                    ${mobileButtonsHtml}
                     ${tagsHtml}
                 </div>
                 
