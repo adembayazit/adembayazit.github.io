@@ -308,7 +308,7 @@
             margin-bottom: 5px;
             font-size: 0.9rem;
             line-height: 1.3;
-            /* padding-right kaldırıldı - butonlar artık başlığın altında */
+            padding-right: 60px;
         }
         
         .article-meta {
@@ -331,49 +331,38 @@
             margin-left: 5px;
         }
         
-        /* BUTON KONTEYNERİ - YENİ EKLENDİ */
-        .article-buttons-container {
-            display: flex;
-            justify-content: flex-end;
-            gap: 8px;
-            margin: 8px 0;
-            padding: 5px 0;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        
         .article-translation-indicator {
+            position: absolute;
+            top: 15px;
+            right: 35px;
             background: rgba(255, 255, 255, 0.2);
             color: white;
             font-size: 0.6rem;
-            padding: 4px 8px;
+            padding: 2px 5px;
             border-radius: 3px;
             font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 4px;
+            z-index: 2;
             white-space: nowrap;
-            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .article-share {
+            position: absolute;
+            top: 15px;
+            right: 10px;
             background: #ff4444;
             color: white;
             border: 1px solid #ff4444;
             border-radius: 3px;
-            padding: 4px 8px;
+            padding: 2px 5px;
             cursor: pointer;
             font-size: 0.6rem;
+            z-index: 2;
             display: flex;
             align-items: center;
-            gap: 4px;
-            white-space: nowrap;
-            transition: all 0.3s ease;
-        }
-        
-        .article-share:hover {
-            background: #ff2222;
-            transform: translateY(-1px);
+            justify-content: center;
+            width: 20px;
+            height: 18px;
+            min-width: unset;
         }
         
         .article-stats {
@@ -430,34 +419,6 @@
             color: white;
             margin-bottom: 15px;
             line-height: 1.4;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        
-        .translation-toggle {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 8px 15px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-        }
-        
-        .translation-toggle:hover {
-            background: rgba(0, 255, 0, 0.1);
-            transform: scale(1.05);
-        }
-        
-        .translation-toggle.active {
-            background: rgba(0, 255, 0, 0.2);
-            border-color: var(--primary-color);
         }
         
         .detail-meta {
@@ -467,12 +428,83 @@
             color: var(--text-muted);
             flex-wrap: wrap;
             margin-top: 10px;
+            align-items: center;
+        }
+        
+        .detail-meta-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .meta-share {
+            background: #ff4444;
+            color: white;
+            border: 1px solid #ff4444;
+            border-radius: 3px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .meta-share:hover {
+            background: #ff2222;
+            transform: translateY(-1px);
+        }
+        
+        .detail-meta-buttons .translation-toggle {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            color: white;
+        }
+        
+        .detail-meta-buttons .translation-toggle:hover {
+            background: rgba(0, 255, 0, 0.1);
+            transform: scale(1.05);
+        }
+        
+        .detail-meta-buttons .translation-toggle.active {
+            background: rgba(0, 255, 0, 0.2);
+            border-color: var(--primary-color);
         }
         
         .detail-date, .detail-category, .detail-author {
             display: flex;
             align-items: center;
             gap: 5px;
+        }
+        
+        .detail-share {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #ff4444;
+            color: white;
+            border: 1px solid #ff4444;
+            border-radius: 5px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .detail-share:hover {
+            background: #ff2222;
+            transform: translateY(-2px);
         }
         
         .image-carousel {
@@ -615,28 +647,6 @@
             background: rgba(0, 255, 0, 0.05);
             font-style: italic;
             color: var(--highlight-color);
-        }
-        
-        .detail-share {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: #ff4444;
-            color: white;
-            border: 1px solid #ff4444;
-            border-radius: 5px;
-            padding: 8px 12px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: all 0.3s ease;
-        }
-        
-        .detail-share:hover {
-            background: #ff2222;
-            transform: translateY(-2px);
         }
         
         .article-stats-detail {
@@ -949,6 +959,7 @@
             color: var(--highlight-color);
         }
         
+        /* Masaüstü görünümü için özel düzenlemeler */
         @media (min-width: 993px) {
             .articles-sidebar {
                 max-height: 70vh;
@@ -960,11 +971,21 @@
                 overflow-y: visible;
             }
             
-            .article-buttons-container {
-                justify-content: flex-end;
+            .detail-meta {
+                flex-wrap: nowrap;
+            }
+            
+            .detail-meta-buttons {
+                margin-left: auto;
+            }
+            
+            /* Masaüstünde mutlak konumlu paylaşım butonunu gizle */
+            .detail-share {
+                display: none;
             }
         }
         
+        /* Tablet ve mobil görünüm için */
         @media (max-width: 992px) {
             .articles-container {
                 flex-direction: column;
@@ -988,13 +1009,25 @@
                 width: 100%;
             }
             
-            .article-buttons-container {
+            .detail-meta-buttons {
                 justify-content: flex-start;
+                width: 100%;
+                margin-top: 10px;
             }
             
             .articles-list {
                 max-height: 250px;
                 overflow-y: auto;
+            }
+            
+            /* Mobilde detail-share butonunu göster */
+            .detail-share {
+                display: flex;
+            }
+            
+            /* Mobilde meta butonları gizle */
+            .detail-meta-buttons {
+                display: none;
             }
         }
         
@@ -1021,12 +1054,6 @@
                 gap: 5px;
             }
             
-            .detail-share {
-                position: static;
-                margin-bottom: 15px;
-                display: inline-flex;
-            }
-            
             .subscription-form {
                 flex-direction: column;
             }
@@ -1044,16 +1071,6 @@
                 flex-direction: column;
             }
             
-            .article-buttons-container {
-                gap: 6px;
-            }
-            
-            .article-translation-indicator,
-            .article-share {
-                font-size: 0.55rem;
-                padding: 3px 6px;
-            }
-            
             .image-carousel {
                 max-height: 300px;
             }
@@ -1064,18 +1081,24 @@
         }
         
         @media (max-width: 480px) {
-            .article-buttons-container {
-                gap: 4px;
+            .article-translation-indicator {
+                top: 15px;
+                right: 30px;
+                font-size: 0.5rem;
+                padding: 1px 4px;
             }
             
-            .article-translation-indicator,
             .article-share {
+                top: 15px;
+                right: 8px;
                 font-size: 0.5rem;
-                padding: 2px 4px;
+                padding: 1px 4px;
+                width: 18px;
+                height: 16px;
             }
             
             .article-title {
-                font-size: 0.85rem;
+                padding-right: 50px;
             }
         }
     </style>
@@ -1558,7 +1581,7 @@
             
             dataManager.queueUpdate(articleId, 'like', 1);
             
-            const likeElement = document.querySelector(`#likes-${articleId}`);
+            const likeElement = document.querySelector(`#likes-${article.id}`);
             if (likeElement) {
                 likeElement.innerHTML = `<i class="fas fa-heart"></i> ${article.likes}`;
                 likeElement.style.color = '#ff6b6b';
@@ -1575,7 +1598,7 @@
                 }
             }
             
-            const heartIcon = document.querySelector(`#likes-${articleId} i`);
+            const heartIcon = document.querySelector(`#likes-${article.id} i`);
             if (heartIcon) {
                 heartIcon.style.transform = 'scale(1.5)';
                 setTimeout(() => {
@@ -1736,20 +1759,18 @@
                 
                 let translationIndicator = '';
                 if (article.content_tr) {
-                    translationIndicator = `<div class="article-translation-indicator"><span class="fi fi-tr"></span> TR</div>`;
+                    translationIndicator = `<div class="article-translation-indicator">TR</div>`;
                 }
                 
                 listItem.innerHTML = `
+                    ${translationIndicator}
+                    <button class="article-share" onclick="event.stopPropagation(); shareArticle(${article.id})">
+                        <i class="fas fa-share-alt"></i>
+                    </button>
                     <div class="article-title">${article.title || 'Untitled Article'}</div>
                     <div class="article-meta">
                         <span class="article-date">${dateStr} ${timeStr}</span>
                         ${article.category ? `<span class="article-category">${article.category}</span>` : ''}
-                    </div>
-                    <div class="article-buttons-container">
-                        ${translationIndicator}
-                        <button class="article-share" onclick="event.stopPropagation(); shareArticle(${article.id})">
-                            <i class="fas fa-share-alt"></i> Share
-                        </button>
                     </div>
                     <div class="article-stats">
                         <span id="views-${article.id}"><i class="far fa-eye"></i> ${views}</span>
@@ -1808,11 +1829,19 @@
                 </div>`;
             }
             
-            const translationToggleHtml = article.content_tr ? `
+            // Çeviri butonu HTML'i - artık detail-meta-buttons içinde
+            const translationButtonHtml = article.content_tr ? `
                 <div class="translation-toggle" id="translationToggle">
                     <span class="fi fi-tr"></span>
                 </div>
             ` : '';
+            
+            // Paylaşım butonu HTML'i - artık detail-meta-buttons içinde
+            const shareButtonHtml = `
+                <button class="meta-share" onclick="shareArticle(${article.id})">
+                    <i class="fas fa-share-alt"></i>
+                </button>
+            `;
             
             // FIXED: Resimleri doğru şekilde topla
             let images = [];
@@ -1867,18 +1896,22 @@
             }
             
             document.getElementById('articleDetail').innerHTML = `
+                <!-- Mutlak konumlu paylaşım butonu - mobil için -->
                 <button class="detail-share" onclick="shareArticle(${article.id})">
                     <i class="fas fa-share-alt"></i> Share This Article
                 </button>
                 <div class="detail-header">
                     <h1 class="detail-title">
                         <span id="articleTitleText">${article.title || 'Untitled Article'}</span>
-                        ${translationToggleHtml}
                     </h1>
                     <div class="detail-meta">
                         <span class="detail-date"><i class="far fa-calendar"></i> ${dateStr} <i class="far fa-clock"></i> ${timeStr}</span>
                         <span class="detail-category"><i class="fas fa-tag"></i> ${article.category || 'Cybersecurity'}</span>
                         <span class="detail-author"><i class="fas fa-user"></i> ${article.author || 'Adem Bayazıt'}</span>
+                        <span class="detail-meta-buttons">
+                            ${translationButtonHtml}
+                            ${shareButtonHtml}
+                        </span>
                     </div>
                     ${tagsHtml}
                 </div>
@@ -2348,20 +2381,18 @@
                 
                 let translationIndicator = '';
                 if (article.content_tr) {
-                    translationIndicator = `<div class="article-translation-indicator"><span class="fi fi-tr"></span> TR</div>`;
+                    translationIndicator = `<div class="article-translation-indicator">TR</div>`;
                 }
                 
                 listItem.innerHTML = `
+                    ${translationIndicator}
+                    <button class="article-share" onclick="event.stopPropagation(); shareArticle(${article.id})">
+                        <i class="fas fa-share-alt"></i>
+                    </button>
                     <div class="article-title">${article.title || 'Untitled Article'}</div>
                     <div class="article-meta">
                         <span class="article-date">${dateStr} ${timeStr}</span>
                         ${article.category ? `<span class="article-category">${article.category}</span>` : ''}
-                    </div>
-                    <div class="article-buttons-container">
-                        ${translationIndicator}
-                        <button class="article-share" onclick="event.stopPropagation(); shareArticle(${article.id})">
-                            <i class="fas fa-share-alt"></i> Share
-                        </button>
                     </div>
                     <div class="article-stats">
                         <span id="views-${article.id}"><i class="far fa-eye"></i> ${views}</span>
