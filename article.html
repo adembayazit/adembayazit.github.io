@@ -433,19 +433,22 @@
             display: flex;
             gap: 10px;
             align-items: center;
+            margin-left: auto;
         }
         
         .meta-share {
             background: #ff4444;
             color: white;
             border: 1px solid #ff4444;
-            border-radius: 3px;
-            padding: 5px 10px;
+            border-radius: 5px;
+            padding: 8px 16px;
             cursor: pointer;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             display: flex;
             align-items: center;
+            justify-content: center;
             transition: all 0.3s ease;
+            height: 40px;
         }
         
         .meta-share:hover {
@@ -454,27 +457,30 @@
         }
         
         .detail-meta-buttons .translation-toggle {
-            padding: 5px 10px;
-            font-size: 0.8rem;
-            border-radius: 10px;
+            padding: 8px;
+            border-radius: 5px;
+            border: 2px solid #ff4444;
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
             cursor: pointer;
             background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.3);
             transition: all 0.3s ease;
             color: white;
+            width: 40px;
+            height: 40px;
+        }
+        
+        .detail-meta-buttons .translation-toggle .fi {
+            font-size: 1.5em;
         }
         
         .detail-meta-buttons .translation-toggle:hover {
-            background: rgba(0, 255, 0, 0.1);
-            transform: scale(1.05);
+            background: rgba(255, 68, 68, 0.1);
         }
         
         .detail-meta-buttons .translation-toggle.active {
-            background: rgba(0, 255, 0, 0.2);
-            border-color: var(--primary-color);
+            background: rgba(255, 68, 68, 0.2);
         }
         
         .detail-date, .detail-category, .detail-author {
@@ -486,27 +492,55 @@
         /* Mobil butonları */
         .mobile-meta-buttons {
             display: none;
-            gap: 8px;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
             margin-top: 10px;
             width: 100%;
         }
         
-        .mobile-meta-buttons .meta-share {
-            font-size: 0.75rem;
-            padding: 4px 8px;
-            margin-right: auto;
+        .mobile-meta-buttons .translation-toggle {
+            padding: 8px;
+            border-radius: 5px;
+            border: 2px solid #ff4444;
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            flex: 1;
+            height: 40px;
         }
         
-        .mobile-meta-buttons {
-            font-size: 0.75rem;
-            padding: 4px 8px;
-            border-radius: 8px;
+        .mobile-meta-buttons .translation-toggle .fi {
+            font-size: 1.5em;
         }
-
-         .translation-toggle {
-            font-size: 1.75rem;
-            padding: 6px 8px;
-            border-radius: 8px;
+        
+        .mobile-meta-buttons .translation-toggle.active {
+            background: rgba(255, 68, 68, 0.2);
+        }
+        
+        .mobile-meta-buttons .meta-share {
+            background: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+            flex: 1;
+            height: 40px;
+        }
+        
+        .mobile-meta-buttons .meta-share:hover {
+            background: #ff2222;
         }
         
         .image-carousel {
@@ -1109,13 +1143,13 @@
             
             /* Buton boyutlarını küçült */
             .mobile-meta-buttons .meta-share,
-            .mobile-meta-buttons {
-                font-size: 0.7rem;
+            .mobile-meta-buttons .translation-toggle {
+                font-size: 0.8rem;
                 padding: 6px 10px;
             }
-            .translation-toggle {
-                font-size: 1.7rem;
-                padding: 6px 10px;
+            
+            .mobile-meta-buttons .translation-toggle .fi {
+                font-size: 1.3em;
             }
         }
         
@@ -1143,15 +1177,14 @@
             
             /* Detay sayfasındaki butonlar */
             .mobile-meta-buttons .meta-share,
-            .mobile-meta-buttons {
-                font-size: 0.65rem;
-                padding: 8px 8px;
-                margin-right: auto;
+            .mobile-meta-buttons .translation-toggle {
+                font-size: 0.75rem;
+                padding: 5px 8px;
+                height: 35px;
             }
-
-            .translation-toggle {
-                font-size: 1.2rem;
-                padding: 8px 8px;
+            
+            .mobile-meta-buttons .translation-toggle .fi {
+                font-size: 1.2em;
             }
             
             /* Fotoğraf boyutlarını çok küçük ekranlarda daha da küçült */
@@ -1903,9 +1936,9 @@
             
             // Çeviri butonu HTML'i - masaüstü için detail-meta-buttons içinde
             const translationButtonHtml = article.content_tr ? `
-                <div class="translation-toggle" id="translationToggle">
+                <button class="translation-toggle" id="translationToggle">
                     <span class="fi fi-tr"></span>
-                </div>
+                </button>
             ` : '';
             
             // Paylaşım butonu HTML'i - masaüstü için detail-meta-buttons içinde
@@ -1918,9 +1951,9 @@
             // Mobil için butonlar
             const mobileButtonsHtml = article.content_tr ? `
                 <div class="mobile-meta-buttons">
-                    <div class="translation-toggle" id="translationToggleMobile">
+                    <button class="translation-toggle" id="translationToggleMobile">
                         <span class="fi fi-tr"></span>
-                    </div>
+                    </button>
                     <button class="meta-share" onclick="shareArticle(${article.id})">
                         <i class="fas fa-share-alt"></i> Share
                     </button>
@@ -1966,24 +1999,6 @@
             }
             
             console.log('DEBUG: Final images array:', images);
-            
-            // TEST: Resmi hemen test et
-            if (images.length > 0 && images[0] !== 'https://adembayazit.com/IMAGES/preview.png') {
-                console.log('TEST: Trying to load image:', images[0]);
-                
-                // Görünmez bir test resmi oluştur
-                const testImg = new Image();
-                testImg.onload = function() {
-                    console.log('SUCCESS: Image loaded successfully:', images[0]);
-                };
-                testImg.onerror = function() {
-                    console.error('ERROR: Image failed to load:', images[0]);
-                    // Yüklenemezse varsayılan resmi kullan
-                    images[0] = 'https://adembayazit.com/IMAGES/preview.png';
-                    console.log('Using default image instead');
-                };
-                testImg.src = images[0];
-            }
             
             document.getElementById('articleDetail').innerHTML = `
                 <div class="detail-header">
