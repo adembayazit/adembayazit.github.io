@@ -485,7 +485,8 @@
             gap: 5px;
         }
         
-        .detail-share {
+        /* Masaüstü için paylaşım butonu - mobilde gizli */
+        .detail-share-desktop {
             position: absolute;
             top: 20px;
             right: 20px;
@@ -502,9 +503,54 @@
             transition: all 0.3s ease;
         }
         
-        .detail-share:hover {
+        .detail-share-desktop:hover {
             background: #ff2222;
             transform: translateY(-2px);
+        }
+        
+        /* Mobil için paylaşım butonu - masaüstünde gizli */
+        .detail-share-mobile {
+            display: none;
+            background: #ff4444;
+            color: white;
+            border: 1px solid #ff4444;
+            border-radius: 5px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            margin-left: auto;
+        }
+        
+        /* Mobil için çeviri butonu - masaüstünde gizli */
+        .translation-toggle-mobile {
+            display: none;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            color: white;
+            margin-top: 10px;
+        }
+        
+        .translation-toggle-mobile:hover {
+            background: rgba(0, 255, 0, 0.1);
+            transform: scale(1.05);
+        }
+        
+        .translation-toggle-mobile.active {
+            background: rgba(0, 255, 0, 0.2);
+            border-color: var(--primary-color);
         }
         
         .image-carousel {
@@ -979,9 +1025,29 @@
                 margin-left: auto;
             }
             
+            /* Masaüstünde butonlar görünür */
+            .detail-meta-buttons {
+                display: flex;
+            }
+            
             /* Masaüstünde mutlak konumlu paylaşım butonunu gizle */
-            .detail-share {
+            .detail-share-desktop {
                 display: none;
+            }
+            
+            /* Masaüstünde mobil butonları gizle */
+            .detail-share-mobile,
+            .translation-toggle-mobile {
+                display: none !important;
+            }
+            
+            /* Fotoğraf boyutları masaüstünde büyük */
+            .image-carousel {
+                max-height: 400px;
+            }
+            
+            .carousel-inner {
+                height: 400px;
             }
         }
         
@@ -1009,10 +1075,34 @@
                 width: 100%;
             }
             
+            /* Mobilde masaüstü butonlarını gizle */
             .detail-meta-buttons {
-                justify-content: flex-start;
-                width: 100%;
+                display: none !important;
+            }
+            
+            /* Mobilde mobil butonları göster */
+            .detail-share-mobile,
+            .translation-toggle-mobile {
+                display: flex;
+            }
+            
+            /* Mobil butonlar için düzen */
+            .mobile-buttons-container {
+                display: flex;
+                justify-content: flex-end;
+                gap: 10px;
                 margin-top: 10px;
+                width: 100%;
+            }
+            
+            /* Fotoğraf boyutlarını mobilde küçült */
+            .image-carousel {
+                max-height: 250px;
+                margin: 15px 0;
+            }
+            
+            .carousel-inner {
+                height: 250px;
             }
             
             .articles-list {
@@ -1020,14 +1110,20 @@
                 overflow-y: auto;
             }
             
-            /* Mobilde detail-share butonunu göster */
-            .detail-share {
-                display: flex;
+            /* Başlık boyutunu mobilde küçült */
+            .detail-title {
+                font-size: 1.3rem;
             }
             
-            /* Mobilde meta butonları gizle */
-            .detail-meta-buttons {
-                display: none;
+            /* Meta bilgilerini mobilde düzenle */
+            .detail-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .detail-date, .detail-category, .detail-author {
+                width: 100%;
             }
         }
         
@@ -1043,15 +1139,6 @@
             
             .article-content {
                 padding: 20px;
-            }
-            
-            .detail-title {
-                font-size: 1.3rem;
-            }
-            
-            .detail-meta {
-                flex-direction: column;
-                gap: 5px;
             }
             
             .subscription-form {
@@ -1071,16 +1158,25 @@
                 flex-direction: column;
             }
             
+            /* Fotoğraf boyutlarını daha da küçük ekranlarda küçült */
             .image-carousel {
-                max-height: 300px;
+                max-height: 200px;
             }
             
             .carousel-inner {
-                height: 300px;
+                height: 200px;
+            }
+            
+            /* Buton boyutlarını küçült */
+            .detail-share-mobile,
+            .translation-toggle-mobile {
+                font-size: 0.7rem;
+                padding: 6px 10px;
             }
         }
         
         @media (max-width: 480px) {
+            /* Liste öğelerindeki butonlar */
             .article-translation-indicator {
                 top: 15px;
                 right: 30px;
@@ -1099,6 +1195,32 @@
             
             .article-title {
                 padding-right: 50px;
+            }
+            
+            /* Detay sayfasındaki butonlar */
+            .detail-share-mobile,
+            .translation-toggle-mobile {
+                font-size: 0.65rem;
+                padding: 5px 8px;
+            }
+            
+            /* Fotoğraf boyutlarını çok küçük ekranlarda daha da küçült */
+            .image-carousel {
+                max-height: 180px;
+            }
+            
+            .carousel-inner {
+                height: 180px;
+            }
+            
+            .carousel-control {
+                width: 30px;
+                height: 30px;
+                font-size: 1rem;
+            }
+            
+            .detail-title {
+                font-size: 1.2rem;
             }
         }
     </style>
@@ -1829,17 +1951,31 @@
                 </div>`;
             }
             
-            // Çeviri butonu HTML'i - artık detail-meta-buttons içinde
+            // Çeviri butonu HTML'i - masaüstü için detail-meta-buttons içinde
             const translationButtonHtml = article.content_tr ? `
                 <div class="translation-toggle" id="translationToggle">
                     <span class="fi fi-tr"></span>
                 </div>
             ` : '';
             
-            // Paylaşım butonu HTML'i - artık detail-meta-buttons içinde
+            // Mobil için çeviri butonu
+            const translationButtonMobileHtml = article.content_tr ? `
+                <div class="translation-toggle-mobile" id="translationToggleMobile">
+                    <span class="fi fi-tr"></span>
+                </div>
+            ` : '';
+            
+            // Paylaşım butonu HTML'i - masaüstü için detail-meta-buttons içinde
             const shareButtonHtml = `
                 <button class="meta-share" onclick="shareArticle(${article.id})">
                     <i class="fas fa-share-alt"></i>
+                </button>
+            `;
+            
+            // Mobil için paylaşım butonu
+            const shareButtonMobileHtml = `
+                <button class="detail-share-mobile" onclick="shareArticle(${article.id})">
+                    <i class="fas fa-share-alt"></i> Share
                 </button>
             `;
             
@@ -1896,8 +2032,8 @@
             }
             
             document.getElementById('articleDetail').innerHTML = `
-                <!-- Mutlak konumlu paylaşım butonu - mobil için -->
-                <button class="detail-share" onclick="shareArticle(${article.id})">
+                <!-- Masaüstü için paylaşım butonu - mobilde gizli -->
+                <button class="detail-share-desktop" onclick="shareArticle(${article.id})">
                     <i class="fas fa-share-alt"></i> Share This Article
                 </button>
                 <div class="detail-header">
@@ -1912,6 +2048,11 @@
                             ${translationButtonHtml}
                             ${shareButtonHtml}
                         </span>
+                    </div>
+                    <!-- Mobil butonlar - masaüstünde gizli -->
+                    <div class="mobile-buttons-container">
+                        ${translationButtonMobileHtml}
+                        ${shareButtonMobileHtml}
                     </div>
                     ${tagsHtml}
                 </div>
@@ -1933,10 +2074,16 @@
             
             document.getElementById('articleDetail').classList.add('active');
             
+            // Çeviri butonlarına event listener ekle
             if (article.content_tr) {
                 const translationToggle = document.getElementById('translationToggle');
                 if (translationToggle) {
                     translationToggle.addEventListener('click', toggleTranslation);
+                }
+                
+                const translationToggleMobile = document.getElementById('translationToggleMobile');
+                if (translationToggleMobile) {
+                    translationToggleMobile.addEventListener('click', toggleTranslation);
                 }
             }
             
@@ -2012,21 +2159,24 @@
             if (!currentArticle || !currentArticle.content_tr) return;
             
             const translationToggle = document.getElementById('translationToggle');
+            const translationToggleMobile = document.getElementById('translationToggleMobile');
             const articleTitle = document.getElementById('articleTitleText');
             const articleBody = document.getElementById('articleBody');
             
-            if (!translationToggle || !articleTitle || !articleBody) return;
+            if (!articleTitle || !articleBody) return;
             
             if (!isTranslated) {
                 articleTitle.textContent = currentArticle.title_tr || currentArticle.title;
                 articleBody.innerHTML = formatArticleContent(currentArticle.content_tr);
-                translationToggle.classList.add('active');
+                if (translationToggle) translationToggle.classList.add('active');
+                if (translationToggleMobile) translationToggleMobile.classList.add('active');
                 isTranslated = true;
                 showToast('Switched to Turkish');
             } else {
                 articleTitle.textContent = currentArticle.title || 'Untitled Article';
                 articleBody.innerHTML = formatArticleContent(currentArticle.content);
-                translationToggle.classList.remove('active');
+                if (translationToggle) translationToggle.classList.remove('active');
+                if (translationToggleMobile) translationToggleMobile.classList.remove('active');
                 isTranslated = false;
                 showToast('Switched to English');
             }
