@@ -317,6 +317,7 @@
             align-items: center;
             font-size: 0.7rem;
             color: var(--text-muted);
+            margin-bottom: 5px;
         }
         
         .article-date {
@@ -329,6 +330,23 @@
             border-radius: 3px;
             font-size: 0.6rem;
             margin-left: 5px;
+        }
+        
+        .article-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 8px;
+        }
+        
+        .article-tag {
+            background: rgba(0, 255, 0, 0.15);
+            color: #b3ffb3;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 0.6rem;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            white-space: nowrap;
         }
         
         .article-translation-indicator {
@@ -487,6 +505,28 @@
             display: flex;
             align-items: center;
             gap: 5px;
+        }
+        
+        .detail-tags {
+            margin-top: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .detail-tag {
+            background: rgba(0, 255, 0, 0.15);
+            color: #b3ffb3;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .detail-tag:hover {
+            background: rgba(0, 255, 0, 0.25);
+            transform: translateY(-2px);
         }
         
         /* Mobil butonları */
@@ -985,14 +1025,6 @@
             color: white;
             font-size: 0.9rem;
             cursor: pointer;
-        }
-        
-        .article-item-stats {
-            display: flex;
-            gap: 10px;
-            margin-top: 5px;
-            font-size: 0.65rem;
-            color: var(--highlight-color);
         }
         
         /* Masaüstü görünümü için özel düzenlemeler */
@@ -1862,6 +1894,21 @@
                 const likes = article.likes || 0;
                 const hasLiked = localStorage.getItem(`user_like_${article.id}`);
                 
+                // Tag'ler için HTML oluştur
+                let tagsHtml = '';
+                if (article.tags && article.tags.length > 0) {
+                    // Maksimum 3 tag göster
+                    const tagsToShow = article.tags.slice(0, 3);
+                    tagsHtml = `<div class="article-tags">`;
+                    tagsToShow.forEach(tag => {
+                        tagsHtml += `<span class="article-tag">${tag}</span>`;
+                    });
+                    if (article.tags.length > 3) {
+                        tagsHtml += `<span class="article-tag">+${article.tags.length - 3}</span>`;
+                    }
+                    tagsHtml += `</div>`;
+                }
+                
                 let translationIndicator = '';
                 if (article.content_tr) {
                     translationIndicator = `<div class="article-translation-indicator">TR</div>`;
@@ -1877,6 +1924,7 @@
                         <span class="article-date">${dateStr} ${timeStr}</span>
                         ${article.category ? `<span class="article-category">${article.category}</span>` : ''}
                     </div>
+                    ${tagsHtml}
                     <div class="article-stats">
                         <span id="views-${article.id}"><i class="far fa-eye"></i> ${views}</span>
                         <span id="likes-${article.id}"><i class="${hasLiked ? 'fas' : 'far'} fa-heart"></i> ${likes}</span>
@@ -1927,10 +1975,11 @@
             const likes = article.likes || 0;
             const hasLiked = localStorage.getItem(`user_like_${article.id}`);
             
+            // Tag'ler için HTML oluştur
             let tagsHtml = '';
             if (article.tags && article.tags.length > 0) {
-                tagsHtml = `<div class="detail-tags" style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 5px;">
-                    <strong>Tags:</strong> ${article.tags.map(tag => `<span style="background: rgba(0,255,0,0.2); padding: 2px 8px; border-radius: 12px; margin: 0 2px; font-size: 0.8em;">${tag}</span>`).join('')}
+                tagsHtml = `<div class="detail-tags">
+                    ${article.tags.map(tag => `<span class="detail-tag">${tag}</span>`).join('')}
                 </div>`;
             }
             
@@ -2490,6 +2539,21 @@
                 const likes = article.likes || 0;
                 const hasLiked = localStorage.getItem(`user_like_${article.id}`);
                 
+                // Tag'ler için HTML oluştur
+                let tagsHtml = '';
+                if (article.tags && article.tags.length > 0) {
+                    // Maksimum 3 tag göster
+                    const tagsToShow = article.tags.slice(0, 3);
+                    tagsHtml = `<div class="article-tags">`;
+                    tagsToShow.forEach(tag => {
+                        tagsHtml += `<span class="article-tag">${tag}</span>`;
+                    });
+                    if (article.tags.length > 3) {
+                        tagsHtml += `<span class="article-tag">+${article.tags.length - 3}</span>`;
+                    }
+                    tagsHtml += `</div>`;
+                }
+                
                 let translationIndicator = '';
                 if (article.content_tr) {
                     translationIndicator = `<div class="article-translation-indicator">TR</div>`;
@@ -2505,6 +2569,7 @@
                         <span class="article-date">${dateStr} ${timeStr}</span>
                         ${article.category ? `<span class="article-category">${article.category}</span>` : ''}
                     </div>
+                    ${tagsHtml}
                     <div class="article-stats">
                         <span id="views-${article.id}"><i class="far fa-eye"></i> ${views}</span>
                         <span id="likes-${article.id}"><i class="${hasLiked ? 'fas' : 'far'} fa-heart"></i> ${likes}</span>
