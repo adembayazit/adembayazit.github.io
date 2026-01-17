@@ -317,7 +317,6 @@
             align-items: center;
             font-size: 0.7rem;
             color: var(--text-muted);
-            margin-bottom: 5px;
         }
         
         .article-date {
@@ -330,23 +329,6 @@
             border-radius: 3px;
             font-size: 0.6rem;
             margin-left: 5px;
-        }
-        
-        .article-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
-            margin-top: 8px;
-        }
-        
-        .article-tag {
-            background: rgba(0, 255, 0, 0.15);
-            color: #b3ffb3;
-            padding: 2px 6px;
-            border-radius: 10px;
-            font-size: 0.6rem;
-            border: 1px solid rgba(0, 255, 0, 0.3);
-            white-space: nowrap;
         }
         
         .article-translation-indicator {
@@ -389,6 +371,23 @@
             margin-top: 8px;
             font-size: 0.65rem;
             color: var(--highlight-color);
+        }
+        
+        .article-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 8px;
+        }
+        
+        .article-tag {
+            background: rgba(0, 255, 0, 0.15);
+            color: #b3ffb3;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 0.6rem;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            white-space: nowrap;
         }
         
         .article-content {
@@ -1025,6 +1024,14 @@
             color: white;
             font-size: 0.9rem;
             cursor: pointer;
+        }
+        
+        .article-item-stats {
+            display: flex;
+            gap: 10px;
+            margin-top: 5px;
+            font-size: 0.65rem;
+            color: var(--highlight-color);
         }
         
         /* Masaüstü görünümü için özel düzenlemeler */
@@ -1894,13 +1901,11 @@
                 const likes = article.likes || 0;
                 const hasLiked = localStorage.getItem(`user_like_${article.id}`);
                 
-                // Tag'ler için HTML oluştur
+                // Tag'leri göster
                 let tagsHtml = '';
                 if (article.tags && article.tags.length > 0) {
-                    // Maksimum 3 tag göster
-                    const tagsToShow = article.tags.slice(0, 3);
                     tagsHtml = `<div class="article-tags">`;
-                    tagsToShow.forEach(tag => {
+                    article.tags.slice(0, 3).forEach(tag => {
                         tagsHtml += `<span class="article-tag">${tag}</span>`;
                     });
                     if (article.tags.length > 3) {
@@ -1975,7 +1980,7 @@
             const likes = article.likes || 0;
             const hasLiked = localStorage.getItem(`user_like_${article.id}`);
             
-            // Tag'ler için HTML oluştur
+            // Tag'leri göster
             let tagsHtml = '';
             if (article.tags && article.tags.length > 0) {
                 tagsHtml = `<div class="detail-tags">
@@ -2015,25 +2020,18 @@
                 </div>
             `;
             
-            // FIXED: Resimleri doğru şekilde topla
+            // Resimleri doğru şekilde topla
             let images = [];
             
             // 1. Önce featured_image'ı kontrol et - PNG/JPG format fark etmez
             if (article.featured_image && article.featured_image.trim() !== '') {
-                console.log('DEBUG: Found featured_image:', article.featured_image);
                 images.push(article.featured_image);
-                
-                // ImageKit URL'lerini optimize et
-                if (article.featured_image.includes('ik.imagekit.io')) {
-                    console.log('DEBUG: This is an ImageKit URL');
-                }
             } else {
                 console.log('DEBUG: No featured_image found');
             }
             
             // 2. images dizisini kontrol et
             if (article.images && Array.isArray(article.images) && article.images.length > 0) {
-                console.log('DEBUG: Found images array:', article.images);
                 article.images.forEach(img => {
                     if (img && img.trim() !== '' && !images.includes(img)) {
                         images.push(img);
@@ -2043,11 +2041,8 @@
             
             // 3. Eğer hiç resim yoksa varsayılan resmi kullan
             if (images.length === 0) {
-                console.log('DEBUG: No images found, using default');
                 images.push('https://adembayazit.com/IMAGES/preview.png');
             }
-            
-            console.log('DEBUG: Final images array:', images);
             
             document.getElementById('articleDetail').innerHTML = `
                 <div class="detail-header">
@@ -2131,8 +2126,6 @@
                 coverImage = article.images[0];
             }
             
-            console.log('DEBUG: Setting cover image to:', coverImage);
-            
             // URL'yi güncelle (hash'li versiyon)
             const currentUrl = window.location.origin + window.location.pathname + '#' + article.id;
             
@@ -2161,7 +2154,6 @@
             
             if (metaTag) {
                 metaTag.setAttribute('content', content);
-                console.log(`Updated meta tag ${property}: ${content}`);
             }
         }
         
@@ -2539,13 +2531,11 @@
                 const likes = article.likes || 0;
                 const hasLiked = localStorage.getItem(`user_like_${article.id}`);
                 
-                // Tag'ler için HTML oluştur
+                // Tag'leri göster
                 let tagsHtml = '';
                 if (article.tags && article.tags.length > 0) {
-                    // Maksimum 3 tag göster
-                    const tagsToShow = article.tags.slice(0, 3);
                     tagsHtml = `<div class="article-tags">`;
-                    tagsToShow.forEach(tag => {
+                    article.tags.slice(0, 3).forEach(tag => {
                         tagsHtml += `<span class="article-tag">${tag}</span>`;
                     });
                     if (article.tags.length > 3) {
