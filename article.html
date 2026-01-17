@@ -112,6 +112,36 @@
             scrollbar-color: var(--primary-color) var(--card-bg);
         }
         
+        /* Hashtag stilleri */
+        .hashtag {
+            background: rgba(0, 255, 0, 0.15);
+            color: var(--primary-color);
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin: 0 4px 4px 0;
+            font-size: 0.85em;
+            display: inline-block;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s ease;
+            cursor: default;
+            text-decoration: none;
+            line-height: 1.2;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            vertical-align: middle;
+        }
+
+        .hashtag:hover {
+            background: rgba(0, 255, 0, 0.25);
+            border-color: var(--primary-color);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 255, 0, 0.2);
+        }
+
+        .detail-body .hashtag {
+            margin: 2px 4px 2px 0;
+        }
+        
         .logo-container {
             display: flex;
             flex-direction: column;
@@ -373,23 +403,6 @@
             color: var(--highlight-color);
         }
         
-        .article-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
-            margin-top: 8px;
-        }
-        
-        .article-tag {
-            background: rgba(0, 255, 0, 0.15);
-            color: #b3ffb3;
-            padding: 2px 6px;
-            border-radius: 10px;
-            font-size: 0.6rem;
-            border: 1px solid rgba(0, 255, 0, 0.3);
-            white-space: nowrap;
-        }
-        
         .article-content {
             flex: 1;
             background: var(--card-bg);
@@ -504,28 +517,6 @@
             display: flex;
             align-items: center;
             gap: 5px;
-        }
-        
-        .detail-tags {
-            margin-top: 15px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        
-        .detail-tag {
-            background: rgba(0, 255, 0, 0.15);
-            color: #b3ffb3;
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            border: 1px solid rgba(0, 255, 0, 0.3);
-            transition: all 0.3s ease;
-        }
-        
-        .detail-tag:hover {
-            background: rgba(0, 255, 0, 0.25);
-            transform: translateY(-2px);
         }
         
         /* Mobil butonları */
@@ -1901,19 +1892,6 @@
                 const likes = article.likes || 0;
                 const hasLiked = localStorage.getItem(`user_like_${article.id}`);
                 
-                // Tag'leri göster
-                let tagsHtml = '';
-                if (article.tags && article.tags.length > 0) {
-                    tagsHtml = `<div class="article-tags">`;
-                    article.tags.slice(0, 3).forEach(tag => {
-                        tagsHtml += `<span class="article-tag">${tag}</span>`;
-                    });
-                    if (article.tags.length > 3) {
-                        tagsHtml += `<span class="article-tag">+${article.tags.length - 3}</span>`;
-                    }
-                    tagsHtml += `</div>`;
-                }
-                
                 let translationIndicator = '';
                 if (article.content_tr) {
                     translationIndicator = `<div class="article-translation-indicator">TR</div>`;
@@ -1929,7 +1907,6 @@
                         <span class="article-date">${dateStr} ${timeStr}</span>
                         ${article.category ? `<span class="article-category">${article.category}</span>` : ''}
                     </div>
-                    ${tagsHtml}
                     <div class="article-stats">
                         <span id="views-${article.id}"><i class="far fa-eye"></i> ${views}</span>
                         <span id="likes-${article.id}"><i class="${hasLiked ? 'fas' : 'far'} fa-heart"></i> ${likes}</span>
@@ -1980,11 +1957,10 @@
             const likes = article.likes || 0;
             const hasLiked = localStorage.getItem(`user_like_${article.id}`);
             
-            // Tag'leri göster
             let tagsHtml = '';
             if (article.tags && article.tags.length > 0) {
-                tagsHtml = `<div class="detail-tags">
-                    ${article.tags.map(tag => `<span class="detail-tag">${tag}</span>`).join('')}
+                tagsHtml = `<div class="detail-tags" style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 5px;">
+                    <strong>Tags:</strong> ${article.tags.map(tag => `<span style="background: rgba(0,255,0,0.2); padding: 2px 8px; border-radius: 12px; margin: 0 2px; font-size: 0.8em;">${tag}</span>`).join('')}
                 </div>`;
             }
             
@@ -2020,18 +1996,25 @@
                 </div>
             `;
             
-            // Resimleri doğru şekilde topla
+            // FIXED: Resimleri doğru şekilde topla
             let images = [];
             
             // 1. Önce featured_image'ı kontrol et - PNG/JPG format fark etmez
             if (article.featured_image && article.featured_image.trim() !== '') {
+                console.log('DEBUG: Found featured_image:', article.featured_image);
                 images.push(article.featured_image);
+                
+                // ImageKit URL'lerini optimize et
+                if (article.featured_image.includes('ik.imagekit.io')) {
+                    console.log('DEBUG: This is an ImageKit URL');
+                }
             } else {
                 console.log('DEBUG: No featured_image found');
             }
             
             // 2. images dizisini kontrol et
             if (article.images && Array.isArray(article.images) && article.images.length > 0) {
+                console.log('DEBUG: Found images array:', article.images);
                 article.images.forEach(img => {
                     if (img && img.trim() !== '' && !images.includes(img)) {
                         images.push(img);
@@ -2041,8 +2024,11 @@
             
             // 3. Eğer hiç resim yoksa varsayılan resmi kullan
             if (images.length === 0) {
+                console.log('DEBUG: No images found, using default');
                 images.push('https://adembayazit.com/IMAGES/preview.png');
             }
+            
+            console.log('DEBUG: Final images array:', images);
             
             document.getElementById('articleDetail').innerHTML = `
                 <div class="detail-header">
@@ -2126,6 +2112,8 @@
                 coverImage = article.images[0];
             }
             
+            console.log('DEBUG: Setting cover image to:', coverImage);
+            
             // URL'yi güncelle (hash'li versiyon)
             const currentUrl = window.location.origin + window.location.pathname + '#' + article.id;
             
@@ -2154,6 +2142,7 @@
             
             if (metaTag) {
                 metaTag.setAttribute('content', content);
+                console.log(`Updated meta tag ${property}: ${content}`);
             }
         }
         
@@ -2209,11 +2198,15 @@
                         return `<div class="image-carousel"><div class="carousel-inner"><div class="carousel-item active"><img src="${imgMatch[2]}" alt="${imgMatch[1]}"></div></div></div>`;
                     }
                     
+                    // Önce linkleri değiştir
                     paragraph = paragraph.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" style="color: var(--primary-color);">$1</a>');
                     
+                    // Kalın ve italik
                     paragraph = paragraph.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                    
                     paragraph = paragraph.replace(/\*(.*?)\*/g, '<em>$1</em>');
+                    
+                    // Hashtag'leri bul ve değiştir
+                    paragraph = paragraph.replace(/#([a-zA-Z0-9_ğüşıöçĞÜŞİÖÇ]+)/g, '<span class="hashtag">#$1</span>');
                     
                     return `<p>${paragraph}</p>`;
                 })
@@ -2531,19 +2524,6 @@
                 const likes = article.likes || 0;
                 const hasLiked = localStorage.getItem(`user_like_${article.id}`);
                 
-                // Tag'leri göster
-                let tagsHtml = '';
-                if (article.tags && article.tags.length > 0) {
-                    tagsHtml = `<div class="article-tags">`;
-                    article.tags.slice(0, 3).forEach(tag => {
-                        tagsHtml += `<span class="article-tag">${tag}</span>`;
-                    });
-                    if (article.tags.length > 3) {
-                        tagsHtml += `<span class="article-tag">+${article.tags.length - 3}</span>`;
-                    }
-                    tagsHtml += `</div>`;
-                }
-                
                 let translationIndicator = '';
                 if (article.content_tr) {
                     translationIndicator = `<div class="article-translation-indicator">TR</div>`;
@@ -2559,7 +2539,6 @@
                         <span class="article-date">${dateStr} ${timeStr}</span>
                         ${article.category ? `<span class="article-category">${article.category}</span>` : ''}
                     </div>
-                    ${tagsHtml}
                     <div class="article-stats">
                         <span id="views-${article.id}"><i class="far fa-eye"></i> ${views}</span>
                         <span id="likes-${article.id}"><i class="${hasLiked ? 'fas' : 'far'} fa-heart"></i> ${likes}</span>
