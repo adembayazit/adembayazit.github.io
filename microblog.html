@@ -1156,6 +1156,7 @@
                 text-align: center;
                 align-items: center;
                 margin-top: 20px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -1259,7 +1260,7 @@
                 text-align: center;
                 align-items: center;
                 margin-top: 20px;
-            
+            }
     </style>
 </head>
 <body>
@@ -2013,7 +2014,7 @@
           
           // YouTube embed linklerini tespit ve ve iframe'e dönüştür
           content = content.replace(/(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/g, 
-            '<div class="video-container"><iframe src="https://www.youtube.com/embed/$4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>');
+            '<div class="video-container"><iframe src="https://www.youtube.comembed/$4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>');
           
           // Birden fazla resim için slider oluştur
           content = content.replace(/(<img[^>]+>\s*){2,}/g, (imgs) => {
@@ -2536,16 +2537,6 @@
             contentDiv.setAttribute('data-full-content', formattedContent);
           }
 
-          // DÜZELTME: Butonların kendisine event listener ekle
-          const likeButton = entryDiv.querySelector(".daisy-like");
-          likeButton?.addEventListener("click", () => handleLikeClick(entry.id, entryDiv));
-
-          const pinButton = entryDiv.querySelector(".pine-pin");
-          pinButton?.addEventListener("click", () => handlePinClick(entry.id, entryDiv));
-
-          const shareIcon = entryDiv.querySelector(".share-entry");
-          shareIcon?.addEventListener("click", () => handleShareClick(entry.id));
-
           return entryDiv;
         }
 
@@ -2642,8 +2633,8 @@
           // Çeviri ikonlarını ekle
           addTranslationIcons();
           
-          // More butonları için event listener ekle
-          setupSeeMoreButtons();
+          // Event delegation için tüm container'a event listener ekle
+          setupEventDelegation();
           
           // Slider'ları başlat
           setTimeout(() => {
@@ -2678,17 +2669,17 @@
           if (callback) callback();
         }
 
-        // More butonları için event listener - YENİ EKLENDİ
-        function setupSeeMoreButtons() {
-          document.querySelectorAll('.see-more-btn').forEach(btn => {
-            // Eğer bu buton zaten işlenmişse atla
-            if (btn.getAttribute('data-processed') === 'true') return;
-            
-            btn.setAttribute('data-processed', 'true');
-            
-            btn.addEventListener('click', function(e) {
-              e.preventDefault();
-              const contentWrapper = this.closest('.content-wrapper');
+        // Event delegation için genel event listener - YENİ EKLENDİ
+        function setupEventDelegation() {
+          const container = document.getElementById("entries");
+          if (!container) return;
+          
+          // Tıklama olaylarını dinle
+          container.addEventListener('click', function(e) {
+            // More butonu için
+            if (e.target.classList.contains('see-more-btn')) {
+              const btn = e.target;
+              const contentWrapper = btn.closest('.content-wrapper');
               const contentDiv = contentWrapper.querySelector('.content');
               const isCollapsed = contentDiv.classList.contains('collapsed');
               
@@ -2697,7 +2688,7 @@
                 const fullContent = contentDiv.getAttribute('data-full-content');
                 contentDiv.innerHTML = fullContent;
                 contentDiv.classList.remove('collapsed');
-                this.textContent = '..Less';
+                btn.textContent = '..Less';
                 
                 // Sadece bu entry içindeki slider'ları başlat
                 const sliders = contentDiv.querySelectorAll('.image-slider');
@@ -2710,9 +2701,37 @@
                 const shortContent = truncateHTML(contentDiv.innerHTML, 632);
                 contentDiv.innerHTML = shortContent;
                 contentDiv.classList.add('collapsed');
-                this.textContent = 'More';
+                btn.textContent = 'More';
               }
-            });
+              return;
+            }
+            
+            // Daisy like butonu için
+            if (e.target.closest('.daisy-like')) {
+              const likeContainer = e.target.closest('.daisy-like');
+              const entryDiv = likeContainer.closest('.entry');
+              const entryId = entryDiv.id.replace('entry-', '');
+              handleLikeClick(entryId, entryDiv);
+              return;
+            }
+            
+            // Pine pin butonu için
+            if (e.target.closest('.pine-pin')) {
+              const pinContainer = e.target.closest('.pine-pin');
+              const entryDiv = pinContainer.closest('.entry');
+              const entryId = entryDiv.id.replace('entry-', '');
+              handlePinClick(entryId, entryDiv);
+              return;
+            }
+            
+            // Share butonu için
+            if (e.target.closest('.share-entry')) {
+              const shareContainer = e.target.closest('.share-entry');
+              const entryDiv = shareContainer.closest('.entry');
+              const entryId = entryDiv.id.replace('entry-', '');
+              handleShareClick(entryId);
+              return;
+            }
           });
         }
 
@@ -3344,6 +3363,9 @@
             
             setupImageModal();
             
+            // Event delegation'ı kur
+            setupEventDelegation();
+            
             // Sadece ilk 5 grubu yükle (sayfa başına 5 grup)
             displayEntries(0, entriesPerPage, scrollToEntryFromHash);
             
@@ -3421,6 +3443,9 @@
               groupedEntries = groupEntries(allEntries);
               
               setupImageModal();
+              
+              // Event delegation'ı kur
+              setupEventDelegation();
               
               // Sadece ilk 5 grubu yükle (sayfa başına 5 grup)
               displayEntries(0, entriesPerPage, scrollToEntryFromHash);
@@ -3760,8 +3785,8 @@
           loadMoreBtn.style.display = 'none';
           // Çeviri ikonlarını ekle
           addTranslationIcons();
-          // More butonları için event listener ekle
-          setupSeeMoreButtons();
+          // Event delegation'ı yeniden kur
+          setupEventDelegation();
           // Slider'ları başlat
           setTimeout(() => {
             initAllSliders();
