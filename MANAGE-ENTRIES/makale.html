@@ -714,6 +714,107 @@
             flex: 1;
         }
         
+        /* Image Upload */
+        .image-upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 50px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 25px;
+        }
+        
+        .image-upload-area:hover {
+            border-color: var(--primary-color);
+            background: rgba(0, 255, 0, 0.05);
+        }
+        
+        .upload-icon {
+            font-size: 3.5rem;
+            color: var(--border-color);
+            margin-bottom: 15px;
+        }
+        
+        .image-upload-area:hover .upload-icon {
+            color: var(--primary-color);
+        }
+        
+        .image-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .preview-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            aspect-ratio: 16/9;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .preview-item:hover {
+            transform: scale(1.05);
+            border-color: var(--primary-color);
+            box-shadow: 0 5px 15px rgba(0, 255, 0, 0.2);
+        }
+        
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .preview-remove {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: var(--danger-color);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 2;
+        }
+        
+        .preview-remove:hover {
+            transform: scale(1.1);
+            box-shadow: 0 3px 10px rgba(255, 68, 68, 0.3);
+        }
+        
+        .preview-insert {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: var(--primary-color);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 2;
+        }
+        
+        .preview-insert:hover {
+            transform: scale(1.1);
+            box-shadow: 0 3px 10px rgba(0, 255, 0, 0.3);
+        }
+        
         /* Email Preview */
         .email-preview {
             background: #f8f9fa;
@@ -981,6 +1082,10 @@
                 margin: 0 10px;
             }
             
+            .image-preview {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+            
             .toast {
                 min-width: 250px;
                 max-width: calc(100vw - 40px);
@@ -1025,6 +1130,14 @@
             
             .modal-body {
                 padding: 20px;
+            }
+            
+            .image-upload-area {
+                padding: 40px 15px;
+            }
+            
+            .upload-icon {
+                font-size: 3rem;
             }
         }
         
@@ -1410,6 +1523,7 @@
                     <div class="nav-tabs">
                         <button class="tab-btn active" data-tab="content">İçerik</button>
                         <button class="tab-btn" data-tab="seo">SEO & Ayarlar</button>
+                        <button class="tab-btn" data-tab="images">Görseller</button>
                         <button class="tab-btn" data-tab="preview">Önizleme</button>
                     </div>
 
@@ -1446,12 +1560,6 @@
                                     <label class="form-label">Yazar *</label>
                                     <input type="text" id="articleAuthor" class="form-control" value="Adem Bayazıt" required>
                                 </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">Kapak Görseli URL</label>
-                                <input type="text" id="featuredImage" class="form-control" placeholder="https://ik.imagekit.io/your-imagekit-id/image.jpg">
-                                <span class="form-text">Önerilen boyut: 1200x630 piksel</span>
                             </div>
 
                             <div class="form-group">
@@ -1512,6 +1620,46 @@
                                     <input type="checkbox" id="featuredArticle" style="width: 18px; height: 18px;">
                                     <label for="featuredArticle" class="form-label" style="margin-bottom: 0;">Öne çıkan makale olarak işaretle</label>
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- Images Tab -->
+                        <div id="imagesTab" class="tab-content">
+                            <div class="form-group">
+                                <label class="form-label">Kapak Görseli URL</label>
+                                <input type="text" id="featuredImage" class="form-control" placeholder="https://ik.imagekit.io/your-imagekit-id/image.jpg">
+                                <span class="form-text">Önerilen boyut: 1200x630 piksel. Aşağıdaki alandan görsel yükleyip buraya otomatik ekleyebilirsiniz.</span>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Kapak Görseli Yükle (ImageKit)</label>
+                                <div class="image-upload-area" id="imageUploadArea">
+                                    <div class="upload-icon">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                    </div>
+                                    <p style="font-weight: 500; margin-bottom: 5px;">Kapak görselini buraya sürükleyin veya tıklayın</p>
+                                    <p class="form-text">PNG, JPG, GIF - Max 5MB</p>
+                                </div>
+                                <input type="file" id="imageUpload" accept="image/*" style="display: none;">
+                                
+                                <div class="image-preview" id="imagePreview">
+                                    <!-- Uploaded images preview will appear here -->
+                                    <p style="color: var(--text-muted); text-align: center; padding: 20px; grid-column: 1 / -1;">
+                                        Henüz görsel yüklenmedi
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                                    <button class="btn btn-primary" id="uploadImageBtn">
+                                        <i class="fas fa-upload"></i> Görseli Yükle
+                                    </button>
+                                    <button class="btn btn-info" id="clearImageBtn">
+                                        <i class="fas fa-times"></i> Temizle
+                                    </button>
+                                </div>
+                                <span class="form-text">Yüklediğiniz görsel otomatik olarak Kapak Görseli URL alanına eklenecektir.</span>
                             </div>
                         </div>
 
@@ -1810,6 +1958,8 @@
         let sessionTimer = null;
         let autoSaveTimer = null;
         let currentArticleTags = [];
+        let uploadedImages = []; // Store uploaded ImageKit URLs for featured images
+        let selectedFile = null; // Single file for featured image
         let isSidebarOpen = false;
 
         // SHA-256 Hash Function
@@ -2080,23 +2230,7 @@
             }
         }
 
-        // Tab switching function
-        function switchToTab(tabName) {
-            document.querySelectorAll('.tab-btn').forEach(tab => {
-                tab.classList.remove('active');
-                if (tab.dataset.tab === tabName) {
-                    tab.classList.add('active');
-                }
-            });
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-                if (content.id === tabName + 'Tab') {
-                    content.classList.add('active');
-                }
-            });
-        }
-
-        // Image Upload to ImageKit and insert into editor
+        // Image Upload to ImageKit for Editor
         async function uploadImageToImageKitAndInsert(file, editor) {
             try {
                 showToast('Görsel yükleniyor...', 'info');
@@ -2141,13 +2275,250 @@
                     editor.insertEmbed(editor.getLength(), 'image', uploadData.url);
                 }
                 
-                showToast('Görsel başarıyla yüklendi ve eklendi', 'success');
+                showToast('Görsel başarıyla yüklendi ve editöre eklendi', 'success');
                 return uploadData.url;
                 
             } catch (error) {
                 console.error('Error uploading image:', error);
                 showToast(`Görsel yüklenirken hata: ${error.message}`, 'error');
                 return null;
+            }
+        }
+
+        // Image Upload to ImageKit for Featured Image
+        async function uploadImageToImageKitForFeaturedImage(file) {
+            try {
+                showToast('Kapak görseli yükleniyor...', 'info');
+                
+                // Önce authentication parametrelerini al
+                const authResponse = await fetch(CONFIG.IMAGEKIT_AUTH_ENDPOINT);
+                
+                if (!authResponse.ok) {
+                    throw new Error(`Auth endpoint error: ${authResponse.status}`);
+                }
+                
+                const authData = await authResponse.json();
+                
+                // FormData oluştur
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('fileName', file.name);
+                formData.append('signature', authData.signature);
+                formData.append('token', authData.token);
+                formData.append('expire', authData.expire);
+                formData.append('publicKey', authData.publicKey);
+                
+                // ImageKit'e yükle
+                const uploadResponse = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!uploadResponse.ok) {
+                    const errorText = await uploadResponse.text();
+                    throw new Error(`Upload error: ${uploadResponse.status} - ${errorText}`);
+                }
+                
+                const uploadData = await uploadResponse.json();
+                
+                // Kapak görseli URL'sini güncelle
+                document.getElementById('featuredImage').value = uploadData.url;
+                uploadedImages.push(uploadData.url);
+                updateImagePreview();
+                
+                showToast('Kapak görseli başarıyla yüklendi', 'success');
+                return uploadData.url;
+                
+            } catch (error) {
+                console.error('Error uploading featured image:', error);
+                showToast(`Kapak görseli yüklenirken hata: ${error.message}`, 'error');
+                return null;
+            }
+        }
+
+        // Setup Image Upload for Featured Image
+        function setupFeaturedImageUpload() {
+            const uploadArea = document.getElementById('imageUploadArea');
+            const fileInput = document.getElementById('imageUpload');
+            
+            // Tıklama ile dosya seç
+            uploadArea.addEventListener('click', (e) => {
+                if (e.target !== uploadArea && !uploadArea.contains(e.target)) return;
+                fileInput.click();
+            });
+            
+            // Drag and drop
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = 'var(--primary-color)';
+                uploadArea.style.background = 'rgba(0, 255, 0, 0.05)';
+            });
+            
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.style.borderColor = 'var(--border-color)';
+                uploadArea.style.background = '';
+            });
+            
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = 'var(--border-color)';
+                uploadArea.style.background = '';
+                
+                if (e.dataTransfer.files.length) {
+                    handleFileSelection(e.dataTransfer.files[0]);
+                }
+            });
+            
+            // File input change
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length) {
+                    handleFileSelection(e.target.files[0]);
+                }
+            });
+            
+            // Upload image button
+            document.getElementById('uploadImageBtn').addEventListener('click', uploadFeaturedImage);
+            
+            // Clear image button
+            document.getElementById('clearImageBtn').addEventListener('click', clearSelectedImage);
+        }
+
+        function handleFileSelection(file) {
+            if (!file.type.startsWith('image/')) {
+                showToast('Lütfen bir resim dosyası seçin', 'error');
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('Resim dosyası çok büyük (max 5MB)', 'error');
+                return;
+            }
+
+            // Create preview
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                selectedFile = {
+                    file: file,
+                    preview: e.target.result,
+                    id: Date.now() + Math.random()
+                };
+                updateImagePreview();
+                showToast(`${file.name} seçildi`, 'info');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function updateImagePreview() {
+            const preview = document.getElementById('imagePreview');
+            preview.innerHTML = '';
+            
+            if (!selectedFile && uploadedImages.length === 0) {
+                preview.innerHTML = `
+                    <p style="color: var(--text-muted); text-align: center; padding: 20px; grid-column: 1 / -1;">
+                        Henüz görsel yüklenmedi
+                    </p>
+                `;
+                return;
+            }
+            
+            // Seçili dosyayı göster
+            if (selectedFile) {
+                const itemDiv = createPreviewItem(selectedFile, false);
+                preview.appendChild(itemDiv);
+            }
+            
+            // Daha önce yüklenen görselleri göster
+            uploadedImages.forEach((url, index) => {
+                const item = {
+                    preview: url,
+                    id: 'uploaded_' + index,
+                    isUploaded: true
+                };
+                const itemDiv = createPreviewItem(item, true);
+                preview.appendChild(itemDiv);
+            });
+        }
+
+        function createPreviewItem(item, isUploaded) {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'preview-item';
+            
+            const img = document.createElement('img');
+            img.src = item.preview;
+            img.alt = `Preview`;
+            
+            const removeBtn = document.createElement('div');
+            removeBtn.className = 'preview-remove';
+            removeBtn.innerHTML = '&times;';
+            removeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                
+                if (isUploaded) {
+                    // Remove from uploaded images
+                    const urlIndex = uploadedImages.indexOf(item.preview);
+                    if (urlIndex > -1) {
+                        uploadedImages.splice(urlIndex, 1);
+                    }
+                    
+                    // Eğer kapak görseli bu ise, URL alanını temizle
+                    if (document.getElementById('featuredImage').value === item.preview) {
+                        document.getElementById('featuredImage').value = '';
+                    }
+                } else {
+                    // Remove selected file
+                    selectedFile = null;
+                }
+                updateImagePreview();
+                showToast('Görsel kaldırıldı', 'info');
+            });
+
+            itemDiv.appendChild(img);
+            itemDiv.appendChild(removeBtn);
+
+            // Görsele tıklayınca kapak görseli olarak ayarla
+            itemDiv.addEventListener('click', (e) => {
+                if (e.target !== removeBtn && !removeBtn.contains(e.target)) {
+                    document.getElementById('featuredImage').value = item.preview;
+                    showToast('Kapak görseli olarak seçildi', 'info');
+                }
+            });
+
+            return itemDiv;
+        }
+
+        async function uploadFeaturedImage() {
+            if (!selectedFile) {
+                showToast('Yüklenecek görsel bulunamadı', 'warning');
+                return;
+            }
+
+            const uploadBtn = document.getElementById('uploadImageBtn');
+            const originalText = uploadBtn.innerHTML;
+            uploadBtn.disabled = true;
+            uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Yükleniyor...';
+
+            try {
+                await uploadImageToImageKitForFeaturedImage(selectedFile.file);
+                selectedFile = null;
+            } catch (error) {
+                console.error('Error uploading featured image:', error);
+            }
+
+            uploadBtn.disabled = false;
+            uploadBtn.innerHTML = originalText;
+        }
+
+        function clearSelectedImage() {
+            if (selectedFile || uploadedImages.length > 0) {
+                showConfirm('Tüm seçili görselleri temizlemek istediğinizden emin misiniz?', function() {
+                    selectedFile = null;
+                    uploadedImages = [];
+                    document.getElementById('featuredImage').value = '';
+                    updateImagePreview();
+                    showToast('Görseller temizlendi', 'info');
+                });
+            } else {
+                showToast('Temizlenecek görsel yok', 'info');
             }
         }
 
@@ -2530,6 +2901,9 @@
             // Setup tag system
             setupTagSystem();
             
+            // Setup featured image upload
+            setupFeaturedImageUpload();
+            
             // Setup autosave
             setupAutoSave();
         }
@@ -2589,6 +2963,7 @@
                 localStorage.setItem('articleDraft', JSON.stringify({
                     ...articleData,
                     tags: currentArticleTags,
+                    uploadedImages: uploadedImages,
                     savedAt: new Date().toISOString()
                 }));
                 
@@ -2627,8 +3002,10 @@
                             if (quillTR && draftData.content_tr) quillTR.root.innerHTML = draftData.content_tr;
                             
                             currentArticleTags = draftData.tags || [];
+                            uploadedImages = draftData.uploadedImages || [];
                             
                             renderTags();
+                            updateImagePreview();
                             
                             showToast(`Taslak yüklendi (${new Date(draftData.savedAt).toLocaleTimeString('tr-TR')})`, 'info');
                         }
@@ -2644,6 +3021,8 @@
             currentArticleId = null;
             isEditing = false;
             currentArticleTags = [];
+            uploadedImages = [];
+            selectedFile = null;
             
             // Reset form
             document.getElementById('articleTitle').value = '';
@@ -2661,8 +3040,9 @@
             if (quillEN) quillEN.root.innerHTML = '';
             if (quillTR) quillTR.root.innerHTML = '';
             
-            // Reset tags
+            // Reset tags and images
             renderTags();
+            updateImagePreview();
             
             // Update UI
             document.querySelector('#editor .section-title').innerHTML = '<i class="fas fa-edit"></i> Yeni Makale';
@@ -2801,7 +3181,13 @@
             // Set tags
             currentArticleTags = article.tags || [];
             
+            // Add featured image to uploaded images
+            if (article.featured_image) {
+                uploadedImages = [article.featured_image];
+            }
+            
             renderTags();
+            updateImagePreview();
             
             // Navigate to editor
             switchToSection('editor');
