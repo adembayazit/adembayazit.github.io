@@ -3258,6 +3258,12 @@
         }
 
         function getArticleFormData() {
+            // Mevcut makalenin görüntülenme ve beğeni sayılarını koru
+            let existingArticle = null;
+            if (isEditing && currentArticleId) {
+                existingArticle = articlesData.find(a => a.id == currentArticleId);
+            }
+            
             return {
                 id: currentArticleId || (articlesData.length > 0 ? Math.max(...articlesData.map(a => parseInt(a.id) || 0)) + 1 : 1),
                 title: document.getElementById('articleTitle').value.trim(),
@@ -3274,9 +3280,10 @@
                 published_date: document.getElementById('publishDate').value || new Date().toISOString(),
                 featured: document.getElementById('featuredArticle').checked,
                 images: uploadedImages, // Store all uploaded images
-                views: 0,
-                likes: 0,
-                comments_count: 0
+                // Görüntüleme ve beğeni sayılarını koru
+                views: existingArticle ? (existingArticle.views || 0) : 0,
+                likes: existingArticle ? (existingArticle.likes || 0) : 0,
+                comments_count: existingArticle ? (existingArticle.comments_count || 0) : 0
             };
         }
 
@@ -3308,11 +3315,23 @@
                 
                 let updatedArticles;
                 if (isEditing && currentArticleId) {
-                    // Update existing article
+                    // Update existing article - görüntüleme ve beğeni sayılarını koru
                     const index = articlesData.findIndex(a => a.id == currentArticleId);
                     if (index !== -1) {
-                        articlesData[index] = { ...articlesData[index], ...articleData };
-                        console.log('Updated article:', articlesData[index]);
+                        // Mevcut makaleden görüntüleme ve beğeni sayılarını al
+                        const existingViews = articlesData[index].views || 0;
+                        const existingLikes = articlesData[index].likes || 0;
+                        const existingComments = articlesData[index].comments_count || 0;
+                        
+                        // Yeni verilerle birleştir, ancak görüntüleme ve beğeni sayılarını koru
+                        articlesData[index] = { 
+                            ...articlesData[index], 
+                            ...articleData,
+                            views: existingViews,
+                            likes: existingLikes,
+                            comments_count: existingComments
+                        };
+                        console.log('Updated article with preserved stats:', articlesData[index]);
                     }
                     updatedArticles = articlesData;
                 } else {
@@ -3438,6 +3457,8 @@
                 <p><strong>Kategori:</strong> ${article.category}</p>
                 <p><strong>Yazar:</strong> ${article.author}</p>
                 <p><strong>Tarih:</strong> ${new Date(article.published_date || article.date).toLocaleDateString('tr-TR')}</p>
+                <p><strong>Görüntülenme:</strong> ${article.views || 0}</p>
+                <p><strong>Beğeni:</strong> ${article.likes || 0}</p>
                 <p><strong>Okuma Süresi:</strong> ${article.reading_time || 5} dakika</p>
                 <hr>
                 <div>${article.content}</div>
@@ -3621,6 +3642,8 @@
                         
                         <p><strong>Kategori:</strong> ${article.category}</p>
                         <p><strong>Yayın Tarihi:</strong> ${new Date(article.published_date || article.date).toLocaleDateString('tr-TR')}</p>
+                        <p><strong>Görüntülenme:</strong> ${article.views || 0}</p>
+                        <p><strong>Beğeni:</strong> ${article.likes || 0}</p>
                         
                         ${customMessage ? `
                         <div style="background: #e7f3ff; padding: 15px; border-radius: 5px; margin: 15px 0;">
@@ -3655,6 +3678,8 @@ ${article.title_tr ? `Türkçe Başlık: ${article.title_tr}` : ''}
 
 Kategori: ${article.category}
 Yayın Tarihi: ${new Date(article.published_date || article.date).toLocaleDateString('tr-TR')}
+Görüntülenme: ${article.views || 0}
+Beğeni: ${article.likes || 0}
 
 ${customMessage ? `Özel Mesaj: ${customMessage}\n\n` : ''}
 
