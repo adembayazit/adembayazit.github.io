@@ -58,6 +58,80 @@
             overflow-x: hidden;
             min-height: 100vh;
             width: 100%;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: default;
+        }
+        
+        /* Mobile text selection improvements */
+        .ql-editor,
+        .ql-editor p,
+        .ql-editor h1,
+        .ql-editor h2,
+        .ql-editor h3,
+        .ql-editor h4,
+        .ql-editor h5,
+        .ql-editor h6,
+        .ql-editor li,
+        .ql-editor blockquote,
+        .ql-editor pre,
+        .ql-editor code {
+            -webkit-user-select: text !important;
+            -moz-user-select: text !important;
+            -ms-user-select: text !important;
+            user-select: text !important;
+        }
+        
+        .ql-editor pre,
+        .ql-editor code {
+            white-space: pre-wrap !important;
+            word-break: break-word !important;
+        }
+        
+        /* Enable text selection for all editable content */
+        [contenteditable="true"],
+        [contenteditable="true"] * {
+            -webkit-user-select: text !important;
+            -moz-user-select: text !important;
+            -ms-user-select: text !important;
+            user-select: text !important;
+        }
+        
+        /* Code blocks specific styling for mobile selection */
+        .ql-syntax {
+            background-color: #1a1a1a !important;
+            color: #f8f8f2 !important;
+            padding: 12px !important;
+            border-radius: 4px !important;
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            font-family: 'Courier New', monospace !important;
+            font-size: 14px !important;
+            line-height: 1.4 !important;
+            margin: 8px 0 !important;
+            position: relative !important;
+            z-index: 1 !important;
+        }
+        
+        .ql-syntax::before {
+            content: '' !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            background: transparent !important;
+            z-index: -1 !important;
+            pointer-events: none !important;
+        }
+        
+        /* Fix for Quill toolbar on mobile */
+        .ql-toolbar {
+            touch-action: manipulation !important;
+        }
+        
+        .ql-toolbar button {
+            min-height: 44px !important;
+            min-width: 44px !important;
         }
         
         /* Login Screen */
@@ -117,6 +191,9 @@
             color: var(--text-color);
             font-size: 1rem;
             transition: all 0.3s ease;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
         }
         
         .form-control:focus {
@@ -138,6 +215,9 @@
             gap: 10px;
             transition: all 0.3s ease;
             width: 100%;
+            touch-action: manipulation;
+            min-height: 44px;
+            -webkit-tap-highlight-color: rgba(0, 255, 0, 0.3);
         }
         
         .btn-primary {
@@ -198,10 +278,12 @@
             color: var(--primary-color);
             font-size: 1.5rem;
             cursor: pointer;
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             border-radius: 6px;
             transition: all 0.3s ease;
+            min-height: 44px;
+            touch-action: manipulation;
         }
         
         .hamburger-btn:hover {
@@ -248,6 +330,8 @@
             align-items: center;
             gap: 8px;
             transition: all 0.3s ease;
+            min-height: 44px;
+            touch-action: manipulation;
         }
         
         .logout-btn:hover {
@@ -316,6 +400,8 @@
             border-left: 3px solid transparent;
             text-decoration: none;
             color: var(--text-color);
+            min-height: 44px;
+            touch-action: manipulation;
         }
         
         .nav-item:hover {
@@ -457,6 +543,7 @@
             border-radius: 12px;
             overflow: hidden;
             margin-top: 20px;
+            -webkit-overflow-scrolling: touch;
         }
         
         .data-table {
@@ -478,6 +565,10 @@
             padding: 18px 20px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             vertical-align: middle;
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
         }
         
         .data-table tr:last-child td {
@@ -498,12 +589,13 @@
             padding: 8px 12px;
             font-size: 0.85rem;
             border-radius: 6px;
-            min-width: 40px;
-            height: 36px;
+            min-width: 44px;
+            height: 44px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
+            touch-action: manipulation;
         }
         
         .btn-success {
@@ -586,6 +678,7 @@
             border-top-left-radius: 8px;
             border-top-right-radius: 8px;
             border-bottom: none !important;
+            touch-action: manipulation !important;
         }
         
         .ql-container {
@@ -594,6 +687,10 @@
             border-bottom-right-radius: 8px;
             min-height: 300px;
             background: rgba(0, 0, 0, 0.2);
+            -webkit-user-select: text !important;
+            -moz-user-select: text !important;
+            -ms-user-select: text !important;
+            user-select: text !important;
         }
         
         .ql-editor {
@@ -601,6 +698,11 @@
             font-family: inherit;
             min-height: 300px;
             font-size: 1rem;
+            -webkit-user-select: text !important;
+            -moz-user-select: text !important;
+            -ms-user-select: text !important;
+            user-select: text !important;
+            padding: 12px 15px !important;
         }
         
         .ql-editor.ql-blank::before {
@@ -647,6 +749,8 @@
             transition: all 0.3s ease;
             font-weight: 500;
             flex-shrink: 0;
+            min-height: 44px;
+            touch-action: manipulation;
         }
         
         .tab-btn:hover {
@@ -683,6 +787,10 @@
             align-items: center;
             gap: 8px;
             font-weight: 500;
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
         }
         
         .tag-remove {
@@ -697,6 +805,7 @@
             justify-content: center;
             border-radius: 50%;
             transition: all 0.3s ease;
+            touch-action: manipulation;
         }
         
         .tag-remove:hover {
@@ -723,6 +832,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             margin-bottom: 25px;
+            touch-action: manipulation;
         }
         
         .image-upload-area:hover {
@@ -785,6 +895,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             z-index: 2;
+            touch-action: manipulation;
         }
         
         .preview-remove:hover {
@@ -808,6 +919,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             z-index: 2;
+            touch-action: manipulation;
         }
         
         .preview-insert:hover {
@@ -850,6 +962,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
         }
         
         .url-item span {
@@ -872,6 +988,11 @@
             max-height: 400px;
             overflow-y: auto;
             border: 1px solid #dee2e6;
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+            -webkit-overflow-scrolling: touch;
         }
         
         /* Toast Notification */
@@ -944,6 +1065,7 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
+            touch-action: manipulation;
         }
         
         .modal-content {
@@ -955,6 +1077,7 @@
             max-height: 90vh;
             overflow-y: auto;
             animation: modalIn 0.3s ease;
+            -webkit-overflow-scrolling: touch;
         }
         
         @keyframes modalIn {
@@ -989,13 +1112,14 @@
             font-size: 1.8rem;
             cursor: pointer;
             line-height: 1;
-            width: 36px;
-            height: 36px;
+            width: 44px;
+            height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 6px;
             transition: all 0.3s ease;
+            touch-action: manipulation;
         }
         
         .modal-close:hover {
@@ -1115,6 +1239,7 @@
             
             .data-table-container {
                 overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
             }
             
             .data-table {
@@ -1136,6 +1261,46 @@
             .toast {
                 min-width: 250px;
                 max-width: calc(100vw - 40px);
+            }
+            
+            /* Mobile-specific text selection improvements */
+            .ql-editor {
+                font-size: 16px !important; /* Prevent iOS zoom on focus */
+                padding: 15px !important;
+            }
+            
+            .ql-editor pre,
+            .ql-editor code {
+                font-size: 14px !important;
+                padding: 10px !important;
+            }
+            
+            /* Improve touch targets for mobile */
+            .btn, .btn-sm, .nav-item, .tab-btn, .modal-close, .hamburger-btn {
+                min-height: 44px;
+                min-width: 44px;
+            }
+            
+            /* Better text selection for mobile */
+            .ql-editor * {
+                -webkit-touch-callout: default !important;
+                -webkit-user-select: text !important;
+                -khtml-user-select: text !important;
+                -moz-user-select: text !important;
+                -ms-user-select: text !important;
+                user-select: text !important;
+            }
+            
+            /* Fix for code blocks on mobile */
+            .ql-syntax {
+                padding: 15px !important;
+                margin: 10px 0 !important;
+                font-size: 13px !important;
+                line-height: 1.5 !important;
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+                position: relative !important;
+                z-index: 10 !important;
             }
         }
         
@@ -1186,6 +1351,16 @@
             .upload-icon {
                 font-size: 3rem;
             }
+            
+            /* Mobile text selection fix */
+            body {
+                -webkit-text-size-adjust: 100%;
+            }
+            
+            .ql-editor {
+                font-size: 16px !important;
+                line-height: 1.6 !important;
+            }
         }
         
         @media (max-width: 400px) {
@@ -1206,6 +1381,16 @@
             
             .logo-container h1 {
                 font-size: 1.1rem;
+            }
+            
+            /* Even smaller screens */
+            .ql-editor {
+                padding: 10px !important;
+            }
+            
+            .ql-syntax {
+                padding: 12px !important;
+                font-size: 12px !important;
             }
         }
         
@@ -1321,6 +1506,66 @@
         .alternative-upload a {
             color: var(--primary-color);
             text-decoration: underline;
+        }
+        
+        /* Mobile text selection enhancement - CRITICAL FIX */
+        .ql-editor {
+            user-select: text !important;
+            -webkit-user-select: text !important;
+            -moz-user-select: text !important;
+            -ms-user-select: text !important;
+        }
+        
+        .ql-editor * {
+            user-select: text !important;
+            -webkit-user-select: text !important;
+            -moz-user-select: text !important;
+            -ms-user-select: text !important;
+        }
+        
+        .ql-syntax,
+        .ql-syntax * {
+            user-select: text !important;
+            -webkit-user-select: text !important;
+            -moz-user-select: text !important;
+            -ms-user-select: text !important;
+            pointer-events: auto !important;
+            -webkit-user-callout: default !important;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1) !important;
+        }
+        
+        /* Fix for nested elements */
+        .ql-container * {
+            pointer-events: auto !important;
+        }
+        
+        /* Mobile context menu fix */
+        .ql-editor {
+            -webkit-touch-callout: default !important;
+            -webkit-user-callout: default !important;
+        }
+        
+        /* Prevent unwanted behaviors */
+        .ql-editor img {
+            pointer-events: none !important;
+            -webkit-user-select: none !important;
+            user-select: none !important;
+        }
+        
+        /* Code block selection area expansion */
+        .ql-syntax {
+            position: relative;
+        }
+        
+        .ql-syntax::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            z-index: -1;
+            pointer-events: none;
         }
     </style>
 </head>
@@ -2272,6 +2517,9 @@
             // Hamburger button
             document.getElementById('hamburgerBtn')?.addEventListener('click', toggleSidebar);
             document.getElementById('sidebarOverlay')?.addEventListener('click', closeSidebar);
+            
+            // Better touch handling for mobile
+            document.addEventListener('touchstart', function() {}, {passive: true});
         }
 
         function switchToSection(sectionId) {
@@ -3111,6 +3359,41 @@
             
             // Setup autosave
             setupAutoSave();
+            
+            // Mobile text selection fix
+            setTimeout(() => {
+                const editors = [quillEN, quillTR];
+                editors.forEach(editor => {
+                    if (editor) {
+                        const editorElement = editor.container.querySelector('.ql-editor');
+                        if (editorElement) {
+                            // Force enable text selection
+                            editorElement.style.userSelect = 'text';
+                            editorElement.style.webkitUserSelect = 'text';
+                            editorElement.style.webkitTouchCallout = 'default';
+                            
+                            // Make all child elements selectable
+                            const allElements = editorElement.querySelectorAll('*');
+                            allElements.forEach(el => {
+                                el.style.userSelect = 'text';
+                                el.style.webkitUserSelect = 'text';
+                                el.style.webkitTouchCallout = 'default';
+                                el.style.pointerEvents = 'auto';
+                            });
+                            
+                            // Special handling for code blocks
+                            const codeBlocks = editorElement.querySelectorAll('pre, code');
+                            codeBlocks.forEach(el => {
+                                el.style.userSelect = 'text';
+                                el.style.webkitUserSelect = 'text';
+                                el.style.webkitTouchCallout = 'default';
+                                el.style.pointerEvents = 'auto';
+                                el.style.cursor = 'text';
+                            });
+                        }
+                    }
+                });
+            }, 1000);
         }
 
         function setupTagSystem() {
@@ -3641,7 +3924,7 @@
                         ${article.title_tr ? `<h4>${article.title_tr}</h4>` : ''}
                         
                         <p><strong>Kategori:</strong> ${article.category}</p>
-                        <p><strong>Yayın Tarihi:</strong> ${new Date(article.published_date || article.date).toLocaleDateString('tr-TR')}</p>
+                        <p><strong>Yayın Tarihi:</strong
                         <p><strong>Görüntülenme:</strong> ${article.views || 0}</p>
                         <p><strong>Beğeni:</strong> ${article.likes || 0}</p>
                         
