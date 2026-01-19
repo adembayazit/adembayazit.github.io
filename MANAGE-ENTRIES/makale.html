@@ -608,6 +608,21 @@
             font-style: italic !important;
         }
         
+        /* Image upload button styling */
+        .ql-toolbar .ql-image {
+            position: relative;
+        }
+        
+        .ql-toolbar .ql-image input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
         /* Tab Navigation */
         .nav-tabs {
             display: flex;
@@ -697,107 +712,6 @@
         
         .tag-input {
             flex: 1;
-        }
-        
-        /* Image Upload */
-        .image-upload-area {
-            border: 2px dashed var(--border-color);
-            border-radius: 12px;
-            padding: 50px 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-bottom: 25px;
-        }
-        
-        .image-upload-area:hover {
-            border-color: var(--primary-color);
-            background: rgba(0, 255, 0, 0.05);
-        }
-        
-        .upload-icon {
-            font-size: 3.5rem;
-            color: var(--border-color);
-            margin-bottom: 15px;
-        }
-        
-        .image-upload-area:hover .upload-icon {
-            color: var(--primary-color);
-        }
-        
-        .image-preview {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
-            margin-top: 25px;
-        }
-        
-        .preview-item {
-            position: relative;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-            aspect-ratio: 16/9;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .preview-item:hover {
-            transform: scale(1.05);
-            border-color: var(--primary-color);
-            box-shadow: 0 5px 15px rgba(0, 255, 0, 0.2);
-        }
-        
-        .preview-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .preview-remove {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            background: var(--danger-color);
-            color: white;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            z-index: 2;
-        }
-        
-        .preview-remove:hover {
-            transform: scale(1.1);
-            box-shadow: 0 3px 10px rgba(255, 68, 68, 0.3);
-        }
-        
-        .preview-insert {
-            position: absolute;
-            top: 8px;
-            left: 8px;
-            background: var(--primary-color);
-            color: white;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            z-index: 2;
-        }
-        
-        .preview-insert:hover {
-            transform: scale(1.1);
-            box-shadow: 0 3px 10px rgba(0, 255, 0, 0.3);
         }
         
         /* Email Preview */
@@ -1067,10 +981,6 @@
                 margin: 0 10px;
             }
             
-            .image-preview {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            }
-            
             .toast {
                 min-width: 250px;
                 max-width: calc(100vw - 40px);
@@ -1115,14 +1025,6 @@
             
             .modal-body {
                 padding: 20px;
-            }
-            
-            .image-upload-area {
-                padding: 40px 15px;
-            }
-            
-            .upload-icon {
-                font-size: 3rem;
             }
         }
         
@@ -1508,7 +1410,6 @@
                     <div class="nav-tabs">
                         <button class="tab-btn active" data-tab="content">İçerik</button>
                         <button class="tab-btn" data-tab="seo">SEO & Ayarlar</button>
-                        <button class="tab-btn" data-tab="images">Görseller</button>
                         <button class="tab-btn" data-tab="preview">Önizleme</button>
                     </div>
 
@@ -1548,15 +1449,21 @@
                             </div>
 
                             <div class="form-group">
+                                <label class="form-label">Kapak Görseli URL</label>
+                                <input type="text" id="featuredImage" class="form-control" placeholder="https://ik.imagekit.io/your-imagekit-id/image.jpg">
+                                <span class="form-text">Önerilen boyut: 1200x630 piksel</span>
+                            </div>
+
+                            <div class="form-group">
                                 <label class="form-label">İçerik (EN) *</label>
                                 <div id="editorEN"></div>
-                                <span class="form-text">Zengin metin editörü. Kod blokları için "Code Block" butonunu kullanın.</span>
+                                <span class="form-text">Zengin metin editörü. Kod blokları için "Code Block" butonunu kullanın. Görsel eklemek için araç çubuğundaki "Görsel" butonuna tıklayın.</span>
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label">İçerik (TR)</label>
                                 <div id="editorTR"></div>
-                                <span class="form-text">Türkçe çeviri (isteğe bağlı)</span>
+                                <span class="form-text">Türkçe çeviri (isteğe bağlı). Görsel eklemek için araç çubuğundaki "Görsel" butonuna tıklayın.</span>
                             </div>
                         </div>
 
@@ -1604,45 +1511,6 @@
                                 <div style="display: flex; align-items: center; gap: 10px;">
                                     <input type="checkbox" id="featuredArticle" style="width: 18px; height: 18px;">
                                     <label for="featuredArticle" class="form-label" style="margin-bottom: 0;">Öne çıkan makale olarak işaretle</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Images Tab -->
-                        <div id="imagesTab" class="tab-content">
-                            <div class="form-group">
-                                <label class="form-label">Kapak Görseli URL</label>
-                                <input type="text" id="featuredImage" class="form-control" placeholder="https://ik.imagekit.io/your-imagekit-id/image.jpg">
-                                <span class="form-text">Önerilen boyut: 1200x630 piksel. Görsellere tıklayarak otomatik ekleyebilirsiniz.</span>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">Görsel Yükle (ImageKit)</label>
-                                <div class="image-upload-area" id="imageUploadArea">
-                                    <div class="upload-icon">
-                                        <i class="fas fa-cloud-upload-alt"></i>
-                                    </div>
-                                    <p style="font-weight: 500; margin-bottom: 5px;">Görselleri buraya sürükleyin veya tıklayın</p>
-                                    <p class="form-text">PNG, JPG, GIF - Max 5MB</p>
-                                </div>
-                                <input type="file" id="imageUpload" multiple accept="image/*" style="display: none;">
-                                
-                                <div class="image-preview" id="imagePreview">
-                                    <!-- Uploaded images preview will appear here -->
-                                    <p style="color: var(--text-muted); text-align: center; padding: 20px; grid-column: 1 / -1;">
-                                        Henüz görsel yüklenmedi
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <div style="display: flex; gap: 10px; margin-top: 20px;">
-                                    <button class="btn btn-primary" id="uploadImagesBtn">
-                                        <i class="fas fa-upload"></i> Seçili Görselleri Yükle
-                                    </button>
-                                    <button class="btn btn-info" id="clearImagesBtn">
-                                        <i class="fas fa-times"></i> Temizle
-                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -1942,10 +1810,7 @@
         let sessionTimer = null;
         let autoSaveTimer = null;
         let currentArticleTags = [];
-        let uploadedImages = []; // This will now store ImageKit URLs
-        let selectedFiles = []; // Temporary storage for selected files before upload
         let isSidebarOpen = false;
-        let activeEditor = null; // Track which editor is active (quillEN or quillTR)
 
         // SHA-256 Hash Function
         async function sha256(message) {
@@ -2231,25 +2096,58 @@
             });
         }
 
-        // Insert image to editor function
-        function insertImageToEditor(imageUrl) {
-            let editor = activeEditor;
-            if (!editor) {
-                editor = quillEN; // varsayılan olarak İngilizce editör
-            }
-
-            // Eğer editor quillEN veya quillTR ise
-            if (editor === quillEN || editor === quillTR) {
+        // Image Upload to ImageKit and insert into editor
+        async function uploadImageToImageKitAndInsert(file, editor) {
+            try {
+                showToast('Görsel yükleniyor...', 'info');
+                
+                // Önce authentication parametrelerini al
+                const authResponse = await fetch(CONFIG.IMAGEKIT_AUTH_ENDPOINT);
+                
+                if (!authResponse.ok) {
+                    throw new Error(`Auth endpoint error: ${authResponse.status}`);
+                }
+                
+                const authData = await authResponse.json();
+                
+                // FormData oluştur
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('fileName', file.name);
+                formData.append('signature', authData.signature);
+                formData.append('token', authData.token);
+                formData.append('expire', authData.expire);
+                formData.append('publicKey', authData.publicKey);
+                
+                // ImageKit'e yükle
+                const uploadResponse = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!uploadResponse.ok) {
+                    const errorText = await uploadResponse.text();
+                    throw new Error(`Upload error: ${uploadResponse.status} - ${errorText}`);
+                }
+                
+                const uploadData = await uploadResponse.json();
+                
+                // Editöre ekle
                 const range = editor.getSelection();
                 if (range) {
-                    editor.insertEmbed(range.index, 'image', imageUrl);
+                    editor.insertEmbed(range.index, 'image', uploadData.url);
                 } else {
                     // Eğer imleç yoksa, en sona ekle
-                    editor.insertEmbed(editor.getLength(), 'image', imageUrl);
+                    editor.insertEmbed(editor.getLength(), 'image', uploadData.url);
                 }
-                showToast('Görsel editöre eklendi', 'success');
-            } else {
-                showToast('Editör bulunamadı', 'error');
+                
+                showToast('Görsel başarıyla yüklendi ve eklendi', 'success');
+                return uploadData.url;
+                
+            } catch (error) {
+                console.error('Error uploading image:', error);
+                showToast(`Görsel yüklenirken hata: ${error.message}`, 'error');
+                return null;
             }
         }
 
@@ -2538,271 +2436,47 @@
             updateEmailArticleSelect();
         }
 
-        // Image Upload Functions - GÜNCELLENDİ
-        function setupImageUpload() {
-            const uploadArea = document.getElementById('imageUploadArea');
-            const fileInput = document.getElementById('imageUpload');
-            
-            // Tıklama ile dosya seç
-            uploadArea.addEventListener('click', (e) => {
-                if (e.target !== uploadArea && !uploadArea.contains(e.target)) return;
-                fileInput.click();
-            });
-            
-            // Drag and drop
-            uploadArea.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                uploadArea.style.borderColor = 'var(--primary-color)';
-                uploadArea.style.background = 'rgba(0, 255, 0, 0.05)';
-            });
-            
-            uploadArea.addEventListener('dragleave', () => {
-                uploadArea.style.borderColor = 'var(--border-color)';
-                uploadArea.style.background = '';
-            });
-            
-            uploadArea.addEventListener('drop', (e) => {
-                e.preventDefault();
-                uploadArea.style.borderColor = 'var(--border-color)';
-                uploadArea.style.background = '';
-                
-                if (e.dataTransfer.files.length) {
-                    handleFileSelection(e.dataTransfer.files);
-                }
-            });
-            
-            // File input change
-            fileInput.addEventListener('change', (e) => {
-                if (e.target.files.length) {
-                    handleFileSelection(e.target.files);
-                }
-            });
-            
-            // Upload images button
-            document.getElementById('uploadImagesBtn').addEventListener('click', uploadImagesToImageKit);
-            
-            // Clear images button
-            document.getElementById('clearImagesBtn').addEventListener('click', clearSelectedImages);
-        }
-
-        function handleFileSelection(files) {
-            for (let file of files) {
-                if (!file.type.startsWith('image/')) {
-                    showToast(`${file.name} bir resim dosyası değil`, 'error');
-                    continue;
-                }
-
-                if (file.size > 5 * 1024 * 1024) {
-                    showToast(`${file.name} çok büyük (max 5MB)`, 'error');
-                    continue;
-                }
-
-                // Create preview
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    selectedFiles.push({
-                        file: file,
-                        preview: e.target.result,
-                        id: Date.now() + Math.random()
-                    });
-                    updateImagePreview();
-                    showToast(`${file.name} seçildi`, 'info');
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function updateImagePreview() {
-            const preview = document.getElementById('imagePreview');
-            preview.innerHTML = '';
-            
-            const allImages = [...selectedFiles, ...uploadedImages.map(url => ({ 
-                preview: url, 
-                id: 'uploaded_' + Date.now() + Math.random(),
-                isUploaded: true 
-            }))];
-            
-            if (allImages.length === 0) {
-                preview.innerHTML = `
-                    <p style="color: var(--text-muted); text-align: center; padding: 20px; grid-column: 1 / -1;">
-                        Henüz görsel yüklenmedi
-                    </p>
-                `;
-                return;
-            }
-            
-            allImages.forEach((item, index) => {
-                const itemDiv = document.createElement('div');
-                itemDiv.className = 'preview-item';
-                
-                const img = document.createElement('img');
-                img.src = item.preview;
-                img.alt = `Preview ${index + 1}`;
-                
-                const removeBtn = document.createElement('div');
-                removeBtn.className = 'preview-remove';
-                removeBtn.innerHTML = '&times;';
-                removeBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    
-                    if (item.isUploaded) {
-                        // Remove from uploaded images
-                        const urlIndex = uploadedImages.indexOf(item.preview);
-                        if (urlIndex > -1) {
-                            uploadedImages.splice(urlIndex, 1);
-                        }
-                    } else {
-                        // Remove from selected files
-                        const fileIndex = selectedFiles.findIndex(f => f.id === item.id);
-                        if (fileIndex > -1) {
-                            selectedFiles.splice(fileIndex, 1);
-                        }
-                    }
-                    updateImagePreview();
-                    showToast('Görsel kaldırıldı', 'info');
-                });
-
-                itemDiv.appendChild(img);
-                itemDiv.appendChild(removeBtn);
-
-                // Eğer görsel ImageKit'e yüklenmişse, editöre ekle butonunu göster
-                if (item.isUploaded) {
-                    const insertBtn = document.createElement('div');
-                    insertBtn.className = 'preview-insert';
-                    insertBtn.innerHTML = '<i class="fas fa-plus"></i>';
-                    insertBtn.title = "Editöre ekle";
-                    insertBtn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        insertImageToEditor(item.preview);
-                    });
-                    itemDiv.appendChild(insertBtn);
-                }
-
-                // Görsele tıklayınca kapak görseli olarak ayarla
-                itemDiv.addEventListener('click', (e) => {
-                    if (e.target !== removeBtn && !removeBtn.contains(e.target) && 
-                        e.target !== insertBtn && !insertBtn.contains(e.target)) {
-                        document.getElementById('featuredImage').value = item.preview;
-                        showToast('Kapak görseli olarak seçildi', 'info');
-                    }
-                });
-
-                preview.appendChild(itemDiv);
-            });
-        }
-
-        // ImageKit Upload Function
-        async function uploadImagesToImageKit() {
-            if (selectedFiles.length === 0) {
-                showToast('Yüklenecek görsel bulunamadı', 'warning');
-                return;
-            }
-
-            const uploadBtn = document.getElementById('uploadImagesBtn');
-            const originalText = uploadBtn.innerHTML;
-            uploadBtn.disabled = true;
-            uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Yükleniyor...';
-
-            let successCount = 0;
-            let errorCount = 0;
-
-            for (const item of selectedFiles) {
-                try {
-                    showToast(`${item.file.name} yükleniyor...`, 'info');
-                    
-                    // Önce authentication parametrelerini al
-                    const authResponse = await fetch(CONFIG.IMAGEKIT_AUTH_ENDPOINT);
-                    
-                    if (!authResponse.ok) {
-                        throw new Error(`Auth endpoint error: ${authResponse.status}`);
-                    }
-                    
-                    const authData = await authResponse.json();
-                    
-                    // FormData oluştur
-                    const formData = new FormData();
-                    formData.append('file', item.file);
-                    formData.append('fileName', item.file.name);
-                    formData.append('signature', authData.signature);
-                    formData.append('token', authData.token);
-                    formData.append('expire', authData.expire);
-                    formData.append('publicKey', authData.publicKey);
-                    
-                    // ImageKit'e yükle
-                    const uploadResponse = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
-                        method: 'POST',
-                        body: formData
-                    });
-                    
-                    if (!uploadResponse.ok) {
-                        const errorText = await uploadResponse.text();
-                        throw new Error(`Upload error: ${uploadResponse.status} - ${errorText}`);
-                    }
-                    
-                    const uploadData = await uploadResponse.json();
-                    
-                    // Add to uploaded images
-                    uploadedImages.push(uploadData.url);
-                    successCount++;
-                    
-                    showToast(`${item.file.name} başarıyla yüklendi`, 'success');
-                    
-                } catch (error) {
-                    console.error('Error uploading image:', error);
-                    errorCount++;
-                    showToast(`${item.file.name} yüklenirken hata: ${error.message}`, 'error');
-                    
-                    // Hata durumunda alternative upload seçeneği göster
-                    if (errorCount === selectedFiles.length) {
-                        showAlternativeUploadOption();
-                    }
-                }
-            }
-
-            // Clear selected files after upload
-            selectedFiles = [];
-            updateImagePreview();
-
-            uploadBtn.disabled = false;
-            uploadBtn.innerHTML = originalText;
-
-            if (successCount > 0) {
-                showToast(`${successCount} görsel başarıyla yüklendi${errorCount > 0 ? `, ${errorCount} başarısız` : ''}`, 
-                         errorCount > 0 ? 'warning' : 'success');
-            }
-        }
-
-        function clearSelectedImages() {
-            if (selectedFiles.length > 0 || uploadedImages.length > 0) {
-                showConfirm('Tüm seçili görselleri temizlemek istediğinizden emin misiniz?', function() {
-                    selectedFiles = [];
-                    uploadedImages = [];
-                    updateImagePreview();
-                    showToast('Görseller temizlendi', 'info');
-                });
-            } else {
-                showToast('Temizlenecek görsel yok', 'info');
-            }
-        }
-
-        // Alternative upload option
-        function showAlternativeUploadOption() {
-            const imagesTab = document.getElementById('imagesTab');
-            const alternativeHtml = `
-                <div class="alternative-upload">
-                    <p>Alternatif olarak, dosyayı manuel olarak yükleyip URL ekleyebilirsiniz:</p>
-                    <p><a href="https://imagekit.io/dashboard/media-library" target="_blank">ImageKit Media Library</a></p>
-                </div>
-            `;
-            
-            if (!imagesTab.querySelector('.alternative-upload')) {
-                imagesTab.insertAdjacentHTML('beforeend', alternativeHtml);
-            }
-        }
-
         // Article Editor Functions
         function initEditor() {
-            // Initialize Quill editors
+            // Custom image handler for Quill
+            const ImageHandler = {
+                // Create a hidden file input
+                createFileInput: function(editor) {
+                    const fileInput = document.createElement('input');
+                    fileInput.setAttribute('type', 'file');
+                    fileInput.setAttribute('accept', 'image/*');
+                    fileInput.style.display = 'none';
+                    
+                    fileInput.addEventListener('change', async function() {
+                        if (this.files && this.files[0]) {
+                            const file = this.files[0];
+                            
+                            // Validate file type
+                            if (!file.type.startsWith('image/')) {
+                                showToast('Lütfen bir resim dosyası seçin', 'error');
+                                return;
+                            }
+                            
+                            // Validate file size (5MB)
+                            if (file.size > 5 * 1024 * 1024) {
+                                showToast('Resim dosyası çok büyük (max 5MB)', 'error');
+                                return;
+                            }
+                            
+                            // Upload to ImageKit and insert into editor
+                            await uploadImageToImageKitAndInsert(file, editor);
+                            
+                            // Reset file input
+                            fileInput.value = '';
+                        }
+                    });
+                    
+                    document.body.appendChild(fileInput);
+                    return fileInput;
+                }
+            };
+
+            // Initialize Quill editors with custom image handler
             const toolbarOptions = [
                 [{ 'header': [1, 2, 3, false] }],
                 ['bold', 'italic', 'underline', 'strike'],
@@ -2819,10 +2493,10 @@
                     toolbar: {
                         container: toolbarOptions,
                         handlers: {
-                            image: function() {
-                                activeEditor = quillEN;
-                                // Images sekmesine geç
-                                switchToTab('images');
+                            'image': function() {
+                                // Create file input for this editor
+                                const fileInput = ImageHandler.createFileInput(quillEN);
+                                fileInput.click();
                             }
                         }
                     }
@@ -2837,28 +2511,15 @@
                     toolbar: {
                         container: toolbarOptions,
                         handlers: {
-                            image: function() {
-                                activeEditor = quillTR;
-                                // Images sekmesine geç
-                                switchToTab('images');
+                            'image': function() {
+                                // Create file input for this editor
+                                const fileInput = ImageHandler.createFileInput(quillTR);
+                                fileInput.click();
                             }
                         }
                     }
                 },
                 placeholder: 'Türkçe içeriği buraya yazın (isteğe bağlı)...'
-            });
-
-            // Track active editor
-            quillEN.on('editor-change', function(eventName, ...args) {
-                if (eventName === 'selection-change') {
-                    activeEditor = quillEN;
-                }
-            });
-
-            quillTR.on('editor-change', function(eventName, ...args) {
-                if (eventName === 'selection-change') {
-                    activeEditor = quillTR;
-                }
             });
             
             // Set default publish date to now
@@ -2868,9 +2529,6 @@
             
             // Setup tag system
             setupTagSystem();
-            
-            // Setup image upload
-            setupImageUpload();
             
             // Setup autosave
             setupAutoSave();
@@ -2931,13 +2589,6 @@
                 localStorage.setItem('articleDraft', JSON.stringify({
                     ...articleData,
                     tags: currentArticleTags,
-                    uploadedImages: uploadedImages,
-                    selectedFiles: selectedFiles.map(f => ({
-                        name: f.file.name,
-                        size: f.file.size,
-                        type: f.file.type,
-                        preview: f.preview
-                    })),
                     savedAt: new Date().toISOString()
                 }));
                 
@@ -2976,16 +2627,8 @@
                             if (quillTR && draftData.content_tr) quillTR.root.innerHTML = draftData.content_tr;
                             
                             currentArticleTags = draftData.tags || [];
-                            uploadedImages = draftData.uploadedImages || [];
-                            
-                            // Note: We can't restore File objects from localStorage
-                            // So we'll just show a message
-                            if (draftData.selectedFiles && draftData.selectedFiles.length > 0) {
-                                showToast(`${draftData.selectedFiles.length} görsel taslakta kayıtlı, lütfen yeniden seçin`, 'info');
-                            }
                             
                             renderTags();
-                            updateImagePreview();
                             
                             showToast(`Taslak yüklendi (${new Date(draftData.savedAt).toLocaleTimeString('tr-TR')})`, 'info');
                         }
@@ -3001,9 +2644,6 @@
             currentArticleId = null;
             isEditing = false;
             currentArticleTags = [];
-            uploadedImages = [];
-            selectedFiles = [];
-            activeEditor = null;
             
             // Reset form
             document.getElementById('articleTitle').value = '';
@@ -3021,9 +2661,8 @@
             if (quillEN) quillEN.root.innerHTML = '';
             if (quillTR) quillTR.root.innerHTML = '';
             
-            // Reset tags and images
+            // Reset tags
             renderTags();
-            updateImagePreview();
             
             // Update UI
             document.querySelector('#editor .section-title').innerHTML = '<i class="fas fa-edit"></i> Yeni Makale';
@@ -3045,7 +2684,6 @@
                 reading_time: parseInt(document.getElementById('readingTime').value) || 5,
                 published_date: document.getElementById('publishDate').value || new Date().toISOString(),
                 featured: document.getElementById('featuredArticle').checked,
-                images: uploadedImages, // Now stores ImageKit URLs
                 views: 0,
                 likes: 0,
                 comments_count: 0
@@ -3160,12 +2798,10 @@
             if (quillEN) quillEN.root.innerHTML = article.content || '';
             if (quillTR) quillTR.root.innerHTML = article.content_tr || '';
             
-            // Set tags and images
+            // Set tags
             currentArticleTags = article.tags || [];
-            uploadedImages = article.images || [];
             
             renderTags();
-            updateImagePreview();
             
             // Navigate to editor
             switchToSection('editor');
