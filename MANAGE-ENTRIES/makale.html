@@ -1670,7 +1670,7 @@
                             </div>
                         </div>
 
-                        <!-- Images Tab - GÜNCELLENDİ -->
+                        <!-- Images Tab -->
                         <div id="imagesTab" class="tab-content">
                             <div class="form-group">
                                 <label class="form-label">Kapak Görseli URL</label>
@@ -2015,11 +2015,11 @@
         let sessionTimer = null;
         let autoSaveTimer = null;
         let currentArticleTags = [];
-        let uploadedImages = []; // Store uploaded ImageKit URLs
-        let selectedFiles = []; // Temporary storage for selected files before upload
+        let uploadedImages = [];
+        let selectedFiles = [];
         let isSidebarOpen = false;
-        let activeEditor = null; // Track which editor is active (quillEN or quillTR)
-        let showUrlList = false; // Track URL list visibility
+        let activeEditor = null;
+        let showUrlList = false;
 
         // SHA-256 Hash Function
         async function sha256(message) {
@@ -2309,16 +2309,14 @@
         function insertImageToEditor(imageUrl) {
             let editor = activeEditor;
             if (!editor) {
-                editor = quillEN; // varsayılan olarak İngilizce editör
+                editor = quillEN;
             }
 
-            // Eğer editor quillEN veya quillTR ise
             if (editor === quillEN || editor === quillTR) {
                 const range = editor.getSelection();
                 if (range) {
                     editor.insertEmbed(range.index, 'image', imageUrl);
                 } else {
-                    // Eğer imleç yoksa, en sona ekle
                     editor.insertEmbed(editor.getLength(), 'image', imageUrl);
                 }
                 showToast('Görsel editöre eklendi', 'success');
@@ -2334,7 +2332,6 @@
                 const result = await fetchViaProxy('/latest', 'GET', null, CONFIG.ARTICLES_BIN_ID);
                 console.log('Raw articles result:', result);
                 
-                // Farklı JSON formatlarını destekle
                 if (Array.isArray(result)) {
                     articlesData = result;
                 } else if (result && result.articles && Array.isArray(result.articles)) {
@@ -2375,7 +2372,6 @@
                 
                 let loadedData = [];
                 
-                // Farklı JSON formatlarını destekle
                 if (Array.isArray(result)) {
                     loadedData = result.map(item => {
                         if (typeof item === 'string') {
@@ -2610,7 +2606,7 @@
             updateEmailArticleSelect();
         }
 
-        // Image Upload Functions - GÜNCELLENDİ (Çoklu görsel yükleme)
+        // Image Upload Functions - FIXED: Direct ImageKit upload from Quill editor
         function setupImageUpload() {
             const uploadArea = document.getElementById('imageUploadArea');
             const fileInput = document.getElementById('imageUpload');
@@ -2780,7 +2776,7 @@
                     if (e.target !== removeBtn && !removeBtn.contains(e.target) && 
                         e.target !== insertBtn && !insertBtn.contains(e.target)) {
                         document.getElementById('featuredImage').value = item.preview;
-                        updateImagePreview(); // Kapak badge'ini güncellemek için
+                        updateImagePreview();
                         showToast('Kapak görseli olarak seçildi', 'info');
                     }
                 });
@@ -2870,6 +2866,61 @@
             if (successCount > 0) {
                 showToast(`${successCount} görsel başarıyla yüklendi${errorCount > 0 ? `, ${errorCount} başarısız` : ''}`, 
                          errorCount > 0 ? 'warning' : 'success');
+            }
+        }
+
+        // FIXED: Direct ImageKit upload from Quill editor
+        async function uploadImageToImageKitFromQuill(file, editor) {
+            try {
+                // Önce authentication parametrelerini al
+                const authResponse = await fetch(CONFIG.IMAGEKIT_AUTH_ENDPOINT);
+                
+                if (!authResponse.ok) {
+                    throw new Error(`Auth endpoint error: ${authResponse.status}`);
+                }
+                
+                const authData = await authResponse.json();
+                
+                // FormData oluştur
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('fileName', file.name);
+                formData.append('signature', authData.signature);
+                formData.append('token', authData.token);
+                formData.append('expire', authData.expire);
+                formData.append('publicKey', authData.publicKey);
+                
+                // ImageKit'e yükle
+                const uploadResponse = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!uploadResponse.ok) {
+                    const errorText = await uploadResponse.text();
+                    throw new Error(`Upload error: ${uploadResponse.status} - ${errorText}`);
+                }
+                
+                const uploadData = await uploadResponse.json();
+                
+                // Add to uploaded images
+                uploadedImages.push(uploadData.url);
+                
+                // Insert into editor at cursor position
+                const range = editor.getSelection();
+                if (range) {
+                    editor.insertEmbed(range.index, 'image', uploadData.url);
+                } else {
+                    editor.insertEmbed(editor.getLength(), 'image', uploadData.url);
+                }
+                
+                showToast('Görsel yüklendi ve editöre eklendi', 'success');
+                return uploadData.url;
+                
+            } catch (error) {
+                console.error('Error uploading image from Quill:', error);
+                showToast('Görsel yüklenirken hata oluştu: ' + error.message, 'error');
+                throw error;
             }
         }
 
@@ -2983,9 +3034,9 @@
             }
         }
 
-        // Article Editor Functions
+        // Article Editor Functions - FIXED: Direct ImageKit upload in Quill editor
         function initEditor() {
-            // Custom image handler for Quill
+            // Custom image handler for Quill that uploads directly to ImageKit
             const ImageHandler = {
                 // Create a hidden file input
                 createFileInput: function(editor) {
@@ -3013,21 +3064,33 @@
                             // Set active editor
                             activeEditor = editor;
                             
-                            // Images sekmesine geç
-                            switchToTab('images');
+                            // Show loading message
+                            const originalRange = editor.getSelection();
+                            const loadingText = `[Görsel yükleniyor: ${file.name}...]`;
                             
-                            // Add to selected files
-                            const reader = new FileReader();
-                            reader.onload = (e) => {
-                                selectedFiles.push({
-                                    file: file,
-                                    preview: e.target.result,
-                                    id: Date.now() + Math.random()
-                                });
-                                updateImagePreview();
-                                showToast(`${file.name} seçildi. Lütfen "Seçili Görselleri Yükle" butonuna tıklayın.`, 'info');
-                            };
-                            reader.readAsDataURL(file);
+                            if (originalRange) {
+                                editor.insertText(originalRange.index, loadingText);
+                            }
+                            
+                            try {
+                                // Upload to ImageKit
+                                const imageUrl = await uploadImageToImageKitFromQuill(file, editor);
+                                
+                                // Remove loading text
+                                if (originalRange) {
+                                    editor.deleteText(originalRange.index, loadingText.length);
+                                }
+                                
+                                // Already inserted in uploadImageToImageKitFromQuill
+                                return;
+                                
+                            } catch (error) {
+                                // Remove loading text on error
+                                if (originalRange) {
+                                    editor.deleteText(originalRange.index, loadingText.length);
+                                }
+                                showToast('Görsel yüklenemedi: ' + error.message, 'error');
+                            }
                             
                             // Reset file input
                             fileInput.value = '';
@@ -3257,6 +3320,7 @@
             document.querySelector('#editor .section-title').innerHTML = '<i class="fas fa-edit"></i> Yeni Makale';
         }
 
+        // FIXED: Preserve likes and views when editing articles
         function getArticleFormData() {
             // Mevcut makalenin görüntülenme ve beğeni sayılarını koru
             let existingArticle = null;
@@ -3279,15 +3343,15 @@
                 reading_time: parseInt(document.getElementById('readingTime').value) || 5,
                 published_date: document.getElementById('publishDate').value || new Date().toISOString(),
                 featured: document.getElementById('featuredArticle').checked,
-                images: uploadedImages, // Store all uploaded images
-                // Görüntüleme ve beğeni sayılarını koru
+                images: uploadedImages,
+                // FIXED: Görüntüleme ve beğeni sayılarını koru
                 views: existingArticle ? (existingArticle.views || 0) : 0,
                 likes: existingArticle ? (existingArticle.likes || 0) : 0,
                 comments_count: existingArticle ? (existingArticle.comments_count || 0) : 0
             };
         }
 
-        // Save Article Function
+        // Save Article Function - FIXED: Preserve stats when saving
         async function saveArticle(publish = false) {
             const articleData = getArticleFormData();
             
@@ -3315,7 +3379,7 @@
                 
                 let updatedArticles;
                 if (isEditing && currentArticleId) {
-                    // Update existing article - görüntüleme ve beğeni sayılarını koru
+                    // FIXED: Update existing article - görüntüleme ve beğeni sayılarını koru
                     const index = articlesData.findIndex(a => a.id == currentArticleId);
                     if (index !== -1) {
                         // Mevcut makaleden görüntüleme ve beğeni sayılarını al
