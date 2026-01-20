@@ -81,27 +81,23 @@
       }
 
       .entries-column {
-        flex: 1; /* Sol ve sağ aynı genişlikte olacak */
-        width: 100%;
+        flex: 1.5; /* Sol taraf daha geniş */
       }
 
       .explanation-column {
-        flex: 1; /* Sol ve sağ aynı genişlikte olacak */
-        width: 100%;
+        flex: 1; /* Sağ taraf daha dar */
       }
 
       .explanation-content {
         background: rgba(10, 25, 20, 0.7);
-        border-radius: 15px; /* MAKALE KARTLARI İLE AYNI: 15px radius */
-        padding: 20px; /* MAKALE KARTLARI İLE AYNI: 20px padding */
+        border-radius: 20px; /* ESKİ HALİ: 20px radius */
+        padding: 20px;
         border: 1px solid rgba(0, 255, 0, 0.3);
         box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);
         position: relative;
         overflow: hidden;
         font-size: 0.8rem;
         height: 100%;
-        box-sizing: border-box; /* Aynı box model */
-        width: 100%;
       }
 
       .explanation-content h3 {
@@ -365,11 +361,10 @@
         gap: 15px;
       }
 
-      /* Küçük Photo Analysis Butonu - ORTALANDI */
+      /* Küçük Photo Analysis Butonu */
       .photo-analysis-btn {
         display: flex;
         align-items: center;
-        justify-content: center;
         gap: 8px;
         background: linear-gradient(135deg, rgba(15, 30, 25, 0.8), rgba(0, 80, 0, 0.6));
         color: #f9d71c;
@@ -385,7 +380,8 @@
         font-size: 0.8em;
         min-height: 36px;
         min-width: 120px;
-        margin: 0 auto; /* Ortalama için eklendi */
+        justify-content: center;
+        margin: 0 auto;
       }
 
       .photo-analysis-btn::before {
@@ -445,7 +441,7 @@
         transform: translateX(-50%) translateY(-4px);
       }
 
-      /* Load More butonu - Analiz butonu ile aynı hizada */
+      /* Load More butonu */
       .load-more {
         margin: 0 auto;
       }
@@ -515,7 +511,6 @@
         width: 100%; /* Tam genişlik */
         max-width: 100%; /* Maksimum genişlik yok */
         margin-bottom: 20px; /* Kartlar arası boşluk */
-        box-sizing: border-box; /* Entries ile aynı box model */
       }
 
       /* Masaüstünde 3'lü grid */
@@ -674,17 +669,15 @@
         box-shadow: 0 5px 15px rgba(0, 255, 0, 0.3);
       }
 
-      /* Mikroblog entries tıklanabilir - GÜNCELLENDİ (makale kartları ile aynı border-radius) */
+      /* Mikroblog entries tıklanabilir - GÜNCELLENDİ */
       .entry-item {
         cursor: pointer;
         transition: all 0.3s ease;
         margin-bottom: 15px;
         background: rgba(10, 25, 20, 0.5);
-        border-radius: 15px; /* MAKALE KARTLARI İLE AYNI: 15px radius */
+        border-radius: 10px; /* ESKİ HALİ: 10px radius */
         border: 1px solid rgba(0, 255, 0, 0.2);
-        padding: 20px; /* MAKALE KARTLARI İLE AYNI: 20px padding */
-        box-sizing: border-box; /* Entries ile makale kartları aynı box model */
-        width: 100%; /* MAKALE KARTLARI İLE AYNI: tam genişlik */
+        padding: 15px;
       }
 
       .entry-item:hover {
@@ -738,10 +731,8 @@
         width: 100%;
         max-width: 1400px;
         margin: 0 auto;
-        display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 15px;
       }
 
       /* MOBİL UYUMLULUK - GÜNCELLENDİ */
@@ -772,32 +763,12 @@
         .explanation-column {
           flex: 1;
           width: 100%;
-          padding: 0;
-          margin: 0;
-          box-sizing: border-box;
-        }
-        
-        /* Entries kutusu makale kartları ile tam aynı genişlikte */
-        .entries-column {
-          width: 100%;
-        }
-        
-        .explanation-content {
-          width: 100%;
-        }
-        
-        .entry-item {
-          width: 100%;
-          margin-bottom: 20px; /* Makale kartları ile aynı margin */
-          box-sizing: border-box; /* Entries ile makale kartları aynı box model */
         }
         
         .explanation-content {
           max-height: 300px;
           overflow: hidden;
           transition: max-height 0.5s ease;
-          width: 100%;
-          box-sizing: border-box;
         }
         
         .explanation-content.expanded {
@@ -806,7 +777,6 @@
         
         .toggle-explanation {
           display: block;
-          width: 100%;
         }
       }
 
@@ -891,31 +861,25 @@
           min-height: 50px;
         }
 
-        /* Galeri actions mobil - Analiz butonu ortada */
+        /* Galeri actions mobil */
         .gallery-actions {
           flex-direction: column;
           align-items: center;
-          gap: 15px;
         }
 
         .photo-analysis-btn {
           order: 2;
-          align-self: center;
-          min-width: 110px;
-          min-height: 40px;
-          padding: 10px 12px;
           margin: 0 auto;
         }
 
         .load-more {
           order: 1;
-          align-self: center;
           margin: 0 auto;
         }
 
-        /* Gallery grid mobil - 4'lü kalacak (önceki kodda 4'lü) */
+        /* Gallery grid mobil - 2'li olacak */
         .gallery-grid {
-          grid-template-columns: repeat(4, 1fr);
+          grid-template-columns: repeat(4, 1fr); /* Mobilde 2'li */
           gap: 10px;
         }
 
@@ -979,7 +943,7 @@
           -webkit-line-clamp: 4;
         }
         
-        /* Tablet boyutunda da 4'lü kalacak */
+        /* Tablet boyutunda da 2'li kalacak */
         .gallery-grid {
           grid-template-columns: repeat(4, 1fr);
           gap: 10px;
@@ -992,15 +956,6 @@
         
         .section-title {
           font-size: 1.5rem;
-        }
-        
-        /* Entries ve explanation aynı padding */
-        .entry-item {
-          padding: 15px; /* Makale kartları ile aynı */
-        }
-        
-        .explanation-content {
-          padding: 15px; /* Makale kartları ile aynı */
         }
       }
 
@@ -1042,7 +997,7 @@
           justify-content: space-between;
         }
         
-        /* Küçük mobil cihazlarda da 4'lü kalacak */
+        /* Küçük mobil cihazlarda da 2'li kalacak */
         .gallery-grid {
           grid-template-columns: repeat(4, 1fr);
           gap: 8px;
@@ -1074,15 +1029,6 @@
         
         .section-title {
           font-size: 1.3rem;
-        }
-        
-        /* Entries ve explanation aynı padding */
-        .entry-item {
-          padding: 12px; /* Makale kartları ile aynı */
-        }
-        
-        .explanation-content {
-          padding: 12px; /* Makale kartları ile aynı */
         }
       }
 
