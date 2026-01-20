@@ -460,7 +460,7 @@
         border: 1px solid rgba(255, 255, 255, 0.1);
       }
 
-      /* Latest Articles Bölümü - GÜNCELLENDİ */
+      /* Latest Articles Bölümü - TAMAMEN YENİ DÜZEN */
       .latest-articles {
         padding: 60px 20px;
         background: rgba(10, 25, 20, 0.5);
@@ -480,12 +480,14 @@
         width: 100%;
         max-width: 1200px;
         margin: 0 auto;
+        flex-wrap: wrap; /* Ekran küçüldükçe alt alta gelsin */
       }
 
+      /* Article kartları entries ile aynı genişlikte ve border radius'ta */
       .article-card {
         background: rgba(10, 25, 20, 0.7);
         border: 1px solid rgba(0, 255, 0, 0.3);
-        border-radius: 15px;
+        border-radius: 10px; /* Entry ile aynı border radius */
         padding: 20px;
         transition: all 0.3s ease;
         cursor: pointer;
@@ -494,8 +496,30 @@
         height: 100%;
         position: relative;
         overflow: hidden;
-        flex: 1;
-        max-width: 350px;
+        width: 100%; /* Tam genişlik */
+        max-width: 100%; /* Maksimum genişlik yok */
+        margin-bottom: 20px; /* Kartlar arası boşluk */
+      }
+
+      /* Masaüstünde 3'lü grid */
+      @media (min-width: 1200px) {
+        .article-card {
+          flex: 0 0 calc(33.333% - 17px); /* 3'lü grid */
+        }
+      }
+
+      /* Tablet boyutunda 2'li grid */
+      @media (min-width: 768px) and (max-width: 1199px) {
+        .article-card {
+          flex: 0 0 calc(50% - 13px); /* 2'li grid */
+        }
+      }
+
+      /* Mobilde tam genişlik */
+      @media (max-width: 767px) {
+        .article-card {
+          flex: 0 0 100%; /* Tam genişlik */
+        }
       }
 
       .article-card:hover {
@@ -649,37 +673,37 @@
         touch-action: pan-y;
       }
 
-      /* YENİ EKLENEN: Başlık ve içerik ortalaması için */
-      .section-title {
-        text-align: center;
-        width: 100%;
-      }
-      
-      .last-entry {
-        text-align: center;
-        width: 100%;
-      }
-      
-      /* Gider başlıklar ve içerik için ortak genişlik */
-      .entries-width {
+      /* YENİ EKLENEN: Entry ile aynı genişlikte container */
+      .entries-width-container {
         width: 100%;
         max-width: 50%; /* Masaüstü için entries-column genişliği */
         margin-left: auto;
         margin-right: auto;
       }
-      
-      /* Butonlar için genişlik ayarı */
-      .latest-articles .btn-box {
+
+      /* Section başlıkları ve butonlar için ortak stil */
+      .centered-content {
         width: 100%;
-        box-sizing: border-box;
+        max-width: 50%; /* Entry ile aynı genişlik */
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
       }
-      
-      /* Photographic Cryptology ve Latest Articles container'ları için düzenleme */
+
+      /* Photo gallery ve latest articles container düzenlemesi */
       .photo-gallery .container,
       .latest-articles .container {
         display: flex;
         flex-direction: column;
         align-items: center;
+      }
+
+      /* Article card'ların wrapper'ı */
+      .articles-wrapper {
+        width: 100%;
+        max-width: 50%; /* Entry ile aynı genişlik */
+        margin-left: auto;
+        margin-right: auto;
       }
 
       /* MOBİL UYUMLULUK */
@@ -689,11 +713,18 @@
         }
         
         .article-card {
-          max-width: 350px;
+          max-width: 100%;
         }
         
         .article-title {
           height: 70px;
+        }
+        
+        /* Entry genişliğini ayarla */
+        .entries-width-container,
+        .centered-content,
+        .articles-wrapper {
+          max-width: 100%;
         }
       }
 
@@ -836,10 +867,8 @@
         }
         
         .article-card {
-          max-width: 100%;
-          width: 100%;
           padding: 15px;
-          max-width: 320px; /* Mobilde daha küçük kartlar */
+          max-width: 100%;
           margin: 0 auto;
         }
         
@@ -858,9 +887,12 @@
           gap: 15px;
         }
         
-        /* Mobilde entries-width tam genişlik */
-        .entries-width {
+        /* Entry genişliğini mobilde tam yap */
+        .entries-width-container,
+        .centered-content,
+        .articles-wrapper {
           max-width: 100%;
+          width: 100%;
         }
       }
 
@@ -876,7 +908,6 @@
         
         .article-card {
           padding: 15px;
-          max-width: 320px; /* Daha da küçük kartlar */
         }
         
         .article-title {
@@ -958,9 +989,7 @@
         
         /* Mobilde kartları daha da küçült */
         .article-card {
-          max-width: 100%;
           padding: 12px;
-          max-width: 320px;
         }
         
         .article-title {
@@ -1238,10 +1267,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <section id="photo-gallery" class="photo-gallery">
         <div class="container">
-            <div class="photo-gallery-header entries-width">
+            <div class="centered-content">
                 <h2 class="section-title"><i class="fa-solid fa-images"></i> Photographic Cryptology</h2>
             </div>
-            <div class="gallery-wrapper entries-width">
+            <div class="entries-width-container">
                 <div id="gallery-grid" class="gallery-grid"></div>
                 <div class="gallery-actions">
                     <button id="load-more" class="load-more">More Photos</button>
@@ -1257,15 +1286,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <section id="latest-articles" class="latest-articles">
         <div class="container">
-            <h2 class="section-title entries-width"><i class="fas fa-newspaper"></i> Latest Cybersecurity Articles</h2>
-            <p class="last-entry entries-width">Last 3 Articles</p>
-            <div class="articles-container entries-width">
+            <div class="centered-content">
+                <h2 class="section-title"><i class="fas fa-newspaper"></i> Latest Cybersecurity Articles</h2>
+                <p class="last-entry">Last 3 Articles</p>
+            </div>
+            <div class="articles-wrapper">
                 <div id="articles-row" class="articles-row">
                     <!-- Makaleler buraya JavaScript ile yüklenecek -->
                 </div>
-            </div>
-            <div class="entries-width" style="text-align: center; margin-top: 20px;">
-                <a href="/article" class="btn-box"><i class="fas fa-book-open"></i> View All Articles</a>
+                <div style="text-align: center; margin-top: 20px;">
+                    <a href="/article" class="btn-box"><i class="fas fa-book-open"></i> View All Articles</a>
+                </div>
             </div>
         </div>
     </section>
