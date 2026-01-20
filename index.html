@@ -347,7 +347,7 @@
         font-size: 14px;
       }
 
-      /* Photographic Cryptology için yeni düzen - GÜNCELLENDİ */
+      /* Photographic Cryptology için yeni düzen - GÜNCELLENDİ: GRID ORTALAMA */
       .photo-gallery-header {
         margin-bottom: 30px;
         text-align: center;
@@ -645,17 +645,19 @@
         margin-bottom: 15px;
       }
 
-      /* Fotoğraf galerisi - KARE FOTOĞRAFLAR İÇİN GÜNCELLENDİ - Masaüstü 4, mobil 2 */
+      /* Fotoğraf galerisi - KARE FOTOĞRAFLAR İÇİN GÜNCELLENDİ - ORTALI */
       .gallery-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr); /* Masaüstünde 4'lü */
         gap: 15px;
         margin-top: 20px;
         width: 100%;
+        justify-items: center; /* Grid içindeki öğeleri ortala */
       }
 
       .gallery-photo {
         width: 100%;
+        max-width: 250px; /* Maksimum genişlik belirle */
         aspect-ratio: 1/1; /* Kare fotoğraflar için */
         object-fit: cover; /* Kare içinde sığdır */
         border-radius: 8px;
@@ -778,6 +780,16 @@
         .toggle-explanation {
           display: block;
         }
+        
+        /* Fotoğraf galerisi tablette */
+        .gallery-grid {
+          grid-template-columns: repeat(4, 1fr);
+          justify-items: center;
+        }
+        
+        .gallery-photo {
+          max-width: 200px;
+        }
       }
 
       @media (max-width: 992px) {
@@ -879,8 +891,13 @@
 
         /* Gallery grid mobil - 2'li olacak */
         .gallery-grid {
-          grid-template-columns: repeat(4, 1fr); /* Mobilde 2'li */
+          grid-template-columns: repeat(2, 1fr); /* Mobilde 2'li */
           gap: 10px;
+          justify-items: center;
+        }
+
+        .gallery-photo {
+          max-width: 100%;
         }
 
         /* Mobilde tooltip'ı kapat */
@@ -915,6 +932,36 @@
           font-size: 0.75rem;
           gap: 15px;
         }
+        
+        /* iPhone 11 landscape için özel düzenleme */
+        @media (max-width: 896px) and (orientation: landscape) {
+          .microblog .section-title {
+            font-size: 1.4rem;
+            margin-bottom: 5px;
+          }
+          
+          .microblog .last-entry {
+            margin-bottom: 15px;
+            font-size: 0.8rem;
+          }
+          
+          .microblog-container {
+            margin-top: 15px;
+          }
+          
+          .entry-item {
+            padding: 12px;
+            margin-bottom: 12px;
+          }
+          
+          .entries-loading {
+            padding: 20px;
+          }
+          
+          .explanation-content {
+            padding: 15px;
+          }
+        }
       }
 
       @media (max-width: 768px) {
@@ -945,17 +992,34 @@
         
         /* Tablet boyutunda da 2'li kalacak */
         .gallery-grid {
-          grid-template-columns: repeat(4, 1fr);
+          grid-template-columns: repeat(2, 1fr);
           gap: 10px;
+          justify-items: center;
         }
         
         .gallery-photo {
           height: auto;
           aspect-ratio: 1/1; /* Mobilde de kare kalacak */
+          max-width: 100%;
         }
         
         .section-title {
           font-size: 1.5rem;
+        }
+        
+        /* Mobil landscape düzenlemeleri */
+        @media (orientation: landscape) {
+          .microblog .container {
+            padding-top: 10px;
+          }
+          
+          .microblog .section-title {
+            margin-bottom: 5px;
+          }
+          
+          .microblog .last-entry {
+            margin-bottom: 15px;
+          }
         }
       }
 
@@ -999,13 +1063,15 @@
         
         /* Küçük mobil cihazlarda da 2'li kalacak */
         .gallery-grid {
-          grid-template-columns: repeat(4, 1fr);
+          grid-template-columns: repeat(2, 1fr);
           gap: 8px;
+          justify-items: center;
         }
         
         .gallery-photo {
           height: auto;
           aspect-ratio: 1/1;
+          max-width: 100%;
         }
         
         .gallery-photo:hover {
@@ -1029,6 +1095,22 @@
         
         .section-title {
           font-size: 1.3rem;
+        }
+        
+        /* Mobil landscape için */
+        @media (orientation: landscape) {
+          .microblog .container {
+            padding: 0 10px;
+          }
+          
+          .entry-item {
+            padding: 10px;
+            margin-bottom: 10px;
+          }
+          
+          .microblog-container {
+            gap: 15px;
+          }
         }
       }
 
@@ -1743,13 +1825,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             }
         }
 
-        // Mikroblog entries'leri yükle - DÜZELTİLDİ: 1 dakika bekleme kaldırıldı
+        // Mikroblog entries'leri yükle - DÜZELTİLDİ: JSONBin ID düzeltildi ve 1 dakika bekleme kaldırıldı
         async function loadMicroblogEntries() {
             showEntriesLoading();
             
             try {
+                // Doğru JSONBin ID'sini kullan
                 const MICROBLOG_BIN_ID = '694f7d8e43b1c97be91ef7d1';
                 const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
+                
+                console.log('Fetching microblog entries from:', MICROBLOG_BIN_ID);
                 
                 const response = await fetch(proxyUrl, {
                     method: 'POST',
@@ -1767,7 +1852,26 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 }
                 
                 const result = await response.json();
-                const entries = result.entries || result.records || result || [];
+                console.log('Microblog entries result:', result);
+                
+                // Veri yapısını kontrol et
+                let entries = [];
+                
+                if (Array.isArray(result)) {
+                    entries = result;
+                } else if (result.entries && Array.isArray(result.entries)) {
+                    entries = result.entries;
+                } else if (result.records && Array.isArray(result.records)) {
+                    entries = result.records;
+                } else if (result.microblog && Array.isArray(result.microblog)) {
+                    entries = result.microblog;
+                } else {
+                    console.warn('Unexpected data structure:', result);
+                }
+                
+                console.log('Parsed entries:', entries);
+                
+                // Son 5 entry'yi al
                 const last5Entries = entries.slice(0, 5);
                 
                 // Başarılı yükleme - hemen göster
@@ -1777,7 +1881,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 console.error('Error loading microblog entries:', error);
                 const entriesContainer = document.getElementById('entries');
                 if (entriesContainer) {
-                    entriesContainer.innerHTML = '<div class="no-articles">Unable to load entries. Please try again later.</div>';
+                    entriesContainer.innerHTML = `
+                        <div class="no-articles">
+                            <p>Unable to load entries. Please try again later.</p>
+                            <p style="font-size: 0.8rem; color: #888; margin-top: 10px;">
+                                Error: ${error.message}
+                            </p>
+                        </div>
+                    `;
                 }
             }
         }
@@ -1794,27 +1905,37 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 
                 entriesContainer.innerHTML = '';
                 
-                entries.forEach(entry => {
-                    const entryDate = new Date(entry.date || entry.created_at);
-                    const dateStr = entryDate.toLocaleDateString('en-US', {
+                entries.forEach((entry, index) => {
+                    const entryDate = new Date(entry.date || entry.created_at || entry.timestamp);
+                    const dateStr = entryDate.toLocaleDateString('tr-TR', {
                         year: 'numeric',
-                        month: 'short',
-                        day: 'numeric'
+                        month: '2-digit',
+                        day: '2-digit'
                     });
-                    const timeStr = entryDate.toLocaleTimeString('en-US', {
+                    const timeStr = entryDate.toLocaleTimeString('tr-TR', {
                         hour: '2-digit',
                         minute: '2-digit'
                     });
+
+                    // Entry içeriğini temizle (HTML etiketlerini kaldır)
+                    let content = entry.content || entry.text || entry.message || 'No content available...';
+                    // Basit HTML temizleme
+                    content = content.replace(/<[^>]*>/g, '');
+                    
+                    // Eğer içerik çok uzunsa kısalt
+                    if (content.length > 150) {
+                        content = content.substring(0, 150) + '...';
+                    }
 
                     const entryDiv = document.createElement('div');
                     entryDiv.className = 'entry-item touch-delay';
                     entryDiv.innerHTML = `
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                             <span style="color: #00ff00; font-size: 0.9rem;">${dateStr} ${timeStr}</span>
-                            <span style="color: #f9d71c; font-size: 0.8rem;">#${entry.category || 'general'}</span>
+                            <span style="color: #f9d71c; font-size: 0.8rem;">#${entry.category || entry.tag || 'general'}</span>
                         </div>
                         <div style="color: white; line-height: 1.5; font-size: 0.95rem;">
-                            ${entry.content || 'No content available...'}
+                            ${content}
                         </div>
                         <div style="margin-top: 10px; display: flex; gap: 15px; font-size: 0.8rem; color: #aaa;">
                             <span><i class="far fa-comment"></i> ${entry.comments || 0}</span>
@@ -1822,6 +1943,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         </div>
                     `;
                     
+                    // Entry ID'si varsa ona göre linkle, yoksa index'e göre
                     if (entry.id) {
                         entryDiv.addEventListener('click', () => {
                             window.location.href = `/microblog.html#${entry.id}`;
@@ -1856,11 +1978,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 });
             } catch (displayError) {
                 console.error('Error displaying entries:', displayError);
-                entriesContainer.innerHTML = '<div class="no-articles">Error displaying entries.</div>';
+                entriesContainer.innerHTML = '<div class="no-articles">Error displaying entries. Please refresh the page.</div>';
             }
         }
 
-        // Galeri ve Modal işlevselliği
+        // Galeri ve Modal işlevselliği - FOTOĞRAF GRID ORTALAMA
         document.addEventListener("DOMContentLoaded", () => {
             const galleryGrid = document.getElementById("gallery-grid");
             const loadMoreBtn = document.getElementById("load-more");
@@ -2082,6 +2204,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 });
             }
             
+            // Sayfa yüklendiğinde makaleleri ve entry'leri yükle
             loadLatestArticles();
             loadMicroblogEntries();
         });
