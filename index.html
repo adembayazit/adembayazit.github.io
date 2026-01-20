@@ -63,30 +63,41 @@
         padding: 10px 5%;
       }
       
-      /* Mikroblog için iki sütunlu düzen */
+      /* Container genişlik ayarı - GÜNCELLENDİ */
+      .container {
+        width: 100%;
+        max-width: 1400px; /* Görseldeki gibi geniş container */
+        margin: 0 auto;
+        padding: 0 20px;
+        box-sizing: border-box;
+      }
+
+      /* Mikroblog için iki sütunlu düzen - GÜNCELLENDİ */
       .microblog-container {
         display: flex;
         gap: 30px;
         margin-top: 30px;
+        width: 100%;
       }
 
       .entries-column {
-        flex: 1;
+        flex: 1.5; /* Sol taraf daha geniş */
       }
 
       .explanation-column {
-        flex: 1;
+        flex: 1; /* Sağ taraf daha dar */
       }
 
       .explanation-content {
         background: rgba(10, 25, 20, 0.7);
-        border-radius: 20px;
+        border-radius: 10px; /* Görseldeki gibi 10px radius */
         padding: 20px;
         border: 1px solid rgba(0, 255, 0, 0.3);
         box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);
         position: relative;
         overflow: hidden;
         font-size: 0.8rem;
+        height: 100%;
       }
 
       .explanation-content h3 {
@@ -112,6 +123,7 @@
         margin-top: 15px;
         cursor: pointer;
         transition: all 0.3s;
+        width: 100%;
       }
 
       .toggle-explanation:hover {
@@ -335,9 +347,10 @@
         font-size: 14px;
       }
 
-      /* Photographic Cryptology için yeni düzen */
+      /* Photographic Cryptology için yeni düzen - GÜNCELLENDİ */
       .photo-gallery-header {
         margin-bottom: 30px;
+        text-align: center;
       }
 
       .gallery-actions {
@@ -460,7 +473,7 @@
         border: 1px solid rgba(255, 255, 255, 0.1);
       }
 
-      /* Latest Articles Bölümü - TAMAMEN YENİ DÜZEN */
+      /* Latest Articles Bölümü - GÜNCELLENDİ */
       .latest-articles {
         padding: 60px 20px;
         background: rgba(10, 25, 20, 0.5);
@@ -478,12 +491,12 @@
         justify-content: center;
         gap: 25px;
         width: 100%;
-        max-width: 1200px;
+        max-width: 1400px; /* Container ile aynı genişlik */
         margin: 0 auto;
         flex-wrap: wrap; /* Ekran küçüldükçe alt alta gelsin */
       }
 
-      /* Article kartları entries ile aynı genişlikte ve border radius'ta */
+      /* Article kartları entries ile aynı genişlikte ve border radius'ta - GÜNCELLENDİ */
       .article-card {
         background: rgba(10, 25, 20, 0.7);
         border: 1px solid rgba(0, 255, 0, 0.3);
@@ -639,6 +652,7 @@
         grid-template-columns: repeat(4, 1fr); /* Masaüstünde 4'lü */
         gap: 15px;
         margin-top: 20px;
+        width: 100%;
       }
 
       .gallery-photo {
@@ -656,16 +670,21 @@
         box-shadow: 0 5px 15px rgba(0, 255, 0, 0.3);
       }
 
-      /* Mikroblog entries tıklanabilir */
+      /* Mikroblog entries tıklanabilir - GÜNCELLENDİ */
       .entry-item {
         cursor: pointer;
         transition: all 0.3s ease;
         margin-bottom: 15px;
+        background: rgba(10, 25, 20, 0.5);
+        border-radius: 10px; /* Görseldeki gibi 10px radius */
+        border: 1px solid rgba(0, 255, 0, 0.2);
+        padding: 20px;
       }
 
       .entry-item:hover {
         background: rgba(0, 255, 0, 0.05);
-        transform: translateX(5px);
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 255, 0, 0.2);
       }
 
       /* Touch için gecikme mekanizması */
@@ -673,43 +692,78 @@
         touch-action: pan-y;
       }
 
-      /* YENİ EKLENEN: Entry ile aynı genişlikte container */
-      .entries-width-container {
+      /* Section başlıkları için stil - GÜNCELLENDİ */
+      .section-title {
+        text-align: center;
         width: 100%;
-        max-width: 50%; /* Masaüstü için entries-column genişliği */
-        margin-left: auto;
-        margin-right: auto;
+        font-size: 1.8rem;
+        margin-bottom: 10px;
+        color: white;
+      }
+      
+      .last-entry {
+        text-align: center;
+        width: 100%;
+        color: #ccc;
+        margin-bottom: 30px;
+        font-size: 0.9rem;
       }
 
-      /* Section başlıkları ve butonlar için ortak stil */
-      .centered-content {
-        width: 100%;
-        max-width: 50%; /* Entry ile aynı genişlik */
-        margin-left: auto;
-        margin-right: auto;
-        text-align: center;
+      /* Butonlar için genişlik ayarı */
+      .btn-box {
+        display: inline-block;
+        padding: 12px 28px;
+        background: rgba(0, 100, 0, 0.5);
+        border-radius: 10px; /* Görseldeki gibi 10px radius */
+        font-size: 16px;
+        color: #f9d71c;
+        letter-spacing: 1px;
+        text-decoration: none;
+        font-weight: 600;
+        border: 1px solid rgba(249, 215, 28, 0.3);
+        transition: all 0.3s ease;
+      }
+
+      .btn-box:hover {
+        background: rgba(0, 100, 0, 0.7);
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 255, 0, 0.3);
       }
 
       /* Photo gallery ve latest articles container düzenlemesi */
       .photo-gallery .container,
-      .latest-articles .container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
-
-      /* Article card'ların wrapper'ı */
-      .articles-wrapper {
+      .latest-articles .container,
+      .microblog .container {
         width: 100%;
-        max-width: 50%; /* Entry ile aynı genişlik */
-        margin-left: auto;
-        margin-right: auto;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 20px;
+        box-sizing: border-box;
       }
 
-      /* MOBİL UYUMLULUK */
+      /* All Entry Show butonu için container */
+      .microblog .container > div:last-child {
+        text-align: center;
+        margin-top: 30px;
+        width: 100%;
+      }
+
+      /* Gallery actions container genişliği */
+      .gallery-actions {
+        width: 100%;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      /* MOBİL UYUMLULUK - GÜNCELLENDİ */
       @media (max-width: 1200px) {
+        .container {
+          max-width: 100%;
+          padding: 0 15px;
+        }
+        
         .articles-row {
-          max-width: 900px;
+          max-width: 100%;
         }
         
         .article-card {
@@ -720,21 +774,19 @@
           height: 70px;
         }
         
-        /* Entry genişliğini ayarla */
-        .entries-width-container,
-        .centered-content,
-        .articles-wrapper {
-          max-width: 100%;
-        }
-      }
-
-      @media (max-width: 992px) {
+        /* Mikroblog container mobilde tek sütun */
         .microblog-container {
           flex-direction: column;
         }
         
+        .entries-column, 
+        .explanation-column {
+          flex: 1;
+          width: 100%;
+        }
+        
         .explanation-content {
-          max-height: 225px;
+          max-height: 300px;
           overflow: hidden;
           transition: max-height 0.5s ease;
         }
@@ -746,7 +798,9 @@
         .toggle-explanation {
           display: block;
         }
-        
+      }
+
+      @media (max-width: 992px) {
         .modal-image-wrapper {
           max-height: calc(100vh - 150px);
           padding: 15px;
@@ -886,14 +940,6 @@
           font-size: 0.75rem;
           gap: 15px;
         }
-        
-        /* Entry genişliğini mobilde tam yap */
-        .entries-width-container,
-        .centered-content,
-        .articles-wrapper {
-          max-width: 100%;
-          width: 100%;
-        }
       }
 
       @media (max-width: 768px) {
@@ -931,6 +977,10 @@
         .gallery-photo {
           height: auto;
           aspect-ratio: 1/1; /* Mobilde de kare kalacak */
+        }
+        
+        .section-title {
+          font-size: 1.5rem;
         }
       }
 
@@ -1000,6 +1050,10 @@
         .article-excerpt {
           font-size: 0.8rem;
           height: 40px;
+        }
+        
+        .section-title {
+          font-size: 1.3rem;
         }
       }
 
@@ -1267,30 +1321,24 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <section id="photo-gallery" class="photo-gallery">
         <div class="container">
-            <div class="centered-content">
-                <h2 class="section-title"><i class="fa-solid fa-images"></i> Photographic Cryptology</h2>
-            </div>
-            <div class="entries-width-container">
-                <div id="gallery-grid" class="gallery-grid"></div>
-                <div class="gallery-actions">
-                    <button id="load-more" class="load-more">More Photos</button>
-                    <a href="/photographiccryptology.html" class="photo-analysis-btn" 
-                       data-tooltip="Fotoğrafların detaylı açıklamaları ve kriptolojik anlamları">
-                        <i class="fas fa-search-plus"></i>
-                        <span class="btn-text">Analysis</span>
-                    </a>
-                </div>
+            <h2 class="section-title"><i class="fa-solid fa-images"></i> Photographic Cryptology</h2>
+            <div id="gallery-grid" class="gallery-grid"></div>
+            <div class="gallery-actions">
+                <button id="load-more" class="load-more">More Photos</button>
+                <a href="/photographiccryptology.html" class="photo-analysis-btn" 
+                   data-tooltip="Fotoğrafların detaylı açıklamaları ve kriptolojik anlamları">
+                    <i class="fas fa-search-plus"></i>
+                    <span class="btn-text">Analysis</span>
+                </a>
             </div>
         </div>
     </section>
 
     <section id="latest-articles" class="latest-articles">
         <div class="container">
-            <div class="centered-content">
-                <h2 class="section-title"><i class="fas fa-newspaper"></i> Latest Cybersecurity Articles</h2>
-                <p class="last-entry">Last 3 Articles</p>
-            </div>
-            <div class="articles-wrapper">
+            <h2 class="section-title"><i class="fas fa-newspaper"></i> Latest Cybersecurity Articles</h2>
+            <p class="last-entry">Last 3 Articles</p>
+            <div class="articles-container">
                 <div id="articles-row" class="articles-row">
                     <!-- Makaleler buraya JavaScript ile yüklenecek -->
                 </div>
@@ -1810,18 +1858,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     const entryDiv = document.createElement('div');
                     entryDiv.className = 'entry-item touch-delay';
                     entryDiv.innerHTML = `
-                        <div style="margin-bottom: 15px; padding: 15px; background: rgba(10, 25, 20, 0.5); border-radius: 10px; border: 1px solid rgba(0, 255, 0, 0.2);">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                                <span style="color: #00ff00; font-size: 0.9rem;">${dateStr} ${timeStr}</span>
-                                <span style="color: #f9d71c; font-size: 0.8rem;">#${entry.category || 'general'}</span>
-                            </div>
-                            <div style="color: white; line-height: 1.5; font-size: 0.95rem;">
-                                ${entry.content || 'No content available...'}
-                            </div>
-                            <div style="margin-top: 10px; display: flex; gap: 15px; font-size: 0.8rem; color: #aaa;">
-                                <span><i class="far fa-comment"></i> ${entry.comments || 0}</span>
-                                <span><i class="far fa-heart"></i> ${entry.likes || 0}</span>
-                            </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <span style="color: #00ff00; font-size: 0.9rem;">${dateStr} ${timeStr}</span>
+                            <span style="color: #f9d71c; font-size: 0.8rem;">#${entry.category || 'general'}</span>
+                        </div>
+                        <div style="color: white; line-height: 1.5; font-size: 0.95rem;">
+                            ${entry.content || 'No content available...'}
+                        </div>
+                        <div style="margin-top: 10px; display: flex; gap: 15px; font-size: 0.8rem; color: #aaa;">
+                            <span><i class="far fa-comment"></i> ${entry.comments || 0}</span>
+                            <span><i class="far fa-heart"></i> ${entry.likes || 0}</span>
                         </div>
                     `;
                     
