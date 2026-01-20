@@ -786,7 +786,7 @@
 
         /* Gallery grid mobil - 2'li olacak */
         .gallery-grid {
-          grid-template-columns: repeat(4, 1fr); /* Mobilde 2'li */
+          grid-template-columns: repeat(2, 1fr); /* Mobilde 2'li */
           gap: 10px;
         }
 
@@ -795,7 +795,7 @@
           display: none;
         }
         
-        /* Makaleler mobil - ORTALAMA VE KÜÇÜK KARTLAR */
+        /* Makaleler mobil - KÜÇÜK KARTLAR */
         .articles-row {
           flex-direction: column;
           align-items: center;
@@ -806,8 +806,23 @@
           max-width: 100%;
           width: 100%;
           padding: 15px;
-          max-width: 400px; /* Mobilde maksimum genişlik */
-          margin: 0 auto; /* Ortalamak için */
+          max-width: 300px; /* Mobilde daha küçük kartlar */
+          margin: 0 auto;
+        }
+        
+        .article-title {
+          font-size: 1rem;
+          height: 50px;
+        }
+        
+        .article-excerpt {
+          font-size: 0.85rem;
+          height: 50px;
+        }
+        
+        .article-stats {
+          font-size: 0.75rem;
+          gap: 15px;
         }
       }
 
@@ -823,23 +838,24 @@
         
         .article-card {
           padding: 15px;
-          max-width: 350px; /* Daha küçük kartlar */
+          max-width: 280px; /* Daha da küçük kartlar */
         }
         
         .article-title {
-          font-size: 1rem;
-          height: auto;
+          font-size: 0.95rem;
+          height: 45px;
           -webkit-line-clamp: 3;
         }
         
         .article-excerpt {
-          height: auto;
+          font-size: 0.82rem;
+          height: 45px;
           -webkit-line-clamp: 4;
         }
         
         /* Tablet boyutunda da 2'li kalacak */
         .gallery-grid {
-          grid-template-columns: repeat(4, 1fr);
+          grid-template-columns: repeat(2, 1fr);
           gap: 10px;
         }
         
@@ -889,7 +905,7 @@
         
         /* Küçük mobil cihazlarda da 2'li kalacak */
         .gallery-grid {
-          grid-template-columns: repeat(4, 1fr);
+          grid-template-columns: repeat(2, 1fr);
           gap: 8px;
         }
         
@@ -906,6 +922,17 @@
         .article-card {
           max-width: 100%;
           padding: 12px;
+          max-width: 250px;
+        }
+        
+        .article-title {
+          font-size: 0.9rem;
+          height: 40px;
+        }
+        
+        .article-excerpt {
+          font-size: 0.8rem;
+          height: 40px;
         }
       }
 
@@ -1521,7 +1548,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             }
         }
 
-        // ENTRY LOADING İÇİN 1 DAKİKA ZAMAN AYARI - SADECE HATA DURUMUNDA
+        // Latest Articles loading - SADECE HATA DURUMUNDA 1 DAKİKA
         async function loadLatestArticles() {
             const container = document.getElementById('articles-row');
             if (!container) return;
@@ -1608,8 +1635,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             } catch (error) {
                 console.error('Error loading articles:', error);
                 // Hata durumunda 1 dakika bekleyip hata göster
-                const minLoadingTime = 60000; // 1 dakika
                 const startTime = Date.now();
+                const minLoadingTime = 60000;
                 const elapsed = Date.now() - startTime;
                 const remainingTime = Math.max(0, minLoadingTime - elapsed);
                 
@@ -1632,16 +1659,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             }
         }
 
-        // Mikroblog entries'leri yükle (mikroblog sayfasından) - HER ZAMAN 1 DAKİKA LOADİNG SÜRESİ
+        // Mikroblog entries'leri yükle - DÜZELTİLDİ: Artık başarılı yüklemeden sonra hata göstermeyecek
         async function loadMicroblogEntries() {
             showEntriesLoading();
             
             const startTime = Date.now();
-            const minLoadingTime = 60000; // 1 dakika = 60000 ms
+            const minLoadingTime = 60000; // 1 dakika
             
             try {
-                // JSONBin'den mikroblog entries'lerini çek
-                const MICROBLOG_BIN_ID = '694f7d8e43b1c97be91ef7d1'; // Mikroblog için bin ID
+                const MICROBLOG_BIN_ID = '694f7d8e43b1c97be91ef7d1';
                 const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
                 
                 const response = await fetch(proxyUrl, {
@@ -1661,8 +1687,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 
                 const result = await response.json();
                 const entries = result.entries || result.records || result || [];
-                
-                // Son 5 entry'yi al
                 const last5Entries = entries.slice(0, 5);
                 
                 // Minimum loading süresini kontrol et
@@ -1672,7 +1696,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 // Kalan süre kadar bekle
                 await new Promise(resolve => setTimeout(resolve, remainingTime));
                 
+                // Başarılı yükleme - entry'leri göster
                 displayMicroblogEntries(last5Entries);
+                
             } catch (error) {
                 console.error('Error loading microblog entries:', error);
                 
@@ -1692,82 +1718,83 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             const entriesContainer = document.getElementById('entries');
             if (!entriesContainer) return;
             
-            if (!entries || entries.length === 0) {
-                entriesContainer.innerHTML = '<div class="no-articles">No entries available at the moment.</div>';
-                return;
-            }
-            
-            entriesContainer.innerHTML = '';
-            
-            entries.forEach(entry => {
-                const entryDate = new Date(entry.date || entry.created_at);
-                const dateStr = entryDate.toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric'
-                });
-                const timeStr = entryDate.toLocaleTimeString('en-US', {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-
-                const entryDiv = document.createElement('div');
-                entryDiv.className = 'entry-item touch-delay';
-                entryDiv.innerHTML = `
-                    <div style="margin-bottom: 15px; padding: 15px; background: rgba(10, 25, 20, 0.5); border-radius: 10px; border: 1px solid rgba(0, 255, 0, 0.2);">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                            <span style="color: #00ff00; font-size: 0.9rem;">${dateStr} ${timeStr}</span>
-                            <span style="color: #f9d71c; font-size: 0.8rem;">#${entry.category || 'general'}</span>
-                        </div>
-                        <div style="color: white; line-height: 1.5; font-size: 0.95rem;">
-                            ${entry.content || 'No content available...'}
-                        </div>
-                        <div style="margin-top: 10px; display: flex; gap: 15px; font-size: 0.8rem; color: #aaa;">
-                            <span><i class="far fa-comment"></i> ${entry.comments || 0}</span>
-                            <span><i class="far fa-heart"></i> ${entry.likes || 0}</span>
-                        </div>
-                    </div>
-                `;
+            try {
+                if (!entries || entries.length === 0) {
+                    entriesContainer.innerHTML = '<div class="no-articles">No entries available at the moment.</div>';
+                    return;
+                }
                 
-                // Entry'e tıklanınca ilgili entry sayfasına git
-                // Mikroblog entry'lerinizde 'id' veya 'slug' olmalı
-                if (entry.id) {
-                    entryDiv.addEventListener('click', () => {
-                        window.location.href = `/microblog.html#${entry.id}`;
+                entriesContainer.innerHTML = '';
+                
+                entries.forEach(entry => {
+                    const entryDate = new Date(entry.date || entry.created_at);
+                    const dateStr = entryDate.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
                     });
-                    
-                    // Touch event with delay for mobile
-                    entryDiv.addEventListener('touchstart', function(e) {
-                        handleTouchStart(e);
+                    const timeStr = entryDate.toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit'
                     });
+
+                    const entryDiv = document.createElement('div');
+                    entryDiv.className = 'entry-item touch-delay';
+                    entryDiv.innerHTML = `
+                        <div style="margin-bottom: 15px; padding: 15px; background: rgba(10, 25, 20, 0.5); border-radius: 10px; border: 1px solid rgba(0, 255, 0, 0.2);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <span style="color: #00ff00; font-size: 0.9rem;">${dateStr} ${timeStr}</span>
+                                <span style="color: #f9d71c; font-size: 0.8rem;">#${entry.category || 'general'}</span>
+                            </div>
+                            <div style="color: white; line-height: 1.5; font-size: 0.95rem;">
+                                ${entry.content || 'No content available...'}
+                            </div>
+                            <div style="margin-top: 10px; display: flex; gap: 15px; font-size: 0.8rem; color: #aaa;">
+                                <span><i class="far fa-comment"></i> ${entry.comments || 0}</span>
+                                <span><i class="far fa-heart"></i> ${entry.likes || 0}</span>
+                            </div>
+                        </div>
+                    `;
                     
-                    entryDiv.addEventListener('touchend', function(e) {
-                        handleTouchEnd(e, () => {
+                    if (entry.id) {
+                        entryDiv.addEventListener('click', () => {
                             window.location.href = `/microblog.html#${entry.id}`;
                         });
-                    });
-                } else {
-                    // Eğer ID yoksa genel mikroblog sayfasına git
-                    entryDiv.addEventListener('click', () => {
-                        window.location.href = '/microblog.html';
-                    });
-                    
-                    entryDiv.addEventListener('touchstart', function(e) {
-                        handleTouchStart(e);
-                    });
-                    
-                    entryDiv.addEventListener('touchend', function(e) {
-                        handleTouchEnd(e, () => {
+                        
+                        entryDiv.addEventListener('touchstart', function(e) {
+                            handleTouchStart(e);
+                        });
+                        
+                        entryDiv.addEventListener('touchend', function(e) {
+                            handleTouchEnd(e, () => {
+                                window.location.href = `/microblog.html#${entry.id}`;
+                            });
+                        });
+                    } else {
+                        entryDiv.addEventListener('click', () => {
                             window.location.href = '/microblog.html';
                         });
-                    });
-                }
+                        
+                        entryDiv.addEventListener('touchstart', function(e) {
+                            handleTouchStart(e);
+                        });
+                        
+                        entryDiv.addEventListener('touchend', function(e) {
+                            handleTouchEnd(e, () => {
+                                window.location.href = '/microblog.html';
+                            });
+                        });
+                    }
 
-                entriesContainer.appendChild(entryDiv);
-            });
+                    entriesContainer.appendChild(entryDiv);
+                });
+            } catch (displayError) {
+                console.error('Error displaying entries:', displayError);
+                entriesContainer.innerHTML = '<div class="no-articles">Error displaying entries.</div>';
+            }
         }
 
-        // Galeri ve YENİ Modal işlevselliği
+        // Galeri ve Modal işlevselliği
         document.addEventListener("DOMContentLoaded", () => {
             const galleryGrid = document.getElementById("gallery-grid");
             const loadMoreBtn = document.getElementById("load-more");
@@ -1796,7 +1823,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 })
                 .catch(err => {
                     console.error("Photo fetch error:", err);
-                    // Fallback veri
                     allPhotos = [
                         {
                             "src": "PHOTO/photo1.JPG",
@@ -1828,13 +1854,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     img.dataset.time = photo.time;
                     img.dataset.index = index;
                     
-                    // Click event
                     img.addEventListener("click", () => {
                         currentIndex = index;
                         openModal();
                     });
                     
-                    // Touch event with delay for mobile
                     img.addEventListener("touchstart", function(e) {
                         handleTouchStart(e);
                     });
@@ -1883,7 +1907,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 if (modalTime) modalTime.textContent = photo.time || 'Unknown Time';
                 if (modalCounter) modalCounter.textContent = `${currentIndex + 1} / ${allPhotos.length}`;
                 
-                // Küçük resimleri güncelle
                 updateThumbnails();
             }
 
@@ -1893,7 +1916,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 
                 if (prevThumb) {
                     prevThumb.src = allPhotos[prevIndex].src;
-                    // Küçük resimlere tıklama olayı ekle
                     prevThumb.onclick = () => {
                         currentIndex = prevIndex;
                         updateModal();
@@ -1919,7 +1941,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 updateModal();
             }
 
-            // Olay dinleyicileri
             if (closeBtn) {
                 closeBtn.addEventListener("click", closeModal);
             }
@@ -1938,7 +1959,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 prevButton.addEventListener("click", prevPhoto);
             }
 
-            // Klavye ile gezinme
             document.addEventListener("keydown", e => {
                 if (modal && modal.classList.contains("show")) {
                     if (e.key === "ArrowRight") {
@@ -1951,7 +1971,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 }
             });
 
-            // Swipe için touch events
             let touchStartX = 0;
             let touchEndX = 0;
 
@@ -1982,7 +2001,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 });
             }
             
-            // Expand More butonu için
             const toggleButton = document.querySelector('.toggle-explanation');
             const explanationContent = document.querySelector('.explanation-content');
             
@@ -1998,10 +2016,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 });
             }
             
-            // Latest Articles yükle
             loadLatestArticles();
-            
-            // Mikroblog entries yükle (1 dakika loading süresiyle)
             loadMicroblogEntries();
         });
     </script>
