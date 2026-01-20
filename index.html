@@ -361,10 +361,11 @@
         gap: 15px;
       }
 
-      /* Küçük Photo Analysis Butonu */
+      /* Küçük Photo Analysis Butonu - ORTALANDI */
       .photo-analysis-btn {
         display: flex;
         align-items: center;
+        justify-content: center;
         gap: 8px;
         background: linear-gradient(135deg, rgba(15, 30, 25, 0.8), rgba(0, 80, 0, 0.6));
         color: #f9d71c;
@@ -380,8 +381,7 @@
         font-size: 0.8em;
         min-height: 36px;
         min-width: 120px;
-        justify-content: center;
-        order: 2; /* Sağ tarafa yerleştir */
+        margin: 0 auto; /* Ortalama için eklendi */
       }
 
       .photo-analysis-btn::before {
@@ -441,10 +441,9 @@
         transform: translateX(-50%) translateY(-4px);
       }
 
-      /* Load More butonu solda kalacak */
+      /* Load More butonu - Analiz butonu ile aynı hizada */
       .load-more {
-        order: 1; /* Sol tarafa yerleştir */
-        margin-right: auto;
+        margin: 0 auto;
       }
 
       /* Animasyon için keyframes */
@@ -512,6 +511,7 @@
         width: 100%; /* Tam genişlik */
         max-width: 100%; /* Maksimum genişlik yok */
         margin-bottom: 20px; /* Kartlar arası boşluk */
+        box-sizing: border-box; /* Entries ile aynı box model */
       }
 
       /* Masaüstünde 3'lü grid */
@@ -670,15 +670,17 @@
         box-shadow: 0 5px 15px rgba(0, 255, 0, 0.3);
       }
 
-      /* Mikroblog entries tıklanabilir - GÜNCELLENDİ */
+      /* Mikroblog entries tıklanabilir - GÜNCELLENDİ (makale kartları ile aynı border-radius) */
       .entry-item {
         cursor: pointer;
         transition: all 0.3s ease;
         margin-bottom: 15px;
         background: rgba(10, 25, 20, 0.5);
-        border-radius: 10px; /* ESKİ HALİ: 10px radius */
+        border-radius: 15px; /* MAKALE KARTLARI İLE AYNI: 15px radius */
         border: 1px solid rgba(0, 255, 0, 0.2);
-        padding: 15px;
+        padding: 20px; /* MAKALE KARTLARI İLE AYNI: 20px padding */
+        box-sizing: border-box; /* Entries ile makale kartları aynı box model */
+        width: 100%; /* MAKALE KARTLARI İLE AYNI: tam genişlik */
       }
 
       .entry-item:hover {
@@ -732,6 +734,10 @@
         width: 100%;
         max-width: 1400px;
         margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
       }
 
       /* MOBİL UYUMLULUK - GÜNCELLENDİ */
@@ -762,6 +768,19 @@
         .explanation-column {
           flex: 1;
           width: 100%;
+          padding: 0;
+          margin: 0;
+          box-sizing: border-box;
+        }
+        
+        /* Entries kutusu makale kartları ile tam aynı genişlikte */
+        .entries-column {
+          width: 100%;
+        }
+        
+        .entry-item {
+          width: 100%;
+          margin-bottom: 20px; /* Makale kartları ile aynı margin */
         }
         
         .explanation-content {
@@ -860,30 +879,31 @@
           min-height: 50px;
         }
 
-        /* Galeri actions mobil */
+        /* Galeri actions mobil - Analiz butonu ortada */
         .gallery-actions {
           flex-direction: column;
-          align-items: stretch;
-          gap: 10px;
+          align-items: center;
+          gap: 15px;
         }
 
         .photo-analysis-btn {
           order: 2;
-          align-self: flex-end;
+          align-self: center;
           min-width: 110px;
           min-height: 40px;
           padding: 10px 12px;
+          margin: 0 auto;
         }
 
         .load-more {
           order: 1;
-          align-self: stretch;
-          margin-right: 0;
+          align-self: center;
+          margin: 0 auto;
         }
 
-        /* Gallery grid mobil - 2'li olacak */
+        /* Gallery grid mobil - 4'lü kalacak (önceki kodda 4'lü) */
         .gallery-grid {
-          grid-template-columns: repeat(4, 1fr); /* Mobilde 2'li */
+          grid-template-columns: repeat(4, 1fr);
           gap: 10px;
         }
 
@@ -947,7 +967,7 @@
           -webkit-line-clamp: 4;
         }
         
-        /* Tablet boyutunda da 2'li kalacak */
+        /* Tablet boyutunda da 4'lü kalacak */
         .gallery-grid {
           grid-template-columns: repeat(4, 1fr);
           gap: 10px;
@@ -1001,7 +1021,7 @@
           justify-content: space-between;
         }
         
-        /* Küçük mobil cihazlarda da 2'li kalacak */
+        /* Küçük mobil cihazlarda da 4'lü kalacak */
         .gallery-grid {
           grid-template-columns: repeat(4, 1fr);
           gap: 8px;
