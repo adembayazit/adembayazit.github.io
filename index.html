@@ -335,7 +335,7 @@
         font-size: 14px;
       }
 
-      /* Photographic Cryptology için yeni düzen */
+      /* Photographic Cryptology için ESKİ DÜZEN */
       .photo-gallery-header {
         margin-bottom: 30px;
       }
@@ -460,26 +460,24 @@
         border: 1px solid rgba(255, 255, 255, 0.1);
       }
 
-      /* Latest Articles Bölümü - GÜNCELLENDİ */
+      /* Latest Articles Bölümü - YENİ DÜZEN */
       .latest-articles {
         padding: 60px 20px;
         background: rgba(10, 25, 20, 0.5);
       }
 
-      .articles-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-top: 30px;
+      /* Makale kartları mikroblog ile aynı genişlikte olacak */
+      .articles-wrapper {
+        max-width: 1200px;
+        margin: 0 auto;
+        width: 100%;
       }
 
       .articles-row {
         display: flex;
-        justify-content: center;
-        gap: 25px;
-        width: 100%;
-        max-width: 1200px;
-        margin: 0 auto;
+        justify-content: space-between;
+        gap: 30px;
+        margin-top: 30px;
       }
 
       .article-card {
@@ -495,7 +493,9 @@
         position: relative;
         overflow: hidden;
         flex: 1;
-        max-width: 350px;
+        /* Mikroblog entries column ile aynı genişlik */
+        width: calc(50% - 15px);
+        max-width: calc(50% - 15px);
       }
 
       .article-card:hover {
@@ -597,19 +597,46 @@
         color: #ccc;
       }
 
-      /* Mikroblog entries için loading */
+      /* Mikroblog entries için loading - UZUN VERSİYON */
       .entries-loading {
         text-align: center;
-        padding: 40px;
+        padding: 60px 20px;
         color: #00ff00;
+        background: rgba(10, 25, 20, 0.5);
+        border-radius: 10px;
+        border: 1px solid rgba(0, 255, 0, 0.2);
       }
 
       .entries-loading i {
-        font-size: 2rem;
-        margin-bottom: 15px;
+        font-size: 3rem;
+        margin-bottom: 20px;
+        display: block;
+        animation: spin 1.5s linear infinite;
       }
 
-      /* Fotoğraf galerisi - ESKİ HALİNE DÖNDÜ */
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      .entries-loading p {
+        font-size: 1.1rem;
+        margin-top: 15px;
+      }
+
+      .entries-loading .loading-dots:after {
+        content: '.';
+        animation: dots 1.5s steps(5, end) infinite;
+      }
+
+      @keyframes dots {
+        0%, 20% { content: '.'; }
+        40% { content: '..'; }
+        60% { content: '...'; }
+        80%, 100% { content: ''; }
+      }
+
+      /* Fotoğraf galerisi - ESKİ HALİNE DÖNDÜ (4 sütun) */
       .gallery-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
@@ -637,11 +664,16 @@
         cursor: pointer;
         transition: all 0.3s ease;
         margin-bottom: 15px;
+        position: relative;
       }
 
       .entry-item:hover {
         background: rgba(0, 255, 0, 0.05);
         transform: translateX(5px);
+      }
+
+      .entry-item:active {
+        transform: scale(0.98);
       }
 
       /* Touch için gecikme mekanizması */
@@ -651,16 +683,18 @@
 
       /* MOBİL UYUMLULUK */
       @media (max-width: 1200px) {
-        .articles-row {
-          max-width: 900px;
+        .gallery-grid {
+          grid-template-columns: repeat(3, 1fr);
         }
         
         .article-card {
-          max-width: 280px;
+          width: calc(50% - 15px);
+          max-width: calc(50% - 15px);
         }
         
-        .article-title {
-          height: 70px;
+        .articles-row {
+          flex-wrap: wrap;
+          justify-content: center;
         }
       }
 
@@ -795,15 +829,25 @@
           display: none;
         }
         
-        /* Makaleler mobil */
+        /* Makaleler mobil - Mikroblog entries ile aynı genişlikte */
         .articles-row {
           flex-direction: column;
           align-items: center;
-          gap: 15px;
         }
         
         .article-card {
-          max-width: 100%;
+          width: 100% !important;
+          max-width: 100% !important;
+          /* Mikroblog entries ile aynı padding */
+          padding: 15px;
+        }
+        
+        /* Mikroblog container genişliğini ayarla */
+        .microblog-container .entries-column {
+          width: 100%;
+        }
+        
+        .articles-wrapper {
           width: 100%;
         }
       }
@@ -811,10 +855,6 @@
       @media (max-width: 768px) {
         .latest-articles {
           padding: 40px 15px;
-        }
-        
-        .article-card {
-          padding: 15px;
         }
         
         .article-title {
@@ -830,11 +870,19 @@
         
         .gallery-grid {
           grid-template-columns: repeat(2, 1fr);
-          gap: 10px;
+          gap: 8px;
         }
         
         .gallery-photo {
           height: 150px;
+        }
+        
+        .entries-loading {
+          padding: 40px 15px;
+        }
+        
+        .entries-loading i {
+          font-size: 2.5rem;
         }
       }
 
@@ -878,7 +926,7 @@
         
         .gallery-grid {
           grid-template-columns: repeat(2, 1fr);
-          gap: 8px;
+          gap: 6px;
         }
         
         .gallery-photo {
@@ -887,6 +935,14 @@
         
         .gallery-photo:hover {
           transform: scale(1.02);
+        }
+        
+        .entries-loading i {
+          font-size: 2rem;
+        }
+        
+        .entries-loading p {
+          font-size: 1rem;
         }
       }
 
@@ -1123,8 +1179,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div class="entries-column">
                     <div id="entries" class="entries">
                         <div class="entries-loading">
-                            <i class="fas fa-spinner fa-spin"></i>
-                            <p>Loading entries...</p>
+                            <i class="fas fa-spinner"></i>
+                            <p>Loading entries<span class="loading-dots"></span></p>
+                            <small style="color: #aaa; font-size: 0.8rem; margin-top: 10px; display: block;">
+                                Fetching latest microblog updates...
+                            </small>
                         </div>
                     </div>
                 </div>
@@ -1175,7 +1234,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="container">
             <h2 class="section-title"><i class="fas fa-newspaper"></i> Latest Cybersecurity Articles</h2>
             <p class="last-entry">Last 3 Articles</p>
-            <div class="articles-container">
+            <div class="articles-wrapper">
                 <div id="articles-row" class="articles-row">
                     <!-- Makaleler buraya JavaScript ile yüklenecek -->
                 </div>
@@ -1260,7 +1319,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         let touchTimer = null;
         let touchStartX = 0;
         let touchStartY = 0;
-        const TOUCH_DELAY = 200; // ms
+        const TOUCH_DELAY = 300; // ms - artırıldı
 
         function handleTouchStart(e) {
             touchStartX = e.touches[0].clientX;
@@ -1284,7 +1343,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 const diffY = Math.abs(touchEndY - touchStartY);
                 
                 // Eğer kaydırma değilse (çok küçük hareket)
-                if (diffX < 10 && diffY < 10) {
+                if (diffX < 15 && diffY < 15) {
                     e.preventDefault();
                     if (callback) callback();
                 }
@@ -1596,8 +1655,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             if (entriesContainer) {
                 entriesContainer.innerHTML = `
                     <div class="entries-loading">
-                        <i class="fas fa-spinner fa-spin"></i>
-                        <p>Loading entries...</p>
+                        <i class="fas fa-spinner"></i>
+                        <p>Loading entries<span class="loading-dots"></span></p>
+                        <small style="color: #aaa; font-size: 0.8rem; margin-top: 10px; display: block;">
+                            Fetching latest microblog updates...
+                        </small>
                     </div>
                 `;
             }
@@ -1606,6 +1668,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         // Mikroblog entries'leri yükle (mikroblog sayfasından)
         async function loadMicroblogEntries() {
             showEntriesLoading();
+            
+            // 1 dakika gecikme ekle (60000ms)
+            await new Promise(resolve => setTimeout(resolve, 60000));
             
             try {
                 // JSONBin'den mikroblog entries'lerini çek
@@ -1654,7 +1719,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             
             entriesContainer.innerHTML = '';
             
-            entries.forEach(entry => {
+            entries.forEach((entry, index) => {
                 const entryDate = new Date(entry.date || entry.created_at);
                 const dateStr = entryDate.toLocaleDateString('en-US', {
                     year: 'numeric',
@@ -1668,6 +1733,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
                 const entryDiv = document.createElement('div');
                 entryDiv.className = 'entry-item touch-delay';
+                entryDiv.dataset.id = entry.id || index;
                 entryDiv.innerHTML = `
                     <div style="margin-bottom: 15px; padding: 15px; background: rgba(10, 25, 20, 0.5); border-radius: 10px; border: 1px solid rgba(0, 255, 0, 0.2);">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -1684,39 +1750,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     </div>
                 `;
                 
-                // Entry'e tıklanınca ilgili entry sayfasına git
-                // Mikroblog entry'lerinizde 'id' veya 'slug' olmalı
-                if (entry.id) {
-                    entryDiv.addEventListener('click', () => {
-                        window.location.href = `/microblog.html#${entry.id}`;
+                // Entry'e tıklanınca mikroblog sayfasına ve ilgili entry'ye git
+                const entryId = entry.id || index;
+                entryDiv.addEventListener('click', () => {
+                    window.location.href = `/microblog.html?entry=${entryId}`;
+                });
+                
+                // Touch event with delay for mobile
+                entryDiv.addEventListener('touchstart', function(e) {
+                    handleTouchStart(e);
+                });
+                
+                entryDiv.addEventListener('touchend', function(e) {
+                    handleTouchEnd(e, () => {
+                        window.location.href = `/microblog.html?entry=${entryId}`;
                     });
-                    
-                    // Touch event with delay for mobile
-                    entryDiv.addEventListener('touchstart', function(e) {
-                        handleTouchStart(e);
-                    });
-                    
-                    entryDiv.addEventListener('touchend', function(e) {
-                        handleTouchEnd(e, () => {
-                            window.location.href = `/microblog.html#${entry.id}`;
-                        });
-                    });
-                } else {
-                    // Eğer ID yoksa genel mikroblog sayfasına git
-                    entryDiv.addEventListener('click', () => {
-                        window.location.href = '/microblog.html';
-                    });
-                    
-                    entryDiv.addEventListener('touchstart', function(e) {
-                        handleTouchStart(e);
-                    });
-                    
-                    entryDiv.addEventListener('touchend', function(e) {
-                        handleTouchEnd(e, () => {
-                            window.location.href = '/microblog.html';
-                        });
-                    });
-                }
+                });
 
                 entriesContainer.appendChild(entryDiv);
             });
