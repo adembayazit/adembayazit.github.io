@@ -609,10 +609,10 @@
         margin-bottom: 15px;
       }
 
-      /* Fotoğraf galerisi - KARE FOTOĞRAFLAR İÇİN GÜNCELLENDİ */
+      /* Fotoğraf galerisi - KARE FOTOĞRAFLAR İÇİN GÜNCELLENDİ - Masaüstü 4, mobil 2 */
       .gallery-grid {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(4, 1fr); /* Masaüstünde 4'lü */
         gap: 15px;
         margin-top: 20px;
       }
@@ -784,9 +784,9 @@
           margin-right: 0;
         }
 
-        /* Gallery grid mobil */
+        /* Gallery grid mobil - 2'li olacak */
         .gallery-grid {
-          grid-template-columns: repeat(4, 1fr);
+          grid-template-columns: repeat(2, 1fr); /* Mobilde 2'li */
           gap: 10px;
         }
 
@@ -837,6 +837,7 @@
           -webkit-line-clamp: 4;
         }
         
+        /* Tablet boyutunda da 2'li kalacak */
         .gallery-grid {
           grid-template-columns: repeat(2, 1fr);
           gap: 10px;
@@ -886,6 +887,7 @@
           justify-content: space-between;
         }
         
+        /* Küçük mobil cihazlarda da 2'li kalacak */
         .gallery-grid {
           grid-template-columns: repeat(2, 1fr);
           gap: 8px;
@@ -1519,7 +1521,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             }
         }
 
-        // ENTRY LOADING İÇİN 1 DAKİKA ZAMAN AYARI
+        // ENTRY LOADING İÇİN 1 DAKİKA ZAMAN AYARI - SADECE HATA DURUMUNDA
         async function loadLatestArticles() {
             const container = document.getElementById('articles-row');
             if (!container) return;
@@ -1529,16 +1531,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             try {
                 const articles = await fetchArticles();
                 
-                // Minimum 1 dakika loading süresi
-                const startTime = Date.now();
-                const minLoadingTime = 60000; // 1 dakika = 60000 ms
-                
+                // Başarılı durumda direkt göster
                 if (!articles || articles.length === 0) {
-                    const elapsed = Date.now() - startTime;
-                    const remainingTime = Math.max(0, minLoadingTime - elapsed);
-                    
-                    await new Promise(resolve => setTimeout(resolve, remainingTime));
-                    
                     container.innerHTML = '<div class="no-articles">No articles available at the moment.</div>';
                     return;
                 }
@@ -1552,12 +1546,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     })
                     .slice(0, 3);
 
-                // Minimum loading süresini kontrol et
-                const elapsed = Date.now() - startTime;
-                const remainingTime = Math.max(0, minLoadingTime - elapsed);
-                
-                await new Promise(resolve => setTimeout(resolve, remainingTime));
-                
                 container.innerHTML = '';
                 
                 latestArticles.forEach(article => {
@@ -1619,8 +1607,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 });
             } catch (error) {
                 console.error('Error loading articles:', error);
+                // Hata durumunda 1 dakika bekleyip hata göster
+                const minLoadingTime = 60000; // 1 dakika
+                const startTime = Date.now();
                 const elapsed = Date.now() - startTime;
                 const remainingTime = Math.max(0, minLoadingTime - elapsed);
+                
                 await new Promise(resolve => setTimeout(resolve, remainingTime));
                 
                 container.innerHTML = '<div class="no-articles">Unable to load articles. Please try again later.</div>';
@@ -1640,7 +1632,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             }
         }
 
-        // Mikroblog entries'leri yükle (mikroblog sayfasından) - 1 DAKİKA LOADİNG SÜRESİ
+        // Mikroblog entries'leri yükle (mikroblog sayfasından) - HER ZAMAN 1 DAKİKA LOADİNG SÜRESİ
         async function loadMicroblogEntries() {
             showEntriesLoading();
             
