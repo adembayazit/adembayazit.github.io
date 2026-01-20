@@ -649,6 +649,39 @@
         touch-action: pan-y;
       }
 
+      /* YENİ EKLENEN: Başlık ve içerik ortalaması için */
+      .section-title {
+        text-align: center;
+        width: 100%;
+      }
+      
+      .last-entry {
+        text-align: center;
+        width: 100%;
+      }
+      
+      /* Gider başlıklar ve içerik için ortak genişlik */
+      .entries-width {
+        width: 100%;
+        max-width: 50%; /* Masaüstü için entries-column genişliği */
+        margin-left: auto;
+        margin-right: auto;
+      }
+      
+      /* Butonlar için genişlik ayarı */
+      .latest-articles .btn-box {
+        width: 100%;
+        box-sizing: border-box;
+      }
+      
+      /* Photographic Cryptology ve Latest Articles container'ları için düzenleme */
+      .photo-gallery .container,
+      .latest-articles .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
       /* MOBİL UYUMLULUK */
       @media (max-width: 1200px) {
         .articles-row {
@@ -823,6 +856,11 @@
         .article-stats {
           font-size: 0.75rem;
           gap: 15px;
+        }
+        
+        /* Mobilde entries-width tam genişlik */
+        .entries-width {
+          max-width: 100%;
         }
       }
 
@@ -1200,10 +1238,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <section id="photo-gallery" class="photo-gallery">
         <div class="container">
-            <div class="photo-gallery-header">
+            <div class="photo-gallery-header entries-width">
                 <h2 class="section-title"><i class="fa-solid fa-images"></i> Photographic Cryptology</h2>
             </div>
-            <div class="gallery-wrapper">
+            <div class="gallery-wrapper entries-width">
                 <div id="gallery-grid" class="gallery-grid"></div>
                 <div class="gallery-actions">
                     <button id="load-more" class="load-more">More Photos</button>
@@ -1219,14 +1257,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <section id="latest-articles" class="latest-articles">
         <div class="container">
-            <h2 class="section-title"><i class="fas fa-newspaper"></i> Latest Cybersecurity Articles</h2>
-            <p class="last-entry">Last 3 Articles</p>
-            <div class="articles-container">
+            <h2 class="section-title entries-width"><i class="fas fa-newspaper"></i> Latest Cybersecurity Articles</h2>
+            <p class="last-entry entries-width">Last 3 Articles</p>
+            <div class="articles-container entries-width">
                 <div id="articles-row" class="articles-row">
                     <!-- Makaleler buraya JavaScript ile yüklenecek -->
                 </div>
             </div>
-            <div style="text-align: center; margin-top: 20px;">
+            <div class="entries-width" style="text-align: center; margin-top: 20px;">
                 <a href="/article" class="btn-box"><i class="fas fa-book-open"></i> View All Articles</a>
             </div>
         </div>
