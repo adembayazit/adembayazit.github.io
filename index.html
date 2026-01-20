@@ -72,7 +72,7 @@
         box-sizing: border-box;
       }
 
-      /* Mikroblog için iki sütunlu düzen - GÜNCELLENDİ */
+      /* Mikroblog için iki sütunlu düzen - GÜNCELLENDİ: ENTRIES COLUMN DAHA GENİŞ */
       .microblog-container {
         display: flex;
         gap: 30px;
@@ -81,7 +81,7 @@
       }
 
       .entries-column {
-        flex: 1.5; /* Sol taraf daha geniş */
+        flex: 2.5; /* DAHA GENİŞ: 2.5 yapıldı */
       }
 
       .explanation-column {
@@ -670,7 +670,7 @@
         box-shadow: 0 5px 15px rgba(0, 255, 0, 0.3);
       }
 
-      /* Mikroblog entries tıklanabilir - GÜNCELLENDİ */
+      /* Mikroblog entries tıklanabilir - GÜNCELLENDİ: DAHA GENİŞ KARTLAR */
       .entry-item {
         cursor: pointer;
         transition: all 0.3s ease;
@@ -679,6 +679,7 @@
         border-radius: 15px; /* Makale kartıyla aynı: 15px */
         border: 1px solid rgba(0, 255, 0, 0.3); /* Makale kartıyla aynı border */
         padding: 20px; /* Makale kartıyla aynı padding */
+        width: 100%; /* Tam genişlik */
       }
 
       .entry-item:hover {
@@ -1688,7 +1689,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             }
         }
 
-        // Latest Articles loading - SADECE HATA DURUMUNDA 1 DAKİKA
+        // Latest Articles loading - DÜZELTİLDİ: 1 dakika bekleme kaldırıldı
         async function loadLatestArticles() {
             const container = document.getElementById('articles-row');
             if (!container) return;
@@ -1774,14 +1775,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 });
             } catch (error) {
                 console.error('Error loading articles:', error);
-                // Hata durumunda 1 dakika bekleyip hata göster
-                const startTime = Date.now();
-                const minLoadingTime = 60000;
-                const elapsed = Date.now() - startTime;
-                const remainingTime = Math.max(0, minLoadingTime - elapsed);
-                
-                await new Promise(resolve => setTimeout(resolve, remainingTime));
-                
                 container.innerHTML = '<div class="no-articles">Unable to load articles. Please try again later.</div>';
             }
         }
@@ -1799,12 +1792,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             }
         }
 
-        // Mikroblog entries'leri yükle - DÜZELTİLDİ: Artık başarılı yüklemeden sonra hata göstermeyecek
+        // Mikroblog entries'leri yükle - DÜZELTİLDİ: 1 dakika bekleme kaldırıldı
         async function loadMicroblogEntries() {
             showEntriesLoading();
-            
-            const startTime = Date.now();
-            const minLoadingTime = 60000; // 1 dakika
             
             try {
                 const MICROBLOG_BIN_ID = '694f7d8e43b1c97be91ef7d1';
@@ -1829,24 +1819,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 const entries = result.entries || result.records || result || [];
                 const last5Entries = entries.slice(0, 5);
                 
-                // Minimum loading süresini kontrol et
-                const elapsed = Date.now() - startTime;
-                const remainingTime = Math.max(0, minLoadingTime - elapsed);
-                
-                // Kalan süre kadar bekle
-                await new Promise(resolve => setTimeout(resolve, remainingTime));
-                
-                // Başarılı yükleme - entry'leri göster
+                // Başarılı yükleme - hemen göster
                 displayMicroblogEntries(last5Entries);
                 
             } catch (error) {
                 console.error('Error loading microblog entries:', error);
-                
-                // Hata durumunda da minimum süreyi bekle
-                const elapsed = Date.now() - startTime;
-                const remainingTime = Math.max(0, minLoadingTime - elapsed);
-                await new Promise(resolve => setTimeout(resolve, remainingTime));
-                
                 const entriesContainer = document.getElementById('entries');
                 if (entriesContainer) {
                     entriesContainer.innerHTML = '<div class="no-articles">Unable to load entries. Please try again later.</div>';
