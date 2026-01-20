@@ -1,20 +1,19 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ethical Hacker | Adem Bayazıt</title>
-    <!-- Open Graph (Facebook, WhatsApp, LinkedIn vs.) -->   
-    <meta property="og:title" content="Adem Bayazıt | Ethical Hacker" />
-    <meta property="og:description" content="Ethical Hacker, Cyber Security Analyst ve Linux Enthusiast." />
+    <title>Cybersecurity Articles | Adem Bayazıt</title>
+    <meta property="og:title" content="Adem Bayazıt | Cybersecurity Articles" />
+    <meta property="og:description" content="Cybersecurity articles, research and analysis by Adem Bayazıt" />
     <meta property="og:image" content="https://adembayazit.com/IMAGES/preview.png" />
-    <meta property="og:url" content="https://adembayazit.com/" />
+    <meta property="og:url" content="https://adembayazit.com/articles" />
     <meta property="og:type" content="website" />
 
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Adem Bayazıt - Ethical Hacker">
-    <meta name="twitter:description" content="Ethical Hacker, Cyber Security Analyst ve Linux Enthusiast.">
+    <meta name="twitter:title" content="Adem Bayazıt - Cybersecurity Articles">
+    <meta name="twitter:description" content="Cybersecurity articles, research and analysis by Adem Bayazıt">
     <meta name="twitter:image" content="https://adembayazit.com/IMAGES/preview.png">
     <meta name="twitter:image:alt" content="Adem Bayazıt">
     
@@ -23,1221 +22,1233 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href='https://cdn.boxicons.com/fonts/basic/boxicons.min.css' rel='stylesheet'>
     <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-TFN7XD9Z');</script>
-    <!-- End Google Tag Manager -->
     <style>
-      html {
-        scroll-behavior: smooth;
-      }
-      
-      /* Logo ve slogan için stil */
-      .logo-container {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-      }
-      
-      .logo-slogan {
-        font-size: 10px;
-        color: white;
-        margin-top: 2px;
-        font-style: italic;
-        letter-spacing: 0.5px;
-        white-space: nowrap;
-        text-align: right;
-        width: 100%;
-        padding-right: 5px;
-      }
-      
-      /* Navbar için responsive ayarlar */
-      .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 5%;
-      }
-      
-      /* Container genişlik ayarı - GÜNCELLENDİ */
-      .container {
-        width: 100%;
-        max-width: 1400px; /* Görseldeki gibi geniş container */
-        margin: 0 auto;
-        padding: 0 20px;
-        box-sizing: border-box;
-      }
-
-      /* Mikroblog için iki sütunlu düzen - GÜNCELLENDİ: ENTRIES COLUMN DAHA GENİŞ */
-      .microblog-container {
-        display: flex;
-        gap: 30px;
-        margin-top: 30px;
-        width: 100%;
-      }
-
-      .entries-column {
-        flex: 2.5; /* DAHA GENİŞ: 2.5 yapıldı */
-      }
-
-      .explanation-column {
-        flex: 1; /* Sağ taraf daha dar */
-      }
-
-      .explanation-content {
-        background: rgba(10, 25, 20, 0.7);
-        border-radius: 15px; /* Makale kartıyla aynı: 15px */
-        padding: 20px;
-        border: 1px solid rgba(0, 255, 0, 0.3);
-        box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);
-        position: relative;
-        overflow: hidden;
-        font-size: 0.8rem;
-        height: 100%;
-      }
-
-      .explanation-content h3 {
-        color: white;
-        margin-bottom: 15px;
-        font-size: 0.9rem;
-        border-bottom: 1px solid rgba(249, 215, 28, 0.3);
-        padding-bottom: 10px;
-      }
-
-      .explanation-content p {
-        margin-bottom: 15px;
-        line-height: 1.6;
-      }
-
-      .toggle-explanation {
-        display: none;
-        background: rgba(0, 100, 0, 0.5);
-        color: #f9d71c;
-        border: 1px solid rgba(249, 215, 28, 0.3);
-        padding: 8px 15px;
-        border-radius: 5px;
-        margin-top: 15px;
-        cursor: pointer;
-        transition: all 0.3s;
-        width: 100%;
-      }
-
-      .toggle-explanation:hover {
-        background: rgba(0, 100, 0, 0.7);
-      }
-
-      /* YENİ MODAL STİLLERİ - İNCE UZUN YATAY NAVBAR */
-      .modal {
-        display: none;
-        position: fixed;
-        z-index: 10000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background: radial-gradient(circle at center, rgba(10, 30, 20, 0.95) 0%, rgba(5, 15, 10, 0.98) 100%);
-        overflow: hidden;
-        opacity: 0;
-        transition: opacity 0.4s ease;
-      }
-
-      .modal.show {
-        opacity: 1;
-      }
-
-      .modal-content-container {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .modal-image-wrapper {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-        box-sizing: border-box;
-        max-height: calc(100vh - 120px);
-      }
-
-      .modal-content {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-        border-radius: 8px;
-        box-shadow: 0 0 40px rgba(0, 255, 128, 0.2);
-        border: 1px solid rgba(0, 255, 128, 0.1);
-        transition: all 0.3s ease;
-      }
-
-      .modal.show .modal-content {
-        animation: imageGlow 3s ease-in-out infinite alternate;
-      }
-
-      @keyframes imageGlow {
-        0% {
-          box-shadow: 0 0 30px rgba(0, 255, 128, 0.2);
-        }
-        100% {
-          box-shadow: 0 0 50px rgba(0, 255, 128, 0.4);
-        }
-      }
-
-      .close {
-        position: absolute;
-        top: 20px;
-        right: 25px;
-        color: #f1f1f1;
-        font-size: 35px;
-        font-weight: bold;
-        cursor: pointer;
-        z-index: 10010;
-        opacity: 0.8;
-        transition: all 0.3s;
-        background: rgba(0, 0, 0, 0.6);
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(249, 215, 28, 0.3);
-      }
-
-      .close:hover {
-        opacity: 1;
-        background: rgba(200, 0, 0, 0.7);
-        transform: rotate(90deg);
-      }
-
-      /* YENİ MODAL NAVBAR - İNCE UZUN YATAY */
-      .modal-navbar {
-        background: linear-gradient(135deg, rgba(15, 35, 25, 0.95) 0%, rgba(8, 20, 15, 0.98) 100%);
-        border-top: 1px solid rgba(0, 255, 128, 0.2);
-        box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(15px);
-        display: flex;
-        flex-direction: column;
-        padding: 15px 20px;
-        min-height: 120px;
-      }
-
-      .modal-nav-top {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 15px;
-      }
-
-      .modal-thumbnails {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        flex: 1;
-        justify-content:space-evenly;
-      }
-
-      .modal-thumb {
-        width: 80px;
-        height: 50px;
-        object-fit: cover;
-        border-radius: 4px;
-        cursor: pointer;
-        opacity: 0.7;
-        transition: all 0.3s ease;
-        border: 1px solid transparent;
-      }
-
-      .modal-thumb:hover {
-        opacity: 1;
-        transform: scale(1.05);
-      }
-
-      .modal-thumb.active {
-        opacity: 1;
-        border: 2px solid #f9d71c;
-        box-shadow: 0 0 8px rgba(249, 215, 28, 0.5);
-      }
-
-      .modal-nav-center {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-      }
-
-      .modal-counter {
-        background: rgba(0, 0, 0, 0.4);
-        padding: 8px 20px;
-        border-radius: 20px;
-        font-size: 16px;
-        font-weight: bold;
-        color: #f9d71c;
-        border: 1px solid rgba(249, 215, 28, 0.3);
-        min-width: 80px;
-        text-align: center;
-      }
-
-      .modal-nav-buttons {
-        display: flex;
-        gap: 10px;
-        flex: 1;
-        justify-content: flex-end;
-      }
-
-      .nav-button {
-        background: linear-gradient(135deg, rgba(20, 45, 30, 0.9), rgba(10, 25, 15, 0.9));
-        color: white;
-        border: 1px solid rgba(0, 255, 128, 0.3);
-        padding: 10px 18px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 15px;
-        font-weight: bold;
-        transition: all 0.3s ease;
-        min-width: 50px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .nav-button:hover {
-        background: linear-gradient(135deg, rgba(30, 65, 40, 0.9), rgba(15, 35, 20, 0.9));
-        border-color: rgba(0, 255, 128, 0.6);
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0, 255, 128, 0.2);
-      }
-
-      .nav-button:active {
-        transform: translateY(0);
-      }
-
-      .modal-nav-bottom {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-
-      .modal-info-items {
-        display: flex;
-        gap: 25px;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-
-      .modal-info-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 14px;
-        color: #e0e0e0;
-      }
-
-      .modal-info-item i {
-        color: #f9d71c;
-        font-size: 14px;
-      }
-
-      /* Photographic Cryptology için yeni düzen - GÜNCELLENDİ */
-      .photo-gallery-header {
-        margin-bottom: 30px;
-        text-align: center;
-      }
-
-      .gallery-actions {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 20px;
-        gap: 15px;
-      }
-
-      /* Küçük Photo Analysis Butonu */
-      .photo-analysis-btn {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        background: linear-gradient(135deg, rgba(15, 30, 25, 0.8), rgba(0, 80, 0, 0.6));
-        color: #f9d71c;
-        text-decoration: none;
-        padding: 8px 15px;
-        border-radius: 8px;
-        border: 1px solid rgba(249, 215, 28, 0.3);
-        box-shadow: 0 2px 8px rgba(0, 255, 0, 0.15);
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-        backdrop-filter: blur(8px);
-        font-size: 0.8em;
-        min-height: 36px;
-        min-width: 120px;
-        justify-content: center;
-        margin: 0 auto;
-      }
-
-      .photo-analysis-btn::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(249, 215, 28, 0.08), transparent);
-        transition: left 0.6s;
-      }
-
-      .photo-analysis-btn:hover::before {
-        left: 100%;
-      }
-
-      .photo-analysis-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 255, 0, 0.25);
-        border-color: rgba(249, 215, 28, 0.5);
-      }
-
-      .photo-analysis-btn i {
-        font-size: 0.9em;
-        color: #f9d71c;
-      }
-
-      .photo-analysis-btn .btn-text {
-        font-weight: 500;
-        letter-spacing: 0.3px;
-        font-size: 0.85em;
-      }
-
-      /* Tooltip */
-      .photo-analysis-btn::after {
-        content: attr(data-tooltip);
-        position: absolute;
-        bottom: 100%;
-        left: 50%;
-        transform: translateX(-50%) translateY(-8px);
-        background: rgba(0, 0, 0, 0.85);
-        color: white;
-        padding: 6px 10px;
-        border-radius: 4px;
-        font-size: 0.7em;
-        white-space: nowrap;
-        opacity: 0;
-        pointer-events: none;
-        transition: all 0.3s ease;
-        border: 1px solid rgba(249, 215, 28, 0.2);
-        z-index: 1000;
-      }
-
-      .photo-analysis-btn:hover::after {
-        opacity: 1;
-        transform: translateX(-50%) translateY(-4px);
-      }
-
-      /* Load More butonu */
-      .load-more {
-        margin: 0 auto;
-      }
-
-      /* Animasyon için keyframes */
-      @keyframes subtleGlow {
-        0%, 100% { box-shadow: 0 2px 8px rgba(0, 255, 0, 0.15); }
-        50% { box-shadow: 0 2px 12px rgba(0, 255, 0, 0.25); }
-      }
-
-      .photo-analysis-btn {
-        animation: subtleGlow 4s ease-in-out infinite;
-      }
-
-      /* Keyboard shortcuts stil */
-      .keyboard-shortcuts {
-        position: absolute;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        color: white;
-        font-size: 12px;
-        background: rgba(0, 0, 0, 0.7);
-        padding: 5px 10px;
-        border-radius: 5px;
-        z-index: 10010;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-      }
-
-      /* Latest Articles Bölümü - GÜNCELLENDİ */
-      .latest-articles {
-        padding: 60px 20px;
-        /* Section arka planı yok ama kartların arka planı yeşil transparan olacak */
-      }
-
-      .articles-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-top: 30px;
-      }
-
-      .articles-row {
-        display: flex;
-        justify-content: center;
-        gap: 25px;
-        width: 100%;
-        max-width: 1400px; /* Container ile aynı genişlik */
-        margin: 0 auto;
-        flex-wrap: wrap; /* Ekran küçüldükçe alt alta gelsin */
-      }
-
-      /* Article kartları entries ile aynı genişlikte ve border radius'ta - GÜNCELLENDİ */
-      .article-card {
-        /* YEŞİL ARKA PLAN GERİ GETİRİLDİ - sadece kart için */
-        background: rgba(10, 25, 20, 0.7);
-        border: 1px solid rgba(0, 255, 0, 0.3);
-        border-radius: 15px;
-        padding: 20px;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        position: relative;
-        overflow: hidden;
-        width: 100%; /* Tam genişlik */
-        max-width: 100%; /* Maksimum genişlik yok */
-        margin-bottom: 20px; /* Kartlar arası boşluk */
-      }
-
-      /* Masaüstünde 3'lü grid */
-      @media (min-width: 1200px) {
-        .article-card {
-          flex: 0 0 calc(33.333% - 17px); /* 3'lü grid */
-        }
-      }
-
-      /* Tablet boyutunda 2'li grid */
-      @media (min-width: 768px) and (max-width: 1199px) {
-        .article-card {
-          flex: 0 0 calc(50% - 13px); /* 2'li grid */
-        }
-      }
-
-      /* Mobilde tam genişlik */
-      @media (max-width: 767px) {
-        .article-card {
-          flex: 0 0 100%; /* Tam genişlik */
-        }
-      }
-
-      .article-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 25px rgba(0, 255, 0, 0.2);
-        border-color: rgba(0, 255, 0, 0.5);
-      }
-
-      .article-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.05), transparent);
-        transition: left 0.6s;
-      }
-
-      .article-card:hover::before {
-        left: 100%;
-      }
-
-      .article-title {
-        font-size: 1.1rem;
-        color: white;
-        margin-bottom: 12px;
-        line-height: 1.4;
-        font-weight: 600;
-        height: 60px;
-        overflow: hidden;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-      }
-
-      .article-meta {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 0.8rem;
-        color: #ccc;
-        margin-bottom: 15px;
-        flex-wrap: wrap;
-        gap: 10px;
-      }
-
-      .article-category {
-        background: rgba(0, 255, 0, 0.2);
-        padding: 4px 10px;
-        border-radius: 15px;
-        color: #00ff00;
-        font-size: 0.75rem;
-        font-weight: 500;
-      }
-
-      .article-excerpt {
-        font-size: 0.9rem;
-        color: #aaa;
-        line-height: 1.6;
-        flex-grow: 1;
-        margin-bottom: 15px;
-        height: 60px;
-        overflow: hidden;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-      }
-
-      .article-stats {
-        display: flex;
-        gap: 20px;
-        margin-top: 15px;
-        font-size: 0.8rem;
-        color: #00ff00;
-        border-top: 1px solid rgba(0, 255, 0, 0.1);
-        padding-top: 15px;
-      }
-
-      .article-stat {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-      }
-
-      .article-stat i {
-        font-size: 0.9rem;
-      }
-
-      .loading-articles {
-        text-align: center;
-        padding: 40px;
-        color: #00ff00;
-      }
-
-      .no-articles {
-        text-align: center;
-        padding: 40px;
-        color: #ccc;
-      }
-
-      /* Mikroblog entries için loading */
-      .entries-loading {
-        text-align: center;
-        padding: 40px;
-        color: #00ff00;
-      }
-
-      .entries-loading i {
-        font-size: 2rem;
-        margin-bottom: 15px;
-      }
-
-      /* Fotoğraf galerisi - KARE FOTOĞRAFLAR İÇİN GÜNCELLENDİ - Masaüstü 4, mobil 2 */
-      .gallery-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr); /* Masaüstünde 4'lü */
-        gap: 15px;
-        margin-top: 20px;
-        width: 100%;
-      }
-
-      .gallery-photo {
-        width: 100%;
-        aspect-ratio: 1/1; /* Kare fotoğraflar için */
-        object-fit: cover; /* Kare içinde sığdır */
-        border-radius: 8px;
-        cursor: pointer;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        border: 1px solid rgba(0, 255, 0, 0.2);
-      }
-
-      .gallery-photo:hover {
-        transform: scale(1.03);
-        box-shadow: 0 5px 15px rgba(0, 255, 0, 0.3);
-      }
-
-      /* Mikroblog entries tıklanabilir - GÜNCELLENDİ: DAHA GENİŞ KARTLAR */
-      .entry-item {
-        cursor: pointer;
-        transition: all 0.3s ease;
-        margin-bottom: 15px;
-        background: rgba(10, 25, 20, 0.7); /* Makale kartıyla aynı arka plan */
-        border-radius: 15px; /* Makale kartıyla aynı: 15px */
-        border: 1px solid rgba(0, 255, 0, 0.3); /* Makale kartıyla aynı border */
-        padding: 20px; /* Makale kartıyla aynı padding */
-        width: 100%; /* Tam genişlik */
-      }
-
-      .entry-item:hover {
-        background: rgba(0, 255, 0, 0.05);
-        transform: translateY(-3px);
-        box-shadow: 0 5px 15px rgba(0, 255, 0, 0.2);
-      }
-
-      /* Touch için gecikme mekanizması */
-      .touch-delay {
-        touch-action: pan-y;
-      }
-
-      /* Section başlıkları için stil - GÜNCELLENDİ */
-      .section-title {
-        text-align: center;
-        width: 100%;
-        font-size: 1.8rem;
-        margin-bottom: 10px;
-        color: white;
-      }
-      
-      .last-entry {
-        text-align: center;
-        width: 100%;
-        color: #ccc;
-        margin-bottom: 30px;
-        font-size: 0.9rem;
-      }
-
-      /* Photo gallery ve latest articles container düzenlemesi */
-      .photo-gallery .container,
-      .latest-articles .container,
-      .microblog .container {
-        width: 100%;
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 0 20px;
-        box-sizing: border-box;
-      }
-
-      /* All Entry Show butonu için container */
-      .microblog .container > div:last-child {
-        text-align: center;
-        margin-top: 30px;
-        width: 100%;
-      }
-
-      /* Gallery actions container genişliği */
-      .gallery-actions {
-        width: 100%;
-        max-width: 1400px;
-        margin: 0 auto;
-        flex-direction: column;
-        align-items: center;
-      }
-
-      /* MOBİL UYUMLULUK - GÜNCELLENDİ: ENTRIES VE AÇIKLAMA KUTUSU MAKALE KARTIYLA AYNI GENİŞLİKTE */
-      @media (max-width: 1200px) {
-        .container {
-          max-width: 100%;
-          padding: 0 15px;
+        :root {
+            --primary-color: #00ff00;
+            --primary-dark: #00cc00;
+            --primary-light: #33ff33;
+            --bg-color: #0a1916;
+            --card-bg: rgba(10, 25, 20, 0.7);
+            --text-color: #ffffff;
+            --text-muted: #cccccc;
+            --border-color: #00aa00;
+            --highlight-color: #99ff99;
+            --sidebar-width: 320px;
         }
         
-        .articles-row {
-          max-width: 100%;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
         }
         
-        .article-card {
-          max-width: 100%;
-          width: 100%;
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Scrollbar stilleri */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(10, 25, 20, 0.7);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, #00ff00, #00cc00);
+            border-radius: 5px;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(to bottom, #33ff33, #00ff00);
+        }
+
+        ::-webkit-scrollbar-corner {
+            background: var(--bg-color);
+        }
+
+        /* Sidebar için özel scrollbar */
+        .articles-sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .articles-sidebar::-webkit-scrollbar-track {
+            background: var(--card-bg);
+            border-radius: 4px;
+        }
+
+        .articles-sidebar::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, var(--primary-color), var(--primary-dark));
+            border-radius: 4px;
+        }
+
+        .articles-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .articles-list::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+
+        .articles-list::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, var(--primary-light), var(--primary-color));
+            border-radius: 3px;
+        }
+
+        /* Firefox için scrollbar stilleri */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-color) var(--card-bg);
+        }
+        
+        /* Hashtag stilleri */
+        .hashtag {
+            background: rgba(0, 255, 0, 0.15);
+            color: var(--primary-color);
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin: 0 4px 4px 0;
+            font-size: 0.85em;
+            display: inline-block;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s ease;
+            cursor: default;
+            text-decoration: none;
+            line-height: 1.2;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            vertical-align: middle;
+        }
+
+        .hashtag:hover {
+            background: rgba(0, 255, 0, 0.25);
+            border-color: var(--primary-color);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 255, 0, 0.2);
+        }
+
+        .detail-body .hashtag {
+            margin: 2px 4px 2px 0;
+        }
+        
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        
+        .logo-slogan {
+            font-size: 10px;
+            color: white;
+            margin-top: 2px;
+            font-style: italic;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            text-align: right;
+            width: 100%;
+            padding-right: 5px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 5%;
+        }
+        
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropbtn {
+            font-size: 18px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            margin-left: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #0a1916;
+            min-width: 160px;
+            z-index: 100;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            border-radius: 10px;
+            padding: 10px 0;
+        }
+
+        .dropdown-content a {
+            color: white;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dropdown-content a:hover {
+            background-color: rgba(0, 255, 0, 0.1);
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        
+        .content-wrapper {
+            margin-top: 160px;
+            position: relative;
+            z-index: 2;
+            padding: 0 20px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .backto {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .back-to-home {
+            display: inline-block;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            padding: 10px 20px;
+        }
+        
+        .back-to-home:hover {
+            text-decoration: underline;
+            color: var(--highlight-color);
+            background: rgba(0, 255, 0, 0.1);
+        }
+        
+        .page-title {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 1.7rem;
+            color: white;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+            position: relative;
+            filter: drop-shadow(0 0 5px limegreen);
+        }
+        
+        .page-title::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 3px;
+        }
+        
+        .articles-container {
+            display: flex;
+            gap: 30px;
+            min-height: 600px;
+        }
+        
+        .articles-sidebar {
+            width: var(--sidebar-width);
+            flex-shrink: 0;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+            max-height: 80vh;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-color) var(--card-bg);
+        }
+        
+        .sidebar-title {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .sidebar-controls {
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .articles-list {
+            list-style: none;
+            max-height: 300px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-light) rgba(0, 0, 0, 0.2);
+        }
+        
+        .article-item {
+            padding: 15px;
+            border-bottom: 1px solid rgba(0, 255, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            position: relative;
+        }
+        
+        .article-item:hover {
+            background: rgba(0, 255, 0, 0.1);
+        }
+        
+        .article-item.active {
+            background: rgba(0, 255, 0, 0.2);
+            border-left: 3px solid var(--primary-color);
         }
         
         .article-title {
-          height: auto;
-          -webkit-line-clamp: 3;
-        }
-        
-        /* Mikroblog container mobilde tek sütun - ENTRIES DAHA GENİŞ */
-        .microblog-container {
-          flex-direction: column;
-          gap: 20px;
-        }
-        
-        .entries-column, 
-        .explanation-column {
-          flex: none;
-          width: 100%;
-          max-width: 100%;
-        }
-        
-        /* Entries sütunu mobilde makale kartı genişliğinde */
-        .entries-column {
-          width: 100%;
-        }
-        
-        /* Entry item'lar makale kartı genişliğinde */
-        .entry-item {
-          width: 100%;
-          max-width: 100%;
-          border-radius: 15px; /* Makale kartıyla aynı */
-          margin-bottom: 20px; /* Makale kartıyla aynı */
-        }
-        
-        /* Açıklama kutusu da makale kartı genişliğinde */
-        .explanation-content {
-          max-height: 300px;
-          overflow: hidden;
-          transition: max-height 0.5s ease;
-          width: 100%;
-          max-width: 100%;
-          border-radius: 15px; /* Makale kartıyla aynı */
-        }
-        
-        .explanation-content.expanded {
-          max-height: 1200px;
-        }
-        
-        .toggle-explanation {
-          display: block;
-          width: 100%;
-          max-width: 100%;
-          border-radius: 15px; /* Makale kartıyla aynı */
-          margin-top: 0; /* Açıklama kutusunun hemen altında */
-        }
-      }
-
-      @media (max-width: 992px) {
-        .modal-image-wrapper {
-          max-height: calc(100vh - 150px);
-          padding: 15px;
-        }
-        
-        .modal-navbar {
-          min-height: 150px;
-          padding: 12px 15px;
-        }
-        
-        .modal-nav-top {
-          flex-direction: column;
-          gap: 12px;
-          margin-bottom: 12px;
-        }
-        
-        .modal-thumbnails {
-          order: 2;
-          justify-content: center;
-          width: 100%;
-        }
-        
-        .modal-nav-center {
-          order: 1;
-        }
-        
-        .modal-nav-buttons {
-          order: 3;
-          justify-content: center;
-          width: 100%;
-        }
-        
-        .modal-thumb {
-          width: 60px;
-          height: 40px;
-        }
-        
-        .modal-info-items {
-          gap: 15px;
-        }
-        
-        .modal-info-item {
-          font-size: 12px;
-        }
-        
-        .nav-button {
-          padding: 9px 15px;
-          min-width: 60px;
-          font-size: 16px;
-        }
-        
-        .close {
-          top: 10px;
-          right: 15px;
-          width: 40px;
-          height: 40px;
-          font-size: 25px;
-        }
-
-        .keyboard-shortcuts {
-          font-size: 10px;
-          top: 15px;
-          padding: 4px 8px;
-        }
-
-        /* Mobil cihazlarda tıklanabilir alanı büyüt */
-        .btn-box {
-          min-height: 44px;
-          padding: 12px 24px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        
-        #downloadCv {
-          padding: 15px 25px;
-          font-size: 16px;
-          min-height: 50px;
-        }
-
-        /* Galeri actions mobil */
-        .gallery-actions {
-          flex-direction: column;
-          align-items: center;
-        }
-
-        .photo-analysis-btn {
-          order: 2;
-          margin: 0 auto;
-        }
-
-        .load-more {
-          order: 1;
-          margin: 0 auto;
-        }
-
-        /* Gallery grid mobil - 2'li olacak */
-        .gallery-grid {
-          grid-template-columns: repeat(2, 1fr); /* Mobilde 2'li */
-          gap: 10px;
-        }
-
-        /* Mobilde tooltip'ı kapat */
-        .photo-analysis-btn::after {
-          display: none;
-        }
-        
-        /* Makaleler mobil - KÜÇÜK KARTLAR */
-        .articles-row {
-          flex-direction: column;
-          align-items: center;
-          gap: 15px;
-        }
-        
-        .article-card {
-          padding: 15px;
-          max-width: 100%;
-          width: 100%;
-          margin: 0 auto;
-        }
-        
-        .article-title {
-          font-size: 1rem;
-          height: auto;
-          -webkit-line-clamp: 3;
-        }
-        
-        .article-excerpt {
-          font-size: 0.85rem;
-          height: auto;
-          -webkit-line-clamp: 4;
-        }
-        
-        .article-stats {
-          font-size: 0.75rem;
-          gap: 15px;
-        }
-      }
-
-      @media (max-width: 768px) {
-        .latest-articles {
-          padding: 40px 15px;
-        }
-        
-        .articles-row {
-          justify-content: center;
-          align-items: center;
-        }
-        
-        .article-card {
-          padding: 15px;
-          width: 100%;
-        }
-        
-        .article-title {
-          font-size: 0.95rem;
-          height: auto;
-          -webkit-line-clamp: 3;
-        }
-        
-        .article-excerpt {
-          font-size: 0.82rem;
-          height: auto;
-          -webkit-line-clamp: 4;
-        }
-        
-        /* Tablet boyutunda da 2'li kalacak */
-        .gallery-grid {
-          grid-template-columns: repeat(2, 1fr);
-          gap: 10px;
-        }
-        
-        .gallery-photo {
-          height: auto;
-          aspect-ratio: 1/1; /* Mobilde de kare kalacak */
-        }
-        
-        .section-title {
-          font-size: 1.5rem;
-        }
-        
-        /* Mobilde entries ve açıklama kutusu makale kartıyla tamamen aynı */
-        .entry-item, .explanation-content {
-          width: 100%;
-          max-width: 100%;
-          margin-bottom: 20px;
-          padding: 15px;
-        }
-        
-        .microblog-container {
-          gap: 15px;
-        }
-      }
-
-      @media (max-width: 480px) {
-        .modal-navbar {
-          min-height: 160px;
-          padding: 10px 12px;
-        }
-        
-        .modal-info-items {
-          flex-direction: column;
-          align-items: center;
-          gap: 8px;
-        }
-        
-        .modal-thumb {
-          width: 50px;
-          height: 35px;
-        }
-        
-        .modal-counter {
-          font-size: 14px;
-          padding: 6px 15px;
-        }
-        
-        .nav-button {
-          padding: 8px 13px;
-          min-width: 55px;
-          font-size: 15px;
+            font-weight: bold;
+            color: var(--text-color);
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            line-height: 1.3;
+            padding-right: 60px;
         }
         
         .article-meta {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+        
+        .article-date {
+            flex: 1;
+        }
+        
+        .article-category {
+            background: rgba(0, 255, 0, 0.2);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.6rem;
+            margin-left: 5px;
+        }
+        
+        .article-translation-indicator {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 0.6rem;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-weight: bold;
+            z-index: 2;
+            white-space: nowrap;
+        }
+        
+        .article-share {
+            position: absolute;
+            top: 15px;
+            right: 10px;
+            background: #ff4444;
+            color: white;
+            border: 1px solid #ff4444;
+            border-radius: 3px;
+            padding: 2px 5px;
+            cursor: pointer;
+            font-size: 0.6rem;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 18px;
+            min-width: unset;
         }
         
         .article-stats {
-          justify-content: space-between;
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+            font-size: 0.65rem;
+            color: var(--highlight-color);
         }
         
-        /* Küçük mobil cihazlarda da 2'li kalacak */
-        .gallery-grid {
-          grid-template-columns: repeat(2, 1fr);
-          gap: 8px;
+        .article-content {
+            flex: 1;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 30px;
+            min-height: 600px;
         }
         
-        .gallery-photo {
-          height: auto;
-          aspect-ratio: 1/1;
+        .content-placeholder {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
         }
         
-        .gallery-photo:hover {
-          transform: scale(1.02);
+        .content-placeholder i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--border-color);
         }
         
-        /* Mobilde kartları daha da küçült */
-        .article-card {
-          padding: 12px;
-          width: 100%;
+        .content-placeholder p {
+            font-size: 1.1rem;
         }
         
-        .article-title {
-          font-size: 0.9rem;
-          height: auto;
+        .article-detail {
+            display: none;
         }
         
-        .article-excerpt {
-          font-size: 0.8rem;
-          height: auto;
+        .article-detail.active {
+            display: block;
         }
         
-        .section-title {
-          font-size: 1.3rem;
+        .detail-header {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
         }
         
-        /* Küçük mobilde entries ve açıklama kutusu */
-        .entry-item, .explanation-content {
-          padding: 12px;
-        }
-      }
-
-      /* Touch device detection ve mobil optimizasyon */
-      @media (hover: none) and (pointer: coarse) {
-        .photo-analysis-btn {
-          cursor: pointer;
-          -webkit-tap-highlight-color: transparent;
-        }
-
-        .photo-analysis-btn:focus {
-          outline: 2px solid rgba(249, 215, 28, 0.4);
-          outline-offset: 1px;
-        }
-
-        .photo-analysis-btn:active {
-          transform: scale(0.95);
-          background: linear-gradient(135deg, rgba(20, 35, 30, 0.9), rgba(0, 90, 0, 0.7));
+        .detail-title {
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 15px;
+            line-height: 1.4;
         }
         
-        .nav-button {
-          -webkit-tap-highlight-color: transparent;
-          min-height: 44px;
+        .detail-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            flex-wrap: wrap;
+            margin-top: 10px;
+            align-items: center;
         }
         
-        .modal-thumb {
-          -webkit-tap-highlight-color: transparent;
-          min-height: 44px;
+        .detail-meta-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-left: auto;
         }
         
-        .article-card {
-          -webkit-tap-highlight-color: transparent;
+        .meta-share {
+            background: #ff4444;
+            color: white;
+            border: 1px solid #ff4444;
+            border-radius: 5px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            height: 40px;
         }
         
-        .article-card:active {
-          transform: scale(0.98);
+        .meta-share:hover {
+            background: #ff2222;
+            transform: translateY(-1px);
         }
         
-        .gallery-photo:active {
-          transform: scale(0.95);
+        .detail-meta-buttons .translation-toggle {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ff4444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            color: white;
+            width: 40px;
+            height: 40px;
         }
         
-        .entry-item:active {
-          transform: scale(0.98);
+        .detail-meta-buttons .translation-toggle .fi {
+            font-size: 1.5em;
         }
-      }
+        
+        .detail-meta-buttons .translation-toggle:hover {
+            background: rgba(255, 68, 68, 0.1);
+        }
+        
+        .detail-meta-buttons .translation-toggle.active {
+            background: rgba(255, 68, 68, 0.2);
+        }
+        
+        .detail-date, .detail-category, .detail-author {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        /* Mobil butonları */
+        .mobile-meta-buttons {
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            width: 100%;
+        }
+        
+        .mobile-meta-buttons .translation-toggle {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ff4444;
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            flex: 1;
+            height: 40px;
+        }
+        
+        .mobile-meta-buttons .translation-toggle .fi {
+            font-size: 1.5em;
+        }
+        
+        .mobile-meta-buttons .translation-toggle.active {
+            background: rgba(255, 68, 68, 0.2);
+        }
+        
+        .mobile-meta-buttons .meta-share {
+            background: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+            flex: 1;
+            height: 40px;
+        }
+        
+        .mobile-meta-buttons .meta-share:hover {
+            background: #ff2222;
+        }
+        
+        .image-carousel {
+            position: relative;
+            margin: 25px 0;
+            border-radius: 8px;
+            overflow: hidden;
+            max-height: 400px;
+        }
+        
+        .carousel-inner {
+            display: flex;
+            transition: transform 0.5s ease;
+            height: 400px;
+        }
+        
+        .carousel-item {
+            min-width: 100%;
+            height: 100%;
+        }
+        
+        .carousel-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .carousel-control {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        
+        .carousel-control:hover {
+            background: rgba(0, 255, 0, 0.7);
+        }
+        
+        .carousel-control.prev {
+            left: 15px;
+        }
+        
+        .carousel-control.next {
+            right: 15px;
+        }
+        
+        .carousel-indicators {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+        
+        .carousel-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            transition: background 0.3s;
+        }
+        
+        .carousel-indicator.active {
+            background: var(--primary-color);
+        }
+        
+        .detail-body {
+            line-height: 1.7;
+            font-size: 1.05rem;
+            color: #e0e0e0;
+        }
+        
+        .detail-body img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px solid var(--border-color);
+            display: block;
+        }
+        
+        .detail-body pre {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 15px 0;
+            border: 1px solid var(--border-color);
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .detail-body code {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #f9d71c;
+        }
+        
+        .detail-body h2, .detail-body h3 {
+            color: var(--primary-color);
+            margin: 20px 0 10px;
+        }
+        
+        .detail-body p {
+            margin-bottom: 15px;
+        }
+        
+        .detail-body ul, .detail-body ol {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .detail-body li {
+            margin-bottom: 5px;
+        }
+        
+        .detail-body blockquote {
+            border-left: 3px solid var(--primary-color);
+            padding: 10px 20px;
+            margin: 20px 0;
+            background: rgba(0, 255, 0, 0.05);
+            font-style: italic;
+            color: var(--highlight-color);
+        }
+        
+        .article-stats-detail {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0,255,0,0.2);
+            display: flex;
+            gap: 20px;
+            color: #90ee90;
+            font-size: 0.9rem;
+            align-items: center;
+        }
+        
+        .like-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: #90ee90;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .like-btn:hover {
+            color: #ff6b6b;
+        }
+        
+        .like-btn i {
+            font-size: 1rem;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--primary-color);
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 255, 0, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary-color);
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 5px;
+            border: 1px solid var(--primary-color);
+            z-index: 1000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .subscription-section {
+            margin-top: 50px;
+            padding: 30px;
+            background: var(--card-bg);
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+        
+        .subscription-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .subscription-form {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .subscription-input {
+            flex: 1;
+            min-width: 250px;
+            padding: 12px;
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+        }
+        
+        .subscription-btn {
+            padding: 12px 24px;
+            background: var(--primary-color);
+            color: black;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .subscription-btn:hover {
+            background: var(--primary-dark);
+        }
+        
+        .subscription-btn:disabled {
+            background: var(--text-muted);
+            cursor: not-allowed;
+        }
+        
+        .subscription-message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .subscription-success {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .subscription-error {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid #ff5555;
+            color: #ff5555;
+        }
+        
+        #matrixCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1001;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+        }
+        
+        .modal-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .modal-title {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .verification-input {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            text-align: center;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+        }
+        
+        .verification-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+        }
+        
+        .verification-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .verification-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .verify-btn {
+            background: var(--primary-color);
+            color: black;
+        }
+        
+        .verify-btn:hover {
+            background: var(--primary-dark);
+        }
+        
+        .cancel-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid var(--border-color);
+        }
+        
+        .cancel-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .resend-code {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        
+        .resend-link {
+            color: var(--primary-color);
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        
+        .resend-link:hover {
+            color: var(--highlight-color);
+        }
+        
+        .resend-link.disabled {
+            color: var(--text-muted);
+            cursor: not-allowed;
+            text-decoration: none;
+        }
+        
+        .countdown {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .mobile-filters {
+            display: none;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 10px 15px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            color: white;
+            font-size: 0.9rem;
+        }
+        
+        .category-filter {
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            color: white;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        
+        .article-item-stats {
+            display: flex;
+            gap: 10px;
+            margin-top: 5px;
+            font-size: 0.65rem;
+            color: var(--highlight-color);
+        }
+        
+        /* Masaüstü görünümü için özel düzenlemeler */
+        @media (min-width: 993px) {
+            .articles-sidebar {
+                max-height: 70vh;
+                overflow-y: auto;
+            }
+            
+            .articles-list {
+                max-height: none;
+                overflow-y: visible;
+            }
+            
+            .detail-meta {
+                flex-wrap: nowrap;
+            }
+            
+            .detail-meta-buttons {
+                margin-left: auto;
+            }
+            
+            /* Masaüstünde butonlar görünür */
+            .detail-meta-buttons {
+                display: flex;
+            }
+            
+            /* Masaüstünde mobil butonları gizle */
+            .mobile-meta-buttons {
+                display: none !important;
+            }
+            
+            /* Fotoğraf boyutları masaüstünde büyük */
+            .image-carousel {
+                max-height: 400px;
+            }
+            
+            .carousel-inner {
+                height: 400px;
+            }
+        }
+        
+        /* Tablet ve mobil görünüm için */
+        @media (max-width: 992px) {
+            .articles-container {
+                flex-direction: column;
+            }
+            
+            .articles-sidebar {
+                width: 100%;
+                position: static;
+                order: 2;
+                max-height: none;
+            }
+            
+            .article-content {
+                min-height: auto;
+                order: 3;
+            }
+            
+            .mobile-filters {
+                display: flex;
+                order: 1;
+                width: 100%;
+            }
+            
+            /* Mobilde masaüstü butonlarını gizle */
+            .detail-meta-buttons {
+                display: none !important;
+            }
+            
+            /* Mobilde mobil butonları göster */
+            .mobile-meta-buttons {
+                display: flex;
+            }
+            
+            /* Fotoğraf boyutlarını mobilde küçült */
+            .image-carousel {
+                max-height: 250px;
+                margin: 15px 0;
+            }
+            
+            .carousel-inner {
+                height: 250px;
+            }
+            
+            .articles-list {
+                max-height: 250px;
+                overflow-y: auto;
+            }
+            
+            /* Başlık boyutunu mobilde küçült */
+            .detail-title {
+                font-size: 1.3rem;
+            }
+            
+            /* Meta bilgilerini mobilde düzenle */
+            .detail-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .detail-date, .detail-category, .detail-author {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .content-wrapper {
+                margin-top: 140px;
+                padding: 0 10px;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+            }
+            
+            .article-content {
+                padding: 20px;
+            }
+            
+            .subscription-form {
+                flex-direction: column;
+            }
+            
+            .subscription-input {
+                min-width: auto;
+            }
+            
+            .article-stats-detail {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .mobile-filters {
+                flex-direction: column;
+            }
+            
+            /* Fotoğraf boyutlarını daha da küçük ekranlarda küçült */
+            .image-carousel {
+                max-height: 200px;
+            }
+            
+            .carousel-inner {
+                height: 200px;
+            }
+            
+            /* Buton boyutlarını küçült */
+            .mobile-meta-buttons .meta-share,
+            .mobile-meta-buttons .translation-toggle {
+                font-size: 0.8rem;
+                padding: 6px 10px;
+            }
+            
+            .mobile-meta-buttons .translation-toggle .fi {
+                font-size: 1.3em;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            /* Liste öğelerindeki butonlar */
+            .article-translation-indicator {
+                top: 15px;
+                right: 30px;
+                font-size: 0.5rem;
+                padding: 1px 4px;
+            }
+            
+            .article-share {
+                top: 15px;
+                right: 8px;
+                font-size: 0.5rem;
+                padding: 1px 4px;
+                width: 18px;
+                height: 16px;
+            }
+            
+            .article-title {
+                padding-right: 50px;
+            }
+            
+            /* Detay sayfasındaki butonlar */
+            .mobile-meta-buttons .meta-share,
+            .mobile-meta-buttons .translation-toggle {
+                font-size: 0.75rem;
+                padding: 5px 8px;
+                height: 35px;
+            }
+            
+            .mobile-meta-buttons .translation-toggle .fi {
+                font-size: 1.2em;
+            }
+            
+            /* Fotoğraf boyutlarını çok küçük ekranlarda daha da küçült */
+            .image-carousel {
+                max-height: 180px;
+            }
+            
+            .carousel-inner {
+                height: 180px;
+            }
+            
+            .carousel-control {
+                width: 30px;
+                height: 30px;
+                font-size: 1rem;
+            }
+            
+            .detail-title {
+                font-size: 1.2rem;
+            }
+        }
     </style>
 </head>
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TFN7XD9Z"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
-<script>
-  // IP gösterici dot
-  const dot = document.createElement('div');
-  dot.style.cssText = `
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 18px;
-    height: 18px;
-    background: #f9d71c;
-    border-radius: 50%;
-    border: 3px solid white;
-    box-shadow: 0 0 10px rgba(50, 205, 50, 0.8);
-    cursor: pointer;
-    z-index: 9999;
-    transition: all 0.3s;
-  `;
-
-  const tooltip = document.createElement('div');
-  tooltip.style.cssText = `
-    position: absolute;
-    bottom: 100%;
-    right: 0;
-    background: rgba(0,0,0,0.9);
-    color: white;
-    padding: 10px;
-    border-radius: 6px;
-    font-size: 14px;
-    font-family: Arial, sans-serif;
-    white-space: nowrap;
-    opacity: 0;
-    transition: opacity 0.3s;
-    pointer-events: none;
-    min-width: 240px;
-    backdrop-filter: blur(5px);
-    z-index: 10000;
-  `;
-
-  dot.appendChild(tooltip);
-  document.body.appendChild(dot);
-
-  dot.addEventListener('mouseenter', () => tooltip.style.opacity = '1');
-  dot.addEventListener('mouseleave', () => tooltip.style.opacity = '0');
-  
-  // Touch events for mobile
-  dot.addEventListener('touchstart', () => tooltip.style.opacity = '1');
-  dot.addEventListener('touchend', () => setTimeout(() => tooltip.style.opacity = '0', 2000));
-
-  fetch('https://ipinfo.io/json?token=68a1229187303a')
-    .then(async res => {
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(`Hatalı cevap (${res.status}): ${text}`);
-      }
-      return res.json();
-    })
-    .then(data => {
-      const now = new Date();
-      const {
-        ip, hostname, city, region,
-        country, loc, org, postal, timezone
-      } = data;
-
-      tooltip.innerHTML = `
-        <div style="margin-bottom: 3px; font-weight: bold; color: #00ff00;">✓ User IP Detected</div>
-        <div><strong>IP:</strong> ${ip}</div>
-        <div><strong>Host:</strong> ${hostname}</div>
-        <div><strong>City:</strong> ${city}</div>
-        <div><strong>Country:</strong> ${country}</div>
-        <div><strong>Location</strong> ${loc}</div>
-        <div><strong>Postal:</strong> ${postal}</div>
-        <div><strong>Org:</strong> ${org}</div>
-        <div><strong>Time:</strong> ${now.toLocaleString('tr-TR')}</div>
-        <div style="font-size: 9px; margin-top: 4px; color: #ccc;">${navigator.userAgent.split(' ')[0]}</div>
-      `;
-
-      // POST ile Netlify fonksiyonuna gönder
-      fetch('https://adembayazit.netlify.app/.netlify/functions/log-visitor', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ip, hostname, city, region,
-          country, loc, org, postal,
-          timezone, timestamp: now.toISOString(),
-          userAgent: navigator.userAgent
-        })
-      }).then(res => res.json())
-        .then(console.log)
-        .catch(err => console.error("POST hatası:", err));
-    })
-    .catch(error => {
-      const now = new Date();
-      tooltip.innerHTML = `
-        <div style="margin-bottom: 5px; font-weight: bold; color: #ff5555;">❌ Hata</div>
-        <div><strong>Zaman:</strong> ${now.toLocaleString('tr-TR')}</div>
-        <div><strong>Mesaj:</strong> ${error.message}</div>
-      `;
-      dot.style.background = "#ff5555";
-    });
-</script>
-    <script type="module" src="/JAVASCRIPT/load-entries.js"></script>
-    <script src="/JAVASCRIPT/monitor.js"></script>
-    <canvas id="matrixCanvas"></canvas>
-    <script src="/JAVASCRIPT/matrix.js"></script>
 <body>
+    <noscript>
+        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TFN7XD9Z" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+    
     <header class="header">
         <div class="logo-container">
-            <a href="#home" class="logo"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">{adembayazit} </a>
+            <a href="https://adembayazit.com" class="logo">
+                <img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">
+                {adembayazit}
+            </a>
             <span class="logo-slogan">One step further every day…</span>
         </div>
         <nav class="navbar">
@@ -1251,889 +1262,1411 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <a href="/steganography"><img src="IMAGES/steganography.svg" alt="Steganography" class="steganography-icon"> Steganography</a>
             <a href="/cryptography"><img src="IMAGES/cryptography.svg" alt="Cryptography" class="cryptography-icon"> Cryptography</a>    
             <a href="/cybersecurityeducationprompt"><img src="IMAGES/education.svg" alt="Education" class="education-icon"> Cybersecurity Resources Prompt</a>
-            <a href="/article"><img src="IMAGES/newspaper.svg" alt="Article" class="articles-icon"> Cybersecurity Article</a>
             </div>
           </div>
         </nav>
     </header>
-
-    <section id="home" class="home">
-        <div class="home-content" data-scroll data-scroll-speed="-5">
-            <h3 class="mu">Hello, It's me</h3>
-            <h1>Adem Bayazıt</h1>
-            <h3>And I'm a <span class="pro-text">
-                <script>
-                   var typed = new Typed(".pro-text", {
-                      strings: [
-                        "Ethical Hacker",
-                        "Network Architect", 
-                        "Cyber Security Analyst",
-                        "Programmer",
-                        "Linux Administrator",
-                        "Reverse Engineer",
-                        "Lifelong Student",
-                      ],
-                      typeSpeed: 100,   
-                      backSpeed: 100,   
-                      backDelay: 1000,  
-                      loop: true        
-                    });
-                </script>
-            </span></h3>
-            
-            <p>  &emsp; &emsp;This platform highlights my passion for cybersecurity and my commitment to ethical practices. <br> <br>
-                &emsp; &emsp;I have acquired fundamental knowledge and skills in various areas of ethical hacking, 
-                allowing me to contribute to the security of organizations and individuals. <br> <br>
-                &emsp; &emsp;I am not the tool you find lying around; I am the source code. A Thesaurus who speaks the language of machines and the language of nature. <br><br> Hack Me If You Can is a platform where you can test yourself!
-            </p>
-            
-            <div class="home-sci">
-                <a href="https://github.com/adembayazit" target="_blank"><i class='bx bxl-github'></i></a>
-               <a href="https://www.linkedin.com/in/adembayazit/" target="_blank"><i class='bx bxl-linkedin' ></i></a>
-               <a href="https://wa.me/+905365844282" target="_blank"><i class='bx bxl-whatsapp'></i></a>
-            </div>
-                <a id="downloadCv" href="https://adembayazit.com/viewcv" class="btn-box"><i class="fas fa-file-alt"></i> &nbsp;View CV</a>
-        </div>
-
-        <div class="home-img">
-            <div class="glowing-circle">
-                <span></span>
-                <span></span>
-                <div class="image">
-                    <img src="/IMAGES/saianon.png" alt="">
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="microblog" class="microblog">
-        <div class="container">
-            <h2 class="section-title"><i class="fa-solid fa-pager"></i> LadyB <span class="fa-solid fa-bug bug-icon"></span> G Entries</h2>
-            <p class="last-entry">Last 5 Entries</p> 
-            <div class="microblog-container">
-                <div class="entries-column">
-                    <div id="entries" class="entries">
-                        <div class="entries-loading">
-                            <i class="fas fa-spinner fa-spin"></i>
-                            <p>Loading entries...</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="explanation-column">
-                    <div class="explanation-content">
-                        <h3>Why I Created This Microblog?</h3>
-                        <p>First of all, I want to clarify that I am not building a social media platform. I have only allocated a small area for myself on my platform to share my own opinions.</p>
-                        <p>Perhaps in the future, it could evolve into a social media platform. (Supply-Demand Eq)</p>
-                        <p>I am developing the platform from the ground up, completely on my own. I am not simply taking an open-source application and modifying it like others do.</p>
-                        <p>Furthermore, I needed a core idea for the platform. Here it is: I have shared the photos, which are the fundamental building blocks of the idea. An entirely new platform is being built upon this foundation.</p>
-                        <p>So, what am I sharing here? On this platform, I am not voicing something unknown. In fact, I bring to light what already exists but slips past your attention.</p>
-                        <p>Also, the entry space on this platform was born out of necessity.</p>
-                        <p>It concerns <strong>Technology, Art, Photography, the World, and the reinterpretation of developments in world history.</strong></p>
-                        <p>At the same time, it contains a <strong>cryptological and steganographic language and art</strong>.</p>
-                        <p>Friends, I'll soon start filling in the content. As the ideas form, they gradually take shape. I assure you, it will include knowledge that has never surfaced before. Since there's no team working in the background and I'm progressing entirely with personal effort and open-source development tools, it takes a little time.</p>
-                        <p>As I mentioned in the text, the cryptology and steganography content will be created in real time. The artworks, on the other hand, will feature the works of old masters such as Picasso, Da Vinci, Salvador Dalí, and many other talented artists whose names you may not have heard of. I will also reinterpret them with photographs by adding my own techniques.</p>
-                    </div>
-                    <button class="toggle-explanation">More..</button>
-                </div>
-            </div>
-            
-            <div style="text-align: center; margin-top: 20px;">
-                <a href="microblog.html" class="btn-box"><i class="fa-solid fa-bug"></i> All Entry Show</a>
-            </div>
-        </div>
-    </section>
-
-    <section id="photo-gallery" class="photo-gallery">
-        <div class="container">
-            <h2 class="section-title"><i class="fa-solid fa-images"></i> Photographic Cryptology</h2>
-            <div id="gallery-grid" class="gallery-grid"></div>
-            <div class="gallery-actions">
-                <button id="load-more" class="load-more">More Photos</button>
-                <a href="/photographiccryptology.html" class="photo-analysis-btn" 
-                   data-tooltip="Fotoğrafların detaylı açıklamaları ve kriptolojik anlamları">
-                    <i class="fas fa-search-plus"></i>
-                    <span class="btn-text">Analysis</span>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <section id="latest-articles" class="latest-articles">
-        <div class="container">
-            <h2 class="section-title"><i class="fas fa-newspaper"></i> Latest Cybersecurity Articles</h2>
-            <p class="last-entry">Last 3 Articles</p>
-            <div class="articles-container">
-                <div id="articles-row" class="articles-row">
-                    <!-- Makaleler buraya JavaScript ile yüklenecek -->
-                </div>
-                <div style="text-align: center; margin-top: 20px;">
-                    <a href="/article" class="btn-box"><i class="fas fa-book-open"></i> View All Articles</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- YENİ MODAL YAPISI - İNCE UZUN YATAY NAVBAR -->
-    <div id="modal" class="modal">
-        <span class="close">&times;</span>
-        <div class="keyboard-shortcuts">
-            <span>← →: Navigate | ESC: Close</span>
+    
+    <div class="content-wrapper">
+        <div class="backto"><a href="/" class="back-to-home"><i class="bx bx-arrow-back"></i> Back to Home</a></div>
+        
+        <h2 class="page-title"><img src="IMAGES/newspaper.svg" alt="Articles Icon" class="articles-icon"> Cybersecurity Articles</h2>
+        
+        <div class="mobile-filters">
+            <input type="text" class="search-input" id="mobileArticleSearch" placeholder="Search articles...">
+            <select class="category-filter" id="mobileCategoryFilter">
+                <option value="all">All Categories</option>
+                <option value="Malware Analysis">Malware Analysis</option>
+                <option value="Network Security">Network Security</option>
+                <option value="Web Security">Web Security</option>
+                <option value="Cryptography">Cryptography</option>
+                <option value="Social Engineering">Social Engineering</option>
+            </select>
         </div>
         
-        <div class="modal-content-container">
-            <div class="modal-image-wrapper">
-                <img class="modal-content" id="modal-img">
-            </div>
+        <div class="articles-container">
+            <aside class="articles-sidebar">
+                <h3 class="sidebar-title"><i class="fas fa-newspaper"></i> Latest Articles</h3>
+                <ul class="articles-list" id="articlesList">
+                    <li class="article-item loading-item">
+                        <div class="spinner"></div>
+                        <div>Loading articles...</div>
+                    </li>
+                </ul>
+            </aside>
             
-            <div class="modal-navbar">
-                <div class="modal-nav-top">
-                    <div class="modal-thumbnails">
-                        <button class="nav-button prev-button">&lt;</button>
-                        <img class="modal-thumb prev-thumb" src="" alt="Previous Photo">
-                        <div class="modal-counter"><span id="modal-counter">1/10</span></div>
-                        <img class="modal-thumb next-thumb" src="" alt="Next Photo">
-                        <button class="nav-button next-button">&gt;</button>
-                    </div>
+            <main class="article-content">
+                <div class="content-placeholder" id="contentPlaceholder">
+                    <i class="fas fa-search"></i>
+                    <p>Select an article from the sidebar to read</p>
                 </div>
                 
-                <div class="modal-nav-bottom">
-                    <div class="modal-info-items">
-                        <div class="modal-info-item">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span id="modal-location">Unknown Location</span>
-                        </div>
-                        <div class="modal-info-item">
-                            <i class="fas fa-calendar-alt"></i>
-                            <span id="modal-date">Unknown Date</span>
-                            <i class="fas fa-clock"></i>
-                            <span id="modal-time">Unknown Time</span>
-                        </div>
-                    </div>
+                <div class="article-detail" id="articleDetail">
                 </div>
+            </main>
+        </div>
+
+        <section class="subscription-section">
+            <h3><i class="fas fa-bell"></i> Get Notified of New Articles</h3>
+            <p>Subscribe to receive email notifications when new articles are published.</p>
+            
+            <form class="subscription-form" id="subscriptionForm">
+                <input type="email" class="subscription-input" id="emailInput" placeholder="Enter your email address" required>
+                <button type="submit" class="subscription-btn" id="subscribeBtn">Subscribe</button>
+            </form>
+            
+            <div class="subscription-message" id="subscriptionMessage"></div>
+        </section>
+    </div>
+
+    <div class="modal" id="verificationModal">
+        <div class="modal-content">
+            <div class="modal-icon">
+                <i class="fas fa-envelope"></i>
+            </div>
+            <h3 class="modal-title">Verify Your Email</h3>
+            <p>We've sent a verification code to <span id="verificationEmail" style="color: var(--primary-color); font-weight: bold;"></span></p>
+            
+            <form id="verificationForm">
+                <input type="text" class="verification-input" id="verificationCode" placeholder="Enter 6-digit code" maxlength="6" required>
+                
+                <div class="verification-buttons">
+                    <button type="button" class="verification-btn cancel-btn" id="cancelVerification">Cancel</button>
+                    <button type="submit" class="verification-btn verify-btn" id="verifyBtn">Verify</button>
+                </div>
+            </form>
+            
+            <div class="resend-code">
+                <p>Didn't receive the code? <span class="resend-link" id="resendCode">Resend code</span> <span id="countdown" class="countdown"></span></p>
             </div>
         </div>
     </div>
 
-    <footer style="text-align: center; padding: 20px; font-size: 14px; color: white;">
+    <div class="toast" id="toast"></div>
+
+    <footer style="text-align: center; padding: 20px; font-size: 14px; color: white; margin-top: 50px;">
         <hr style="margin-bottom: 10px; border-color: limegreen;" />
-        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.3 | Aug 2025</p>
+        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.7 | January 2026</p>
     </footer>
 
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0WNL3VLY3F"></script>
+    <script src="/JAVASCRIPT/monitor.js"></script>
+    <canvas id="matrixCanvas"></canvas>
+    <script src="/JAVASCRIPT/matrix.js"></script>
+    
     <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-0WNL3VLY3F');
-    </script>
-
-    <script src="/JAVASCRIPT/gallery.js"></script>
-    <script src="/JAVASCRIPT/log-download.js"></script>
-    <script src="/JAVASCRIPT/translate-entry.js"></script>
-    <script src="/JAVASCRIPT/keysound.js"></script>
-
-    <script>
-        // Mobil cihaz tespiti
-        function isMobileDevice() {
-            return /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        }
-
-        // Debug bilgileri
-        console.log('Device type:', isMobileDevice() ? 'Mobile' : 'Desktop');
-        console.log('User Agent:', navigator.userAgent);
-
-        // Touch için gecikme mekanizması
-        let touchTimer = null;
-        let touchStartX = 0;
-        let touchStartY = 0;
-        const TOUCH_DELAY = 200; // ms
-
-        function handleTouchStart(e) {
-            touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
-            touchTimer = setTimeout(() => {
-                // Uzun basma durumunda işlem yapma
-                touchTimer = null;
-            }, TOUCH_DELAY);
-        }
-
-        function handleTouchEnd(e, callback) {
-            if (touchTimer) {
-                clearTimeout(touchTimer);
-                touchTimer = null;
-                
-                const touchEndX = e.changedTouches[0].clientX;
-                const touchEndY = e.changedTouches[0].clientY;
-                
-                // Kaydırma mı tıklama mı kontrol et
-                const diffX = Math.abs(touchEndX - touchStartX);
-                const diffY = Math.abs(touchEndY - touchStartY);
-                
-                // Eğer kaydırma değilse (çok küçük hareket)
-                if (diffX < 10 && diffY < 10) {
-                    e.preventDefault();
-                    if (callback) callback();
-                }
-            }
-        }
-
-        // CV görüntüleme sayacı için fonksiyon
-        async function logCvView() {
-            try {
-                console.log('Starting CV view logging...');
-                
-                // Timeout ile IP bilgisi alma
-                const ipController = new AbortController();
-                const ipTimeout = setTimeout(() => ipController.abort(), 5000);
-                
-                const ipResponse = await fetch('https://ipinfo.io/json?token=68a1229187303a', {
-                    signal: ipController.signal
-                });
-                clearTimeout(ipTimeout);
-                
-                if (!ipResponse.ok) {
-                    throw new Error(`IP API error: ${ipResponse.status}`);
-                }
-                
-                const ipData = await ipResponse.json();
-                
-                const now = new Date();
-                const viewEntry = {
-                    id: Date.now(),
-                    ip: ipData.ip,
-                    hostname: ipData.hostname || 'unknown',
-                    city: ipData.city || 'unknown',
-                    region: ipData.region || 'unknown',
-                    country: ipData.country || 'unknown',
-                    loc: ipData.loc || 'unknown',
-                    org: ipData.org || 'unknown',
-                    postal: ipData.postal || 'unknown',
-                    timezone: ipData.timezone || 'unknown',
-                    timestamp: now.toISOString(),
-                    userAgent: navigator.userAgent.substring(0, 200),
-                    type: 'cv_view',
-                    page: 'home',
-                    device: isMobileDevice() ? 'mobile' : 'desktop'
+        const CONFIG = {
+            ARTICLES_BIN_ID: '695f155c43b1c97be920c28d',
+            SUBSCRIBERS_BIN_ID: '68d7fc3bae596e708ffdcc6e',
+            VIEWS_BIN_ID: '68862fd97b4b8670d8a81945',
+            LIKES_BIN_ID: '695f155c43b1c97be920c28d'
+        };
+        
+        class ArticleDataManager {
+            constructor() {
+                this.localData = {
+                    views: JSON.parse(localStorage.getItem('articleViews') || '{}'),
+                    likes: JSON.parse(localStorage.getItem('userLikedArticles') || '{}'),
+                    sessionViews: JSON.parse(sessionStorage.getItem('sessionViewedArticles') || '{}')
                 };
+                this.pendingUpdates = [];
+                this.isSyncing = false;
+                this.lastSyncTime = 0;
+                this.SYNC_INTERVAL = 30000;
+                this.QUEUE_PROCESS_INTERVAL = 5000;
+                this.CACHE_CLEANUP_INTERVAL = 12 * 60 * 60 * 1000;
+                this.lastCacheCleanup = parseInt(localStorage.getItem('lastCacheCleanup') || '0');
+            }
 
-                console.log('New view entry:', viewEntry);
+            async syncWithServer() {
+                if (this.isSyncing) return;
+                if (Date.now() - this.lastSyncTime < this.SYNC_INTERVAL) return;
 
-                // JSONBin işlemleri için timeout
-                const binController = new AbortController();
-                const binTimeout = setTimeout(() => binController.abort(), 10000);
-
-                // Önce mevcut veriyi al
-                const getResponse = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        path: '/b/68ecedca43b1c97be96584cc/latest',
-                        method: 'GET'
-                    }),
-                    signal: binController.signal
-                });
-
-                let existingData = { 
-                    cvview: 'adem', 
-                    cv_views: [], 
-                    total_views: 0,
-                    last_updated: new Date().toISOString()
-                };
+                this.isSyncing = true;
                 
-                if (getResponse.ok) {
-                    const result = await getResponse.json();
-                    console.log('Existing data from bin:', result);
-                    existingData = result;
+                try {
+                    const serverData = await fetchViaProxy('/latest', 'GET', null, CONFIG.ARTICLES_BIN_ID);
+                    const serverArticles = serverData.articles || serverData.records || serverData;
                     
-                    if (!existingData.cv_views) {
-                        existingData.cv_views = [];
-                    }
-                    if (typeof existingData.total_views !== 'number') {
-                        existingData.total_views = 0;
-                    }
-                }
-
-                // Yeni entry'yi array'e ekle
-                existingData.cv_views.push(viewEntry);
-                existingData.total_views = (existingData.total_views || 0) + 1;
-                existingData.last_updated = now.toISOString();
-
-                console.log('Updated data to save:', existingData);
-
-                // Güncellenmiş veriyi kaydet
-                const putResponse = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        path: '/b/68ecedca43b1c97be96584cc',
-                        method: 'PUT',
-                        body: existingData
-                    }),
-                    signal: binController.signal
-                });
-
-                clearTimeout(binTimeout);
-
-                if (!putResponse.ok) {
-                    throw new Error(`JSONBin PUT error: ${putResponse.status}`);
-                }
-
-                const result = await putResponse.json();
-                console.log('CV view logged successfully:', result);
-                
-                return result;
-            } catch (error) {
-                console.error('Error logging CV view:', error);
-                return { success: false, error: error.message };
-            }
-        }
-
-        // CV link kontrolü
-        document.addEventListener('DOMContentLoaded', function() {
-            const cvLink = document.getElementById('downloadCv');
-            console.log('CV link found:', !!cvLink);
-            if (cvLink) {
-                console.log('CV link href:', cvLink.href);
-                
-                // Hem click hem de touchstart event'lerini ekle
-                cvLink.addEventListener('click', handleCvClick);
-                cvLink.addEventListener('touchstart', handleCvClick, { passive: true });
-            }
-            
-            // Sayfa yüklendiğinde mevcut istatistikleri göster
-            showCvStats();
-        });
-
-        // Ortak click/touch handler
-        function handleCvClick(e) {
-            // Mobil cihazlarda varsayılan davranışı engelle
-            e.preventDefault();
-            e.stopPropagation();
-            
-            console.log('CV link clicked/touched, logging view...');
-            
-            const originalHref = this.href;
-            
-            // Loglama işlemini başlat
-            logCvView().then(result => {
-                console.log('Logging completed:', result);
-                // Loglama tamamlandıktan sonra yönlendir
-                setTimeout(() => {
-                    window.location.href = originalHref;
-                }, 300);
-            }).catch(err => {
-                console.error('Logging failed:', err);
-                // Hata olsa bile yönlendir
-                window.location.href = originalHref;
-            });
-        }
-
-        // CV istatistiklerini göster
-        async function showCvStats() {
-            try {
-                const response = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        path: '/b/68ecedca43b1c97be96584cc/latest',
-                        method: 'GET'
-                    })
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log('CV Stats:', data);
+                    const mergedArticles = this.mergeData(serverArticles, articlesData || []);
                     
-                    if (data.total_views) {
-                        console.log(`Total CV Views: ${data.total_views}`);
-                    }
+                    await fetchViaProxy('', 'PUT', { 
+                        articles: mergedArticles,
+                        lastSynced: new Date().toISOString()
+                    }, CONFIG.ARTICLES_BIN_ID);
+                    
+                    articlesData = mergedArticles;
+                    this.lastSyncTime = Date.now();
+                    
+                    console.log('Data sync completed successfully');
+                } catch (error) {
+                    console.error('Sync error:', error);
+                } finally {
+                    this.isSyncing = false;
                 }
-            } catch (error) {
-                console.log('Error fetching CV stats:', error);
+            }
+
+            mergeData(serverData, localData) {
+                const merged = [...serverData];
+                
+                merged.forEach((serverArticle, index) => {
+                    const localArticle = localData.find(a => a.id === serverArticle.id);
+                    if (localArticle) {
+                        merged[index].views = Math.max(
+                            serverArticle.views || 0,
+                            localArticle.views || 0,
+                            this.localData.views[serverArticle.id] || 0
+                        );
+                        
+                        merged[index].likes = Math.max(
+                            serverArticle.likes || 0,
+                            localArticle.likes || 0
+                        );
+                    }
+                });
+                
+                return merged;
+            }
+
+            queueUpdate(articleId, type, value) {
+                this.pendingUpdates.push({
+                    articleId,
+                    type,
+                    value,
+                    timestamp: Date.now()
+                });
+                
+                setTimeout(() => this.processQueue(), this.QUEUE_PROCESS_INTERVAL);
+            }
+
+            async processQueue() {
+                if (this.pendingUpdates.length === 0 || this.isSyncing) return;
+                
+                this.isSyncing = true;
+                
+                try {
+                    const updates = [...this.pendingUpdates];
+                    this.pendingUpdates = [];
+                    
+                    const serverData = await fetchViaProxy('/latest', 'GET', null, CONFIG.ARTICLES_BIN_ID);
+                    let articles = serverData.articles || serverData.records || serverData;
+                    
+                    updates.forEach(update => {
+                        const articleIndex = articles.findIndex(a => a.id == update.articleId);
+                        if (articleIndex !== -1) {
+                            if (update.type === 'view') {
+                                articles[articleIndex].views = (articles[articleIndex].views || 0) + update.value;
+                            } else if (update.type === 'like') {
+                                articles[articleIndex].likes = (articles[articleIndex].likes || 0) + update.value;
+                            }
+                        }
+                    });
+                    
+                    await fetchViaProxy('', 'PUT', { 
+                        articles: articles,
+                        lastUpdated: new Date().toISOString()
+                    }, CONFIG.ARTICLES_BIN_ID);
+                    
+                    articlesData = articles;
+                    
+                    console.log('Queue processed successfully:', updates.length, 'updates');
+                } catch (error) {
+                    console.error('Queue processing error:', error);
+                    this.pendingUpdates.push(...updates);
+                } finally {
+                    this.isSyncing = false;
+                }
+            }
+
+            clearStaleCache() {
+                const now = Date.now();
+                
+                if (now - this.lastCacheCleanup < this.CACHE_CLEANUP_INTERVAL) {
+                    return;
+                }
+                
+                console.log('Performing automatic cache cleanup...');
+                
+                const oneWeekAgo = now - (7 * 24 * 60 * 60 * 1000);
+                const oneDayAgo = now - (24 * 60 * 60 * 1000);
+                
+                Object.keys(localStorage).forEach(key => {
+                    if (key.startsWith('liked_')) {
+                        const timestamp = parseInt(localStorage.getItem(key));
+                        if (timestamp && timestamp < oneDayAgo) {
+                            localStorage.removeItem(key);
+                        }
+                    }
+                });
+                
+                Object.keys(sessionStorage).forEach(key => {
+                    if (key.startsWith('viewed_')) {
+                        const timestamp = parseInt(sessionStorage.getItem(key));
+                        if (timestamp && (now - timestamp) > (30 * 60 * 1000)) {
+                            sessionStorage.removeItem(key);
+                        }
+                    }
+                });
+                
+                this.pendingUpdates = this.pendingUpdates.filter(update => {
+                    return (now - update.timestamp) < (7 * 24 * 60 * 60 * 1000);
+                });
+                
+                Object.keys(this.localData.views).forEach(articleId => {
+                    if (!articlesData.some(a => a.id == articleId)) {
+                        delete this.localData.views[articleId];
+                    }
+                });
+                
+                Object.keys(this.localData.likes).forEach(articleId => {
+                    const article = articlesData.find(a => a.id == articleId);
+                    if (article && article.likes) {
+                        if (article.likes >= (this.localData.likes[articleId] || 0)) {
+                            delete this.localData.likes[articleId];
+                        }
+                    }
+                });
+                
+                localStorage.setItem('articleViews', JSON.stringify(this.localData.views));
+                localStorage.setItem('userLikedArticles', JSON.stringify(this.localData.likes));
+                
+                this.lastCacheCleanup = now;
+                localStorage.setItem('lastCacheCleanup', now.toString());
+                
+                console.log('Automatic cache cleanup completed');
+            }
+            
+            optimizeCache() {
+                const now = Date.now();
+                const oneHourAgo = now - (60 * 60 * 1000);
+                
+                const activeArticles = articlesData.filter(article => {
+                    const articleDate = new Date(article.published_date || article.date);
+                    return (now - articleDate.getTime()) < (30 * 24 * 60 * 60 * 1000);
+                });
+                
+                const activeArticleIds = activeArticles.map(a => a.id.toString());
+                
+                Object.keys(this.localData.views).forEach(articleId => {
+                    if (!activeArticleIds.includes(articleId)) {
+                        const lastView = this.localData.views[articleId];
+                        if (lastView && (now - lastView) > (7 * 24 * 60 * 60 * 1000)) {
+                            delete this.localData.views[articleId];
+                        }
+                    }
+                });
+                
+                localStorage.setItem('articleViews', JSON.stringify(this.localData.views));
             }
         }
 
-        // Latest Articles için fonksiyonlar
-        async function fetchArticles() {
+        const dataManager = new ArticleDataManager();
+        
+        let articlesData = [];
+        let currentArticle = null;
+        let isTranslated = false;
+        let pendingEmail = null;
+        let verificationCode = null;
+        let countdownTimer = null;
+        let carouselCurrentIndex = 0;
+        
+        async function fetchViaProxy(path, method = 'GET', body = null, binId = null) {
+            const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
+            
+            const actualPath = binId ? `/b/${binId}${path}` : path;
+            
             try {
-                const ARTICLES_BIN_ID = '695f155c43b1c97be920c28d';
-                const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
-                
                 const response = await fetch(proxyUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        path: `/b/${ARTICLES_BIN_ID}/latest`,
-                        method: 'GET'
-                    })
+                    body: JSON.stringify({ path: actualPath, method, body })
                 });
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const result = await response.json();
-                return result.articles || result.records || result || [];
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return await response.json();
             } catch (error) {
-                console.error('Error fetching articles:', error);
-                return [];
+                console.error('Proxy error:', error);
+                throw error;
             }
         }
-
-        // Latest Articles loading - DÜZELTİLDİ: 1 dakika bekleme kaldırıldı
-        async function loadLatestArticles() {
-            const container = document.getElementById('articles-row');
-            if (!container) return;
-
-            container.innerHTML = '<div class="loading-articles"><i class="fas fa-spinner fa-spin"></i> Loading articles...</div>';
-
+        
+        function showToast(message, duration = 3000) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
+        }
+        
+        async function loadArticlesData() {
             try {
-                const articles = await fetchArticles();
+                renderArticlesList();
                 
-                // Başarılı durumda direkt göster
-                if (!articles || articles.length === 0) {
-                    container.innerHTML = '<div class="no-articles">No articles available at the moment.</div>';
-                    return;
-                }
-
-                // En yeni 3 makaleyi al
-                const latestArticles = articles
-                    .sort((a, b) => {
-                        const dateA = new Date(a.published_date || a.date || 0);
-                        const dateB = new Date(b.published_date || b.date || 0);
-                        return dateB - dateA;
-                    })
-                    .slice(0, 3);
-
-                container.innerHTML = '';
+                const result = await fetchViaProxy('/latest', 'GET', null, CONFIG.ARTICLES_BIN_ID);
+                const serverArticles = result.articles || result.records || result;
                 
-                latestArticles.forEach(article => {
-                    const articleDate = new Date(article.published_date || article.date);
-                    const dateStr = articleDate.toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric'
-                    });
-
-                    // İçerikten HTML etiketlerini temizle ve kısa açıklama oluştur
-                    let excerpt = '';
-                    if (article.content) {
-                        const tempDiv = document.createElement('div');
-                        tempDiv.innerHTML = article.content;
-                        excerpt = tempDiv.textContent || tempDiv.innerText || '';
-                        excerpt = excerpt.substring(0, 120).trim();
-                        if (excerpt.length === 120) excerpt += '...';
-                    } else {
-                        excerpt = 'Read the full article for more details...';
-                    }
-
-                    const card = document.createElement('div');
-                    card.className = 'article-card touch-delay';
-                    card.innerHTML = `
-                        <div class="article-title">${article.title || 'Untitled Article'}</div>
-                        <div class="article-meta">
-                            <span class="article-date">${dateStr}</span>
-                            <span class="article-category">${article.category || 'Cybersecurity'}</span>
-                        </div>
-                        <div class="article-excerpt">${excerpt}</div>
-                        <div class="article-stats">
-                            <div class="article-stat">
-                                <i class="far fa-eye"></i> ${article.views || 0} views
-                            </div>
-                            <div class="article-stat">
-                                <i class="far fa-heart"></i> ${article.likes || 0} likes
-                            </div>
-                        </div>
-                    `;
-
-                    // Click event
-                    card.addEventListener('click', () => {
-                        window.location.href = `/article#${article.id}`;
-                    });
+                articlesData = dataManager.mergeData(serverArticles, articlesData || []);
+                
+                dataManager.optimizeCache();
+                
+                renderArticlesList();
+                
+                if (window.location.hash) {
+                    const articleId = window.location.hash.substring(1);
+                    loadArticleDetail(articleId);
+                } else if (articlesData.length > 0) {
+                    const latestArticle = articlesData[0];
+                    loadArticleDetail(latestArticle.id);
+                    history.replaceState(null, null, `#${latestArticle.id}`);
                     
-                    // Touch event with delay for mobile
-                    card.addEventListener('touchstart', function(e) {
-                        handleTouchStart(e);
-                    });
-                    
-                    card.addEventListener('touchend', function(e) {
-                        handleTouchEnd(e, () => {
-                            window.location.href = `/article#${article.id}`;
+                    setTimeout(() => {
+                        document.querySelectorAll('.article-item').forEach(item => {
+                            item.classList.remove('active');
+                            if (item.dataset.id == latestArticle.id) {
+                                item.classList.add('active');
+                            }
                         });
-                    });
-
-                    container.appendChild(card);
-                });
+                    }, 100);
+                }
+                
+                setTimeout(() => dataManager.syncWithServer(), 2000);
+                
             } catch (error) {
-                console.error('Error loading articles:', error);
-                container.innerHTML = '<div class="no-articles">Unable to load articles. Please try again later.</div>';
+                console.error('Error loading articles data:', error);
+                
+                if (articlesData && articlesData.length > 0) {
+                    renderArticlesList();
+                    showToast('Showing cached articles', 3000);
+                } else {
+                    document.getElementById('articlesList').innerHTML = 
+                        '<li class="article-item">Error loading articles. Please try again later.</li>';
+                }
             }
         }
-
-        // Mikroblog entries için yükleniyor göstergesi
-        function showEntriesLoading() {
-            const entriesContainer = document.getElementById('entries');
-            if (entriesContainer) {
-                entriesContainer.innerHTML = `
-                    <div class="entries-loading">
-                        <i class="fas fa-spinner fa-spin"></i>
-                        <p>Loading entries... Please wait.</p>
+        
+        async function updateViewCount(articleId) {
+            if (!articleId) return;
+            
+            const sessionKey = `viewed_${articleId}`;
+            const lastViewed = sessionStorage.getItem(sessionKey);
+            const now = Date.now();
+            
+            if (lastViewed && (now - parseInt(lastViewed)) < 30 * 60 * 1000) {
+                return;
+            }
+            
+            sessionStorage.setItem(sessionKey, now.toString());
+            
+            const article = articlesData.find(a => a.id == articleId);
+            if (!article) return;
+            
+            article.views = (article.views || 0) + 1;
+            
+            dataManager.localData.views[articleId] = article.views;
+            localStorage.setItem('articleViews', JSON.stringify(dataManager.localData.views));
+            
+            dataManager.queueUpdate(articleId, 'view', 1);
+            
+            const viewElement = document.querySelector(`#views-${articleId}`);
+            if (viewElement) {
+                viewElement.innerHTML = `<i class="far fa-eye"></i> ${article.views}`;
+            }
+            
+            if (currentArticle && currentArticle.id == articleId) {
+                const detailViewElement = document.querySelector('.article-stats-detail .views');
+                if (detailViewElement) {
+                    detailViewElement.innerHTML = `<i class="far fa-eye"></i> ${article.views} views`;
+                }
+            }
+            
+            showToast('View counted!', 1000);
+        }
+        
+        async function handleLike(articleId) {
+            if (!articleId) return;
+            
+            const article = articlesData.find(a => a.id == articleId);
+            if (!article) return;
+            
+            const likeKey = `liked_${articleId}`;
+            const lastLiked = localStorage.getItem(likeKey);
+            const now = Date.now();
+            
+            if (lastLiked && (now - parseInt(lastLiked)) < 5000) {
+                showToast('Please wait before liking again');
+                return;
+            }
+            
+            const userLikeKey = `user_like_${articleId}`;
+            if (localStorage.getItem(userLikeKey)) {
+                showToast('You already liked this article');
+                return;
+            }
+            
+            localStorage.setItem(userLikeKey, 'true');
+            localStorage.setItem(likeKey, now.toString());
+            
+            article.likes = (article.likes || 0) + 1;
+            
+            dataManager.localData.likes[articleId] = true;
+            localStorage.setItem('userLikedArticles', JSON.stringify(dataManager.localData.likes));
+            
+            dataManager.queueUpdate(articleId, 'like', 1);
+            
+            const likeElement = document.querySelector(`#likes-${article.id}`);
+            if (likeElement) {
+                likeElement.innerHTML = `<i class="fas fa-heart"></i> ${article.likes}`;
+                likeElement.style.color = '#ff6b6b';
+            }
+            
+            if (currentArticle && currentArticle.id == articleId) {
+                const detailLikeBtn = document.querySelector('.article-stats-detail .like-btn');
+                if (detailLikeBtn) {
+                    detailLikeBtn.innerHTML = `<i class="fas fa-heart"></i> ${article.likes} likes`;
+                    detailLikeBtn.disabled = true;
+                    detailLikeBtn.style.color = '#ff6b6b';
+                    detailLikeBtn.style.cursor = 'default';
+                    detailLikeBtn.onclick = null;
+                }
+            }
+            
+            const heartIcon = document.querySelector(`#likes-${article.id} i`);
+            if (heartIcon) {
+                heartIcon.style.transform = 'scale(1.5)';
+                setTimeout(() => {
+                    heartIcon.style.transform = 'scale(1)';
+                }, 300);
+            }
+            
+            showToast('Article liked!');
+        }
+        
+        function createCarousel(images) {
+            console.log('Creating carousel with images:', images);
+            
+            if (!images || images.length === 0) {
+                console.log('No images available, showing default');
+                return `
+                    <div class="image-carousel">
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <img src="https://adembayazit.com/IMAGES/preview.png" alt="Default article image">
+                            </div>
+                        </div>
                     </div>
                 `;
             }
-        }
-
-        // Mikroblog entries'leri yükle - DÜZELTİLDİ: 1 dakika bekleme kaldırıldı
-        async function loadMicroblogEntries() {
-            showEntriesLoading();
             
-            try {
-                const MICROBLOG_BIN_ID = '694f7d8e43b1c97be91ef7d1';
-                const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
+            if (images.length === 1) {
+                console.log('Single image:', images[0]);
+                return `
+                    <div class="image-carousel">
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <img src="${images[0]}" alt="Article image">
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            console.log('Multiple images:', images.length);
+            
+            let indicators = '';
+            for (let i = 0; i < images.length; i++) {
+                indicators += `<button class="carousel-indicator ${i === 0 ? 'active' : ''}" onclick="goToSlide(${i})"></button>`;
+            }
+            
+            return `
+                <div class="image-carousel">
+                    <div class="carousel-inner" id="carouselInner">
+                        ${images.map((img, index) => `
+                            <div class="carousel-item ${index === 0 ? 'active' : ''}">
+                                <img src="${img}" alt="Article image ${index + 1}">
+                            </div>
+                        `).join('')}
+                    </div>
+                    <button class="carousel-control prev" onclick="prevSlide()">❮</button>
+                    <button class="carousel-control next" onclick="nextSlide()">❯</button>
+                    <div class="carousel-indicators" id="carouselIndicators">
+                        ${indicators}
+                    </div>
+                </div>
+            `;
+        }
+        
+        function nextSlide() {
+            const items = document.querySelectorAll('.carousel-item');
+            const indicators = document.querySelectorAll('.carousel-indicator');
+            if (items.length === 0) return;
+            
+            carouselCurrentIndex = (carouselCurrentIndex + 1) % items.length;
+            
+            const carouselInner = document.getElementById('carouselInner');
+            if (carouselInner) {
+                carouselInner.style.transform = `translateX(-${carouselCurrentIndex * 100}%)`;
+            }
+            
+            items.forEach((item, index) => {
+                item.classList.toggle('active', index === carouselCurrentIndex);
+            });
+            
+            indicators.forEach((indicator, index) => {
+                indicator.classList.toggle('active', index === carouselCurrentIndex);
+            });
+        }
+        
+        function prevSlide() {
+            const items = document.querySelectorAll('.carousel-item');
+            const indicators = document.querySelectorAll('.carousel-indicator');
+            if (items.length === 0) return;
+            
+            carouselCurrentIndex = (carouselCurrentIndex - 1 + items.length) % items.length;
+            
+            const carouselInner = document.getElementById('carouselInner');
+            if (carouselInner) {
+                carouselInner.style.transform = `translateX(-${carouselCurrentIndex * 100}%)`;
+            }
+            
+            items.forEach((item, index) => {
+                item.classList.toggle('active', index === carouselCurrentIndex);
+            });
+            
+            indicators.forEach((indicator, index) => {
+                indicator.classList.toggle('active', index === carouselCurrentIndex);
+            });
+        }
+        
+        function goToSlide(index) {
+            const items = document.querySelectorAll('.carousel-item');
+            const indicators = document.querySelectorAll('.carousel-indicator');
+            if (items.length === 0 || index < 0 || index >= items.length) return;
+            
+            carouselCurrentIndex = index;
+            
+            const carouselInner = document.getElementById('carouselInner');
+            if (carouselInner) {
+                carouselInner.style.transform = `translateX(-${carouselCurrentIndex * 100}%)`;
+            }
+            
+            items.forEach((item, i) => {
+                item.classList.toggle('active', i === carouselCurrentIndex);
+            });
+            
+            indicators.forEach((indicator, i) => {
+                indicator.classList.toggle('active', i === carouselCurrentIndex);
+            });
+        }
+        
+        function renderArticlesList() {
+            const articlesList = document.getElementById('articlesList');
+            if (!articlesList) return;
+            
+            articlesList.innerHTML = '';
+            
+            if (articlesData.length === 0) {
+                articlesList.innerHTML = '<li class="article-item">No articles available.</li>';
+                return;
+            }
+            
+            articlesData.forEach(article => {
+                const listItem = document.createElement('li');
+                listItem.className = `article-item`;
+                listItem.dataset.id = article.id;
                 
-                const response = await fetch(proxyUrl, {
+                const articleDate = new Date(article.published_date || article.date);
+                const dateStr = articleDate.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+                const timeStr = articleDate.toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                const views = article.views || 0;
+                const likes = article.likes || 0;
+                const hasLiked = localStorage.getItem(`user_like_${article.id}`);
+                
+                let translationIndicator = '';
+                if (article.content_tr) {
+                    translationIndicator = `<div class="article-translation-indicator">TR</div>`;
+                }
+                
+                listItem.innerHTML = `
+                    ${translationIndicator}
+                    <button class="article-share" onclick="event.stopPropagation(); shareArticle(${article.id})">
+                        <i class="fas fa-share-alt"></i>
+                    </button>
+                    <div class="article-title">${article.title || 'Untitled Article'}</div>
+                    <div class="article-meta">
+                        <span class="article-date">${dateStr} ${timeStr}</span>
+                        ${article.category ? `<span class="article-category">${article.category}</span>` : ''}
+                    </div>
+                    <div class="article-stats">
+                        <span id="views-${article.id}"><i class="far fa-eye"></i> ${views}</span>
+                        <span id="likes-${article.id}"><i class="${hasLiked ? 'fas' : 'far'} fa-heart"></i> ${likes}</span>
+                    </div>
+                `;
+                
+                listItem.addEventListener('click', () => {
+                    window.location.hash = article.id;
+                    loadArticleDetail(article.id);
+                    
+                    document.querySelectorAll('.article-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    listItem.classList.add('active');
+                });
+                
+                articlesList.appendChild(listItem);
+            });
+        }
+        
+        function loadArticleDetail(articleId) {
+            const article = articlesData.find(item => item.id == articleId);
+            
+            if (!article) {
+                document.getElementById('contentPlaceholder').style.display = 'block';
+                document.getElementById('articleDetail').classList.remove('active');
+                return;
+            }
+            
+            currentArticle = article;
+            isTranslated = false;
+            carouselCurrentIndex = 0;
+            
+            document.getElementById('contentPlaceholder').style.display = 'none';
+            
+            const articleDate = new Date(article.published_date || article.date);
+            const dateStr = articleDate.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            const timeStr = articleDate.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            const views = article.views || 0;
+            const likes = article.likes || 0;
+            const hasLiked = localStorage.getItem(`user_like_${article.id}`);
+            
+            let tagsHtml = '';
+            if (article.tags && article.tags.length > 0) {
+                tagsHtml = `<div class="detail-tags" style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 5px;">
+                    <strong>Tags:</strong> ${article.tags.map(tag => `<span style="background: rgba(0,255,0,0.2); padding: 2px 8px; border-radius: 12px; margin: 0 2px; font-size: 0.8em;">${tag}</span>`).join('')}
+                </div>`;
+            }
+            
+            // Çeviri butonu HTML'i - masaüstü için detail-meta-buttons içinde
+            const translationButtonHtml = article.content_tr ? `
+                <button class="translation-toggle" id="translationToggle">
+                    <span class="fi fi-tr"></span>
+                </button>
+            ` : '';
+            
+            // Paylaşım butonu HTML'i - masaüstü için detail-meta-buttons içinde
+            const shareButtonHtml = `
+                <button class="meta-share" onclick="shareArticle(${article.id})">
+                    <i class="fas fa-share-alt"></i>
+                </button>
+            `;
+            
+            // Mobil için butonlar
+            const mobileButtonsHtml = article.content_tr ? `
+                <div class="mobile-meta-buttons">
+                    <button class="translation-toggle" id="translationToggleMobile">
+                        <span class="fi fi-tr"></span>
+                    </button>
+                    <button class="meta-share" onclick="shareArticle(${article.id})">
+                        <i class="fas fa-share-alt"></i> Share
+                    </button>
+                </div>
+            ` : `
+                <div class="mobile-meta-buttons">
+                    <button class="meta-share" onclick="shareArticle(${article.id})">
+                        <i class="fas fa-share-alt"></i> Share
+                    </button>
+                </div>
+            `;
+            
+            // FIXED: Resimleri doğru şekilde topla
+            let images = [];
+            
+            // 1. Önce featured_image'ı kontrol et - PNG/JPG format fark etmez
+            if (article.featured_image && article.featured_image.trim() !== '') {
+                console.log('DEBUG: Found featured_image:', article.featured_image);
+                images.push(article.featured_image);
+                
+                // ImageKit URL'lerini optimize et
+                if (article.featured_image.includes('ik.imagekit.io')) {
+                    console.log('DEBUG: This is an ImageKit URL');
+                }
+            } else {
+                console.log('DEBUG: No featured_image found');
+            }
+            
+            // 2. images dizisini kontrol et
+            if (article.images && Array.isArray(article.images) && article.images.length > 0) {
+                console.log('DEBUG: Found images array:', article.images);
+                article.images.forEach(img => {
+                    if (img && img.trim() !== '' && !images.includes(img)) {
+                        images.push(img);
+                    }
+                });
+            }
+            
+            // 3. Eğer hiç resim yoksa varsayılan resmi kullan
+            if (images.length === 0) {
+                console.log('DEBUG: No images found, using default');
+                images.push('https://adembayazit.com/IMAGES/preview.png');
+            }
+            
+            console.log('DEBUG: Final images array:', images);
+            
+            document.getElementById('articleDetail').innerHTML = `
+                <div class="detail-header">
+                    <h1 class="detail-title">
+                        <span id="articleTitleText">${article.title || 'Untitled Article'}</span>
+                    </h1>
+                    <div class="detail-meta">
+                        <span class="detail-date"><i class="far fa-calendar"></i> ${dateStr} <i class="far fa-clock"></i> ${timeStr}</span>
+                        <span class="detail-category"><i class="fas fa-tag"></i> ${article.category || 'Cybersecurity'}</span>
+                        <span class="detail-author"><i class="fas fa-user"></i> ${article.author || 'Adem Bayazıt'}</span>
+                        <span class="detail-meta-buttons">
+                            ${translationButtonHtml}
+                            ${shareButtonHtml}
+                        </span>
+                    </div>
+                    ${mobileButtonsHtml}
+                    ${tagsHtml}
+                </div>
+                
+                ${createCarousel(images)}
+                
+                <div class="detail-body" id="articleBody">
+                    ${formatArticleContent(article.content)}
+                </div>
+                
+                <div class="article-stats-detail">
+                    <div class="views"><i class="far fa-eye"></i> ${views} views</div>
+                    <button class="like-btn" onclick="handleLike(${article.id})" ${hasLiked ? 'disabled' : ''}>
+                        <i class="${hasLiked ? 'fas' : 'far'} fa-heart"></i> ${likes} likes
+                    </button>
+                    <div><i class="far fa-clock"></i> ${article.reading_time || '5'} min read</div>
+                </div>
+            `;
+            
+            document.getElementById('articleDetail').classList.add('active');
+            
+            // Çeviri butonlarına event listener ekle
+            if (article.content_tr) {
+                const translationToggle = document.getElementById('translationToggle');
+                if (translationToggle) {
+                    translationToggle.addEventListener('click', toggleTranslation);
+                }
+                
+                const translationToggleMobile = document.getElementById('translationToggleMobile');
+                if (translationToggleMobile) {
+                    translationToggleMobile.addEventListener('click', toggleTranslation);
+                }
+            }
+            
+            document.querySelectorAll('.article-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.id == articleId) {
+                    item.classList.add('active');
+                }
+            });
+            
+            document.querySelector('.article-content').scrollTop = 0;
+            
+            updateViewCount(articleId);
+            
+            // Meta tagleri güncelle
+            updateMetaTags(article);
+        }
+        
+        function updateMetaTags(article) {
+            // Makale başlığını temizle
+            const cleanTitle = article.title.replace(/<[^>]*>/g, '');
+            
+            // Makale açıklamasını oluştur
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = article.content || '';
+            let cleanDescription = tempDiv.textContent || tempDiv.innerText || '';
+            cleanDescription = cleanDescription.substring(0, 150).replace(/\s+/g, ' ').trim() + '...';
+            
+            // Kapak fotoğrafını belirle - ÖNCE featured_image'ı kontrol et
+            let coverImage = 'https://adembayazit.com/IMAGES/preview.png';
+            
+            if (article.featured_image && article.featured_image.trim() !== '') {
+                coverImage = article.featured_image;
+            } else if (article.images && article.images.length > 0 && article.images[0].trim() !== '') {
+                coverImage = article.images[0];
+            }
+            
+            console.log('DEBUG: Setting cover image to:', coverImage);
+            
+            // URL'yi güncelle (hash'li versiyon)
+            const currentUrl = window.location.origin + window.location.pathname + '#' + article.id;
+            
+            // Meta tagleri güncelle
+            updateMetaTag('og:title', cleanTitle + ' | Adem Bayazıt');
+            updateMetaTag('og:description', cleanDescription);
+            updateMetaTag('og:image', coverImage);
+            updateMetaTag('og:url', currentUrl);
+            updateMetaTag('og:type', 'article');
+            
+            // Twitter meta taglerini güncelle
+            updateMetaTag('twitter:title', cleanTitle + ' | Adem Bayazıt');
+            updateMetaTag('twitter:description', cleanDescription);
+            updateMetaTag('twitter:image', coverImage);
+            updateMetaTag('twitter:card', 'summary_large_image');
+            
+            // Sayfa başlığını da güncelle
+            document.title = cleanTitle + ' | Adem Bayazıt Cybersecurity';
+        }
+        
+        function updateMetaTag(property, content) {
+            let metaTag = document.querySelector(`meta[property="${property}"]`);
+            if (!metaTag) {
+                metaTag = document.querySelector(`meta[name="${property}"]`);
+            }
+            
+            if (metaTag) {
+                metaTag.setAttribute('content', content);
+                console.log(`Updated meta tag ${property}: ${content}`);
+            }
+        }
+        
+        function toggleTranslation() {
+            if (!currentArticle || !currentArticle.content_tr) return;
+            
+            const translationToggle = document.getElementById('translationToggle');
+            const translationToggleMobile = document.getElementById('translationToggleMobile');
+            const articleTitle = document.getElementById('articleTitleText');
+            const articleBody = document.getElementById('articleBody');
+            
+            if (!articleTitle || !articleBody) return;
+            
+            if (!isTranslated) {
+                articleTitle.textContent = currentArticle.title_tr || currentArticle.title;
+                articleBody.innerHTML = formatArticleContent(currentArticle.content_tr);
+                if (translationToggle) translationToggle.classList.add('active');
+                if (translationToggleMobile) translationToggleMobile.classList.add('active');
+                isTranslated = true;
+                showToast('Switched to Turkish');
+            } else {
+                articleTitle.textContent = currentArticle.title || 'Untitled Article';
+                articleBody.innerHTML = formatArticleContent(currentArticle.content);
+                if (translationToggle) translationToggle.classList.remove('active');
+                if (translationToggleMobile) translationToggleMobile.classList.remove('active');
+                isTranslated = false;
+                showToast('Switched to English');
+            }
+        }
+        
+        function formatArticleContent(content) {
+            if (!content) return '<p>No content available for this article.</p>';
+            
+            let formattedContent = content
+                .split('\n')
+                .filter(paragraph => paragraph.trim() !== '')
+                .map(paragraph => {
+                    if (paragraph.trim().startsWith('```') && paragraph.trim().endsWith('```')) {
+                        const code = paragraph.trim().substring(3, paragraph.length - 3);
+                        return `<pre><code>${escapeHtml(code)}</code></pre>`;
+                    }
+                    
+                    if (paragraph.startsWith('## ')) {
+                        return `<h3>${paragraph.substring(3)}</h3>`;
+                    }
+                    
+                    if (paragraph.startsWith('# ')) {
+                        return `<h2>${paragraph.substring(2)}</h2>`;
+                    }
+                    
+                    const imgMatch = paragraph.match(/!\[(.*?)\]\((.*?)\)/);
+                    if (imgMatch) {
+                        return `<div class="image-carousel"><div class="carousel-inner"><div class="carousel-item active"><img src="${imgMatch[2]}" alt="${imgMatch[1]}"></div></div></div>`;
+                    }
+                    
+                    // Önce linkleri değiştir
+                    paragraph = paragraph.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" style="color: var(--primary-color);">$1</a>');
+                    
+                    // Kalın ve italik
+                    paragraph = paragraph.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                    paragraph = paragraph.replace(/\*(.*?)\*/g, '<em>$1</em>');
+                    
+                    // Hashtag'leri bul ve değiştir
+                    paragraph = paragraph.replace(/#([a-zA-Z0-9_ğüşıöçĞÜŞİÖÇ]+)/g, '<span class="hashtag">#$1</span>');
+                    
+                    return `<p>${paragraph}</p>`;
+                })
+                .join('');
+            
+            formattedContent = formattedContent.replace(/(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/g, 
+                '<div class="video-container" style="position:relative;padding-bottom:56.25%;height:0;margin:15px 0;"><iframe src="https://www.youtube.com/embed/$4" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allowfullscreen></iframe></div>'
+            );
+            
+            return formattedContent;
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function shareArticle(articleId) {
+            const article = articlesData.find(item => item.id == articleId);
+            if (!article) return;
+            
+            const shareUrl = `${window.location.origin}${window.location.pathname}#${articleId}`;
+            
+            // Meta tagleri güncelle
+            updateMetaTags(article);
+            
+            if (navigator.share) {
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = article.content || '';
+                let cleanText = tempDiv.textContent || tempDiv.innerText || '';
+                cleanText = cleanText.substring(0, 100).replace(/\s+/g, ' ').trim() + '...';
+                
+                const cleanTitle = article.title.replace(/<[^>]*>/g, '');
+                
+                navigator.share({
+                    title: cleanTitle,
+                    text: cleanText,
+                    url: shareUrl
+                }).catch(() => {
+                    copyShareUrl(shareUrl, article.title);
+                });
+            } else {
+                copyShareUrl(shareUrl, article.title);
+            }
+        }
+        
+        async function copyShareUrl(url, title) {
+            const success = await navigator.clipboard.writeText(url).then(() => true).catch(() => false);
+            if (success) {
+                showToast('Link copied to clipboard!');
+            } else {
+                const textArea = document.createElement('textarea');
+                textArea.value = url;
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    showToast('Link copied to clipboard!');
+                } catch (err) {
+                    showToast('Failed to copy link');
+                }
+                document.body.removeChild(textArea);
+            }
+        }
+        
+        function generateVerificationCode() {
+            return Math.floor(100000 + Math.random() * 900000).toString();
+        }
+        
+        async function sendVerificationEmail(email, code) {
+            try {
+                const emailData = {
+                    Messages: [
+                        {
+                            From: {
+                                Email: "fyi@adembayazit.com",
+                                Name: "Adem Bayazıt - Cybersecurity Articles"
+                            },
+                            To: [{ Email: email }],
+                            Subject: 'Verify Your Email - Cybersecurity Articles',
+                            HTMLPart: `
+                                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                                    <h2 style="color: #00cc00; text-align: center;">Email Verification</h2>
+                                    <div style="background: #f5f5f5; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                                        <p>Hello,</p>
+                                        <p>Thank you for subscribing to Adem Bayazıt's Cybersecurity Articles notifications.</p>
+                                        <p>Your verification code is:</p>
+                                        <div style="text-align: center; margin: 30px 0;">
+                                            <span style="font-size: 32px; font-weight: bold; color: #00cc00; letter-spacing: 5px;">${code}</span>
+                                        </div>
+                                        <p>Enter this code on the website to complete your subscription.</p>
+                                        <p>This code will expire in 10 minutes.</p>
+                                    </div>
+                                    <p style="color: #666; font-size: 12px; text-align: center;">
+                                        If you didn't request this subscription, please ignore this email.
+                                    </p>
+                                </div>
+                            `
+                        }
+                    ]
+                };
+                
+                const response = await fetch('https://adembayazit.netlify.app/.netlify/functions/send-email', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        path: `/b/${MICROBLOG_BIN_ID}/latest`,
-                        method: 'GET'
+                        emailData: emailData
                     })
                 });
-
+                
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    throw new Error('Failed to send verification email');
                 }
                 
-                const result = await response.json();
-                const entries = result.entries || result.records || result || [];
-                const last5Entries = entries.slice(0, 5);
-                
-                // Başarılı yükleme - hemen göster
-                displayMicroblogEntries(last5Entries);
-                
+                return true;
             } catch (error) {
-                console.error('Error loading microblog entries:', error);
-                const entriesContainer = document.getElementById('entries');
-                if (entriesContainer) {
-                    entriesContainer.innerHTML = '<div class="no-articles">Unable to load entries. Please try again later.</div>';
-                }
+                console.error('Error sending verification email:', error);
+                throw error;
             }
         }
-
-        function displayMicroblogEntries(entries) {
-            const entriesContainer = document.getElementById('entries');
-            if (!entriesContainer) return;
+        
+        function startCountdown() {
+            const resendLink = document.getElementById('resendCode');
+            const countdownElement = document.getElementById('countdown');
+            let timeLeft = 60;
+            
+            if (!resendLink || !countdownElement) return;
+            
+            resendLink.classList.add('disabled');
+            
+            if (countdownTimer) {
+                clearInterval(countdownTimer);
+            }
+            
+            countdownTimer = setInterval(() => {
+                countdownElement.textContent = `(${timeLeft}s)`;
+                timeLeft--;
+                
+                if (timeLeft < 0) {
+                    clearInterval(countdownTimer);
+                    countdownTimer = null;
+                    resendLink.classList.remove('disabled');
+                    countdownElement.textContent = '';
+                }
+            }, 1000);
+        }
+        
+        function showVerificationModal(email) {
+            pendingEmail = email;
+            verificationCode = generateVerificationCode();
+            
+            document.getElementById('verificationEmail').textContent = email;
+            document.getElementById('verificationModal').style.display = 'flex';
+            document.getElementById('verificationCode').value = '';
+            document.getElementById('verificationCode').focus();
+            
+            sendVerificationEmail(email, verificationCode)
+                .then(() => {
+                    showToast('Verification code sent to your email');
+                    startCountdown();
+                })
+                .catch(error => {
+                    console.error('Error sending verification code:', error);
+                    showToast('Error sending verification code. Please try again.', 5000);
+                });
+        }
+        
+        function hideVerificationModal() {
+            document.getElementById('verificationModal').style.display = 'none';
+            pendingEmail = null;
+            verificationCode = null;
+            
+            if (countdownTimer) {
+                clearInterval(countdownTimer);
+                countdownTimer = null;
+            }
+        }
+        
+        async function verifyAndSubscribe(code) {
+            if (code !== verificationCode) {
+                showToast('Invalid verification code. Please try again.', 5000);
+                return false;
+            }
             
             try {
-                if (!entries || entries.length === 0) {
-                    entriesContainer.innerHTML = '<div class="no-articles">No entries available at the moment.</div>';
-                    return;
+                const result = await saveSubscriber(pendingEmail);
+                
+                if (result.success) {
+                    showToast('Successfully subscribed! You will receive notifications for new articles.');
+                    document.getElementById('emailInput').value = '';
+                    hideVerificationModal();
+                    return true;
+                } else {
+                    showToast(result.message || 'Subscription failed. Please try again.', 5000);
+                    return false;
                 }
-                
-                entriesContainer.innerHTML = '';
-                
-                entries.forEach(entry => {
-                    const entryDate = new Date(entry.date || entry.created_at);
-                    const dateStr = entryDate.toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric'
-                    });
-                    const timeStr = entryDate.toLocaleTimeString('en-US', {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
-
-                    const entryDiv = document.createElement('div');
-                    entryDiv.className = 'entry-item touch-delay';
-                    entryDiv.innerHTML = `
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                            <span style="color: #00ff00; font-size: 0.9rem;">${dateStr} ${timeStr}</span>
-                            <span style="color: #f9d71c; font-size: 0.8rem;">#${entry.category || 'general'}</span>
-                        </div>
-                        <div style="color: white; line-height: 1.5; font-size: 0.95rem;">
-                            ${entry.content || 'No content available...'}
-                        </div>
-                        <div style="margin-top: 10px; display: flex; gap: 15px; font-size: 0.8rem; color: #aaa;">
-                            <span><i class="far fa-comment"></i> ${entry.comments || 0}</span>
-                            <span><i class="far fa-heart"></i> ${entry.likes || 0}</span>
-                        </div>
-                    `;
-                    
-                    if (entry.id) {
-                        entryDiv.addEventListener('click', () => {
-                            window.location.href = `/microblog.html#${entry.id}`;
-                        });
-                        
-                        entryDiv.addEventListener('touchstart', function(e) {
-                            handleTouchStart(e);
-                        });
-                        
-                        entryDiv.addEventListener('touchend', function(e) {
-                            handleTouchEnd(e, () => {
-                                window.location.href = `/microblog.html#${entry.id}`;
-                            });
-                        });
-                    } else {
-                        entryDiv.addEventListener('click', () => {
-                            window.location.href = '/microblog.html';
-                        });
-                        
-                        entryDiv.addEventListener('touchstart', function(e) {
-                            handleTouchStart(e);
-                        });
-                        
-                        entryDiv.addEventListener('touchend', function(e) {
-                            handleTouchEnd(e, () => {
-                                window.location.href = '/microblog.html';
-                            });
-                        });
-                    }
-
-                    entriesContainer.appendChild(entryDiv);
-                });
-            } catch (displayError) {
-                console.error('Error displaying entries:', displayError);
-                entriesContainer.innerHTML = '<div class="no-articles">Error displaying entries.</div>';
+            } catch (error) {
+                console.error('Verification error:', error);
+                showToast('An error occurred. Please try again.', 5000);
+                return false;
             }
         }
-
-        // Galeri ve Modal işlevselliği
-        document.addEventListener("DOMContentLoaded", () => {
-            const galleryGrid = document.getElementById("gallery-grid");
-            const loadMoreBtn = document.getElementById("load-more");
-            const modal = document.getElementById("modal");
-            const modalImg = document.getElementById("modal-img");
-            const modalLocation = document.getElementById("modal-location");
-            const modalDate = document.getElementById("modal-date");
-            const modalTime = document.getElementById("modal-time");
-            const modalCounter = document.getElementById("modal-counter");
-            const prevThumb = document.querySelector(".prev-thumb");
-            const nextThumb = document.querySelector(".next-thumb");
-            const closeBtn = document.querySelector(".close");
-            const prevButton = document.querySelector(".prev-button");
-            const nextButton = document.querySelector(".next-button");
-
-            let allPhotos = [];
-            let visibleCount = 8;
-            let currentIndex = 0;
-
-            // photos.json'dan verileri çek
-            fetch("/photos.json")
-                .then(res => res.json())
-                .then(data => {
-                    allPhotos = data;
-                    renderPhotos();
-                })
-                .catch(err => {
-                    console.error("Photo fetch error:", err);
-                    allPhotos = [
-                        {
-                            "src": "PHOTO/photo1.JPG",
-                            "date": "2017-05-25",
-                            "time": "17:12",
-                            "location": "Eymir, Ankara, Türkiye"
-                        },
-                        {
-                            "src": "PHOTO/photo2.JPG",
-                            "date": "2017-05-30",
-                            "time": "14:57",
-                            "location": "Eymir, Ankara, Türkiye"
-                        }
-                    ];
-                    renderPhotos();
+        
+        async function saveSubscriber(email) {
+            try {
+                const currentData = await fetchViaProxy('/latest', 'GET', null, CONFIG.SUBSCRIBERS_BIN_ID);
+                const subscribers = currentData.subscribers || [];
+                
+                if (subscribers.includes(email)) {
+                    return { success: false, message: 'This email is already subscribed.' };
+                }
+                
+                subscribers.push(email);
+                const timestamp = new Date().toISOString();
+                
+                await fetchViaProxy('', 'PUT', { 
+                    subscribers: subscribers,
+                    lastUpdated: timestamp
+                }, CONFIG.SUBSCRIBERS_BIN_ID);
+                
+                return { success: true, message: 'Subscription successful' };
+            } catch (error) {
+                console.error('Error saving subscriber:', error);
+                return { success: false, message: 'Failed to save subscription.' };
+            }
+        }
+        
+        function showSubscriptionMessage(message, type) {
+            const messageElement = document.getElementById('subscriptionMessage');
+            if (!messageElement) return;
+            
+            messageElement.textContent = message;
+            messageElement.className = `subscription-message subscription-${type}`;
+            messageElement.style.display = 'block';
+            
+            setTimeout(() => {
+                messageElement.style.display = 'none';
+            }, 5000);
+        }
+        
+        async function handleSubscription(email) {
+            const messageElement = document.getElementById('subscriptionMessage');
+            const subscribeBtn = document.getElementById('subscribeBtn');
+            
+            if (!messageElement || !subscribeBtn) return false;
+            
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showSubscriptionMessage('Please enter a valid email address.', 'error');
+                return false;
+            }
+            
+            subscribeBtn.disabled = true;
+            subscribeBtn.textContent = 'Sending...';
+            
+            try {
+                showVerificationModal(email);
+                
+                subscribeBtn.disabled = false;
+                subscribeBtn.textContent = 'Subscribe';
+                
+                return true;
+            } catch (error) {
+                console.error('Subscription error:', error);
+                showSubscriptionMessage('An error occurred. Please try again.', 'error');
+                subscribeBtn.disabled = false;
+                subscribeBtn.textContent = 'Subscribe';
+                return false;
+            }
+        }
+        
+        function filterArticles() {
+            const searchTerm = document.getElementById('mobileArticleSearch').value.toLowerCase();
+            const category = document.getElementById('mobileCategoryFilter').value;
+            
+            const articlesList = document.getElementById('articlesList');
+            if (!articlesList) return;
+            
+            articlesList.innerHTML = '';
+            
+            const filteredArticles = articlesData.filter(article => {
+                const matchesSearch = article.title.toLowerCase().includes(searchTerm) || 
+                                     (article.content && article.content.toLowerCase().includes(searchTerm));
+                
+                const matchesCategory = category === 'all' || article.category === category;
+                
+                return matchesSearch && matchesCategory;
+            });
+            
+            if (filteredArticles.length === 0) {
+                articlesList.innerHTML = '<li class="article-item">No articles found. Try a different search or category.</li>';
+                return;
+            }
+            
+            filteredArticles.forEach(article => {
+                const listItem = document.createElement('li');
+                listItem.className = `article-item`;
+                listItem.dataset.id = article.id;
+                
+                const articleDate = new Date(article.published_date || article.date);
+                const dateStr = articleDate.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
                 });
-
-            function renderPhotos() {
-                if (!galleryGrid) return;
-                
-                galleryGrid.innerHTML = "";
-                allPhotos.slice(0, visibleCount).forEach((photo, index) => {
-                    const img = document.createElement("img");
-                    img.src = photo.src;
-                    img.classList.add("gallery-photo", "touch-delay");
-                    img.alt = "Gallery Photo";
-                    img.dataset.location = photo.location;
-                    img.dataset.date = photo.date;
-                    img.dataset.time = photo.time;
-                    img.dataset.index = index;
-                    
-                    img.addEventListener("click", () => {
-                        currentIndex = index;
-                        openModal();
-                    });
-                    
-                    img.addEventListener("touchstart", function(e) {
-                        handleTouchStart(e);
-                    });
-                    
-                    img.addEventListener("touchend", function(e) {
-                        handleTouchEnd(e, () => {
-                            currentIndex = index;
-                            openModal();
-                        });
-                    });
-                    
-                    galleryGrid.appendChild(img);
+                const timeStr = articleDate.toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit'
                 });
-
-                if (loadMoreBtn) {
-                    loadMoreBtn.style.display = visibleCount < allPhotos.length ? "block" : "none";
-                }
-            }
-
-            function openModal() {
-                if (!modal) return;
                 
-                modal.style.display = "flex";
-                setTimeout(() => {
-                    modal.classList.add("show");
-                }, 10);
-                document.body.style.overflow = "hidden";
-                updateModal();
-            }
-
-            function closeModal() {
-                if (!modal) return;
+                const views = article.views || 0;
+                const likes = article.likes || 0;
+                const hasLiked = localStorage.getItem(`user_like_${article.id}`);
                 
-                modal.classList.remove("show");
-                setTimeout(() => {
-                    modal.style.display = "none";
-                    document.body.style.overflow = "auto";
-                }, 300);
-            }
-
-            function updateModal() {
-                const photo = allPhotos[currentIndex];
-                if (modalImg) modalImg.src = photo.src;
-                if (modalLocation) modalLocation.textContent = photo.location || 'Unknown Location';
-                if (modalDate) modalDate.textContent = photo.date || 'Unknown Date';
-                if (modalTime) modalTime.textContent = photo.time || 'Unknown Time';
-                if (modalCounter) modalCounter.textContent = `${currentIndex + 1} / ${allPhotos.length}`;
-                
-                updateThumbnails();
-            }
-
-            function updateThumbnails() {
-                const prevIndex = (currentIndex - 1 + allPhotos.length) % allPhotos.length;
-                const nextIndex = (currentIndex + 1) % allPhotos.length;
-                
-                if (prevThumb) {
-                    prevThumb.src = allPhotos[prevIndex].src;
-                    prevThumb.onclick = () => {
-                        currentIndex = prevIndex;
-                        updateModal();
-                    };
+                let translationIndicator = '';
+                if (article.content_tr) {
+                    translationIndicator = `<div class="article-translation-indicator">TR</div>`;
                 }
                 
-                if (nextThumb) {
-                    nextThumb.src = allPhotos[nextIndex].src;
-                    nextThumb.onclick = () => {
-                        currentIndex = nextIndex;
-                        updateModal();
-                    };
-                }
-            }
-
-            function nextPhoto() {
-                currentIndex = (currentIndex + 1) % allPhotos.length;
-                updateModal();
-            }
-
-            function prevPhoto() {
-                currentIndex = (currentIndex - 1 + allPhotos.length) % allPhotos.length;
-                updateModal();
-            }
-
-            if (closeBtn) {
-                closeBtn.addEventListener("click", closeModal);
-            }
-
-            window.addEventListener("click", e => {
-                if (e.target === modal) {
-                    closeModal();
+                listItem.innerHTML = `
+                    ${translationIndicator}
+                    <button class="article-share" onclick="event.stopPropagation(); shareArticle(${article.id})">
+                        <i class="fas fa-share-alt"></i>
+                    </button>
+                    <div class="article-title">${article.title || 'Untitled Article'}</div>
+                    <div class="article-meta">
+                        <span class="article-date">${dateStr} ${timeStr}</span>
+                        ${article.category ? `<span class="article-category">${article.category}</span>` : ''}
+                    </div>
+                    <div class="article-stats">
+                        <span id="views-${article.id}"><i class="far fa-eye"></i> ${views}</span>
+                        <span id="likes-${article.id}"><i class="${hasLiked ? 'fas' : 'far'} fa-heart"></i> ${likes}</span>
+                    </div>
+                `;
+                
+                listItem.addEventListener('click', () => {
+                    window.location.hash = article.id;
+                    
+                    loadArticleDetail(article.id);
+                    
+                    document.querySelectorAll('.article-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    listItem.classList.add('active');
+                });
+                
+                articlesList.appendChild(listItem);
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            dataManager.clearStaleCache();
+            
+            loadArticlesData();
+            
+            window.addEventListener('hashchange', function() {
+                if (window.location.hash) {
+                    const articleId = window.location.hash.substring(1);
+                    loadArticleDetail(articleId);
                 }
             });
-
-            if (nextButton) {
-                nextButton.addEventListener("click", nextPhoto);
+            
+            const mobileArticleSearch = document.getElementById('mobileArticleSearch');
+            if (mobileArticleSearch) {
+                mobileArticleSearch.addEventListener('input', filterArticles);
             }
-
-            if (prevButton) {
-                prevButton.addEventListener("click", prevPhoto);
+            
+            const mobileCategoryFilter = document.getElementById('mobileCategoryFilter');
+            if (mobileCategoryFilter) {
+                mobileCategoryFilter.addEventListener('change', filterArticles);
             }
-
-            document.addEventListener("keydown", e => {
-                if (modal && modal.classList.contains("show")) {
-                    if (e.key === "ArrowRight") {
-                        nextPhoto();
-                    } else if (e.key === "ArrowLeft") {
-                        prevPhoto();
-                    } else if (e.key === "Escape") {
-                        closeModal();
-                    }
-                }
-            });
-
-            let touchStartX = 0;
-            let touchEndX = 0;
-
-            if (modal) {
-                modal.addEventListener('touchstart', e => {
-                    touchStartX = e.changedTouches[0].screenX;
-                }, false);
-
-                modal.addEventListener('touchend', e => {
-                    touchEndX = e.changedTouches[0].screenX;
-                    handleSwipe();
-                }, false);
-            }
-
-            function handleSwipe() {
-                if (touchEndX < touchStartX - 50) {
-                    nextPhoto();
-                }
-                if (touchEndX > touchStartX + 50) {
-                    prevPhoto();
-                }
-            }
-
-            if (loadMoreBtn) {
-                loadMoreBtn.addEventListener("click", () => {
-                    visibleCount += 8;
-                    renderPhotos();
+            
+            const subscriptionForm = document.getElementById('subscriptionForm');
+            if (subscriptionForm) {
+                subscriptionForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const email = document.getElementById('emailInput').value.trim();
+                    handleSubscription(email);
                 });
             }
             
-            const toggleButton = document.querySelector('.toggle-explanation');
-            const explanationContent = document.querySelector('.explanation-content');
+            const verificationForm = document.getElementById('verificationForm');
+            if (verificationForm) {
+                verificationForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const code = document.getElementById('verificationCode').value.trim();
+                    verifyAndSubscribe(code);
+                });
+            }
             
-            if (toggleButton && explanationContent) {
-                toggleButton.addEventListener('click', function() {
-                    explanationContent.classList.toggle('expanded');
+            const cancelVerification = document.getElementById('cancelVerification');
+            if (cancelVerification) {
+                cancelVerification.addEventListener('click', function() {
+                    hideVerificationModal();
+                });
+            }
+            
+            const resendCode = document.getElementById('resendCode');
+            if (resendCode) {
+                resendCode.addEventListener('click', function() {
+                    if (this.classList.contains('disabled')) return;
                     
-                    if (explanationContent.classList.contains('expanded')) {
-                        toggleButton.textContent = 'Less..';
-                    } else {
-                        toggleButton.textContent = 'More..';
+                    if (pendingEmail && verificationCode) {
+                        sendVerificationEmail(pendingEmail, verificationCode)
+                            .then(() => {
+                                showToast('Verification code resent');
+                                startCountdown();
+                            })
+                            .catch(error => {
+                                console.error('Error resending verification code:', error);
+                                showToast('Error resending verification code. Please try again.', 5000);
+                            });
                     }
                 });
             }
             
-            loadLatestArticles();
-            loadMicroblogEntries();
+            window.addEventListener('click', function(event) {
+                const modal = document.getElementById('verificationModal');
+                if (event.target === modal) {
+                    hideVerificationModal();
+                }
+            });
+            
+            setInterval(() => {
+                dataManager.syncWithServer();
+            }, 30000);
+            
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden) {
+                    dataManager.syncWithServer();
+                    dataManager.clearStaleCache();
+                }
+            });
+            
+            setInterval(() => {
+                dataManager.clearStaleCache();
+            }, 12 * 60 * 60 * 1000);
+            
+            window.addEventListener('online', function() {
+                showToast('Back online. Syncing data...', 2000);
+                dataManager.syncWithServer();
+            });
+            
+            window.addEventListener('offline', function() {
+                showToast('You are offline. Using cached data.', 3000);
+            });
+            
+            window.addEventListener('beforeunload', function() {
+                if (dataManager.pendingUpdates.length > 0) {
+                    dataManager.processQueue();
+                }
+            });
+            
+            setInterval(() => {
+                dataManager.optimizeCache();
+            }, 5 * 60 * 1000);
         });
     </script>
-</body> 
+</body>
 </html>
