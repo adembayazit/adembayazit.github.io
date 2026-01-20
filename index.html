@@ -644,21 +644,30 @@
         margin-bottom: 15px;
       }
 
-      /* Fotoğraf galerisi - KARE FOTOĞRAFLAR İÇİN GÜNCELLENDİ - ORTALI */
+      /* FOTOĞRAF GALERİSİ - TÜM PLATFORMLARDA 4 SÜTUN VE ORTALAMA */
+      .photo-gallery .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+      }
+
       .gallery-grid {
         display: grid;
-        grid-template-columns: repeat(4, 1fr); /* Masaüstünde 4'lü */
+        grid-template-columns: repeat(4, 1fr); /* TÜM PLATFORMLARDA 4 SÜTUN */
         gap: 15px;
-        margin-top: 20px;
+        margin: 20px auto 0;
         width: 100%;
-        justify-items: center; /* Grid içindeki öğeleri ortala */
+        max-width: 1300px;
+        justify-items: center;
+        justify-content: center;
       }
 
       .gallery-photo {
         width: 100%;
-        max-width: 250px; /* Maksimum genişlik belirle */
-        aspect-ratio: 1/1; /* Kare fotoğraflar için */
-        object-fit: cover; /* Kare içinde sığdır */
+        max-width: 300px;
+        aspect-ratio: 1/1;
+        object-fit: cover;
         border-radius: 8px;
         cursor: pointer;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -730,13 +739,15 @@
       /* Gallery actions container genişliği */
       .gallery-actions {
         width: 100%;
-        max-width: 1400px;
-        margin: 0 auto;
-        flex-direction: column;
+        max-width: 1300px;
+        margin: 20px auto 0;
+        flex-direction: row;
         align-items: center;
+        justify-content: center;
+        gap: 20px;
       }
 
-      /* MOBİL UYUMLULUK - ESKİ HALİNE GETİRİLDİ */
+      /* MOBİL UYUMLULUK - GÜNCELLENDİ: FOTOĞRAF GRID MOBİLDE DE 4 SÜTUN */
       @media (max-width: 1200px) {
         .container {
           max-width: 100%;
@@ -780,14 +791,15 @@
           display: block;
         }
         
-        /* Fotoğraf galerisi tablette */
+        /* Fotoğraf galerisi - MOBİLDE DE 4 SÜTUN */
         .gallery-grid {
           grid-template-columns: repeat(4, 1fr);
-          justify-items: center;
+          max-width: 100%;
+          gap: 10px;
         }
         
         .gallery-photo {
-          max-width: 200px;
+          max-width: 100%;
         }
       }
 
@@ -876,6 +888,7 @@
         .gallery-actions {
           flex-direction: column;
           align-items: center;
+          max-width: 100%;
         }
 
         .photo-analysis-btn {
@@ -888,11 +901,12 @@
           margin: 0 auto;
         }
 
-        /* Gallery grid mobil - 2'li olacak */
+        /* Gallery grid - TABLETTE DE 4 SÜTUN */
         .gallery-grid {
-          grid-template-columns: repeat(4, 1fr); /* Mobilde 2'li */
-          gap: 10px;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 8px;
           justify-items: center;
+          max-width: 100%;
         }
 
         .gallery-photo {
@@ -989,16 +1003,17 @@
           -webkit-line-clamp: 4;
         }
         
-        /* Tablet boyutunda da 2'li kalacak */
+        /* MOBİLDE DE 4 SÜTUN */
         .gallery-grid {
           grid-template-columns: repeat(4, 1fr);
-          gap: 10px;
+          gap: 6px;
           justify-items: center;
+          max-width: 100%;
         }
         
         .gallery-photo {
           height: auto;
-          aspect-ratio: 1/1; /* Mobilde de kare kalacak */
+          aspect-ratio: 1/1;
           max-width: 100%;
         }
         
@@ -1018,6 +1033,11 @@
           
           .microblog .last-entry {
             margin-bottom: 15px;
+          }
+          
+          /* Landscape modda fotoğraflar daha iyi görünsün */
+          .gallery-grid {
+            gap: 8px;
           }
         }
       }
@@ -1060,11 +1080,12 @@
           justify-content: space-between;
         }
         
-        /* Küçük mobil cihazlarda da 2'li kalacak */
+        /* KÜÇÜK MOBİL CİHAZLARDA DA 4 SÜTUN */
         .gallery-grid {
           grid-template-columns: repeat(4, 1fr);
-          gap: 8px;
+          gap: 4px;
           justify-items: center;
+          max-width: 100%;
         }
         
         .gallery-photo {
@@ -1110,6 +1131,23 @@
           .microblog-container {
             gap: 15px;
           }
+          
+          /* Landscape modda fotoğraflar daha iyi görünsün */
+          .gallery-grid {
+            gap: 6px;
+          }
+        }
+      }
+
+      /* Çok küçük ekranlar için (320px ve altı) */
+      @media (max-width: 320px) {
+        .gallery-grid {
+          grid-template-columns: repeat(4, 1fr);
+          gap: 3px;
+        }
+        
+        .gallery-photo {
+          max-width: 100%;
         }
       }
 
