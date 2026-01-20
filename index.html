@@ -335,7 +335,7 @@
         font-size: 14px;
       }
 
-      /* Photographic Cryptology için İLK KODDAKİ GİBİ */
+      /* Photographic Cryptology için yeni düzen */
       .photo-gallery-header {
         margin-bottom: 30px;
       }
@@ -368,7 +368,7 @@
         min-height: 36px;
         min-width: 120px;
         justify-content: center;
-        order: 2;
+        order: 2; /* Sağ tarafa yerleştir */
       }
 
       .photo-analysis-btn::before {
@@ -430,7 +430,7 @@
 
       /* Load More butonu solda kalacak */
       .load-more {
-        order: 1;
+        order: 1; /* Sol tarafa yerleştir */
         margin-right: auto;
       }
 
@@ -460,265 +460,7 @@
         border: 1px solid rgba(255, 255, 255, 0.1);
       }
 
-      /* Latest Articles Bölümü - DÜZENLENMİŞ KÜÇÜK KARTLAR */
-      .latest-articles {
-        padding: 40px 20px;
-        background: rgba(10, 25, 20, 0.5);
-      }
-
-      /* Makale kartları mikroblog ile aynı genişlikte olacak */
-      .articles-wrapper {
-        max-width: 1200px;
-        margin: 0 auto;
-        width: 100%;
-      }
-
-      .articles-row {
-        display: flex;
-        justify-content: space-between;
-        gap: 20px;
-        margin-top: 20px;
-      }
-
-      .article-card {
-        background: rgba(10, 25, 20, 0.7);
-        border: 1px solid rgba(0, 255, 0, 0.3);
-        border-radius: 12px;
-        padding: 15px;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        position: relative;
-        overflow: hidden;
-        flex: 1;
-        /* Mikroblog entries column ile aynı genişlik */
-        width: calc(50% - 10px);
-        max-width: calc(50% - 10px);
-        -webkit-tap-highlight-color: transparent;
-      }
-
-      .article-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 5px 15px rgba(0, 255, 0, 0.2);
-        border-color: rgba(0, 255, 0, 0.5);
-      }
-
-      .article-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.05), transparent);
-        transition: left 0.6s;
-      }
-
-      .article-card:hover::before {
-        left: 100%;
-      }
-
-      .article-title {
-        font-size: 0.95rem;
-        color: white;
-        margin-bottom: 10px;
-        line-height: 1.3;
-        font-weight: 600;
-        height: 40px;
-        overflow: hidden;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-      }
-
-      .article-meta {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 0.75rem;
-        color: #ccc;
-        margin-bottom: 10px;
-        flex-wrap: wrap;
-        gap: 8px;
-      }
-
-      .article-category {
-        background: rgba(0, 255, 0, 0.2);
-        padding: 3px 8px;
-        border-radius: 12px;
-        color: #00ff00;
-        font-size: 0.7rem;
-        font-weight: 500;
-      }
-
-      .article-excerpt {
-        font-size: 0.8rem;
-        color: #aaa;
-        line-height: 1.4;
-        flex-grow: 1;
-        margin-bottom: 12px;
-        height: 45px;
-        overflow: hidden;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-      }
-
-      .article-stats {
-        display: flex;
-        gap: 15px;
-        margin-top: 10px;
-        font-size: 0.7rem;
-        color: #00ff00;
-        border-top: 1px solid rgba(0, 255, 0, 0.1);
-        padding-top: 10px;
-      }
-
-      .article-stat {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-      }
-
-      .article-stat i {
-        font-size: 0.8rem;
-      }
-
-      .article-language {
-        position: absolute;
-        top: 12px;
-        right: 12px;
-        z-index: 10;
-        cursor: pointer;
-        -webkit-tap-highlight-color: transparent;
-      }
-
-      .article-language .fi {
-        font-size: 0.9rem;
-        border-radius: 2px;
-        box-shadow: 0 0 4px rgba(0, 255, 0, 0.3);
-        transition: all 0.3s ease;
-        display: block;
-      }
-
-      .article-language .fi:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 6px rgba(0, 255, 0, 0.5);
-      }
-
-      .loading-articles {
-        text-align: center;
-        padding: 30px;
-        color: #00ff00;
-        font-size: 0.9rem;
-      }
-
-      .no-articles {
-        text-align: center;
-        padding: 30px;
-        color: #ccc;
-        font-size: 0.9rem;
-      }
-
-      /* Mikroblog entries için loading - UZUN VERSİYON */
-      .entries-loading {
-        text-align: center;
-        padding: 40px 15px;
-        color: #00ff00;
-        background: rgba(10, 25, 20, 0.5);
-        border-radius: 8px;
-        border: 1px solid rgba(0, 255, 0, 0.2);
-      }
-
-      .entries-loading i {
-        font-size: 2rem;
-        margin-bottom: 15px;
-        display: block;
-        animation: spin 1.5s linear infinite;
-      }
-
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
-
-      .entries-loading p {
-        font-size: 0.9rem;
-        margin-top: 10px;
-      }
-
-      .entries-loading .loading-dots:after {
-        content: '.';
-        animation: dots 1.5s steps(5, end) infinite;
-      }
-
-      @keyframes dots {
-        0%, 20% { content: '.'; }
-        40% { content: '..'; }
-        60% { content: '...'; }
-        80%, 100% { content: ''; }
-      }
-
-      /* Fotoğraf galerisi - İLK KODDAKİ GİBİ (photo-gallery section) */
-      .gallery-wrapper {
-        width: 100%;
-      }
-
-      .gallery-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 15px;
-        margin-top: 20px;
-      }
-
-      .gallery-photo {
-        width: 100%;
-        height: 200px;
-        object-fit: cover;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        border: 1px solid rgba(0, 255, 0, 0.2);
-      }
-
-      .gallery-photo:hover {
-        transform: scale(1.03);
-        box-shadow: 0 5px 15px rgba(0, 255, 0, 0.3);
-      }
-
-      /* Mikroblog entries tıklanabilir */
-      .entry-item {
-        cursor: pointer;
-        transition: all 0.3s ease;
-        margin-bottom: 12px;
-        position: relative;
-        -webkit-tap-highlight-color: transparent;
-      }
-
-      .entry-item:hover {
-        background: rgba(0, 255, 0, 0.05);
-        transform: translateX(3px);
-      }
-
       /* MOBİL UYUMLULUK */
-      @media (max-width: 1200px) {
-        .gallery-grid {
-          grid-template-columns: repeat(3, 1fr);
-        }
-        
-        .article-card {
-          width: calc(50% - 10px);
-          max-width: calc(50% - 10px);
-        }
-        
-        .articles-row {
-          flex-wrap: wrap;
-          justify-content: center;
-        }
-      }
-
       @media (max-width: 992px) {
         .microblog-container {
           flex-direction: column;
@@ -806,16 +548,16 @@
         /* Mobil cihazlarda tıklanabilir alanı büyüt */
         .btn-box {
           min-height: 44px;
-          padding: 12px 20px;
+          padding: 12px 24px;
           display: flex;
           align-items: center;
           justify-content: center;
         }
         
         #downloadCv {
-          padding: 14px 22px;
-          font-size: 15px;
-          min-height: 48px;
+          padding: 15px 25px;
+          font-size: 16px;
+          min-height: 50px;
         }
 
         /* Galeri actions mobil */
@@ -828,172 +570,33 @@
         .photo-analysis-btn {
           order: 2;
           align-self: flex-end;
-          min-width: 100px;
-          min-height: 38px;
-          padding: 8px 12px;
-          font-size: 0.75em;
+          min-width: 110px;
+          min-height: 40px;
+          padding: 10px 12px;
         }
 
         .load-more {
           order: 1;
           align-self: stretch;
           margin-right: 0;
-          padding: 12px 20px;
-        }
-
-        /* Gallery grid mobil - İLK KODDAKİ GİBİ (4 sütun yatayda) */
-        .gallery-grid {
-          grid-template-columns: repeat(4, 1fr);
-          gap: 8px;
-        }
-
-        .gallery-photo {
-          height: 150px;
         }
 
         /* Mobilde tooltip'ı kapat */
         .photo-analysis-btn::after {
           display: none;
         }
-        
-        /* Makaleler mobil - ÇOK DAHA KÜÇÜK */
-        .articles-row {
-          flex-direction: column;
-          align-items: center;
-        }
-        
-        .article-card {
-          width: 100% !important;
-          max-width: 100% !important;
-          padding: 12px;
-          margin-bottom: 12px;
-          min-height: auto;
-        }
-        
-        .article-title {
-          font-size: 0.85rem;
-          height: 36px;
-          -webkit-line-clamp: 2;
-          margin-bottom: 8px;
-        }
-        
-        .article-excerpt {
-          font-size: 0.75rem;
-          height: 36px;
-          -webkit-line-clamp: 2;
-          margin-bottom: 8px;
-        }
-        
-        .article-meta {
-          font-size: 0.7rem;
-          gap: 6px;
-          margin-bottom: 8px;
-        }
-        
-        .article-category {
-          font-size: 0.65rem;
-          padding: 2px 6px;
-        }
-        
-        .article-stats {
-          font-size: 0.65rem;
-          gap: 12px;
-          padding-top: 8px;
-          margin-top: 8px;
-        }
-        
-        .article-language {
-          top: 10px;
-          right: 10px;
-        }
-        
-        .article-language .fi {
-          font-size: 0.8rem;
-        }
-        
-        /* Mikroblog container genişliğini ayarla */
-        .microblog-container .entries-column {
-          width: 100%;
-        }
-        
-        .articles-wrapper {
-          width: 100%;
-        }
-      }
-
-      @media (max-width: 768px) {
-        .latest-articles {
-          padding: 30px 15px;
-        }
-        
-        .gallery-grid {
-          grid-template-columns: repeat(2, 1fr);
-          gap: 10px;
-        }
-        
-        .gallery-photo {
-          height: 140px;
-        }
-        
-        .entries-loading {
-          padding: 30px 15px;
-        }
-        
-        .entries-loading i {
-          font-size: 1.8rem;
-        }
-        
-        .entries-loading p {
-          font-size: 0.85rem;
-        }
-        
-        .article-card {
-          padding: 10px;
-        }
-        
-        .article-title {
-          font-size: 0.8rem;
-          height: 32px;
-        }
-      }
-
-      @media (max-width: 576px) {
-        .gallery-grid {
-          grid-template-columns: repeat(2, 1fr);
-          gap: 6px;
-        }
-        
-        .gallery-photo {
-          height: 120px;
-        }
-        
-        .articles-row {
-          gap: 8px;
-        }
-        
-        .article-card {
-          padding: 8px;
-        }
-        
-        .article-title {
-          font-size: 0.78rem;
-        }
-        
-        .article-excerpt {
-          font-size: 0.7rem;
-        }
       }
 
       @media (max-width: 480px) {
         .modal-navbar {
-          min-height: 140px;
+          min-height: 160px;
           padding: 10px 12px;
         }
         
         .modal-info-items {
           flex-direction: column;
           align-items: center;
-          gap: 6px;
+          gap: 8px;
         }
         
         .modal-thumb {
@@ -1002,71 +605,14 @@
         }
         
         .modal-counter {
-          font-size: 13px;
-          padding: 5px 12px;
-          min-width: 70px;
+          font-size: 14px;
+          padding: 6px 15px;
         }
         
         .nav-button {
-          padding: 7px 12px;
-          min-width: 50px;
-          font-size: 14px;
-        }
-        
-        .gallery-grid {
-          grid-template-columns: repeat(2, 1fr);
-          gap: 5px;
-        }
-        
-        .gallery-photo {
-          height: 100px;
-        }
-        
-        .entries-loading i {
-          font-size: 1.5rem;
-        }
-        
-        .entries-loading p {
-          font-size: 0.8rem;
-        }
-        
-        .article-card {
-          padding: 8px;
-          margin-bottom: 8px;
-        }
-        
-        .article-title {
-          font-size: 0.75rem;
-          height: 30px;
-        }
-        
-        .article-excerpt {
-          font-size: 0.7rem;
-          height: 30px;
-        }
-        
-        .article-stats {
-          font-size: 0.6rem;
-          gap: 10px;
-        }
-      }
-
-      @media (max-width: 360px) {
-        .gallery-grid {
-          grid-template-columns: repeat(2, 1fr);
-          gap: 4px;
-        }
-        
-        .gallery-photo {
-          height: 90px;
-        }
-        
-        .article-title {
-          font-size: 0.72rem;
-        }
-        
-        .article-excerpt {
-          font-size: 0.68rem;
+          padding: 8px 13px;
+          min-width: 55px;
+          font-size: 15px;
         }
       }
 
@@ -1095,39 +641,6 @@
         .modal-thumb {
           -webkit-tap-highlight-color: transparent;
           min-height: 44px;
-        }
-        
-        .article-card {
-          -webkit-tap-highlight-color: transparent;
-          touch-action: pan-y;
-        }
-        
-        .article-card:active {
-          transform: scale(0.97);
-        }
-        
-        .gallery-photo:active {
-          transform: scale(0.95);
-        }
-        
-        .entry-item:active {
-          transform: scale(0.97);
-        }
-        
-        .article-language {
-          -webkit-tap-highlight-color: transparent;
-        }
-        
-        .article-language:active .fi {
-          transform: scale(0.9);
-        }
-        
-        /* Mobilde kaydırırken tıklamayı engelle */
-        .article-card {
-          -webkit-user-select: none;
-          -moz-user-select: none;
-          -ms-user-select: none;
-          user-select: none;
         }
       }
     </style>
@@ -1318,15 +831,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <p class="last-entry">Last 5 Entries</p> 
             <div class="microblog-container">
                 <div class="entries-column">
-                    <div id="entries" class="entries">
-                        <div class="entries-loading">
-                            <i class="fas fa-spinner"></i>
-                            <p>Loading entries<span class="loading-dots"></span></p>
-                            <small style="color: #aaa; font-size: 0.8rem; margin-top: 10px; display: block;">
-                                Fetching latest microblog updates...
-                            </small>
-                        </div>
-                    </div>
+                    <div id="entries" class="entries"></div>
                 </div>
                 <div class="explanation-column">
                     <div class="explanation-content">
@@ -1367,21 +872,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <span class="btn-text">Analysis</span>
                     </a>
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="latest-articles" class="latest-articles">
-        <div class="container">
-            <h2 class="section-title"><i class="fas fa-newspaper"></i> Latest Cybersecurity Articles</h2>
-            <p class="last-entry">Last 3 Articles</p>
-            <div class="articles-wrapper">
-                <div id="articles-row" class="articles-row">
-                    <!-- Makaleler buraya JavaScript ile yüklenecek -->
-                </div>
-            </div>
-            <div style="text-align: center; margin-top: 20px;">
-                <a href="/article" class="btn-box"><i class="fas fa-book-open"></i> View All Articles</a>
             </div>
         </div>
     </section>
@@ -1452,50 +942,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             return /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         }
 
-        // Touch için gecikme mekanizması
-        let touchStartTime = 0;
-        let touchStartX = 0;
-        let touchStartY = 0;
-        let isScrolling = false;
-        const TOUCH_DELAY = 150; // ms - artırıldı
-
-        function handleTouchStart(e) {
-            if (e.target.closest('.article-language')) {
-                e.stopPropagation();
-                return;
-            }
-            touchStartTime = Date.now();
-            touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
-            isScrolling = false;
-        }
-
-        function handleTouchMove(e) {
-            const touchX = e.touches[0].clientX;
-            const touchY = e.touches[0].clientY;
-            const diffX = Math.abs(touchX - touchStartX);
-            const diffY = Math.abs(touchY - touchStartY);
-            
-            // Eğer kaydırma varsa
-            if (diffX > 15 || diffY > 15) {
-                isScrolling = true;
-            }
-        }
-
-        function handleTouchEnd(e, callback) {
-            const touchEndTime = Date.now();
-            const timeDiff = touchEndTime - touchStartTime;
-            const touchEndX = e.changedTouches[0].clientX;
-            const touchEndY = e.changedTouches[0].clientY;
-            const diffX = Math.abs(touchEndX - touchStartX);
-            const diffY = Math.abs(touchEndY - touchStartY);
-            
-            // Kısa süreli ve küçük hareket ise tıklama olarak kabul et
-            if (timeDiff < TOUCH_DELAY && diffX < 15 && diffY < 15 && !isScrolling) {
-                e.preventDefault();
-                if (callback) callback();
-            }
-        }
+        // Debug bilgileri
+        console.log('Device type:', isMobileDevice() ? 'Mobile' : 'Desktop');
+        console.log('User Agent:', navigator.userAgent);
 
         // CV görüntüleme sayacı için fonksiyon
         async function logCvView() {
@@ -1536,6 +985,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     device: isMobileDevice() ? 'mobile' : 'desktop'
                 };
 
+                console.log('New view entry:', viewEntry);
+
                 // JSONBin işlemleri için timeout
                 const binController = new AbortController();
                 const binTimeout = setTimeout(() => binController.abort(), 10000);
@@ -1562,6 +1013,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 
                 if (getResponse.ok) {
                     const result = await getResponse.json();
+                    console.log('Existing data from bin:', result);
                     existingData = result;
                     
                     if (!existingData.cv_views) {
@@ -1576,6 +1028,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 existingData.cv_views.push(viewEntry);
                 existingData.total_views = (existingData.total_views || 0) + 1;
                 existingData.last_updated = now.toISOString();
+
+                console.log('Updated data to save:', existingData);
 
                 // Güncellenmiş veriyi kaydet
                 const putResponse = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
@@ -1598,7 +1052,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 }
 
                 const result = await putResponse.json();
-                console.log('CV view logged successfully');
+                console.log('CV view logged successfully:', result);
                 
                 return result;
             } catch (error) {
@@ -1610,7 +1064,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         // CV link kontrolü
         document.addEventListener('DOMContentLoaded', function() {
             const cvLink = document.getElementById('downloadCv');
+            console.log('CV link found:', !!cvLink);
             if (cvLink) {
+                console.log('CV link href:', cvLink.href);
+                
+                // Hem click hem de touchstart event'lerini ekle
                 cvLink.addEventListener('click', handleCvClick);
                 cvLink.addEventListener('touchstart', handleCvClick, { passive: true });
             }
@@ -1621,17 +1079,24 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         // Ortak click/touch handler
         function handleCvClick(e) {
+            // Mobil cihazlarda varsayılan davranışı engelle
             e.preventDefault();
             e.stopPropagation();
+            
+            console.log('CV link clicked/touched, logging view...');
             
             const originalHref = this.href;
             
             // Loglama işlemini başlat
             logCvView().then(result => {
+                console.log('Logging completed:', result);
+                // Loglama tamamlandıktan sonra yönlendir
                 setTimeout(() => {
                     window.location.href = originalHref;
                 }, 300);
             }).catch(err => {
+                console.error('Logging failed:', err);
+                // Hata olsa bile yönlendir
                 window.location.href = originalHref;
             });
         }
@@ -1652,6 +1117,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 
                 if (response.ok) {
                     const data = await response.json();
+                    console.log('CV Stats:', data);
+                    
                     if (data.total_views) {
                         console.log(`Total CV Views: ${data.total_views}`);
                     }
@@ -1661,360 +1128,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             }
         }
 
-        // Latest Articles için fonksiyonlar
-        async function fetchArticles() {
-            try {
-                const ARTICLES_BIN_ID = '695f155c43b1c97be920c28d';
-                const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
-                
-                const response = await fetch(proxyUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        path: `/b/${ARTICLES_BIN_ID}/latest`,
-                        method: 'GET'
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const result = await response.json();
-                return result.articles || result.records || result || [];
-            } catch (error) {
-                console.error('Error fetching articles:', error);
-                return [];
-            }
-        }
-
-        // Dil değiştirme fonksiyonu
-        function toggleArticleLanguage(card, article, e) {
-            if (e) {
-                e.stopPropagation();
-                e.preventDefault();
-            }
-            
-            let currentLang = card.getAttribute('data-lang');
-            let newLang = currentLang === 'en' ? 'tr' : 'en';
-            
-            // Eğer Türkçe içerik yoksa ve Türkçe'ye geçmek istiyorsa
-            if (newLang === 'tr' && !article.title_tr && !article.content_tr) {
-                return;
-            }
-            
-            // İçeriği güncelle
-            if (newLang === 'tr') {
-                // Türkçe'ye çevir
-                card.querySelector('.article-title').textContent = article.title_tr || article.title;
-                const excerptTr = article.excerpt_tr || (article.content_tr ? article.content_tr.substring(0, 100).trim() + '...' : 'Türkçe içerik mevcut...');
-                card.querySelector('.article-excerpt').textContent = excerptTr;
-                card.querySelector('.article-category').textContent = article.category_tr || article.category;
-                card.querySelector('.article-language .fi').className = 'fi fi-us';
-                card.querySelector('.article-language .fi').title = 'View in English';
-            } else {
-                // İngilizce'ye çevir
-                card.querySelector('.article-title').textContent = article.title;
-                const excerptEn = article.excerpt || (article.content ? article.content.substring(0, 100).trim() + '...' : 'Read the full article...');
-                card.querySelector('.article-excerpt').textContent = excerptEn;
-                card.querySelector('.article-category').textContent = article.category;
-                card.querySelector('.article-language .fi').className = 'fi fi-tr';
-                card.querySelector('.article-language .fi').title = 'Türkçe görüntüle';
-            }
-            
-            // Dil durumunu güncelle
-            card.setAttribute('data-lang', newLang);
-        }
-
-        async function loadLatestArticles() {
-            const container = document.getElementById('articles-row');
-            if (!container) return;
-
-            container.innerHTML = '<div class="loading-articles"><i class="fas fa-spinner fa-spin"></i> Loading articles...</div>';
-
-            try {
-                const articles = await fetchArticles();
-                
-                if (!articles || articles.length === 0) {
-                    container.innerHTML = '<div class="no-articles">No articles available at the moment.</div>';
-                    return;
-                }
-
-                // En yeni 3 makaleyi al
-                const latestArticles = articles
-                    .sort((a, b) => {
-                        const dateA = new Date(a.published_date || a.date || 0);
-                        const dateB = new Date(b.published_date || b.date || 0);
-                        return dateB - dateA;
-                    })
-                    .slice(0, 3);
-
-                container.innerHTML = '';
-                
-                latestArticles.forEach(article => {
-                    const articleDate = new Date(article.published_date || article.date);
-                    const dateStr = articleDate.toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric'
-                    });
-
-                    // İçerikten HTML etiketlerini temizle ve kısa açıklama oluştur
-                    let excerpt = '';
-                    if (article.content) {
-                        const tempDiv = document.createElement('div');
-                        tempDiv.innerHTML = article.content;
-                        excerpt = tempDiv.textContent || tempDiv.innerText || '';
-                        excerpt = excerpt.substring(0, 100).trim();
-                        if (excerpt.length === 100) excerpt += '...';
-                    } else {
-                        excerpt = 'Read the full article...';
-                    }
-
-                    // Türkçe excerpt varsa onu da hazırla
-                    let excerpt_tr = '';
-                    if (article.content_tr) {
-                        const tempDiv = document.createElement('div');
-                        tempDiv.innerHTML = article.content_tr;
-                        excerpt_tr = tempDiv.textContent || tempDiv.innerText || '';
-                        excerpt_tr = excerpt_tr.substring(0, 100).trim();
-                        if (excerpt_tr.length === 100) excerpt_tr += '...';
-                    }
-
-                    const card = document.createElement('div');
-                    card.className = 'article-card';
-                    card.dataset.lang = 'en'; // Varsayılan dil İngilizce
-                    card.dataset.articleId = article.id || article._id;
-                    
-                    // Türkçe içerik kontrolü
-                    const hasTurkishContent = article.title_tr || article.content_tr || article.category_tr;
-                    
-                    card.innerHTML = `
-                        ${hasTurkishContent ? '<div class="article-language"><span class="fi fi-tr" title="Türkçe görüntüle"></span></div>' : ''}
-                        <div class="article-title">${article.title || 'Untitled Article'}</div>
-                        <div class="article-meta">
-                            <span class="article-date">${dateStr}</span>
-                            <span class="article-category">${article.category || 'Cybersecurity'}</span>
-                        </div>
-                        <div class="article-excerpt">${excerpt}</div>
-                        <div class="article-stats">
-                            <div class="article-stat">
-                                <i class="far fa-eye"></i> ${article.views || 0} views
-                            </div>
-                            <div class="article-stat">
-                                <i class="far fa-heart"></i> ${article.likes || 0} likes
-                            </div>
-                        </div>
-                    `;
-
-                    // Dil değiştirme butonuna tıklama
-                    if (hasTurkishContent) {
-                        const languageBtn = card.querySelector('.article-language');
-                        languageBtn.addEventListener('click', function(e) {
-                            toggleArticleLanguage(card, article, e);
-                        });
-                        
-                        // Touch events for language button
-                        languageBtn.addEventListener('touchstart', function(e) {
-                            e.stopPropagation();
-                            e.preventDefault();
-                            touchStartTime = Date.now();
-                            touchStartX = e.touches[0].clientX;
-                            touchStartY = e.touches[0].clientY;
-                            isScrolling = false;
-                        });
-                        
-                        languageBtn.addEventListener('touchmove', function(e) {
-                            e.stopPropagation();
-                            const touchX = e.touches[0].clientX;
-                            const touchY = e.touches[0].clientY;
-                            const diffX = Math.abs(touchX - touchStartX);
-                            const diffY = Math.abs(touchY - touchStartY);
-                            if (diffX > 10 || diffY > 10) {
-                                isScrolling = true;
-                            }
-                        });
-                        
-                        languageBtn.addEventListener('touchend', function(e) {
-                            e.stopPropagation();
-                            e.preventDefault();
-                            const touchEndTime = Date.now();
-                            const timeDiff = touchEndTime - touchStartTime;
-                            const touchEndX = e.changedTouches[0].clientX;
-                            const touchEndY = e.changedTouches[0].clientY;
-                            const diffX = Math.abs(touchEndX - touchStartX);
-                            const diffY = Math.abs(touchEndY - touchStartY);
-                            
-                            if (timeDiff < TOUCH_DELAY && diffX < 10 && diffY < 10 && !isScrolling) {
-                                toggleArticleLanguage(card, article, e);
-                            }
-                        });
-                    }
-
-                    // Click event for card
-                    card.addEventListener('click', (e) => {
-                        if (!e.target.closest('.article-language')) {
-                            window.location.href = `/article#${article.id || article._id}`;
-                        }
-                    });
-                    
-                    // Touch events for card
-                    card.addEventListener('touchstart', function(e) {
-                        if (!e.target.closest('.article-language')) {
-                            handleTouchStart(e);
-                        }
-                    });
-                    
-                    card.addEventListener('touchmove', function(e) {
-                        if (!e.target.closest('.article-language')) {
-                            handleTouchMove(e);
-                        }
-                    });
-                    
-                    card.addEventListener('touchend', function(e) {
-                        if (!e.target.closest('.article-language')) {
-                            handleTouchEnd(e, () => {
-                                window.location.href = `/article#${article.id || article._id}`;
-                            });
-                        }
-                    });
-
-                    container.appendChild(card);
-                });
-            } catch (error) {
-                console.error('Error loading articles:', error);
-                container.innerHTML = '<div class="no-articles">Unable to load articles. Please try again later.</div>';
-            }
-        }
-
-        // Mikroblog entries için yükleniyor göstergesi
-        function showEntriesLoading() {
-            const entriesContainer = document.getElementById('entries');
-            if (entriesContainer) {
-                entriesContainer.innerHTML = `
-                    <div class="entries-loading">
-                        <i class="fas fa-spinner"></i>
-                        <p>Loading entries<span class="loading-dots"></span></p>
-                        <small style="color: #aaa; font-size: 0.8rem; margin-top: 10px; display: block;">
-                            Fetching latest microblog updates...
-                        </small>
-                    </div>
-                `;
-            }
-        }
-
-        // Mikroblog entries'leri yükle (mikroblog sayfasından)
-        async function loadMicroblogEntries() {
-            showEntriesLoading();
-            
-            // 1 dakika (60000ms) gecikme
-            setTimeout(async () => {
-                try {
-                    // JSONBin'den mikroblog entries'lerini çek
-                    const MICROBLOG_BIN_ID = '694f7d8e43b1c97be91ef7d1';
-                    const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
-                    
-                    const response = await fetch(proxyUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            path: `/b/${MICROBLOG_BIN_ID}/latest`,
-                            method: 'GET'
-                        })
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    
-                    const result = await response.json();
-                    const entries = result.entries || result.records || result || [];
-                    
-                    // Son 5 entry'yi al
-                    const last5Entries = entries.slice(0, 5);
-                    
-                    displayMicroblogEntries(last5Entries);
-                } catch (error) {
-                    console.error('Error loading microblog entries:', error);
-                    const entriesContainer = document.getElementById('entries');
-                    if (entriesContainer) {
-                        entriesContainer.innerHTML = '<div class="no-articles">Unable to load entries. Please try again later.</div>';
-                    }
-                }
-            }, 60000); // 1 dakika bekle
-        }
-
-        function displayMicroblogEntries(entries) {
-            const entriesContainer = document.getElementById('entries');
-            if (!entriesContainer) return;
-            
-            if (!entries || entries.length === 0) {
-                entriesContainer.innerHTML = '<div class="no-articles">No entries available at the moment.</div>';
-                return;
-            }
-            
-            entriesContainer.innerHTML = '';
-            
-            entries.forEach((entry, index) => {
-                const entryDate = new Date(entry.date || entry.created_at);
-                const dateStr = entryDate.toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric'
-                });
-                const timeStr = entryDate.toLocaleTimeString('en-US', {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-
-                const entryDiv = document.createElement('div');
-                entryDiv.className = 'entry-item';
-                const entryId = entry.id || index;
-                entryDiv.innerHTML = `
-                    <div style="margin-bottom: 12px; padding: 12px; background: rgba(10, 25, 20, 0.5); border-radius: 8px; border: 1px solid rgba(0, 255, 0, 0.2);">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <span style="color: #00ff00; font-size: 0.8rem;">${dateStr} ${timeStr}</span>
-                            <span style="color: #f9d71c; font-size: 0.75rem;">#${entry.category || 'general'}</span>
-                        </div>
-                        <div style="color: white; line-height: 1.4; font-size: 0.9rem;">
-                            ${entry.content || 'No content available...'}
-                        </div>
-                        <div style="margin-top: 8px; display: flex; gap: 12px; font-size: 0.75rem; color: #aaa;">
-                            <span><i class="far fa-comment"></i> ${entry.comments || 0}</span>
-                            <span><i class="far fa-heart"></i> ${entry.likes || 0}</span>
-                        </div>
-                    </div>
-                `;
-                
-                // Entry'e tıklanınca mikroblog sayfasına ve ilgili entry'ye git
-                entryDiv.addEventListener('click', () => {
-                    window.location.href = `/microblog.html#${entryId}`;
-                });
-                
-                // Touch events for entry
-                entryDiv.addEventListener('touchstart', function(e) {
-                    handleTouchStart(e);
-                });
-                
-                entryDiv.addEventListener('touchmove', function(e) {
-                    handleTouchMove(e);
-                });
-                
-                entryDiv.addEventListener('touchend', function(e) {
-                    handleTouchEnd(e, () => {
-                        window.location.href = `/microblog.html#${entryId}`;
-                    });
-                });
-
-                entriesContainer.appendChild(entryDiv);
-            });
-        }
-
-        // Galeri ve Modal işlevselliği - İLK KODDAKİ GİBİ
+        // Galeri ve YENİ Modal işlevselliği
         document.addEventListener("DOMContentLoaded", () => {
             const galleryGrid = document.getElementById("gallery-grid");
             const loadMoreBtn = document.getElementById("load-more");
@@ -2075,27 +1189,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     img.dataset.time = photo.time;
                     img.dataset.index = index;
                     
-                    // Click event
+                    // Hem click hem touch için
                     img.addEventListener("click", () => {
                         currentIndex = index;
                         openModal();
                     });
                     
-                    // Touch events for gallery photos
-                    img.addEventListener('touchstart', function(e) {
-                        handleTouchStart(e);
-                    });
-                    
-                    img.addEventListener('touchmove', function(e) {
-                        handleTouchMove(e);
-                    });
-                    
-                    img.addEventListener('touchend', function(e) {
-                        handleTouchEnd(e, () => {
-                            currentIndex = index;
-                            openModal();
-                        });
-                    });
+                    // Mobil için touch event
+                    img.addEventListener("touchstart", (e) => {
+                        e.preventDefault();
+                        currentIndex = index;
+                        openModal();
+                    }, { passive: false });
                     
                     galleryGrid.appendChild(img);
                 });
@@ -2213,13 +1318,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
                 modal.addEventListener('touchend', e => {
                     touchEndX = e.changedTouches[0].screenX;
-                    if (touchEndX < touchStartX - 50) {
-                        nextPhoto();
-                    }
-                    if (touchEndX > touchStartX + 50) {
-                        prevPhoto();
-                    }
+                    handleSwipe();
                 }, false);
+            }
+
+            function handleSwipe() {
+                if (touchEndX < touchStartX - 50) {
+                    nextPhoto();
+                }
+                if (touchEndX > touchStartX + 50) {
+                    prevPhoto();
+                }
             }
 
             if (loadMoreBtn) {
@@ -2236,15 +1345,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             if (toggleButton && explanationContent) {
                 toggleButton.addEventListener('click', function() {
                     explanationContent.classList.toggle('expanded');
-                    toggleButton.textContent = explanationContent.classList.contains('expanded') ? 'Less..' : 'More..';
+                    
+                    if (explanationContent.classList.contains('expanded')) {
+                        toggleButton.textContent = 'Less..';
+                    } else {
+                        toggleButton.textContent = 'More..';
+                    }
                 });
             }
-            
-            // Latest Articles yükle
-            loadLatestArticles();
-            
-            // Mikroblog entries yükle (1 dakika sonra)
-            loadMicroblogEntries();
         });
     </script>
 </body> 
