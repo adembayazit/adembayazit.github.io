@@ -1,149 +1,2168 @@
-/* Mikroblog için iki sütunlu düzen - GÜNCELLENDİ */
-.microblog-container {
-  display: flex;
-  gap: 30px;
-  margin-top: 30px;
-  width: 100%;
-}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethical Hacker | Adem Bayazıt</title>
+    <!-- Open Graph (Facebook, WhatsApp, LinkedIn vs.) -->   
+    <meta property="og:title" content="Adem Bayazıt | Ethical Hacker" />
+    <meta property="og:description" content="Ethical Hacker, Cyber Security Analyst ve Linux Enthusiast." />
+    <meta property="og:image" content="https://adembayazit.com/IMAGES/preview.png" />
+    <meta property="og:url" content="https://adembayazit.com/" />
+    <meta property="og:type" content="website" />
 
-.entries-column {
-  flex: 1.5; /* Sol taraf daha geniş */
-  width: 100%;
-}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Adem Bayazıt - Ethical Hacker">
+    <meta name="twitter:description" content="Ethical Hacker, Cyber Security Analyst ve Linux Enthusiast.">
+    <meta name="twitter:image" content="https://adembayazit.com/IMAGES/preview.png">
+    <meta name="twitter:image:alt" content="Adem Bayazıt">
+    
+    <link rel="icon" type="png|image" href="/IMAGES/ab.png">
+    <link rel="stylesheet" href="/CSS/style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-TFN7XD9Z');</script>
+    <!-- End Google Tag Manager -->
+    <style>
+      html {
+        scroll-behavior: smooth;
+      }
+      
+      /* Logo ve slogan için stil */
+      .logo-container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+      }
+      
+      .logo-slogan {
+        font-size: 10px;
+        color: white;
+        margin-top: 2px;
+        font-style: italic;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+        text-align: right;
+        width: 100%;
+        padding-right: 5px;
+      }
+      
+      /* Navbar için responsive ayarlar */
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 5%;
+      }
+      
+      /* Container genişlik ayarı - GÜNCELLENDİ */
+      .container {
+        width: 100%;
+        max-width: 1400px; /* Görseldeki gibi geniş container */
+        margin: 0 auto;
+        padding: 0 20px;
+        box-sizing: border-box;
+      }
 
-.explanation-column {
-  flex: 1; /* Sağ taraf daha dar */
-  width: 100%;
-}
+      /* Mikroblog için iki sütunlu düzen - GÜNCELLENDİ */
+      .microblog-container {
+        display: flex;
+        gap: 30px;
+        margin-top: 30px;
+        width: 100%;
+      }
 
-/* MOBİL UYUMLULUK - GÜNCELLENDİ */
-@media (max-width: 1200px) {
-  .container {
-    max-width: 100%;
-    padding: 0 15px;
-  }
-  
-  .articles-row {
-    max-width: 100%;
-  }
-  
-  .article-card {
-    max-width: 100%;
-  }
-  
-  .article-title {
-    height: 70px;
-  }
-  
-  /* Mikroblog container mobilde tek sütun */
-  .microblog-container {
-    flex-direction: column;
-  }
-  
-  .entries-column, 
-  .explanation-column {
-    flex: 1;
-    width: 100%;
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-  }
-  
-  /* Entries kutusu makale kartları ile tam aynı genişlikte */
-  .entries-column {
-    width: 100%;
-  }
-  
-  .explanation-content {
-    width: 100%;
-  }
-  
-  .entry-item {
-    width: 100%;
-    margin-bottom: 20px; /* Makale kartları ile aynı margin */
-    box-sizing: border-box; /* Entries ile makale kartları aynı box model */
-  }
-  
-  .explanation-content {
-    max-height: 300px;
-    overflow: hidden;
-    transition: max-height 0.5s ease;
-    width: 100%;
-    box-sizing: border-box;
-  }
-  
-  .explanation-content.expanded {
-    max-height: 1200px;
-  }
-  
-  .toggle-explanation {
-    display: block;
-    width: 100%;
-  }
-}
+      .entries-column {
+        flex: 1; /* Sol ve sağ aynı genişlikte olacak */
+        width: 100%;
+      }
 
-/* Entry item - makale kartları ile aynı border-radius */
-.entry-item {
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-bottom: 15px;
-  background: rgba(10, 25, 20, 0.5);
-  border-radius: 15px; /* MAKALE KARTLARI İLE AYNI: 15px radius */
-  border: 1px solid rgba(0, 255, 0, 0.2);
-  padding: 20px; /* MAKALE KARTLARI İLE AYNI: 20px padding */
-  box-sizing: border-box; /* Entries ile makale kartları aynı box model */
-  width: 100%;
-}
+      .explanation-column {
+        flex: 1; /* Sol ve sağ aynı genişlikte olacak */
+        width: 100%;
+      }
 
-.entry-item:hover {
-  background: rgba(0, 255, 0, 0.05);
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(0, 255, 0, 0.2);
-}
+      .explanation-content {
+        background: rgba(10, 25, 20, 0.7);
+        border-radius: 15px; /* MAKALE KARTLARI İLE AYNI: 15px radius */
+        padding: 20px; /* MAKALE KARTLARI İLE AYNI: 20px padding */
+        border: 1px solid rgba(0, 255, 0, 0.3);
+        box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);
+        position: relative;
+        overflow: hidden;
+        font-size: 0.8rem;
+        height: 100%;
+        box-sizing: border-box; /* Aynı box model */
+        width: 100%;
+      }
 
-/* Ayrıca makale kartları için de box-sizing ekleyelim */
-.article-card {
-  box-sizing: border-box; /* Entries ile aynı box model */
-  background: rgba(10, 25, 20, 0.7);
-  border: 1px solid rgba(0, 255, 0, 0.3);
-  border-radius: 15px; /* ESKİ HALİ: 15px radius */
-  padding: 20px;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  position: relative;
-  overflow: hidden;
-  width: 100%; /* Tam genişlik */
-  max-width: 100%; /* Maksimum genişlik yok */
-  margin-bottom: 20px; /* Kartlar arası boşluk */
-}
+      .explanation-content h3 {
+        color: white;
+        margin-bottom: 15px;
+        font-size: 0.9rem;
+        border-bottom: 1px solid rgba(249, 215, 28, 0.3);
+        padding-bottom: 10px;
+      }
 
-@media (max-width: 768px) {
-  .entry-item {
-    padding: 15px; /* Makale kartları ile aynı */
-  }
-  
-  .explanation-content {
-    padding: 15px; /* Makale kartları ile aynı */
-  }
-  
-  .article-card {
-    padding: 15px;
-  }
-}
+      .explanation-content p {
+        margin-bottom: 15px;
+        line-height: 1.6;
+      }
 
-@media (max-width: 480px) {
-  .entry-item {
-    padding: 12px; /* Makale kartları ile aynı */
-  }
+      .toggle-explanation {
+        display: none;
+        background: rgba(0, 100, 0, 0.5);
+        color: #f9d71c;
+        border: 1px solid rgba(249, 215, 28, 0.3);
+        padding: 8px 15px;
+        border-radius: 5px;
+        margin-top: 15px;
+        cursor: pointer;
+        transition: all 0.3s;
+        width: 100%;
+      }
+
+      .toggle-explanation:hover {
+        background: rgba(0, 100, 0, 0.7);
+      }
+
+      /* YENİ MODAL STİLLERİ - İNCE UZUN YATAY NAVBAR */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 10000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at center, rgba(10, 30, 20, 0.95) 0%, rgba(5, 15, 10, 0.98) 100%);
+        overflow: hidden;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+      }
+
+      .modal.show {
+        opacity: 1;
+      }
+
+      .modal-content-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .modal-image-wrapper {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        box-sizing: border-box;
+        max-height: calc(100vh - 120px);
+      }
+
+      .modal-content {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        border-radius: 8px;
+        box-shadow: 0 0 40px rgba(0, 255, 128, 0.2);
+        border: 1px solid rgba(0, 255, 128, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      .modal.show .modal-content {
+        animation: imageGlow 3s ease-in-out infinite alternate;
+      }
+
+      @keyframes imageGlow {
+        0% {
+          box-shadow: 0 0 30px rgba(0, 255, 128, 0.2);
+        }
+        100% {
+          box-shadow: 0 0 50px rgba(0, 255, 128, 0.4);
+        }
+      }
+
+      .close {
+        position: absolute;
+        top: 20px;
+        right: 25px;
+        color: #f1f1f1;
+        font-size: 35px;
+        font-weight: bold;
+        cursor: pointer;
+        z-index: 10010;
+        opacity: 0.8;
+        transition: all 0.3s;
+        background: rgba(0, 0, 0, 0.6);
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(249, 215, 28, 0.3);
+      }
+
+      .close:hover {
+        opacity: 1;
+        background: rgba(200, 0, 0, 0.7);
+        transform: rotate(90deg);
+      }
+
+      /* YENİ MODAL NAVBAR - İNCE UZUN YATAY */
+      .modal-navbar {
+        background: linear-gradient(135deg, rgba(15, 35, 25, 0.95) 0%, rgba(8, 20, 15, 0.98) 100%);
+        border-top: 1px solid rgba(0, 255, 128, 0.2);
+        box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(15px);
+        display: flex;
+        flex-direction: column;
+        padding: 15px 20px;
+        min-height: 120px;
+      }
+
+      .modal-nav-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+
+      .modal-thumbnails {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex: 1;
+        justify-content:space-evenly;
+      }
+
+      .modal-thumb {
+        width: 80px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 4px;
+        cursor: pointer;
+        opacity: 0.7;
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+      }
+
+      .modal-thumb:hover {
+        opacity: 1;
+        transform: scale(1.05);
+      }
+
+      .modal-thumb.active {
+        opacity: 1;
+        border: 2px solid #f9d71c;
+        box-shadow: 0 0 8px rgba(249, 215, 28, 0.5);
+      }
+
+      .modal-nav-center {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .modal-counter {
+        background: rgba(0, 0, 0, 0.4);
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-size: 16px;
+        font-weight: bold;
+        color: #f9d71c;
+        border: 1px solid rgba(249, 215, 28, 0.3);
+        min-width: 80px;
+        text-align: center;
+      }
+
+      .modal-nav-buttons {
+        display: flex;
+        gap: 10px;
+        flex: 1;
+        justify-content: flex-end;
+      }
+
+      .nav-button {
+        background: linear-gradient(135deg, rgba(20, 45, 30, 0.9), rgba(10, 25, 15, 0.9));
+        color: white;
+        border: 1px solid rgba(0, 255, 128, 0.3);
+        padding: 10px 18px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        min-width: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .nav-button:hover {
+        background: linear-gradient(135deg, rgba(30, 65, 40, 0.9), rgba(15, 35, 20, 0.9));
+        border-color: rgba(0, 255, 128, 0.6);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 255, 128, 0.2);
+      }
+
+      .nav-button:active {
+        transform: translateY(0);
+      }
+
+      .modal-nav-bottom {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .modal-info-items {
+        display: flex;
+        gap: 25px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .modal-info-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        color: #e0e0e0;
+      }
+
+      .modal-info-item i {
+        color: #f9d71c;
+        font-size: 14px;
+      }
+
+      /* Photographic Cryptology için yeni düzen - GÜNCELLENDİ */
+      .photo-gallery-header {
+        margin-bottom: 30px;
+        text-align: center;
+      }
+
+      .gallery-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+        gap: 15px;
+      }
+
+      /* Küçük Photo Analysis Butonu - ORTALANDI */
+      .photo-analysis-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        background: linear-gradient(135deg, rgba(15, 30, 25, 0.8), rgba(0, 80, 0, 0.6));
+        color: #f9d71c;
+        text-decoration: none;
+        padding: 8px 15px;
+        border-radius: 8px;
+        border: 1px solid rgba(249, 215, 28, 0.3);
+        box-shadow: 0 2px 8px rgba(0, 255, 0, 0.15);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        backdrop-filter: blur(8px);
+        font-size: 0.8em;
+        min-height: 36px;
+        min-width: 120px;
+        margin: 0 auto; /* Ortalama için eklendi */
+      }
+
+      .photo-analysis-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(249, 215, 28, 0.08), transparent);
+        transition: left 0.6s;
+      }
+
+      .photo-analysis-btn:hover::before {
+        left: 100%;
+      }
+
+      .photo-analysis-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 255, 0, 0.25);
+        border-color: rgba(249, 215, 28, 0.5);
+      }
+
+      .photo-analysis-btn i {
+        font-size: 0.9em;
+        color: #f9d71c;
+      }
+
+      .photo-analysis-btn .btn-text {
+        font-weight: 500;
+        letter-spacing: 0.3px;
+        font-size: 0.85em;
+      }
+
+      /* Tooltip */
+      .photo-analysis-btn::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-8px);
+        background: rgba(0, 0, 0, 0.85);
+        color: white;
+        padding: 6px 10px;
+        border-radius: 4px;
+        font-size: 0.7em;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(249, 215, 28, 0.2);
+        z-index: 1000;
+      }
+
+      .photo-analysis-btn:hover::after {
+        opacity: 1;
+        transform: translateX(-50%) translateY(-4px);
+      }
+
+      /* Load More butonu - Analiz butonu ile aynı hizada */
+      .load-more {
+        margin: 0 auto;
+      }
+
+      /* Animasyon için keyframes */
+      @keyframes subtleGlow {
+        0%, 100% { box-shadow: 0 2px 8px rgba(0, 255, 0, 0.15); }
+        50% { box-shadow: 0 2px 12px rgba(0, 255, 0, 0.25); }
+      }
+
+      .photo-analysis-btn {
+        animation: subtleGlow 4s ease-in-out infinite;
+      }
+
+      /* Keyboard shortcuts stil */
+      .keyboard-shortcuts {
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: white;
+        font-size: 12px;
+        background: rgba(0, 0, 0, 0.7);
+        padding: 5px 10px;
+        border-radius: 5px;
+        z-index: 10010;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      /* Latest Articles Bölümü - GÜNCELLENDİ */
+      .latest-articles {
+        padding: 60px 20px;
+        background: rgba(10, 25, 20, 0.5);
+      }
+
+      .articles-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 30px;
+      }
+
+      .articles-row {
+        display: flex;
+        justify-content: center;
+        gap: 25px;
+        width: 100%;
+        max-width: 1400px; /* Container ile aynı genişlik */
+        margin: 0 auto;
+        flex-wrap: wrap; /* Ekran küçüldükçe alt alta gelsin */
+      }
+
+      /* Article kartları entries ile aynı genişlikte ve border radius'ta - GÜNCELLENDİ */
+      .article-card {
+        background: rgba(10, 25, 20, 0.7);
+        border: 1px solid rgba(0, 255, 0, 0.3);
+        border-radius: 15px; /* ESKİ HALİ: 15px radius */
+        padding: 20px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+        width: 100%; /* Tam genişlik */
+        max-width: 100%; /* Maksimum genişlik yok */
+        margin-bottom: 20px; /* Kartlar arası boşluk */
+        box-sizing: border-box; /* Entries ile aynı box model */
+      }
+
+      /* Masaüstünde 3'lü grid */
+      @media (min-width: 1200px) {
+        .article-card {
+          flex: 0 0 calc(33.333% - 17px); /* 3'lü grid */
+        }
+      }
+
+      /* Tablet boyutunda 2'li grid */
+      @media (min-width: 768px) and (max-width: 1199px) {
+        .article-card {
+          flex: 0 0 calc(50% - 13px); /* 2'li grid */
+        }
+      }
+
+      /* Mobilde tam genişlik */
+      @media (max-width: 767px) {
+        .article-card {
+          flex: 0 0 100%; /* Tam genişlik */
+        }
+      }
+
+      .article-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 255, 0, 0.2);
+        border-color: rgba(0, 255, 0, 0.5);
+      }
+
+      .article-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.05), transparent);
+        transition: left 0.6s;
+      }
+
+      .article-card:hover::before {
+        left: 100%;
+      }
+
+      .article-title {
+        font-size: 1.1rem;
+        color: white;
+        margin-bottom: 12px;
+        line-height: 1.4;
+        font-weight: 600;
+        height: 60px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
+
+      .article-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.8rem;
+        color: #ccc;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .article-category {
+        background: rgba(0, 255, 0, 0.2);
+        padding: 4px 10px;
+        border-radius: 15px;
+        color: #00ff00;
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+
+      .article-excerpt {
+        font-size: 0.9rem;
+        color: #aaa;
+        line-height: 1.6;
+        flex-grow: 1;
+        margin-bottom: 15px;
+        height: 60px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+      }
+
+      .article-stats {
+        display: flex;
+        gap: 20px;
+        margin-top: 15px;
+        font-size: 0.8rem;
+        color: #00ff00;
+        border-top: 1px solid rgba(0, 255, 0, 0.1);
+        padding-top: 15px;
+      }
+
+      .article-stat {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .article-stat i {
+        font-size: 0.9rem;
+      }
+
+      .loading-articles {
+        text-align: center;
+        padding: 40px;
+        color: #00ff00;
+      }
+
+      .no-articles {
+        text-align: center;
+        padding: 40px;
+        color: #ccc;
+      }
+
+      /* Mikroblog entries için loading */
+      .entries-loading {
+        text-align: center;
+        padding: 40px;
+        color: #00ff00;
+      }
+
+      .entries-loading i {
+        font-size: 2rem;
+        margin-bottom: 15px;
+      }
+
+      /* Fotoğraf galerisi - KARE FOTOĞRAFLAR İÇİN GÜNCELLENDİ - Masaüstü 4, mobil 2 */
+      .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr); /* Masaüstünde 4'lü */
+        gap: 15px;
+        margin-top: 20px;
+        width: 100%;
+      }
+
+      .gallery-photo {
+        width: 100%;
+        aspect-ratio: 1/1; /* Kare fotoğraflar için */
+        object-fit: cover; /* Kare içinde sığdır */
+        border-radius: 8px;
+        cursor: pointer;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid rgba(0, 255, 0, 0.2);
+      }
+
+      .gallery-photo:hover {
+        transform: scale(1.03);
+        box-shadow: 0 5px 15px rgba(0, 255, 0, 0.3);
+      }
+
+      /* Mikroblog entries tıklanabilir - GÜNCELLENDİ (makale kartları ile aynı border-radius) */
+      .entry-item {
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-bottom: 15px;
+        background: rgba(10, 25, 20, 0.5);
+        border-radius: 15px; /* MAKALE KARTLARI İLE AYNI: 15px radius */
+        border: 1px solid rgba(0, 255, 0, 0.2);
+        padding: 20px; /* MAKALE KARTLARI İLE AYNI: 20px padding */
+        box-sizing: border-box; /* Entries ile makale kartları aynı box model */
+        width: 100%; /* MAKALE KARTLARI İLE AYNI: tam genişlik */
+      }
+
+      .entry-item:hover {
+        background: rgba(0, 255, 0, 0.05);
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 255, 0, 0.2);
+      }
+
+      /* Touch için gecikme mekanizması */
+      .touch-delay {
+        touch-action: pan-y;
+      }
+
+      /* Section başlıkları için stil - GÜNCELLENDİ */
+      .section-title {
+        text-align: center;
+        width: 100%;
+        font-size: 1.8rem;
+        margin-bottom: 10px;
+        color: white;
+      }
+      
+      .last-entry {
+        text-align: center;
+        width: 100%;
+        color: #ccc;
+        margin-bottom: 30px;
+        font-size: 0.9rem;
+      }
+
+      /* Photo gallery ve latest articles container düzenlemesi */
+      .photo-gallery .container,
+      .latest-articles .container,
+      .microblog .container {
+        width: 100%;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 20px;
+        box-sizing: border-box;
+      }
+
+      /* All Entry Show butonu için container */
+      .microblog .container > div:last-child {
+        text-align: center;
+        margin-top: 30px;
+        width: 100%;
+      }
+
+      /* Gallery actions container genişliği */
+      .gallery-actions {
+        width: 100%;
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+      }
+
+      /* MOBİL UYUMLULUK - GÜNCELLENDİ */
+      @media (max-width: 1200px) {
+        .container {
+          max-width: 100%;
+          padding: 0 15px;
+        }
+        
+        .articles-row {
+          max-width: 100%;
+        }
+        
+        .article-card {
+          max-width: 100%;
+        }
+        
+        .article-title {
+          height: 70px;
+        }
+        
+        /* Mikroblog container mobilde tek sütun */
+        .microblog-container {
+          flex-direction: column;
+        }
+        
+        .entries-column, 
+        .explanation-column {
+          flex: 1;
+          width: 100%;
+          padding: 0;
+          margin: 0;
+          box-sizing: border-box;
+        }
+        
+        /* Entries kutusu makale kartları ile tam aynı genişlikte */
+        .entries-column {
+          width: 100%;
+        }
+        
+        .explanation-content {
+          width: 100%;
+        }
+        
+        .entry-item {
+          width: 100%;
+          margin-bottom: 20px; /* Makale kartları ile aynı margin */
+          box-sizing: border-box; /* Entries ile makale kartları aynı box model */
+        }
+        
+        .explanation-content {
+          max-height: 300px;
+          overflow: hidden;
+          transition: max-height 0.5s ease;
+          width: 100%;
+          box-sizing: border-box;
+        }
+        
+        .explanation-content.expanded {
+          max-height: 1200px;
+        }
+        
+        .toggle-explanation {
+          display: block;
+          width: 100%;
+        }
+      }
+
+      @media (max-width: 992px) {
+        .modal-image-wrapper {
+          max-height: calc(100vh - 150px);
+          padding: 15px;
+        }
+        
+        .modal-navbar {
+          min-height: 150px;
+          padding: 12px 15px;
+        }
+        
+        .modal-nav-top {
+          flex-direction: column;
+          gap: 12px;
+          margin-bottom: 12px;
+        }
+        
+        .modal-thumbnails {
+          order: 2;
+          justify-content: center;
+          width: 100%;
+        }
+        
+        .modal-nav-center {
+          order: 1;
+        }
+        
+        .modal-nav-buttons {
+          order: 3;
+          justify-content: center;
+          width: 100%;
+        }
+        
+        .modal-thumb {
+          width: 60px;
+          height: 40px;
+        }
+        
+        .modal-info-items {
+          gap: 15px;
+        }
+        
+        .modal-info-item {
+          font-size: 12px;
+        }
+        
+        .nav-button {
+          padding: 9px 15px;
+          min-width: 60px;
+          font-size: 16px;
+        }
+        
+        .close {
+          top: 10px;
+          right: 15px;
+          width: 40px;
+          height: 40px;
+          font-size: 25px;
+        }
+
+        .keyboard-shortcuts {
+          font-size: 10px;
+          top: 15px;
+          padding: 4px 8px;
+        }
+
+        /* Mobil cihazlarda tıklanabilir alanı büyüt */
+        .btn-box {
+          min-height: 44px;
+          padding: 12px 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        
+        #downloadCv {
+          padding: 15px 25px;
+          font-size: 16px;
+          min-height: 50px;
+        }
+
+        /* Galeri actions mobil - Analiz butonu ortada */
+        .gallery-actions {
+          flex-direction: column;
+          align-items: center;
+          gap: 15px;
+        }
+
+        .photo-analysis-btn {
+          order: 2;
+          align-self: center;
+          min-width: 110px;
+          min-height: 40px;
+          padding: 10px 12px;
+          margin: 0 auto;
+        }
+
+        .load-more {
+          order: 1;
+          align-self: center;
+          margin: 0 auto;
+        }
+
+        /* Gallery grid mobil - 4'lü kalacak (önceki kodda 4'lü) */
+        .gallery-grid {
+          grid-template-columns: repeat(4, 1fr);
+          gap: 10px;
+        }
+
+        /* Mobilde tooltip'ı kapat */
+        .photo-analysis-btn::after {
+          display: none;
+        }
+        
+        /* Makaleler mobil - KÜÇÜK KARTLAR */
+        .articles-row {
+          flex-direction: column;
+          align-items: center;
+          gap: 15px;
+        }
+        
+        .article-card {
+          padding: 15px;
+          max-width: 100%;
+          margin: 0 auto;
+        }
+        
+        .article-title {
+          font-size: 1rem;
+          height: 50px;
+        }
+        
+        .article-excerpt {
+          font-size: 0.85rem;
+          height: 50px;
+        }
+        
+        .article-stats {
+          font-size: 0.75rem;
+          gap: 15px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .latest-articles {
+          padding: 40px 15px;
+        }
+        
+        .articles-row {
+          justify-content: center;
+          align-items: center;
+        }
+        
+        .article-card {
+          padding: 15px;
+        }
+        
+        .article-title {
+          font-size: 0.95rem;
+          height: 45px;
+          -webkit-line-clamp: 3;
+        }
+        
+        .article-excerpt {
+          font-size: 0.82rem;
+          height: 45px;
+          -webkit-line-clamp: 4;
+        }
+        
+        /* Tablet boyutunda da 4'lü kalacak */
+        .gallery-grid {
+          grid-template-columns: repeat(4, 1fr);
+          gap: 10px;
+        }
+        
+        .gallery-photo {
+          height: auto;
+          aspect-ratio: 1/1; /* Mobilde de kare kalacak */
+        }
+        
+        .section-title {
+          font-size: 1.5rem;
+        }
+        
+        /* Entries ve explanation aynı padding */
+        .entry-item {
+          padding: 15px; /* Makale kartları ile aynı */
+        }
+        
+        .explanation-content {
+          padding: 15px; /* Makale kartları ile aynı */
+        }
+      }
+
+      @media (max-width: 480px) {
+        .modal-navbar {
+          min-height: 160px;
+          padding: 10px 12px;
+        }
+        
+        .modal-info-items {
+          flex-direction: column;
+          align-items: center;
+          gap: 8px;
+        }
+        
+        .modal-thumb {
+          width: 50px;
+          height: 35px;
+        }
+        
+        .modal-counter {
+          font-size: 14px;
+          padding: 6px 15px;
+        }
+        
+        .nav-button {
+          padding: 8px 13px;
+          min-width: 55px;
+          font-size: 15px;
+        }
+        
+        .article-meta {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 5px;
+        }
+        
+        .article-stats {
+          justify-content: space-between;
+        }
+        
+        /* Küçük mobil cihazlarda da 4'lü kalacak */
+        .gallery-grid {
+          grid-template-columns: repeat(4, 1fr);
+          gap: 8px;
+        }
+        
+        .gallery-photo {
+          height: auto;
+          aspect-ratio: 1/1;
+        }
+        
+        .gallery-photo:hover {
+          transform: scale(1.02);
+        }
+        
+        /* Mobilde kartları daha da küçült */
+        .article-card {
+          padding: 12px;
+        }
+        
+        .article-title {
+          font-size: 0.9rem;
+          height: 40px;
+        }
+        
+        .article-excerpt {
+          font-size: 0.8rem;
+          height: 40px;
+        }
+        
+        .section-title {
+          font-size: 1.3rem;
+        }
+        
+        /* Entries ve explanation aynı padding */
+        .entry-item {
+          padding: 12px; /* Makale kartları ile aynı */
+        }
+        
+        .explanation-content {
+          padding: 12px; /* Makale kartları ile aynı */
+        }
+      }
+
+      /* Touch device detection ve mobil optimizasyon */
+      @media (hover: none) and (pointer: coarse) {
+        .photo-analysis-btn {
+          cursor: pointer;
+          -webkit-tap-highlight-color: transparent;
+        }
+
+        .photo-analysis-btn:focus {
+          outline: 2px solid rgba(249, 215, 28, 0.4);
+          outline-offset: 1px;
+        }
+
+        .photo-analysis-btn:active {
+          transform: scale(0.95);
+          background: linear-gradient(135deg, rgba(20, 35, 30, 0.9), rgba(0, 90, 0, 0.7));
+        }
+        
+        .nav-button {
+          -webkit-tap-highlight-color: transparent;
+          min-height: 44px;
+        }
+        
+        .modal-thumb {
+          -webkit-tap-highlight-color: transparent;
+          min-height: 44px;
+        }
+        
+        .article-card {
+          -webkit-tap-highlight-color: transparent;
+        }
+        
+        .article-card:active {
+          transform: scale(0.98);
+        }
+        
+        .gallery-photo:active {
+          transform: scale(0.95);
+        }
+        
+        .entry-item:active {
+          transform: scale(0.98);
+        }
+      }
+    </style>
+</head>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TFN7XD9Z"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<script>
+  // IP gösterici dot
+  const dot = document.createElement('div');
+  dot.style.cssText = `
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 18px;
+    height: 18px;
+    background: #f9d71c;
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 0 10px rgba(50, 205, 50, 0.8);
+    cursor: pointer;
+    z-index: 9999;
+    transition: all 0.3s;
+  `;
+
+  const tooltip = document.createElement('div');
+  tooltip.style.cssText = `
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    background: rgba(0,0,0,0.9);
+    color: white;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    min-width: 240px;
+    backdrop-filter: blur(5px);
+    z-index: 10000;
+  `;
+
+  dot.appendChild(tooltip);
+  document.body.appendChild(dot);
+
+  dot.addEventListener('mouseenter', () => tooltip.style.opacity = '1');
+  dot.addEventListener('mouseleave', () => tooltip.style.opacity = '0');
   
-  .explanation-content {
-    padding: 12px; /* Makale kartları ile aynı */
-  }
-  
-  .article-card {
-    padding: 12px;
-  }
-}
+  // Touch events for mobile
+  dot.addEventListener('touchstart', () => tooltip.style.opacity = '1');
+  dot.addEventListener('touchend', () => setTimeout(() => tooltip.style.opacity = '0', 2000));
+
+  fetch('https://ipinfo.io/json?token=68a1229187303a')
+    .then(async res => {
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`Hatalı cevap (${res.status}): ${text}`);
+      }
+      return res.json();
+    })
+    .then(data => {
+      const now = new Date();
+      const {
+        ip, hostname, city, region,
+        country, loc, org, postal, timezone
+      } = data;
+
+      tooltip.innerHTML = `
+        <div style="margin-bottom: 3px; font-weight: bold; color: #00ff00;">✓ User IP Detected</div>
+        <div><strong>IP:</strong> ${ip}</div>
+        <div><strong>Host:</strong> ${hostname}</div>
+        <div><strong>City:</strong> ${city}</div>
+        <div><strong>Country:</strong> ${country}</div>
+        <div><strong>Location</strong> ${loc}</div>
+        <div><strong>Postal:</strong> ${postal}</div>
+        <div><strong>Org:</strong> ${org}</div>
+        <div><strong>Time:</strong> ${now.toLocaleString('tr-TR')}</div>
+        <div style="font-size: 9px; margin-top: 4px; color: #ccc;">${navigator.userAgent.split(' ')[0]}</div>
+      `;
+
+      // POST ile Netlify fonksiyonuna gönder
+      fetch('https://adembayazit.netlify.app/.netlify/functions/log-visitor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ip, hostname, city, region,
+          country, loc, org, postal,
+          timezone, timestamp: now.toISOString(),
+          userAgent: navigator.userAgent
+        })
+      }).then(res => res.json())
+        .then(console.log)
+        .catch(err => console.error("POST hatası:", err));
+    })
+    .catch(error => {
+      const now = new Date();
+      tooltip.innerHTML = `
+        <div style="margin-bottom: 5px; font-weight: bold; color: #ff5555;">❌ Hata</div>
+        <div><strong>Zaman:</strong> ${now.toLocaleString('tr-TR')}</div>
+        <div><strong>Mesaj:</strong> ${error.message}</div>
+      `;
+      dot.style.background = "#ff5555";
+    });
+</script>
+    <script type="module" src="/JAVASCRIPT/load-entries.js"></script>
+    <script src="/JAVASCRIPT/monitor.js"></script>
+    <canvas id="matrixCanvas"></canvas>
+    <script src="/JAVASCRIPT/matrix.js"></script>
+<body>
+    <header class="header">
+        <div class="logo-container">
+            <a href="#home" class="logo"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">{adembayazit} </a>
+            <span class="logo-slogan">One step further every day…</span>
+        </div>
+        <nav class="navbar">
+            <div class="dropdown">
+            <a href="#" style="--i:5;" class="dropbtn"> <img src="IMAGES/Ata.svg" alt="Ata Icon" class="ata-icon"><span class="fi fi-tr"></span> <span class='bx bx-code-alt'></span> Ethical Hacker <span class='bx bx-chevron-down'></span></a>
+            <div class="dropdown-content">
+            <a href="/whatishacker"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hacker-icon"> What is an Ethical Hacker?</a>
+            <a href="/cybersecurityglossary"><img src="IMAGES/glossary.svg" alt="Glossary" class="glossary-icon"> Cybersecurity Glossary</a>
+            <a href="/whatissoc"><img src="IMAGES/soc.svg" alt="Soc" class="soc-icon"> What is a SOC ?</a>
+            <a href="/vulnerabilities"><img src="IMAGES/vulnerabilities.svg" alt="Vulnerabilities" class="vulnerabilities-icon"> Vulnerabilities</a>
+            <a href="/steganography"><img src="IMAGES/steganography.svg" alt="Steganography" class="steganography-icon"> Steganography</a>
+            <a href="/cryptography"><img src="IMAGES/cryptography.svg" alt="Cryptography" class="cryptography-icon"> Cryptography</a>    
+            <a href="/cybersecurityeducationprompt"><img src="IMAGES/education.svg" alt="Education" class="education-icon"> Cybersecurity Resources Prompt</a>
+            <a href="/article"><img src="IMAGES/newspaper.svg" alt="Article" class="articles-icon"> Cybersecurity Article</a>
+            </div>
+          </div>
+        </nav>
+    </header>
+
+    <section id="home" class="home">
+        <div class="home-content" data-scroll data-scroll-speed="-5">
+            <h3 class="mu">Hello, It's me</h3>
+            <h1>Adem Bayazıt</h1>
+            <h3>And I'm a <span class="pro-text">
+                <script>
+                   var typed = new Typed(".pro-text", {
+                      strings: [
+                        "Ethical Hacker",
+                        "Network Architect", 
+                        "Cyber Security Analyst",
+                        "Programmer",
+                        "Linux Administrator",
+                        "Reverse Engineer",
+                        "Lifelong Student",
+                      ],
+                      typeSpeed: 100,   
+                      backSpeed: 100,   
+                      backDelay: 1000,  
+                      loop: true        
+                    });
+                </script>
+            </span></h3>
+            
+            <p>  &emsp; &emsp;This platform highlights my passion for cybersecurity and my commitment to ethical practices. <br> <br>
+                &emsp; &emsp;I have acquired fundamental knowledge and skills in various areas of ethical hacking, 
+                allowing me to contribute to the security of organizations and individuals. <br> <br>
+                &emsp; &emsp;I am not the tool you find lying around; I am the source code. A Thesaurus who speaks the language of machines and the language of nature. <br><br> Hack Me If You Can is a platform where you can test yourself!
+            </p>
+            
+            <div class="home-sci">
+                <a href="https://github.com/adembayazit" target="_blank"><i class='bx bxl-github'></i></a>
+               <a href="https://www.linkedin.com/in/adembayazit/" target="_blank"><i class='bx bxl-linkedin' ></i></a>
+               <a href="https://wa.me/+905365844282" target="_blank"><i class='bx bxl-whatsapp'></i></a>
+            </div>
+                <a id="downloadCv" href="https://adembayazit.com/viewcv" class="btn-box"><i class="fas fa-file-alt"></i> &nbsp;View CV</a>
+        </div>
+
+        <div class="home-img">
+            <div class="glowing-circle">
+                <span></span>
+                <span></span>
+                <div class="image">
+                    <img src="/IMAGES/saianon.png" alt="">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="microblog" class="microblog">
+        <div class="container">
+            <h2 class="section-title"><i class="fa-solid fa-pager"></i> LadyB <span class="fa-solid fa-bug bug-icon"></span> G Entries</h2>
+            <p class="last-entry">Last 5 Entries</p> 
+            <div class="microblog-container">
+                <div class="entries-column">
+                    <div id="entries" class="entries">
+                        <div class="entries-loading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>Loading entries...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="explanation-column">
+                    <div class="explanation-content">
+                        <h3>Why I Created This Microblog?</h3>
+                        <p>First of all, I want to clarify that I am not building a social media platform. I have only allocated a small area for myself on my platform to share my own opinions.</p>
+                        <p>Perhaps in the future, it could evolve into a social media platform. (Supply-Demand Eq)</p>
+                        <p>I am developing the platform from the ground up, completely on my own. I am not simply taking an open-source application and modifying it like others do.</p>
+                        <p>Furthermore, I needed a core idea for the platform. Here it is: I have shared the photos, which are the fundamental building blocks of the idea. An entirely new platform is being built upon this foundation.</p>
+                        <p>So, what am I sharing here? On this platform, I am not voicing something unknown. In fact, I bring to light what already exists but slips past your attention.</p>
+                        <p>Also, the entry space on this platform was born out of necessity.</p>
+                        <p>It concerns <strong>Technology, Art, Photography, the World, and the reinterpretation of developments in world history.</strong></p>
+                        <p>At the same time, it contains a <strong>cryptological and steganographic language and art</strong>.</p>
+                        <p>Friends, I'll soon start filling in the content. As the ideas form, they gradually take shape. I assure you, it will include knowledge that has never surfaced before. Since there's no team working in the background and I'm progressing entirely with personal effort and open-source development tools, it takes a little time.</p>
+                        <p>As I mentioned in the text, the cryptology and steganography content will be created in real time. The artworks, on the other hand, will feature the works of old masters such as Picasso, Da Vinci, Salvador Dalí, and many other talented artists whose names you may not have heard of. I will also reinterpret them with photographs by adding my own techniques.</p>
+                    </div>
+                    <button class="toggle-explanation">More..</button>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="microblog.html" class="btn-box"><i class="fa-solid fa-bug"></i> All Entry Show</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="photo-gallery" class="photo-gallery">
+        <div class="container">
+            <h2 class="section-title"><i class="fa-solid fa-images"></i> Photographic Cryptology</h2>
+            <div id="gallery-grid" class="gallery-grid"></div>
+            <div class="gallery-actions">
+                <button id="load-more" class="load-more">More Photos</button>
+                <a href="/photographiccryptology.html" class="photo-analysis-btn" 
+                   data-tooltip="Fotoğrafların detaylı açıklamaları ve kriptolojik anlamları">
+                    <i class="fas fa-search-plus"></i>
+                    <span class="btn-text">Analysis</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="latest-articles" class="latest-articles">
+        <div class="container">
+            <h2 class="section-title"><i class="fas fa-newspaper"></i> Latest Cybersecurity Articles</h2>
+            <p class="last-entry">Last 3 Articles</p>
+            <div class="articles-container">
+                <div id="articles-row" class="articles-row">
+                    <!-- Makaleler buraya JavaScript ile yüklenecek -->
+                </div>
+                <div style="text-align: center; margin-top: 20px;">
+                    <a href="/article" class="btn-box"><i class="fas fa-book-open"></i> View All Articles</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- YENİ MODAL YAPISI - İNCE UZUN YATAY NAVBAR -->
+    <div id="modal" class="modal">
+        <span class="close">&times;</span>
+        <div class="keyboard-shortcuts">
+            <span>← →: Navigate | ESC: Close</span>
+        </div>
+        
+        <div class="modal-content-container">
+            <div class="modal-image-wrapper">
+                <img class="modal-content" id="modal-img">
+            </div>
+            
+            <div class="modal-navbar">
+                <div class="modal-nav-top">
+                    <div class="modal-thumbnails">
+                        <button class="nav-button prev-button">&lt;</button>
+                        <img class="modal-thumb prev-thumb" src="" alt="Previous Photo">
+                        <div class="modal-counter"><span id="modal-counter">1/10</span></div>
+                        <img class="modal-thumb next-thumb" src="" alt="Next Photo">
+                        <button class="nav-button next-button">&gt;</button>
+                    </div>
+                </div>
+                
+                <div class="modal-nav-bottom">
+                    <div class="modal-info-items">
+                        <div class="modal-info-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span id="modal-location">Unknown Location</span>
+                        </div>
+                        <div class="modal-info-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span id="modal-date">Unknown Date</span>
+                            <i class="fas fa-clock"></i>
+                            <span id="modal-time">Unknown Time</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer style="text-align: center; padding: 20px; font-size: 14px; color: white;">
+        <hr style="margin-bottom: 10px; border-color: limegreen;" />
+        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.3 | Aug 2025</p>
+    </footer>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0WNL3VLY3F"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-0WNL3VLY3F');
+    </script>
+
+    <script src="/JAVASCRIPT/gallery.js"></script>
+    <script src="/JAVASCRIPT/log-download.js"></script>
+    <script src="/JAVASCRIPT/translate-entry.js"></script>
+    <script src="/JAVASCRIPT/keysound.js"></script>
+
+    <script>
+        // Mobil cihaz tespiti
+        function isMobileDevice() {
+            return /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
+        // Debug bilgileri
+        console.log('Device type:', isMobileDevice() ? 'Mobile' : 'Desktop');
+        console.log('User Agent:', navigator.userAgent);
+
+        // Touch için gecikme mekanizması
+        let touchTimer = null;
+        let touchStartX = 0;
+        let touchStartY = 0;
+        const TOUCH_DELAY = 200; // ms
+
+        function handleTouchStart(e) {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            touchTimer = setTimeout(() => {
+                // Uzun basma durumunda işlem yapma
+                touchTimer = null;
+            }, TOUCH_DELAY);
+        }
+
+        function handleTouchEnd(e, callback) {
+            if (touchTimer) {
+                clearTimeout(touchTimer);
+                touchTimer = null;
+                
+                const touchEndX = e.changedTouches[0].clientX;
+                const touchEndY = e.changedTouches[0].clientY;
+                
+                // Kaydırma mı tıklama mı kontrol et
+                const diffX = Math.abs(touchEndX - touchStartX);
+                const diffY = Math.abs(touchEndY - touchStartY);
+                
+                // Eğer kaydırma değilse (çok küçük hareket)
+                if (diffX < 10 && diffY < 10) {
+                    e.preventDefault();
+                    if (callback) callback();
+                }
+            }
+        }
+
+        // CV görüntüleme sayacı için fonksiyon
+        async function logCvView() {
+            try {
+                console.log('Starting CV view logging...');
+                
+                // Timeout ile IP bilgisi alma
+                const ipController = new AbortController();
+                const ipTimeout = setTimeout(() => ipController.abort(), 5000);
+                
+                const ipResponse = await fetch('https://ipinfo.io/json?token=68a1229187303a', {
+                    signal: ipController.signal
+                });
+                clearTimeout(ipTimeout);
+                
+                if (!ipResponse.ok) {
+                    throw new Error(`IP API error: ${ipResponse.status}`);
+                }
+                
+                const ipData = await ipResponse.json();
+                
+                const now = new Date();
+                const viewEntry = {
+                    id: Date.now(),
+                    ip: ipData.ip,
+                    hostname: ipData.hostname || 'unknown',
+                    city: ipData.city || 'unknown',
+                    region: ipData.region || 'unknown',
+                    country: ipData.country || 'unknown',
+                    loc: ipData.loc || 'unknown',
+                    org: ipData.org || 'unknown',
+                    postal: ipData.postal || 'unknown',
+                    timezone: ipData.timezone || 'unknown',
+                    timestamp: now.toISOString(),
+                    userAgent: navigator.userAgent.substring(0, 200),
+                    type: 'cv_view',
+                    page: 'home',
+                    device: isMobileDevice() ? 'mobile' : 'desktop'
+                };
+
+                console.log('New view entry:', viewEntry);
+
+                // JSONBin işlemleri için timeout
+                const binController = new AbortController();
+                const binTimeout = setTimeout(() => binController.abort(), 10000);
+
+                // Önce mevcut veriyi al
+                const getResponse = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        path: '/b/68ecedca43b1c97be96584cc/latest',
+                        method: 'GET'
+                    }),
+                    signal: binController.signal
+                });
+
+                let existingData = { 
+                    cvview: 'adem', 
+                    cv_views: [], 
+                    total_views: 0,
+                    last_updated: new Date().toISOString()
+                };
+                
+                if (getResponse.ok) {
+                    const result = await getResponse.json();
+                    console.log('Existing data from bin:', result);
+                    existingData = result;
+                    
+                    if (!existingData.cv_views) {
+                        existingData.cv_views = [];
+                    }
+                    if (typeof existingData.total_views !== 'number') {
+                        existingData.total_views = 0;
+                    }
+                }
+
+                // Yeni entry'yi array'e ekle
+                existingData.cv_views.push(viewEntry);
+                existingData.total_views = (existingData.total_views || 0) + 1;
+                existingData.last_updated = now.toISOString();
+
+                console.log('Updated data to save:', existingData);
+
+                // Güncellenmiş veriyi kaydet
+                const putResponse = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        path: '/b/68ecedca43b1c97be96584cc',
+                        method: 'PUT',
+                        body: existingData
+                    }),
+                    signal: binController.signal
+                });
+
+                clearTimeout(binTimeout);
+
+                if (!putResponse.ok) {
+                    throw new Error(`JSONBin PUT error: ${putResponse.status}`);
+                }
+
+                const result = await putResponse.json();
+                console.log('CV view logged successfully:', result);
+                
+                return result;
+            } catch (error) {
+                console.error('Error logging CV view:', error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        // CV link kontrolü
+        document.addEventListener('DOMContentLoaded', function() {
+            const cvLink = document.getElementById('downloadCv');
+            console.log('CV link found:', !!cvLink);
+            if (cvLink) {
+                console.log('CV link href:', cvLink.href);
+                
+                // Hem click hem de touchstart event'lerini ekle
+                cvLink.addEventListener('click', handleCvClick);
+                cvLink.addEventListener('touchstart', handleCvClick, { passive: true });
+            }
+            
+            // Sayfa yüklendiğinde mevcut istatistikleri göster
+            showCvStats();
+        });
+
+        // Ortak click/touch handler
+        function handleCvClick(e) {
+            // Mobil cihazlarda varsayılan davranışı engelle
+            e.preventDefault();
+            e.stopPropagation();
+            
+            console.log('CV link clicked/touched, logging view...');
+            
+            const originalHref = this.href;
+            
+            // Loglama işlemini başlat
+            logCvView().then(result => {
+                console.log('Logging completed:', result);
+                // Loglama tamamlandıktan sonra yönlendir
+                setTimeout(() => {
+                    window.location.href = originalHref;
+                }, 300);
+            }).catch(err => {
+                console.error('Logging failed:', err);
+                // Hata olsa bile yönlendir
+                window.location.href = originalHref;
+            });
+        }
+
+        // CV istatistiklerini göster
+        async function showCvStats() {
+            try {
+                const response = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        path: '/b/68ecedca43b1c97be96584cc/latest',
+                        method: 'GET'
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('CV Stats:', data);
+                    
+                    if (data.total_views) {
+                        console.log(`Total CV Views: ${data.total_views}`);
+                    }
+                }
+            } catch (error) {
+                console.log('Error fetching CV stats:', error);
+            }
+        }
+
+        // Latest Articles için fonksiyonlar
+        async function fetchArticles() {
+            try {
+                const ARTICLES_BIN_ID = '695f155c43b1c97be920c28d';
+                const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
+                
+                const response = await fetch(proxyUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        path: `/b/${ARTICLES_BIN_ID}/latest`,
+                        method: 'GET'
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                return result.articles || result.records || result || [];
+            } catch (error) {
+                console.error('Error fetching articles:', error);
+                return [];
+            }
+        }
+
+        // Latest Articles loading - SADECE HATA DURUMUNDA 1 DAKİKA
+        async function loadLatestArticles() {
+            const container = document.getElementById('articles-row');
+            if (!container) return;
+
+            container.innerHTML = '<div class="loading-articles"><i class="fas fa-spinner fa-spin"></i> Loading articles...</div>';
+
+            try {
+                const articles = await fetchArticles();
+                
+                // Başarılı durumda direkt göster
+                if (!articles || articles.length === 0) {
+                    container.innerHTML = '<div class="no-articles">No articles available at the moment.</div>';
+                    return;
+                }
+
+                // En yeni 3 makaleyi al
+                const latestArticles = articles
+                    .sort((a, b) => {
+                        const dateA = new Date(a.published_date || a.date || 0);
+                        const dateB = new Date(b.published_date || b.date || 0);
+                        return dateB - dateA;
+                    })
+                    .slice(0, 3);
+
+                container.innerHTML = '';
+                
+                latestArticles.forEach(article => {
+                    const articleDate = new Date(article.published_date || article.date);
+                    const dateStr = articleDate.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    });
+
+                    // İçerikten HTML etiketlerini temizle ve kısa açıklama oluştur
+                    let excerpt = '';
+                    if (article.content) {
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = article.content;
+                        excerpt = tempDiv.textContent || tempDiv.innerText || '';
+                        excerpt = excerpt.substring(0, 120).trim();
+                        if (excerpt.length === 120) excerpt += '...';
+                    } else {
+                        excerpt = 'Read the full article for more details...';
+                    }
+
+                    const card = document.createElement('div');
+                    card.className = 'article-card touch-delay';
+                    card.innerHTML = `
+                        <div class="article-title">${article.title || 'Untitled Article'}</div>
+                        <div class="article-meta">
+                            <span class="article-date">${dateStr}</span>
+                            <span class="article-category">${article.category || 'Cybersecurity'}</span>
+                        </div>
+                        <div class="article-excerpt">${excerpt}</div>
+                        <div class="article-stats">
+                            <div class="article-stat">
+                                <i class="far fa-eye"></i> ${article.views || 0} views
+                            </div>
+                            <div class="article-stat">
+                                <i class="far fa-heart"></i> ${article.likes || 0} likes
+                            </div>
+                        </div>
+                    `;
+
+                    // Click event
+                    card.addEventListener('click', () => {
+                        window.location.href = `/article#${article.id}`;
+                    });
+                    
+                    // Touch event with delay for mobile
+                    card.addEventListener('touchstart', function(e) {
+                        handleTouchStart(e);
+                    });
+                    
+                    card.addEventListener('touchend', function(e) {
+                        handleTouchEnd(e, () => {
+                            window.location.href = `/article#${article.id}`;
+                        });
+                    });
+
+                    container.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Error loading articles:', error);
+                // Hata durumunda 1 dakika bekleyip hata göster
+                const startTime = Date.now();
+                const minLoadingTime = 60000;
+                const elapsed = Date.now() - startTime;
+                const remainingTime = Math.max(0, minLoadingTime - elapsed);
+                
+                await new Promise(resolve => setTimeout(resolve, remainingTime));
+                
+                container.innerHTML = '<div class="no-articles">Unable to load articles. Please try again later.</div>';
+            }
+        }
+
+        // Mikroblog entries için yükleniyor göstergesi
+        function showEntriesLoading() {
+            const entriesContainer = document.getElementById('entries');
+            if (entriesContainer) {
+                entriesContainer.innerHTML = `
+                    <div class="entries-loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading entries... Please wait.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Mikroblog entries'leri yükle - DÜZELTİLDİ: Artık başarılı yüklemeden sonra hata göstermeyecek
+        async function loadMicroblogEntries() {
+            showEntriesLoading();
+            
+            const startTime = Date.now();
+            const minLoadingTime = 60000; // 1 dakika
+            
+            try {
+                const MICROBLOG_BIN_ID = '694f7d8e43b1c97be91ef7d1';
+                const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
+                
+                const response = await fetch(proxyUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        path: `/b/${MICROBLOG_BIN_ID}/latest`,
+                        method: 'GET'
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                const entries = result.entries || result.records || result || [];
+                const last5Entries = entries.slice(0, 5);
+                
+                // Minimum loading süresini kontrol et
+                const elapsed = Date.now() - startTime;
+                const remainingTime = Math.max(0, minLoadingTime - elapsed);
+                
+                // Kalan süre kadar bekle
+                await new Promise(resolve => setTimeout(resolve, remainingTime));
+                
+                // Başarılı yükleme - entry'leri göster
+                displayMicroblogEntries(last5Entries);
+                
+            } catch (error) {
+                console.error('Error loading microblog entries:', error);
+                
+                // Hata durumunda da minimum süreyi bekle
+                const elapsed = Date.now() - startTime;
+                const remainingTime = Math.max(0, minLoadingTime - elapsed);
+                await new Promise(resolve => setTimeout(resolve, remainingTime));
+                
+                const entriesContainer = document.getElementById('entries');
+                if (entriesContainer) {
+                    entriesContainer.innerHTML = '<div class="no-articles">Unable to load entries. Please try again later.</div>';
+                }
+            }
+        }
+
+        function displayMicroblogEntries(entries) {
+            const entriesContainer = document.getElementById('entries');
+            if (!entriesContainer) return;
+            
+            try {
+                if (!entries || entries.length === 0) {
+                    entriesContainer.innerHTML = '<div class="no-articles">No entries available at the moment.</div>';
+                    return;
+                }
+                
+                entriesContainer.innerHTML = '';
+                
+                entries.forEach(entry => {
+                    const entryDate = new Date(entry.date || entry.created_at);
+                    const dateStr = entryDate.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    });
+                    const timeStr = entryDate.toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+
+                    const entryDiv = document.createElement('div');
+                    entryDiv.className = 'entry-item touch-delay';
+                    entryDiv.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <span style="color: #00ff00; font-size: 0.9rem;">${dateStr} ${timeStr}</span>
+                            <span style="color: #f9d71c; font-size: 0.8rem;">#${entry.category || 'general'}</span>
+                        </div>
+                        <div style="color: white; line-height: 1.5; font-size: 0.95rem;">
+                            ${entry.content || 'No content available...'}
+                        </div>
+                        <div style="margin-top: 10px; display: flex; gap: 15px; font-size: 0.8rem; color: #aaa;">
+                            <span><i class="far fa-comment"></i> ${entry.comments || 0}</span>
+                            <span><i class="far fa-heart"></i> ${entry.likes || 0}</span>
+                        </div>
+                    `;
+                    
+                    if (entry.id) {
+                        entryDiv.addEventListener('click', () => {
+                            window.location.href = `/microblog.html#${entry.id}`;
+                        });
+                        
+                        entryDiv.addEventListener('touchstart', function(e) {
+                            handleTouchStart(e);
+                        });
+                        
+                        entryDiv.addEventListener('touchend', function(e) {
+                            handleTouchEnd(e, () => {
+                                window.location.href = `/microblog.html#${entry.id}`;
+                            });
+                        });
+                    } else {
+                        entryDiv.addEventListener('click', () => {
+                            window.location.href = '/microblog.html';
+                        });
+                        
+                        entryDiv.addEventListener('touchstart', function(e) {
+                            handleTouchStart(e);
+                        });
+                        
+                        entryDiv.addEventListener('touchend', function(e) {
+                            handleTouchEnd(e, () => {
+                                window.location.href = '/microblog.html';
+                            });
+                        });
+                    }
+
+                    entriesContainer.appendChild(entryDiv);
+                });
+            } catch (displayError) {
+                console.error('Error displaying entries:', displayError);
+                entriesContainer.innerHTML = '<div class="no-articles">Error displaying entries.</div>';
+            }
+        }
+
+        // Galeri ve Modal işlevselliği
+        document.addEventListener("DOMContentLoaded", () => {
+            const galleryGrid = document.getElementById("gallery-grid");
+            const loadMoreBtn = document.getElementById("load-more");
+            const modal = document.getElementById("modal");
+            const modalImg = document.getElementById("modal-img");
+            const modalLocation = document.getElementById("modal-location");
+            const modalDate = document.getElementById("modal-date");
+            const modalTime = document.getElementById("modal-time");
+            const modalCounter = document.getElementById("modal-counter");
+            const prevThumb = document.querySelector(".prev-thumb");
+            const nextThumb = document.querySelector(".next-thumb");
+            const closeBtn = document.querySelector(".close");
+            const prevButton = document.querySelector(".prev-button");
+            const nextButton = document.querySelector(".next-button");
+
+            let allPhotos = [];
+            let visibleCount = 8;
+            let currentIndex = 0;
+
+            // photos.json'dan verileri çek
+            fetch("/photos.json")
+                .then(res => res.json())
+                .then(data => {
+                    allPhotos = data;
+                    renderPhotos();
+                })
+                .catch(err => {
+                    console.error("Photo fetch error:", err);
+                    allPhotos = [
+                        {
+                            "src": "PHOTO/photo1.JPG",
+                            "date": "2017-05-25",
+                            "time": "17:12",
+                            "location": "Eymir, Ankara, Türkiye"
+                        },
+                        {
+                            "src": "PHOTO/photo2.JPG",
+                            "date": "2017-05-30",
+                            "time": "14:57",
+                            "location": "Eymir, Ankara, Türkiye"
+                        }
+                    ];
+                    renderPhotos();
+                });
+
+            function renderPhotos() {
+                if (!galleryGrid) return;
+                
+                galleryGrid.innerHTML = "";
+                allPhotos.slice(0, visibleCount).forEach((photo, index) => {
+                    const img = document.createElement("img");
+                    img.src = photo.src;
+                    img.classList.add("gallery-photo", "touch-delay");
+                    img.alt = "Gallery Photo";
+                    img.dataset.location = photo.location;
+                    img.dataset.date = photo.date;
+                    img.dataset.time = photo.time;
+                    img.dataset.index = index;
+                    
+                    img.addEventListener("click", () => {
+                        currentIndex = index;
+                        openModal();
+                    });
+                    
+                    img.addEventListener("touchstart", function(e) {
+                        handleTouchStart(e);
+                    });
+                    
+                    img.addEventListener("touchend", function(e) {
+                        handleTouchEnd(e, () => {
+                            currentIndex = index;
+                            openModal();
+                        });
+                    });
+                    
+                    galleryGrid.appendChild(img);
+                });
+
+                if (loadMoreBtn) {
+                    loadMoreBtn.style.display = visibleCount < allPhotos.length ? "block" : "none";
+                }
+            }
+
+            function openModal() {
+                if (!modal) return;
+                
+                modal.style.display = "flex";
+                setTimeout(() => {
+                    modal.classList.add("show");
+                }, 10);
+                document.body.style.overflow = "hidden";
+                updateModal();
+            }
+
+            function closeModal() {
+                if (!modal) return;
+                
+                modal.classList.remove("show");
+                setTimeout(() => {
+                    modal.style.display = "none";
+                    document.body.style.overflow = "auto";
+                }, 300);
+            }
+
+            function updateModal() {
+                const photo = allPhotos[currentIndex];
+                if (modalImg) modalImg.src = photo.src;
+                if (modalLocation) modalLocation.textContent = photo.location || 'Unknown Location';
+                if (modalDate) modalDate.textContent = photo.date || 'Unknown Date';
+                if (modalTime) modalTime.textContent = photo.time || 'Unknown Time';
+                if (modalCounter) modalCounter.textContent = `${currentIndex + 1} / ${allPhotos.length}`;
+                
+                updateThumbnails();
+            }
+
+            function updateThumbnails() {
+                const prevIndex = (currentIndex - 1 + allPhotos.length) % allPhotos.length;
+                const nextIndex = (currentIndex + 1) % allPhotos.length;
+                
+                if (prevThumb) {
+                    prevThumb.src = allPhotos[prevIndex].src;
+                    prevThumb.onclick = () => {
+                        currentIndex = prevIndex;
+                        updateModal();
+                    };
+                }
+                
+                if (nextThumb) {
+                    nextThumb.src = allPhotos[nextIndex].src;
+                    nextThumb.onclick = () => {
+                        currentIndex = nextIndex;
+                        updateModal();
+                    };
+                }
+            }
+
+            function nextPhoto() {
+                currentIndex = (currentIndex + 1) % allPhotos.length;
+                updateModal();
+            }
+
+            function prevPhoto() {
+                currentIndex = (currentIndex - 1 + allPhotos.length) % allPhotos.length;
+                updateModal();
+            }
+
+            if (closeBtn) {
+                closeBtn.addEventListener("click", closeModal);
+            }
+
+            window.addEventListener("click", e => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+
+            if (nextButton) {
+                nextButton.addEventListener("click", nextPhoto);
+            }
+
+            if (prevButton) {
+                prevButton.addEventListener("click", prevPhoto);
+            }
+
+            document.addEventListener("keydown", e => {
+                if (modal && modal.classList.contains("show")) {
+                    if (e.key === "ArrowRight") {
+                        nextPhoto();
+                    } else if (e.key === "ArrowLeft") {
+                        prevPhoto();
+                    } else if (e.key === "Escape") {
+                        closeModal();
+                    }
+                }
+            });
+
+            let touchStartX = 0;
+            let touchEndX = 0;
+
+            if (modal) {
+                modal.addEventListener('touchstart', e => {
+                    touchStartX = e.changedTouches[0].screenX;
+                }, false);
+
+                modal.addEventListener('touchend', e => {
+                    touchEndX = e.changedTouches[0].screenX;
+                    handleSwipe();
+                }, false);
+            }
+
+            function handleSwipe() {
+                if (touchEndX < touchStartX - 50) {
+                    nextPhoto();
+                }
+                if (touchEndX > touchStartX + 50) {
+                    prevPhoto();
+                }
+            }
+
+            if (loadMoreBtn) {
+                loadMoreBtn.addEventListener("click", () => {
+                    visibleCount += 8;
+                    renderPhotos();
+                });
+            }
+            
+            const toggleButton = document.querySelector('.toggle-explanation');
+            const explanationContent = document.querySelector('.explanation-content');
+            
+            if (toggleButton && explanationContent) {
+                toggleButton.addEventListener('click', function() {
+                    explanationContent.classList.toggle('expanded');
+                    
+                    if (explanationContent.classList.contains('expanded')) {
+                        toggleButton.textContent = 'Less..';
+                    } else {
+                        toggleButton.textContent = 'More..';
+                    }
+                });
+            }
+            
+            loadLatestArticles();
+            loadMicroblogEntries();
+        });
+    </script>
+</body> 
+</html>
