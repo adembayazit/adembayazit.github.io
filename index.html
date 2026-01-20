@@ -609,7 +609,7 @@
         margin-bottom: 15px;
       }
 
-      /* Fotoğraf galerisi - ESKİ HALİNE DÖNDÜ */
+      /* Fotoğraf galerisi - KARE FOTOĞRAFLAR İÇİN GÜNCELLENDİ */
       .gallery-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
@@ -619,8 +619,8 @@
 
       .gallery-photo {
         width: 100%;
-        height: 200px;
-        object-fit: cover;
+        aspect-ratio: 1/1; /* Kare fotoğraflar için */
+        object-fit: cover; /* Kare içinde sığdır */
         border-radius: 8px;
         cursor: pointer;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -795,7 +795,7 @@
           display: none;
         }
         
-        /* Makaleler mobil */
+        /* Makaleler mobil - ORTALAMA VE KÜÇÜK KARTLAR */
         .articles-row {
           flex-direction: column;
           align-items: center;
@@ -805,6 +805,9 @@
         .article-card {
           max-width: 100%;
           width: 100%;
+          padding: 15px;
+          max-width: 400px; /* Mobilde maksimum genişlik */
+          margin: 0 auto; /* Ortalamak için */
         }
       }
 
@@ -813,8 +816,14 @@
           padding: 40px 15px;
         }
         
+        .articles-row {
+          justify-content: center;
+          align-items: center;
+        }
+        
         .article-card {
           padding: 15px;
+          max-width: 350px; /* Daha küçük kartlar */
         }
         
         .article-title {
@@ -834,7 +843,8 @@
         }
         
         .gallery-photo {
-          height: 150px;
+          height: auto;
+          aspect-ratio: 1/1; /* Mobilde de kare kalacak */
         }
       }
 
@@ -877,16 +887,23 @@
         }
         
         .gallery-grid {
-          grid-template-columns: repeat(4, 1fr);
+          grid-template-columns: repeat(2, 1fr);
           gap: 8px;
         }
         
         .gallery-photo {
-          height: 120px;
+          height: auto;
+          aspect-ratio: 1/1;
         }
         
         .gallery-photo:hover {
           transform: scale(1.02);
+        }
+        
+        /* Mobilde kartları daha da küçült */
+        .article-card {
+          max-width: 100%;
+          padding: 12px;
         }
       }
 
@@ -1502,6 +1519,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             }
         }
 
+        // ENTRY LOADING İÇİN 1 DAKİKA ZAMAN AYARI
         async function loadLatestArticles() {
             const container = document.getElementById('articles-row');
             if (!container) return;
@@ -1511,7 +1529,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             try {
                 const articles = await fetchArticles();
                 
+                // Minimum 1 dakika loading süresi
+                const startTime = Date.now();
+                const minLoadingTime = 60000; // 1 dakika = 60000 ms
+                
                 if (!articles || articles.length === 0) {
+                    const elapsed = Date.now() - startTime;
+                    const remainingTime = Math.max(0, minLoadingTime - elapsed);
+                    
+                    await new Promise(resolve => setTimeout(resolve, remainingTime));
+                    
                     container.innerHTML = '<div class="no-articles">No articles available at the moment.</div>';
                     return;
                 }
@@ -1525,6 +1552,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     })
                     .slice(0, 3);
 
+                // Minimum loading süresini kontrol et
+                const elapsed = Date.now() - startTime;
+                const remainingTime = Math.max(0, minLoadingTime - elapsed);
+                
+                await new Promise(resolve => setTimeout(resolve, remainingTime));
+                
                 container.innerHTML = '';
                 
                 latestArticles.forEach(article => {
@@ -1586,6 +1619,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 });
             } catch (error) {
                 console.error('Error loading articles:', error);
+                const elapsed = Date.now() - startTime;
+                const remainingTime = Math.max(0, minLoadingTime - elapsed);
+                await new Promise(resolve => setTimeout(resolve, remainingTime));
+                
                 container.innerHTML = '<div class="no-articles">Unable to load articles. Please try again later.</div>';
             }
         }
@@ -1597,15 +1634,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 entriesContainer.innerHTML = `
                     <div class="entries-loading">
                         <i class="fas fa-spinner fa-spin"></i>
-                        <p>Loading entries...</p>
+                        <p>Loading entries... Please wait.</p>
                     </div>
                 `;
             }
         }
 
-        // Mikroblog entries'leri yükle (mikroblog sayfasından)
+        // Mikroblog entries'leri yükle (mikroblog sayfasından) - 1 DAKİKA LOADİNG SÜRESİ
         async function loadMicroblogEntries() {
             showEntriesLoading();
+            
+            const startTime = Date.now();
+            const minLoadingTime = 60000; // 1 dakika = 60000 ms
             
             try {
                 // JSONBin'den mikroblog entries'lerini çek
@@ -1633,9 +1673,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 // Son 5 entry'yi al
                 const last5Entries = entries.slice(0, 5);
                 
+                // Minimum loading süresini kontrol et
+                const elapsed = Date.now() - startTime;
+                const remainingTime = Math.max(0, minLoadingTime - elapsed);
+                
+                // Kalan süre kadar bekle
+                await new Promise(resolve => setTimeout(resolve, remainingTime));
+                
                 displayMicroblogEntries(last5Entries);
             } catch (error) {
                 console.error('Error loading microblog entries:', error);
+                
+                // Hata durumunda da minimum süreyi bekle
+                const elapsed = Date.now() - startTime;
+                const remainingTime = Math.max(0, minLoadingTime - elapsed);
+                await new Promise(resolve => setTimeout(resolve, remainingTime));
+                
                 const entriesContainer = document.getElementById('entries');
                 if (entriesContainer) {
                     entriesContainer.innerHTML = '<div class="no-articles">Unable to load entries. Please try again later.</div>';
@@ -1956,7 +2009,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             // Latest Articles yükle
             loadLatestArticles();
             
-            // Mikroblog entries yükle
+            // Mikroblog entries yükle (1 dakika loading süresiyle)
             loadMicroblogEntries();
         });
     </script>
