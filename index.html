@@ -335,7 +335,7 @@
         font-size: 14px;
       }
 
-      /* Photographic Cryptology için ESKİ DÜZEN */
+      /* Photographic Cryptology için ESKİ DÜZEN (ilk koddaki gibi) */
       .photo-gallery-header {
         margin-bottom: 30px;
       }
@@ -585,6 +585,26 @@
         font-size: 0.9rem;
       }
 
+      .article-language {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        z-index: 10;
+        cursor: pointer;
+      }
+
+      .article-language .fi {
+        font-size: 1rem;
+        border-radius: 2px;
+        box-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+        transition: all 0.3s ease;
+      }
+
+      .article-language .fi:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+      }
+
       .loading-articles {
         text-align: center;
         padding: 40px;
@@ -636,7 +656,7 @@
         80%, 100% { content: ''; }
       }
 
-      /* Fotoğraf galerisi - ESKİ HALİNE DÖNDÜ (4 sütun) */
+      /* Fotoğraf galerisi - ESKİ HALİNE DÖNDÜ (4 sütun) - İLK KODDAKİ GİBİ */
       .gallery-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
@@ -665,6 +685,7 @@
         transition: all 0.3s ease;
         margin-bottom: 15px;
         position: relative;
+        -webkit-tap-highlight-color: transparent;
       }
 
       .entry-item:hover {
@@ -674,11 +695,6 @@
 
       .entry-item:active {
         transform: scale(0.98);
-      }
-
-      /* Touch için gecikme mekanizması */
-      .touch-delay {
-        touch-action: pan-y;
       }
 
       /* MOBİL UYUMLULUK */
@@ -840,6 +856,8 @@
           max-width: 100% !important;
           /* Mikroblog entries ile aynı padding */
           padding: 15px;
+          margin-bottom: 15px;
+          min-height: auto;
         }
         
         /* Mikroblog container genişliğini ayarla */
@@ -850,22 +868,42 @@
         .articles-wrapper {
           width: 100%;
         }
+        
+        /* Makale kartları mobilde daha küçük */
+        .article-title {
+          font-size: 1rem;
+          height: auto;
+          -webkit-line-clamp: 3;
+          margin-bottom: 10px;
+        }
+        
+        .article-excerpt {
+          font-size: 0.85rem;
+          height: auto;
+          -webkit-line-clamp: 4;
+          margin-bottom: 10px;
+        }
+        
+        .article-stats {
+          font-size: 0.75rem;
+          gap: 15px;
+          padding-top: 10px;
+          margin-top: 10px;
+        }
+        
+        .article-language {
+          top: 10px;
+          right: 10px;
+        }
+        
+        .article-language .fi {
+          font-size: 0.9rem;
+        }
       }
 
       @media (max-width: 768px) {
         .latest-articles {
           padding: 40px 15px;
-        }
-        
-        .article-title {
-          font-size: 1rem;
-          height: auto;
-          -webkit-line-clamp: 3;
-        }
-        
-        .article-excerpt {
-          height: auto;
-          -webkit-line-clamp: 4;
         }
         
         .gallery-grid {
@@ -920,10 +958,6 @@
           gap: 5px;
         }
         
-        .article-stats {
-          justify-content: space-between;
-        }
-        
         .gallery-grid {
           grid-template-columns: repeat(2, 1fr);
           gap: 6px;
@@ -931,10 +965,6 @@
         
         .gallery-photo {
           height: 120px;
-        }
-        
-        .gallery-photo:hover {
-          transform: scale(1.02);
         }
         
         .entries-loading i {
@@ -975,6 +1005,7 @@
         
         .article-card {
           -webkit-tap-highlight-color: transparent;
+          touch-action: pan-y;
         }
         
         .article-card:active {
@@ -987,6 +1018,14 @@
         
         .entry-item:active {
           transform: scale(0.98);
+        }
+        
+        /* Mobilde kaydırırken tıklamayı engelle */
+        .article-card {
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          user-select: none;
         }
       }
     </style>
@@ -1316,37 +1355,43 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         console.log('User Agent:', navigator.userAgent);
 
         // Touch için gecikme mekanizması
-        let touchTimer = null;
+        let touchStartTime = 0;
         let touchStartX = 0;
         let touchStartY = 0;
-        const TOUCH_DELAY = 300; // ms - artırıldı
+        let isScrolling = false;
+        const TOUCH_DELAY = 100; // ms
 
         function handleTouchStart(e) {
+            touchStartTime = Date.now();
             touchStartX = e.touches[0].clientX;
             touchStartY = e.touches[0].clientY;
-            touchTimer = setTimeout(() => {
-                // Uzun basma durumunda işlem yapma
-                touchTimer = null;
-            }, TOUCH_DELAY);
+            isScrolling = false;
+        }
+
+        function handleTouchMove(e) {
+            const touchX = e.touches[0].clientX;
+            const touchY = e.touches[0].clientY;
+            const diffX = Math.abs(touchX - touchStartX);
+            const diffY = Math.abs(touchY - touchStartY);
+            
+            // Eğer kaydırma varsa
+            if (diffX > 10 || diffY > 10) {
+                isScrolling = true;
+            }
         }
 
         function handleTouchEnd(e, callback) {
-            if (touchTimer) {
-                clearTimeout(touchTimer);
-                touchTimer = null;
-                
-                const touchEndX = e.changedTouches[0].clientX;
-                const touchEndY = e.changedTouches[0].clientY;
-                
-                // Kaydırma mı tıklama mı kontrol et
-                const diffX = Math.abs(touchEndX - touchStartX);
-                const diffY = Math.abs(touchEndY - touchStartY);
-                
-                // Eğer kaydırma değilse (çok küçük hareket)
-                if (diffX < 15 && diffY < 15) {
-                    e.preventDefault();
-                    if (callback) callback();
-                }
+            const touchEndTime = Date.now();
+            const timeDiff = touchEndTime - touchStartTime;
+            const touchEndX = e.changedTouches[0].clientX;
+            const touchEndY = e.changedTouches[0].clientY;
+            const diffX = Math.abs(touchEndX - touchStartX);
+            const diffY = Math.abs(touchEndY - touchStartY);
+            
+            // Kısa süreli ve küçük hareket ise tıklama olarak kabul et
+            if (timeDiff < TOUCH_DELAY && diffX < 10 && diffY < 10 && !isScrolling) {
+                e.preventDefault();
+                if (callback) callback();
             }
         }
 
@@ -1561,6 +1606,37 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             }
         }
 
+        // Dil değiştirme fonksiyonu
+        function toggleArticleLanguage(card, article) {
+            let currentLang = card.getAttribute('data-lang');
+            let newLang = currentLang === 'en' ? 'tr' : 'en';
+            
+            // Eğer Türkçe içerik yoksa ve Türkçe'ye geçmek istiyorsa
+            if (newLang === 'tr' && !article.title_tr && !article.content_tr) {
+                return; // Türkçe içerik yoksa değiştirme
+            }
+            
+            // İçeriği güncelle
+            if (newLang === 'tr') {
+                // Türkçe'ye çevir
+                card.querySelector('.article-title').textContent = article.title_tr || article.title;
+                card.querySelector('.article-excerpt').textContent = article.excerpt_tr || article.excerpt || 'Türkçe içerik mevcut...';
+                card.querySelector('.article-category').textContent = article.category_tr || article.category;
+                card.querySelector('.article-language .fi').className = 'fi fi-us';
+                card.querySelector('.article-language .fi').title = 'View in English';
+            } else {
+                // İngilizce'ye çevir
+                card.querySelector('.article-title').textContent = article.title;
+                card.querySelector('.article-excerpt').textContent = article.excerpt || 'Read the full article for more details...';
+                card.querySelector('.article-category').textContent = article.category;
+                card.querySelector('.article-language .fi').className = 'fi fi-tr';
+                card.querySelector('.article-language .fi').title = 'Türkçe görüntüle';
+            }
+            
+            // Dil durumunu güncelle
+            card.setAttribute('data-lang', newLang);
+        }
+
         async function loadLatestArticles() {
             const container = document.getElementById('articles-row');
             if (!container) return;
@@ -1606,9 +1682,26 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         excerpt = 'Read the full article for more details...';
                     }
 
+                    // Türkçe excerpt varsa onu da hazırla
+                    let excerpt_tr = '';
+                    if (article.content_tr) {
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = article.content_tr;
+                        excerpt_tr = tempDiv.textContent || tempDiv.innerText || '';
+                        excerpt_tr = excerpt_tr.substring(0, 120).trim();
+                        if (excerpt_tr.length === 120) excerpt_tr += '...';
+                    }
+
                     const card = document.createElement('div');
-                    card.className = 'article-card touch-delay';
+                    card.className = 'article-card';
+                    card.dataset.lang = 'en'; // Varsayılan dil İngilizce
+                    card.dataset.articleId = article.id || article._id;
+                    
+                    // Türkçe içerik kontrolü
+                    const hasTurkishContent = article.title_tr || article.content_tr || article.category_tr;
+                    
                     card.innerHTML = `
+                        ${hasTurkishContent ? '<div class="article-language"><span class="fi fi-tr" title="Türkçe görüntüle"></span></div>' : ''}
                         <div class="article-title">${article.title || 'Untitled Article'}</div>
                         <div class="article-meta">
                             <span class="article-date">${dateStr}</span>
@@ -1625,19 +1718,47 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         </div>
                     `;
 
-                    // Click event
+                    // Dil değiştirme butonuna tıklama
+                    if (hasTurkishContent) {
+                        const languageBtn = card.querySelector('.article-language');
+                        languageBtn.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            toggleArticleLanguage(card, article);
+                        });
+                        
+                        // Touch events for language button
+                        languageBtn.addEventListener('touchstart', function(e) {
+                            handleTouchStart(e);
+                        });
+                        
+                        languageBtn.addEventListener('touchmove', function(e) {
+                            handleTouchMove(e);
+                        });
+                        
+                        languageBtn.addEventListener('touchend', function(e) {
+                            handleTouchEnd(e, () => {
+                                toggleArticleLanguage(card, article);
+                            });
+                        });
+                    }
+
+                    // Click event for card
                     card.addEventListener('click', () => {
-                        window.location.href = `/article#${article.id}`;
+                        window.location.href = `/article#${article.id || article._id}`;
                     });
                     
-                    // Touch event with delay for mobile
+                    // Touch events for card
                     card.addEventListener('touchstart', function(e) {
                         handleTouchStart(e);
                     });
                     
+                    card.addEventListener('touchmove', function(e) {
+                        handleTouchMove(e);
+                    });
+                    
                     card.addEventListener('touchend', function(e) {
                         handleTouchEnd(e, () => {
-                            window.location.href = `/article#${article.id}`;
+                            window.location.href = `/article#${article.id || article._id}`;
                         });
                     });
 
@@ -1669,12 +1790,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         async function loadMicroblogEntries() {
             showEntriesLoading();
             
-            // 1 dakika gecikme ekle (60000ms)
-            await new Promise(resolve => setTimeout(resolve, 60000));
-            
             try {
                 // JSONBin'den mikroblog entries'lerini çek
-                const MICROBLOG_BIN_ID = '694f7d8e43b1c97be91ef7d1'; // Mikroblog için bin ID
+                const MICROBLOG_BIN_ID = '694f7d8e43b1c97be91ef7d1';
                 const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
                 
                 const response = await fetch(proxyUrl, {
@@ -1732,7 +1850,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 });
 
                 const entryDiv = document.createElement('div');
-                entryDiv.className = 'entry-item touch-delay';
+                entryDiv.className = 'entry-item';
                 entryDiv.dataset.id = entry.id || index;
                 entryDiv.innerHTML = `
                     <div style="margin-bottom: 15px; padding: 15px; background: rgba(10, 25, 20, 0.5); border-radius: 10px; border: 1px solid rgba(0, 255, 0, 0.2);">
@@ -1756,9 +1874,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     window.location.href = `/microblog.html?entry=${entryId}`;
                 });
                 
-                // Touch event with delay for mobile
+                // Touch events for entry
                 entryDiv.addEventListener('touchstart', function(e) {
                     handleTouchStart(e);
+                });
+                
+                entryDiv.addEventListener('touchmove', function(e) {
+                    handleTouchMove(e);
                 });
                 
                 entryDiv.addEventListener('touchend', function(e) {
@@ -1825,7 +1947,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 allPhotos.slice(0, visibleCount).forEach((photo, index) => {
                     const img = document.createElement("img");
                     img.src = photo.src;
-                    img.classList.add("gallery-photo", "touch-delay");
+                    img.classList.add("gallery-photo");
                     img.alt = "Gallery Photo";
                     img.dataset.location = photo.location;
                     img.dataset.date = photo.date;
@@ -1838,12 +1960,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         openModal();
                     });
                     
-                    // Touch event with delay for mobile
-                    img.addEventListener("touchstart", function(e) {
+                    // Touch events for gallery photos
+                    img.addEventListener('touchstart', function(e) {
                         handleTouchStart(e);
                     });
                     
-                    img.addEventListener("touchend", function(e) {
+                    img.addEventListener('touchmove', function(e) {
+                        handleTouchMove(e);
+                    });
+                    
+                    img.addEventListener('touchend', function(e) {
                         handleTouchEnd(e, () => {
                             currentIndex = index;
                             openModal();
