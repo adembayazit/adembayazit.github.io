@@ -72,23 +72,6 @@
         box-sizing: border-box;
       }
 
-      /* Section başlıkları için stil */
-      .section-title {
-        text-align: center;
-        width: 100%;
-        font-size: 1.8rem;
-        margin-bottom: 10px;
-        color: white;
-      }
-      
-      .last-entry {
-        text-align: center;
-        width: 100%;
-        color: #ccc;
-        margin-bottom: 30px;
-        font-size: 0.9rem;
-      }
-
       /* Mikroblog için iki sütunlu düzen */
       .microblog-container {
         display: flex;
@@ -380,7 +363,7 @@
         margin: 20px auto 0;
       }
 
-      /* Küçük Photo Analysis Butonu */
+      /* Küçük Photo Analysis Butonu - YEŞİL TEMA */
       .photo-analysis-btn {
         display: flex;
         align-items: center;
@@ -400,7 +383,7 @@
         min-height: 36px;
         min-width: 120px;
         justify-content: center;
-        order: 2; /* Sağ tarafa yerleştir */
+        order: 2;
       }
 
       .photo-analysis-btn::before {
@@ -460,10 +443,25 @@
         transform: translateX(-50%) translateY(-4px);
       }
 
-      /* Load More butonu solda kalacak */
+      /* Load More butonu solda kalacak - YEŞİL TEMA */
       .load-more {
-        order: 1; /* Sol tarafa yerleştir */
+        order: 1;
         margin-right: auto;
+        background: rgba(0, 100, 0, 0.5);
+        color: #f9d71c;
+        border: 1px solid rgba(249, 215, 28, 0.3);
+        padding: 12px 28px;
+        border-radius: 40px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .load-more:hover {
+        background: rgba(0, 100, 0, 0.7);
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 255, 0, 0.3);
       }
 
       /* Animasyon için keyframes */
@@ -492,7 +490,7 @@
         border: 1px solid rgba(255, 255, 255, 0.1);
       }
 
-      /* Latest Articles Bölümü - GÜNCELLENDİ */
+      /* Latest Articles Bölümü */
       .latest-articles {
         padding: 60px 20px;
         background: rgba(10, 25, 20, 0.5);
@@ -510,12 +508,12 @@
         justify-content: center;
         gap: 25px;
         width: 100%;
-        max-width: 1400px; /* Container ile aynı genişlik */
+        max-width: 1400px;
         margin: 0 auto;
-        flex-wrap: wrap; /* Ekran küçüldükçe alt alta gelsin */
+        flex-wrap: wrap;
       }
 
-      /* Article kartları entries ile aynı genişlikte ve border radius'ta */
+      /* Article kartları */
       .article-card {
         background: rgba(10, 25, 20, 0.7);
         border: 1px solid rgba(0, 255, 0, 0.3);
@@ -528,29 +526,29 @@
         height: 100%;
         position: relative;
         overflow: hidden;
-        width: 100%; /* Tam genişlik */
-        max-width: 100%; /* Maksimum genişlik yok */
-        margin-bottom: 20px; /* Kartlar arası boşluk */
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: 20px;
       }
 
       /* Masaüstünde 3'lü grid */
       @media (min-width: 1200px) {
         .article-card {
-          flex: 0 0 calc(33.333% - 17px); /* 3'lü grid */
+          flex: 0 0 calc(33.333% - 17px);
         }
       }
 
       /* Tablet boyutunda 2'li grid */
       @media (min-width: 768px) and (max-width: 1199px) {
         .article-card {
-          flex: 0 0 calc(50% - 13px); /* 2'li grid */
+          flex: 0 0 calc(50% - 13px);
         }
       }
 
       /* Mobilde tam genişlik */
       @media (max-width: 767px) {
         .article-card {
-          flex: 0 0 100%; /* Tam genişlik */
+          flex: 0 0 100%;
         }
       }
 
@@ -668,7 +666,7 @@
       /* Fotoğraf galerisi - KARE FOTOĞRAFLAR İÇİN */
       .gallery-grid {
         display: grid;
-        grid-template-columns: repeat(4, 1fr); /* Masaüstünde 4'lü */
+        grid-template-columns: repeat(4, 1fr);
         gap: 15px;
         margin-top: 20px;
         width: 100%;
@@ -676,8 +674,8 @@
 
       .gallery-photo {
         width: 100%;
-        aspect-ratio: 1/1; /* Kare fotoğraflar için */
-        object-fit: cover; /* Kare içinde sığdır */
+        aspect-ratio: 1/1;
+        object-fit: cover;
         border-radius: 8px;
         cursor: pointer;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -711,12 +709,29 @@
         touch-action: pan-y;
       }
 
-      /* BUTONLARI ESKİ HALİ */
+      /* Section başlıkları için stil */
+      .section-title {
+        text-align: center;
+        width: 100%;
+        font-size: 1.8rem;
+        margin-bottom: 10px;
+        color: white;
+      }
+      
+      .last-entry {
+        text-align: center;
+        width: 100%;
+        color: #ccc;
+        margin-bottom: 30px;
+        font-size: 0.9rem;
+      }
+
+      /* BUTONLARI İLK KODDAKİ GİBİ YEŞİL TEMA YAP */
       .btn-box {
         display: inline-block;
         padding: 12px 28px;
         background: rgba(0, 100, 0, 0.5);
-        border-radius: 40px; /* ORİJİNAL: 40px radius */
+        border-radius: 40px;
         font-size: 16px;
         color: #f9d71c;
         letter-spacing: 1px;
@@ -1662,7 +1677,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             }
         }
 
-        // Latest Articles loading - SADECE HATA DURUMUNDA 1 DAKİKA
+        // Latest Articles loading
         async function loadLatestArticles() {
             const container = document.getElementById('articles-row');
             if (!container) return;
@@ -1672,7 +1687,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             try {
                 const articles = await fetchArticles();
                 
-                // Başarılı durumda direkt göster
                 if (!articles || articles.length === 0) {
                     container.innerHTML = '<div class="no-articles">No articles available at the moment.</div>';
                     return;
@@ -1697,7 +1711,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         day: 'numeric'
                     });
 
-                    // İçerikten HTML etiketlerini temizle ve kısa açıklama oluştur
                     let excerpt = '';
                     if (article.content) {
                         const tempDiv = document.createElement('div');
@@ -1728,12 +1741,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         </div>
                     `;
 
-                    // Click event
                     card.addEventListener('click', () => {
                         window.location.href = `/article#${article.id}`;
                     });
                     
-                    // Touch event with delay for mobile
                     card.addEventListener('touchstart', function(e) {
                         handleTouchStart(e);
                     });
@@ -1748,7 +1759,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 });
             } catch (error) {
                 console.error('Error loading articles:', error);
-                // Hata durumunda 1 dakika bekleyip hata göster
                 const startTime = Date.now();
                 const minLoadingTime = 60000;
                 const elapsed = Date.now() - startTime;
@@ -1773,12 +1783,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             }
         }
 
-        // Mikroblog entries'leri yükle - DÜZELTİLDİ: Artık başarılı yüklemeden sonra hata göstermeyecek
+        // Mikroblog entries'leri yükle
         async function loadMicroblogEntries() {
             showEntriesLoading();
             
             const startTime = Date.now();
-            const minLoadingTime = 60000; // 1 dakika
+            const minLoadingTime = 60000;
             
             try {
                 const MICROBLOG_BIN_ID = '694f7d8e43b1c97be91ef7d1';
@@ -1803,20 +1813,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 const entries = result.entries || result.records || result || [];
                 const last5Entries = entries.slice(0, 5);
                 
-                // Minimum loading süresini kontrol et
                 const elapsed = Date.now() - startTime;
                 const remainingTime = Math.max(0, minLoadingTime - elapsed);
                 
-                // Kalan süre kadar bekle
                 await new Promise(resolve => setTimeout(resolve, remainingTime));
                 
-                // Başarılı yükleme - entry'leri göster
                 displayMicroblogEntries(last5Entries);
                 
             } catch (error) {
                 console.error('Error loading microblog entries:', error);
                 
-                // Hata durumunda da minimum süreyi bekle
                 const elapsed = Date.now() - startTime;
                 const remainingTime = Math.max(0, minLoadingTime - elapsed);
                 await new Promise(resolve => setTimeout(resolve, remainingTime));
