@@ -460,6 +460,126 @@
         border: 1px solid rgba(255, 255, 255, 0.1);
       }
 
+      /* Latest Articles Bölümü */
+      .latest-articles {
+        padding: 60px 20px;
+        background: rgba(10, 25, 20, 0.5);
+        border-top: 1px solid rgba(0, 255, 0, 0.1);
+        border-bottom: 1px solid rgba(0, 255, 0, 0.1);
+      }
+
+      .articles-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        margin-top: 30px;
+      }
+
+      .article-card {
+        background: rgba(10, 25, 20, 0.7);
+        border: 1px solid rgba(0, 255, 0, 0.3);
+        border-radius: 15px;
+        padding: 20px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .article-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 255, 0, 0.2);
+        border-color: rgba(0, 255, 0, 0.5);
+      }
+
+      .article-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.05), transparent);
+        transition: left 0.6s;
+      }
+
+      .article-card:hover::before {
+        left: 100%;
+      }
+
+      .article-title {
+        font-size: 1.2rem;
+        color: white;
+        margin-bottom: 12px;
+        line-height: 1.4;
+        font-weight: 600;
+      }
+
+      .article-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.8rem;
+        color: #ccc;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .article-category {
+        background: rgba(0, 255, 0, 0.2);
+        padding: 4px 10px;
+        border-radius: 15px;
+        color: #00ff00;
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+
+      .article-excerpt {
+        font-size: 0.9rem;
+        color: #aaa;
+        line-height: 1.6;
+        flex-grow: 1;
+        margin-bottom: 15px;
+      }
+
+      .article-stats {
+        display: flex;
+        gap: 20px;
+        margin-top: 15px;
+        font-size: 0.8rem;
+        color: #00ff00;
+        border-top: 1px solid rgba(0, 255, 0, 0.1);
+        padding-top: 15px;
+      }
+
+      .article-stat {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .article-stat i {
+        font-size: 0.9rem;
+      }
+
+      .loading-articles {
+        text-align: center;
+        padding: 40px;
+        color: #00ff00;
+        grid-column: 1 / -1;
+      }
+
+      .no-articles {
+        text-align: center;
+        padding: 40px;
+        color: #ccc;
+        grid-column: 1 / -1;
+      }
+
       /* MOBİL UYUMLULUK */
       @media (max-width: 992px) {
         .microblog-container {
@@ -581,9 +701,34 @@
           margin-right: 0;
         }
 
+        /* Latest Articles responsive */
+        .articles-container {
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          gap: 20px;
+        }
+
         /* Mobilde tooltip'ı kapat */
         .photo-analysis-btn::after {
           display: none;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .latest-articles {
+          padding: 40px 15px;
+        }
+        
+        .articles-container {
+          grid-template-columns: 1fr;
+          gap: 15px;
+        }
+        
+        .article-card {
+          padding: 15px;
+        }
+        
+        .article-title {
+          font-size: 1.1rem;
         }
       }
 
@@ -614,6 +759,16 @@
           min-width: 55px;
           font-size: 15px;
         }
+        
+        .article-meta {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 5px;
+        }
+        
+        .article-stats {
+          justify-content: space-between;
+        }
       }
 
       /* Touch device detection ve mobil optimizasyon */
@@ -641,6 +796,14 @@
         .modal-thumb {
           -webkit-tap-highlight-color: transparent;
           min-height: 44px;
+        }
+        
+        .article-card {
+          -webkit-tap-highlight-color: transparent;
+        }
+        
+        .article-card:active {
+          transform: scale(0.98);
         }
       }
     </style>
@@ -872,6 +1035,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <span class="btn-text">Analysis</span>
                     </a>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="latest-articles" class="latest-articles">
+        <div class="container">
+            <h2 class="section-title"><i class="fas fa-newspaper"></i> Latest Cybersecurity Articles</h2>
+            <p class="last-entry">Last 3 Articles</p>
+            <div id="articles-container" class="articles-container">
+                <!-- Makaleler buraya JavaScript ile yüklenecek -->
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="/article" class="btn-box"><i class="fas fa-book-open"></i> View All Articles</a>
             </div>
         </div>
     </section>
@@ -1128,6 +1304,117 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             }
         }
 
+        // Latest Articles için fonksiyonlar
+        async function fetchArticles() {
+            try {
+                const ARTICLES_BIN_ID = '695f155c43b1c97be920c28d';
+                const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
+                
+                const response = await fetch(proxyUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        path: `/b/${ARTICLES_BIN_ID}/latest`,
+                        method: 'GET'
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                return result.articles || result.records || result || [];
+            } catch (error) {
+                console.error('Error fetching articles:', error);
+                return [];
+            }
+        }
+
+        async function loadLatestArticles() {
+            const container = document.getElementById('articles-container');
+            if (!container) return;
+
+            container.innerHTML = '<div class="loading-articles"><i class="fas fa-spinner fa-spin"></i> Loading articles...</div>';
+
+            try {
+                const articles = await fetchArticles();
+                
+                if (!articles || articles.length === 0) {
+                    container.innerHTML = '<div class="no-articles">No articles available at the moment.</div>';
+                    return;
+                }
+
+                // En yeni 3 makaleyi al
+                const latestArticles = articles
+                    .sort((a, b) => {
+                        const dateA = new Date(a.published_date || a.date || 0);
+                        const dateB = new Date(b.published_date || b.date || 0);
+                        return dateB - dateA;
+                    })
+                    .slice(0, 3);
+
+                container.innerHTML = '';
+                
+                latestArticles.forEach(article => {
+                    const articleDate = new Date(article.published_date || article.date);
+                    const dateStr = articleDate.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    });
+
+                    // İçerikten HTML etiketlerini temizle ve kısa açıklama oluştur
+                    let excerpt = '';
+                    if (article.content) {
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = article.content;
+                        excerpt = tempDiv.textContent || tempDiv.innerText || '';
+                        excerpt = excerpt.substring(0, 120).trim();
+                        if (excerpt.length === 120) excerpt += '...';
+                    } else {
+                        excerpt = 'Read the full article for more details...';
+                    }
+
+                    const card = document.createElement('div');
+                    card.className = 'article-card';
+                    card.innerHTML = `
+                        <div class="article-title">${article.title || 'Untitled Article'}</div>
+                        <div class="article-meta">
+                            <span class="article-date">${dateStr}</span>
+                            <span class="article-category">${article.category || 'Cybersecurity'}</span>
+                        </div>
+                        <div class="article-excerpt">${excerpt}</div>
+                        <div class="article-stats">
+                            <div class="article-stat">
+                                <i class="far fa-eye"></i> ${article.views || 0} views
+                            </div>
+                            <div class="article-stat">
+                                <i class="far fa-heart"></i> ${article.likes || 0} likes
+                            </div>
+                        </div>
+                    `;
+
+                    card.addEventListener('click', () => {
+                        window.location.href = `/article#${article.id}`;
+                    });
+                    
+                    // Touch event for mobile
+                    card.addEventListener('touchstart', (e) => {
+                        e.preventDefault();
+                        window.location.href = `/article#${article.id}`;
+                    }, { passive: false });
+
+                    container.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Error loading articles:', error);
+                container.innerHTML = '<div class="no-articles">Unable to load articles. Please try again later.</div>';
+            }
+        }
+
         // Galeri ve YENİ Modal işlevselliği
         document.addEventListener("DOMContentLoaded", () => {
             const galleryGrid = document.getElementById("gallery-grid");
@@ -1353,6 +1640,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     }
                 });
             }
+            
+            // Latest Articles yükle
+            loadLatestArticles();
         });
     </script>
 </body> 
