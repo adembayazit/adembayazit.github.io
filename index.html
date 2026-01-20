@@ -464,15 +464,22 @@
       .latest-articles {
         padding: 60px 20px;
         background: rgba(10, 25, 20, 0.5);
-        /* border-top: 1px solid rgba(0, 255, 0, 0.1); ÇİZGİ KALDIRILDI */
-        /* border-bottom: 1px solid rgba(0, 255, 0, 0.1); ÇİZGİ KALDIRILDI */
       }
 
-      .articles-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 25px;
+      .articles-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         margin-top: 30px;
+      }
+
+      .articles-row {
+        display: flex;
+        justify-content: center;
+        gap: 25px;
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
       }
 
       .article-card {
@@ -487,6 +494,8 @@
         height: 100%;
         position: relative;
         overflow: hidden;
+        flex: 1;
+        max-width: 350px;
       }
 
       .article-card:hover {
@@ -580,14 +589,12 @@
         text-align: center;
         padding: 40px;
         color: #00ff00;
-        grid-column: 1 / -1;
       }
 
       .no-articles {
         text-align: center;
         padding: 40px;
         color: #ccc;
-        grid-column: 1 / -1;
       }
 
       /* Mikroblog entries için loading */
@@ -602,11 +609,11 @@
         margin-bottom: 15px;
       }
 
-      /* Fotoğraf galerisi iyileştirmeleri */
+      /* Fotoğraf galerisi - ESKİ HALİNE DÖNDÜ */
       .gallery-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 20px;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
         margin-top: 20px;
       }
 
@@ -614,22 +621,22 @@
         width: 100%;
         height: 200px;
         object-fit: cover;
-        border-radius: 10px;
+        border-radius: 8px;
         cursor: pointer;
-        transition: all 0.3s ease;
-        border: 1px solid rgba(0, 255, 0, 0.3);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid rgba(0, 255, 0, 0.2);
       }
 
       .gallery-photo:hover {
         transform: scale(1.03);
-        box-shadow: 0 5px 20px rgba(0, 255, 0, 0.3);
-        border-color: rgba(0, 255, 0, 0.6);
+        box-shadow: 0 5px 15px rgba(0, 255, 0, 0.3);
       }
 
       /* Mikroblog entries tıklanabilir */
       .entry-item {
         cursor: pointer;
         transition: all 0.3s ease;
+        margin-bottom: 15px;
       }
 
       .entry-item:hover {
@@ -644,9 +651,12 @@
 
       /* MOBİL UYUMLULUK */
       @media (max-width: 1200px) {
-        .articles-grid {
-          grid-template-columns: repeat(2, 1fr);
-          gap: 20px;
+        .articles-row {
+          max-width: 900px;
+        }
+        
+        .article-card {
+          max-width: 280px;
         }
         
         .article-title {
@@ -776,24 +786,31 @@
 
         /* Gallery grid mobil */
         .gallery-grid {
-          grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-          gap: 15px;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 10px;
         }
 
         /* Mobilde tooltip'ı kapat */
         .photo-analysis-btn::after {
           display: none;
         }
+        
+        /* Makaleler mobil */
+        .articles-row {
+          flex-direction: column;
+          align-items: center;
+          gap: 15px;
+        }
+        
+        .article-card {
+          max-width: 100%;
+          width: 100%;
+        }
       }
 
       @media (max-width: 768px) {
         .latest-articles {
           padding: 40px 15px;
-        }
-        
-        .articles-grid {
-          grid-template-columns: 1fr;
-          gap: 15px;
         }
         
         .article-card {
@@ -812,7 +829,7 @@
         }
         
         .gallery-grid {
-          grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+          grid-template-columns: repeat(2, 1fr);
           gap: 10px;
         }
         
@@ -861,11 +878,15 @@
         
         .gallery-grid {
           grid-template-columns: repeat(2, 1fr);
-          gap: 10px;
+          gap: 8px;
         }
         
         .gallery-photo {
           height: 120px;
+        }
+        
+        .gallery-photo:hover {
+          transform: scale(1.02);
         }
       }
 
@@ -1154,8 +1175,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="container">
             <h2 class="section-title"><i class="fas fa-newspaper"></i> Latest Cybersecurity Articles</h2>
             <p class="last-entry">Last 3 Articles</p>
-            <div id="articles-container" class="articles-grid">
-                <!-- Makaleler buraya JavaScript ile yüklenecek -->
+            <div class="articles-container">
+                <div id="articles-row" class="articles-row">
+                    <!-- Makaleler buraya JavaScript ile yüklenecek -->
+                </div>
             </div>
             <div style="text-align: center; margin-top: 20px;">
                 <a href="/article" class="btn-box"><i class="fas fa-book-open"></i> View All Articles</a>
@@ -1480,7 +1503,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         }
 
         async function loadLatestArticles() {
-            const container = document.getElementById('articles-container');
+            const container = document.getElementById('articles-row');
             if (!container) return;
 
             container.innerHTML = '<div class="loading-articles"><i class="fas fa-spinner fa-spin"></i> Loading articles...</div>';
@@ -1661,21 +1684,39 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     </div>
                 `;
                 
-                // Entry'e tıklanınca mikroblog sayfasına git
-                entryDiv.addEventListener('click', () => {
-                    window.location.href = '/microblog.html';
-                });
-                
-                // Touch event with delay for mobile
-                entryDiv.addEventListener('touchstart', function(e) {
-                    handleTouchStart(e);
-                });
-                
-                entryDiv.addEventListener('touchend', function(e) {
-                    handleTouchEnd(e, () => {
+                // Entry'e tıklanınca ilgili entry sayfasına git
+                // Mikroblog entry'lerinizde 'id' veya 'slug' olmalı
+                if (entry.id) {
+                    entryDiv.addEventListener('click', () => {
+                        window.location.href = `/microblog.html#${entry.id}`;
+                    });
+                    
+                    // Touch event with delay for mobile
+                    entryDiv.addEventListener('touchstart', function(e) {
+                        handleTouchStart(e);
+                    });
+                    
+                    entryDiv.addEventListener('touchend', function(e) {
+                        handleTouchEnd(e, () => {
+                            window.location.href = `/microblog.html#${entry.id}`;
+                        });
+                    });
+                } else {
+                    // Eğer ID yoksa genel mikroblog sayfasına git
+                    entryDiv.addEventListener('click', () => {
                         window.location.href = '/microblog.html';
                     });
-                });
+                    
+                    entryDiv.addEventListener('touchstart', function(e) {
+                        handleTouchStart(e);
+                    });
+                    
+                    entryDiv.addEventListener('touchend', function(e) {
+                        handleTouchEnd(e, () => {
+                            window.location.href = '/microblog.html';
+                        });
+                    });
+                }
 
                 entriesContainer.appendChild(entryDiv);
             });
