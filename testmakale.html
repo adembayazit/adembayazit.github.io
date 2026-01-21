@@ -932,7 +932,7 @@
                /* ===========================
            LAYOUT PATCH (Articles + Gallery)
            - Kartlar boşluk bırakmasın
-           - Galeri masaüstünde 4 sütun olsun
+           - Galeri masaüstünde 6 sütun ve kare olsun
            =========================== */
         
         /* 1) ARTICLES: boşluk bırakmadan akıllı yayılma */
@@ -955,17 +955,26 @@
           }
         }
         
-        /* 2) GALLERY: masaüstünde kesin 4 sütun */
+        /* 2) GALLERY: fotoğraflar kare olsun (height 200px kuralını ezer) */
+        .gallery-photo{
+          width: 100% !important;
+          aspect-ratio: 1 / 1 !important;  /* kare */
+          height: auto !important;
+          object-fit: cover !important;
+          display: block;
+        }
+        
+        /* Galeri masaüstünde kesin 6 sütun */
         @media (min-width: 992px){
           .gallery-grid{
-            grid-template-columns: repeat(4, 1fr) !important;
+            grid-template-columns: repeat(6, 1fr) !important;
           }
         }
         
         /* Büyük masaüstü (garanti) */
         @media (min-width: 1200px){
           .gallery-grid{
-            grid-template-columns: repeat(4, 1fr) !important;
+            grid-template-columns: repeat(6, 1fr) !important;
           }
         }
       /* Touch device detection ve mobil optimizasyon */
