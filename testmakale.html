@@ -929,52 +929,92 @@
           height: 100px;
         }
       }
-               /* ===========================
-           LAYOUT PATCH (Articles + Gallery)
-           - Kartlar boşluk bırakmasın
-           - Galeri masaüstünde 6 sütun ve kare olsun
-           =========================== */
+                       /* ======================================================
+           MASTER PATCH (Articles + Gallery)  — tek blok
+           - Articles: boşluk bırakmadan yayılır
+           - Gallery: masaüstü 6 sütun + kare foto (minik değil, ortalı büyük)
+           ====================================================== */
         
-        /* 1) ARTICLES: boşluk bırakmadan akıllı yayılma */
+        /* -----------------------
+           ARTICLES (Kartlar)
+           ----------------------- */
         .articles-grid{
+          display: grid !important;
           grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important;
           width: 100% !important;
         }
         
-        /* Tablet / telefon yatay (genelde 2 sütun daha iyi) */
+        /* Kart içi taşmaları önle (ince-uzun kalma / overflow hissi) */
+        .article-card{ min-width: 0 !important; }
+        .article-title, .article-excerpt{ min-width: 0 !important; }
+        
+        /* Tablet / telefon yatay: 2 sütun daha dengeli */
         @media (max-width: 992px){
           .articles-grid{
             grid-template-columns: repeat(2, 1fr) !important;
           }
         }
         
-        /* Mobil */
+        /* Mobil: tek sütun */
         @media (max-width: 768px){
           .articles-grid{
             grid-template-columns: 1fr !important;
           }
         }
         
-        /* 2) GALLERY: fotoğraflar kare olsun (height 200px kuralını ezer) */
+        /* -----------------------
+           GALLERY (Foto Grid)
+           ----------------------- */
+        
+        /* Fotoğrafı kare yap (height sabitini ez) */
         .gallery-photo{
           width: 100% !important;
-          aspect-ratio: 1 / 1 !important;  /* kare */
-          height: auto !important;
+          aspect-ratio: 1 / 1 !important;  /* tam kare */
+          height: auto !important;         /* senin 200px kuralını iptal eder */
           object-fit: cover !important;
           display: block;
         }
         
-        /* Galeri masaüstünde kesin 6 sütun */
+        /* MASAÜSTÜ: galeri alanını büyüt (tam ekran değil, ortalı-büyük) */
         @media (min-width: 992px){
+          .photo-gallery .container{
+            max-width: 1480px !important;  /* 1200 yerine daha geniş -> 6'lı daha büyük görünür */
+            margin: 0 auto !important;
+            padding-left: 16px !important;
+            padding-right: 16px !important;
+          }
+        
           .gallery-grid{
             grid-template-columns: repeat(6, 1fr) !important;
+            gap: 12px !important;
           }
         }
         
-        /* Büyük masaüstü (garanti) */
+        /* Büyük masaüstü: biraz daha genişlet (6 kare daha “büyük” olur) */
         @media (min-width: 1200px){
+          .photo-gallery .container{
+            max-width: 1680px !important;
+          }
+        
           .gallery-grid{
             grid-template-columns: repeat(6, 1fr) !important;
+            gap: 14px !important;
+          }
+        }
+        
+        /* Tablet: 4 sütun (daha iyi görünür) */
+        @media (min-width: 768px) and (max-width: 991px){
+          .gallery-grid{
+            grid-template-columns: repeat(4, 1fr) !important;
+            gap: 12px !important;
+          }
+        }
+        
+        /* Mobil: 3 sütun (sende zaten var ama garantiye alıyoruz) */
+        @media (max-width: 767px){
+          .gallery-grid{
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 8px !important;
           }
         }
       /* Touch device detection ve mobil optimizasyon */
