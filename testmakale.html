@@ -119,7 +119,7 @@
         background: rgba(0, 100, 0, 0.7);
       }
 
-      /* YENİ MODAL STİLLERİ - İNCE UZUN YATAY NAVBAR */
+      /* MODAL STİLLERİ */
       .modal {
         display: none;
         position: fixed;
@@ -209,7 +209,7 @@
         transform: rotate(90deg);
       }
 
-      /* YENİ MODAL NAVBAR - İNCE UZUN YATAY */
+      /* MODAL NAVBAR */
       .modal-navbar {
         background: linear-gradient(135deg, rgba(15, 35, 25, 0.95) 0%, rgba(8, 20, 15, 0.98) 100%);
         border-top: 1px solid rgba(0, 255, 128, 0.2);
@@ -336,7 +336,7 @@
         font-size: 14px;
       }
 
-      /* Photographic Cryptology için yeni düzen */
+      /* Photographic Cryptology için düzen */
       .photo-gallery-header {
         margin-bottom: 30px;
       }
@@ -349,7 +349,7 @@
         gap: 15px;
       }
 
-      /* Küçük Photo Analysis Butonu */
+      /* Photo Analysis Butonu */
       .photo-analysis-btn {
         display: flex;
         align-items: center;
@@ -369,7 +369,7 @@
         min-height: 36px;
         min-width: 120px;
         justify-content: center;
-        order: 2; /* Sağ tarafa yerleştir */
+        order: 2;
       }
 
       .photo-analysis-btn::before {
@@ -429,13 +429,13 @@
         transform: translateX(-50%) translateY(-4px);
       }
 
-      /* Load More butonu solda kalacak */
+      /* Load More butonu */
       .load-more {
-        order: 1; /* Sol tarafa yerleştir */
+        order: 1;
         margin-right: auto;
       }
 
-      /* Animasyon için keyframes */
+      /* Animasyon */
       @keyframes subtleGlow {
         0%, 100% { box-shadow: 0 2px 8px rgba(0, 255, 0, 0.15); }
         50% { box-shadow: 0 2px 12px rgba(0, 255, 0, 0.25); }
@@ -461,7 +461,7 @@
         border: 1px solid rgba(255, 255, 255, 0.1);
       }
 
-      /* Latest Articles Bölümü - GÜNCELLENDİ */
+      /* Latest Articles Bölümü */
       .latest-articles {
         padding: 60px 20px;
       }
@@ -500,9 +500,10 @@
         padding: 0 20px;
       }
 
+      /* ARTICLES GRID */
       .articles-grid {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
         gap: 25px;
         margin-top: 30px;
         width: 100%;
@@ -636,23 +637,26 @@
         margin-bottom: 15px;
       }
 
-      /* Fotoğraf galerisi iyileştirmeleri - GÜNCELLENDİ */
+      /* FOTOĞRAF GALERİSİ - DÜZENLENDİ: MASAÜSTÜNDE 6 SÜTUN, BÜYÜK KARELER */
       .gallery-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
         gap: 20px;
         margin-top: 20px;
         width: 100%;
       }
 
+      /* Fotoğrafları büyük kare yap */
       .gallery-photo {
         width: 100%;
-        height: 200px;
+        aspect-ratio: 1 / 1;
         object-fit: cover;
         border-radius: 10px;
         cursor: pointer;
         transition: all 0.3s ease;
         border: 1px solid rgba(0, 255, 0, 0.3);
+        display: block;
+        height: 100%;
+        min-height: 180px;
       }
 
       .gallery-photo:hover {
@@ -677,33 +681,54 @@
         touch-action: pan-y;
       }
 
-      /* MOBİL UYUMLULUK */
-      @media (max-width: 1200px) {
-        .articles-grid {
-          grid-template-columns: repeat(4, 1fr);
-          gap: 20px;
+      /* RESPONSIVE TASARIM */
+      
+      /* Masaüstü: 6 sütun büyük kare grid */
+      @media (min-width: 1200px) {
+        .gallery-grid {
+          grid-template-columns: repeat(6, 1fr);
         }
         
-        .article-title {
-          height: 70px;
+        .articles-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+        
+        .gallery-photo {
+          min-height: 200px;
         }
       }
-        @media (max-width: 768px) {
-          .microblog .container {
-            padding-left: 0px;
-            padding-right: 0px;
-            max-width: 100%;
-          }
+
+      /* Büyük masaüstü: 6 sütun */
+      @media (min-width: 992px) and (max-width: 1199px) {
+        .gallery-grid {
+          grid-template-columns: repeat(6, 1fr);
         }
         
-        @media (max-width: 480px) {
-          .microblog .container {
-            padding-left: 0px;
-            padding-right: 0px;
-          }
+        .articles-grid {
+          grid-template-columns: repeat(3, 1fr);
         }
         
-      @media (max-width: 992px) {
+        .gallery-photo {
+          min-height: 180px;
+        }
+      }
+
+      /* Tablet: 4 sütun */
+      @media (min-width: 768px) and (max-width: 991px) {
+        .gallery-grid {
+          grid-template-columns: repeat(4, 1fr);
+          gap: 15px;
+        }
+        
+        .gallery-photo {
+          aspect-ratio: 1 / 1;
+          min-height: 160px;
+        }
+        
+        .articles-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        
         .microblog-container {
           flex-direction: column;
         }
@@ -727,7 +752,95 @@
         .toggle-explanation {
           display: block;
         }
+      }
+
+      /* Mobil: 3 sütun */
+      @media (max-width: 767px) {
+        .gallery-grid {
+          grid-template-columns: repeat(3, 1fr);
+          gap: 10px;
+        }
         
+        .gallery-photo {
+          aspect-ratio: 1 / 1;
+          min-height: 120px;
+        }
+        
+        .articles-grid {
+          grid-template-columns: 1fr;
+        }
+        
+        .latest-articles {
+          padding: 40px 15px;
+        }
+        
+        .article-card {
+          padding: 15px;
+        }
+        
+        .article-title {
+          font-size: 1rem;
+          height: auto;
+          -webkit-line-clamp: 3;
+        }
+        
+        .article-excerpt {
+          height: auto;
+          -webkit-line-clamp: 4;
+        }
+      }
+
+      /* Çok küçük ekranlar: 2 sütun */
+      @media (max-width: 480px) {
+        .gallery-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 8px;
+        }
+        
+        .gallery-photo {
+          min-height: 100px;
+        }
+        
+        .modal-navbar {
+          min-height: 160px;
+          padding: 10px 12px;
+        }
+        
+        .modal-info-items {
+          flex-direction: column;
+          align-items: center;
+          gap: 8px;
+        }
+        
+        .modal-thumb {
+          width: 50px;
+          height: 35px;
+        }
+        
+        .modal-counter {
+          font-size: 14px;
+          padding: 6px 15px;
+        }
+        
+        .nav-button {
+          padding: 8px 13px;
+          min-width: 55px;
+          font-size: 15px;
+        }
+        
+        .article-meta {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 5px;
+        }
+        
+        .article-stats {
+          justify-content: space-between;
+        }
+      }
+
+      /* Modal responsive ayarları */
+      @media (max-width: 992px) {
         .modal-image-wrapper {
           max-height: calc(100vh - 150px);
           padding: 15px;
@@ -829,179 +942,12 @@
           margin-right: 0;
         }
 
-        /* Gallery grid mobil - 3 fotoğraf görünecek */
-        .gallery-grid {
-          grid-template-columns: repeat(3, 1fr);
-          gap: 10px;
-        }
-
-        .gallery-photo {
-          height: 150px;
-        }
-
         /* Mobilde tooltip'ı kapat */
         .photo-analysis-btn::after {
           display: none;
         }
       }
 
-      @media (max-width: 768px) {
-        .latest-articles {
-          padding: 40px 15px;
-        }
-        
-        .articles-grid {
-          grid-template-columns: 1fr;
-          gap: 15px;
-        }
-        
-        .article-card {
-          padding: 15px;
-        }
-        
-        .article-title {
-          font-size: 1rem;
-          height: auto;
-          -webkit-line-clamp: 3;
-        }
-        
-        .article-excerpt {
-          height: auto;
-          -webkit-line-clamp: 4;
-        }
-        
-        /* Mobilde 3 fotoğraf grid */
-        .gallery-grid {
-          grid-template-columns: repeat(3, 1fr);
-          gap: 8px;
-        }
-        
-        .gallery-photo {
-          height: 120px;
-        }
-      }
-
-      @media (max-width: 480px) {
-        .modal-navbar {
-          min-height: 160px;
-          padding: 10px 12px;
-        }
-        
-        .modal-info-items {
-          flex-direction: column;
-          align-items: center;
-          gap: 8px;
-        }
-        
-        .modal-thumb {
-          width: 50px;
-          height: 35px;
-        }
-        
-        .modal-counter {
-          font-size: 14px;
-          padding: 6px 15px;
-        }
-        
-        .nav-button {
-          padding: 8px 13px;
-          min-width: 55px;
-          font-size: 15px;
-        }
-        
-        .article-meta {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 5px;
-        }
-        
-        .article-stats {
-          justify-content: space-between;
-        }
-        
-        /* Çok küçük ekranlarda 3 fotoğraf grid */
-        .gallery-grid {
-          grid-template-columns: repeat(3, 1fr);
-          gap: 6px;
-        }
-        
-        .gallery-photo {
-          height: 100px;
-        }
-      }
-           /* ======================================================
-           MASTER PATCH (Articles + Gallery)  — tek blok
-           - Articles: boşluk bırakmadan yayılır
-           - Gallery: masaüstü 4 sütun + kare foto
-           ====================================================== */
-        
-        /* -----------------------
-           ARTICLES (Kartlar)
-           ----------------------- */
-        .articles-grid{
-          display: grid !important;
-          grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important;
-          width: 100% !important;
-        }
-        
-        /* Kart içi taşmaları önle */
-        .article-card{ min-width: 0 !important; }
-        .article-title, .article-excerpt{ min-width: 0 !important; }
-        
-        /* Tablet / telefon yatay */
-        @media (max-width: 992px){
-          .articles-grid{ grid-template-columns: repeat(2, 1fr) !important; }
-        }
-        
-        /* Mobil */
-        @media (max-width: 768px){
-          .articles-grid{ grid-template-columns: 1fr !important; }
-        }
-        
-        /* -----------------------
-           GALLERY (Foto Grid)
-           ----------------------- */
-        
-        /* Fotoğrafı kare yap (height 200px kuralını ezer) */
-        .gallery-photo{
-          width: 100% !important;
-          aspect-ratio: 1 / 1 !important;   /* kare */
-          height: auto !important;
-          object-fit: cover !important;
-          display: block;
-        }
-        
-        /* Masaüstü: 4 sütun (ideal boy) */
-        @media (min-width: 992px){
-          .gallery-grid{
-            grid-template-columns: repeat(4, 1fr) !important;
-            gap: 14px !important;
-          }
-        }
-        
-        /* Büyük masaüstü: 4 sütun garanti */
-        @media (min-width: 1200px){
-          .gallery-grid{
-            grid-template-columns: repeat(4, 1fr) !important;
-            gap: 16px !important;
-          }
-        }
-        
-        /* Tablet: 4 sütun (sende böyle daha iyi görünür) */
-        @media (min-width: 768px) and (max-width: 991px){
-          .gallery-grid{
-            grid-template-columns: repeat(4, 1fr) !important;
-            gap: 12px !important;
-          }
-        }
-        
-        /* Mobil: 3 sütun */
-        @media (max-width: 767px){
-          .gallery-grid{
-            grid-template-columns: repeat(3, 1fr) !important;
-            gap: 8px !important;
-          }
-        }
       /* Touch device detection ve mobil optimizasyon */
       @media (hover: none) and (pointer: coarse) {
         .photo-analysis-btn {
@@ -1298,7 +1244,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
     </section>
 
-    <!-- YENİ MODAL YAPISI - İNCE UZUN YATAY NAVBAR -->
+    <!-- MODAL YAPISI -->
     <div id="modal" class="modal">
         <span class="close">&times;</span>
         <div class="keyboard-shortcuts">
@@ -1364,21 +1310,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             return /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         }
 
-        // Debug bilgileri
-        console.log('Device type:', isMobileDevice() ? 'Mobile' : 'Desktop');
-        console.log('User Agent:', navigator.userAgent);
-
         // Touch için gecikme mekanizması
         let touchTimer = null;
         let touchStartX = 0;
         let touchStartY = 0;
-        const TOUCH_DELAY = 200; // ms
+        const TOUCH_DELAY = 200;
 
         function handleTouchStart(e) {
             touchStartX = e.touches[0].clientX;
             touchStartY = e.touches[0].clientY;
             touchTimer = setTimeout(() => {
-                // Uzun basma durumunda işlem yapma
                 touchTimer = null;
             }, TOUCH_DELAY);
         }
@@ -1391,11 +1332,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 const touchEndX = e.changedTouches[0].clientX;
                 const touchEndY = e.changedTouches[0].clientY;
                 
-                // Kaydırma mı tıklama mı kontrol et
                 const diffX = Math.abs(touchEndX - touchStartX);
                 const diffY = Math.abs(touchEndY - touchStartY);
                 
-                // Eğer kaydırma değilse (çok küçük hareket)
                 if (diffX < 10 && diffY < 10) {
                     e.preventDefault();
                     if (callback) callback();
@@ -1406,9 +1345,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         // CV görüntüleme sayacı için fonksiyon
         async function logCvView() {
             try {
-                console.log('Starting CV view logging...');
-                
-                // Timeout ile IP bilgisi alma
                 const ipController = new AbortController();
                 const ipTimeout = setTimeout(() => ipController.abort(), 5000);
                 
@@ -1442,13 +1378,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     device: isMobileDevice() ? 'mobile' : 'desktop'
                 };
 
-                console.log('New view entry:', viewEntry);
-
-                // JSONBin işlemleri için timeout
                 const binController = new AbortController();
                 const binTimeout = setTimeout(() => binController.abort(), 10000);
 
-                // Önce mevcut veriyi al
                 const getResponse = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
                     method: 'POST',
                     headers: {
@@ -1470,7 +1402,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 
                 if (getResponse.ok) {
                     const result = await getResponse.json();
-                    console.log('Existing data from bin:', result);
                     existingData = result;
                     
                     if (!existingData.cv_views) {
@@ -1481,14 +1412,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     }
                 }
 
-                // Yeni entry'yi array'e ekle
                 existingData.cv_views.push(viewEntry);
                 existingData.total_views = (existingData.total_views || 0) + 1;
                 existingData.last_updated = now.toISOString();
 
-                console.log('Updated data to save:', existingData);
-
-                // Güncellenmiş veriyi kaydet
                 const putResponse = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
                     method: 'POST',
                     headers: {
@@ -1509,8 +1436,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 }
 
                 const result = await putResponse.json();
-                console.log('CV view logged successfully:', result);
-                
                 return result;
             } catch (error) {
                 console.error('Error logging CV view:', error);
@@ -1521,44 +1446,30 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         // CV link kontrolü
         document.addEventListener('DOMContentLoaded', function() {
             const cvLink = document.getElementById('downloadCv');
-            console.log('CV link found:', !!cvLink);
             if (cvLink) {
-                console.log('CV link href:', cvLink.href);
-                
-                // Hem click hem de touchstart event'lerini ekle
                 cvLink.addEventListener('click', handleCvClick);
                 cvLink.addEventListener('touchstart', handleCvClick, { passive: true });
             }
             
-            // Sayfa yüklendiğinde mevcut istatistikleri göster
             showCvStats();
         });
 
-        // Ortak click/touch handler
         function handleCvClick(e) {
-            // Mobil cihazlarda varsayılan davranışı engelle
             e.preventDefault();
             e.stopPropagation();
             
-            console.log('CV link clicked/touched, logging view...');
-            
             const originalHref = this.href;
             
-            // Loglama işlemini başlat
             logCvView().then(result => {
-                console.log('Logging completed:', result);
-                // Loglama tamamlandıktan sonra yönlendir
                 setTimeout(() => {
                     window.location.href = originalHref;
                 }, 300);
             }).catch(err => {
                 console.error('Logging failed:', err);
-                // Hata olsa bile yönlendir
                 window.location.href = originalHref;
             });
         }
 
-        // CV istatistiklerini göster
         async function showCvStats() {
             try {
                 const response = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
@@ -1574,8 +1485,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 
                 if (response.ok) {
                     const data = await response.json();
-                    console.log('CV Stats:', data);
-                    
                     if (data.total_views) {
                         console.log(`Total CV Views: ${data.total_views}`);
                     }
@@ -1628,7 +1537,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     return;
                 }
 
-                // En yeni 3 makaleyi al
                 const latestArticles = articles
                     .sort((a, b) => {
                         const dateA = new Date(a.published_date || a.date || 0);
@@ -1647,7 +1555,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         day: 'numeric'
                     });
 
-                    // İçerikten HTML etiketlerini temizle ve kısa açıklama oluştur
                     let excerpt = '';
                     if (article.content) {
                         const tempDiv = document.createElement('div');
@@ -1678,12 +1585,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         </div>
                     `;
 
-                    // Click event
                     card.addEventListener('click', () => {
                         window.location.href = `/article#${article.id}`;
                     });
                     
-                    // Touch event with delay for mobile
                     card.addEventListener('touchstart', function(e) {
                         handleTouchStart(e);
                     });
@@ -1715,13 +1620,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             }
         }
 
-        // Mikroblog entries'leri yükle (mikroblog sayfasından)
+        // Mikroblog entries'leri yükle
         async function loadMicroblogEntries() {
             showEntriesLoading();
             
             try {
-                // JSONBin'den mikroblog entries'lerini çek
-                const MICROBLOG_BIN_ID = '694f7d8e43b1c97be91ef7d1'; // Mikroblog için bin ID
+                const MICROBLOG_BIN_ID = '694f7d8e43b1c97be91ef7d1';
                 const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
                 
                 const response = await fetch(proxyUrl, {
@@ -1742,7 +1646,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 const result = await response.json();
                 const entries = result.entries || result.records || result || [];
                 
-                // Son 5 entry'yi al
                 const last5Entries = entries.slice(0, 5);
                 
                 displayMicroblogEntries(last5Entries);
@@ -1796,12 +1699,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     </div>
                 `;
                 
-                // Entry'e tıklanınca mikroblog sayfasına git
                 entryDiv.addEventListener('click', () => {
                     window.location.href = '/microblog.html';
                 });
                 
-                // Touch event with delay for mobile
                 entryDiv.addEventListener('touchstart', function(e) {
                     handleTouchStart(e);
                 });
@@ -1816,7 +1717,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             });
         }
 
-        // Galeri ve YENİ Modal işlevselliği
+        // Galeri ve Modal işlevselliği
         document.addEventListener("DOMContentLoaded", () => {
             const galleryGrid = document.getElementById("gallery-grid");
             const loadMoreBtn = document.getElementById("load-more");
@@ -1833,10 +1734,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             const nextButton = document.querySelector(".next-button");
 
             let allPhotos = [];
-            let visibleCount = 8;
+            let visibleCount = 12;
             let currentIndex = 0;
 
-            // photos.json'dan verileri çek
             fetch("/photos.json")
                 .then(res => res.json())
                 .then(data => {
@@ -1845,7 +1745,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 })
                 .catch(err => {
                     console.error("Photo fetch error:", err);
-                    // Fallback veri
                     allPhotos = [
                         {
                             "src": "PHOTO/photo1.JPG",
@@ -1877,13 +1776,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     img.dataset.time = photo.time;
                     img.dataset.index = index;
                     
-                    // Click event
                     img.addEventListener("click", () => {
                         currentIndex = index;
                         openModal();
                     });
                     
-                    // Touch event with delay for mobile
                     img.addEventListener("touchstart", function(e) {
                         handleTouchStart(e);
                     });
@@ -1932,7 +1829,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 if (modalTime) modalTime.textContent = photo.time || 'Unknown Time';
                 if (modalCounter) modalCounter.textContent = `${currentIndex + 1} / ${allPhotos.length}`;
                 
-                // Küçük resimleri güncelle
                 updateThumbnails();
             }
 
@@ -1942,7 +1838,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 
                 if (prevThumb) {
                     prevThumb.src = allPhotos[prevIndex].src;
-                    // Küçük resimlere tıklama olayı ekle
                     prevThumb.onclick = () => {
                         currentIndex = prevIndex;
                         updateModal();
@@ -1968,7 +1863,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 updateModal();
             }
 
-            // Olay dinleyicileri
             if (closeBtn) {
                 closeBtn.addEventListener("click", closeModal);
             }
@@ -1987,7 +1881,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 prevButton.addEventListener("click", prevPhoto);
             }
 
-            // Klavye ile gezinme
             document.addEventListener("keydown", e => {
                 if (modal && modal.classList.contains("show")) {
                     if (e.key === "ArrowRight") {
@@ -2000,7 +1893,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 }
             });
 
-            // Swipe için touch events
             let touchStartX = 0;
             let touchEndX = 0;
 
@@ -2026,12 +1918,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
             if (loadMoreBtn) {
                 loadMoreBtn.addEventListener("click", () => {
-                    visibleCount += 8;
+                    visibleCount += 12;
                     renderPhotos();
                 });
             }
             
-            // Expand More butonu için
             const toggleButton = document.querySelector('.toggle-explanation');
             const explanationContent = document.querySelector('.explanation-content');
             
@@ -2047,10 +1938,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 });
             }
             
-            // Latest Articles yükle
             loadLatestArticles();
-            
-            // Mikroblog entries yükle
             loadMicroblogEntries();
         });
     </script>
