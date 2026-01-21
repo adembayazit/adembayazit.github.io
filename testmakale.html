@@ -929,79 +929,79 @@
           height: 100px;
         }
       }
-         /* ======================================================
-   MASTER PATCH (Articles + Gallery)  — tek blok
-   - Articles: boşluk bırakmadan yayılır
-   - Gallery: masaüstü 6 sütun + kare foto (BÜYÜK görünsün)
-   ====================================================== */
-
-/* -----------------------
-   ARTICLES (Kartlar)
-   ----------------------- */
-.articles-grid{
-  display: grid !important;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important;
-  width: 100% !important;
-}
-
-/* Kart içi taşmaları önle */
-.article-card{ min-width: 0 !important; }
-.article-title, .article-excerpt{ min-width: 0 !important; }
-
-/* Tablet / telefon yatay */
-@media (max-width: 992px){
-  .articles-grid{ grid-template-columns: repeat(2, 1fr) !important; }
-}
-
-/* Mobil */
-@media (max-width: 768px){
-  .articles-grid{ grid-template-columns: 1fr !important; }
-}
-
-/* -----------------------
-   GALLERY (Foto Grid)
-   ----------------------- */
-
-/* Fotoğrafı kare yap */
-.gallery-photo{
-  width: 100% !important;
-  aspect-ratio: 1 / 1 !important;
-  height: auto !important;
-  object-fit: cover !important;
-  display: block;
-}
-
-/* MASAÜSTÜ: 6 sütun ama BÜYÜK görünsün => galeri alanını tam genişlik yap */
-@media (min-width: 992px){
-  /* sadece photo-gallery alanını tam genişliğe aç */
-  .photo-gallery .container{
-    max-width: 100% !important;     /* <-- büyüten ana hamle */
-    margin: 0 auto !important;
-    padding-left: 18px !important;  /* kenarlarda nefes */
-    padding-right: 18px !important;
-  }
-
-  .gallery-grid{
-    grid-template-columns: repeat(6, 1fr) !important;
-    gap: 10px !important;           /* gap azalınca kareler büyür */
-  }
-}
-
-/* Tablet: 4 sütun */
-@media (min-width: 768px) and (max-width: 991px){
-  .gallery-grid{
-    grid-template-columns: repeat(4, 1fr) !important;
-    gap: 12px !important;
-  }
-}
-
-/* Mobil: 3 sütun */
-@media (max-width: 767px){
-  .gallery-grid{
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 8px !important;
-  }
-}
+           /* ======================================================
+           MASTER PATCH (Articles + Gallery)  — tek blok
+           - Articles: boşluk bırakmadan yayılır
+           - Gallery: masaüstü 4 sütun + kare foto
+           ====================================================== */
+        
+        /* -----------------------
+           ARTICLES (Kartlar)
+           ----------------------- */
+        .articles-grid{
+          display: grid !important;
+          grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important;
+          width: 100% !important;
+        }
+        
+        /* Kart içi taşmaları önle */
+        .article-card{ min-width: 0 !important; }
+        .article-title, .article-excerpt{ min-width: 0 !important; }
+        
+        /* Tablet / telefon yatay */
+        @media (max-width: 992px){
+          .articles-grid{ grid-template-columns: repeat(2, 1fr) !important; }
+        }
+        
+        /* Mobil */
+        @media (max-width: 768px){
+          .articles-grid{ grid-template-columns: 1fr !important; }
+        }
+        
+        /* -----------------------
+           GALLERY (Foto Grid)
+           ----------------------- */
+        
+        /* Fotoğrafı kare yap (height 200px kuralını ezer) */
+        .gallery-photo{
+          width: 100% !important;
+          aspect-ratio: 1 / 1 !important;   /* kare */
+          height: auto !important;
+          object-fit: cover !important;
+          display: block;
+        }
+        
+        /* Masaüstü: 4 sütun (ideal boy) */
+        @media (min-width: 992px){
+          .gallery-grid{
+            grid-template-columns: repeat(4, 1fr) !important;
+            gap: 14px !important;
+          }
+        }
+        
+        /* Büyük masaüstü: 4 sütun garanti */
+        @media (min-width: 1200px){
+          .gallery-grid{
+            grid-template-columns: repeat(4, 1fr) !important;
+            gap: 16px !important;
+          }
+        }
+        
+        /* Tablet: 4 sütun (sende böyle daha iyi görünür) */
+        @media (min-width: 768px) and (max-width: 991px){
+          .gallery-grid{
+            grid-template-columns: repeat(4, 1fr) !important;
+            gap: 12px !important;
+          }
+        }
+        
+        /* Mobil: 3 sütun */
+        @media (max-width: 767px){
+          .gallery-grid{
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 8px !important;
+          }
+        }
       /* Touch device detection ve mobil optimizasyon */
       @media (hover: none) and (pointer: coarse) {
         .photo-analysis-btn {
