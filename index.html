@@ -966,33 +966,44 @@
 }
 
 /* -----------------------
-   GALLERY (Foto Grid) — 6 kolon büyük + yayılma
+   GALLERY FIX — ortalama + 6 kolon
 ----------------------- */
 
-/* Galeri container'ı 16:9 masaüstünde genişlesin */
+/* Container genişlesin ve ortalansın */
 .photo-gallery .container{
   max-width: min(1800px, 94vw) !important;
-  margin: 0 auto !important;
-  padding: 0 20px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
 }
 
-/* Varsayılan: (992 altı için güvenli) */
-.gallery-grid{
-  display: grid !important;
+/* Wrapper kesin ortada ve tam genişlikte olsun */
+.gallery-wrapper{
   width: 100% !important;
-  gap: 12px !important;
-  grid-template-columns: repeat(4, 1fr) !important; /* default desktop/tablet */
+  max-width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
 
-/* Büyük masaüstü: 6 kolon ama minicik olmasın */
+/* Grid tam genişlikte: sola yapışma hissi kalmasın */
+.gallery-grid{
+  width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  justify-content: center;   /* nadiren gerek, ama iyi sigorta */
+}
+
+/* Büyük ekran: 6 kolon ama küçülmesin */
 @media (min-width: 1200px){
   .gallery-grid{
+    display: grid !important;
     grid-template-columns: repeat(6, minmax(180px, 1fr)) !important;
     gap: 14px !important;
   }
 }
 
-/* Orta desktop: 4 kolon (dengeli) */
+/* Orta desktop */
 @media (min-width: 992px) and (max-width: 1199px){
   .gallery-grid{
     grid-template-columns: repeat(4, minmax(180px, 1fr)) !important;
@@ -1000,15 +1011,7 @@
   }
 }
 
-/* Tablet: 4 kolon */
-@media (min-width: 768px) and (max-width: 991px){
-  .gallery-grid{
-    grid-template-columns: repeat(4, 1fr) !important;
-    gap: 12px !important;
-  }
-}
-
-/* Mobil: 3 kolon */
+/* Mobil */
 @media (max-width: 767px){
   .gallery-grid{
     grid-template-columns: repeat(3, 1fr) !important;
@@ -1016,7 +1019,7 @@
   }
 }
 
-/* Fotoğraflar kare ve “büyük” dursun */
+/* Kare foto */
 .gallery-photo{
   width: 100% !important;
   aspect-ratio: 1 / 1 !important;
