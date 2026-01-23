@@ -23,8 +23,8 @@
     <!-- Quill Editor CSS -->
     <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
     
-    <!-- Cropper.js CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <!-- Cropper CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
     
     <style>
         :root {
@@ -63,72 +63,915 @@
             width: 100%;
         }
         
-        /* ... Diğer CSS kuralları aynı kalacak ... */
-        
-        /* Kapak fotoğrafı seçme alanı için özel stil */
-        .cover-image-container {
-            position: relative;
-            margin-bottom: 15px;
+        /* Login Screen */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            background: var(--bg-color);
+            width: 100%;
         }
         
-        .cover-image-preview {
-            max-width: 100%;
-            max-height: 300px;
-            border: 2px dashed var(--border-color);
+        .login-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 40px 30px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .login-icon {
+            font-size: 3.5rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        
+        .login-title {
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-color);
+            font-size: 0.95rem;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
-            margin-top: 10px;
-            display: none;
-            cursor: pointer;
+            color: var(--text-color);
+            font-size: 1rem;
+            transition: all 0.3s ease;
         }
         
-        .cover-image-preview.active {
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 255, 0, 0.15);
+        }
+        
+        .btn {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            color: #000;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 0, 0.2);
+        }
+        
+        .login-error {
+            color: var(--danger-color);
+            margin-top: 15px;
+            font-size: 0.9rem;
+            display: none;
+            padding: 10px;
+            background: rgba(255, 68, 68, 0.1);
+            border-radius: 6px;
+            border: 1px solid rgba(255, 68, 68, 0.3);
+        }
+        
+        /* Admin Panel */
+        .admin-panel {
+            display: none;
+            min-height: 100vh;
+            width: 100%;
+        }
+        
+        /* Admin Header */
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: 70px;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .hamburger-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .hamburger-btn:hover {
+            background: rgba(0, 255, 0, 0.1);
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-container img {
+            height: 32px;
+            width: auto;
+        }
+        
+        .logo-container h1 {
+            font-size: 1.4rem;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .current-user {
+            font-weight: 500;
+            color: var(--highlight-color);
+        }
+        
+        .logout-btn {
+            background: rgba(255, 68, 68, 0.2);
+            color: var(--danger-color);
+            border: 1px solid var(--danger-color);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .logout-btn:hover {
+            background: var(--danger-color);
+            color: white;
+        }
+        
+        /* Admin Container */
+        .admin-container {
+            display: flex;
+            min-height: calc(100vh - 70px);
+            margin-top: 70px;
+            width: 100%;
+        }
+        
+        /* Sidebar */
+        .admin-sidebar {
+            width: var(--sidebar-width);
+            background: var(--card-bg);
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            top: 70px;
+            left: 0;
+            bottom: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+            padding: 20px 0;
+        }
+        
+        .admin-sidebar::-webkit-scrollbar {
+            width: 5px;
+        }
+        
+        .admin-sidebar::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        .admin-sidebar::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 3px;
+        }
+        
+        .admin-nav {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .nav-section {
+            margin: 20px 0 10px 25px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        
+        .nav-item {
+            padding: 14px 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            text-decoration: none;
+            color: var(--text-color);
+        }
+        
+        .nav-item:hover {
+            background: rgba(0, 255, 0, 0.1);
+        }
+        
+        .nav-item.active {
+            background: rgba(0, 255, 0, 0.15);
+            border-left: 3px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+        
+        .nav-item span {
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        
+        /* Main Content */
+        .admin-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 25px;
+            min-height: calc(100vh - 70px);
+            transition: all 0.3s ease;
+            width: calc(100% - var(--sidebar-width));
+        }
+        
+        .section-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .section-content.active {
             display: block;
         }
         
-        .cover-image-preview img {
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .section-title {
+            font-size: 1.6rem;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+        }
+        
+        .section-title i {
+            font-size: 1.4rem;
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-color);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        
+        .icon-blue { background: rgba(0, 123, 255, 0.2); color: #007bff; }
+        .icon-green { background: rgba(0, 200, 83, 0.2); color: #00c853; }
+        .icon-orange { background: rgba(255, 152, 0, 0.2); color: #ff9800; }
+        .icon-purple { background: rgba(156, 39, 176, 0.2); color: #9c27b0; }
+        .icon-red { background: rgba(244, 67, 54, 0.2); color: #f44336; }
+        .icon-teal { background: rgba(0, 150, 136, 0.2); color: #009688; }
+        
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: white;
+        }
+        
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+        
+        /* Tables */
+        .data-table-container {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .data-table th {
+            background: rgba(0, 255, 0, 0.1);
+            padding: 18px 20px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--primary-color);
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.95rem;
+        }
+        
+        .data-table td {
+            padding: 18px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            vertical-align: middle;
+        }
+        
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .data-table tr:hover {
+            background: rgba(0, 255, 0, 0.03);
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-sm {
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            min-width: 40px;
+            height: 36px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #00b359;
+            transform: translateY(-2px);
+        }
+        
+        .btn-warning {
+            background: var(--warning-color);
+            color: #000;
+        }
+        
+        .btn-warning:hover {
+            background: #e6b800;
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #ff2222;
+            transform: translateY(-2px);
+        }
+        
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        .btn-info:hover {
+            background: #138496;
+            transform: translateY(-2px);
+        }
+        
+        /* Form Container */
+        .form-container {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 30px;
+            margin-top: 20px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+            line-height: 1.5;
+        }
+        
+        .form-text {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 6px;
+            display: block;
+        }
+        
+        /* Quill Editor Customization */
+        .ql-toolbar {
+            background: rgba(0, 0, 0, 0.4) !important;
+            border-color: var(--border-color) !important;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            border-bottom: none !important;
+        }
+        
+        .ql-container {
+            border-color: var(--border-color) !important;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+            min-height: 300px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        .ql-editor {
+            color: var(--text-color);
+            font-family: inherit;
+            min-height: 300px;
+            font-size: 1rem;
+        }
+        
+        .ql-editor.ql-blank::before {
+            color: var(--text-muted) !important;
+            font-style: italic !important;
+        }
+        
+        /* Image upload button styling */
+        .ql-toolbar .ql-image {
+            position: relative;
+        }
+        
+        .ql-toolbar .ql-image input {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            object-fit: contain;
-            border-radius: 6px;
+            opacity: 0;
+            cursor: pointer;
         }
         
-        .cover-image-controls {
+        /* Tab Navigation */
+        .nav-tabs {
             display: flex;
-            gap: 10px;
-            margin-top: 10px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 25px;
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
         }
         
-        /* Kırpma modalı için stiller */
-        .crop-modal {
+        .nav-tabs::-webkit-scrollbar {
+            height: 4px;
+        }
+        
+        .tab-btn {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            flex-shrink: 0;
+        }
+        
+        .tab-btn:hover {
+            color: var(--text-color);
+        }
+        
+        .tab-btn.active {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Tags Input */
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        
+        .tag {
+            background: rgba(0, 255, 0, 0.2);
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+        
+        .tag-remove {
+            cursor: pointer;
+            font-size: 1.2rem;
+            line-height: 1;
+            color: var(--danger-color);
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .tag-remove:hover {
+            background: var(--danger-color);
+            color: white;
+        }
+        
+        .tag-input-container {
+            display: flex;
+            gap: 12px;
+            margin-top: 15px;
+        }
+        
+        .tag-input {
+            flex: 1;
+        }
+        
+        /* Image Upload */
+        .image-upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 50px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 25px;
+        }
+        
+        .image-upload-area:hover {
+            border-color: var(--primary-color);
+            background: rgba(0, 255, 0, 0.05);
+        }
+        
+        .upload-icon {
+            font-size: 3.5rem;
+            color: var(--border-color);
+            margin-bottom: 15px;
+        }
+        
+        .image-upload-area:hover .upload-icon {
+            color: var(--primary-color);
+        }
+        
+        .image-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .preview-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            aspect-ratio: 16/9;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .preview-item:hover {
+            transform: scale(1.05);
+            border-color: var(--primary-color);
+            box-shadow: 0 5px 15px rgba(0, 255, 0, 0.2);
+        }
+        
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .preview-remove {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: var(--danger-color);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 2;
+        }
+        
+        .preview-remove:hover {
+            transform: scale(1.1);
+            box-shadow: 0 3px 10px rgba(255, 68, 68, 0.3);
+        }
+        
+        .preview-insert {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: var(--primary-color);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 2;
+        }
+        
+        .preview-insert:hover {
+            transform: scale(1.1);
+            box-shadow: 0 3px 10px rgba(0, 255, 0, 0.3);
+        }
+        
+        .preview-cover {
+            position: absolute;
+            bottom: 8px;
+            left: 8px;
+            background: var(--success-color);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            z-index: 2;
+        }
+        
+        /* URL List */
+        .url-list {
+            margin-top: 20px;
+        }
+        
+        .url-list-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+        
+        .url-item {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+            word-break: break-all;
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .url-item span {
+            flex: 1;
+            margin-right: 10px;
+        }
+        
+        .url-actions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        /* Email Preview */
+        .email-preview {
+            background: #f8f9fa;
+            color: #333;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 25px;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+        }
+        
+        /* Toast Notification */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .toast {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px 20px;
+            min-width: 300px;
+            max-width: 400px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        
+        .toast-success {
+            border-left: 4px solid var(--success-color);
+        }
+        
+        .toast-error {
+            border-left: 4px solid var(--danger-color);
+        }
+        
+        .toast-warning {
+            border-left: 4px solid var(--warning-color);
+        }
+        
+        .toast-info {
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .toast i {
+            font-size: 1.2rem;
+        }
+        
+        .toast-success i { color: var(--success-color); }
+        .toast-error i { color: var(--danger-color); }
+        .toast-warning i { color: var(--warning-color); }
+        .toast-info i { color: var(--primary-color); }
+        
+        /* Modal */
+        .modal {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.85);
             z-index: 10000;
             align-items: center;
             justify-content: center;
             padding: 20px;
         }
         
-        .crop-modal.active {
-            display: flex;
-        }
-        
-        .crop-modal-content {
+        .modal-content {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
             width: 100%;
-            max-width: 800px;
+            max-width: 600px;
             max-height: 90vh;
-            overflow: hidden;
+            overflow-y: auto;
             animation: modalIn 0.3s ease;
         }
         
-        .crop-modal-header {
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        .modal-header {
             padding: 20px 25px;
             border-bottom: 1px solid var(--border-color);
             display: flex;
@@ -136,85 +979,1072 @@
             align-items: center;
         }
         
-        .crop-modal-title {
+        .modal-title {
             color: var(--primary-color);
             font-size: 1.3rem;
             font-weight: 600;
         }
         
-        .crop-modal-body {
-            padding: 20px;
-            max-height: 60vh;
-            overflow: auto;
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.8rem;
+            cursor: pointer;
+            line-height: 1;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .modal-body {
+            padding: 25px;
+        }
+        
+        /* Loading Spinner */
+        .spinner {
+            border: 3px solid rgba(0, 255, 0, 0.3);
+            border-radius: 50%;
+            border-top: 3px solid var(--primary-color);
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Mobile Sidebar Overlay */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 998;
+            backdrop-filter: blur(3px);
+        }
+        
+        .sidebar-overlay.active {
+            display: block;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .admin-content {
+                padding: 20px;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .hamburger-btn {
+                display: block;
+            }
+            
+            .admin-sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+            
+            .admin-sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .admin-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            .nav-section, .nav-item span {
+                display: block;
+            }
+            
+            .logo-container h1 {
+                font-size: 1.2rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            html {
+                font-size: 15px;
+            }
+            
+            .admin-header {
+                padding: 12px 15px;
+                height: 60px;
+            }
+            
+            .admin-container {
+                margin-top: 60px;
+                min-height: calc(100vh - 60px);
+            }
+            
+            .admin-content {
+                padding: 15px;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .data-table-container {
+                overflow-x: auto;
+            }
+            
+            .data-table {
+                min-width: 700px;
+            }
+            
+            .action-buttons {
+                flex-wrap: wrap;
+            }
+            
+            .modal-content {
+                margin: 0 10px;
+            }
+            
+            .image-preview {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+            
+            .toast {
+                min-width: 250px;
+                max-width: calc(100vw - 40px);
+            }
+        }
+        
+        @media (max-width: 576px) {
+            html {
+                font-size: 14px;
+            }
+            
+            .login-box {
+                padding: 30px 20px;
+            }
+            
+            .section-title {
+                font-size: 1.4rem;
+            }
+            
+            .stat-card {
+                padding: 20px;
+            }
+            
+            .stat-value {
+                font-size: 2rem;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+            
+            .nav-tabs {
+                flex-wrap: nowrap;
+                overflow-x: scroll;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .tab-btn {
+                padding: 10px 16px;
+                font-size: 0.9rem;
+            }
+            
+            .modal-body {
+                padding: 20px;
+            }
+            
+            .image-upload-area {
+                padding: 40px 15px;
+            }
+            
+            .upload-icon {
+                font-size: 3rem;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            .admin-header {
+                flex-wrap: wrap;
+                height: auto;
+                min-height: 60px;
+            }
+            
+            .header-left, .header-right {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .admin-container {
+                margin-top: 80px;
+            }
+            
+            .logo-container h1 {
+                font-size: 1.1rem;
+            }
+        }
+        
+        /* Dark mode scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+        
+        /* Utility Classes */
+        .d-flex {
+            display: flex;
+        }
+        
+        .flex-column {
+            flex-direction: column;
+        }
+        
+        .align-center {
+            align-items: center;
+        }
+        
+        .justify-between {
+            justify-content: space-between;
+        }
+        
+        .w-100 {
+            width: 100%;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .mb-3 {
+            margin-bottom: 1rem;
+        }
+        
+        .mt-3 {
+            margin-top: 1rem;
+        }
+        
+        .p-3 {
+            padding: 1rem;
+        }
+        
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .badge-success {
+            background: rgba(0, 200, 83, 0.2);
+            color: #00c853;
+        }
+        
+        .badge-warning {
+            background: rgba(255, 152, 0, 0.2);
+            color: #ff9800;
+        }
+        
+        .badge-danger {
+            background: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+        }
+        
+        .badge-info {
+            background: rgba(23, 162, 184, 0.2);
+            color: #17a2b8;
+        }
+        
+        /* Debug info */
+        .debug-info {
+            font-size: 0.7rem;
+            color: #888;
+            margin-top: 5px;
+            padding: 5px;
+            background: rgba(0, 30, 0, 0.2);
+            border-radius: 3px;
+            display: none;
+        }
+        
+        /* Alternative upload */
+        .alternative-upload {
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(0, 30, 0, 0.3);
+            border: 1px dashed var(--primary-color);
+            border-radius: 3px;
+            font-size: 0.8rem;
+        }
+        
+        .alternative-upload a {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+        
+        /* Cropper Modal */
+        .crop-modal-content {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalIn 0.3s ease;
         }
         
         .crop-container {
             width: 100%;
-            height: 400px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 8px;
-            overflow: hidden;
+            height: 500px;
             position: relative;
+            background: rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            margin-bottom: 20px;
         }
         
-        #cropImage {
+        .crop-container img {
             max-width: 100%;
             max-height: 100%;
+            display: block;
         }
         
-        .crop-modal-footer {
-            padding: 20px 25px;
-            border-top: 1px solid var(--border-color);
+        .crop-controls {
             display: flex;
-            justify-content: flex-end;
+            flex-wrap: wrap;
             gap: 10px;
+            margin-top: 20px;
+            justify-content: center;
         }
         
-        .crop-size-info {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-bottom: 10px;
+        .crop-aspect-ratios {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
         
-        /* ... Diğer CSS kuralları aynı kalacak ... */
+        .aspect-ratio-btn {
+            padding: 8px 15px;
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
         
-        /* Son düzenleme tarihi için stil */
-        .last-updated-info {
-            margin-top: 30px;
-            padding-top: 15px;
-            border-top: 1px solid var(--border-color);
-            color: var(--text-muted);
-            font-style: italic;
-            font-size: 0.9rem;
+        .aspect-ratio-btn:hover {
+            background: rgba(0, 255, 0, 0.2);
+        }
+        
+        .aspect-ratio-btn.active {
+            background: var(--primary-color);
+            color: #000;
+            border-color: var(--primary-color);
+        }
+        
+        .crop-preview {
+            width: 150px;
+            height: 100px;
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 0 auto 20px;
+            background: #000;
+        }
+        
+        .crop-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            display: block;
+        }
+        
+        .featured-image-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
     <!-- Login Screen -->
-    <!-- ... Login ekranı aynı kalacak ... -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-box">
+            <div class="login-icon">
+                <i class="fas fa-lock"></i>
+            </div>
+            <h1 class="login-title">Admin Girişi</h1>
+            <p style="margin-bottom: 25px; color: var(--text-muted); font-size: 0.95rem;">Makale yönetim paneline erişmek için giriş yapın</p>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label" for="adminPassword">Şifre</label>
+                    <input type="password" id="adminPassword" class="form-control" placeholder="Admin şifresini girin" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt"></i> Giriş Yap
+                </button>
+            </form>
+            
+            <div id="loginError" class="login-error">
+                Hatalı şifre! Lütfen tekrar deneyin.
+            </div>
+            
+            <div style="margin-top: 25px; font-size: 0.85rem; color: var(--text-muted);">
+                <p><strong>Varsayılan şifre:</strong> admin</p>
+                <p style="margin-top: 5px; font-size: 0.8rem;">İlk girişten sonra şifrenizi değiştirmeniz önerilir.</p>
+            </div>
+        </div>
+    </div>
 
     <!-- Admin Panel -->
-    <!-- ... Admin panel yapısı aynı kalacak ... -->
+    <div id="adminPanel" class="admin-panel">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="header-left">
+                <button class="hamburger-btn" id="hamburgerBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="logo-container">
+                    <img src="/IMAGES/hackerwhite.svg" alt="Logo">
+                    <h1>Makale Yönetim Paneli</h1>
+                </div>
+            </div>
+            
+            <div class="header-right">
+                <span class="current-user" id="currentUser">Admin</span>
+                <button class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Çıkış
+                </button>
+            </div>
+        </header>
 
-    <!-- Kırpma Modalı -->
-    <div class="crop-modal" id="cropModal">
-        <div class="crop-modal-content">
-            <div class="crop-modal-header">
-                <h3 class="crop-modal-title">Kapak Fotoğrafını Kırp</h3>
-                <button class="modal-close" id="closeCropModal">&times;</button>
-            </div>
-            <div class="crop-modal-body">
-                <div class="crop-size-info">
-                    Önerilen boyut: 1200x630 piksel. Görselin orijinal boyutundan daha büyük bir alan seçemezsiniz.
-                </div>
-                <div class="crop-container">
-                    <img id="cropImage" src="" alt="Kırpılacak görsel">
-                </div>
-            </div>
-            <div class="crop-modal-footer">
-                <button class="btn btn-danger" id="cancelCrop">İptal</button>
-                <button class="btn btn-primary" id="cropImageBtn">Kırp ve Kaydet</button>
-            </div>
+        <!-- Mobile Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Main Container -->
+        <div class="admin-container">
+            <!-- Sidebar -->
+            <aside class="admin-sidebar" id="adminSidebar">
+                <ul class="admin-nav">
+                    <div class="nav-section">Ana Sayfa</div>
+                    <li class="nav-item active" data-section="dashboard">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </li>
+                    
+                    <div class="nav-section">Makale Yönetimi</div>
+                    <li class="nav-item" data-section="articles">
+                        <i class="fas fa-newspaper"></i>
+                        <span>Tüm Makaleler</span>
+                    </li>
+                    <li class="nav-item" data-section="editor">
+                        <i class="fas fa-edit"></i>
+                        <span>Yeni Makale</span>
+                    </li>
+                    
+                    <div class="nav-section">Abonelik</div>
+                    <li class="nav-item" data-section="subscribers">
+                        <i class="fas fa-users"></i>
+                        <span>Aboneler</span>
+                    </li>
+                    <li class="nav-item" data-section="email">
+                        <i class="fas fa-envelope"></i>
+                        <span>Email Gönder</span>
+                    </li>
+                    
+                    <div class="nav-section">Ayarlar</div>
+                    <li class="nav-item" data-section="settings">
+                        <i class="fas fa-cog"></i>
+                        <span>Ayarlar</span>
+                    </li>
+                </ul>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="admin-content">
+                <!-- Dashboard Section -->
+                <section id="dashboard" class="section-content active">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </h2>
+                        <div style="color: var(--text-muted); font-size: 0.9rem;">
+                            Son güncelleme: <span id="lastUpdateTime">-</span>
+                        </div>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon icon-blue">
+                                <i class="fas fa-newspaper"></i>
+                            </div>
+                            <div class="stat-value" id="totalArticles">0</div>
+                            <div class="stat-label">Toplam Makale</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon icon-green">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                            <div class="stat-value" id="totalViews">0</div>
+                            <div class="stat-label">Toplam Görüntülenme</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon icon-purple">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <div class="stat-value" id="totalLikes">0</div>
+                            <div class="stat-label">Toplam Beğeni</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon icon-orange">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-value" id="totalSubscribers">0</div>
+                            <div class="stat-label">Abone Sayısı</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon icon-teal">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-value" id="avgReadingTime">0</div>
+                            <div class="stat-label">Ort. Okuma Süresi</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon icon-red">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div class="stat-value" id="lastArticleDate">-</div>
+                            <div class="stat-label">Son Makale</div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Articles -->
+                    <div class="section-header" style="margin-top: 40px;">
+                        <h3 class="section-title">
+                            <i class="fas fa-history"></i> Son Makaleler
+                        </h3>
+                    </div>
+                    
+                    <div class="data-table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Başlık</th>
+                                    <th>Kategori</th>
+                                    <th>Tarih</th>
+                                    <th>Görüntülenme</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentArticles">
+                                <!-- Recent articles will be loaded here -->
+                                <tr>
+                                    <td colspan="5" class="text-center" style="padding: 40px;">
+                                        <div class="spinner"></div>
+                                        <p style="margin-top: 15px; color: var(--text-muted);">Makaleler yükleniyor...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Articles List Section -->
+                <section id="articles" class="section-content">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-newspaper"></i> Tüm Makaleler
+                        </h2>
+                        <button class="btn btn-primary" id="newArticleBtn">
+                            <i class="fas fa-plus"></i> Yeni Makale
+                        </button>
+                    </div>
+
+                    <div class="data-table-container">
+                        <table class="data-table" id="articlesTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Başlık</th>
+                                    <th>Kategori</th>
+                                    <th>Tarih</th>
+                                    <th>Görüntülenme</th>
+                                    <th>Beğeni</th>
+                                    <th>Son Güncelleme</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody id="articlesTableBody">
+                                <!-- Articles will be loaded here -->
+                                <tr>
+                                    <td colspan="8" class="text-center" style="padding: 40px;">
+                                        <div class="spinner"></div>
+                                        <p style="margin-top: 15px; color: var(--text-muted);">Makaleler yükleniyor...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Article Editor Section -->
+                <section id="editor" class="section-content">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-edit"></i> Makale Editörü
+                        </h2>
+                        <div class="d-flex align-center" style="gap: 10px;">
+                            <button class="btn btn-primary" id="saveDraftBtn">
+                                <i class="fas fa-save"></i> Taslak Kaydet
+                            </button>
+                            <button class="btn btn-success" id="publishArticleBtn">
+                                <i class="fas fa-paper-plane"></i> Yayınla
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="nav-tabs">
+                        <button class="tab-btn active" data-tab="content">İçerik</button>
+                        <button class="tab-btn" data-tab="seo">SEO & Ayarlar</button>
+                        <button class="tab-btn" data-tab="images">Görseller</button>
+                        <button class="tab-btn" data-tab="preview">Önizleme</button>
+                    </div>
+
+                    <div class="form-container">
+                        <!-- Content Tab -->
+                        <div id="contentTab" class="tab-content active">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Makale Başlığı (EN) *</label>
+                                    <input type="text" id="articleTitle" class="form-control" placeholder="Makale başlığını girin" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Makale Başlığı (TR)</label>
+                                    <input type="text" id="articleTitleTR" class="form-control" placeholder="Türkçe başlık (isteğe bağlı)">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Kategori *</label>
+                                    <select id="articleCategory" class="form-control" required>
+                                        <option value="">Kategori seçin</option>
+                                        <option value="Malware Analysis">Malware Analysis</option>
+                                        <option value="Network Security">Network Security</option>
+                                        <option value="Web Security">Web Security</option>
+                                        <option value="Cryptography">Cryptography</option>
+                                        <option value="Social Engineering">Social Engineering</option>
+                                        <option value="Threat Intelligence">Threat Intelligence</option>
+                                        <option value="Penetration Testing">Penetration Testing</option>
+                                        <option value="Incident Response">Incident Response</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Yazar *</label>
+                                    <input type="text" id="articleAuthor" class="form-control" value="Adem Bayazıt" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">İçerik (EN) *</label>
+                                <div id="editorEN"></div>
+                                <span class="form-text">Zengin metin editörü. Kod blokları için "Code Block" butonunu kullanın. Görsel eklemek için araç çubuğundaki "Görsel" butonuna tıklayın.</span>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">İçerik (TR)</label>
+                                <div id="editorTR"></div>
+                                <span class="form-text">Türkçe çeviri (isteğe bağlı). Görsel eklemek için araç çubuğundaki "Görsel" butonuna tıklayın.</span>
+                            </div>
+                        </div>
+
+                        <!-- SEO & Settings Tab -->
+                        <div id="seoTab" class="tab-content">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">SEO Başlık</label>
+                                    <input type="text" id="seoTitle" class="form-control" placeholder="Google'da görünecek başlık (otomatik)">
+                                    <span class="form-text">Boş bırakılırsa makale başlığı kullanılır</span>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">SEO Açıklama</label>
+                                    <textarea id="seoDescription" class="form-control" placeholder="Meta açıklaması (max 160 karakter)" maxlength="160" rows="3"></textarea>
+                                    <span class="form-text">Arama motorlarında görünecek açıklama</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Etiketler</label>
+                                <div class="tags-container" id="tagsContainer">
+                                    <!-- Tags will appear here -->
+                                </div>
+                                <div class="tag-input-container">
+                                    <input type="text" id="tagInput" class="form-control tag-input" placeholder="Etiket ekle (örn: hacking, security)">
+                                    <button type="button" class="btn btn-primary btn-sm" id="addTagBtn">Ekle</button>
+                                </div>
+                                <span class="form-text">Enter tuşu ile hızlı ekleme yapabilirsiniz</span>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Okuma Süresi (dakika)</label>
+                                    <input type="number" id="readingTime" class="form-control" value="5" min="1" max="60">
+                                    <span class="form-text">Makalenin ortalama okuma süresi</span>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Yayın Tarihi</label>
+                                    <input type="datetime-local" id="publishDate" class="form-control">
+                                    <span class="form-text">Gelecek bir tarih seçerek zamanlayabilirsiniz</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <input type="checkbox" id="featuredArticle" style="width: 18px; height: 18px;">
+                                    <label for="featuredArticle" class="form-label" style="margin-bottom: 0;">Öne çıkan makale olarak işaretle</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Images Tab -->
+                        <div id="imagesTab" class="tab-content">
+                            <div class="form-group">
+                                <label class="form-label">Kapak Görseli URL</label>
+                                <div class="featured-image-controls">
+                                    <input type="text" id="featuredImage" class="form-control" placeholder="https://ik.imagekit.io/your-imagekit-id/image.jpg" readonly>
+                                    <button type="button" class="btn btn-primary" id="selectCoverImage">
+                                        <i class="fas fa-image"></i> Seç ve Kırp
+                                    </button>
+                                </div>
+                                <span class="form-text">Önerilen boyut: 1200x630 piksel. Seç ve kırp butonu ile görsel seçip kırpabilirsiniz.</span>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Görsel Yükle (ImageKit) - Birden Fazla Seçebilirsiniz</label>
+                                <div class="image-upload-area" id="imageUploadArea">
+                                    <div class="upload-icon">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                    </div>
+                                    <p style="font-weight: 500; margin-bottom: 5px;">Görselleri buraya sürükleyin veya tıklayın</p>
+                                    <p class="form-text">PNG, JPG, GIF - Max 5MB (Birden fazla seçebilirsiniz)</p>
+                                </div>
+                                <input type="file" id="imageUpload" multiple accept="image/*" style="display: none;">
+                                
+                                <div class="image-preview" id="imagePreview">
+                                    <!-- Uploaded images preview will appear here -->
+                                    <p style="color: var(--text-muted); text-align: center; padding: 20px; grid-column: 1 / -1;">
+                                        Henüz görsel yüklenmedi. Görselleri yükledikten sonra burada görünecekler.
+                                    </p>
+                                </div>
+                                
+                                <div class="url-list" id="urlListContainer" style="display: none;">
+                                    <div class="url-list-title">Yüklenen Görsellerin URL'leri:</div>
+                                    <div id="urlList">
+                                        <!-- URL'ler buraya eklenecek -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div style="display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;">
+                                    <button class="btn btn-primary" id="uploadImagesBtn">
+                                        <i class="fas fa-upload"></i> Seçili Görselleri Yükle
+                                    </button>
+                                    <button class="btn btn-info" id="clearImagesBtn">
+                                        <i class="fas fa-times"></i> Temizle
+                                    </button>
+                                    <button class="btn btn-warning" id="toggleUrlListBtn">
+                                        <i class="fas fa-link"></i> URL'leri Göster/Gizle
+                                    </button>
+                                </div>
+                                <span class="form-text">Yüklediğiniz görselleri önizlemede görebilir, editöre ekleyebilir veya kapak görseli olarak seçebilirsiniz.</span>
+                            </div>
+                        </div>
+
+                        <!-- Preview Tab -->
+                        <div id="previewTab" class="tab-content">
+                            <div class="form-group">
+                                <button class="btn btn-primary" id="refreshPreview">
+                                    <i class="fas fa-sync"></i> Önizlemeyi Yenile
+                                </button>
+                                <span class="form-text">Makale içeriğini önizlemek için yukarıdaki butonu kullanın</span>
+                            </div>
+                            <div id="articlePreview" class="email-preview">
+                                <h3>Makale Önizleme</h3>
+                                <p style="color: #666; margin-top: 10px;">Önizlemeyi yenile butonuna tıklayarak makalenin nasıl görüneceğini görebilirsiniz.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Subscribers Section -->
+                <section id="subscribers" class="section-content">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-users"></i> Abone Listesi
+                        </h2>
+                        <div class="d-flex align-center" style="gap: 10px;">
+                            <span id="subscribersCount" style="color: var(--text-muted);">0 abone</span>
+                            <button class="btn btn-primary btn-sm" id="exportSubscribersBtn">
+                                <i class="fas fa-download"></i> CSV İndir
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-container" style="margin-bottom: 25px;">
+                        <div class="form-group">
+                            <label class="form-label">Yeni Abone Ekle</label>
+                            <div class="d-flex" style="gap: 10px;">
+                                <input type="email" id="addSubscriberEmail" class="form-control" placeholder="email@example.com">
+                                <button class="btn btn-success" id="addSubscriberBtn" style="min-width: 120px;">
+                                    <i class="fas fa-plus"></i> Ekle
+                                </button>
+                            </div>
+                            <span class="form-text">Geçerli bir email adresi girin</span>
+                        </div>
+                    </div>
+
+                    <div class="data-table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Email</th>
+                                    <th>Kayıt Tarihi</th>
+                                    <th>Durum</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody id="subscribersTableBody">
+                                <!-- Subscribers will be loaded here -->
+                                <tr>
+                                    <td colspan="5" class="text-center" style="padding: 40px;">
+                                        <div class="spinner"></div>
+                                        <p style="margin-top: 15px; color: var(--text-muted);">Aboneler yükleniyor...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Email Section -->
+                <section id="email" class="section-content">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-envelope"></i> Email Gönderimi
+                        </h2>
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <span id="emailStats" style="color: var(--text-muted); font-weight: 500;">0 abone</span>
+                            <button class="btn btn-primary btn-sm" id="refreshEmailStats">
+                                <i class="fas fa-sync"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-container">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Gönderilecek Makale</label>
+                                <select id="emailArticleSelect" class="form-control">
+                                    <option value="">Makale seçin</option>
+                                    <!-- Articles will be loaded here -->
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email Başlığı</label>
+                                <input type="text" id="emailSubject" class="form-control" value="Yeni Makale: {article_title}">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Şablon</label>
+                                <select id="emailTemplate" class="form-control">
+                                    <option value="new_article">Yeni Makale Duyurusu</option>
+                                    <option value="weekly_digest">Haftalık Özet</option>
+                                    <option value="important_alert">Önemli Güncelleme</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Test Email (isteğe bağlı)</label>
+                                <input type="email" id="testEmail" class="form-control" placeholder="test@example.com">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Özel Mesaj (isteğe bağlı)</label>
+                            <textarea id="customMessage" class="form-control" rows="4" placeholder="Abonelerinize özel bir mesaj ekleyin..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="d-flex align-center" style="gap: 12px; flex-wrap: wrap;">
+                                <button class="btn btn-warning" id="testEmailBtn">
+                                    <i class="fas fa-vial"></i> Test Gönderimi
+                                </button>
+                                <button class="btn btn-success" id="sendEmailBtn">
+                                    <i class="fas fa-paper-plane"></i> Tüm Abonelere Gönder
+                                </button>
+                                <button class="btn btn-info" id="previewEmailBtn">
+                                    <i class="fas fa-eye"></i> Önizleme
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-container" style="margin-top: 25px;">
+                        <h3 style="margin-bottom: 15px; color: var(--primary-color);">
+                            <i class="fas fa-eye"></i> Email Önizleme
+                        </h3>
+                        <div id="emailPreviewContent" class="email-preview">
+                            <p style="color: #666;">Bir makale seçerek email önizlemesini görebilirsiniz.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Settings Section -->
+                <section id="settings" class="section-content">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-cog"></i> Ayarlar
+                        </h2>
+                    </div>
+
+                    <div class="form-container">
+                        <div class="nav-tabs">
+                            <button class="tab-btn active" data-tab="general">Genel</button>
+                            <button class="tab-btn" data-tab="security">Güvenlik</button>
+                            <button class="tab-btn" data-tab="backup">Yedekleme</button>
+                        </div>
+
+                        <!-- General Settings -->
+                        <div id="generalTab" class="tab-content active">
+                            <div class="form-group">
+                                <label class="form-label">Site Başlığı</label>
+                                <input type="text" id="siteTitle" class="form-control" value="Cybersecurity Articles">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Site Açıklaması</label>
+                                <textarea id="siteDescription" class="form-control" rows="3">Cybersecurity articles, research and analysis by Adem Bayazıt</textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Yönetici Email</label>
+                                <input type="email" id="adminEmail" class="form-control" value="fyi@adembayazit.com">
+                            </div>
+                            
+                            <button class="btn btn-primary" id="saveGeneralSettings" style="margin-top: 20px;">
+                                <i class="fas fa-save"></i> Genel Ayarları Kaydet
+                            </button>
+                        </div>
+
+                        <!-- Security Settings -->
+                        <div id="securityTab" class="tab-content">
+                            <div class="form-group">
+                                <label class="form-label">Yeni Şifre</label>
+                                <input type="password" id="newPassword" class="form-control" placeholder="En az 6 karakter">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Şifre Tekrar</label>
+                                <input type="password" id="confirmPassword" class="form-control" placeholder="Şifreyi tekrar girin">
+                            </div>
+                            
+                            <div class="form-group">
+                                <div style="display: flex; align-items: center; gap: 10px; margin-top: 20px;">
+                                    <input type="checkbox" id="require2FA" style="width: 18px; height: 18px;">
+                                    <label for="require2FA" class="form-label" style="margin-bottom: 0;">İki faktörlü kimlik doğrulama gerektir</label>
+                                </div>
+                            </div>
+                            
+                            <button class="btn btn-primary" id="saveSecuritySettings" style="margin-top: 20px;">
+                                <i class="fas fa-save"></i> Güvenlik Ayarlarını Kaydet
+                            </button>
+                        </div>
+
+                        <!-- Backup Settings -->
+                        <div id="backupTab" class="tab-content">
+                            <div class="form-group">
+                                <label class="form-label">Son Yedekleme</label>
+                                <input type="text" id="lastBackup" class="form-control" readonly value="Hiç yedekleme yapılmadı">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Otomatik Yedekleme</label>
+                                <select id="backupFrequency" class="form-control">
+                                    <option value="daily">Günlük</option>
+                                    <option value="weekly" selected>Haftalık</option>
+                                    <option value="monthly">Aylık</option>
+                                    <option value="never">Hiçbir zaman</option>
+                                </select>
+                            </div>
+                            
+                            <div class="d-flex align-center" style="gap: 12px; margin-top: 25px; flex-wrap: wrap;">
+                                <button class="btn btn-primary" id="createBackupBtn">
+                                    <i class="fas fa-download"></i> Yedek Oluştur
+                                </button>
+                                <button class="btn btn-info" id="exportDataBtn">
+                                    <i class="fas fa-file-export"></i> JSON İndir
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
         </div>
     </div>
 
@@ -222,17 +2052,98 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <!-- Modal for Article Preview -->
-    <!-- ... Diğer modal'lar aynı kalacak ... -->
+    <div class="modal" id="previewModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Makale Önizleme</h3>
+                <button class="modal-close" id="closePreview">&times;</button>
+            </div>
+            <div class="modal-body" id="previewModalContent">
+                <!-- Preview content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Confirmations -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="confirmTitle">Onay</h3>
+                <button class="modal-close" id="closeConfirm">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage">Bu işlemi gerçekleştirmek istediğinizden emin misiniz?</p>
+                <div class="d-flex align-center" style="gap: 12px; margin-top: 25px;">
+                    <button class="btn btn-primary" id="cancelConfirm" style="flex: 1;">İptal</button>
+                    <button class="btn btn-danger" id="confirmAction" style="flex: 1;">Onayla</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Image Cropping -->
+    <div class="modal" id="cropModal">
+        <div class="crop-modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Kapak Fotoğrafı Seç ve Kırp</h3>
+                <button class="modal-close" id="closeCropModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Görsel Yükle</label>
+                    <input type="file" id="cropImageInput" accept="image/*" class="form-control">
+                </div>
+                
+                <div class="crop-aspect-ratios">
+                    <button class="aspect-ratio-btn" data-ratio="16/9">16:9 (Yatay)</button>
+                    <button class="aspect-ratio-btn active" data-ratio="1200/630">1200:630 (Kapak)</button>
+                    <button class="aspect-ratio-btn" data-ratio="1/1">1:1 (Kare)</button>
+                    <button class="aspect-ratio-btn" data-ratio="4/3">4:3 (Klasik)</button>
+                    <button class="aspect-ratio-btn" data-ratio="free">Serbest</button>
+                </div>
+                
+                <div class="crop-container">
+                    <img id="imageToCrop" src="" alt="Kırpılacak görsel" style="display: none;">
+                </div>
+                
+                <div class="crop-preview">
+                    <div id="cropPreview"></div>
+                </div>
+                
+                <div class="crop-controls">
+                    <button class="btn btn-primary" id="applyCrop">
+                        <i class="fas fa-crop"></i> Kırp ve Uygula
+                    </button>
+                    <button class="btn btn-warning" id="rotateLeft">
+                        <i class="fas fa-undo"></i> Sola Döndür
+                    </button>
+                    <button class="btn btn-warning" id="rotateRight">
+                        <i class="fas fa-redo"></i> Sağa Döndür
+                    </button>
+                    <button class="btn btn-info" id="resetCrop">
+                        <i class="fas fa-sync"></i> Sıfırla
+                    </button>
+                    <button class="btn btn-danger" id="cancelCrop">
+                        <i class="fas fa-times"></i> İptal
+                    </button>
+                </div>
+                
+                <div class="form-text" style="text-align: center; margin-top: 15px;">
+                    <p>Kapak fotoğrafı boyutu: 1200x630 piksel. Kırpma alanı bu boyutu aşamaz, daha küçük seçim yapabilirsiniz.</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Scripts -->
     <!-- Quill Editor -->
     <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
     
+    <!-- Cropper.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    
     <!-- Chart.js for Statistics (optional) -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- Cropper.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     
     <script>
         // Configuration
@@ -261,10 +2172,11 @@
         let activeEditor = null;
         let showUrlList = false;
         
-        // Kırpma için değişkenler
+        // Cropper variables
         let cropper = null;
-        let coverImageFile = null;
-        let coverImagePreviewUrl = null;
+        let currentAspectRatio = 1200/630;
+        const MAX_COVER_WIDTH = 1200;
+        const MAX_COVER_HEIGHT = 630;
 
         // SHA-256 Hash Function
         async function sha256(message) {
@@ -306,237 +2218,6 @@
 
         function hideModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
-        }
-
-        // Kapak fotoğrafı kırpma fonksiyonları
-        function initCoverImageCropping() {
-            const coverImageInput = document.getElementById('featuredImage');
-            const coverImagePreview = document.getElementById('coverImagePreview');
-            const selectCoverImageBtn = document.getElementById('selectCoverImageBtn');
-            const cropModal = document.getElementById('cropModal');
-            const closeCropModal = document.getElementById('closeCropModal');
-            const cancelCrop = document.getElementById('cancelCrop');
-            const cropImageBtn = document.getElementById('cropImageBtn');
-            
-            // Kapak fotoğrafı önizleme alanına tıklanınca dosya seç
-            if (coverImagePreview) {
-                coverImagePreview.addEventListener('click', function() {
-                    document.getElementById('coverImageFileInput').click();
-                });
-            }
-            
-            // Dosya seçme butonu
-            if (selectCoverImageBtn) {
-                selectCoverImageBtn.addEventListener('click', function() {
-                    document.getElementById('coverImageFileInput').click();
-                });
-            }
-            
-            // Dosya seçildiğinde
-            document.getElementById('coverImageFileInput').addEventListener('change', function(e) {
-                if (this.files && this.files[0]) {
-                    const file = this.files[0];
-                    
-                    // Sadece resim dosyalarını kabul et
-                    if (!file.type.match('image.*')) {
-                        showToast('Lütfen sadece resim dosyası seçin', 'error');
-                        return;
-                    }
-                    
-                    // Max 5MB kontrolü
-                    if (file.size > 5 * 1024 * 1024) {
-                        showToast('Resim dosyası çok büyük (max 5MB)', 'error');
-                        return;
-                    }
-                    
-                    coverImageFile = file;
-                    
-                    // Önizleme göster
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        coverImagePreviewUrl = e.target.result;
-                        openCropModal(coverImagePreviewUrl);
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-            
-            // Kırpma modalını aç
-            function openCropModal(imageSrc) {
-                const cropImage = document.getElementById('cropImage');
-                cropImage.src = imageSrc;
-                
-                cropModal.classList.add('active');
-                
-                // Eski cropper'ı temizle
-                if (cropper) {
-                    cropper.destroy();
-                }
-                
-                // Yeni cropper oluştur
-                cropper = new Cropper(cropImage, {
-                    aspectRatio: 1200 / 630,
-                    viewMode: 1,
-                    autoCropArea: 0.8,
-                    responsive: true,
-                    guides: true,
-                    center: true,
-                    background: false,
-                    movable: true,
-                    rotatable: false,
-                    scalable: false,
-                    zoomable: true,
-                    zoomOnTouch: true,
-                    zoomOnWheel: true,
-                    wheelZoomRatio: 0.1,
-                    cropBoxMovable: true,
-                    cropBoxResizable: true,
-                    toggleDragModeOnDblclick: false,
-                    minCanvasWidth: 100,
-                    minCanvasHeight: 100,
-                    minCropBoxWidth: 100,
-                    minCropBoxHeight: 100,
-                    ready: function() {
-                        // Görselin orijinal boyutundan daha büyük kırpma yapılmasını engelle
-                        const canvasData = cropper.getCanvasData();
-                        const cropBoxData = cropper.getCropBoxData();
-                        
-                        // Kırpma kutusunun görsel alanından daha büyük olmamasını sağla
-                        if (cropBoxData.width > canvasData.width) {
-                            cropper.setCropBoxData({
-                                width: canvasData.width
-                            });
-                        }
-                        if (cropBoxData.height > canvasData.height) {
-                            cropper.setCropBoxData({
-                                height: canvasData.height
-                            });
-                        }
-                    }
-                });
-            }
-            
-            // Modalı kapat
-            function closeCropModalFunc() {
-                cropModal.classList.remove('active');
-                if (cropper) {
-                    cropper.destroy();
-                    cropper = null;
-                }
-            }
-            
-            // Kapatma butonları
-            if (closeCropModal) {
-                closeCropModal.addEventListener('click', closeCropModalFunc);
-            }
-            
-            if (cancelCrop) {
-                cancelCrop.addEventListener('click', closeCropModalFunc);
-            }
-            
-            // Kırpma butonu
-            if (cropImageBtn) {
-                cropImageBtn.addEventListener('click', async function() {
-                    if (!cropper || !coverImageFile) {
-                        showToast('Kırpılacak görsel bulunamadı', 'error');
-                        return;
-                    }
-                    
-                    try {
-                        // Kırpılmış görseli al
-                        const canvas = cropper.getCroppedCanvas({
-                            width: 1200,
-                            height: 630,
-                            fillColor: '#fff',
-                            imageSmoothingEnabled: true,
-                            imageSmoothingQuality: 'high'
-                        });
-                        
-                        if (!canvas) {
-                            showToast('Kırpma işlemi başarısız', 'error');
-                            return;
-                        }
-                        
-                        // Canvas'ı blob'a çevir
-                        canvas.toBlob(async function(blob) {
-                            if (!blob) {
-                                showToast('Görsel oluşturulamadı', 'error');
-                                return;
-                            }
-                            
-                            // Blob'dan dosya oluştur
-                            const croppedFile = new File([blob], coverImageFile.name, {
-                                type: coverImageFile.type,
-                                lastModified: Date.now()
-                            });
-                            
-                            // ImageKit'e yükle
-                            const imageUrl = await uploadImageToImageKit(croppedFile);
-                            
-                            if (imageUrl) {
-                                // Kapak fotoğrafı alanına URL'yi yaz
-                                document.getElementById('featuredImage').value = imageUrl;
-                                
-                                // Önizlemeyi güncelle
-                                const previewImg = document.getElementById('coverImagePreviewImg');
-                                if (previewImg) {
-                                    previewImg.src = imageUrl;
-                                    document.getElementById('coverImagePreview').classList.add('active');
-                                }
-                                
-                                showToast('Kapak fotoğrafı başarıyla yüklendi', 'success');
-                                closeCropModalFunc();
-                            }
-                        }, coverImageFile.type);
-                        
-                    } catch (error) {
-                        console.error('Kırpma hatası:', error);
-                        showToast('Kırpma işlemi sırasında hata oluştu', 'error');
-                    }
-                });
-            }
-        }
-        
-        // ImageKit'e görsel yükleme fonksiyonu (kapak fotoğrafı için)
-        async function uploadImageToImageKit(file) {
-            try {
-                // Authentication parametrelerini al
-                const authResponse = await fetch(CONFIG.IMAGEKIT_AUTH_ENDPOINT);
-                
-                if (!authResponse.ok) {
-                    throw new Error(`Auth endpoint error: ${authResponse.status}`);
-                }
-                
-                const authData = await authResponse.json();
-                
-                // FormData oluştur
-                const formData = new FormData();
-                formData.append('file', file);
-                formData.append('fileName', file.name);
-                formData.append('signature', authData.signature);
-                formData.append('token', authData.token);
-                formData.append('expire', authData.expire);
-                formData.append('publicKey', authData.publicKey);
-                
-                // ImageKit'e yükle
-                const uploadResponse = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                if (!uploadResponse.ok) {
-                    const errorText = await uploadResponse.text();
-                    throw new Error(`Upload error: ${uploadResponse.status} - ${errorText}`);
-                }
-                
-                const uploadData = await uploadResponse.json();
-                return uploadData.url;
-                
-            } catch (error) {
-                console.error('Görsel yükleme hatası:', error);
-                showToast('Görsel yüklenirken hata oluştu: ' + error.message, 'error');
-                return null;
-            }
         }
 
         // Confirm Dialog
@@ -1007,6 +2688,7 @@
             }
             
             recentArticles.forEach(article => {
+                const date = new Date(article.published_date || article.date).toLocaleDateString('tr-TR');
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
@@ -1040,7 +2722,7 @@
             if (articlesData.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="7" class="text-center" style="padding: 40px; color: var(--text-muted);">
+                        <td colspan="8" class="text-center" style="padding: 40px; color: var(--text-muted);">
                             Henüz makale bulunmuyor
                         </td>
                     </tr>
@@ -1051,6 +2733,7 @@
             articlesData.forEach(article => {
                 const row = document.createElement('tr');
                 const date = new Date(article.published_date || article.date).toLocaleDateString('tr-TR');
+                const lastUpdated = article.last_updated ? new Date(article.last_updated).toLocaleDateString('tr-TR') : '-';
                 
                 row.innerHTML = `
                     <td>${article.id}</td>
@@ -1061,6 +2744,7 @@
                     <td>${date}</td>
                     <td>${article.views || 0}</td>
                     <td>${article.likes || 0}</td>
+                    <td>${lastUpdated}</td>
                     <td>
                         <div class="action-buttons">
                             <button class="btn btn-info btn-sm" onclick="editArticle(${article.id})">
@@ -1509,6 +3193,269 @@
             }
         }
 
+        // Image Cropping Functions
+        function setupImageCropping() {
+            const selectCoverBtn = document.getElementById('selectCoverImage');
+            const cropImageInput = document.getElementById('cropImageInput');
+            const closeCropModal = document.getElementById('closeCropModal');
+            const cancelCrop = document.getElementById('cancelCrop');
+            const applyCrop = document.getElementById('applyCrop');
+            const rotateLeft = document.getElementById('rotateLeft');
+            const rotateRight = document.getElementById('rotateRight');
+            const resetCrop = document.getElementById('resetCrop');
+            const aspectRatioBtns = document.querySelectorAll('.aspect-ratio-btn');
+            
+            // Kapak fotoğrafı seç butonu
+            selectCoverBtn.addEventListener('click', () => {
+                showModal('cropModal');
+            });
+            
+            // Görsel yükleme input'u
+            cropImageInput.addEventListener('change', function(e) {
+                if (this.files && this.files[0]) {
+                    const file = this.files[0];
+                    
+                    if (!file.type.startsWith('image/')) {
+                        showToast('Lütfen bir resim dosyası seçin', 'error');
+                        return;
+                    }
+                    
+                    if (file.size > 5 * 1024 * 1024) {
+                        showToast('Resim dosyası çok büyük (max 5MB)', 'error');
+                        return;
+                    }
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const imageToCrop = document.getElementById('imageToCrop');
+                        imageToCrop.src = e.target.result;
+                        imageToCrop.style.display = 'block';
+                        
+                        // Destroy existing cropper
+                        if (cropper) {
+                            cropper.destroy();
+                        }
+                        
+                        // Initialize cropper with aspect ratio constraint
+                        cropper = new Cropper(imageToCrop, {
+                            aspectRatio: currentAspectRatio,
+                            viewMode: 1,
+                            autoCropArea: 1,
+                            responsive: true,
+                            restore: true,
+                            checkCrossOrigin: false,
+                            cropBoxResizable: true,
+                            cropBoxMovable: true,
+                            toggleDragModeOnDblclick: false,
+                            minCropBoxWidth: 100,
+                            minCropBoxHeight: 100,
+                            maxCropBoxWidth: MAX_COVER_WIDTH,
+                            maxCropBoxHeight: MAX_COVER_HEIGHT,
+                            ready: function() {
+                                // Update preview
+                                updateCropPreview();
+                            },
+                            crop: function() {
+                                // Update preview on crop
+                                updateCropPreview();
+                            }
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // Aspect ratio butonları
+            aspectRatioBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    aspectRatioBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const ratio = this.dataset.ratio;
+                    if (ratio === 'free') {
+                        currentAspectRatio = NaN;
+                    } else if (ratio === '1200/630') {
+                        currentAspectRatio = 1200/630;
+                    } else {
+                        const [width, height] = ratio.split('/').map(Number);
+                        currentAspectRatio = width / height;
+                    }
+                    
+                    if (cropper) {
+                        cropper.setAspectRatio(currentAspectRatio);
+                        
+                        // Kapak boyutu için özel kısıtlama
+                        if (ratio === '1200/630') {
+                            const cropBoxData = cropper.getCropBoxData();
+                            if (cropBoxData.width > MAX_COVER_WIDTH) {
+                                cropBoxData.width = MAX_COVER_WIDTH;
+                            }
+                            if (cropBoxData.height > MAX_COVER_HEIGHT) {
+                                cropBoxData.height = MAX_COVER_HEIGHT;
+                            }
+                            cropper.setCropBoxData(cropBoxData);
+                        }
+                    }
+                });
+            });
+            
+            // Döndürme butonları
+            rotateLeft.addEventListener('click', () => {
+                if (cropper) {
+                    cropper.rotate(-90);
+                }
+            });
+            
+            rotateRight.addEventListener('click', () => {
+                if (cropper) {
+                    cropper.rotate(90);
+                }
+            });
+            
+            // Sıfırla butonu
+            resetCrop.addEventListener('click', () => {
+                if (cropper) {
+                    cropper.reset();
+                }
+            });
+            
+            // Kırp ve uygula butonu
+            applyCrop.addEventListener('click', async () => {
+                if (!cropper) {
+                    showToast('Lütfen önce bir görsel yükleyin', 'error');
+                    return;
+                }
+                
+                try {
+                    // Get cropped canvas
+                    const canvas = cropper.getCroppedCanvas({
+                        width: MAX_COVER_WIDTH,
+                        height: MAX_COVER_HEIGHT,
+                        fillColor: '#000',
+                        imageSmoothingEnabled: true,
+                        imageSmoothingQuality: 'high'
+                    });
+                    
+                    // Convert canvas to blob
+                    canvas.toBlob(async (blob) => {
+                        // Create form data for ImageKit upload
+                        const formData = new FormData();
+                        formData.append('file', blob, `cover-${Date.now()}.jpg`);
+                        
+                        // Get authentication parameters
+                        const authResponse = await fetch(CONFIG.IMAGEKIT_AUTH_ENDPOINT);
+                        if (!authResponse.ok) {
+                            throw new Error(`Auth endpoint error: ${authResponse.status}`);
+                        }
+                        
+                        const authData = await authResponse.json();
+                        formData.append('fileName', `cover-${Date.now()}.jpg`);
+                        formData.append('signature', authData.signature);
+                        formData.append('token', authData.token);
+                        formData.append('expire', authData.expire);
+                        formData.append('publicKey', authData.publicKey);
+                        
+                        // Show loading
+                        applyCrop.disabled = true;
+                        applyCrop.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Yükleniyor...';
+                        
+                        // Upload to ImageKit
+                        const uploadResponse = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        
+                        if (!uploadResponse.ok) {
+                            const errorText = await uploadResponse.text();
+                            throw new Error(`Upload error: ${uploadResponse.status} - ${errorText}`);
+                        }
+                        
+                        const uploadData = await uploadResponse.json();
+                        
+                        // Update featured image input
+                        document.getElementById('featuredImage').value = uploadData.url;
+                        
+                        // Add to uploaded images if not already there
+                        if (!uploadedImages.includes(uploadData.url)) {
+                            uploadedImages.push(uploadData.url);
+                            updateImagePreview();
+                        }
+                        
+                        // Reset and close modal
+                        resetCropModal();
+                        hideModal('cropModal');
+                        
+                        showToast('Kapak fotoğrafı başarıyla yüklendi ve ayarlandı', 'success');
+                        
+                    }, 'image/jpeg', 0.9);
+                    
+                } catch (error) {
+                    console.error('Error cropping and uploading image:', error);
+                    showToast('Görsel işlenirken hata oluştu: ' + error.message, 'error');
+                    applyCrop.disabled = false;
+                    applyCrop.innerHTML = '<i class="fas fa-crop"></i> Kırp ve Uygula';
+                }
+            });
+            
+            // İptal ve kapatma butonları
+            closeCropModal.addEventListener('click', () => {
+                resetCropModal();
+                hideModal('cropModal');
+            });
+            
+            cancelCrop.addEventListener('click', () => {
+                resetCropModal();
+                hideModal('cropModal');
+            });
+            
+            // Modal dışına tıklama ile kapatma
+            document.getElementById('cropModal').addEventListener('click', (e) => {
+                if (e.target.id === 'cropModal') {
+                    resetCropModal();
+                    hideModal('cropModal');
+                }
+            });
+        }
+        
+        function resetCropModal() {
+            const cropImageInput = document.getElementById('cropImageInput');
+            const imageToCrop = document.getElementById('imageToCrop');
+            const applyCrop = document.getElementById('applyCrop');
+            
+            // Reset inputs
+            cropImageInput.value = '';
+            imageToCrop.src = '';
+            imageToCrop.style.display = 'none';
+            
+            // Reset cropper
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+            
+            // Reset button
+            applyCrop.disabled = false;
+            applyCrop.innerHTML = '<i class="fas fa-crop"></i> Kırp ve Uygula';
+            
+            // Reset preview
+            document.getElementById('cropPreview').innerHTML = '';
+        }
+        
+        function updateCropPreview() {
+            if (!cropper) return;
+            
+            const preview = document.getElementById('cropPreview');
+            const canvas = cropper.getCroppedCanvas({
+                width: 150,
+                height: 100
+            });
+            
+            preview.innerHTML = '';
+            if (canvas) {
+                preview.appendChild(canvas);
+            }
+        }
+
         // Article Editor Functions
         function initEditor() {
             // Custom image handler for Quill that uploads directly to ImageKit
@@ -1647,11 +3594,11 @@
             // Setup image upload
             setupImageUpload();
             
+            // Setup image cropping
+            setupImageCropping();
+            
             // Setup autosave
             setupAutoSave();
-            
-            // Setup cover image cropping
-            initCoverImageCropping();
         }
 
         function setupTagSystem() {
@@ -1753,15 +3700,6 @@
                             renderTags();
                             updateImagePreview();
                             
-                            // Kapak fotoğrafı önizlemesini güncelle
-                            if (draftData.featured_image) {
-                                const previewImg = document.getElementById('coverImagePreviewImg');
-                                if (previewImg) {
-                                    previewImg.src = draftData.featured_image;
-                                    document.getElementById('coverImagePreview').classList.add('active');
-                                }
-                            }
-                            
                             showToast(`Taslak yüklendi (${new Date(draftData.savedAt).toLocaleTimeString('tr-TR')})`, 'info');
                         }
                     }
@@ -1780,8 +3718,6 @@
             selectedFiles = [];
             activeEditor = null;
             showUrlList = false;
-            coverImageFile = null;
-            coverImagePreviewUrl = null;
             
             // Reset form
             document.getElementById('articleTitle').value = '';
@@ -1804,13 +3740,6 @@
             updateImagePreview();
             document.getElementById('urlListContainer').style.display = 'none';
             document.getElementById('toggleUrlListBtn').innerHTML = '<i class="fas fa-eye"></i> URL\'leri Göster';
-            
-            // Kapak fotoğrafı önizlemesini sıfırla
-            const previewImg = document.getElementById('coverImagePreviewImg');
-            if (previewImg) {
-                previewImg.src = '';
-                document.getElementById('coverImagePreview').classList.remove('active');
-            }
             
             // Update UI
             document.querySelector('#editor .section-title').innerHTML = '<i class="fas fa-edit"></i> Yeni Makale';
@@ -1843,12 +3772,13 @@
                 // FIXED: Görüntüleme ve beğeni sayılarını koru
                 views: existingArticle ? (existingArticle.views || 0) : 0,
                 likes: existingArticle ? (existingArticle.likes || 0) : 0,
-                comments_count: existingArticle ? (existingArticle.comments_count || 0) : 0
+                comments_count: existingArticle ? (existingArticle.comments_count || 0) : 0,
+                // Son düzenleme tarihi ekle
+                last_updated: new Date().toISOString()
             };
         }
 
         // Save Article Function - FIXED: Preserve stats when saving
-        // DEĞİŞİKLİK: Son düzenleme tarihi ekleme
         async function saveArticle(publish = false) {
             const articleData = getArticleFormData();
             
@@ -1873,35 +3803,6 @@
             try {
                 // Mevcut verileri yükle
                 await loadArticles();
-                
-                // Eğer yayınlama işlemiyse, son düzenleme tarihini ekle
-                if (publish) {
-                    const now = new Date();
-                    const formattedDate = now.toLocaleDateString('tr-TR', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
-                    
-                    // Son düzenleme tarihini içeriğin en altına ekle
-                    const lastUpdatedHtml = `<div class="last-updated-info">Last updated: ${formattedDate}</div>`;
-                    
-                    // İngilizce içeriğe ekle
-                    if (articleData.content) {
-                        // Eğer zaten son düzenleme tarihi varsa onu kaldır
-                        articleData.content = articleData.content.replace(/<div class="last-updated-info">[\s\S]*?<\/div>/g, '');
-                        articleData.content += lastUpdatedHtml;
-                    }
-                    
-                    // Türkçe içeriğe ekle (eğer varsa)
-                    if (articleData.content_tr) {
-                        // Eğer zaten son düzenleme tarihi varsa onu kaldır
-                        articleData.content_tr = articleData.content_tr.replace(/<div class="last-updated-info">[\s\S]*?<\/div>/g, '');
-                        articleData.content_tr += lastUpdatedHtml;
-                    }
-                }
                 
                 let updatedArticles;
                 if (isEditing && currentArticleId) {
@@ -2004,15 +3905,6 @@
             renderTags();
             updateImagePreview();
             
-            // Kapak fotoğrafı önizlemesini güncelle
-            if (article.featured_image) {
-                const previewImg = document.getElementById('coverImagePreviewImg');
-                if (previewImg) {
-                    previewImg.src = article.featured_image;
-                    document.getElementById('coverImagePreview').classList.add('active');
-                }
-            }
-            
             // Navigate to editor
             switchToSection('editor');
             document.querySelector('#editor .section-title').innerHTML = `<i class="fas fa-edit"></i> Makaleyi Düzenle: ${article.title.substring(0, 30)}...`;
@@ -2056,6 +3948,7 @@
                 <p><strong>Kategori:</strong> ${article.category}</p>
                 <p><strong>Yazar:</strong> ${article.author}</p>
                 <p><strong>Tarih:</strong> ${new Date(article.published_date || article.date).toLocaleDateString('tr-TR')}</p>
+                ${article.last_updated ? `<p><strong>Son Güncelleme:</strong> ${new Date(article.last_updated).toLocaleDateString('tr-TR')} ${new Date(article.last_updated).toLocaleTimeString('tr-TR')}</p>` : ''}
                 <p><strong>Görüntülenme:</strong> ${article.views || 0}</p>
                 <p><strong>Beğeni:</strong> ${article.likes || 0}</p>
                 <p><strong>Okuma Süresi:</strong> ${article.reading_time || 5} dakika</p>
@@ -2241,6 +4134,7 @@
                         
                         <p><strong>Kategori:</strong> ${article.category}</p>
                         <p><strong>Yayın Tarihi:</strong> ${new Date(article.published_date || article.date).toLocaleDateString('tr-TR')}</p>
+                        ${article.last_updated ? `<p><strong>Son Güncelleme:</strong> ${new Date(article.last_updated).toLocaleDateString('tr-TR')}</p>` : ''}
                         <p><strong>Görüntülenme:</strong> ${article.views || 0}</p>
                         <p><strong>Beğeni:</strong> ${article.likes || 0}</p>
                         
@@ -2277,6 +4171,7 @@ ${article.title_tr ? `Türkçe Başlık: ${article.title_tr}` : ''}
 
 Kategori: ${article.category}
 Yayın Tarihi: ${new Date(article.published_date || article.date).toLocaleDateString('tr-TR')}
+${article.last_updated ? `Son Güncelleme: ${new Date(article.last_updated).toLocaleDateString('tr-TR')}\n` : ''}
 Görüntülenme: ${article.views || 0}
 Beğeni: ${article.likes || 0}
 
@@ -2406,6 +4301,7 @@ Abonelikten çıkmak için: https://adembayazit.com/unsubscribe
                     <p><strong>Kategori:</strong> ${articleData.category || 'Belirtilmemiş'}</p>
                     <p><strong>Yazar:</strong> ${articleData.author}</p>
                     <p><strong>Okuma Süresi:</strong> ${articleData.reading_time} dakika</p>
+                    ${articleData.last_updated ? `<p><strong>Son Güncelleme:</strong> ${new Date(articleData.last_updated).toLocaleDateString('tr-TR')} ${new Date(articleData.last_updated).toLocaleTimeString('tr-TR')}</p>` : ''}
                     <hr>
                     <div>${articleData.content || 'İçerik yok'}</div>
                     ${articleData.content_tr ? `<hr><h4>Türkçe İçerik:</h4><div>${articleData.content_tr}</div>` : ''}
@@ -2491,6 +4387,7 @@ Abonelikten çıkmak için: https://adembayazit.com/unsubscribe
             
             // Modal close buttons
             document.getElementById('closePreview').addEventListener('click', () => hideModal('previewModal'));
+            document.getElementById('closeCropModal').addEventListener('click', () => hideModal('cropModal'));
             
             // Load draft if available
             loadDraft();
@@ -2518,13 +4415,6 @@ Abonelikten çıkmak için: https://adembayazit.com/unsubscribe
                 if (event.target.classList.contains('modal')) {
                     hideModal(event.target.id);
                 }
-                if (event.target.classList.contains('crop-modal')) {
-                    document.getElementById('cropModal').classList.remove('active');
-                    if (cropper) {
-                        cropper.destroy();
-                        cropper = null;
-                    }
-                }
             });
             
             // Handle escape key
@@ -2532,14 +4422,7 @@ Abonelikten çıkmak için: https://adembayazit.com/unsubscribe
                 if (event.key === 'Escape') {
                     hideModal('previewModal');
                     hideModal('confirmModal');
-                    const cropModal = document.getElementById('cropModal');
-                    if (cropModal.classList.contains('active')) {
-                        cropModal.classList.remove('active');
-                        if (cropper) {
-                            cropper.destroy();
-                            cropper = null;
-                        }
-                    }
+                    hideModal('cropModal');
                     if (window.innerWidth <= 992 && isSidebarOpen) {
                         closeSidebar();
                     }
