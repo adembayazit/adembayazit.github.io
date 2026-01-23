@@ -1963,7 +1963,17 @@
                     <strong>Tags:</strong> ${article.tags.map(tag => `<span style="background: rgba(0,255,0,0.2); padding: 2px 8px; border-radius: 12px; margin: 0 2px; font-size: 0.8em;">${tag}</span>`).join('')}
                 </div>`;
             }
-            
+            // Son güncelleme tarihini formatla - BU SATIRI EKLEYİN
+            const lastUpdatedHtml = article.last_updated ? 
+                `<div class="detail-updated" style="margin-top: 10px; color: var(--highlight-color); font-size: 0.9rem;">
+                    <i class="fas fa-history"></i> Last updated: ${new Date(article.last_updated).toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'short', 
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    })}
+                </div>` : '';
             // Çeviri butonu HTML'i - masaüstü için detail-meta-buttons içinde
             const translationButtonHtml = article.content_tr ? `
                 <button class="translation-toggle" id="translationToggle">
