@@ -541,7 +541,7 @@ async function initializeApp() {
         if (el.querySelector(".entry") || el.querySelector(".entry-group")) return;
 
         el.innerHTML = '<div class="error">Veriler yüklenirken bir hata oluştu</div>';
-      }, 1500);
+      }, 7000);
     }
   }
 }
