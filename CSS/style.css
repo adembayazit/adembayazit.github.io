@@ -1490,3 +1490,42 @@ canvas {
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
 }
+
+/* ===============================
+   CLEAN LANDSCAPE FIX (TEK BLOK)
+   =============================== */
+@media (max-width: 932px) and (orientation: landscape){
+
+  /* HOME: header fixed olduğu için yukarı çakışmayı kes */
+  .home{
+    height: auto !important;
+    min-height: 100dvh !important;
+  }
+
+  /* HOME-IMG: görünür + biraz aşağı */
+  .home-img{
+    opacity: 1 !important;
+    margin-top: 18px !important;
+    animation: zoomIn 0.8s ease forwards, floatMargin 5s ease-in-out infinite !important;
+    animation-delay: 0s, 0s !important;
+  }
+
+  /* Float: transform yerine margin (çemberin dönüşü bozulmaz) */
+  @keyframes floatMargin{
+    0%,100%{ margin-top: 18px; }
+    50%{ margin-top: 10px; }
+  }
+
+  /* Fotoğrafı daire içinde ortala (top:0 sorununu bitir) */
+  .image img{
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+  }
+
+  /* Çember dönsün (span varsa) */
+  .glowing-circle span{
+    animation: circleRotate 3s linear infinite !important;
+  }
+}
+
