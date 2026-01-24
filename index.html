@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>Ethical Hacker | Adem Bayazıt</title>
+    
     <!-- Open Graph (Facebook, WhatsApp, LinkedIn vs.) -->   
     <meta property="og:title" content="Adem Bayazıt | Ethical Hacker" />
     <meta property="og:description" content="Ethical Hacker, Cyber Security Analyst ve Linux Enthusiast." />
@@ -24,6 +25,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
+    
     <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -31,925 +33,1235 @@
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-TFN7XD9Z');</script>
     <!-- End Google Tag Manager -->
+    
     <style>
-      html {
-        scroll-behavior: smooth;
-      }
-      
-      /* Logo ve slogan için stil */
-      .logo-container {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-      }
-      
-      .logo-slogan {
-        font-size: 10px;
-        color: white;
-        margin-top: 2px;
-        font-style: italic;
-        letter-spacing: 0.5px;
-        white-space: nowrap;
-        text-align: right;
-        width: 100%;
-        padding-right: 5px;
-      }
-      
-      /* Navbar için responsive ayarlar */
-      .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 5%;
-      }
-      
-      /* Mikroblog için iki sütunlu düzen */
-      .microblog-container {
-        display: flex;
-        gap: 30px;
-        margin-top: 30px;
-      }
-
-      .entries-column {
-        flex: 1;
-        max-width: 100%;
-      }
-
-      .explanation-column {
-        flex: 1;
-      }
-
-      .explanation-content {
-        background: rgba(10, 25, 20, 0.7);
-        border-radius: 20px;
-        padding: 20px;
-        border: 1px solid rgba(0, 255, 0, 0.3);
-        box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);
-        position: relative;
-        overflow: hidden;
-        font-size: 0.8rem;
-      }
-
-      .explanation-content h3 {
-        color: white;
-        margin-bottom: 15px;
-        font-size: 0.9rem;
-        border-bottom: 1px solid rgba(249, 215, 28, 0.3);
-        padding-bottom: 10px;
-      }
-
-      .explanation-content p {
-        margin-bottom: 15px;
-        line-height: 1.6;
-      }
-
-      .toggle-explanation {
-        display: none;
-        background: rgba(0, 100, 0, 0.5);
-        color: #f9d71c;
-        border: 1px solid rgba(249, 215, 28, 0.3);
-        padding: 8px 15px;
-        border-radius: 5px;
-        margin-top: 15px;
-        cursor: pointer;
-        transition: all 0.3s;
-      }
-
-      .toggle-explanation:hover {
-        background: rgba(0, 100, 0, 0.7);
-      }
-
-      /* YENİ MODAL STİLLERİ - İNCE UZUN YATAY NAVBAR */
-      .modal {
-        display: none;
-        position: fixed;
-        z-index: 10000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background: radial-gradient(circle at center, rgba(10, 30, 20, 0.95) 0%, rgba(5, 15, 10, 0.98) 100%);
-        overflow: hidden;
-        opacity: 0;
-        transition: opacity 0.4s ease;
-      }
-
-      .modal.show {
-        opacity: 1;
-      }
-
-      .modal-content-container {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .modal-image-wrapper {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-        box-sizing: border-box;
-        max-height: calc(100vh - 120px);
-      }
-
-      .modal-content {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-        border-radius: 8px;
-        box-shadow: 0 0 40px rgba(0, 255, 128, 0.2);
-        border: 1px solid rgba(0, 255, 128, 0.1);
-        transition: all 0.3s ease;
-      }
-
-      .modal.show .modal-content {
-        animation: imageGlow 3s ease-in-out infinite alternate;
-      }
-
-      @keyframes imageGlow {
-        0% { box-shadow: 0 0 30px rgba(0, 255, 128, 0.2); }
-        100% { box-shadow: 0 0 50px rgba(0, 255, 128, 0.4); }
-      }
-
-      .close {
-        position: absolute;
-        top: 20px;
-        right: 25px;
-        color: #f1f1f1;
-        font-size: 35px;
-        font-weight: bold;
-        cursor: pointer;
-        z-index: 10010;
-        opacity: 0.8;
-        transition: all 0.3s;
-        background: rgba(0, 0, 0, 0.6);
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(249, 215, 28, 0.3);
-      }
-
-      .close:hover {
-        opacity: 1;
-        background: rgba(200, 0, 0, 0.7);
-        transform: rotate(90deg);
-      }
-
-      /* YENİ MODAL NAVBAR - İNCE UZUN YATAY */
-      .modal-navbar {
-        background: linear-gradient(135deg, rgba(15, 35, 25, 0.95) 0%, rgba(8, 20, 15, 0.98) 100%);
-        border-top: 1px solid rgba(0, 255, 128, 0.2);
-        box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(15px);
-        display: flex;
-        flex-direction: column;
-        padding: 15px 20px;
-        min-height: 120px;
-      }
-
-      .modal-nav-top {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 15px;
-      }
-
-      .modal-thumbnails {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        flex: 1;
-        justify-content:space-evenly;
-      }
-
-      .modal-thumb {
-        width: 80px;
-        height: 50px;
-        object-fit: cover;
-        border-radius: 4px;
-        cursor: pointer;
-        opacity: 0.7;
-        transition: all 0.3s ease;
-        border: 1px solid transparent;
-      }
-
-      .modal-thumb:hover {
-        opacity: 1;
-        transform: scale(1.05);
-      }
-
-      .modal-thumb.active {
-        opacity: 1;
-        border: 2px solid #f9d71c;
-        box-shadow: 0 0 8px rgba(249, 215, 28, 0.5);
-      }
-
-      .modal-nav-center {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-      }
-
-      .modal-counter {
-        background: rgba(0, 0, 0, 0.4);
-        padding: 8px 20px;
-        border-radius: 20px;
-        font-size: 16px;
-        font-weight: bold;
-        color: #f9d71c;
-        border: 1px solid rgba(249, 215, 28, 0.3);
-        min-width: 80px;
-        text-align: center;
-      }
-
-      .modal-nav-buttons {
-        display: flex;
-        gap: 10px;
-        flex: 1;
-        justify-content: flex-end;
-      }
-
-      .nav-button {
-        background: linear-gradient(135deg, rgba(20, 45, 30, 0.9), rgba(10, 25, 15, 0.9));
-        color: white;
-        border: 1px solid rgba(0, 255, 128, 0.3);
-        padding: 10px 18px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 15px;
-        font-weight: bold;
-        transition: all 0.3s ease;
-        min-width: 50px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .nav-button:hover {
-        background: linear-gradient(135deg, rgba(30, 65, 40, 0.9), rgba(15, 35, 20, 0.9));
-        border-color: rgba(0, 255, 128, 0.6);
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0, 255, 128, 0.2);
-      }
-
-      .nav-button:active {
-        transform: translateY(0);
-      }
-
-      .modal-nav-bottom {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-
-      .modal-info-items {
-        display: flex;
-        gap: 25px;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-
-      .modal-info-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 14px;
-        color: #e0e0e0;
-      }
-
-      .modal-info-item i {
-        color: #f9d71c;
-        font-size: 14px;
-      }
-
-      /* Photographic Cryptology için yeni düzen */
-      .photo-gallery-header { margin-bottom: 30px; }
-
-      .gallery-actions {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 20px;
-        gap: 15px;
-      }
-
-      /* Küçük Photo Analysis Butonu */
-      .photo-analysis-btn {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        background: linear-gradient(135deg, rgba(15, 30, 25, 0.8), rgba(0, 80, 0, 0.6));
-        color: #f9d71c;
-        text-decoration: none;
-        padding: 8px 15px;
-        border-radius: 8px;
-        border: 1px solid rgba(249, 215, 28, 0.3);
-        box-shadow: 0 2px 8px rgba(0, 255, 0, 0.15);
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-        backdrop-filter: blur(8px);
-        font-size: 0.8em;
-        min-height: 36px;
-        min-width: 120px;
-        justify-content: center;
-        order: 2;
-      }
-
-      .photo-analysis-btn::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(249, 215, 28, 0.08), transparent);
-        transition: left 0.6s;
-      }
-
-      .photo-analysis-btn:hover::before { left: 100%; }
-
-      .photo-analysis-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 255, 0, 0.25);
-        border-color: rgba(249, 215, 28, 0.5);
-      }
-
-      .photo-analysis-btn i { font-size: 0.9em; color: #f9d71c; }
-      .photo-analysis-btn .btn-text { font-weight: 500; letter-spacing: 0.3px; font-size: 0.85em; }
-
-      .photo-analysis-btn::after {
-        content: attr(data-tooltip);
-        position: absolute;
-        bottom: 100%;
-        left: 50%;
-        transform: translateX(-50%) translateY(-8px);
-        background: rgba(0, 0, 0, 0.85);
-        color: white;
-        padding: 6px 10px;
-        border-radius: 4px;
-        font-size: 0.7em;
-        white-space: nowrap;
-        opacity: 0;
-        pointer-events: none;
-        transition: all 0.3s ease;
-        border: 1px solid rgba(249, 215, 28, 0.2);
-        z-index: 1000;
-      }
-
-      .photo-analysis-btn:hover::after {
-        opacity: 1;
-        transform: translateX(-50%) translateY(-4px);
-      }
-
-      .load-more { order: 1; margin-right: auto; }
-
-      @keyframes subtleGlow {
-        0%, 100% { box-shadow: 0 2px 8px rgba(0, 255, 0, 0.15); }
-        50% { box-shadow: 0 2px 12px rgba(0, 255, 0, 0.25); }
-      }
-
-      .photo-analysis-btn { animation: subtleGlow 4s ease-in-out infinite; }
-
-      .keyboard-shortcuts {
-        position: absolute;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        color: white;
-        font-size: 12px;
-        background: rgba(0, 0, 0, 0.7);
-        padding: 5px 10px;
-        border-radius: 5px;
-        z-index: 10010;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-      }
-
-      .latest-articles { padding: 60px 20px; }
-
-      .latest-articles .section-title {
-        text-align: center;
-        font-size: 1.5rem;
-        margin-bottom: 1rem;
-        color: white;
-        text-shadow: 0 0 10px rgba(0, 255, 0, 0.7);
-        width: 100%;
-      }
-
-      .latest-articles .last-entry {
-        text-align: center;
-        color: #ccc;
-        margin-bottom: 30px;
-        font-size: 0.9rem;
-      }
-
-      .entries-column,
-      .gallery-wrapper,
-      .articles-grid-container {
-        width: 100%;
-        max-width: 100%;
-        margin: 0 auto;
-      }
-
-      .microblog .container,
-      .photo-gallery .container,
-      .latest-articles .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 20px;
-      }
-
-      .articles-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 25px;
-        margin-top: 30px;
-        width: 100%;
-      }
-
-      .article-card {
-        background: rgba(10, 25, 20, 0.7);
-        border: 1px solid rgba(0, 255, 0, 0.3);
-        border-radius: 15px;
-        padding: 20px;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        position: relative;
-        overflow: hidden;
-        width: 100%;
-      }
-
-      .article-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 25px rgba(0, 255, 0, 0.2);
-        border-color: rgba(0, 255, 0, 0.5);
-      }
-
-      .article-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.05), transparent);
-        transition: left 0.6s;
-      }
-
-      .article-card:hover::before { left: 100%; }
-
-      .article-title {
-        font-size: 1.1rem;
-        color: white;
-        margin-bottom: 12px;
-        line-height: 1.4;
-        font-weight: 600;
-        height: 60px;
-        overflow: hidden;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-      }
-
-      .article-meta {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 0.8rem;
-        color: #ccc;
-        margin-bottom: 15px;
-        flex-wrap: wrap;
-        gap: 10px;
-      }
-
-      .article-category {
-        background: rgba(0, 255, 0, 0.2);
-        padding: 4px 10px;
-        border-radius: 15px;
-        color: #00ff00;
-        font-size: 0.75rem;
-        font-weight: 500;
-      }
-
-      .article-excerpt {
-        font-size: 0.9rem;
-        color: #aaa;
-        line-height: 1.6;
-        flex-grow: 1;
-        margin-bottom: 15px;
-        height: 60px;
-        overflow: hidden;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-      }
-
-      .article-stats {
-        display: flex;
-        gap: 20px;
-        margin-top: 15px;
-        font-size: 0.8rem;
-        color: #00ff00;
-        border-top: 1px solid rgba(0, 255, 0, 0.1);
-        padding-top: 15px;
-      }
-
-      .article-stat { display: flex; align-items: center; gap: 6px; }
-      .article-stat i { font-size: 0.9rem; }
-
-      .loading-articles {
-        text-align: center;
-        padding: 40px;
-        color: #00ff00;
-        grid-column: 1 / -1;
-      }
-
-      .no-articles {
-        text-align: center;
-        padding: 40px;
-        color: #ccc;
-        grid-column: 1 / -1;
-      }
-
-      .entries-loading {
-        text-align: center;
-        padding: 40px;
-        color: #00ff00;
-      }
-
-      .entries-loading i {
-        font-size: 2rem;
-        margin-bottom: 15px;
-      }
-
-      .gallery-grid {
-        display: grid;
-        gap: 20px;
-        margin-top: 20px;
-        width: 100%;
-      }
-
-      .gallery-photo {
-        width: 100%;
-        height: 200px;
-        object-fit: cover;
-        border-radius: 10px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        border: 1px solid rgba(0, 255, 0, 0.3);
-      }
-
-      .gallery-photo:hover {
-        transform: scale(1.03);
-        box-shadow: 0 5px 20px rgba(0, 255, 0, 0.3);
-        border-color: rgba(0, 255, 0, 0.6);
-      }
-
-      .entry-item { cursor: pointer; transition: all 0.3s ease; }
-      .entry-item:hover { background: rgba(0, 255, 0, 0.05); transform: translateX(5px); }
-
-      .touch-delay { touch-action: pan-y; }
-
-      @media (max-width: 1200px) {
-        .articles-grid { grid-template-columns: repeat(4, 1fr); gap: 20px; }
-        .article-title { height: 70px; }
-      }
-      @media (max-width: 768px) {
-        .microblog .container { padding-left: 0px; padding-right: 0px; max-width: 100%; }
-      }
-      @media (max-width: 480px) {
-        .microblog .container { padding-left: 0px; padding-right: 0px; }
-      }
-      @media (max-width: 992px) {
-        .microblog-container { flex-direction: column; }
-        .entries-column, .gallery-wrapper, .articles-grid-container { width: 100%; }
-
-        .explanation-content { max-height: 225px; overflow: hidden; transition: max-height 0.5s ease; }
-        .explanation-content.expanded { max-height: 1200px; }
-        .toggle-explanation { display: block; }
-
-        .modal-image-wrapper { max-height: calc(100vh - 150px); padding: 15px; }
-        .modal-navbar { min-height: 150px; padding: 12px 15px; }
-        .modal-nav-top { flex-direction: column; gap: 12px; margin-bottom: 12px; }
-        .modal-thumbnails { order: 2; justify-content: center; width: 100%; }
-        .modal-nav-center { order: 1; }
-        .modal-nav-buttons { order: 3; justify-content: center; width: 100%; }
-        .modal-thumb { width: 60px; height: 40px; }
-        .modal-info-items { gap: 15px; }
-        .modal-info-item { font-size: 12px; }
-        .nav-button { padding: 9px 15px; min-width: 60px; font-size: 16px; }
-        .close { top: 10px; right: 15px; width: 40px; height: 40px; font-size: 25px; }
-        .keyboard-shortcuts { font-size: 10px; top: 15px; padding: 4px 8px; }
-
-        .btn-box { min-height: 44px; padding: 12px 24px; display: flex; align-items: center; justify-content: center; }
-        #downloadCv { padding: 15px 25px; font-size: 16px; min-height: 50px; }
-
-        .gallery-actions { flex-direction: column; align-items: stretch; gap: 10px; }
-        .photo-analysis-btn { order: 2; align-self: flex-end; min-width: 110px; min-height: 40px; padding: 10px 12px; }
-        .load-more { order: 1; align-self: stretch; margin-right: 0; }
-
-        .gallery-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .gallery-photo { height: 150px; }
-        .photo-analysis-btn::after { display: none; }
-      }
-
-      @media (max-width: 768px) {
-        .latest-articles { padding: 40px 15px; }
-        .articles-grid { grid-template-columns: 1fr; gap: 15px; }
-        .article-card { padding: 15px; }
-        .article-title { font-size: 1rem; height: auto; -webkit-line-clamp: 3; }
-        .article-excerpt { height: auto; -webkit-line-clamp: 4; }
-        .gallery-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-        .gallery-photo { height: 120px; }
-      }
-
-      @media (max-width: 480px) {
-        .modal-navbar { min-height: 160px; padding: 10px 12px; }
-        .modal-info-items { flex-direction: column; align-items: center; gap: 8px; }
-        .modal-thumb { width: 50px; height: 35px; }
-        .modal-counter { font-size: 14px; padding: 6px 15px; }
-        .nav-button { padding: 8px 13px; min-width: 55px; font-size: 15px; }
-        .article-meta { flex-direction: column; align-items: flex-start; gap: 5px; }
-        .article-stats { justify-content: space-between; }
-        .gallery-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
-        .gallery-photo { height: 100px; }
-      }
-
-      /* ======================================================
-         MASTER PATCH (Articles + Gallery) — FINAL TEK BLOK
-      ====================================================== */
-      .articles-grid{
-        display: grid !important;
-        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important;
-        gap: 25px !important;
-        width: 100% !important;
-      }
-      .article-card{ min-width: 0 !important; }
-      .article-title, .article-excerpt{ min-width: 0 !important; }
-
-      @media (max-width: 992px){
-        .articles-grid{
-          grid-template-columns: repeat(2, 1fr) !important;
-          gap: 18px !important;
+        /* =============================================
+           TEMEL RESPONSIVE AYARLAR
+        ============================================= */
+        :root {
+            --primary-color: #00ff00;
+            --secondary-color: #f9d71c;
+            --bg-dark: rgba(10, 25, 20, 0.95);
+            --border-color: rgba(0, 255, 0, 0.3);
+            --card-bg: rgba(10, 25, 20, 0.7);
+            --container-max-width: 1200px;
+            --container-padding: 20px;
         }
-      }
-      @media (max-width: 768px){
-        .articles-grid{
-          grid-template-columns: 1fr !important;
-          gap: 15px !important;
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
-      }
-
-      .photo-gallery .container{
-        max-width: min(1800px, 94vw) !important;
-        margin-left: auto !important;
-        margin-right: auto !important;
-        padding-left: 20px !important;
-        padding-right: 20px !important;
-      }
-      .gallery-wrapper{
-        width: 100% !important;
-        max-width: 100% !important;
-        margin-left: auto !important;
-        margin-right: auto !important;
-      }
-      .gallery-grid{
-        width: 100% !important;
-        margin-left: auto !important;
-        margin-right: auto !important;
-        justify-content: center;
-      }
-      @media (min-width: 1200px){
-        .gallery-grid{
-          display: grid !important;
-          grid-template-columns: repeat(6, minmax(180px, 1fr)) !important;
-          gap: 14px !important;
+        
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
         }
-      }
-      @media (min-width: 992px) and (max-width: 1199px){
-        .gallery-grid{
-          grid-template-columns: repeat(4, minmax(180px, 1fr)) !important;
-          gap: 14px !important;
+        
+        body {
+            overflow-x: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-      }
-      @media (max-width: 767px){
-        .gallery-grid{
-          grid-template-columns: repeat(3, 1fr) !important;
-          gap: 8px !important;
+        
+        /* =============================================
+           HEADER VE NAVBAR - RESPONSIVE
+        ============================================= */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 5%;
+            width: 100%;
+            position: relative;
+            z-index: 1000;
+            background: rgba(5, 15, 10, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
         }
-      }
-      .gallery-photo{
-        width: 100% !important;
-        aspect-ratio: 1 / 1 !important;
-        height: auto !important;
-        object-fit: cover !important;
-        display: block !important;
-      }
-      .photo-analysis-btn{ margin-left:auto !important; margin-right:auto !important; }
-
-      @media (hover: none) and (pointer: coarse) {
+        
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            flex: 1;
+            max-width: 50%;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.4rem;
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+        }
+        
+        .hackerwhite-icon {
+            width: 30px;
+            height: 30px;
+            margin-right: 8px;
+        }
+        
+        .logo-slogan {
+            font-size: 0.7rem;
+            color: #aaa;
+            margin-top: 2px;
+            font-style: italic;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        
+        .navbar {
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+        }
+        
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .dropbtn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(15, 35, 25, 0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            border: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+        
+        .dropbtn:hover {
+            background: rgba(25, 55, 35, 0.9);
+        }
+        
+        .ata-icon {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background: var(--bg-dark);
+            min-width: 220px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            z-index: 1;
+            right: 0;
+            top: 100%;
+            margin-top: 5px;
+        }
+        
+        .dropdown-content a {
+            color: white;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .dropdown-content a:hover {
+            background: rgba(0, 255, 0, 0.1);
+        }
+        
+        .dropdown-content a img {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        
+        /* =============================================
+           HOME SECTION - RESPONSIVE
+        ============================================= */
+        .home {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 60px 5%;
+            min-height: 90vh;
+            flex-wrap: wrap;
+            gap: 40px;
+        }
+        
+        .home-content {
+            flex: 1;
+            min-width: 300px;
+            max-width: 600px;
+        }
+        
+        .home-content h1 {
+            font-size: 2.5rem;
+            color: white;
+            margin: 10px 0;
+            line-height: 1.2;
+        }
+        
+        .home-content h3 {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+        }
+        
+        .pro-text {
+            color: var(--primary-color);
+        }
+        
+        .home-content p {
+            color: #ccc;
+            line-height: 1.6;
+            margin: 20px 0;
+            text-align: justify;
+        }
+        
+        .home-sci {
+            display: flex;
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        .home-sci a {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(15, 35, 25, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            font-size: 1.2rem;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .home-sci a:hover {
+            background: rgba(0, 255, 0, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 255, 0, 0.2);
+        }
+        
+        #downloadCv {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, rgba(15, 30, 25, 0.9), rgba(0, 80, 0, 0.8));
+            color: var(--secondary-color);
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            border: 1px solid rgba(249, 215, 28, 0.3);
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        
+        #downloadCv:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 255, 0, 0.3);
+        }
+        
+        .home-img {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-width: 300px;
+        }
+        
+        .glowing-circle {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .glowing-circle span {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: conic-gradient(from 0deg, #00ff00, #f9d71c, #00ff00);
+            border-radius: 50%;
+            animation: rotate 4s linear infinite;
+        }
+        
+        .glowing-circle span:nth-child(2) {
+            filter: blur(20px);
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .image {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            overflow: hidden;
+            z-index: 1;
+            border: 5px solid rgba(5, 15, 10, 0.9);
+        }
+        
+        .image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* =============================================
+           MİKROBLOG - RESPONSIVE
+        ============================================= */
+        .microblog {
+            padding: 60px 5%;
+            background: rgba(5, 15, 10, 0.5);
+        }
+        
+        .container {
+            max-width: var(--container-max-width);
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            color: white;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            color: var(--primary-color);
+        }
+        
+        .bug-icon {
+            color: var(--secondary-color);
+            margin-left: 5px;
+        }
+        
+        .last-entry {
+            color: #aaa;
+            margin-bottom: 30px;
+            font-size: 0.9rem;
+        }
+        
+        .microblog-container {
+            display: flex;
+            gap: 30px;
+            margin-top: 20px;
+            width: 100%;
+        }
+        
+        .entries-column {
+            flex: 1.5;
+            min-width: 0; /* Önemli: flexbox'ta taşmayı önler */
+        }
+        
+        .entries {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 20px;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .entry-item {
+            background: rgba(15, 30, 20, 0.6);
+            border-radius: 10px;
+            padding: 15px;
+            border-left: 3px solid var(--primary-color);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .entry-item:hover {
+            background: rgba(0, 255, 0, 0.05);
+            transform: translateX(5px);
+        }
+        
+        .entry-date {
+            font-size: 0.8rem;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .entry-category {
+            color: var(--secondary-color);
+            font-size: 0.75rem;
+            background: rgba(249, 215, 28, 0.1);
+            padding: 3px 8px;
+            border-radius: 12px;
+        }
+        
+        .entry-content {
+            color: white;
+            line-height: 1.5;
+            margin: 10px 0;
+        }
+        
+        .entry-stats {
+            display: flex;
+            gap: 15px;
+            font-size: 0.8rem;
+            color: #aaa;
+            margin-top: 10px;
+        }
+        
+        .explanation-column {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .explanation-content {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 25px;
+            max-height: 400px;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+        
+        .explanation-content.expanded {
+            max-height: 1200px;
+        }
+        
+        .explanation-content h3 {
+            color: white;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            border-bottom: 1px solid rgba(249, 215, 28, 0.3);
+            padding-bottom: 10px;
+        }
+        
+        .explanation-content p {
+            color: #ccc;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .toggle-explanation {
+            display: none;
+            width: 100%;
+            background: rgba(0, 100, 0, 0.5);
+            color: var(--secondary-color);
+            border: 1px solid rgba(249, 215, 28, 0.3);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .toggle-explanation:hover {
+            background: rgba(0, 100, 0, 0.7);
+        }
+        
+        .btn-box {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: linear-gradient(135deg, rgba(15, 30, 25, 0.9), rgba(0, 80, 0, 0.8));
+            color: var(--secondary-color);
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            border: 1px solid rgba(249, 215, 28, 0.3);
+            font-weight: 600;
+            transition: all 0.3s;
+            min-height: 44px;
+        }
+        
+        .btn-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 255, 0, 0.3);
+        }
+        
+        /* =============================================
+           PHOTO GALLERY - RESPONSIVE
+        ============================================= */
+        .photo-gallery {
+            padding: 60px 5%;
+        }
+        
+        .gallery-wrapper {
+            width: 100%;
+        }
+        
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+            width: 100%;
+        }
+        
+        .gallery-photo {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid var(--border-color);
+        }
+        
+        .gallery-photo:hover {
+            transform: scale(1.03);
+            box-shadow: 0 5px 20px rgba(0, 255, 0, 0.3);
+            border-color: rgba(0, 255, 0, 0.6);
+        }
+        
+        .gallery-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .load-more {
+            background: linear-gradient(135deg, rgba(15, 30, 25, 0.9), rgba(0, 80, 0, 0.8));
+            color: white;
+            border: 1px solid var(--border-color);
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            min-height: 44px;
+        }
+        
+        .load-more:hover {
+            background: linear-gradient(135deg, rgba(25, 50, 35, 0.9), rgba(0, 100, 0, 0.8));
+            transform: translateY(-3px);
+        }
+        
         .photo-analysis-btn {
-          cursor: pointer;
-          -webkit-tap-highlight-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, rgba(15, 30, 25, 0.9), rgba(0, 80, 0, 0.8));
+            color: var(--secondary-color);
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            border: 1px solid rgba(249, 215, 28, 0.3);
+            font-weight: 600;
+            transition: all 0.3s;
+            min-height: 44px;
         }
-        .photo-analysis-btn:focus {
-          outline: 2px solid rgba(249, 215, 28, 0.4);
-          outline-offset: 1px;
+        
+        .photo-analysis-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 255, 0, 0.3);
         }
-        .photo-analysis-btn:active {
-          transform: scale(0.95);
-          background: linear-gradient(135deg, rgba(20, 35, 30, 0.9), rgba(0, 90, 0, 0.7));
+        
+        /* =============================================
+           LATEST ARTICLES - RESPONSIVE
+        ============================================= */
+        .latest-articles {
+            padding: 60px 5%;
+            background: rgba(5, 15, 10, 0.5);
         }
-        .nav-button { -webkit-tap-highlight-color: transparent; min-height: 44px; }
-        .modal-thumb { -webkit-tap-highlight-color: transparent; min-height: 44px; }
-        .article-card { -webkit-tap-highlight-color: transparent; }
-        .article-card:active { transform: scale(0.98); }
-        .gallery-photo:active { transform: scale(0.95); }
-        .entry-item:active { transform: scale(0.98); }
-      }
+        
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+            width: 100%;
+        }
+        
+        .article-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 255, 0, 0.2);
+            border-color: rgba(0, 255, 0, 0.6);
+        }
+        
+        .article-title {
+            font-size: 1.2rem;
+            color: white;
+            margin-bottom: 12px;
+            line-height: 1.4;
+            flex-grow: 0;
+        }
+        
+        .article-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .article-date {
+            color: #aaa;
+            font-size: 0.85rem;
+        }
+        
+        .article-category {
+            background: rgba(0, 255, 0, 0.2);
+            color: var(--primary-color);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .article-excerpt {
+            color: #ccc;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+        
+        .article-stats {
+            display: flex;
+            gap: 20px;
+            color: var(--primary-color);
+            font-size: 0.85rem;
+            padding-top: 15px;
+            border-top: 1px solid rgba(0, 255, 0, 0.1);
+        }
+        
+        .article-stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        /* =============================================
+           MODAL - RESPONSIVE
+        ============================================= */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(10, 30, 20, 0.95) 0%, rgba(5, 15, 10, 0.98) 100%);
+            z-index: 10000;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        
+        .modal.show {
+            opacity: 1;
+        }
+        
+        .modal-content-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+        }
+        
+        .modal-image-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .modal-content {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0, 255, 128, 0.3);
+        }
+        
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            color: white;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 10010;
+            background: rgba(0, 0, 0, 0.6);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-color);
+        }
+        
+        .close:hover {
+            background: rgba(200, 0, 0, 0.7);
+        }
+        
+        .modal-navbar {
+            background: rgba(15, 35, 25, 0.95);
+            border-top: 1px solid var(--border-color);
+            padding: 15px;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .modal-nav-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .modal-thumbnails {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            justify-content: center;
+        }
+        
+        .modal-thumb {
+            width: 70px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 5px;
+            cursor: pointer;
+            opacity: 0.7;
+            border: 1px solid transparent;
+        }
+        
+        .modal-thumb:hover, .modal-thumb.active {
+            opacity: 1;
+            border-color: var(--secondary-color);
+        }
+        
+        .modal-counter {
+            background: rgba(0, 0, 0, 0.4);
+            color: var(--secondary-color);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            min-width: 80px;
+            text-align: center;
+        }
+        
+        .nav-button {
+            background: rgba(20, 45, 30, 0.9);
+            color: white;
+            border: 1px solid var(--border-color);
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            min-width: 50px;
+        }
+        
+        .nav-button:hover {
+            background: rgba(30, 65, 40, 0.9);
+        }
+        
+        .modal-nav-bottom {
+            display: flex;
+            justify-content: center;
+        }
+        
+        .modal-info-items {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .modal-info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #ddd;
+            font-size: 0.9rem;
+        }
+        
+        .modal-info-item i {
+            color: var(--secondary-color);
+        }
+        
+        .keyboard-shortcuts {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            z-index: 10010;
+        }
+        
+        /* =============================================
+           FOOTER
+        ============================================= */
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: white;
+            background: rgba(5, 15, 10, 0.9);
+            border-top: 1px solid var(--border-color);
+        }
+        
+        footer hr {
+            margin: 0 auto 20px auto;
+            width: 80%;
+            border-color: var(--primary-color);
+        }
+        
+        /* =============================================
+           LOADING VE BOŞ DURUMLAR
+        ============================================= */
+        .entries-loading, .loading-articles, .no-articles {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            color: white;
+            text-align: center;
+            width: 100%;
+        }
+        
+        .fa-spinner {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+        
+        /* =============================================
+           IP GÖSTERİCİ DOT
+        ============================================= */
+        .ip-dot {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 18px;
+            height: 18px;
+            background: var(--secondary-color);
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 10px rgba(50, 205, 50, 0.8);
+            cursor: pointer;
+            z-index: 9999;
+        }
+        
+        .ip-tooltip {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            min-width: 240px;
+        }
+        
+        /* =============================================
+           RESPONSIVE MEDIA QUERIES
+        ============================================= */
+        
+        /* Tablet (768px - 1024px) */
+        @media (max-width: 1024px) {
+            .home {
+                flex-direction: column;
+                text-align: center;
+                padding: 40px 5%;
+            }
+            
+            .logo-container {
+                align-items: center;
+                max-width: 100%;
+            }
+            
+            .home-content {
+                text-align: center;
+            }
+            
+            .home-sci {
+                justify-content: center;
+            }
+            
+            .microblog-container {
+                flex-direction: column;
+            }
+            
+            .entries-column, .explanation-column {
+                width: 100%;
+            }
+            
+            .explanation-content {
+                max-height: 300px;
+            }
+            
+            .toggle-explanation {
+                display: block;
+            }
+            
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            
+            .articles-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+        }
+        
+        /* Mobil (480px - 768px) */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px 5%;
+            }
+            
+            .logo-container {
+                align-items: center;
+                text-align: center;
+            }
+            
+            .logo-slogan {
+                white-space: normal;
+                text-align: center;
+            }
+            
+            .navbar {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .dropbtn {
+                font-size: 0.85rem;
+                padding: 8px 15px;
+            }
+            
+            .home-content h1 {
+                font-size: 2rem;
+            }
+            
+            .home-content h3 {
+                font-size: 1.1rem;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .entries {
+                padding: 15px;
+            }
+            
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 10px;
+            }
+            
+            .gallery-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .load-more, .photo-analysis-btn {
+                width: 100%;
+                text-align: center;
+                justify-content: center;
+            }
+            
+            .articles-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-nav-top {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .modal-thumbnails {
+                order: 2;
+            }
+            
+            .modal-nav-buttons {
+                order: 3;
+                display: flex;
+                justify-content: center;
+                width: 100%;
+            }
+            
+            .modal-thumb {
+                width: 60px;
+                height: 40px;
+            }
+            
+            .close {
+                top: 10px;
+                right: 15px;
+                width: 40px;
+                height: 40px;
+                font-size: 25px;
+            }
+        }
+        
+        /* Küçük Mobil (480px altı) */
+        @media (max-width: 480px) {
+            html {
+                font-size: 14px;
+            }
+            
+            .home {
+                padding: 30px 5%;
+            }
+            
+            .home-content h1 {
+                font-size: 1.8rem;
+            }
+            
+            .glowing-circle {
+                width: 220px;
+                height: 220px;
+            }
+            
+            .image {
+                width: 200px;
+                height: 200px;
+            }
+            
+            .dropdown-content {
+                min-width: 200px;
+                left: 50%;
+                transform: translateX(-50%);
+                right: auto;
+            }
+            
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+            
+            .article-card {
+                padding: 20px;
+            }
+            
+            .modal-navbar {
+                min-height: 140px;
+                padding: 10px;
+            }
+            
+            .modal-info-items {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+        }
+        
+        /* Çok küçük ekranlar (360px altı) */
+        @media (max-width: 360px) {
+            .logo {
+                font-size: 1.2rem;
+            }
+            
+            .home-content h1 {
+                font-size: 1.6rem;
+            }
+            
+            .home-content h3 {
+                font-size: 1rem;
+            }
+            
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+            }
+            
+            .btn-box, #downloadCv, .load-more, .photo-analysis-btn {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Yatay (Landscape) mod için */
+        @media (max-height: 600px) and (orientation: landscape) {
+            .home {
+                min-height: auto;
+                padding: 30px 5%;
+            }
+            
+            .modal-image-wrapper {
+                max-height: 70vh;
+            }
+            
+            .modal-navbar {
+                min-height: 100px;
+            }
+        }
+        
+        /* Yüksek çözünürlüklü ekranlar için */
+        @media (min-width: 1600px) {
+            .container {
+                max-width: 1400px;
+            }
+            
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            }
+        }
+        
+        /* Karanlık mod desteği */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-dark: rgba(5, 10, 8, 0.95);
+            }
+        }
+        
+        /* İnternet Explorer desteği */
+        @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+            .gallery-grid {
+                display: flex;
+                flex-wrap: wrap;
+            }
+            
+            .gallery-photo {
+                width: 180px;
+                height: 180px;
+            }
+        }
     </style>
 </head>
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TFN7XD9Z"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
-<script>
-  // IP gösterici dot
-  const dot = document.createElement('div');
-  dot.style.cssText = `
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 18px;
-    height: 18px;
-    background: #f9d71c;
-    border-radius: 50%;
-    border: 3px solid white;
-    box-shadow: 0 0 10px rgba(50, 205, 50, 0.8);
-    cursor: pointer;
-    z-index: 9999;
-    transition: all 0.3s;
-  `;
 
-  const tooltip = document.createElement('div');
-  tooltip.style.cssText = `
-    position: absolute;
-    bottom: 100%;
-    right: 0;
-    background: rgba(0,0,0,0.9);
-    color: white;
-    padding: 10px;
-    border-radius: 6px;
-    font-size: 14px;
-    font-family: Arial, sans-serif;
-    white-space: nowrap;
-    opacity: 0;
-    transition: opacity 0.3s;
-    pointer-events: none;
-    min-width: 240px;
-    backdrop-filter: blur(5px);
-    z-index: 10000;
-  `;
-
-  dot.appendChild(tooltip);
-  document.body.appendChild(dot);
-
-  dot.addEventListener('mouseenter', () => tooltip.style.opacity = '1');
-  dot.addEventListener('mouseleave', () => tooltip.style.opacity = '0');
-  
-  // Touch events for mobile
-  dot.addEventListener('touchstart', () => tooltip.style.opacity = '1');
-  dot.addEventListener('touchend', () => setTimeout(() => tooltip.style.opacity = '0', 2000));
-
-  fetch('https://ipinfo.io/json?token=68a1229187303a')
-    .then(async res => {
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(`Hatalı cevap (${res.status}): ${text}`);
-      }
-      return res.json();
-    })
-    .then(data => {
-      const now = new Date();
-      const {
-        ip, hostname, city, region,
-        country, loc, org, postal, timezone
-      } = data;
-
-      tooltip.innerHTML = `
-        <div style="margin-bottom: 3px; font-weight: bold; color: #00ff00;">✓ User IP Detected</div>
-        <div><strong>IP:</strong> ${ip}</div>
-        <div><strong>Host:</strong> ${hostname}</div>
-        <div><strong>City:</strong> ${city}</div>
-        <div><strong>Country:</strong> ${country}</div>
-        <div><strong>Location</strong> ${loc}</div>
-        <div><strong>Postal:</strong> ${postal}</div>
-        <div><strong>Org:</strong> ${org}</div>
-        <div><strong>Time:</strong> ${now.toLocaleString('tr-TR')}</div>
-        <div style="font-size: 9px; margin-top: 4px; color: #ccc;">${navigator.userAgent.split(' ')[0]}</div>
-      `;
-
-      // POST ile Netlify fonksiyonuna gönder
-      fetch('https://adembayazit.netlify.app/.netlify/functions/log-visitor', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ip, hostname, city, region,
-          country, loc, org, postal,
-          timezone, timestamp: now.toISOString(),
-          userAgent: navigator.userAgent
-        })
-      }).then(res => res.json())
-        .then(console.log)
-        .catch(err => console.error("POST hatası:", err));
-    })
-    .catch(error => {
-      const now = new Date();
-      tooltip.innerHTML = `
-        <div style="margin-bottom: 5px; font-weight: bold; color: #ff5555;">❌ Hata</div>
-        <div><strong>Zaman:</strong> ${now.toLocaleString('tr-TR')}</div>
-        <div><strong>Mesaj:</strong> ${error.message}</div>
-      `;
-      dot.style.background = "#ff5555";
-    });
-</script>
-    <script type="module" src="/JAVASCRIPT/load-entries.js"></script>
-    <script src="/JAVASCRIPT/monitor.js"></script>
-    <canvas id="matrixCanvas"></canvas>
-    <script src="/JAVASCRIPT/matrix.js"></script>
 <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TFN7XD9Z"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    
     <header class="header">
         <div class="logo-container">
-            <a href="#home" class="logo"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">{adembayazit} </a>
+            <a href="#home" class="logo">
+                <img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hackerwhite-icon">
+                {adembayazit}
+            </a>
             <span class="logo-slogan">One step further every day…</span>
         </div>
+        
         <nav class="navbar">
             <div class="dropdown">
-            <a href="#" style="--i:5;" class="dropbtn"> <img src="IMAGES/Ata.svg" alt="Ata Icon" class="ata-icon"><span class="fi fi-tr"></span> <span class='bx bx-code-alt'></span> Ethical Hacker <span class='bx bx-chevron-down'></span></a>
-            <div class="dropdown-content">
-            <a href="/whatishacker"><img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hacker-icon"> What is an Ethical Hacker?</a>
-            <a href="/cybersecurityglossary"><img src="IMAGES/glossary.svg" alt="Glossary" class="glossary-icon"> Cybersecurity Glossary</a>
-            <a href="/whatissoc"><img src="IMAGES/soc.svg" alt="Soc" class="soc-icon"> What is a SOC ?</a>
-            <a href="/vulnerabilities"><img src="IMAGES/vulnerabilities.svg" alt="Vulnerabilities" class="vulnerabilities-icon"> Vulnerabilities</a>
-            <a href="/steganography"><img src="IMAGES/steganography.svg" alt="Steganography" class="steganography-icon"> Steganography</a>
-            <a href="/cryptography"><img src="IMAGES/cryptography.svg" alt="Cryptography" class="cryptography-icon"> Cryptography</a>    
-            <a href="/cybersecurityeducationprompt"><img src="IMAGES/education.svg" alt="Education" class="education-icon"> Cybersecurity Resources Prompt</a>
-            <a href="/article"><img src="IMAGES/newspaper.svg" alt="Article" class="articles-icon"> Cybersecurity Article</a>
+                <a href="#" class="dropbtn">
+                    <img src="IMAGES/Ata.svg" alt="Ata Icon" class="ata-icon">
+                    <span class="fi fi-tr"></span>
+                    <span class='bx bx-code-alt'></span>
+                    Ethical Hacker
+                    <span class='bx bx-chevron-down'></span>
+                </a>
+                <div class="dropdown-content">
+                    <a href="/whatishacker">
+                        <img src="IMAGES/hackerwhite.svg" alt="Hacker Icon" class="hacker-icon">
+                        What is an Ethical Hacker?
+                    </a>
+                    <a href="/cybersecurityglossary">
+                        <img src="IMAGES/glossary.svg" alt="Glossary" class="glossary-icon">
+                        Cybersecurity Glossary
+                    </a>
+                    <a href="/whatissoc">
+                        <img src="IMAGES/soc.svg" alt="Soc" class="soc-icon">
+                        What is a SOC?
+                    </a>
+                    <a href="/vulnerabilities">
+                        <img src="IMAGES/vulnerabilities.svg" alt="Vulnerabilities" class="vulnerabilities-icon">
+                        Vulnerabilities
+                    </a>
+                    <a href="/steganography">
+                        <img src="IMAGES/steganography.svg" alt="Steganography" class="steganography-icon">
+                        Steganography
+                    </a>
+                    <a href="/cryptography">
+                        <img src="IMAGES/cryptography.svg" alt="Cryptography" class="cryptography-icon">
+                        Cryptography
+                    </a>
+                    <a href="/cybersecurityeducationprompt">
+                        <img src="IMAGES/education.svg" alt="Education" class="education-icon">
+                        Cybersecurity Resources Prompt
+                    </a>
+                    <a href="/article">
+                        <img src="IMAGES/newspaper.svg" alt="Article" class="articles-icon">
+                        Cybersecurity Article
+                    </a>
+                </div>
             </div>
-          </div>
         </nav>
     </header>
 
     <section id="home" class="home">
-        <div class="home-content" data-scroll data-scroll-speed="-5">
+        <div class="home-content">
             <h3 class="mu">Hello, It's me</h3>
             <h1>Adem Bayazıt</h1>
-            <h3>And I'm a <span class="pro-text">
-                <script>
-                   var typed = new Typed(".pro-text", {
-                      strings: [
-                        "Ethical Hacker",
-                        "Network Architect", 
-                        "Cyber Security Analyst",
-                        "Programmer",
-                        "Linux Administrator",
-                        "Reverse Engineer",
-                        "Lifelong Student",
-                      ],
-                      typeSpeed: 100,   
-                      backSpeed: 100,   
-                      backDelay: 1000,  
-                      loop: true        
-                    });
-                </script>
-            </span></h3>
+            <h3>And I'm a <span class="pro-text"></span></h3>
             
-            <p>  &emsp; &emsp;This platform highlights my passion for cybersecurity and my commitment to ethical practices. <br> <br>
-                &emsp; &emsp;I have acquired fundamental knowledge and skills in various areas of ethical hacking, 
-                allowing me to contribute to the security of organizations and individuals. <br> <br>
-                &emsp; &emsp;I am not the tool you find lying around; I am the source code. A Thesaurus who speaks the language of machines and the language of nature. <br><br> Hack Me If You Can is a platform where you can test yourself!
+            <p>
+                This platform highlights my passion for cybersecurity and my commitment to ethical practices. 
+                I have acquired fundamental knowledge and skills in various areas of ethical hacking, 
+                allowing me to contribute to the security of organizations and individuals.
+                I am not the tool you find lying around; I am the source code. A Thesaurus who speaks the language of machines and the language of nature.
+                Hack Me If You Can is a platform where you can test yourself!
             </p>
             
             <div class="home-sci">
                 <a href="https://github.com/adembayazit" target="_blank"><i class='bx bxl-github'></i></a>
-               <a href="https://www.linkedin.com/in/adembayazit/" target="_blank"><i class='bx bxl-linkedin' ></i></a>
-               <a href="https://wa.me/+905365844282" target="_blank"><i class='bx bxl-whatsapp'></i></a>
+                <a href="https://www.linkedin.com/in/adembayazit/" target="_blank"><i class='bx bxl-linkedin'></i></a>
+                <a href="https://wa.me/+905365844282" target="_blank"><i class='bx bxl-whatsapp'></i></a>
             </div>
-                <a id="downloadCv" href="https://adembayazit.com/viewcv" class="btn-box"><i class="fas fa-file-alt"></i> &nbsp;View CV</a>
+            
+            <a id="downloadCv" href="https://adembayazit.com/viewcv" class="btn-box">
+                <i class="fas fa-file-alt"></i> &nbsp;View CV
+            </a>
         </div>
 
         <div class="home-img">
@@ -957,7 +1269,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <span></span>
                 <span></span>
                 <div class="image">
-                    <img src="/IMAGES/saianon.png" alt="">
+                    <img src="/IMAGES/saianon.png" alt="Adem Bayazıt">
                 </div>
             </div>
         </div>
@@ -965,17 +1277,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <section id="microblog" class="microblog">
         <div class="container">
-            <h2 class="section-title"><i class="fa-solid fa-pager"></i> LadyB <span class="fa-solid fa-bug bug-icon"></span> G Entries</h2>
-            <p class="last-entry">Last 5 Entries</p> 
+            <h2 class="section-title">
+                <i class="fa-solid fa-pager"></i> LadyB 
+                <span class="fa-solid fa-bug bug-icon"></span> G Entries
+            </h2>
+            <p class="last-entry">Last 5 Entries</p>
+            
             <div class="microblog-container">
                 <div class="entries-column">
-                    <div id="entries" class="entries" style="min-height: 300px; display: flex; align-items: center; justify-content: center;">
-                        <div class="entries-loading" style="text-align: center; padding: 40px;">
-                            <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #00ff00; margin-bottom: 15px;"></i>
-                            <p style="color: white; font-size: 1rem;">Loading entries...</p>
+                    <div id="entries" class="entries">
+                        <div class="entries-loading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>Loading entries...</p>
                         </div>
                     </div>
                 </div>
+                
                 <div class="explanation-column">
                     <div class="explanation-content">
                         <h3>Why I Created This Microblog?</h3>
@@ -995,7 +1312,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
             
             <div style="text-align: center; margin-top: 20px;">
-                <a href="microblog.html" class="btn-box"><i class="fa-solid fa-bug"></i> All Entry Show</a>
+                <a href="microblog.html" class="btn-box">
+                    <i class="fa-solid fa-bug"></i> All Entry Show
+                </a>
             </div>
         </div>
     </section>
@@ -1003,14 +1322,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <section id="photo-gallery" class="photo-gallery">
         <div class="container">
             <div class="photo-gallery-header">
-                <h2 class="section-title"><i class="fa-solid fa-images"></i> Photographic Cryptology</h2>
+                <h2 class="section-title">
+                    <i class="fa-solid fa-images"></i> Photographic Cryptology
+                </h2>
             </div>
+            
             <div class="gallery-wrapper">
                 <div id="gallery-grid" class="gallery-grid"></div>
+                
                 <div class="gallery-actions">
                     <button id="load-more" class="load-more">More Photos</button>
-                    <a href="/photographiccryptology.html" class="photo-analysis-btn" 
-                       data-tooltip="Fotoğrafların detaylı açıklamaları ve kriptolojik anlamları">
+                    <a href="/photographiccryptology.html" class="photo-analysis-btn">
                         <i class="fas fa-search-plus"></i>
                         <span class="btn-text">Analysis</span>
                     </a>
@@ -1021,19 +1343,30 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <section id="latest-articles" class="latest-articles">
         <div class="container">
-            <h2 class="section-title"><i class="fas fa-newspaper"></i> Latest Cybersecurity Articles</h2>
+            <h2 class="section-title">
+                <i class="fas fa-newspaper"></i> Latest Cybersecurity Articles
+            </h2>
             <p class="last-entry">Last 3 Articles</p>
+            
             <div class="articles-grid-container">
                 <div id="articles-container" class="articles-grid">
-                    <!-- Makaleler buraya JavaScript ile yüklenecek -->
+                    <!-- Makaleler JavaScript ile yüklenecek -->
+                    <div class="loading-articles">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading articles...</p>
+                    </div>
                 </div>
             </div>
+            
             <div style="text-align: center; margin-top: 20px;">
-                <a href="/article" class="btn-box"><i class="fas fa-book-open"></i> View All Articles</a>
+                <a href="/article" class="btn-box">
+                    <i class="fas fa-book-open"></i> View All Articles
+                </a>
             </div>
         </div>
     </section>
 
+    <!-- MODAL (Fotoğraf görüntüleme) -->
     <div id="modal" class="modal">
         <span class="close">&times;</span>
         <div class="keyboard-shortcuts">
@@ -1042,16 +1375,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         
         <div class="modal-content-container">
             <div class="modal-image-wrapper">
-                <img class="modal-content" id="modal-img">
+                <img class="modal-content" id="modal-img" alt="Full size photo">
             </div>
             
             <div class="modal-navbar">
                 <div class="modal-nav-top">
                     <div class="modal-thumbnails">
                         <button class="nav-button prev-button">&lt;</button>
-                        <img class="modal-thumb prev-thumb" src="" alt="Previous Photo">
-                        <div class="modal-counter"><span id="modal-counter">1/10</span></div>
-                        <img class="modal-thumb next-thumb" src="" alt="Next Photo">
+                        <img class="modal-thumb prev-thumb" src="" alt="Previous photo">
+                        <div class="modal-counter">
+                            <span id="modal-counter">1/10</span>
+                        </div>
+                        <img class="modal-thumb next-thumb" src="" alt="Next photo">
                         <button class="nav-button next-button">&gt;</button>
                     </div>
                 </div>
@@ -1074,386 +1409,169 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
     </div>
 
-    <footer style="text-align: center; padding: 20px; font-size: 14px; color: white;">
-        <hr style="margin-bottom: 10px; border-color: limegreen;" />
-        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.3 | Aug 2025</p>
+    <footer>
+        <hr />
+        <p>Design & Code by <strong>Adem Bayazıt</strong> | Version 1.3.4 | Aug 2025</p>
     </footer>
 
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0WNL3VLY3F"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-0WNL3VLY3F');
-    </script>
-
-    <script src="/JAVASCRIPT/gallery.js"></script>
-    <script src="/JAVASCRIPT/log-download.js"></script>
-    <script src="/JAVASCRIPT/translate-entry.js"></script>
-    <script src="/JAVASCRIPT/keysound.js"></script>
+    <!-- IP Gösterici Dot -->
+    <div class="ip-dot" id="ipDot">
+        <div class="ip-tooltip" id="ipTooltip">Loading IP information...</div>
+    </div>
 
     <script>
-        function isMobileDevice() {
-            return /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        }
-
-        console.log('Device type:', isMobileDevice() ? 'Mobile' : 'Desktop');
-        console.log('User Agent:', navigator.userAgent);
-
-        let touchTimer = null;
-        let touchStartX = 0;
-        let touchStartY = 0;
-        const TOUCH_DELAY = 200;
-
-        function handleTouchStart(e) {
-            touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
-            touchTimer = setTimeout(() => { touchTimer = null; }, TOUCH_DELAY);
-        }
-
-        function handleTouchEnd(e, callback) {
-            if (touchTimer) {
-                clearTimeout(touchTimer);
-                touchTimer = null;
-                
-                const touchEndX = e.changedTouches[0].clientX;
-                const touchEndY = e.changedTouches[0].clientY;
-                
-                const diffX = Math.abs(touchEndX - touchStartX);
-                const diffY = Math.abs(touchEndY - touchStartY);
-                
-                if (diffX < 10 && diffY < 10) {
-                    e.preventDefault();
-                    if (callback) callback();
-                }
-            }
-        }
-
-        async function logCvView() {
-            try {
-                console.log('Starting CV view logging...');
-
-                const ipController = new AbortController();
-                const ipTimeout = setTimeout(() => ipController.abort(), 5000);
-                
-                const ipResponse = await fetch('https://ipinfo.io/json?token=68a1229187303a', {
-                    signal: ipController.signal
-                });
-                clearTimeout(ipTimeout);
-                
-                if (!ipResponse.ok) throw new Error(`IP API error: ${ipResponse.status}`);
-                const ipData = await ipResponse.json();
-                
-                const now = new Date();
-                const viewEntry = {
-                    id: Date.now(),
-                    ip: ipData.ip,
-                    hostname: ipData.hostname || 'unknown',
-                    city: ipData.city || 'unknown',
-                    region: ipData.region || 'unknown',
-                    country: ipData.country || 'unknown',
-                    loc: ipData.loc || 'unknown',
-                    org: ipData.org || 'unknown',
-                    postal: ipData.postal || 'unknown',
-                    timezone: ipData.timezone || 'unknown',
-                    timestamp: now.toISOString(),
-                    userAgent: navigator.userAgent.substring(0, 200),
-                    type: 'cv_view',
-                    page: 'home',
-                    device: isMobileDevice() ? 'mobile' : 'desktop'
-                };
-
-                console.log('New view entry:', viewEntry);
-
-                const binController = new AbortController();
-                const binTimeout = setTimeout(() => binController.abort(), 10000);
-
-                const getResponse = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        path: '/b/68ecedca43b1c97be96584cc/latest',
-                        method: 'GET'
-                    }),
-                    signal: binController.signal
-                });
-
-                let existingData = { 
-                    cvview: 'adem', 
-                    cv_views: [], 
-                    total_views: 0,
-                    last_updated: new Date().toISOString()
-                };
-                
-                if (getResponse.ok) {
-                    const result = await getResponse.json();
-                    console.log('Existing data from bin:', result);
-                    existingData = result;
-                    if (!existingData.cv_views) existingData.cv_views = [];
-                    if (typeof existingData.total_views !== 'number') existingData.total_views = 0;
-                }
-
-                existingData.cv_views.push(viewEntry);
-                existingData.total_views = (existingData.total_views || 0) + 1;
-                existingData.last_updated = now.toISOString();
-
-                console.log('Updated data to save:', existingData);
-
-                const putResponse = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        path: '/b/68ecedca43b1c97be96584cc',
-                        method: 'PUT',
-                        body: existingData
-                    }),
-                    signal: binController.signal
-                });
-
-                clearTimeout(binTimeout);
-
-                if (!putResponse.ok) throw new Error(`JSONBin PUT error: ${putResponse.status}`);
-
-                const result = await putResponse.json();
-                console.log('CV view logged successfully:', result);
-                return result;
-            } catch (error) {
-                console.error('Error logging CV view:', error);
-                return { success: false, error: error.message };
-            }
-        }
-
+        // Typed.js başlatma
         document.addEventListener('DOMContentLoaded', function() {
-            const cvLink = document.getElementById('downloadCv');
-            console.log('CV link found:', !!cvLink);
-            if (cvLink) {
-                console.log('CV link href:', cvLink.href);
-                cvLink.addEventListener('click', handleCvClick);
-                cvLink.addEventListener('touchstart', handleCvClick, { passive: true });
-            }
-            showCvStats();
-        });
-
-        function handleCvClick(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            console.log('CV link clicked/touched, logging view...');
-            const originalHref = this.href;
-            
-            logCvView().then(result => {
-                console.log('Logging completed:', result);
-                setTimeout(() => { window.location.href = originalHref; }, 300);
-            }).catch(err => {
-                console.error('Logging failed:', err);
-                window.location.href = originalHref;
+            var typed = new Typed(".pro-text", {
+                strings: [
+                    "Ethical Hacker",
+                    "Network Architect", 
+                    "Cyber Security Analyst",
+                    "Programmer",
+                    "Linux Administrator",
+                    "Reverse Engineer",
+                    "Lifelong Student",
+                ],
+                typeSpeed: 100,
+                backSpeed: 80,
+                backDelay: 1500,
+                loop: true
             });
-        }
-
-        async function showCvStats() {
-            try {
-                const response = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        path: '/b/68ecedca43b1c97be96584cc/latest',
-                        method: 'GET'
-                    })
+            
+            // Açıklama bölümü toggle
+            const toggleButton = document.querySelector('.toggle-explanation');
+            const explanationContent = document.querySelector('.explanation-content');
+            
+            if (toggleButton && explanationContent) {
+                toggleButton.addEventListener('click', function() {
+                    explanationContent.classList.toggle('expanded');
+                    this.textContent = explanationContent.classList.contains('expanded') 
+                        ? 'Less..' 
+                        : 'More..';
                 });
                 
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log('CV Stats:', data);
-                    if (data.total_views) console.log(`Total CV Views: ${data.total_views}`);
+                // Mobilde toggle butonunu göster
+                if (window.innerWidth <= 1024) {
+                    toggleButton.style.display = 'block';
                 }
-            } catch (error) {
-                console.log('Error fetching CV stats:', error);
             }
-        }
-
-        async function fetchArticles() {
-            try {
-                const ARTICLES_BIN_ID = '695f155c43b1c97be920c28d';
-                const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
-                
-                const response = await fetch(proxyUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        path: `/b/${ARTICLES_BIN_ID}/latest`,
-                        method: 'GET'
-                    })
+            
+            // IP gösterici
+            const ipDot = document.getElementById('ipDot');
+            const ipTooltip = document.getElementById('ipTooltip');
+            
+            if (ipDot && ipTooltip) {
+                ipDot.addEventListener('mouseenter', () => {
+                    ipTooltip.style.opacity = '1';
                 });
-
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                const result = await response.json();
-                return result.articles || result.records || result || [];
-            } catch (error) {
-                console.error('Error fetching articles:', error);
-                return [];
-            }
-        }
-
-        async function loadLatestArticles() {
-            const container = document.getElementById('articles-container');
-            if (!container) return;
-
-            container.innerHTML = '<div class="loading-articles"><i class="fas fa-spinner fa-spin"></i> Loading articles...</div>';
-
-            try {
-                const articles = await fetchArticles();
                 
-                if (!articles || articles.length === 0) {
-                    container.innerHTML = '<div class="no-articles">No articles available at the moment.</div>';
-                    return;
-                }
-
-                const latestArticles = articles
-                    .sort((a, b) => {
-                        const dateA = new Date(a.published_date || a.date || 0);
-                        const dateB = new Date(b.published_date || b.date || 0);
-                        return dateB - dateA;
-                    })
-                    .slice(0, 3);
-
-                container.innerHTML = '';
-                
-                latestArticles.forEach(article => {
-                    const articleDate = new Date(article.published_date || article.date);
-                    const dateStr = articleDate.toLocaleDateString('en-US', {
-                        year: 'numeric', month: 'short', day: 'numeric'
-                    });
-
-                    let excerpt = '';
-                    if (article.content) {
-                        const tempDiv = document.createElement('div');
-                        tempDiv.innerHTML = article.content;
-                        excerpt = tempDiv.textContent || tempDiv.innerText || '';
-                        excerpt = excerpt.substring(0, 120).trim();
-                        if (excerpt.length === 120) excerpt += '...';
-                    } else {
-                        excerpt = 'Read the full article for more details...';
-                    }
-
-                    const card = document.createElement('div');
-                    card.className = 'article-card touch-delay';
-                    card.innerHTML = `
-                        <div class="article-title">${article.title || 'Untitled Article'}</div>
-                        <div class="article-meta">
-                            <span class="article-date">${dateStr}</span>
-                            <span class="article-category">${article.category || 'Cybersecurity'}</span>
-                        </div>
-                        <div class="article-excerpt">${excerpt}</div>
-                        <div class="article-stats">
-                            <div class="article-stat"><i class="far fa-eye"></i> ${article.views || 0} views</div>
-                            <div class="article-stat"><i class="far fa-heart"></i> ${article.likes || 0} likes</div>
-                        </div>
-                    `;
-
-                    card.addEventListener('click', () => { window.location.href = `/article#${article.id}`; });
-                    card.addEventListener('touchstart', function(e) { handleTouchStart(e); });
-                    card.addEventListener('touchend', function(e) {
-                        handleTouchEnd(e, () => { window.location.href = `/article#${article.id}`; });
-                    });
-
-                    container.appendChild(card);
+                ipDot.addEventListener('mouseleave', () => {
+                    ipTooltip.style.opacity = '0';
                 });
-            } catch (error) {
-                console.error('Error loading articles:', error);
-                container.innerHTML = '<div class="no-articles">Unable to load articles. Please try again later.</div>';
+                
+                // Mobil için touch event
+                ipDot.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    ipTooltip.style.opacity = '1';
+                    setTimeout(() => {
+                        ipTooltip.style.opacity = '0';
+                    }, 3000);
+                });
+                
+                // IP bilgisi al
+                fetch('https://ipinfo.io/json?token=68a1229187303a')
+                    .then(res => res.json())
+                    .then(data => {
+                        const now = new Date();
+                        const {
+                            ip, hostname, city, region,
+                            country, loc, org, postal, timezone
+                        } = data;
+                        
+                        ipTooltip.innerHTML = `
+                            <div style="margin-bottom: 3px; font-weight: bold; color: #00ff00;">✓ User IP Detected</div>
+                            <div><strong>IP:</strong> ${ip}</div>
+                            <div><strong>City:</strong> ${city}</div>
+                            <div><strong>Country:</strong> ${country}</div>
+                            <div><strong>Location:</strong> ${loc}</div>
+                            <div><strong>Time:</strong> ${now.toLocaleString('tr-TR')}</div>
+                            <div style="font-size: 9px; margin-top: 4px; color: #ccc;">${navigator.userAgent.split(' ')[0]}</div>
+                        `;
+                        
+                        // Netlify fonksiyonuna gönder
+                        fetch('https://adembayazit.netlify.app/.netlify/functions/log-visitor', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                ip, hostname, city, region,
+                                country, loc, org, postal,
+                                timezone, timestamp: now.toISOString(),
+                                userAgent: navigator.userAgent
+                            })
+                        }).catch(err => console.error("POST hatası:", err));
+                    })
+                    .catch(error => {
+                        const now = new Date();
+                        ipTooltip.innerHTML = `
+                            <div style="margin-bottom: 5px; font-weight: bold; color: #ff5555;">❌ Hata</div>
+                            <div><strong>Zaman:</strong> ${now.toLocaleString('tr-TR')}</div>
+                            <div><strong>Mesaj:</strong> ${error.message}</div>
+                        `;
+                        ipDot.style.background = "#ff5555";
+                    });
             }
-        }
-
-        // ✅ DÜZELTİLEN KISIM: Mikroblog entries'leri yükle
+            
+            // Sayfa yüklendiğinde mikroblog ve makaleleri yükle
+            loadMicroblogEntries();
+            loadLatestArticles();
+            initializeGallery();
+        });
+        
+        // Mikroblog entry'lerini yükle
         async function loadMicroblogEntries() {
-            console.log('Starting to load microblog entries...');
-
             const entriesContainer = document.getElementById('entries');
             if (!entriesContainer) return;
-
-            // Loading zaten HTML'de var; yine de garanti olsun:
-            // (Başka şeye dokunmadan sadece güvenli hale getiriyoruz)
-            // entriesContainer.innerHTML = ...  (YAPMIYORUZ)
-
-            // 3.5sn sonra sadece bilgilendirme (HATA DEĞİL) mesajı göster
-            // Eğer veri bu sürede gelirse otomatik iptal edilir.
-            let hintTimer = setTimeout(() => {
-                // Sadece loading içindeysek (yani henüz entry basılmadıysa) yazıyı yumuşat:
-                const stillLoading = entriesContainer.querySelector('.entries-loading');
-                if (stillLoading) {
-                    const p = stillLoading.querySelector('p');
-                    if (p) {
-                        p.textContent = "Sometimes it can take 3–5 seconds…";
-                    }
-                }
-            }, 3500);
-
+            
             try {
                 const MICROBLOG_BIN_ID = '694f7d8e43b1c97be91ef7d1';
                 const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
-
-                console.log('Fetching entries from JSONBin...');
-
-                // İsteğe timeout ekleyelim: gerçek “fail” durumunda hataya düşsün.
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 15000); // 15sn
-
+                
                 const response = await fetch(proxyUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         path: `/b/${MICROBLOG_BIN_ID}/latest`,
                         method: 'GET'
-                    }),
-                    signal: controller.signal
+                    })
                 });
-
-                clearTimeout(timeoutId);
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
+                
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                
                 const result = await response.json();
-                console.log('Entries fetched:', result);
-
                 const entries = result.entries || result.records || result || [];
-
-                // Son 5 entry’yi al (senin mantığını bozmadım)
                 const last5Entries = entries.slice(0, 5);
-                console.log('Last 5 entries:', last5Entries);
-
-                // ✅ Artık "zorunlu 1sn bekleme" yok.
-                // Çünkü bu bekleme, “loading -> hata -> sonra veri” hissini arttırıyordu.
-                // (İstersen 200ms gibi minimal bırakabilirdik ama gerek yok.)
-
-                clearTimeout(hintTimer);
+                
                 displayMicroblogEntries(last5Entries);
-
             } catch (error) {
-                clearTimeout(hintTimer);
-
                 console.error('Error loading microblog entries:', error);
-
-                // ✅ Sadece GERÇEK hata varsa göster
-                const msg = (error && error.name === 'AbortError')
-                    ? "Request timed out. Please try again later."
-                    : "Unable to load entries. Please try again later.";
-
                 entriesContainer.innerHTML = `
-                  <div class="no-articles" style="text-align: center; padding: 40px; color: #ccc;">
-                    ${msg}
-                  </div>
+                    <div class="no-articles">
+                        <p>Unable to load entries. Please try again later.</p>
+                    </div>
                 `;
             }
         }
-
+        
         function displayMicroblogEntries(entries) {
             const entriesContainer = document.getElementById('entries');
             if (!entriesContainer) return;
             
             if (!entries || entries.length === 0) {
-                entriesContainer.innerHTML = '<div class="no-articles" style="text-align: center; padding: 40px; color: #ccc;">No entries available at the moment.</div>';
+                entriesContainer.innerHTML = `
+                    <div class="no-articles">
+                        <p>No entries available at the moment.</p>
+                    </div>
+                `;
                 return;
             }
             
@@ -1470,74 +1588,155 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     hour: '2-digit',
                     minute: '2-digit'
                 });
-
+                
                 const entryDiv = document.createElement('div');
-                entryDiv.className = 'entry-item touch-delay';
+                entryDiv.className = 'entry-item';
                 entryDiv.innerHTML = `
-                    <div style="margin-bottom: 15px; padding: 15px; background: rgba(10, 25, 20, 0.5); border-radius: 10px; border: 1px solid rgba(0, 255, 0, 0.2);">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                            <span style="color: #00ff00; font-size: 0.9rem;">${dateStr} ${timeStr}</span>
-                            <span style="color: #f9d71c; font-size: 0.8rem;">#${entry.category || 'general'}</span>
+                    <div class="entry-date">
+                        <span>${dateStr} ${timeStr}</span>
+                        <span class="entry-category">#${entry.category || 'general'}</span>
+                    </div>
+                    <div class="entry-content">
+                        ${entry.content || 'No content available...'}
+                    </div>
+                    <div class="entry-stats">
+                        <span><i class="far fa-comment"></i> ${entry.comments || 0}</span>
+                        <span><i class="far fa-heart"></i> ${entry.likes || 0}</span>
+                    </div>
+                `;
+                
+                entryDiv.addEventListener('click', () => {
+                    window.location.href = '/microblog.html';
+                });
+                
+                entriesContainer.appendChild(entryDiv);
+            });
+        }
+        
+        // Makaleleri yükle
+        async function loadLatestArticles() {
+            const container = document.getElementById('articles-container');
+            if (!container) return;
+            
+            try {
+                const ARTICLES_BIN_ID = '695f155c43b1c97be920c28d';
+                const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
+                
+                const response = await fetch(proxyUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        path: `/b/${ARTICLES_BIN_ID}/latest`,
+                        method: 'GET'
+                    })
+                });
+                
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                
+                const result = await response.json();
+                const articles = result.articles || result.records || result || [];
+                
+                const latestArticles = articles
+                    .sort((a, b) => {
+                        const dateA = new Date(a.published_date || a.date || 0);
+                        const dateB = new Date(b.published_date || b.date || 0);
+                        return dateB - dateA;
+                    })
+                    .slice(0, 3);
+                
+                displayArticles(latestArticles);
+            } catch (error) {
+                console.error('Error loading articles:', error);
+                container.innerHTML = `
+                    <div class="no-articles">
+                        <p>Unable to load articles. Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
+        
+        function displayArticles(articles) {
+            const container = document.getElementById('articles-container');
+            if (!container) return;
+            
+            if (!articles || articles.length === 0) {
+                container.innerHTML = `
+                    <div class="no-articles">
+                        <p>No articles available at the moment.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            articles.forEach(article => {
+                const articleDate = new Date(article.published_date || article.date);
+                const dateStr = articleDate.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+                
+                let excerpt = '';
+                if (article.content) {
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = article.content;
+                    excerpt = tempDiv.textContent || tempDiv.innerText || '';
+                    excerpt = excerpt.substring(0, 120).trim();
+                    if (excerpt.length === 120) excerpt += '...';
+                } else {
+                    excerpt = 'Read the full article for more details...';
+                }
+                
+                const card = document.createElement('div');
+                card.className = 'article-card';
+                card.innerHTML = `
+                    <div class="article-title">${article.title || 'Untitled Article'}</div>
+                    <div class="article-meta">
+                        <span class="article-date">${dateStr}</span>
+                        <span class="article-category">${article.category || 'Cybersecurity'}</span>
+                    </div>
+                    <div class="article-excerpt">${excerpt}</div>
+                    <div class="article-stats">
+                        <div class="article-stat">
+                            <i class="far fa-eye"></i> ${article.views || 0} views
                         </div>
-                        <div style="color: white; line-height: 1.5; font-size: 0.95rem;">
-                            ${entry.content || 'No content available...'}
-                        </div>
-                        <div style="margin-top: 10px; display: flex; gap: 15px; font-size: 0.8rem; color: #aaa;">
-                            <span><i class="far fa-comment"></i> ${entry.comments || 0}</span>
-                            <span><i class="far fa-heart"></i> ${entry.likes || 0}</span>
+                        <div class="article-stat">
+                            <i class="far fa-heart"></i> ${article.likes || 0} likes
                         </div>
                     </div>
                 `;
                 
-                entryDiv.addEventListener('click', () => { window.location.href = '/microblog.html'; });
-                entryDiv.addEventListener('touchstart', function(e) { handleTouchStart(e); });
-                entryDiv.addEventListener('touchend', function(e) {
-                    handleTouchEnd(e, () => { window.location.href = '/microblog.html'; });
+                card.addEventListener('click', () => {
+                    window.location.href = `/article#${article.id}`;
                 });
-
-                entriesContainer.appendChild(entryDiv);
+                
+                container.appendChild(card);
             });
         }
-
-        document.addEventListener("DOMContentLoaded", async () => {
-            const galleryGrid = document.getElementById("gallery-grid");
-            const loadMoreBtn = document.getElementById("load-more");
-            const modal = document.getElementById("modal");
-            const modalImg = document.getElementById("modal-img");
-            const modalLocation = document.getElementById("modal-location");
-            const modalDate = document.getElementById("modal-date");
-            const modalTime = document.getElementById("modal-time");
-            const modalCounter = document.getElementById("modal-counter");
-            const prevThumb = document.querySelector(".prev-thumb");
-            const nextThumb = document.querySelector(".next-thumb");
-            const closeBtn = document.querySelector(".close");
-            const prevButton = document.querySelector(".prev-button");
-            const nextButton = document.querySelector(".next-button");
-
+        
+        // Galeri işlevselliği
+        function initializeGallery() {
+            const galleryGrid = document.getElementById('gallery-grid');
+            const loadMoreBtn = document.getElementById('load-more');
+            const modal = document.getElementById('modal');
+            const modalImg = document.getElementById('modal-img');
+            const modalLocation = document.getElementById('modal-location');
+            const modalDate = document.getElementById('modal-date');
+            const modalTime = document.getElementById('modal-time');
+            const modalCounter = document.getElementById('modal-counter');
+            const prevThumb = document.querySelector('.prev-thumb');
+            const nextThumb = document.querySelector('.next-thumb');
+            const closeBtn = document.querySelector('.close');
+            const prevButton = document.querySelector('.prev-button');
+            const nextButton = document.querySelector('.next-button');
+            
             let allPhotos = [];
             let visibleCount = 12;
             let currentIndex = 0;
-
-            const toggleButton = document.querySelector('.toggle-explanation');
-            const explanationContent = document.querySelector('.explanation-content');
             
-            if (toggleButton && explanationContent) {
-                toggleButton.addEventListener('click', function() {
-                    explanationContent.classList.toggle('expanded');
-                    if (explanationContent.classList.contains('expanded')) {
-                        toggleButton.textContent = 'Less..';
-                    } else {
-                        toggleButton.textContent = 'More..';
-                    }
-                });
-            }
-            
-            console.log('Loading microblog entries first...');
-            await loadMicroblogEntries();
-            console.log('Microblog entries loaded successfully');
-            
-            loadLatestArticles();
-
+            // Fotoğrafları yükle
             fetch("/photos.json")
                 .then(res => res.json())
                 .then(data => {
@@ -1552,7 +1751,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     ];
                     renderPhotos();
                 });
-
+            
             function renderPhotos() {
                 if (!galleryGrid) return;
                 
@@ -1560,7 +1759,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 allPhotos.slice(0, visibleCount).forEach((photo, index) => {
                     const img = document.createElement("img");
                     img.src = photo.src;
-                    img.classList.add("gallery-photo", "touch-delay");
+                    img.classList.add("gallery-photo");
                     img.alt = "Gallery Photo";
                     img.dataset.location = photo.location;
                     img.dataset.date = photo.date;
@@ -1572,22 +1771,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         openModal();
                     });
                     
-                    img.addEventListener("touchstart", function(e) { handleTouchStart(e); });
-                    img.addEventListener("touchend", function(e) {
-                        handleTouchEnd(e, () => {
-                            currentIndex = index;
-                            openModal();
-                        });
-                    });
-                    
                     galleryGrid.appendChild(img);
                 });
-
+                
                 if (loadMoreBtn) {
                     loadMoreBtn.style.display = visibleCount < allPhotos.length ? "block" : "none";
                 }
             }
-
+            
             function openModal() {
                 if (!modal) return;
                 modal.style.display = "flex";
@@ -1595,7 +1786,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 document.body.style.overflow = "hidden";
                 updateModal();
             }
-
+            
             function closeModal() {
                 if (!modal) return;
                 modal.classList.remove("show");
@@ -1604,7 +1795,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     document.body.style.overflow = "auto";
                 }, 300);
             }
-
+            
             function updateModal() {
                 const photo = allPhotos[currentIndex];
                 if (modalImg) modalImg.src = photo.src;
@@ -1614,7 +1805,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 if (modalCounter) modalCounter.textContent = `${currentIndex + 1} / ${allPhotos.length}`;
                 updateThumbnails();
             }
-
+            
             function updateThumbnails() {
                 const prevIndex = (currentIndex - 1 + allPhotos.length) % allPhotos.length;
                 const nextIndex = (currentIndex + 1) % allPhotos.length;
@@ -1628,45 +1819,151 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     nextThumb.onclick = () => { currentIndex = nextIndex; updateModal(); };
                 }
             }
-
-            function nextPhoto() { currentIndex = (currentIndex + 1) % allPhotos.length; updateModal(); }
-            function prevPhoto() { currentIndex = (currentIndex - 1 + allPhotos.length) % allPhotos.length; updateModal(); }
-
+            
+            function nextPhoto() { 
+                currentIndex = (currentIndex + 1) % allPhotos.length; 
+                updateModal(); 
+            }
+            
+            function prevPhoto() { 
+                currentIndex = (currentIndex - 1 + allPhotos.length) % allPhotos.length; 
+                updateModal(); 
+            }
+            
+            // Event listeners
             if (closeBtn) closeBtn.addEventListener("click", closeModal);
-
-            window.addEventListener("click", e => { if (e.target === modal) closeModal(); });
-
+            
+            if (modal) {
+                modal.addEventListener("click", (e) => {
+                    if (e.target === modal) closeModal();
+                });
+            }
+            
             if (nextButton) nextButton.addEventListener("click", nextPhoto);
             if (prevButton) prevButton.addEventListener("click", prevPhoto);
-
-            document.addEventListener("keydown", e => {
+            
+            // Klavye kontrolleri
+            document.addEventListener("keydown", (e) => {
                 if (modal && modal.classList.contains("show")) {
                     if (e.key === "ArrowRight") nextPhoto();
                     else if (e.key === "ArrowLeft") prevPhoto();
                     else if (e.key === "Escape") closeModal();
                 }
             });
-
+            
+            // Swipe desteği (mobil)
             let touchStartX = 0;
-            let touchEndX = 0;
-
+            
             if (modal) {
-                modal.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, false);
-                modal.addEventListener('touchend', e => { touchEndX = e.changedTouches[0].screenX; handleSwipe(); }, false);
+                modal.addEventListener('touchstart', (e) => {
+                    touchStartX = e.changedTouches[0].screenX;
+                }, false);
+                
+                modal.addEventListener('touchend', (e) => {
+                    const touchEndX = e.changedTouches[0].screenX;
+                    
+                    if (touchEndX < touchStartX - 50) nextPhoto();
+                    if (touchEndX > touchStartX + 50) prevPhoto();
+                }, false);
             }
-
-            function handleSwipe() {
-                if (touchEndX < touchStartX - 50) nextPhoto();
-                if (touchEndX > touchStartX + 50) prevPhoto();
-            }
-
+            
+            // Daha fazla fotoğraf yükle
             if (loadMoreBtn) {
                 loadMoreBtn.addEventListener("click", () => {
-                    visibleCount += 8;
+                    visibleCount += 12;
                     renderPhotos();
                 });
             }
+        }
+        
+        // CV görüntüleme loglama
+        async function logCvView() {
+            try {
+                const response = await fetch('https://ipinfo.io/json?token=68a1229187303a');
+                const ipData = await response.json();
+                
+                const viewEntry = {
+                    id: Date.now(),
+                    ip: ipData.ip,
+                    city: ipData.city || 'unknown',
+                    country: ipData.country || 'unknown',
+                    timestamp: new Date().toISOString(),
+                    userAgent: navigator.userAgent.substring(0, 200),
+                    type: 'cv_view'
+                };
+                
+                // JSONBin'e kaydet
+                const binResponse = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        path: '/b/68ecedca43b1c97be96584cc/latest',
+                        method: 'GET'
+                    })
+                });
+                
+                let existingData = { 
+                    cvview: 'adem', 
+                    cv_views: [], 
+                    total_views: 0,
+                    last_updated: new Date().toISOString()
+                };
+                
+                if (binResponse.ok) {
+                    const result = await binResponse.json();
+                    existingData = result;
+                    if (!existingData.cv_views) existingData.cv_views = [];
+                    if (typeof existingData.total_views !== 'number') existingData.total_views = 0;
+                }
+                
+                existingData.cv_views.push(viewEntry);
+                existingData.total_views = (existingData.total_views || 0) + 1;
+                existingData.last_updated = new Date().toISOString();
+                
+                // Güncellenmiş veriyi kaydet
+                await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        path: '/b/68ecedca43b1c97be96584cc',
+                        method: 'PUT',
+                        body: existingData
+                    })
+                });
+                
+                console.log('CV view logged successfully');
+            } catch (error) {
+                console.error('Error logging CV view:', error);
+            }
+        }
+        
+        // CV linkine loglama ekle
+        document.addEventListener('DOMContentLoaded', function() {
+            const cvLink = document.getElementById('downloadCv');
+            if (cvLink) {
+                cvLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const originalHref = this.href;
+                    
+                    logCvView().then(() => {
+                        setTimeout(() => {
+                            window.location.href = originalHref;
+                        }, 300);
+                    }).catch(() => {
+                        window.location.href = originalHref;
+                    });
+                });
+            }
         });
+        
+        // Google Analytics
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-0WNL3VLY3F');
     </script>
-</body> 
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0WNL3VLY3F"></script>
+</body>
 </html>
