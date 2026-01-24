@@ -1259,6 +1259,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <h2 class="section-title"><i class="fa-solid fa-pager"></i> LadyB <span class="fa-solid fa-bug bug-icon"></span> G Entries</h2>
             <p class="last-entry">Last 5 Entries</p> 
             <div class="microblog-container">
+                <!-- DEĞİŞİKLİK: entries container'a min-height ve flex eklendi -->
                 <div class="entries-column">
                     <div id="entries" class="entries" style="min-height: 300px; display: flex; align-items: center; justify-content: center;">
                         <div class="entries-loading" style="text-align: center; padding: 40px;">
@@ -1729,12 +1730,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             }
         }
 
-        // DÜZELTİLDİ: Mikroblog entries'leri yükle - YENİ FONKSİYON
+        // DEĞİŞİKLİK: Mikroblog entries'leri yükle - YENİ FONKSİYON
         async function loadMicroblogEntries() {
             console.log('Starting to load microblog entries...');
-            
-            const entriesContainer = document.getElementById('entries');
-            if (!entriesContainer) return;
             
             try {
                 // JSONBin'den mikroblog entries'lerini çek
@@ -1742,10 +1740,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
                 
                 console.log('Fetching entries from JSONBin...');
-                
-                // Fetch işlemi için timeout ekle
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 saniye timeout
                 
                 const response = await fetch(proxyUrl, {
                     method: 'POST',
@@ -1755,11 +1749,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     body: JSON.stringify({
                         path: `/b/${MICROBLOG_BIN_ID}/latest`,
                         method: 'GET'
-                    }),
-                    signal: controller.signal
+                    })
                 });
-
-                clearTimeout(timeoutId);
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -1774,25 +1765,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 const last5Entries = entries.slice(0, 5);
                 console.log('Last 5 entries:', last5Entries);
                 
-                // Loading mesajını daha uzun süre göster (minimum 1.5 saniye)
-                await new Promise(resolve => setTimeout(resolve, 1500));
+                // 1 saniye bekleyelim ki loading görünsün (zorunlu bekleme)
+                await new Promise(resolve => setTimeout(resolve, 1000));
                 
                 displayMicroblogEntries(last5Entries);
                 
             } catch (error) {
                 console.error('Error loading microblog entries:', error);
-                
-                // Network timeout ise farklı mesaj göster
-                if (error.name === 'AbortError') {
-                    entriesContainer.innerHTML = '<div class="no-articles" style="text-align: center; padding: 40px; color: #ccc;">Connection is taking longer than expected. Please check your internet connection or try again later.</div>';
-                } else {
-                    entriesContainer.innerHTML = '<div class="no-articles" style="text-align: center; padding: 40px; color: #ccc;">Sometimes it can take 3–5 seconds. Please be patient or try again later.</div>';
+                const entriesContainer = document.getElementById('entries');
+                if (entriesContainer) {
+                    entriesContainer.innerHTML = '<div class="no-articles" style="text-align: center; padding: 40px; color: #ccc;">Sometimes it can take 3–5 seconds. I’m just asking you to be a little patient. Unable to load entries. Please try again later.</div>';
                 }
-                
-                // 3 saniye sonra tekrar dene
-                setTimeout(() => {
-                    loadMicroblogEntries();
-                }, 3000);
             }
         }
 
@@ -1858,6 +1841,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         }
 
         // Galeri ve YENİ Modal işlevselliği
+        // DEĞİŞİKLİK: DOMContentLoaded async yapıldı
         document.addEventListener("DOMContentLoaded", async () => {
             const galleryGrid = document.getElementById("gallery-grid");
             const loadMoreBtn = document.getElementById("load-more");
@@ -1893,7 +1877,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 });
             }
             
-            // ÖNCE Mikroblog entries yükle
+            // DEĞİŞİKLİK: ÖNCE Mikroblog entries yükle
             console.log('Loading microblog entries first...');
             await loadMicroblogEntries();
             console.log('Microblog entries loaded successfully');
