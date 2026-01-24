@@ -1072,91 +1072,162 @@
           transform: scale(0.98);
         }
       }
-    /* =========================================================
-   LANDSCAPE PATCH v5 — STABLE (No fixed header)
-   - Amaç: Yatayda çakışma olmasın, hoodie aşağı insin,
-           sağdaki görsel (glow) menü altına girmesin.
+  /* =========================================================
+   LANDSCAPE FIX v2 (iPhone / mobile yatay) — FULL PATCH
+   - Header + Home çakışma / kayma gider
+   - Animasyonlu simge küçülür ve sabitlenir
+   - Yazılar taşmaz, düzgün wrap olur
+   - iOS landscape bar (vh) sapmalarına karşı d/vh kullanır
 ========================================================= */
-@media screen and (max-width: 1024px) and (orientation: landscape){
+@media (max-width: 932px) and (orientation: landscape) {
 
-  /* HOME: header yüksekliği kadar üst boşluk ver */
-  section#home.home{
-    padding-top: 90px !important;     /* gerekirse 100 */
-    min-height: 100vh !important;
-    height: auto !important;
+  /* iOS Safari’de 100vh sapmasını düzelt */
+  :root { --hdrH: 72px; }
 
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: flex-start !important;
-    justify-content: space-between !important;
-    gap: 18px !important;
-
-    /* Hoodie (arka plan) aşağı */
-    background-position: 75% 78% !important;
-    background-size: cover !important;
-    background-repeat: no-repeat !important;
+  /* Header kompakt + sabit yüksekliğe yaklaş */
+  .header{
+    padding: 6px 14px !important;
+    min-height: var(--hdrH) !important;
+    align-items: center !important;
+    gap: 10px !important;
+    flex-wrap: nowrap !important;  /* kaymayı azaltır */
   }
 
-  /* Eğer hoodie ::before/::after ise onu da aşağı indir */
-  section#home.home::before,
-  section#home.home::after{
-    background-position: 75% 78% !important;
-    background-size: cover !important;
-    background-repeat: no-repeat !important;
-  }
-
-  /* Sol yazı alanı */
-  .home-content{
-    flex: 1 1 62% !important;
-    max-width: 62% !important;
+  .logo-container{
+    max-width: 58vw !important;
     min-width: 0 !important;
   }
 
-  /* Sağ görsel alanı: aşağıdan başlasın */
-  .home-img{
-    flex: 0 0 38% !important;
-    max-width: 38% !important;
+  .logo{
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    font-size: 18px !important;
+    line-height: 1.05 !important;
+    white-space: nowrap !important;
+  }
 
+  .logo-slogan{
+    font-size: 9px !important;
+    margin-top: 2px !important;
+    white-space: nowrap !important;   /* slogan tek satır kalsın */
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 58vw !important;
+  }
+
+  /* Navbar taşmasın */
+  .navbar{ min-width: 0 !important; }
+  .navbar .dropbtn{
+    font-size: 14px !important;
+    padding: 6px 10px !important;
+    white-space: nowrap !important;
+  }
+
+  /* HOME: header kadar aşağı in, iOS için dvh/svh kullan */
+  #home.home{
+    padding-top: calc(var(--hdrH) + 14px) !important;
+    min-height: 100dvh !important;   /* iOS için daha doğru */
+    height: auto !important;
+    align-items: flex-start !important;
+  }
+
+  /* Home layout: kesin hizalama ve kaymayı bitirme */
+  .home{
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: space-between !important;
+    gap: 16px !important;
+  }
+
+  .home-content{
+    flex: 1 1 60% !important;
+    max-width: 60% !important;
+    min-width: 0 !important;
+    margin-top: 0 !important;
+  }
+
+  .home-img{
+    flex: 0 0 40% !important;
+    max-width: 40% !important;
+    min-width: 0 !important;
     display: flex !important;
     justify-content: center !important;
     align-items: flex-start !important;
-
-    /* KRİTİK: menü altına girmesin diye aşağı it */
-    margin-top: 24px !important;
-    padding-top: 0 !important;
-
-    position: relative !important;
-    z-index: 3 !important;
+    margin-top: -6px !important; /* ekrandaki küçük sarkmayı alır */
   }
 
-  /* Glow boyutu */
+  /* Animasyonlu simgeyi küçült + sabitle */
   .glowing-circle{
-    width: 170px !important;
-    height: 170px !important;
+    width: 165px !important;
+    height: 165px !important;
     transform: translateY(0) !important;
   }
-
+  .glowing-circle .image{
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
   .glowing-circle .image img{
-    width: 145px !important;
-    height: 145px !important;
+    width: 140px !important;
+    height: 140px !important;
     object-fit: contain !important;
   }
 
-  /* Metin taşmasın */
-  .home-content p{
-    max-height: 36vh !important;
-    overflow: auto !important;
-    -webkit-overflow-scrolling: touch !important;
+  /* Başlıklar: taşma yok */
+  .home-content h1{
+    font-size: 26px !important;
+    line-height: 1.05 !important;
+    margin: 6px 0 !important;
+    word-break: break-word !important;
+  }
+  .home-content h3{
+    font-size: 16px !important;
+    line-height: 1.15 !important;
+    margin: 4px 0 !important;
+    display: block !important;
   }
 
-  /* Typed taşmasın */
+  /* Typed text: satır taşmasın */
   .pro-text{
+    display: inline-block !important;
     max-width: 100% !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
     white-space: nowrap !important;
-    display: inline-block !important;
+    vertical-align: bottom !important;
   }
+
+  /* Paragraf: yatayda alan az, kontrollü */
+  .home-content p{
+    font-size: 12.5px !important;
+    line-height: 1.45 !important;
+    margin-top: 10px !important;
+
+    /* aşağıdaki iki satır kayma/taşma için kilit */
+    max-height: 34dvh !important;
+    overflow: auto !important;
+
+    padding-right: 6px !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Sosyal + buton */
+  .home-sci{
+    margin-top: 10px !important;
+    gap: 10px !important;
+    flex-wrap: wrap !important;
+  }
+
+  #downloadCv.btn-box{
+    padding: 10px 16px !important;
+    font-size: 14px !important;
+    min-height: 40px !important;
+    margin-top: 10px !important;
+  }
+
+  /* Section’a gidince header üstünü kapatmasın */
+  section{ scroll-margin-top: calc(var(--hdrH) + 14px) !important; }
 }
     
     </style>
