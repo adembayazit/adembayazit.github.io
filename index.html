@@ -781,6 +781,38 @@
         .gallery-photo:active { transform: scale(0.95); }
         .entry-item:active { transform: scale(0.98); }
       }
+    
+    /* ✅ Microblog yatayda büyüyünce entry kartları da genişlesin */
+        #microblog .microblog-container,
+        #microblog .entries-column,
+        #microblog #entries,
+        #microblog .entry-item,
+        #microblog .entry-item > div {
+          width: 100%;
+          max-width: 100%;
+          min-width: 0;          /* flex içinde küçülebilsin */
+          box-sizing: border-box;
+        }
+        
+        /* ✅ İçerik taşmasın (uzun link / kod / tek kelime) */
+        #microblog .entry-item {
+          overflow: hidden;
+        }
+        
+        #microblog .entry-item * {
+          min-width: 0;
+          overflow-wrap: anywhere;
+          word-break: break-word;
+        }
+        
+        /* (Opsiyonel) Eğer .entries display:flex ise child’ları dikey diz */
+        #microblog #entries {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          align-items: stretch;
+        }
+    
     </style>
 </head>
 <!-- Google Tag Manager (noscript) -->
