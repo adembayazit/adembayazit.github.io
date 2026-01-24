@@ -781,38 +781,143 @@
         .gallery-photo:active { transform: scale(0.95); }
         .entry-item:active { transform: scale(0.98); }
       }
-    
-    /* ✅ Microblog yatayda büyüyünce entry kartları da genişlesin */
-        #microblog .microblog-container,
-        #microblog .entries-column,
-        #microblog #entries,
-        #microblog .entry-item,
-        #microblog .entry-item > div {
-          width: 100%;
-          max-width: 100%;
-          min-width: 0;          /* flex içinde küçülebilsin */
-          box-sizing: border-box;
-        }
+        /* =====================================================
+           ✅ MOBILE LANDSCAPE FIX (Header + Microblog)
+           Sadece telefon yatayda (dar yükseklik) devreye girer
+        ===================================================== */
+        @media (max-width: 900px) and (orientation: landscape) {
+          /* Header artık tek satırda sıkışmasın */
+          .header{
+            flex-wrap: wrap !important;
+            align-items: flex-start !important;
+            padding: 10px 4% !important;
+            gap: 10px !important;
+          }
         
-        /* ✅ İçerik taşmasın (uzun link / kod / tek kelime) */
-        #microblog .entry-item {
-          overflow: hidden;
-        }
+          /* Logo alanı bir satır kaplasın, navbar aşağı insin */
+          .logo-container{
+            width: 100% !important;
+            align-items: flex-start !important;
+          }
         
-        #microblog .entry-item * {
-          min-width: 0;
-          overflow-wrap: anywhere;
-          word-break: break-word;
-        }
+          /* Slogan taşmasın, alt satıra rahat geçsin */
+          .logo-slogan{
+            white-space: normal !important;
+            width: 100% !important;
+            text-align: left !important;
+            padding-right: 0 !important;
+            line-height: 1.15 !important;
+            margin-top: 4px !important;
+          }
         
-        /* (Opsiyonel) Eğer .entries display:flex ise child’ları dikey diz */
-        #microblog #entries {
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-          align-items: stretch;
+          /* Menü header içinde ayrı satıra geçsin */
+          .navbar{
+            width: 100% !important;
+          }
+        
+          .dropdown{
+            width: 100% !important;
+          }
+        
+          /* Drop butonu taşma yapmasın */
+          .dropbtn{
+            width: 100% !important;
+            display: flex !important;
+            flex-wrap: wrap !important;
+            justify-content: flex-start !important;
+            gap: 8px !important;
+            padding: 10px 12px !important;
+          }
         }
-    
+        /* =====================================================
+   ✅ MICROBLOG - DAR EKRAN / YATAY MOD KIRILMA FIX
+   Spotify + uzun yazı + URL + kod + tek kelime taşmalarını bitirir
+===================================================== */
+
+/* 1) Entry kartının flex içinde gerçekten küçülebilmesi */
+#microblog #entries,
+#microblog .entry-item,
+#microblog .entry-item > div{
+  min-width: 0 !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* 2) İçerik taşmalarını kontrol et */
+#microblog .entry-item{
+  overflow: hidden !important;
+}
+
+/* 3) Metin/URL/tek kelime kırılması (asıl çözüm burada) */
+#microblog .entry-item,
+#microblog .entry-item *{
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important; /* en agresif ve etkili */
+  word-break: break-word !important;
+}
+
+/* 4) Linkler ve kod gibi kırılması zor parçalar */
+#microblog .entry-item a{
+  display: inline-block;
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+}
+
+/* Kod bloğu / inline code varsa */
+#microblog .entry-item pre,
+#microblog .entry-item code{
+  max-width: 100% !important;
+  white-space: pre-wrap !important;  /* tek satır uzayıp taşmasın */
+  word-break: break-word !important;
+  overflow-x: auto !important;       /* gerekiyorsa yatay scroll */
+}
+
+/* 5) Görsel / iframe / embed hepsi %100 */
+#microblog .entry-item img,
+#microblog .entry-item iframe,
+#microblog .entry-item embed,
+#microblog .entry-item object,
+#microblog .entry-item video{
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+/* 6) Inline style ile width verilen içerikleri de yakala */
+#microblog .entry-item [style*="width"],
+#microblog .entry-item [style*="max-width"]{
+  max-width: 100% !important;
+}
+@media (max-width: 900px) and (orientation: landscape) {
+  .header{
+    flex-wrap: wrap !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+  }
+  .logo-container{
+    width: 100% !important;
+    align-items: flex-start !important;
+  }
+  .logo-slogan{
+    white-space: normal !important;
+    text-align: left !important;
+    padding-right: 0 !important;
+    line-height: 1.15 !important;
+  }
+  .navbar, .dropdown{ width: 100% !important; }
+  .dropbtn{
+    width: 100% !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    justify-content: flex-start !important;
+  }
+}
+
     </style>
 </head>
 <!-- Google Tag Manager (noscript) -->
