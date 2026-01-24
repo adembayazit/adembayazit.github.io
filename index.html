@@ -1029,6 +1029,132 @@
 }
 .photo-analysis-btn{ margin-left:auto !important; margin-right:auto !important; }
 
+/* =========================================================
+   LANDSCAPE FIX (iPhone / mobile yatay)
+   - Header + Home çakışmasını engeller
+   - Animasyonlu simgeyi küçültür
+   - Yazıları yataya yayar, taşmayı keser
+========================================================= */
+@media (max-width: 932px) and (orientation: landscape) {
+
+  /* Header kompakt */
+  .header{
+    padding: 6px 12px !important;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .logo-container{
+    max-width: 60vw;
+  }
+
+  .logo{
+    font-size: 18px !important;
+    line-height: 1.1 !important;
+    white-space: nowrap;
+  }
+
+  .logo-slogan{
+    font-size: 9px !important;
+    white-space: normal !important;     /* tek satıra zorlamasın */
+    max-width: 60vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Dropdown butonu taşmasın */
+  .navbar .dropbtn{
+    font-size: 14px !important;
+    padding: 6px 10px !important;
+    white-space: nowrap;
+  }
+
+  /* Home section: header ile çakışma olmasın */
+  #home.home{
+    padding-top: 90px !important;       /* header yüksekliği kadar boşluk */
+    min-height: 100vh !important;
+    height: auto !important;
+    align-items: flex-start !important;
+  }
+
+  /* Home içerik düzeni: yatayda yan yana ama taşmasın */
+  .home{
+    gap: 14px !important;
+  }
+
+  .home-content{
+    flex: 1 1 62% !important;
+    max-width: 62% !important;
+    min-width: 0 !important;
+  }
+
+  .home-img{
+    flex: 1 1 38% !important;
+    max-width: 38% !important;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  /* Animasyonlu simgeyi küçült (glowing circle + image) */
+  .glowing-circle{
+    width: 180px !important;
+    height: 180px !important;
+  }
+  .glowing-circle .image img{
+    width: 150px !important;
+    height: 150px !important;
+    object-fit: contain;
+  }
+
+  /* Yazılar yataya yayılıp taşmasın */
+  .home-content h1{
+    font-size: 26px !important;
+    line-height: 1.1 !important;
+    word-break: break-word;
+  }
+  .home-content h3{
+    font-size: 16px !important;
+    line-height: 1.2 !important;
+    flex-wrap: wrap;
+  }
+
+  /* Typed text taşmasını engelle */
+  .pro-text{
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: bottom;
+  }
+
+  /* Paragraf: taşarsa scroll yapsın (yatayda alan az) */
+  .home-content p{
+    font-size: 12.5px !important;
+    line-height: 1.45 !important;
+    max-height: 38vh;
+    overflow: auto;
+    padding-right: 6px;
+  }
+
+  /* Sosyal ikonlar ve butonlar sıkışmasın */
+  .home-sci{
+    gap: 10px !important;
+    flex-wrap: wrap;
+  }
+
+  #downloadCv.btn-box{
+    padding: 10px 16px !important;
+    font-size: 14px !important;
+    min-height: 40px !important;
+  }
+
+  /* Anchor ile section’a gidince header üstünü kapatmasın */
+  section{
+    scroll-margin-top: 90px;
+  }
+}
+
       /* Touch device detection ve mobil optimizasyon */
       @media (hover: none) and (pointer: coarse) {
         .photo-analysis-btn {
