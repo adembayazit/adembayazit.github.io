@@ -1226,6 +1226,25 @@
     margin-top: 10px !important;
   }
 
+    /* ===== LANDSCAPE KESİN FIX (animasyon var ama taşma yok) ===== */
+    @keyframes floatImage {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-6px); } /* -24 yerine güvenli */
+    }
+    
+    /* home-img: biraz aşağı, menü altına girme biter */
+    .home-img{
+      margin-top: 14px !important;   /* 10-20 arası oynayabilirsin */
+      animation: zoomIn 1s ease forwards, floatImage 5s ease-in-out infinite !important;
+    }
+    
+    /* fotoğrafı dairenin ortasına al (top:0 yüzünden yukarı yapışıyordu) */
+    .image img{
+      top: 50% !important;
+      left: 50% !important;
+      transform: translate(-50%, -50%) !important;
+    }
+
   /* Section’a gidince header üstünü kapatmasın */
   section{ scroll-margin-top: calc(var(--hdrH) + 14px) !important; }
 }
