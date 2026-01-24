@@ -1028,123 +1028,85 @@
   display: block !important;
 }
 .photo-analysis-btn{ margin-left:auto !important; margin-right:auto !important; }
-
 /* =========================================================
-   MEGA LANDSCAPE PATCH v3 — FORCE OVERRIDE
-   Amaç: Header menü altında kalan glow görseli + home çakışması
-   Çalışma koşulu:
-   - Telefon yatay (orientation: landscape) VEYA
-   - Ekran yüksekliği küçük (iOS landscape bar)
+   LANDSCAPE PATCH v4 — BACKGROUND (hoodie) + HOME-IMG FORCE
 ========================================================= */
-
-/* 1) Telefon yatay */
 @media screen and (orientation: landscape) and (max-width: 1024px),
        screen and (max-height: 500px) and (max-width: 1024px){
 
-  /* HEADER: üstte sabit ve en üst katmanda */
   header.header{
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
     right: 0 !important;
-    z-index: 2147483647 !important;
-    padding: 6px 14px !important;
-    min-height: 74px !important;
-    box-sizing: border-box !important;
+    z-index: 999999 !important;
   }
 
-  /* BODY: fixed header için sayfayı aşağı kaydır */
-  body{
-    padding-top: 86px !important; /* header+boşluk */
-  }
+  body{ padding-top: 86px !important; }
 
-  /* HOME: menünün altına girmesin */
   section#home.home{
-    padding-top: 18px !important; /* artık body padding-top itiyor */
-    margin-top: 0 !important;
     min-height: calc(100dvh - 86px) !important;
     height: auto !important;
-    align-items: flex-start !important;
-  }
-
-  /* HOME layout: yan yana ve taşmasın */
-  section#home.home{
+    padding-top: 10px !important;
     display: flex !important;
     flex-direction: row !important;
+    align-items: flex-start !important;
     justify-content: space-between !important;
     gap: 16px !important;
+
+    /* hoodie arka planı aşağı */
+    background-position: 75% 72% !important;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
   }
 
   .home-content{
     flex: 1 1 60% !important;
     max-width: 60% !important;
     min-width: 0 !important;
+    z-index: 5 !important;
   }
 
   .home-img{
     flex: 0 0 40% !important;
     max-width: 40% !important;
     min-width: 0 !important;
+
     display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+
     justify-content: center !important;
     align-items: flex-start !important;
 
-    /* asıl kritik: görseli aşağı it */
-    padding-top: 28px !important;
-    margin-top: 0 !important;
-
     position: relative !important;
-    z-index: 5 !important;
+    z-index: 6 !important;
+
+    margin-top: 0 !important;
+    padding-top: 26px !important;
   }
 
-  /* GLOW: kesin aşağı insin + katman sorunu olmasın */
   .glowing-circle{
+    width: 165px !important;
+    height: 165px !important;
     position: relative !important;
-    z-index: 5 !important;
-    transform: translateY(18px) !important; /* daha da aşağı */
-    width: 170px !important;
-    height: 170px !important;
+    z-index: 6 !important;
+    transform: translateY(16px) !important;
   }
 
   .glowing-circle .image img{
-    width: 145px !important;
-    height: 145px !important;
+    width: 140px !important;
+    height: 140px !important;
     object-fit: contain !important;
   }
 
-  /* Yazılar */
-  .home-content h1{
-    font-size: 26px !important;
-    line-height: 1.05 !important;
-  }
-  .home-content h3{
-    font-size: 16px !important;
-    line-height: 1.15 !important;
-  }
-  .pro-text{
-    display: inline-block !important;
-    max-width: 100% !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    white-space: nowrap !important;
-  }
-
   .home-content p{
-    font-size: 12.5px !important;
-    line-height: 1.45 !important;
     max-height: 34dvh !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch !important;
   }
+}
 
-  /* Anchor ile gidince header üstünü kapatmasın */
-  section{
-    scroll-margin-top: 90px !important;
-  }
-}
-  /* Section’a gidince header üstünü kapatmasın */
-  section{ scroll-margin-top: calc(var(--hdrH) + 14px) !important; }
-}
       /* Touch device detection ve mobil optimizasyon */
       @media (hover: none) and (pointer: coarse) {
         .photo-analysis-btn {
