@@ -161,30 +161,38 @@ async function loadInteractions() {
 function formatContent(content) {
   if (!content) return '';
   
+  // Geçici div oluşturarak içeriği parse et
   const tempDiv = document.createElement('div');
   tempDiv.innerHTML = content;
   
+  // Birden fazla img etiketi varsa sadece ilkini göster
   const images = tempDiv.querySelectorAll('img');
   if (images.length > 1) {
+    // İlk img dışındakileri kaldır
     for (let i = 1; i < images.length; i++) {
       images[i].remove();
     }
   }
   
+  // Boş <p> etiketlerini ve gereksiz boşlukları temizle
   const paragraphs = tempDiv.querySelectorAll('p');
   paragraphs.forEach(p => {
+    // İçeriği olmayan veya sadece boşluk içeren <p> etiketlerini kaldır
     if (!p.textContent.trim() && p.children.length === 0) {
       p.remove();
     }
   });
   
+  // Gereksiz <br> etiketlerini temizle
   const lineBreaks = tempDiv.querySelectorAll('br');
   lineBreaks.forEach(br => {
+    // Eğer <br> etiketinden sonra başka bir <br> geliyorsa veya bir önceki kardeş yoksa kaldır
     if (br.nextElementSibling && br.nextElementSibling.tagName === 'BR') {
       br.remove();
     }
   });
   
+  // İçeriği temizlenmiş olarak döndür
   return tempDiv.innerHTML.trim();
 }
 
@@ -241,9 +249,11 @@ async function addTranslationIcons() {
 
 // Entry'leri gruplama fonksiyonu
 function groupEntries(entries) {
+  const parentMap = new Map();
   const childMap = new Map();
   const parentEntries = [];
   
+  // Önce tüm entry'leri parent ve child olarak ayır
   entries.forEach(entry => {
     if (!entry.references || entry.references.length === 0) {
       parentEntries.push(entry);
@@ -256,21 +266,32 @@ function groupEntries(entries) {
     }
   });
   
+  // Parent entry'leri tarihe göre sırala (yeniden eskiye)
   parentEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
   
+  // Parent entry'leri grupla ve child'larını ekle
   const groups = [];
   parentEntries.forEach(parent => {
     const children = childMap.get(parent.id) || [];
+    
+    // Child'ları tarihe göre sırala (yeniden eskiye)
     children.sort((a, b) => new Date(b.date) - new Date(a.date));
     
+    // Grubun tarihini belirle (en yeni tarih - parent veya child'lardan)
     const groupDate = children.length > 0 
       ? new Date(Math.max(new Date(parent.date), ...children.map(c => new Date(c.date))))
       : new Date(parent.date);
     
-    groups.push({ parent, children, groupDate });
+    groups.push({
+      parent,
+      children,
+      groupDate
+    });
   });
   
+  // Grupları grup tarihine göre sırala (yeniden eskiye)
   groups.sort((a, b) => b.groupDate - a.groupDate);
+  
   return groups;
 }
 
@@ -278,6 +299,7 @@ function createEntryElement(entry, depth = 0) {
   const entryDiv = document.createElement("div");
   entryDiv.className = `entry ${depth > 0 ? 'child-entry' : ''}`;
   
+  // Spotify link kontrolü
   const hasSpotifyLink = entry.content.includes('open.spotify.com');
   if (!hasSpotifyLink) {
     entryDiv.classList.add('regular-entry');
@@ -338,23 +360,32 @@ function processEntries(entries) {
 
   allEntries = [...entries];
   
+  // Yeni entry kontrolü
   if (entries.length !== lastEntryCount) {
     lastEntryCount = entries.length;
     if (lastEntryCount > 0) {
+      // Yeni entry geldiğinde sayfayı en üste kaydır
       window.scrollTo(0, 0);
     }
   }
 
+  // Entry'leri grupla
   groupedEntries = groupEntries(entries);
+  
+  // İlk 5 grubu göster (toplamda 5 entry değil, 5 grup)
   const groupsToShow = groupedEntries.slice(0, 5);
   
+  // Grupları ekrana bas
   groupsToShow.forEach(group => {
+    // Grup container'ı oluştur
     const groupDiv = document.createElement("div");
     groupDiv.className = "entry-group";
     
+    // Parent entry'yi ekle
     const parentElement = createEntryElement(group.parent, 0);
     groupDiv.appendChild(parentElement);
     
+    // Child entry'leri ekle
     group.children.forEach(child => {
       const childElement = createEntryElement(child, 1);
       groupDiv.appendChild(childElement);
@@ -363,6 +394,7 @@ function processEntries(entries) {
     container.appendChild(groupDiv);
   });
 
+  // Çeviri ikonlarını ekle
   addTranslationIcons();
 }
 
@@ -443,6 +475,7 @@ async function updateInteractionsOnServer(entryId, newLikeCount, newPinCount) {
 async function checkForNewEntries() {
   try {
     const entries = await loadAllEntries();
+    
     if (entries.length !== lastEntryCount) {
       processEntries(entries);
     }
@@ -451,58 +484,27 @@ async function checkForNewEntries() {
   }
 }
 
-/* =========================================================
-   ✅ SADECE UI HATA YAZISINI "ERKEN" BASMAYI ENGELLEME PATCH’İ
-   - Gerçekten 8sn boyunca entry gelmezse error göster
-   - Bu süre boyunca loading kalır
-========================================================= */
-function showEntriesLoading(message = "Loading entries...") {
-  const el = document.getElementById("entries");
-  if (!el) return;
-
-  // Eğer zaten entry basılmışsa loading'e dönme
-  if (el.querySelector(".entry") || el.querySelector(".entry-group")) return;
-
-  el.innerHTML = `
-    <div class="entries-loading" style="text-align:center; padding:40px;">
-      <i class="fas fa-spinner fa-spin" style="font-size:2rem; color:#00ff00; margin-bottom:15px;"></i>
-      <p style="color:white; font-size:1rem;">${message}</p>
-    </div>
-  `;
-}
-
-function scheduleEntriesError(messageHtml, delayMs = 8000) {
-  setTimeout(() => {
-    const el = document.getElementById("entries");
-    if (!el) return;
-
-    // Eğer bu süre içinde entry gelmişse HİÇBİR ŞEY YAPMA
-    if (el.querySelector(".entry") || el.querySelector(".entry-group")) return;
-
-    el.innerHTML = messageHtml;
-  }, delayMs);
-}
-
 // 5. BAŞLANGIÇ FONKSİYONU - BİN SİSTEMİ İLE GÜNCELLENDİ
 async function initializeApp() {
   try {
-    // (Loading’i burada zorla gösteriyoruz; HTML’de zaten var ama load-entries.js daha erken çalışıyor olabilir)
-    showEntriesLoading("Loading entries...");
-
+    // Bin sistemini başlat
     await initializeBinSystem();
+    
+    // Tüm entry'leri yükle
     const entries = await loadAllEntries();
+    
+    // Interaction verilerini yükle
     await loadInteractions();
+    
+    // Entry'leri işle
     processEntries(entries);
     
+    // Otomatik yenileme kontrolünü başlat
     checkInterval = setInterval(checkForNewEntries, refreshInterval);
   } catch (error) {
     console.error("Initialization error:", error);
-
-    // ✅ HEMEN error basma -> loading kalsın
-    showEntriesLoading("Sometimes it can take 3–5 seconds…");
-
-    // Demo verileri (eski davranış korunuyor)
     try {
+      // Demo verileri (gerçek API'ye erişilemezse)
       const demoEntries = [
         {
           id: 123,
@@ -524,16 +526,22 @@ async function initializeApp() {
         }
       ];
       processEntries(demoEntries);
-
+      
+      // Fallback için de kontrolü başlat
       checkInterval = setInterval(checkForNewEntries, refreshInterval);
     } catch (fallbackError) {
       console.error("Fallback failed:", fallbackError);
 
-      // ✅ Artık hemen değil, 8sn sonra hâlâ entry yoksa error göster
-      scheduleEntriesError(
-        '<div class="error">Veriler yüklenirken bir hata oluştu</div>',
-        8000
-      );
+      // ✅ DEĞİŞİKLİK: Hata mesajını 1.5sn geciktir
+      setTimeout(() => {
+        const el = document.getElementById("entries");
+        if (!el) return;
+
+        // Bu süre içinde entry basıldıysa hata yazma
+        if (el.querySelector(".entry") || el.querySelector(".entry-group")) return;
+
+        el.innerHTML = '<div class="error">Veriler yüklenirken bir hata oluştu</div>';
+      }, 1500);
     }
   }
 }
