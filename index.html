@@ -1732,52 +1732,63 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         // DEĞİŞİKLİK: Mikroblog entries'leri yükle - YENİ FONKSİYON
         async function loadMicroblogEntries() {
-            console.log('Starting to load microblog entries...');
-            
-            try {
-                // JSONBin'den mikroblog entries'lerini çek
-                const MICROBLOG_BIN_ID = '694f7d8e43b1c97be91ef7d1'; // Mikroblog için bin ID
-                const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
-                
-                console.log('Fetching entries from JSONBin...');
-                
-                const response = await fetch(proxyUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        path: `/b/${MICROBLOG_BIN_ID}/latest`,
-                        method: 'GET'
-                    })
-                });
+  console.log('Starting to load microblog entries...');
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const result = await response.json();
-                console.log('Entries fetched:', result);
-                
-                const entries = result.entries || result.records || result || [];
-                
-                // Son 5 entry'yi al
-                const last5Entries = entries.slice(0, 5);
-                console.log('Last 5 entries:', last5Entries);
-                
-                // 1 saniye bekleyelim ki loading görünsün (zorunlu bekleme)
-                await new Promise(resolve => setTimeout(resolve, 15000));
-                
-                displayMicroblogEntries(last5Entries);
-                
-            } catch (error) {
-                console.error('Error loading microblog entries:', error);
-                const entriesContainer = document.getElementById('entries');
-                if (entriesContainer) {
-                    entriesContainer.innerHTML = '<div class="no-articles" style="text-align: center; padding: 40px; color: #ccc;">Unable to load entries. Please try again later.</div>';
-                }
-            }
-        }
+  const entriesContainer = document.getElementById('entries');
+  const MIN_LOADING_MS = 1200; // 1.2s yeterli (istersen 15000 yap)
+  const start = Date.now();
+
+  // yardımcı: minimum süreyi garantile
+  const waitMin = async () => {
+    const elapsed = Date.now() - start;
+    const remaining = MIN_LOADING_MS - elapsed;
+    if (remaining > 0) await new Promise(r => setTimeout(r, remaining));
+  };
+
+  try {
+    const MICROBLOG_BIN_ID = '694f7d8e43b1c97be91ef7d1';
+    const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
+
+    const response = await fetch(proxyUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        path: `/b/${MICROBLOG_BIN_ID}/latest`,
+        method: 'GET'
+      })
+    });
+
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+    const result = await response.json();
+
+    // ✅ entries her koşulda array olsun
+    let entriesRaw = result?.entries ?? result?.records ?? result;
+    const entries = Array.isArray(entriesRaw)
+      ? entriesRaw
+      : (entriesRaw && Array.isArray(entriesRaw.entries) ? entriesRaw.entries : []);
+
+    // İstersen burada tarih bazlı sıralama:
+    // entries.sort((a,b)=> new Date(b.date||b.created_at||0) - new Date(a.date||a.created_at||0));
+
+    const last5Entries = entries.slice(0, 5);
+
+    // ✅ loading minimum süre kalsın
+    await waitMin();
+
+    displayMicroblogEntries(last5Entries);
+  } catch (error) {
+    console.error('Error loading microblog entries:', error);
+
+    // ✅ hata olsa bile loading minimum süre kalsın
+    await waitMin();
+
+    if (entriesContainer) {
+      entriesContainer.innerHTML =
+        '<div class="no-articles" style="text-align: center; padding: 40px; color: #ccc;">Unable to load entries. Please try again later.</div>';
+    }
+  }
+}
 
         function displayMicroblogEntries(entries) {
             const entriesContainer = document.getElementById('entries');
