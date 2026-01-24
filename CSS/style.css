@@ -1383,3 +1383,88 @@ canvas {
   backface-visibility: hidden;
   perspective: 1000px;
 }
+
+/* =========================================================
+   LANDSCAPE — GLOW CIRCLE FINAL (TEK PARÇA)
+   - home-img görünür + çember katmanları + animasyon garanti
+========================================================= */
+@media (max-width: 932px) and (orientation: landscape){
+
+  /* 1) HOME-IMG kesin görünsün (opacity 0 kalmasın) */
+  .home-img{
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: flex !important;
+
+    /* konum */
+    margin-top: 18px !important;     /* biraz aşağı */
+    justify-content: center !important;
+    align-items: flex-start !important;
+
+    /* animasyon: zoom + hafif float (margin ile) */
+    animation: zoomIn 1s ease forwards, floatImageMargin 5s ease-in-out infinite !important;
+    animation-delay: 0s, 0s !important;
+  }
+
+  /* 2) Float hareketi (transform çatışması yok) */
+  @keyframes floatImageMargin{
+    0%,100% { margin-top: 18px; }
+    50%     { margin-top: 10px; }
+  }
+
+  /* 3) Glowing circle katmanlarını zorla */
+  .home-img .glowing-circle{
+    position: relative !important;
+    width: 165px !important;
+    height: 165px !important;
+    border-radius: 50% !important;
+    overflow: visible !important;
+  }
+
+  /* Dönen yeşil halka */
+  .home-img .glowing-circle span{
+    position: absolute !important;
+    inset: 0 !important;
+    display: block !important;
+    border-radius: 50% !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    background: linear-gradient(black, rgba(0, 128, 0, 0.55)) !important;
+    animation: circleRotate 5s linear infinite !important;
+    z-index: 1 !important;
+  }
+
+  .home-img .glowing-circle span:nth-child(1){
+    filter: blur(10px) !important;
+  }
+
+  /* İç siyah disk (mask) — halka kalınlığı */
+  .home-img .glowing-circle::after{
+    content: "" !important;
+    position: absolute !important;
+    inset: 10px !important;
+    background: #000 !important;
+    border-radius: 50% !important;
+    z-index: 2 !important;
+  }
+
+  /* Fotoğraf katmanı */
+  .home-img .glowing-circle .image{
+    position: relative !important;
+    width: 145px !important;
+    height: 145px !important;
+    border-radius: 50% !important;
+    overflow: hidden !important;
+    z-index: 3 !important;
+  }
+
+  .home-img .glowing-circle .image img{
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    max-width: 140px !important;
+    height: auto !important;
+    object-fit: cover !important;
+  }
+}
