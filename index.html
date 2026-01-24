@@ -1259,6 +1259,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <h2 class="section-title"><i class="fa-solid fa-pager"></i> LadyB <span class="fa-solid fa-bug bug-icon"></span> G Entries</h2>
             <p class="last-entry">Last 5 Entries</p> 
             <div class="microblog-container">
+                <!-- DEĞİŞİKLİK: entries container'a min-height ve flex eklendi -->
                 <div class="entries-column">
                     <div id="entries" class="entries" style="min-height: 300px; display: flex; align-items: center; justify-content: center;">
                         <div class="entries-loading" style="text-align: center; padding: 40px;">
@@ -1386,110 +1387,230 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <script src="/JAVASCRIPT/keysound.js"></script>
 
     <script>
-        // DÜZELTME: Mikroblog entries'leri yükle - BASİT VE ETKİLİ
-        async function loadMicroblogEntries() {
-            console.log('loadMicroblogEntries çalıştı');
-            const entriesContainer = document.getElementById('entries');
-            
-            if (!entriesContainer) {
-                console.error('Entries container bulunamadı!');
-                return;
-            }
-            
-            // Loading mesajını göster (mevcut HTML'de zaten var)
-            console.log('Loading mesajı gösteriliyor...');
-            
-            try {
-                // JSONBin'den mikroblog entries'lerini çek
-                const MICROBLOG_BIN_ID = '694f7d8e43b1c97be91ef7d1';
-                const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
-                
-                console.log('Fetching entries from JSONBin...');
-                
-                const response = await fetch(proxyUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        path: `/b/${MICROBLOG_BIN_ID}/latest`,
-                        method: 'GET'
-                    })
-                });
+        // Mobil cihaz tespiti
+        function isMobileDevice() {
+            return /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+        // Debug bilgileri
+        console.log('Device type:', isMobileDevice() ? 'Mobile' : 'Desktop');
+        console.log('User Agent:', navigator.userAgent);
+
+        // Touch için gecikme mekanizması
+        let touchTimer = null;
+        let touchStartX = 0;
+        let touchStartY = 0;
+        const TOUCH_DELAY = 200; // ms
+
+        function handleTouchStart(e) {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            touchTimer = setTimeout(() => {
+                // Uzun basma durumunda işlem yapma
+                touchTimer = null;
+            }, TOUCH_DELAY);
+        }
+
+        function handleTouchEnd(e, callback) {
+            if (touchTimer) {
+                clearTimeout(touchTimer);
+                touchTimer = null;
+                
+                const touchEndX = e.changedTouches[0].clientX;
+                const touchEndY = e.changedTouches[0].clientY;
+                
+                // Kaydırma mı tıklama mı kontrol et
+                const diffX = Math.abs(touchEndX - touchStartX);
+                const diffY = Math.abs(touchEndY - touchStartY);
+                
+                // Eğer kaydırma değilse (çok küçük hareket)
+                if (diffX < 10 && diffY < 10) {
+                    e.preventDefault();
+                    if (callback) callback();
                 }
-                
-                const result = await response.json();
-                console.log('Entries result:', result);
-                
-                const entries = result.entries || result.records || result || [];
-                console.log(`Found ${entries.length} entries`);
-                
-                // Son 5 entry'yi al
-                const last5Entries = entries.slice(0, 5);
-                console.log('Last 5 entries:', last5Entries);
-                
-                // Minimum 2 saniye loading gösterilsin
-                await new Promise(resolve => setTimeout(resolve, 10000));
-                
-                displayMicroblogEntries(last5Entries);
-                
-            } catch (error) {
-                console.error('Error loading microblog entries:', error);
-                entriesContainer.innerHTML = '<div class="no-articles" style="text-align: center; padding: 40px; color: #ccc;">Unable to load entries. Please check your connection and try again.</div>';
             }
         }
 
-        function displayMicroblogEntries(entries) {
-            const entriesContainer = document.getElementById('entries');
-            if (!entriesContainer) return;
-            
-            if (!entries || entries.length === 0) {
-                entriesContainer.innerHTML = '<div class="no-articles" style="text-align: center; padding: 40px; color: #ccc;">No entries available at the moment.</div>';
-                return;
+        // CV görüntüleme sayacı için fonksiyon
+        async function logCvView() {
+            try {
+                console.log('Starting CV view logging...');
+                
+                // Timeout ile IP bilgisi alma
+                const ipController = new AbortController();
+                const ipTimeout = setTimeout(() => ipController.abort(), 5000);
+                
+                const ipResponse = await fetch('https://ipinfo.io/json?token=68a1229187303a', {
+                    signal: ipController.signal
+                });
+                clearTimeout(ipTimeout);
+                
+                if (!ipResponse.ok) {
+                    throw new Error(`IP API error: ${ipResponse.status}`);
+                }
+                
+                const ipData = await ipResponse.json();
+                
+                const now = new Date();
+                const viewEntry = {
+                    id: Date.now(),
+                    ip: ipData.ip,
+                    hostname: ipData.hostname || 'unknown',
+                    city: ipData.city || 'unknown',
+                    region: ipData.region || 'unknown',
+                    country: ipData.country || 'unknown',
+                    loc: ipData.loc || 'unknown',
+                    org: ipData.org || 'unknown',
+                    postal: ipData.postal || 'unknown',
+                    timezone: ipData.timezone || 'unknown',
+                    timestamp: now.toISOString(),
+                    userAgent: navigator.userAgent.substring(0, 200),
+                    type: 'cv_view',
+                    page: 'home',
+                    device: isMobileDevice() ? 'mobile' : 'desktop'
+                };
+
+                console.log('New view entry:', viewEntry);
+
+                // JSONBin işlemleri için timeout
+                const binController = new AbortController();
+                const binTimeout = setTimeout(() => binController.abort(), 10000);
+
+                // Önce mevcut veriyi al
+                const getResponse = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        path: '/b/68ecedca43b1c97be96584cc/latest',
+                        method: 'GET'
+                    }),
+                    signal: binController.signal
+                });
+
+                let existingData = { 
+                    cvview: 'adem', 
+                    cv_views: [], 
+                    total_views: 0,
+                    last_updated: new Date().toISOString()
+                };
+                
+                if (getResponse.ok) {
+                    const result = await getResponse.json();
+                    console.log('Existing data from bin:', result);
+                    existingData = result;
+                    
+                    if (!existingData.cv_views) {
+                        existingData.cv_views = [];
+                    }
+                    if (typeof existingData.total_views !== 'number') {
+                        existingData.total_views = 0;
+                    }
+                }
+
+                // Yeni entry'yi array'e ekle
+                existingData.cv_views.push(viewEntry);
+                existingData.total_views = (existingData.total_views || 0) + 1;
+                existingData.last_updated = now.toISOString();
+
+                console.log('Updated data to save:', existingData);
+
+                // Güncellenmiş veriyi kaydet
+                const putResponse = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        path: '/b/68ecedca43b1c97be96584cc',
+                        method: 'PUT',
+                        body: existingData
+                    }),
+                    signal: binController.signal
+                });
+
+                clearTimeout(binTimeout);
+
+                if (!putResponse.ok) {
+                    throw new Error(`JSONBin PUT error: ${putResponse.status}`);
+                }
+
+                const result = await putResponse.json();
+                console.log('CV view logged successfully:', result);
+                
+                return result;
+            } catch (error) {
+                console.error('Error logging CV view:', error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        // CV link kontrolü
+        document.addEventListener('DOMContentLoaded', function() {
+            const cvLink = document.getElementById('downloadCv');
+            console.log('CV link found:', !!cvLink);
+            if (cvLink) {
+                console.log('CV link href:', cvLink.href);
+                
+                // Hem click hem de touchstart event'lerini ekle
+                cvLink.addEventListener('click', handleCvClick);
+                cvLink.addEventListener('touchstart', handleCvClick, { passive: true });
             }
             
-            entriesContainer.innerHTML = '';
+            // Sayfa yüklendiğinde mevcut istatistikleri göster
+            showCvStats();
+        });
+
+        // Ortak click/touch handler
+        function handleCvClick(e) {
+            // Mobil cihazlarda varsayılan davranışı engelle
+            e.preventDefault();
+            e.stopPropagation();
             
-            entries.forEach(entry => {
-                const entryDate = new Date(entry.date || entry.created_at);
-                const dateStr = entryDate.toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric'
-                });
-                const timeStr = entryDate.toLocaleTimeString('en-US', {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-
-                const entryDiv = document.createElement('div');
-                entryDiv.className = 'entry-item';
-                entryDiv.innerHTML = `
-                    <div style="margin-bottom: 15px; padding: 15px; background: rgba(10, 25, 20, 0.5); border-radius: 10px; border: 1px solid rgba(0, 255, 0, 0.2);">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                            <span style="color: #00ff00; font-size: 0.9rem;">${dateStr} ${timeStr}</span>
-                            <span style="color: #f9d71c; font-size: 0.8rem;">#${entry.category || 'general'}</span>
-                        </div>
-                        <div style="color: white; line-height: 1.5; font-size: 0.95rem;">
-                            ${entry.content || 'No content available...'}
-                        </div>
-                        <div style="margin-top: 10px; display: flex; gap: 15px; font-size: 0.8rem; color: #aaa;">
-                            <span><i class="far fa-comment"></i> ${entry.comments || 0}</span>
-                            <span><i class="far fa-heart"></i> ${entry.likes || 0}</span>
-                        </div>
-                    </div>
-                `;
-                
-                // Entry'e tıklanınca mikroblog sayfasına git
-                entryDiv.addEventListener('click', () => {
-                    window.location.href = '/microblog.html';
-                });
-
-                entriesContainer.appendChild(entryDiv);
+            console.log('CV link clicked/touched, logging view...');
+            
+            const originalHref = this.href;
+            
+            // Loglama işlemini başlat
+            logCvView().then(result => {
+                console.log('Logging completed:', result);
+                // Loglama tamamlandıktan sonra yönlendir
+                setTimeout(() => {
+                    window.location.href = originalHref;
+                }, 300);
+            }).catch(err => {
+                console.error('Logging failed:', err);
+                // Hata olsa bile yönlendir
+                window.location.href = originalHref;
             });
+        }
+
+        // CV istatistiklerini göster
+        async function showCvStats() {
+            try {
+                const response = await fetch('https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        path: '/b/68ecedca43b1c97be96584cc/latest',
+                        method: 'GET'
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('CV Stats:', data);
+                    
+                    if (data.total_views) {
+                        console.log(`Total CV Views: ${data.total_views}`);
+                    }
+                }
+            } catch (error) {
+                console.log('Error fetching CV stats:', error);
+            }
         }
 
         // Latest Articles için fonksiyonlar
@@ -1567,7 +1688,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     }
 
                     const card = document.createElement('div');
-                    card.className = 'article-card';
+                    card.className = 'article-card touch-delay';
                     card.innerHTML = `
                         <div class="article-title">${article.title || 'Untitled Article'}</div>
                         <div class="article-meta">
@@ -1589,6 +1710,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     card.addEventListener('click', () => {
                         window.location.href = `/article#${article.id}`;
                     });
+                    
+                    // Touch event with delay for mobile
+                    card.addEventListener('touchstart', function(e) {
+                        handleTouchStart(e);
+                    });
+                    
+                    card.addEventListener('touchend', function(e) {
+                        handleTouchEnd(e, () => {
+                            window.location.href = `/article#${article.id}`;
+                        });
+                    });
 
                     container.appendChild(card);
                 });
@@ -1598,42 +1730,119 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             }
         }
 
-        // Sayfa yüklendiğinde çalıştır
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOMContentLoaded - Sayfa yüklendi');
+        // DEĞİŞİKLİK: Mikroblog entries'leri yükle - YENİ FONKSİYON
+        async function loadMicroblogEntries() {
+            console.log('Starting to load microblog entries...');
             
-            // ÖNCE Mikroblog entries yükle
-            console.log('Mikroblog entries yükleniyor...');
-            loadMicroblogEntries();
-            
-            // SONRA Latest Articles yükle (biraz gecikmeyle)
-            setTimeout(() => {
-                console.log('Latest articles yükleniyor...');
-                loadLatestArticles();
-            }, 500);
-            
-            // Expand More butonu için
-            const toggleButton = document.querySelector('.toggle-explanation');
-            const explanationContent = document.querySelector('.explanation-content');
-            
-            if (toggleButton && explanationContent) {
-                toggleButton.addEventListener('click', function() {
-                    explanationContent.classList.toggle('expanded');
-                    
-                    if (explanationContent.classList.contains('expanded')) {
-                        toggleButton.textContent = 'Less..';
-                    } else {
-                        toggleButton.textContent = 'More..';
-                    }
+            try {
+                // JSONBin'den mikroblog entries'lerini çek
+                const MICROBLOG_BIN_ID = '694f7d8e43b1c97be91ef7d1'; // Mikroblog için bin ID
+                const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
+                
+                console.log('Fetching entries from JSONBin...');
+                
+                const response = await fetch(proxyUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        path: `/b/${MICROBLOG_BIN_ID}/latest`,
+                        method: 'GET'
+                    })
                 });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                console.log('Entries fetched:', result);
+                
+                const entries = result.entries || result.records || result || [];
+                
+                // Son 5 entry'yi al
+                const last5Entries = entries.slice(0, 5);
+                console.log('Last 5 entries:', last5Entries);
+                
+                // 1 saniye bekleyelim ki loading görünsün (zorunlu bekleme)
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                displayMicroblogEntries(last5Entries);
+                
+            } catch (error) {
+                console.error('Error loading microblog entries:', error);
+                const entriesContainer = document.getElementById('entries');
+                if (entriesContainer) {
+                    entriesContainer.innerHTML = '<div class="no-articles" style="text-align: center; padding: 40px; color: #ccc;">Sometimes it can take 3–5 seconds. I’m just asking you to be a little patient. Unable to load entries. Please try again later.</div>';
+                }
+            }
+        }
+
+        function displayMicroblogEntries(entries) {
+            const entriesContainer = document.getElementById('entries');
+            if (!entriesContainer) return;
+            
+            if (!entries || entries.length === 0) {
+                entriesContainer.innerHTML = '<div class="no-articles" style="text-align: center; padding: 40px; color: #ccc;">No entries available at the moment.</div>';
+                return;
             }
             
-            // Galeri kodu buraya gelecek
-            // ... (mevcut galeri kodu aynı kalacak)
-        });
+            entriesContainer.innerHTML = '';
+            
+            entries.forEach(entry => {
+                const entryDate = new Date(entry.date || entry.created_at);
+                const dateStr = entryDate.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+                const timeStr = entryDate.toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
 
-        // Galeri kodu - SADECE GEREKLİ KISIM
-        document.addEventListener("DOMContentLoaded", function() {
+                const entryDiv = document.createElement('div');
+                entryDiv.className = 'entry-item touch-delay';
+                entryDiv.innerHTML = `
+                    <div style="margin-bottom: 15px; padding: 15px; background: rgba(10, 25, 20, 0.5); border-radius: 10px; border: 1px solid rgba(0, 255, 0, 0.2);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <span style="color: #00ff00; font-size: 0.9rem;">${dateStr} ${timeStr}</span>
+                            <span style="color: #f9d71c; font-size: 0.8rem;">#${entry.category || 'general'}</span>
+                        </div>
+                        <div style="color: white; line-height: 1.5; font-size: 0.95rem;">
+                            ${entry.content || 'No content available...'}
+                        </div>
+                        <div style="margin-top: 10px; display: flex; gap: 15px; font-size: 0.8rem; color: #aaa;">
+                            <span><i class="far fa-comment"></i> ${entry.comments || 0}</span>
+                            <span><i class="far fa-heart"></i> ${entry.likes || 0}</span>
+                        </div>
+                    </div>
+                `;
+                
+                // Entry'e tıklanınca mikroblog sayfasına git
+                entryDiv.addEventListener('click', () => {
+                    window.location.href = '/microblog.html';
+                });
+                
+                // Touch event with delay for mobile
+                entryDiv.addEventListener('touchstart', function(e) {
+                    handleTouchStart(e);
+                });
+                
+                entryDiv.addEventListener('touchend', function(e) {
+                    handleTouchEnd(e, () => {
+                        window.location.href = '/microblog.html';
+                    });
+                });
+
+                entriesContainer.appendChild(entryDiv);
+            });
+        }
+
+        // Galeri ve YENİ Modal işlevselliği
+        // DEĞİŞİKLİK: DOMContentLoaded async yapıldı
+        document.addEventListener("DOMContentLoaded", async () => {
             const galleryGrid = document.getElementById("gallery-grid");
             const loadMoreBtn = document.getElementById("load-more");
             const modal = document.getElementById("modal");
@@ -1651,6 +1860,30 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             let allPhotos = [];
             let visibleCount = 12;
             let currentIndex = 0;
+
+            // Expand More butonu için
+            const toggleButton = document.querySelector('.toggle-explanation');
+            const explanationContent = document.querySelector('.explanation-content');
+            
+            if (toggleButton && explanationContent) {
+                toggleButton.addEventListener('click', function() {
+                    explanationContent.classList.toggle('expanded');
+                    
+                    if (explanationContent.classList.contains('expanded')) {
+                        toggleButton.textContent = 'Less..';
+                    } else {
+                        toggleButton.textContent = 'More..';
+                    }
+                });
+            }
+            
+            // DEĞİŞİKLİK: ÖNCE Mikroblog entries yükle
+            console.log('Loading microblog entries first...');
+            await loadMicroblogEntries();
+            console.log('Microblog entries loaded successfully');
+            
+            // SONRA Latest Articles yükle
+            loadLatestArticles();
 
             // Galeri verilerini çek
             fetch("/photos.json")
@@ -1686,7 +1919,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 allPhotos.slice(0, visibleCount).forEach((photo, index) => {
                     const img = document.createElement("img");
                     img.src = photo.src;
-                    img.classList.add("gallery-photo");
+                    img.classList.add("gallery-photo", "touch-delay");
                     img.alt = "Gallery Photo";
                     img.dataset.location = photo.location;
                     img.dataset.date = photo.date;
@@ -1697,6 +1930,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     img.addEventListener("click", () => {
                         currentIndex = index;
                         openModal();
+                    });
+                    
+                    // Touch event with delay for mobile
+                    img.addEventListener("touchstart", function(e) {
+                        handleTouchStart(e);
+                    });
+                    
+                    img.addEventListener("touchend", function(e) {
+                        handleTouchEnd(e, () => {
+                            currentIndex = index;
+                            openModal();
+                        });
                     });
                     
                     galleryGrid.appendChild(img);
@@ -1803,6 +2048,30 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     }
                 }
             });
+
+            // Swipe için touch events
+            let touchStartX = 0;
+            let touchEndX = 0;
+
+            if (modal) {
+                modal.addEventListener('touchstart', e => {
+                    touchStartX = e.changedTouches[0].screenX;
+                }, false);
+
+                modal.addEventListener('touchend', e => {
+                    touchEndX = e.changedTouches[0].screenX;
+                    handleSwipe();
+                }, false);
+            }
+
+            function handleSwipe() {
+                if (touchEndX < touchStartX - 50) {
+                    nextPhoto();
+                }
+                if (touchEndX > touchStartX + 50) {
+                    prevPhoto();
+                }
+            }
 
             if (loadMoreBtn) {
                 loadMoreBtn.addEventListener("click", () => {
