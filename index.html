@@ -1259,11 +1259,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <h2 class="section-title"><i class="fa-solid fa-pager"></i> LadyB <span class="fa-solid fa-bug bug-icon"></span> G Entries</h2>
             <p class="last-entry">Last 5 Entries</p> 
             <div class="microblog-container">
+                <!-- DEĞİŞİKLİK: entries container'a min-height ve flex eklendi -->
                 <div class="entries-column">
-                    <div id="entries" class="entries">
-                        <div class="entries-loading">
-                            <i class="fas fa-spinner fa-spin"></i>
-                            <p>Loading entries...</p>
+                    <div id="entries" class="entries" style="min-height: 300px; display: flex; align-items: center; justify-content: center;">
+                        <div class="entries-loading" style="text-align: center; padding: 40px;">
+                            <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #00ff00; margin-bottom: 15px;"></i>
+                            <p style="color: white; font-size: 1rem;">Loading entries...</p>
                         </div>
                     </div>
                 </div>
@@ -1729,148 +1730,61 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             }
         }
 
-        // Mikroblog entries için yükleniyor göstergesi
-        function showEntriesLoading() {
-            const entriesContainer = document.getElementById('entries');
-            if (entriesContainer) {
-                entriesContainer.innerHTML = `
-                    <div class="entries-loading">
-                        <i class="fas fa-spinner fa-spin"></i>
-                        <p>Loading entries...</p>
-                    </div>
-                `;
+        // DEĞİŞİKLİK: Mikroblog entries'leri yükle - YENİ FONKSİYON
+        async function loadMicroblogEntries() {
+            console.log('Starting to load microblog entries...');
+            
+            try {
+                // JSONBin'den mikroblog entries'lerini çek
+                const MICROBLOG_BIN_ID = '694f7d8e43b1c97be91ef7d1'; // Mikroblog için bin ID
+                const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
+                
+                console.log('Fetching entries from JSONBin...');
+                
+                const response = await fetch(proxyUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        path: `/b/${MICROBLOG_BIN_ID}/latest`,
+                        method: 'GET'
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                console.log('Entries fetched:', result);
+                
+                const entries = result.entries || result.records || result || [];
+                
+                // Son 5 entry'yi al
+                const last5Entries = entries.slice(0, 5);
+                console.log('Last 5 entries:', last5Entries);
+                
+                // 1 saniye bekleyelim ki loading görünsün (zorunlu bekleme)
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                displayMicroblogEntries(last5Entries);
+                
+            } catch (error) {
+                console.error('Error loading microblog entries:', error);
+                const entriesContainer = document.getElementById('entries');
+                if (entriesContainer) {
+                    entriesContainer.innerHTML = '<div class="no-articles" style="text-align: center; padding: 40px; color: #ccc;">Unable to load entries. Please try again later.</div>';
+                }
             }
         }
 
-        // Mikroblog entries için yükleniyor göstergesi
-            function showEntriesLoading() {
-                const entriesContainer = document.getElementById('entries');
-                if (entriesContainer) {
-                    entriesContainer.innerHTML = `
-                        <div class="entries-loading">
-                            <i class="fas fa-spinner fa-spin"></i>
-                            <p>Loading entries...</p>
-                        </div>
-                    `;
-                }
-            }
-            
-            // Mikroblog entries'leri yükle (mikroblog sayfasından)
-            async function loadMicroblogEntries() {
-                showEntriesLoading();
-                
-                try {
-                    // JSONBin'den mikroblog entries'lerini çek
-                    const MICROBLOG_BIN_ID = '694f7d8e43b1c97be91ef7d1'; // Mikroblog için bin ID
-                    const proxyUrl = 'https://adembayazit.netlify.app/.netlify/functions/jsonbin-proxy';
-                    
-                    // setTimeout ile timeout ekleyelim
-                    const timeoutPromise = new Promise((_, reject) => {
-                        setTimeout(() => reject(new Error('Request timeout')), 10000); // 10 saniye timeout
-                    });
-                    
-                    const fetchPromise = fetch(proxyUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            path: `/b/${MICROBLOG_BIN_ID}/latest`,
-                            method: 'GET'
-                        })
-                    });
-                    
-                    const response = await Promise.race([fetchPromise, timeoutPromise]);
-                    
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    
-                    const result = await response.json();
-                    const entries = result.entries || result.records || result || [];
-                    
-                    // Son 5 entry'yi al
-                    const last5Entries = entries.slice(0, 5);
-                    
-                    // Entry'leri göster
-                    displayMicroblogEntries(last5Entries);
-                    
-                } catch (error) {
-                    console.error('Error loading microblog entries:', error);
-                    const entriesContainer = document.getElementById('entries');
-                    if (entriesContainer) {
-                        entriesContainer.innerHTML = '<div class="no-articles">Unable to load entries. Please try again later.</div>';
-                    }
-                }
-            }
-            
-            // Sadece entry'leri göster
-            function displayMicroblogEntries(entries) {
-                const entriesContainer = document.getElementById('entries');
-                if (!entriesContainer) return;
-                
-                if (!entries || entries.length === 0) {
-                    entriesContainer.innerHTML = '<div class="no-articles">No entries available at the moment.</div>';
-                    return;
-                }
-                
-                entriesContainer.innerHTML = '';
-                
-                entries.forEach(entry => {
-                    const entryDate = new Date(entry.date || entry.created_at);
-                    const dateStr = entryDate.toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric'
-                    });
-                    const timeStr = entryDate.toLocaleTimeString('en-US', {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
-            
-                    const entryDiv = document.createElement('div');
-                    entryDiv.className = 'entry-item touch-delay';
-                    entryDiv.innerHTML = `
-                        <div style="margin-bottom: 15px; padding: 15px; background: rgba(10, 25, 20, 0.5); border-radius: 10px; border: 1px solid rgba(0, 255, 0, 0.2);">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                                <span style="color: #00ff00; font-size: 0.9rem;">${dateStr} ${timeStr}</span>
-                                <span style="color: #f9d71c; font-size: 0.8rem;">#${entry.category || 'general'}</span>
-                            </div>
-                            <div style="color: white; line-height: 1.5; font-size: 0.95rem;">
-                                ${entry.content || 'No content available...'}
-                            </div>
-                            <div style="margin-top: 10px; display: flex; gap: 15px; font-size: 0.8rem; color: #aaa;">
-                                <span><i class="far fa-comment"></i> ${entry.comments || 0}</span>
-                                <span><i class="far fa-heart"></i> ${entry.likes || 0}</span>
-                            </div>
-                        </div>
-                    `;
-                    
-                    // Entry'e tıklanınca mikroblog sayfasına git
-                    entryDiv.addEventListener('click', () => {
-                        window.location.href = '/microblog.html';
-                    });
-                    
-                    // Touch event with delay for mobile
-                    entryDiv.addEventListener('touchstart', function(e) {
-                        handleTouchStart(e);
-                    });
-                    
-                    entryDiv.addEventListener('touchend', function(e) {
-                        handleTouchEnd(e, () => {
-                            window.location.href = '/microblog.html';
-                        });
-                    });
-            
-                    entriesContainer.appendChild(entryDiv);
-                });
-            }
         function displayMicroblogEntries(entries) {
             const entriesContainer = document.getElementById('entries');
             if (!entriesContainer) return;
             
             if (!entries || entries.length === 0) {
-                entriesContainer.innerHTML = '<div class="no-articles">No entries available at the moment.</div>';
+                entriesContainer.innerHTML = '<div class="no-articles" style="text-align: center; padding: 40px; color: #ccc;">No entries available at the moment.</div>';
                 return;
             }
             
@@ -1927,7 +1841,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         }
 
         // Galeri ve YENİ Modal işlevselliği
-        document.addEventListener("DOMContentLoaded", () => {
+        // DEĞİŞİKLİK: DOMContentLoaded async yapıldı
+        document.addEventListener("DOMContentLoaded", async () => {
             const galleryGrid = document.getElementById("gallery-grid");
             const loadMoreBtn = document.getElementById("load-more");
             const modal = document.getElementById("modal");
@@ -1946,7 +1861,31 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             let visibleCount = 12;
             let currentIndex = 0;
 
-            // photos.json'dan verileri çek
+            // Expand More butonu için
+            const toggleButton = document.querySelector('.toggle-explanation');
+            const explanationContent = document.querySelector('.explanation-content');
+            
+            if (toggleButton && explanationContent) {
+                toggleButton.addEventListener('click', function() {
+                    explanationContent.classList.toggle('expanded');
+                    
+                    if (explanationContent.classList.contains('expanded')) {
+                        toggleButton.textContent = 'Less..';
+                    } else {
+                        toggleButton.textContent = 'More..';
+                    }
+                });
+            }
+            
+            // DEĞİŞİKLİK: ÖNCE Mikroblog entries yükle
+            console.log('Loading microblog entries first...');
+            await loadMicroblogEntries();
+            console.log('Microblog entries loaded successfully');
+            
+            // SONRA Latest Articles yükle
+            loadLatestArticles();
+
+            // Galeri verilerini çek
             fetch("/photos.json")
                 .then(res => res.json())
                 .then(data => {
@@ -2140,28 +2079,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     renderPhotos();
                 });
             }
-            
-            // Expand More butonu için
-            const toggleButton = document.querySelector('.toggle-explanation');
-            const explanationContent = document.querySelector('.explanation-content');
-            
-            if (toggleButton && explanationContent) {
-                toggleButton.addEventListener('click', function() {
-                    explanationContent.classList.toggle('expanded');
-                    
-                    if (explanationContent.classList.contains('expanded')) {
-                        toggleButton.textContent = 'Less..';
-                    } else {
-                        toggleButton.textContent = 'More..';
-                    }
-                });
-            }
-            
-            // Latest Articles yükle
-            loadLatestArticles();
-            
-            // Mikroblog entries yükle
-            loadMicroblogEntries();
         });
     </script>
 </body> 
