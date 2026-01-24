@@ -1030,69 +1030,47 @@
 .photo-analysis-btn{ margin-left:auto !important; margin-right:auto !important; }
 
 /* =========================================================
-   LANDSCAPE FIX v2 (iPhone / mobile yatay) — FULL PATCH
-   - Header + Home çakışma / kayma gider
-   - Animasyonlu simge küçülür ve sabitlenir
-   - Yazılar taşmaz, düzgün wrap olur
-   - iOS landscape bar (vh) sapmalarına karşı d/vh kullanır
+   MEGA LANDSCAPE PATCH v3 — FORCE OVERRIDE
+   Amaç: Header menü altında kalan glow görseli + home çakışması
+   Çalışma koşulu:
+   - Telefon yatay (orientation: landscape) VEYA
+   - Ekran yüksekliği küçük (iOS landscape bar)
 ========================================================= */
-@media (max-width: 932px) and (orientation: landscape) {
 
-  /* iOS Safari’de 100vh sapmasını düzelt */
-  :root { --hdrH: 72px; }
+/* 1) Telefon yatay */
+@media screen and (orientation: landscape) and (max-width: 1024px),
+       screen and (max-height: 500px) and (max-width: 1024px){
 
-  /* Header kompakt + sabit yüksekliğe yaklaş */
-  .header{
+  /* HEADER: üstte sabit ve en üst katmanda */
+  header.header{
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 2147483647 !important;
     padding: 6px 14px !important;
-    min-height: var(--hdrH) !important;
-    align-items: center !important;
-    gap: 10px !important;
-    flex-wrap: nowrap !important;  /* kaymayı azaltır */
+    min-height: 74px !important;
+    box-sizing: border-box !important;
   }
 
-  .logo-container{
-    max-width: 58vw !important;
-    min-width: 0 !important;
+  /* BODY: fixed header için sayfayı aşağı kaydır */
+  body{
+    padding-top: 86px !important; /* header+boşluk */
   }
 
-  .logo{
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-    font-size: 18px !important;
-    line-height: 1.05 !important;
-    white-space: nowrap !important;
-  }
-
-  .logo-slogan{
-    font-size: 9px !important;
-    margin-top: 2px !important;
-    white-space: nowrap !important;   /* slogan tek satır kalsın */
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    max-width: 58vw !important;
-  }
-
-  /* Navbar taşmasın */
-  .navbar{ min-width: 0 !important; }
-  .navbar .dropbtn{
-    font-size: 14px !important;
-    padding: 6px 10px !important;
-    white-space: nowrap !important;
-  }
-
-  /* HOME: header kadar aşağı in, iOS için dvh/svh kullan */
-  #home.home{
-    padding-top: calc(var(--hdrH) + 14px) !important;
-    min-height: 100dvh !important;   /* iOS için daha doğru */
+  /* HOME: menünün altına girmesin */
+  section#home.home{
+    padding-top: 18px !important; /* artık body padding-top itiyor */
+    margin-top: 0 !important;
+    min-height: calc(100dvh - 86px) !important;
     height: auto !important;
     align-items: flex-start !important;
   }
 
-  /* Home layout: kesin hizalama ve kaymayı bitirme */
-  .home{
+  /* HOME layout: yan yana ve taşmasın */
+  section#home.home{
     display: flex !important;
-    align-items: flex-start !important;
+    flex-direction: row !important;
     justify-content: space-between !important;
     gap: 16px !important;
   }
@@ -1101,7 +1079,6 @@
     flex: 1 1 60% !important;
     max-width: 60% !important;
     min-width: 0 !important;
-    margin-top: 0 !important;
   }
 
   .home-img{
@@ -1111,78 +1088,60 @@
     display: flex !important;
     justify-content: center !important;
     align-items: flex-start !important;
-    margin-top: 8px !important; /* ekrandaki küçük sarkmayı alır */
+
+    /* asıl kritik: görseli aşağı it */
+    padding-top: 28px !important;
+    margin-top: 0 !important;
+
+    position: relative !important;
+    z-index: 5 !important;
   }
 
-  /* Animasyonlu simgeyi küçült + sabitle */
+  /* GLOW: kesin aşağı insin + katman sorunu olmasın */
   .glowing-circle{
-    width: 165px !important;
-    height: 165px !important;
-    transform: translateY(18px) !important;
+    position: relative !important;
+    z-index: 5 !important;
+    transform: translateY(18px) !important; /* daha da aşağı */
+    width: 170px !important;
+    height: 170px !important;
   }
-  .glowing-circle .image{
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
+
   .glowing-circle .image img{
-    width: 140px !important;
-    height: 140px !important;
+    width: 145px !important;
+    height: 145px !important;
     object-fit: contain !important;
   }
 
-  /* Başlıklar: taşma yok */
+  /* Yazılar */
   .home-content h1{
     font-size: 26px !important;
     line-height: 1.05 !important;
-    margin: 6px 0 !important;
-    word-break: break-word !important;
   }
   .home-content h3{
     font-size: 16px !important;
     line-height: 1.15 !important;
-    margin: 4px 0 !important;
-    display: block !important;
   }
-
-  /* Typed text: satır taşmasın */
   .pro-text{
     display: inline-block !important;
     max-width: 100% !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
     white-space: nowrap !important;
-    vertical-align: bottom !important;
   }
 
-  /* Paragraf: yatayda alan az, kontrollü */
   .home-content p{
     font-size: 12.5px !important;
     line-height: 1.45 !important;
-    margin-top: 10px !important;
-
-    /* aşağıdaki iki satır kayma/taşma için kilit */
     max-height: 34dvh !important;
     overflow: auto !important;
-
-    padding-right: 6px !important;
-    -webkit-overflow-scrolling: touch;
+    -webkit-overflow-scrolling: touch !important;
   }
 
-  /* Sosyal + buton */
-  .home-sci{
-    margin-top: 10px !important;
-    gap: 10px !important;
-    flex-wrap: wrap !important;
+  /* Anchor ile gidince header üstünü kapatmasın */
+  section{
+    scroll-margin-top: 90px !important;
   }
-
-  #downloadCv.btn-box{
-    padding: 10px 16px !important;
-    font-size: 14px !important;
-    min-height: 40px !important;
-    margin-top: 10px !important;
-  }
-
+}
   /* Section’a gidince header üstünü kapatmasın */
   section{ scroll-margin-top: calc(var(--hdrH) + 14px) !important; }
 }
