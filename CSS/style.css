@@ -639,7 +639,7 @@ canvas {
 /* Mobil için */
 @media (max-width: 768px) {
   .entry {
-    padding: 8px;
+    padding: 6px;
   }
   
   .child-entry {
@@ -1539,6 +1539,35 @@ canvas {
   @keyframes floatCircleLS{
     0%,100% { transform: translateY(0); }
     50%     { transform: translateY(-10px); }
+  }
+}
+
+/* ===== LANDSCAPE FLOAT FIX (transform çatışması yok) ===== */
+@media (max-width: 932px) and (orientation: landscape) {
+
+  /* home-img yukarıda kalmasın + hareket buradan gelecek */
+  .home-img{
+    margin-top: 22px !important; /* 18-30 arası oynatabilirsin */
+    animation: zoomIn 1s ease forwards, floatImageMargin 5s ease-in-out infinite !important;
+    will-change: margin-top;
+  }
+
+  /* transform yerine margin-top oynatıyoruz */
+  @keyframes floatImageMargin {
+    0%, 100% { margin-top: 22px; }
+    50%      { margin-top: 14px; }
+  }
+
+  /* Çember dönmesi garanti */
+  .glowing-circle span{
+    animation: circleRotate 5s linear infinite !important;
+  }
+
+  /* Fotoğraf tam ortaya gelsin */
+  .glowing-circle .image img{
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
   }
 }
 
