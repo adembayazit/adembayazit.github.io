@@ -1506,3 +1506,39 @@ canvas {
   }
 }
 
+/* =========================================================
+   FLOAT FIX (Kesin) — Çember dönsün + tüm paket yukarı-aşağı gitsin
+   - Float: .glowing-circle üzerinde (iOS/Safari çakışma yapmaz)
+   - Rotate: span zaten dönüyor, aynı kalır
+   - Not: Bu blok EN ALTA yapıştırılacak
+========================================================= */
+
+/* Genel (tüm ekranlar) float */
+.home-img { animation: none !important; } /* transform çakışmasını kes */
+.home-img .glowing-circle{
+  will-change: transform;
+  animation: floatCircle 4s ease-in-out infinite !important;
+}
+
+/* Float sadece çemberi oynatır */
+@keyframes floatCircle{
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-18px); }
+}
+
+/* Çember dönme garanti */
+.glowing-circle span{
+  animation: circleRotate 5s linear infinite !important;
+}
+
+/* iPhone / mobil LANDSCAPE özel: daha küçük ve hafif float */
+@media (max-width: 932px) and (orientation: landscape){
+  .home-img .glowing-circle{
+    animation: floatCircleLS 4.6s ease-in-out infinite !important;
+  }
+  @keyframes floatCircleLS{
+    0%,100% { transform: translateY(0); }
+    50%     { transform: translateY(-10px); }
+  }
+}
+
