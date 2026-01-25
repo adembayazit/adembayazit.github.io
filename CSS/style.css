@@ -1384,41 +1384,48 @@ canvas {
   perspective: 1000px;
 }
 /* =========================================================
-   LANDSCAPE PATCH — Glow çember + dönme animasyonu GARANTİ
-   - iPhone landscape'te çember kaybolmaz
-   - circleRotate çalışır
-   - floatImage çakışmasını önler
+   SINGLE FINAL PATCH — iPhone LANDSCAPE
+   - Float aşağı/yukarı: SADECE .home-img (margin ile)
+   - Glow + rotate: SADECE span (transform ile)
+   - Transform çakışması biter
 ========================================================= */
-@media (max-width: 932px) and (orientation: landscape) {
 
-  /* Home sağdaki görsel biraz aşağı insin */
+@media (max-width: 1200px) and (orientation: landscape){
+
+  /* Home görsel alanı */
   .home-img{
-    margin-top: 18px !important; /* 12-28 arası oynatabilirsin */
+    width: 165px !important;
+    height: 165px !important;
     position: relative !important;
-    z-index: 2 !important;
-    animation: zoomIn 1s ease forwards, floatImageMargin 5s ease-in-out infinite !important;
+    z-index: 5 !important;
+
+    /* transform animasyonlarını sıfırla (çakışma olmasın) */
+    transform: none !important;
+
+    /* FLOAT: margin-top ile (rotate/transform bozulmaz) */
+    margin-top: 18px !important;
+    animation: floatHomeImg 4.6s ease-in-out infinite !important;
     will-change: margin-top;
   }
 
-  /* Transform yerine margin ile float (rotate animasyonunu bozmaz) */
-  @keyframes floatImageMargin{
+  @keyframes floatHomeImg{
     0%,100% { margin-top: 18px; }
-    50%     { margin-top: 10px; }
+    50%     { margin-top: 8px; }
   }
 
-  /* Çemberin iç katmanları görünür olsun */
+  /* Çember boyut + katman */
   .home-img .glowing-circle{
-    position: relative !important;
     width: 165px !important;
     height: 165px !important;
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
+    position: relative !important;
     border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     overflow: visible !important;
   }
 
-  /* Siyah iç disk (ortadaki boşluk) */
+  /* İç siyah disk */
   .home-img .glowing-circle::after{
     content: "" !important;
     position: absolute !important;
@@ -1429,27 +1436,21 @@ canvas {
     z-index: 1 !important;
   }
 
-  /* Yeşil halka + dönme animasyonu */
+  /* Yeşil halka + rotate */
   .home-img .glowing-circle span{
     position: absolute !important;
     inset: 0 !important;
     border-radius: 50% !important;
-    background: linear-gradient(black, rgba(0, 255, 0, 0.55)) !important;
+    background: linear-gradient(black, rgba(0,255,0,0.55)) !important;
     animation: circleRotate 5s linear infinite !important;
     z-index: 0 !important;
   }
-
-  /* Glow blur */
   .home-img .glowing-circle span:nth-child(1){
     filter: blur(12px) !important;
     opacity: 0.9 !important;
   }
-  .home-img .glowing-circle span:nth-child(2){
-    filter: blur(0px) !important;
-    opacity: 1 !important;
-  }
 
-  /* İç resim wrapper */
+  /* Resim wrapper */
   .home-img .glowing-circle .image{
     position: relative !important;
     width: 145px !important;
@@ -1457,12 +1458,9 @@ canvas {
     border-radius: 50% !important;
     z-index: 2 !important;
     overflow: hidden !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
   }
 
-  /* Resmi tam ortala */
+  /* Resmi ortala */
   .home-img .glowing-circle .image img{
     position: absolute !important;
     top: 50% !important;
@@ -1471,103 +1469,6 @@ canvas {
     width: 130px !important;
     height: 130px !important;
     object-fit: cover !important;
-  }
-}
-/* ===== FLOAT FIX (iOS landscape tetik + garantili) ===== */
-
-/* 1) Float animasyonu (genel tanım) */
-@keyframes floatCircle {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-18px); }
-}
-
-/* 2) Varsayılan: sadece çember float etsin (tüm cihazlarda çalışır) */
-.home-img .glowing-circle{
-  animation: floatCircle 4s ease-in-out infinite;
-  will-change: transform;
-}
-
-/* 3) Dönen yeşil halka sigorta */
-.glowing-circle span{
-  animation: circleRotate 5s linear infinite;
-}
-
-/* 4) iPhone landscape için media query’yi büyüt (932 yetmiyor) */
-@media (max-width: 1200px) and (orientation: landscape){
-  /* home-img üzerindeki transform/floating çakışmasını kapat */
-  .home-img{
-    animation: zoomIn 1s ease forwards !important;
-    transform: none !important;
-  }
-
-  /* Float kesin çemberde kalsın */
-  .home-img .glowing-circle{
-    animation: floatCircle 4s ease-in-out infinite !important;
-  }
-}
-
-/* =========================================================
-   FLOAT FIX (Kesin) — Çember dönsün + tüm paket yukarı-aşağı gitsin
-   - Float: .glowing-circle üzerinde (iOS/Safari çakışma yapmaz)
-   - Rotate: span zaten dönüyor, aynı kalır
-   - Not: Bu blok EN ALTA yapıştırılacak
-========================================================= */
-
-/* Genel (tüm ekranlar) float */
-.home-img { animation: none !important; } /* transform çakışmasını kes */
-.home-img .glowing-circle{
-  will-change: transform;
-  animation: floatCircle 4s ease-in-out infinite !important;
-}
-
-/* Float sadece çemberi oynatır */
-@keyframes floatCircle{
-  0%,100% { transform: translateY(0); }
-  50%     { transform: translateY(-18px); }
-}
-
-/* Çember dönme garanti */
-.glowing-circle span{
-  animation: circleRotate 5s linear infinite !important;
-}
-
-/* iPhone / mobil LANDSCAPE özel: daha küçük ve hafif float */
-@media (max-width: 932px) and (orientation: landscape){
-  .home-img .glowing-circle{
-    animation: floatCircleLS 4.6s ease-in-out infinite !important;
-  }
-  @keyframes floatCircleLS{
-    0%,100% { transform: translateY(0); }
-    50%     { transform: translateY(-10px); }
-  }
-}
-
-/* ===== LANDSCAPE FLOAT FIX (transform çatışması yok) ===== */
-@media (max-width: 932px) and (orientation: landscape) {
-
-  /* home-img yukarıda kalmasın + hareket buradan gelecek */
-  .home-img{
-    margin-top: 22px !important; /* 18-30 arası oynatabilirsin */
-    animation: zoomIn 1s ease forwards, floatImageMargin 5s ease-in-out infinite !important;
-    will-change: margin-top;
-  }
-
-  /* transform yerine margin-top oynatıyoruz */
-  @keyframes floatImageMargin {
-    0%, 100% { margin-top: 22px; }
-    50%      { margin-top: 14px; }
-  }
-
-  /* Çember dönmesi garanti */
-  .glowing-circle span{
-    animation: circleRotate 5s linear infinite !important;
-  }
-
-  /* Fotoğraf tam ortaya gelsin */
-  .glowing-circle .image img{
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
   }
 }
 
