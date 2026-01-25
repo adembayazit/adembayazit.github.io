@@ -1473,4 +1473,18 @@ canvas {
     object-fit: cover !important;
   }
 }
+/* LANDSCAPE: aşağı-yukarı float geri gelsin (çember rotate bozulmaz) */
+@media (max-width: 932px) and (orientation: landscape) {
 
+  /* .home-img'in float animasyonunu kesinleştir */
+  .home-img{
+    animation: zoomIn 1s ease forwards, floatImage 4s ease-in-out infinite !important;
+  }
+
+  /* iOS bazen transform/animasyonları yutar: bu sigorta */
+  .home-img,
+  .home-img .glowing-circle,
+  .home-img .glowing-circle span{
+    will-change: transform;
+  }
+}
