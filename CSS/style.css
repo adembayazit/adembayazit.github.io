@@ -1488,3 +1488,29 @@ canvas {
     will-change: transform;
   }
 }
+/* ===== LANDSCAPE FLOAT FIX (iOS Safari kesin) ===== */
+@media (max-width: 932px) and (orientation: landscape) {
+
+  /* home-img üzerindeki float'ı tamamen iptal et (transform çakışmasını bitir) */
+  .home-img{
+    animation: zoomIn 1s ease forwards !important;
+    transform: none !important;
+  }
+
+  /* Float artık çemberin kendisinde */
+  .home-img .glowing-circle{
+    animation: floatCircle 4s ease-in-out infinite !important;
+    will-change: transform;
+  }
+
+  @keyframes floatCircle{
+    0%,100% { transform: translateY(0); }
+    50%     { transform: translateY(-18px); }
+  }
+
+  /* Dönen yeşil halka garanti (zaten var ama sigorta) */
+  .glowing-circle span{
+    animation: circleRotate 5s linear infinite !important;
+  }
+}
+
