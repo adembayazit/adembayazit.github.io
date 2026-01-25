@@ -1473,44 +1473,36 @@ canvas {
     object-fit: cover !important;
   }
 }
-/* LANDSCAPE: aşağı-yukarı float geri gelsin (çember rotate bozulmaz) */
-@media (max-width: 932px) and (orientation: landscape) {
+/* ===== FLOAT FIX (iOS landscape tetik + garantili) ===== */
 
-  /* .home-img'in float animasyonunu kesinleştir */
-  .home-img{
-    animation: zoomIn 1s ease forwards, floatImage 4s ease-in-out infinite !important;
-  }
-
-  /* iOS bazen transform/animasyonları yutar: bu sigorta */
-  .home-img,
-  .home-img .glowing-circle,
-  .home-img .glowing-circle span{
-    will-change: transform;
-  }
+/* 1) Float animasyonu (genel tanım) */
+@keyframes floatCircle {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-18px); }
 }
-/* ===== LANDSCAPE FLOAT FIX (iOS Safari kesin) ===== */
-@media (max-width: 932px) and (orientation: landscape) {
 
-  /* home-img üzerindeki float'ı tamamen iptal et (transform çakışmasını bitir) */
+/* 2) Varsayılan: sadece çember float etsin (tüm cihazlarda çalışır) */
+.home-img .glowing-circle{
+  animation: floatCircle 4s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* 3) Dönen yeşil halka sigorta */
+.glowing-circle span{
+  animation: circleRotate 5s linear infinite;
+}
+
+/* 4) iPhone landscape için media query’yi büyüt (932 yetmiyor) */
+@media (max-width: 1200px) and (orientation: landscape){
+  /* home-img üzerindeki transform/floating çakışmasını kapat */
   .home-img{
     animation: zoomIn 1s ease forwards !important;
     transform: none !important;
   }
 
-  /* Float artık çemberin kendisinde */
+  /* Float kesin çemberde kalsın */
   .home-img .glowing-circle{
     animation: floatCircle 4s ease-in-out infinite !important;
-    will-change: transform;
-  }
-
-  @keyframes floatCircle{
-    0%,100% { transform: translateY(0); }
-    50%     { transform: translateY(-18px); }
-  }
-
-  /* Dönen yeşil halka garanti (zaten var ama sigorta) */
-  .glowing-circle span{
-    animation: circleRotate 5s linear infinite !important;
   }
 }
 
