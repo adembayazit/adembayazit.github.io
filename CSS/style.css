@@ -1383,4 +1383,94 @@ canvas {
   backface-visibility: hidden;
   perspective: 1000px;
 }
+/* =========================================================
+   LANDSCAPE PATCH — Glow çember + dönme animasyonu GARANTİ
+   - iPhone landscape'te çember kaybolmaz
+   - circleRotate çalışır
+   - floatImage çakışmasını önler
+========================================================= */
+@media (max-width: 932px) and (orientation: landscape) {
+
+  /* Home sağdaki görsel biraz aşağı insin */
+  .home-img{
+    margin-top: 18px !important; /* 12-28 arası oynatabilirsin */
+    position: relative !important;
+    z-index: 2 !important;
+    animation: zoomIn 1s ease forwards, floatImageMargin 5s ease-in-out infinite !important;
+    will-change: margin-top;
+  }
+
+  /* Transform yerine margin ile float (rotate animasyonunu bozmaz) */
+  @keyframes floatImageMargin{
+    0%,100% { margin-top: 18px; }
+    50%     { margin-top: 10px; }
+  }
+
+  /* Çemberin iç katmanları görünür olsun */
+  .home-img .glowing-circle{
+    position: relative !important;
+    width: 165px !important;
+    height: 165px !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    border-radius: 50% !important;
+    overflow: visible !important;
+  }
+
+  /* Siyah iç disk (ortadaki boşluk) */
+  .home-img .glowing-circle::after{
+    content: "" !important;
+    position: absolute !important;
+    width: 145px !important;
+    height: 145px !important;
+    background: #000 !important;
+    border-radius: 50% !important;
+    z-index: 1 !important;
+  }
+
+  /* Yeşil halka + dönme animasyonu */
+  .home-img .glowing-circle span{
+    position: absolute !important;
+    inset: 0 !important;
+    border-radius: 50% !important;
+    background: linear-gradient(black, rgba(0, 255, 0, 0.55)) !important;
+    animation: circleRotate 5s linear infinite !important;
+    z-index: 0 !important;
+  }
+
+  /* Glow blur */
+  .home-img .glowing-circle span:nth-child(1){
+    filter: blur(12px) !important;
+    opacity: 0.9 !important;
+  }
+  .home-img .glowing-circle span:nth-child(2){
+    filter: blur(0px) !important;
+    opacity: 1 !important;
+  }
+
+  /* İç resim wrapper */
+  .home-img .glowing-circle .image{
+    position: relative !important;
+    width: 145px !important;
+    height: 145px !important;
+    border-radius: 50% !important;
+    z-index: 2 !important;
+    overflow: hidden !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* Resmi tam ortala */
+  .home-img .glowing-circle .image img{
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 130px !important;
+    height: 130px !important;
+    object-fit: cover !important;
+  }
+}
 
