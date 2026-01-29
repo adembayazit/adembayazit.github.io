@@ -1,169 +1,612 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UpDownAlert - Yakında Geliyor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
 
-<title>UpDownAlert — Smarter Monitoring</title>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #7c3aed;
+            --accent: #10b981;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
 
-<style>
-body{
-  margin:0;
-  font-family:system-ui,Arial;
-  background:#0b0f14;
-  color:white;
-  text-align:center;
-  overflow-x:hidden;
-}
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(37, 99, 235, 0.15) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(124, 58, 237, 0.15) 0%, transparent 20%);
+        }
 
-.wrapper{
-  max-width:1000px;
-  margin:auto;
-  padding:40px 20px;
-}
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
 
-h1{
-  font-size:52px;
-  margin-bottom:5px;
-  background:linear-gradient(90deg,#00ffa6,#00c3ff);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
+        /* Header Styles */
+        header {
+            padding: 30px 0;
+            position: relative;
+            z-index: 10;
+        }
 
-.tag{
-  display:inline-block;
-  border:1px solid #00ffa6;
-  padding:8px 18px;
-  border-radius:20px;
-  color:#00ffa6;
-  margin:15px 0;
-}
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
 
-p{
-  opacity:.85;
-}
+        .logo-svg {
+            width: 80px;
+            height: 80px;
+            margin-right: 15px;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+        }
 
-.features{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-  gap:15px;
-  margin-top:35px;
-  text-align:left;
-}
+        .logo-text {
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -1px;
+        }
 
-.card{
-  background:#111824;
-  padding:18px;
-  border-radius:12px;
-  border:1px solid #1f2a3a;
-  transition:.2s;
-}
+        .tagline {
+            text-align: center;
+            font-size: 1.3rem;
+            color: var(--gray);
+            margin-bottom: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
 
-.card:hover{
-  transform:translateY(-5px);
-  border-color:#00ffa6;
-}
+        /* Hero Section */
+        .hero {
+            padding: 40px 0 80px;
+            text-align: center;
+        }
 
-footer{
-  margin-top:40px;
-  opacity:0.5;
-  font-size:13px;
-}
-</style>
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            background: linear-gradient(to right, #fff, #a5b4fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            max-width: 800px;
+            margin: 0 auto 40px;
+            color: #cbd5e1;
+        }
+
+        .highlight {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .construction-badge {
+            display: inline-block;
+            background: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        /* Countdown Timer */
+        .countdown {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+
+        .countdown-item {
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 12px;
+            padding: 20px 15px;
+            min-width: 100px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .countdown-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1;
+        }
+
+        .countdown-label {
+            font-size: 0.9rem;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 8px;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        .section-title:after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: var(--gradient);
+            margin: 15px auto;
+            border-radius: 2px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .feature-card {
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .feature-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: #e2e8f0;
+        }
+
+        .feature-card p {
+            color: #94a3b8;
+            font-size: 1rem;
+        }
+
+        /* CTA Section */
+        .cta {
+            padding: 80px 0;
+            text-align: center;
+            background: rgba(15, 23, 42, 0.7);
+            border-radius: 24px;
+            margin: 40px 0;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .cta h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .cta p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            color: #cbd5e1;
+        }
+
+        .email-form {
+            max-width: 500px;
+            margin: 0 auto;
+            display: flex;
+            gap: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .email-form {
+                flex-direction: column;
+            }
+        }
+
+        .email-input {
+            flex: 1;
+            padding: 18px 20px;
+            border-radius: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: rgba(30, 41, 59, 0.8);
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .email-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .notify-btn {
+            padding: 18px 30px;
+            border-radius: 12px;
+            border: none;
+            background: var(--gradient);
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .notify-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+        }
+
+        /* Footer */
+        footer {
+            padding: 60px 0 30px;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            margin-top: 40px;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .social-link {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(30, 41, 59, 0.7);
+            color: white;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .social-link:hover {
+            background: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        .copyright {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-top: 30px;
+        }
+
+        .redirect-note {
+            background: rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(124, 58, 237, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 30px;
+            display: inline-block;
+            font-size: 0.9rem;
+        }
+
+        .redirect-note a {
+            color: #a78bfa;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .redirect-note a:hover {
+            text-decoration: underline;
+        }
+
+        /* Animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .floating {
+            animation: float 5s ease-in-out infinite;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(37, 99, 235, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .logo-text {
+                font-size: 2rem;
+            }
+            
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .countdown-item {
+                min-width: 80px;
+                padding: 15px 10px;
+            }
+            
+            .countdown-value {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
-
 <body>
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <!-- UpDownAlert SVG Logo -->
+                <svg class="logo-svg floating" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#2563eb" />
+                            <stop offset="100%" stop-color="#7c3aed" />
+                        </linearGradient>
+                        <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                            <feGaussianBlur in="SourceAlpha" stdDeviation="5" />
+                            <feOffset dx="0" dy="4" result="offsetblur" />
+                            <feFlood flood-color="rgba(0,0,0,0.3)" />
+                            <feComposite in2="offsetblur" operator="in" />
+                            <feMerge>
+                                <feMergeNode />
+                                <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    <circle cx="100" cy="100" r="90" fill="rgba(30, 41, 59, 0.8)" stroke="url(#gradient)" stroke-width="8" filter="url(#shadow)" />
+                    <path d="M70,100 L100,60 L130,100" stroke="url(#gradient)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                    <path d="M70,140 L100,100 L130,140" stroke="url(#gradient)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                    <circle cx="100" cy="100" r="8" fill="#10b981" class="pulse" />
+                </svg>
+                <div class="logo-text">UpDownAlert</div>
+            </div>
+            <div class="tagline">Sadece "çalışıyor mu?" değil, <span class="highlight">"ne kadar sağlıklı?"</span> sorusuna cevap veren servis izleme platformu</div>
+        </header>
 
-<div class="wrapper">
+        <section class="hero">
+            <div class="construction-badge">
+                <i class="fas fa-tools"></i> YAPIM AŞAMASINDA
+            </div>
+            <h1>Yeni Uptime & Servis İzleme Platformu</h1>
+            <p>UpDownAlert, servislerinizin sadece ayakta olup olmadığını değil, <span class="highlight">sağlıklı çalışıp çalışmadığını</span> izleyen yapay zeka destekli bir gözlem platformudur. Bazı problemler loglarda bağırmaz, metriklerde fısıldar.</p>
+            
+            <div class="countdown">
+                <div class="countdown-item">
+                    <div class="countdown-value" id="days">00</div>
+                    <div class="countdown-label">Gün</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-value" id="hours">00</div>
+                    <div class="countdown-label">Saat</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-value" id="minutes">00</div>
+                    <div class="countdown-label">Dakika</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-value" id="seconds">00</div>
+                    <div class="countdown-label">Saniye</div>
+                </div>
+            </div>
+        </section>
 
-<h1>UpDownAlert</h1>
+        <section class="features">
+            <h2 class="section-title">Öne Çıkan Özellikler</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <h3>Heartbeat İzleme</h3>
+                    <p>Cron job, worker ve yedek süreçlerinizi takip edin. Süreçlerinizin düzenli çalıştığından emin olun.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>Yapay Zeka Destekli</h3>
+                    <p>AI ile anormal davranışları tespit edin, olası sorunları daha ortaya çıkmadan öngörün.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Güvenlik İzleme</h3>
+                    <p>SSL sertifika süreleri, domain süreleri ve güvenlik açıklarını takip edin.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <h3>Çoklu Bildirim</h3>
+                    <p>E-posta, Telegram, Slack ve webhook ile anlık alarmlar alın. Hiçbir kritik olayı kaçırmayın.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-sitemap"></i>
+                    </div>
+                    <h3>Çok Kiracılı Mimari</h3>
+                    <p>Multi-tenant SaaS mimarisi ile takımlarınızı ve müşterilerinizi ayrı ayrı yönetin.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-network"></i>
+                    </div>
+                    <h3>Vendor Bağımsız</h3>
+                    <p>Agent, protokol, telefon ve proxy client desteği ile herhangi bir cihazı izleyin.</p>
+                </div>
+            </div>
+        </section>
 
-<div class="tag">
-Next-Gen Uptime & Observability Platform
-</div>
+        <section class="cta">
+            <h2>Lansman Haberlerini Kaçırmayın</h2>
+            <p>UpDownAlert kullanıma hazır olduğunda size haber verelim. Erken erişim ve özel fırsatlardan yararlanın.</p>
+            
+            <form class="email-form" id="notifyForm">
+                <input type="email" class="email-input" placeholder="E-posta adresiniz" required>
+                <button type="submit" class="notify-btn">Bilgilendir <i class="fas fa-paper-plane"></i></button>
+            </form>
+            
+            <div class="redirect-note">
+                <i class="fas fa-external-link-alt"></i> Bu sayfa geçici olarak <strong>adembayazit.com/updownalert</strong> adresine yönlendirilmektedir.
+            </div>
+        </section>
 
-<p>
-Not just <b>“Is it up?”</b><br>
-But <b>“Is it healthy and approaching risk?”</b>
-</p>
+        <footer>
+            <div class="social-links">
+                <a href="#" class="social-link">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="#" class="social-link">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="#" class="social-link">
+                    <i class="fab fa-linkedin-in"></i>
+                </a>
+                <a href="#" class="social-link">
+                    <i class="fab fa-telegram"></i>
+                </a>
+            </div>
+            
+            <div class="logo-container" style="justify-content: center; margin-bottom: 10px;">
+                <svg class="logo-svg" viewBox="0 0 200 200" style="width: 40px; height: 40px;">
+                    <circle cx="100" cy="100" r="45" fill="none" stroke="url(#gradient)" stroke-width="8"/>
+                    <path d="M70,100 L100,60 L130,100" stroke="url(#gradient)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                    <path d="M70,140 L100,100 L130,140" stroke="url(#gradient)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                </svg>
+                <div class="logo-text" style="font-size: 1.8rem;">UpDownAlert</div>
+            </div>
+            
+            <div class="copyright">
+                &copy; 2023 UpDownAlert.com - Tüm hakları saklıdır. <br>
+                <small>Uptime, monitoring, observability ve güvenlik kesişiminde yeni bir çözüm.</small>
+            </div>
+        </footer>
+    </div>
 
-<!-- SVG HERO -->
-<div style="margin:40px 0;">
-
-<svg width="100%" height="220" viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg">
-
-  <defs>
-    <linearGradient id="g1" x1="0" x2="1">
-      <stop offset="0%" stop-color="#00ffa6"/>
-      <stop offset="100%" stop-color="#00c3ff"/>
-    </linearGradient>
-  </defs>
-
-  <!-- grid -->
-  <g opacity="0.15">
-    <path d="M0 50 H600 M0 100 H600 M0 150 H600" stroke="#00ffa6"/>
-    <path d="M100 0 V220 M200 0 V220 M300 0 V220 M400 0 V220 M500 0 V220" stroke="#00ffa6"/>
-  </g>
-
-  <!-- pulse line -->
-  <polyline 
-    fill="none" 
-    stroke="url(#g1)" 
-    stroke-width="4"
-    points="
-      0,120 
-      60,120 
-      90,60 
-      120,170 
-      150,100 
-      210,120 
-      260,120
-      290,70
-      320,160
-      350,120
-      600,120
-    "/>
-
-  <!-- dots -->
-  <circle cx="120" cy="170" r="6" fill="#00ffa6"/>
-  <circle cx="290" cy="70" r="6" fill="#00c3ff"/>
-
-  <!-- text -->
-  <text x="50%" y="40" text-anchor="middle" fill="#00ffa6" font-size="26">
-    Monitoring the Pulse of Your Infrastructure
-  </text>
-
-</svg>
-
-</div>
-
-<h2>What’s Coming</h2>
-
-<div class="features">
-
-  <div class="card">🌐 Web & API uptime monitoring</div>
-  <div class="card">❤️ Heartbeat job tracking</div>
-  <div class="card">🔐 SSL & domain expiry alerts</div>
-  <div class="card">🧭 DNS & port monitoring</div>
-  <div class="card">📝 Keyword & content checks</div>
-  <div class="card">🔔 Instant alerts (Mail/Slack/Webhook)</div>
-  <div class="card">📊 Status pages & badges</div>
-  <div class="card">🏢 Multi-tenant SaaS</div>
-  <div class="card">🧠 AI-assisted insights</div>
-  <div class="card">🕸️ Agent & proxy support</div>
-
-</div>
-
-<p style="margin-top:35px;">
-Some problems don’t scream in logs —<br>
-they whisper in metrics.
-</p>
-
-<footer>
-© 2026 UpDownAlert — Building in Public
-</footer>
-
-</div>
-
+    <script>
+        // Geri sayım zamanlayıcısı
+        const launchDate = new Date();
+        launchDate.setDate(launchDate.getDate() + 45); // 45 gün sonrası
+        
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const timeLeft = launchDate - now;
+            
+            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+            
+            document.getElementById('days').textContent = days.toString().padStart(2, '0');
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+            
+            if (timeLeft < 0) {
+                clearInterval(countdownInterval);
+                document.querySelector('.countdown').innerHTML = '<div style="font-size: 1.5rem; color: #10b981; font-weight: 600;">Yayında! 🎉</div>';
+            }
+        }
+        
+        const countdownInterval = setInterval(updateCountdown, 1000);
+        updateCountdown();
+        
+        // E-posta form işleme
+        document.getElementById('notifyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const emailInput = this.querySelector('.email-input');
+            const email = emailInput.value;
+            
+            if (email) {
+                // Burada normalde e-posta backend'e gönderilir
+                // Şimdilik sadece simüle ediyoruz
+                emailInput.value = '';
+                alert('Teşekkürler! UpDownAlert hazır olduğunda size haber vereceğiz.');
+            }
+        });
+        
+        // Yönlendirme notu için tıklama olayı
+        document.querySelector('.redirect-note').addEventListener('click', function() {
+            window.location.href = 'https://adembayazit.com/updownalert';
+        });
+    </script>
 </body>
 </html>
