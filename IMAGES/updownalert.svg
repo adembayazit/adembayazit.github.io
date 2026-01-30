@@ -1,28 +1,82 @@
-<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-    <style>
-        .background { fill: #f0f8ff; stroke: #4682b4; stroke-width: 5; }
-        .eye-circle { fill: #ffffff; stroke: #2e8b57; stroke-width: 4; }
-        .eye-inner { fill: #2e8b57; }
-        .arrow-up { fill: #ff6347; }
-        .arrow-down { fill: #1e90ff; }
-        .text { font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; fill: #333333; }
-    </style>
+<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg">
 
-    <!-- Arka plan dikdörtgeni -->
-    <rect class="background" x="10" y="10" width="180" height="180" rx="15"/>
+<defs>
+  <linearGradient id="gGreen" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#e5ff4f"/>
+    <stop offset="100%" stop-color="#9fd400"/>
+  </linearGradient>
 
-    <!-- Göz simgesi -->
-    <circle class="eye-circle" cx="100" cy="80" r="30"/>
-    <circle class="eye-inner" cx="100" cy="80" r="12"/>
+  <linearGradient id="gRed" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#ff4747"/>
+    <stop offset="100%" stop-color="#c40000"/>
+  </linearGradient>
 
-    <!-- Yukarı ok -->
-    <polygon class="arrow-up" points="70,130 100,100 130,130 115,130 115,160 85,160 85,130"/>
+  <filter id="shadow">
+    <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000"/>
+  </filter>
+</defs>
 
-    <!-- Aşağı ok -->
-    <polygon class="arrow-down" points="70,170 100,200 130,170 115,170 115,140 85,140 85,170"/>
+<!-- BG -->
+<rect width="100%" height="100%" fill="#0b0b0b"/>
 
-    <!-- Metin -->
-    <text class="text" x="100" y="115" text-anchor="middle">UpDownAlert</text>
-    <text class="text" x="100" y="135" text-anchor="middle" font-size="10">Just leave it</text>
-    <text class="text" x="100" y="150" text-anchor="middle" font-size="10">it will watch</text>
+<!-- GREEN U ARROW -->
+<path d="
+M380 330
+C320 330 320 260 320 260
+L320 170
+L290 170
+L380 90
+L470 170
+L440 170
+L440 260
+C440 260 440 330 380 330
+Z"
+fill="url(#gGreen)" filter="url(#shadow)"/>
+
+<!-- RED P ARROW -->
+<path d="
+M450 170
+L450 290
+C450 330 520 330 550 290
+L550 250
+L580 250
+L520 320
+L460 250
+L490 250
+L490 170
+Z"
+fill="url(#gRed)" filter="url(#shadow)"/>
+
+<!-- TEXT -->
+<text x="450" y="430"
+text-anchor="middle"
+font-size="64"
+font-weight="600"
+font-family="Segoe UI, Arial"
+fill="#e6e6e6">
+UpDown
+</text>
+
+<text x="620" y="430"
+font-size="64"
+font-weight="700"
+font-family="Segoe UI, Arial"
+fill="#ff2a2a">
+Alert
+</text>
+
+<!-- SIGNAL ICON -->
+<circle cx="595" cy="390" r="6" fill="#ff2a2a"/>
+<path d="M595 378 Q610 390 595 402" stroke="#ff2a2a" stroke-width="3" fill="none"/>
+<path d="M595 372 Q620 390 595 408" stroke="#ff2a2a" stroke-width="3" fill="none"/>
+
+<!-- SLOGAN -->
+<text x="450" y="500"
+text-anchor="middle"
+font-size="36"
+font-family="Segoe UI, Arial"
+fill="#c6ff2e">
+Just leave it — it will watch.
+</text>
+
 </svg>
