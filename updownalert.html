@@ -15,54 +15,50 @@
 body{
   margin:0;
   font-family:Inter,sans-serif;
-  background:#000; /* LOGO ZEMİNİYLE AYNI */
+  background:#000;
   color:white;
   text-align:center;
 }
 
-/* SOFT GREEN GLOW (çok hafif) */
-body::after{
-  content:"";
-  position:fixed;
-  width:700px;
-  height:700px;
-  background:radial-gradient(circle,rgba(180,240,0,.08),transparent 70%);
-  top:-250px;
-  left:50%;
-  transform:translateX(-50%);
-  z-index:0;
-}
-
 .wrapper{
-  position:relative;
-  z-index:1;
   max-width:1100px;
   margin:auto;
-  padding:60px 20px;
+  padding:40px 20px;
 }
 
-/* ===== LOGO ===== */
-.logo{
-  width:320px;
-  filter:drop-shadow(0 0 18px rgba(180,240,0,.25));
+/* ===== LOGO HERO ===== */
+.hero-logo{
+  width:100%;
+  height:260px;
+  background:url("IMAGES/6D3ACFAA-9EE7-4691-B1CA-F94EB8AD2DE3.png") center no-repeat;
+  background-size:contain;
+  position:relative;
 }
 
-/* ===== TEXT ===== */
+/* fade blend */
+.hero-logo::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(to bottom, transparent 65%, #000 100%);
+}
+
+/* ===== TEXTS ===== */
 .slogan{
-  font-size:28px;
-  margin-top:20px;
+  font-size:32px;
   color:#b4f000;
+  margin-top:10px;
 }
 
 .coming{
-  margin-top:12px;
-  letter-spacing:4px;
-  font-size:13px;
+  letter-spacing:5px;
+  font-size:14px;
   color:#ff2a2a;
+  margin-top:8px;
 }
 
 .desc{
-  margin-top:18px;
+  margin-top:15px;
   opacity:.75;
   line-height:1.6;
 }
@@ -70,27 +66,27 @@ body::after{
 .badge{
   display:inline-block;
   margin-top:25px;
-  padding:10px 22px;
+  padding:12px 24px;
   border:1px solid #ff2a2a;
-  border-radius:25px;
+  border-radius:30px;
   color:#ff2a2a;
-  font-size:14px;
+  font-size:15px;
 }
 
 /* ===== FEATURES ===== */
 .features{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-  gap:22px;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:20px;
   margin-top:60px;
   text-align:left;
 }
 
 .card{
-  background:#050505;
-  padding:22px;
-  border-radius:14px;
-  border:1px solid #111;
+  background:#070707;
+  padding:25px;
+  border-radius:16px;
+  border:1px solid #151515;
   transition:.25s;
 }
 
@@ -104,12 +100,14 @@ body::after{
   margin-bottom:12px;
 }
 
+/* ===== QUOTE ===== */
 .quote{
   margin-top:50px;
   font-size:18px;
   opacity:.6;
 }
 
+/* ===== FOOTER ===== */
 footer{
   margin-top:40px;
   opacity:.4;
@@ -124,8 +122,9 @@ footer{
 <div class="wrapper">
 
 <!-- LOGO -->
-<img src="IMAGES/6D3ACFAA-9EE7-4691-B1CA-F94EB8AD2DE3.png" class="logo">
+<div class="hero-logo"></div>
 
+<!-- HEADLINE -->
 <div class="slogan">
 Just leave it — it will watch.
 </div>
@@ -143,29 +142,66 @@ silent failures and unseen risks.
 Always Watching • Always Alert
 </div>
 
-<!-- FEATURES -->
+<!-- ===== FEATURES ===== -->
 <div class="features">
 
 <div class="card">
 <i data-lucide="activity" class="icon"></i>
 <b>Web & API Monitoring</b>
-<p>Status code, latency & uptime health</p>
+<p>Status codes, latency & uptime health</p>
+</div>
+
+<div class="card">
+<i data-lucide="heart-pulse" class="icon"></i>
+<b>Heartbeat Tracking</b>
+<p>Cron jobs, workers & backups</p>
 </div>
 
 <div class="card">
 <i data-lucide="shield-check" class="icon"></i>
-<b>SSL & Domain Watch</b>
-<p>Expiry & certificate trust</p>
+<b>SSL & Domain Monitoring</b>
+<p>Expiry dates & certificate trust</p>
+</div>
+
+<div class="card">
+<i data-lucide="network" class="icon"></i>
+<b>DNS & Port Monitoring</b>
+<p>Network-level visibility</p>
+</div>
+
+<div class="card">
+<i data-lucide="search" class="icon"></i>
+<b>Keyword & Content Checks</b>
+<p>Integrity & change detection</p>
 </div>
 
 <div class="card">
 <i data-lucide="bell" class="icon"></i>
 <b>Smart Alerts</b>
-<p>Email, Slack & Webhooks</p>
+<p>Email, Telegram, Slack & Webhooks</p>
+</div>
+
+<div class="card">
+<i data-lucide="bar-chart" class="icon"></i>
+<b>Status Pages & Badges</b>
+<p>Public uptime dashboards</p>
+</div>
+
+<div class="card">
+<i data-lucide="brain" class="icon"></i>
+<b>AI-Assisted Insights</b>
+<p>Anomaly & risk signals</p>
+</div>
+
+<div class="card">
+<i data-lucide="server" class="icon"></i>
+<b>Vendor-Independent Monitoring</b>
+<p>Monitor any device or infrastructure</p>
 </div>
 
 </div>
 
+<!-- QUOTE -->
 <div class="quote">
 Some problems don’t scream in logs —<br>
 they whisper in metrics.
