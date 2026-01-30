@@ -10,110 +10,135 @@
 <script src="https://unpkg.com/lucide@latest"></script>
 
 <style>
+
+/* ===== BASE ===== */
 body{
   margin:0;
   font-family:Inter,sans-serif;
-  background:radial-gradient(circle at top,#0f172a,#020617 60%,#000);
   color:white;
   text-align:center;
+  background:#050505;
+  overflow-x:hidden;
 }
 
-/* glow effect */
+/* ===== GRID BACKGROUND ===== */
 body::before{
   content:"";
-  position:absolute;
-  width:700px;
-  height:700px;
-  background:radial-gradient(circle,#00ffa620,transparent 70%);
-  top:-250px;
+  position:fixed;
+  inset:0;
+  background:
+    linear-gradient(rgba(0,255,120,.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,0,0,.08) 1px, transparent 1px);
+  background-size:60px 60px;
+  z-index:0;
+}
+
+/* ===== GREEN GLOW ===== */
+body::after{
+  content:"";
+  position:fixed;
+  width:600px;
+  height:600px;
+  background:radial-gradient(circle,#b4f00033,transparent 70%);
+  top:-200px;
   left:50%;
   transform:translateX(-50%);
+  z-index:0;
 }
 
 .wrapper{
   position:relative;
-  z-index:2;
+  z-index:1;
   max-width:1100px;
   margin:auto;
   padding:60px 20px;
 }
 
-/* LOGO */
+/* ===== LOGO ===== */
 .logo{
-  width:260px;
-  filter:drop-shadow(0 0 25px rgba(0,255,166,.25));
+  width:280px;
+  filter:
+    drop-shadow(0 0 25px rgba(180,240,0,.35))
+    drop-shadow(0 0 10px rgba(255,0,0,.25));
 }
 
-/* TEXTS */
+/* ===== TEXT ===== */
 .slogan{
-  font-size:26px;
-  color:#b4f000;
+  font-size:28px;
   margin-top:15px;
+  color:#b4f000;
+  text-shadow:0 0 10px rgba(180,240,0,.4);
 }
 
 .coming{
   margin-top:15px;
-  letter-spacing:3px;
+  letter-spacing:4px;
   font-size:13px;
-  opacity:.7;
+  color:#ff3b3b;
 }
 
 .desc{
-  margin-top:20px;
+  margin-top:18px;
   opacity:.8;
   line-height:1.6;
 }
 
+/* ===== BADGE ===== */
 .badge{
   display:inline-block;
   margin-top:25px;
-  padding:10px 20px;
-  border:1px solid #00ffa6;
+  padding:10px 22px;
+  border:1px solid #ff3b3b;
   border-radius:25px;
-  color:#00ffa6;
+  color:#ff3b3b;
   font-size:14px;
+  box-shadow:0 0 12px rgba(255,0,0,.25);
 }
 
-/* FEATURES */
+/* ===== FEATURES ===== */
 .features{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-  gap:20px;
+  gap:22px;
   margin-top:60px;
   text-align:left;
 }
 
 .card{
-  background:#0f172a;
+  background:#0c0c0c;
   padding:22px;
   border-radius:14px;
-  border:1px solid #1f2937;
+  border:1px solid #222;
   transition:.25s;
 }
 
 .card:hover{
   transform:translateY(-6px);
-  border-color:#00ffa6;
-  background:#111827;
+  border-color:#b4f000;
+  box-shadow:
+    0 0 15px rgba(180,240,0,.25),
+    0 0 10px rgba(255,0,0,.2);
 }
 
 .icon{
-  color:#00ffa6;
+  color:#b4f000;
   margin-bottom:12px;
 }
 
+/* ===== QUOTE ===== */
 .quote{
   margin-top:50px;
   font-size:18px;
-  opacity:.65;
-  text-align:center;
+  opacity:.7;
 }
 
+/* ===== FOOTER ===== */
 footer{
   margin-top:40px;
   opacity:.5;
   font-size:13px;
 }
+
 </style>
 </head>
 
@@ -121,23 +146,23 @@ footer{
 
 <div class="wrapper">
 
-<!-- LOGO -->
 <img src="IMAGES/6D3ACFAA-9EE7-4691-B1CA-F94EB8AD2DE3.png" class="logo">
 
-<!-- SLOGAN -->
 <div class="slogan">
 Just leave it — it will watch.
 </div>
 
-<div class="coming">COMING SOON</div>
+<div class="coming">
+COMING SOON
+</div>
 
 <div class="desc">
-24/7 business protection from downtime,  
+24/7 business protection from downtime,<br>
 silent failures and unseen risks.
 </div>
 
 <div class="badge">
-Monitoring • Alerts • Protection
+Always Watching • Always Alert
 </div>
 
 <!-- FEATURES -->
@@ -177,24 +202,6 @@ Monitoring • Alerts • Protection
 <i data-lucide="bell" class="icon"></i>
 <b>Smart Alerts</b>
 <p>Email, Slack & Webhooks</p>
-</div>
-
-<div class="card">
-<i data-lucide="bar-chart" class="icon"></i>
-<b>Status Pages</b>
-<p>Public trust dashboards</p>
-</div>
-
-<div class="card">
-<i data-lucide="brain" class="icon"></i>
-<b>AI-Assisted Insights</b>
-<p>Anomaly & risk signals</p>
-</div>
-
-<div class="card">
-<i data-lucide="server" class="icon"></i>
-<b>Vendor-Independent</b>
-<p>Monitor any infrastructure</p>
 </div>
 
 </div>
