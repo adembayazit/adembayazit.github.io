@@ -22,7 +22,7 @@ let lastEntryCount = 0;
 
 // ================= BIN SYSTEM =================
 
-const MASTER_BIN_ID = "68933248ae596e708fc2fbbc";
+const MASTER_BIN_ID = "69ab097ed0ea881f40f60c42";
 let currentActiveBinId = MASTER_BIN_ID;
 let allBins = [];
 
